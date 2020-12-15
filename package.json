@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "26.1.1",
+  "version": "27.1.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -78,6 +78,7 @@
   "license": "See LICENSE.md",
   "scripts": {
     "wiredep": "grunt wiredep",
+    "webpack": "webpack",
     "webpack:fhir": "webpack --env.fhirOnly=true",
     "webpack:r4": "webpack --env.r4Only=true",
     "webpack:main": "webpack --env.mainOnly=true",

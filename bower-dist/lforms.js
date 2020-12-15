@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.1.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"27.1.0\"}");
 
 /***/ }),
 /* 7 */
@@ -2342,14 +2342,18 @@ LForms.Util = {
    *  Adds an LForms form to the page.
    * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
    *  for backward compatibility, this can be the name of a global-scope variable
-   *  (on "window") containing that form definition object.
+   *  (on "window") containing that form definition object. A FHIR Questionnaire can be also be
+   *  used as a form definition.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
-   * @param options A hash of options (currently just one):
-   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
-   *     the form was an imported FHIR Questionnaire).
+   * @param {Object} [options] A hash of options
+   * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
+   *  the form was an imported FHIR Questionnaire).
+   * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
+   *  Questionnaire. options are: `R4` or `STU3`. If not provided an attempt will be made to determine
+   *  the version from the Questionnaire content.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
    *  Questionnaire).
@@ -2361,6 +2365,16 @@ LForms.Util = {
       if (formDataDef.indexOf('{') >= 0) // test for JSON
         formDataDef = JSON.parse(formDataDef);else // backward compatibility
         formDataDef = window[formDataDef];
+    } // If resourceType is specified assume formDataDef is FHIR
+
+
+    var resourceType = formDataDef.resourceType;
+    var fhirVersion = options && options.fhirVersion;
+
+    if (resourceType === 'Questionnaire') {
+      formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
+    } else if (resourceType) {
+      throw new Error('Only Questionnaire FHIR content is supported in addFormToPage.');
     }
 
     if (!this.pageFormID_) this.pageFormID_ = 0;
@@ -2456,6 +2470,17 @@ LForms.Util = {
   getFormFHIRData: function getFormFHIRData(resourceType, fhirVersion, formDataSource, options) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
     return this._convertLFormsToFHIRData(resourceType, fhirVersion, formDataSource, options);
+  },
+
+  /**
+   * Get a list of errors preventing the form from being valid.
+   * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors or null if form is valid
+   */
+  checkValidity: function checkValidity(element) {
+    var formObj = this._getFormObjectInScope(element);
+
+    return formObj ? formObj.checkValidity() : null;
   },
 
   /**
@@ -2589,20 +2614,16 @@ LForms.Util = {
   /**
    *  For FHIR applications, provides FHIR context information that might be
    *  needed in rendering a Quesitonnaire.
+   *  Priort to calling this, the LHC-Forms FHIR support files should be loaded.
    * @param fhirContext an optional object for accessing a FHIR context and
-   *  FHIR API.  It should define the following operations:
-   *  - getCurrent(typeList, callback):  "typeList" should be a list of desired
-   *    FHIR resource types for which there is conceptually a "current" on in
-   *    the FHIR context (e.g., Patient, or Practitioner).  Only one resource
-   *    from the requested list will be returned, and the result will be null if
-   *    none of the requested resource types are available.  Because retrieving
-   *    the resource will generally be an asynchronous operation, the resource
-   *    will be returned via the first argument to the provided "callback"
-   *    function.
-   *  - getFHIRAPI():  Should return an instance of fhir.js for interacting with
-   *    the FHIR server.
+   *  a FHIR API.  It should be an instance of 'client-js', a.k.a. npm package fhirclient,
+   *  version 2.  (See http://docs.smarthealthit.org/client-js).
    */
   setFHIRContext: function setFHIRContext(fhirContext) {
+    if (!LForms.FHIR) {
+      throw new Error('LHC-Forms FHIR support files have not been loaded.' + 'See http://lhncbc.github.io/lforms/#fhirScripts');
+    }
+
     LForms.fhirContext = fhirContext;
     LForms.fhirCapabilities = {}; // our own flags about what the server can do
 
@@ -2649,9 +2670,9 @@ LForms.Util = {
     if (!LForms._serverFHIRReleaseID) {
       // Retrieve the fhir version
       try {
-        var fhirAPI = LForms.fhirContext.getFHIRAPI();
-        fhirAPI.conformance({}).then(function (res) {
-          var fhirVersion = res.data.fhirVersion;
+        var fhirAPI = LForms.fhirContext; //fhirAPI.request('metadata?_elements=fhirVersion').then(function(res) // causes an error on lforms-smart-fhir (TBD)
+
+        fhirAPI.getFhirVersion().then(function (fhirVersion) {
           LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
           console.log('Server FHIR version is ' + LForms._serverFHIRReleaseID + ' (' + fhirVersion + ')');
           callback(LForms._serverFHIRReleaseID);
@@ -3311,6 +3332,19 @@ LForms.Util = {
     return {
       lformsVersion: LForms.lformsVersion
     };
+  },
+
+  /**
+   * Get a list of warning messages about answer lists, which should have been
+   * loaded from the URL in answerValueSet but were not.
+   *
+   * @param {*} formDataSource Optional.  Either the containing HTML element that
+   *  includes the LForm's rendered form, a CSS selector for that element, an
+   *  LFormsData object, or an LForms form definition (parsed).  If not
+   *  provided, the first form found in the page will be used.   */
+  getAnswersResourceStatus: function getAnswersResourceStatus(formDataSource) {
+    if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
+    return formDataSource.checkAnswersResourceStatus();
   }
 };
 
@@ -4844,6 +4878,24 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
 
     /**
+     * Get a list of warning messages where answer lists are not loaded from URLs
+     * in 'answerValueSet'
+     */
+    checkAnswersResourceStatus: function checkAnswersResourceStatus() {
+      var status = [];
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var item = this.itemList[i];
+
+        if (item.answerValueSet && !item.answers) {
+          status.push("Resource not loaded: " + item.answerValueSet);
+        }
+      }
+
+      return status;
+    },
+
+    /**
      *  Registers a callback for use if the rendering of the form
      *  requires the asynchronous operations (e.g. the loading of external
      *  resources) which could affect the content.  Potentially, the function could
@@ -4924,64 +4976,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      *  should be set to false (which is the default).
      */
     loadFHIRResources: function loadFHIRResources(prepopulate) {
-      var _this = this;
-
       if (!LForms.fhirContext) {
         throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
       }
 
       var lfData = this;
-      var pendingPromises = []; // launchContext
-
-      var contextItems = LForms.Util.findObjectInArray(this.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
-
-      var _loop = function _loop() {
-        var contextItemExt = contextItems[i].extension;
-        var name = void 0;
-        var typeList = [];
-
-        for (j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
-          fieldExt = contextItemExt[j];
-
-          if (!name && fieldExt.url === 'name') {
-            name = fieldExt.valueId;
-
-            _this._checkFHIRVarName(name); // might throw
-
-          } else if (fieldExt.url === 'type') typeList.push(fieldExt.valueCode);
-        }
-
-        if (name && typeList.length > 0) {
-          pendingPromises.push(new Promise(function (resolve, reject) {
-            // Enforce that this is truly asynchronous with setTimeout.
-            // Some implementations of getCurrent (e.g in testing) might be
-            // synchronous.
-            setTimeout(function () {
-              try {
-                LForms.fhirContext.getCurrent(typeList, function (resource) {
-                  if (resource) lfData._fhirVariables[name] = resource;
-                  resolve();
-                });
-              } catch (e) {
-                reject(e);
-              }
-            }, 1);
-          }));
-        }
-      };
-
-      for (var i = 0, len = contextItems.length; i < len; ++i) {
-        var j, jLen;
-        var fieldExt;
-
-        _loop();
-      } // answerValueSet (for prefetched lists)
-      // For this import, we don't actually care which version of FHIR;
-      // the implementation is common.  If either support file is loaded use
-      // that (for both the terminology server case and the FHIR server case).
-
-
-      var sdc = this._getFHIRSupport().SDC;
+      var sdc = this._fhir.SDC;
+      var pendingPromises = sdc.loadLaunchContext(this); // answerValueSet (for prefetched lists)
 
       pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
       if (prepopulate) pendingPromises.push(this._requestLinkedObs());
@@ -5101,7 +5102,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      *  any prepopulation has been performed.
      */
     _requestLinkedObs: function _requestLinkedObs() {
-      var _this2 = this;
+      var _this = this;
 
       if (LForms.fhirContext && this._fhir) {
         // We will need to know what version of FHIR the server is using.  Make
@@ -5121,33 +5122,32 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
           var obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
 
-          var _loop2 = function _loop2() {
-            var item = _this2.itemList[i];
+          var _loop = function _loop() {
+            var item = _this.itemList[i];
             var obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
 
             if (obsExt) {
               // an array of at least 1 if present
               duration = obsExt[0].valueDuration; // optional
 
-              itemCodeSystem = item.questionCodeSystem;
-              if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
-              fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
+              fhirClient = LForms.fhirContext; // Get a comma separated list of codes
 
-              queryParams = {
-                type: 'Observation',
-                query: {
-                  code: itemCodeSystem + '|' + item.questionCode,
-                  _sort: '-date',
-                  _count: 5
-                }
-              }; // only need one, but we need to filter out focus=true below
-              // Temporarily disabling the addition of the focus search
+              var codeQuery = item.codeList.map(function (code) {
+                var codeSystem = code.system === 'LOINC' ? serverFHIR.LOINC_URI : code.system;
+                return [codeSystem, code.code].join('|');
+              }).join(',');
+              var queryParams = {
+                code: codeQuery,
+                _sort: '-date',
+                _count: 5 // only need one, but we need to filter out focus=true below
+
+              }; // Temporarily disabling the addition of the focus search
               // parameter, because of support issues.  Instead, for now, we
               // will check the focus parameter when the Observation is
               // returned.  Later, we might query the server to find out whether
               // :missing is supported.
               //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-              //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
+              //  queryParams.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
 
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
@@ -5155,46 +5155,40 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
                 if (result.status === 'succeeded') {
                   date = new Date(new Date() - result.toVal);
-                  queryParams.query._lastUpdated = 'gt' + date.toISOString();
+                  queryParams._lastUpdated = 'gt' + date.toISOString();
                 }
-              } // I'm not sure why, but fhirjs.search.then() returns an already
-              // resolved promise.  Wrap it in a Promise object.
+              }
 
+              pendingPromises.push(fhirClient.patient.request(_this._buildURL(['Observation'], queryParams)).then(function (successData) {
+                var bundle = successData;
 
-              pendingPromises.push(new Promise(function (resolve, reject) {
-                fhirjs.search(queryParams).then(function (successData) {
-                  var bundle = successData.data;
+                if (bundle.entry) {
+                  var foundObs;
 
-                  if (bundle.entry) {
-                    var foundObs;
+                  for (var j = 0, jLen = bundle.entry.length; j < jLen && !foundObs; ++j) {
+                    var obs = bundle.entry[j].resource;
 
-                    for (var j = 0, jLen = bundle.entry.length; j < jLen && !foundObs; ++j) {
-                      var obs = bundle.entry[j].resource;
-
-                      if (!obs.focus) {
-                        // in case we couldn't use focus:missing above
-                        serverFHIR.SDC.importObsValue(item, obs);
-                        if (item.value) foundObs = true;
-                        if (item.unit) lfData._setUnitDisplay(item.unit);
-                      }
+                    if (!obs.focus) {
+                      // in case we couldn't use focus:missing above
+                      serverFHIR.SDC.importObsValue(item, obs);
+                      if (item.value) foundObs = true;
+                      if (item.unit) lfData._setUnitDisplay(item.unit);
                     }
                   }
+                }
 
-                  resolve(item.questionCode); // code is not needed, but useful for debugging
-                });
+                return item.questionCode; // code is not needed, but useful for debugging
               }));
             }
           };
 
           for (var i = 0, len = this.itemList.length; i < len; ++i) {
             var duration;
-            var itemCodeSystem;
-            var fhirjs;
-            var queryParams;
+            var fhirClient;
             var result;
             var date;
 
-            _loop2();
+            _loop();
           }
 
           return Promise.all(pendingPromises);
@@ -5299,7 +5293,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     /**
      * Validate user input value
-     * Note: Not currently used since validations are handled in an Angular directive.
      * This might be used in the future.
      * @param item the question item
      * @private
@@ -6147,6 +6140,41 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
       return angular.copy(ret);
+    },
+
+    /**
+     * Get a list of errors preventing the form from being valid.
+     * @returns {Array<string> | null} list of errors or null if no errors
+     */
+    checkValidity: function checkValidity() {
+      var _this2 = this;
+
+      var errors = [];
+      var itemListLength = this.itemList.length;
+
+      var _loop2 = function _loop2(i) {
+        var item = _this2.itemList[i];
+
+        _this2._checkValidations(item);
+
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          var errorDetails = item._validationErrors.map(function (e) {
+            return "".concat(item.question, " ").concat(e);
+          });
+
+          Array.prototype.push.apply(errors, errorDetails);
+        }
+      };
+
+      for (var i = 0; i < itemListLength; i++) {
+        _loop2(i);
+      }
+
+      if (errors.length) {
+        return errors;
+      } else {
+        return null;
+      }
     },
 
     /**
@@ -7454,17 +7482,37 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @return a Promise that will resolve to the ValueSet expansion.
      */
     _fhirClientSearchByValueSetID: function _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
-      var fhirClient = LForms.fhirContext.getFHIRAPI();
-      return fhirClient.search({
-        type: 'ValueSet/' + valueSetID + '/$expand',
-        query: {
-          _format: 'application/json',
-          count: count,
-          filter: fieldVal
-        }
-      }).then(function (response) {
-        return response.data;
-      });
+      var fhirClient = LForms.fhirContext;
+      return fhirClient.request(this._buildURL(['ValueSet', valueSetID, '$expand'], {
+        count: count,
+        filter: fieldVal
+      }));
+    },
+
+    /**
+     *  An internal function for safely constructing a URL based on a path
+     *  segments and query parameters.
+     * @param pathParts An array of path segments (not including the protocol).
+     *  These will be URL-encoded.
+     * @param queryParams (optional) A object of key/value pairs (string values)
+     *  for the query part of the URL.  Values be URL-encoded.
+     */
+    _buildURL: function _buildURL(pathParts, queryParams) {
+      // Would Use URL and URLSearchParams, except for the need to support IE11
+      // It looks like if we update babel, we could have a polyfill, but I don't
+      // want to revise the build configuration at the moment.
+      var url = pathParts.map(function (part) {
+        return encodeURIComponent(part);
+      }).join('/');
+
+      if (queryParams) {
+        // Assuming a single value per key, for now.
+        url += '?' + Object.keys(queryParams).map(function (k) {
+          return k + '=' + encodeURIComponent(queryParams[k]);
+        }).join('&');
+      }
+
+      return url;
     },
 
     /**
@@ -7478,7 +7526,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     _findValueSetIDAndSearch: function _findValueSetIDAndSearch(item, fieldVal, count) {
       // Fetch the ValueSet
       var failMsg = "Could not retrieve the ValueSet definition for " + item.answerValueSet;
-      var fhirClient = LForms.fhirContext.getFHIRAPI(); // Cache the lookup of ValueSet IDs, which should not change.  (A page
+      var fhirClient = LForms.fhirContext; // Cache the lookup of ValueSet IDs, which should not change.  (A page
       // reload will clear the cache.)
 
       if (!LForms._valueSetUrlToID) LForms._valueSetUrlToID = {};
@@ -7488,15 +7536,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
       } else {
         var self = this;
-        return fhirClient.search({
-          type: 'ValueSet',
-          query: {
-            _format: 'application/json',
-            url: item.answerValueSet,
-            _total: 'accurate'
-          }
-        }).then(function (response) {
-          var data = response.data;
+        return fhirClient.request(this._buildURL(['ValueSet'], {
+          url: item.answerValueSet,
+          _total: 'accurate'
+        })).then(function (response) {
+          var data = response;
 
           if (data.total === 1) {
             var valueSetID = data.entry[0].resource.id;
@@ -7571,18 +7615,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             options.fhir = {
               search: function search(fieldVal, count) {
                 if (LForms.fhirCapabilities.urlExpandBroken) return self._findValueSetIDAndSearch(item, fieldVal, count);else {
-                  var fhirClient = LForms.fhirContext.getFHIRAPI();
-                  return fhirClient.search({
-                    type: 'ValueSet/$expand',
-                    query: {
-                      _format: 'application/json',
-                      count: count,
-                      filter: fieldVal,
-                      url: item.answerValueSet
-                    }
-                  }).then(function (successData) {
-                    return successData.data;
-                  }, function (errorData) {
+                  var fhirClient = LForms.fhirContext;
+                  return fhirClient.request(self._buildURL(['ValueSet/$expand'], {
+                    count: count,
+                    filter: fieldVal,
+                    url: item.answerValueSet
+                  })).catch(function (errorData) {
                     LForms.fhirCapabilities.urlExpandBroken = true; // HAPI does not support (maybe just because of a bug) $expand
                     // when both "url" and "filter" parameters are present.  In that
                     // case, it says, ""ValueSet contains include criteria with no

@@ -2,6 +2,40 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [27.1.0] 2020-12-09
+### Added
+- Support for the FHIR questionnaire choice orientation extension.
+
+## [27.0.0] 2020-12-08
+### Changes
+- Breaking change to FHIR support.  LForms.Util.setFHIRContext now takes an
+  instance of 'client-js', a.k.a. npm package fhirclient,
+  version 2.  (See http://docs.smarthealthit.org/client-js).
+
+## [26.4.0] 2020-12-01
+### Added
+- Multiple code support for observationLinkPeriod prepopulation.
+
+## [26.3.1] 2020-10-19
+### Fixed
+- Fixed a bug in STU3 Questionnaire import that 'options' is not handled correctly
+
+## [26.3.0] 2020-10-16
+### Added
+- Added two functions: LForms.Util.isValid, which checks if the form fields are
+  valid and LForms.Util.getErrors to get a list of errors preventing the form
+  from being valid.
+
+## [26.2.0] 2020-10-06
+### Added
+- Added a function, LForms.Util.getAnswersResourceStatus, which checks the status
+  of the loading of answer lists. (This only applies to forms defined as a
+  FHIR Questionnaire.)
+
+## [26.1.2] 2020-10-05
+### Added
+- Support for using a FHIR Questionnaire as a form definition in addFormToPage.
+
 ## [26.1.1] 2020-09-30
 ### Fixed
 - Fixed the extensions URI for answer scores

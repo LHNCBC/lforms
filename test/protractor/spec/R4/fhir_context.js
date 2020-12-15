@@ -14,96 +14,121 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
     };
   }
 
+  // Mock needed functions from the fhirclient API
+  // http://docs.smarthealthit.org/client-js/client
   return {
-    getCurrent:  function(typeList, callback) {
-      var rtn = null;
-      if (typeList.indexOf('Patient') >= 0) {
-        rtn = {resourceType: "Patient",
-          name: [{
-            family: "Smith",
-            given: ["John", "Adam"]
-          }],
-          birthDate: "1990-12-10",
-          gender: "male"
-        }
-      }
-      callback(rtn);
+    getFhirVersion: function() {
+      return Promise.resolve('4.0.0');
     },
 
-    getFHIRAPI: function() {
-      return {
-        conformance: function() {
-          return {
-            then: function(callback) {
-              setTimeout(function() { // preserve expected async behavior
-                callback({data: {fhirVersion: fhirVersion}});
-              });
-            }
-          }
-        },
-        search: function(queryParams) {
-          var entry = {
-            "resource": {
-              "status": "final",
-              "effectiveDateTime": "2016-06-29T19:14:57-04:00",
-              "issued": "2016-06-29T19:14:57-04:00",
-            }
-          };
-          switch(queryParams.query.code) {
-            case 'http://loinc.org|29463-7':
-              entry.resource.code = {
-                "coding": [
-                  {
-                    "system": "http://loinc.org",
-                    "code": "29463-7",
-                    "display": "Body Weight"
-                  }
-                ],
-                "text": "Body Weight"
-              };
-              entry.resource.valueQuantity = weightQuantity;
-              break;
-            case 'http://loinc.org|44250-9':
-              entry.resource.code = {
-                "coding": [
-                  {
-                    "system": "http://loinc.org",
-                    "code": "44250-9",
-                    "display": "Little interest or pleasure in doing things?"
-                  }
-                ],
-                "text": "Little interest or pleasure in doing things?"
-              };
-              entry.resource.valueCodeableConcept = {
-                "coding": [
-                  {
-                    "system": "http://loinc.org",
-                    "code": "LA6568-5",
-                    "display": "Not at all"
-                  }
-                ],
-                "text": "Not at all"
-              };
-              break;
-            default:
-              entry = null;
-              break;
-          }
+    patient: {
+      id: 5,
+      read:  function() {
+        return new Promise((resolve, reject)=>{
+          setTimeout(function() { // preserve expected async behavior
+            resolve({resourceType: "Patient",
+              name: [{
+                family: "Smith",
+                given: ["John", "Adam"]
+              }],
+              birthDate: "1990-12-10",
+              gender: "male"
+            });
+          });
+        });
+      },
 
-          return {
-            then: function(callback) {
-              var data = {
-                "resourceType": "Bundle",
-                "type": "searchset",
-              };
-              if (entry)
-                data.entry = [entry];
-              setTimeout(function() { // preserve expected async behavior
-                callback({data: data});
-              });
-            }
-          };
+      request: function(relativeURL) {
+        var entry = {
+          "resource": {
+            "status": "final",
+            "effectiveDateTime": "2016-06-29T19:14:57-04:00",
+            "issued": "2016-06-29T19:14:57-04:00",
+          }
+        };
+        let url = new URL(relativeURL, 'https://example.com');
+        let params = url.searchParams;
+        let entries = [];
+
+        switch(params.get('code')) {
+          case 'http://loinc.org|29463-7':
+            entry.resource.code = {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "29463-7",
+                  "display": "Body Weight"
+                }
+              ],
+              "text": "Body Weight"
+            };
+            entry.resource.valueQuantity = weightQuantity;
+            entries.push(entry);
+            break;
+          case 'http://loinc.org|44250-9':
+            entry.resource.code = {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "44250-9",
+                  "display": "Little interest or pleasure in doing things?"
+                }
+              ],
+              "text": "Little interest or pleasure in doing things?"
+            };
+            entry.resource.valueCodeableConcept = {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "LA6568-5",
+                  "display": "Not at all"
+                }
+              ],
+              "text": "Not at all"
+            };
+            entries.push(entry);
+            break;
+          case 'http://example.org|example,http://loinc.org|29463-7':
+            entry.resource.code = {
+              "coding": [
+                {
+                  "system": "http://example.org",
+                  "code": "example",
+                  "display": "Example"
+                }
+              ],
+              "text": "Example"
+            };
+            entry.resource.valueQuantity = weightQuantity;
+            entry.resource.valueQuantity.value = 96;
+            entry.resource.effectiveDateTime = "2020-06-29T19:14:57-04:00";
+            entry.resource.issued = "2020-06-29T19:14:57-04:00";
+            entries.push(entry);
+            // Need a deep copy of the data
+            entry = JSON.parse(JSON.stringify(entry));
+            entry.resource.valueQuantity.value = 95;
+            entry.resource.effectiveDateTime = "2016-06-29T19:14:57-04:00";
+            entry.resource.issued = "2016-06-29T19:14:57-04:00";
+            entries.push(entry);
+            break;
+          default:
+            entry = null;
+            break;
         }
+
+        return {
+          then: function(callback) {
+            var data = {
+              "resourceType": "Bundle",
+              "type": "searchset",
+            };
+            if (entries.length)
+              data.entry = entries;
+            setTimeout(function() { // preserve expected async behavior
+              callback(data);
+            });
+          }
+        };
       }
     }
   }

@@ -234,7 +234,7 @@ function addSDCImportFns(ns) {
         lfItem.answers = vs.answers;
       }
       else
-        lfItem.answerValueSet = qItem.options;
+        lfItem.answerValueSet = qItem.options.reference;
     }
   }
 

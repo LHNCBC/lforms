@@ -33,14 +33,18 @@ LForms.Util = {
    *  Adds an LForms form to the page.
    * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
    *  for backward compatibility, this can be the name of a global-scope variable
-   *  (on "window") containing that form definition object.
+   *  (on "window") containing that form definition object. A FHIR Questionnaire can be also be
+   *  used as a form definition.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
-   * @param options A hash of options (currently just one):
-   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
-   *     the form was an imported FHIR Questionnaire).
+   * @param {Object} [options] A hash of options
+   * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
+   *  the form was an imported FHIR Questionnaire).
+   * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
+   *  Questionnaire. options are: `R4` or `STU3`. If not provided an attempt will be made to determine
+   *  the version from the Questionnaire content.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
    *  Questionnaire).
@@ -53,6 +57,16 @@ LForms.Util = {
         formDataDef = JSON.parse(formDataDef);
       else // backward compatibility
         formDataDef = window[formDataDef];
+    }
+
+    // If resourceType is specified assume formDataDef is FHIR
+    var resourceType = formDataDef.resourceType;
+    var fhirVersion = options && options.fhirVersion;
+
+    if (resourceType === 'Questionnaire') {
+      formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
+    } else if (resourceType) {
+      throw new Error('Only Questionnaire FHIR content is supported in addFormToPage.')
     }
 
     if (!this.pageFormID_)
@@ -160,6 +174,17 @@ LForms.Util = {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string')
       formDataSource = this._getFormObjectInScope(formDataSource);
     return this._convertLFormsToFHIRData(resourceType, fhirVersion, formDataSource, options);
+  },
+
+
+  /**
+   * Get a list of errors preventing the form from being valid.
+   * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors or null if form is valid
+   */
+  checkValidity: function (element) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? formObj.checkValidity() : null;
   },
 
 
@@ -307,20 +332,16 @@ LForms.Util = {
   /**
    *  For FHIR applications, provides FHIR context information that might be
    *  needed in rendering a Quesitonnaire.
+   *  Priort to calling this, the LHC-Forms FHIR support files should be loaded.
    * @param fhirContext an optional object for accessing a FHIR context and
-   *  FHIR API.  It should define the following operations:
-   *  - getCurrent(typeList, callback):  "typeList" should be a list of desired
-   *    FHIR resource types for which there is conceptually a "current" on in
-   *    the FHIR context (e.g., Patient, or Practitioner).  Only one resource
-   *    from the requested list will be returned, and the result will be null if
-   *    none of the requested resource types are available.  Because retrieving
-   *    the resource will generally be an asynchronous operation, the resource
-   *    will be returned via the first argument to the provided "callback"
-   *    function.
-   *  - getFHIRAPI():  Should return an instance of fhir.js for interacting with
-   *    the FHIR server.
+   *  a FHIR API.  It should be an instance of 'client-js', a.k.a. npm package fhirclient,
+   *  version 2.  (See http://docs.smarthealthit.org/client-js).
    */
   setFHIRContext: function(fhirContext) {
+    if (!LForms.FHIR) {
+      throw new Error('LHC-Forms FHIR support files have not been loaded.' +
+        'See http://lhncbc.github.io/lforms/#fhirScripts');
+    }
     LForms.fhirContext = fhirContext;
     LForms.fhirCapabilities = {}; // our own flags about what the server can do
     delete LForms._serverFHIRReleaseID; // in case the version changed
@@ -366,9 +387,9 @@ LForms.Util = {
     if (!LForms._serverFHIRReleaseID) {
       // Retrieve the fhir version
       try {
-        var fhirAPI = LForms.fhirContext.getFHIRAPI();
-        fhirAPI.conformance({}).then(function(res) {
-          var fhirVersion = res.data.fhirVersion;
+        var fhirAPI = LForms.fhirContext;
+        //fhirAPI.request('metadata?_elements=fhirVersion').then(function(res) // causes an error on lforms-smart-fhir (TBD)
+        fhirAPI.getFhirVersion().then(function(fhirVersion) {
           LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
           console.log('Server FHIR version is '+LForms._serverFHIRReleaseID+' ('+
             fhirVersion+')');
@@ -1037,13 +1058,28 @@ LForms.Util = {
   },
 
 
-
   /**
    *   Returns the part of an LForms form definition that all form definitions
    *   should have.
    */
   baseFormDef: function() {
     return {lformsVersion: LForms.lformsVersion};
+  },
+
+
+  /**
+   * Get a list of warning messages about answer lists, which should have been
+   * loaded from the URL in answerValueSet but were not.
+   *
+   * @param {*} formDataSource Optional.  Either the containing HTML element that
+   *  includes the LForm's rendered form, a CSS selector for that element, an
+   *  LFormsData object, or an LForms form definition (parsed).  If not
+   *  provided, the first form found in the page will be used.   */
+  getAnswersResourceStatus : function(formDataSource) {
+    if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string')
+      formDataSource = this._getFormObjectInScope(formDataSource);
+
+    return formDataSource.checkAnswersResourceStatus();
   }
 
 };

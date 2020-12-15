@@ -74,8 +74,7 @@ describe('Form pre-population', function() {
       var launchContextExt = browser.executeScript(function(fhirVersion) {
         var q2Data = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion);
         return LForms.Util.findObjectInArray(q2Data.extension, 'url',
-          "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
-          0);
+          LForms.FHIR.R4.SDC.fhirExtLaunchContext, 0);
       }, fhirVersion);
       expect(launchContextExt).not.toBeNull();
     });
@@ -84,9 +83,13 @@ describe('Form pre-population', function() {
     for (let serverFHIRNum of ['3.0', '4.0']) {
       describe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
                function() {
-        it('should load values from observationLinkPeriod', function() {
+        beforeAll(() => {
           tp.openBaseTestPage();
           setServerFHIRContext(serverFHIRNum);
+        });
+
+
+        it('should load values from observationLinkPeriod', function() {
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
           browser.wait(EC.presenceOf(weightField), 2000);
@@ -99,8 +102,6 @@ describe('Form pre-population', function() {
         });
 
         it('should populate observationLinkPeriod fields that are not top-level', function() {
-          //tp.openBaseTestPage();
-          //setServerFHIRContext(serverFHIRNum);
           tp.loadFromTestData('ussg-fhp.json', 'R4');
           var weightField = element(by.id('/54126-8/29463-7/1/1'));
           browser.wait(EC.presenceOf(weightField), 2000);
@@ -123,6 +124,33 @@ describe('Form pre-population', function() {
             var obs = resources[1];
             expect(obs.resourceType).toBe("Observation");
             expect(obs.valueQuantity.value).toEqual(95);
+            expect(obs.valueQuantity.code).toEqual('kg');
+            done();
+          });
+        });
+
+        it('should populate observationLinkPeriod fields when multiple codes are present', function () {
+          tp.loadFromTestData('multipleCodes.json', 'R4');
+          var weightField = element(by.id('/29463-7/1'));
+          browser.wait(EC.presenceOf(weightField), 2000);
+          browser.wait(function () {return weightField.getAttribute('value').then(function (val) {
+            return val == '96'
+          })}, 1000);
+          expect(weightField.getAttribute('value')).toBe('96');
+        });
+
+        it('should extract observationLinkPeriod fields when multiple codes are present', function (done) {
+          // Follows previous test on population
+          var releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
+          var resourcesPromise = browser.executeScript(
+            'return LForms.Util.getFormFHIRData("QuestionnaireResponse", "'+
+            releaseVersion + '", null, {"extract": true})');
+          resourcesPromise.then((resources) => {
+            expect(resources.length).toBe(2); // One QR and one observation
+            var obs = resources[1];
+            expect(obs.code.coding.length).toEqual(2);
+            expect(obs.resourceType).toBe("Observation");
+            expect(obs.valueQuantity.value).toEqual(96);
             expect(obs.valueQuantity.code).toEqual('kg');
             done();
           });

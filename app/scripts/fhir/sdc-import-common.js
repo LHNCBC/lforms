@@ -32,6 +32,8 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtInitialExp = "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression";
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
+  self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+  self.fhirExtLaunchContext = "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -58,7 +60,8 @@ function addCommonSDCImportFns(ns) {
     self.argonautExtUrlExtensionScore,
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
-    self.fhirExtUrlDataControl
+    self.fhirExtUrlDataControl,
+    self.fhirExtChoiceOrientation
   ]);
 
   self.formLevelFields = [
@@ -585,6 +588,15 @@ function addCommonSDCImportFns(ns) {
         case 'Radio': // backward-compatibility with old export
         case 'radio-button':
           displayControl.answerLayout = {type: 'RADIO_CHECKBOX'};
+          var answerChoiceOrientation = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtChoiceOrientation);
+          if (answerChoiceOrientation) {
+            if (answerChoiceOrientation.valueCode === "vertical") {
+              displayControl.answerLayout.columns = "1"
+            }
+            else if (answerChoiceOrientation.valueCode === "horizontal") {
+              displayControl.answerLayout.columns = "0"
+            }
+          }
           break;
         case 'Table': // backward-compatibility with old export
         case 'gtable':  // Not in STU3, but we'll accept it
@@ -979,19 +991,20 @@ function addCommonSDCImportFns(ns) {
             }));
           }
           else { // use FHIR context
-            var fhirClient = LForms.fhirContext.getFHIRAPI();
-            pendingPromises.push(fhirClient.search({type: 'ValueSet/$expand',
-              query: {_format: 'application/json', url: item.answerValueSet}}).then(function(response) {
-                var valueSet = response.data;
-                var answers = self.answersFromVS(valueSet);
-                if (answers) {
-                  LForms._valueSetAnswerCache[vsKey] = answers;
-                  item.answers = answers;
-                  lfData._updateAutocompOptions(item, true);
-                }
-              }, function fail() {
-                throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-              }));
+            var fhirClient = LForms.fhirContext;
+            pendingPromises.push(fhirClient.request(lfData._buildURL(
+              ['ValueSet','$expand'], {url: item.answerValueSet})
+            ).then(function(response) {
+              var valueSet = response;
+              var answers = self.answersFromVS(valueSet);
+              if (answers) {
+                LForms._valueSetAnswerCache[vsKey] = answers;
+                item.answers = answers;
+                lfData._updateAutocompOptions(item, true);
+              }
+            }, function fail() {
+              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
+            }));
           }
         }
       }
