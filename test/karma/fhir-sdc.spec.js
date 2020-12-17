@@ -1432,6 +1432,46 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out.linkId, "/weight");
             assert.equal(out.answer[0].valueQuantity.value, 128);
           });
+          it('should convert an item of QTY with 0 in the value to valueQuantity in FHIR QuestionnaireResponse', function () {
+            var item = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "questionCardinality": {"min": "1", "max": "1"},
+              "question": "fill in weight",
+              "dataType": "QTY",
+              "linkId": "/weight",
+              "value": 0
+            };
+            var out = fhir.SDC._processResponseItem(item);
+            assert.equal(out.linkId, "/weight");
+            assert.equal(out.answer[0].valueQuantity.value, 0);
+          });
+          it('should convert an item of INT with 0 in the value to valueInteger in FHIR QuestionnaireResponse', function () {
+            var item = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "questionCardinality": {"min": "1", "max": "1"},
+              "question": "an integer",
+              "dataType": "INT",
+              "linkId": "/int",
+              "value": 0
+            };
+            var out = fhir.SDC._processResponseItem(item);
+            assert.equal(out.answer[0].valueInteger, 0);
+          });
+          it('should convert an item of REAL with 0 in the value to valueDecimal in FHIR QuestionnaireResponse', function () {
+            var item = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "questionCardinality": {"min": "1", "max": "1"},
+              "question": "a decimal",
+              "dataType": "REAL",
+              "linkId": "/real",
+              "value": 0
+            };
+            var out = fhir.SDC._processResponseItem(item);
+            assert.equal(out.answer[0].valueDecimal, 0);
+          });
         });
 
         // import - xl
