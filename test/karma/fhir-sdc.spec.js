@@ -1432,6 +1432,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out.linkId, "/weight");
             assert.equal(out.answer[0].valueQuantity.value, 128);
           });
+
           it('should convert an item of QTY with 0 in the value to valueQuantity in FHIR QuestionnaireResponse', function () {
             var item = {
               "questionCodeSystem":"ad-hoc",
@@ -1446,6 +1447,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out.linkId, "/weight");
             assert.equal(out.answer[0].valueQuantity.value, 0);
           });
+
           it('should convert an item of INT with 0 in the value to valueInteger in FHIR QuestionnaireResponse', function () {
             var item = {
               "questionCodeSystem":"ad-hoc",
@@ -1459,6 +1461,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var out = fhir.SDC._processResponseItem(item);
             assert.equal(out.answer[0].valueInteger, 0);
           });
+          
           it('should convert an item of REAL with 0 in the value to valueDecimal in FHIR QuestionnaireResponse', function () {
             var item = {
               "questionCodeSystem":"ad-hoc",
