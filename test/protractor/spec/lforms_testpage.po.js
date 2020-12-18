@@ -130,6 +130,15 @@ var TestPage = function() {
   };
   USSGFHTVertical.name = element(by.id(USSGFHTVertical.nameID));
 
+  /**
+   *  Returns true if two arrays are equal (a shallow comparison)
+   */
+  function arraysEqual(array1, array2) {
+    // https://stackoverflow.com/a/19746771
+    return array1.length === array2.length &&
+      array1.every(function(value, index) { return value === array2[index]});
+  };
+
 
   Object.assign(rtnObj, {
     WAIT_TIMEOUT_1: 20000,
@@ -141,6 +150,22 @@ var TestPage = function() {
     heightLabel: element(by.css('label[for="' + heightFieldID + '"]')),
     readerLog: $('#reader_log'),
     readerLogEntries: element.all(by.css('#reader_log p')),
+    expectReaderLogEntries: function(expectedEntries) {
+      browser.wait(function() {
+        return rtnObj.readerLogEntries.getText().then((textArray) => {
+          var rtn = arraysEqual(textArray, expectedEntries);
+          if (!rtn) {
+            console.log("Screen reader log test:  expecting +"+
+              JSON.stringify(expectedEntries)+ " but got " +
+              JSON.stringify(textArray) +", retrying until timeout");
+            // Sleep a bit and try again.
+            //rtn = browser.sleep(100).then(()=>false);
+            rtn = browser.sleep(100000000).then(()=>false);
+          }
+          return rtn;
+        });
+      }, 5000);
+    },
 
     Autocomp: {
       listFieldID: '/54126-8/54132-6/1/1', // "Were you born a twin?"

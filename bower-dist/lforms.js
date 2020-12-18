@@ -1388,7 +1388,14 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
                 return key.indexOf('_') === 0 || key.indexOf('$$') === 0 ? undefined : val;
               });
             }, function () {
-              if (lfData) lfData._expressionProcessor.runCalculations(false);
+              if (lfData) console.log("%%% in watch, calling runCalculations");
+
+              lfData._expressionProcessor.runCalculations(false).then(function () {
+                return $scope.$apply();
+              }); // pick up asynchronous model changes
+
+
+              ;
             });
           }
         }

@@ -48,13 +48,17 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *  @param includeInitialExpr whether to include the "initialExpression"
      *   expressions (which should only be run once, after asynchronous loads
      *   from questionnaire-launchContext have been completed).
+     *  @return a Promise that resolves when the expressions have been run, and
+     *   there are no pending runs left to do.
      */
     runCalculations: function(includeInitialExpr) {
+console.log("%%% in runCalc");
+console.trace();
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
       if (this.deferRuns_)
         this.pendingRun_ = true; // so we know to run them when we can
-      if (!this.deferRuns_) {
+      else {
         this.pendingRun_ = false; // clear this because we are running them now
         this.runStart_ = new Date();
         // Create an export of Questionnaire for the %questionnaire variable in
@@ -64,8 +68,10 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           lfData._fhirVariables.questionnaire =
             this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
         }
-        this._asyncRunCalculations(includeInitialExpr, true);
+        this.currentRunPromise_ =
+          this._asyncRunCalculations(includeInitialExpr, true);
       }
+      return this.currentRunPromise_;
     },
 
     /**
@@ -75,7 +81,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *  pending queries do not indicate a change.
      * @param nextStep the function to run the next step, that returns a promise
      *  which resolves when it is finished.
-     * @return a Promise the resolves when everything is finished.
+     * @return a Promise the resolves when everything is finished, including any
+     *  pending re-run request.
      */
     _handlePendingQueries: function(runNextStep, nextStep) {
       return Promise.allSettled(this.pendingQueries_).then(function(results) {
@@ -108,6 +115,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *  processed have been processed and the values have stablized.
      */
     _asyncRunCalculations: function(includeInitialExpr, firstCall) {
+console.log("%%% in _asyncRunCalc");
       const self = this;
       const lfData = this._lfData;
       var changed; // whether the calculations result in changed values
@@ -126,7 +134,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         self.deferRuns_ = false; // we are done
         console.log("Ran FHIRPath expressions in "+(new Date()-self.runStart_)+" ms");
         if (self.pendingRun_)
-          self.runCalculations(false);
+          return self.runCalculations(false);
       });
     },
 
@@ -141,6 +149,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      */
     updateItemVariable(item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
+console.log("%%% newVal = "+newVal);
       item._fhirVariables[varName] = newVal;
       if (!deepEqual(oldVal, newVal)) {
         item._varChanged = true; // flag for re-running expressions.
@@ -172,6 +181,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           }
           // Delete the old value, so we don't have circular references.
           delete item._fhirVariables[varName];
+console.log("%%% expression = "+ext.valueExpression.expression);
           if (ext.valueExpression.language=="text/fhirpath") {
             newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
             this.updateItemVariable(item, varName, newVal);

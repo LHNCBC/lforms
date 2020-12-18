@@ -26027,26 +26027,30 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *  @param includeInitialExpr whether to include the "initialExpression"
      *   expressions (which should only be run once, after asynchronous loads
      *   from questionnaire-launchContext have been completed).
+     *  @return a Promise that resolves when the expressions have been run, and
+     *   there are no pending runs left to do.
      */
     runCalculations: function runCalculations(includeInitialExpr) {
-      // Defer running calculations while we are waiting for earlier runs to
+      console.log("%%% in runCalc");
+      console.trace(); // Defer running calculations while we are waiting for earlier runs to
       // finish.
+
       if (this.deferRuns_) this.pendingRun_ = true; // so we know to run them when we can
+      else {
+          this.pendingRun_ = false; // clear this because we are running them now
 
-      if (!this.deferRuns_) {
-        this.pendingRun_ = false; // clear this because we are running them now
+          this.runStart_ = new Date(); // Create an export of Questionnaire for the %questionnaire variable in
+          // FHIRPath.  We only need to do this once per form.
 
-        this.runStart_ = new Date(); // Create an export of Questionnaire for the %questionnaire variable in
-        // FHIRPath.  We only need to do this once per form.
+          var lfData = this._lfData;
 
-        var lfData = this._lfData;
+          if (!lfData._fhirVariables.questionnaire) {
+            lfData._fhirVariables.questionnaire = this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
+          }
 
-        if (!lfData._fhirVariables.questionnaire) {
-          lfData._fhirVariables.questionnaire = this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
+          this.currentRunPromise_ = this._asyncRunCalculations(includeInitialExpr, true);
         }
-
-        this._asyncRunCalculations(includeInitialExpr, true);
-      }
+      return this.currentRunPromise_;
     },
 
     /**
@@ -26056,7 +26060,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *  pending queries do not indicate a change.
      * @param nextStep the function to run the next step, that returns a promise
      *  which resolves when it is finished.
-     * @return a Promise the resolves when everything is finished.
+     * @return a Promise the resolves when everything is finished, including any
+     *  pending re-run request.
      */
     _handlePendingQueries: function _handlePendingQueries(runNextStep, nextStep) {
       return Promise.allSettled(this.pendingQueries_).then(function (results) {
@@ -26088,6 +26093,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *  processed have been processed and the values have stablized.
      */
     _asyncRunCalculations: function _asyncRunCalculations(includeInitialExpr, firstCall) {
+      console.log("%%% in _asyncRunCalc");
       var self = this;
       var lfData = this._lfData;
       var changed; // whether the calculations result in changed values
@@ -26109,7 +26115,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         self.deferRuns_ = false; // we are done
 
         console.log("Ran FHIRPath expressions in " + (new Date() - self.runStart_) + " ms");
-        if (self.pendingRun_) self.runCalculations(false);
+        if (self.pendingRun_) return self.runCalculations(false);
       });
     },
 
@@ -26123,6 +26129,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      */
     updateItemVariable: function updateItemVariable(item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
+      console.log("%%% newVal = " + newVal);
       item._fhirVariables[varName] = newVal;
 
       if (!deepEqual(oldVal, newVal)) {
@@ -26152,6 +26159,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
           } // Delete the old value, so we don't have circular references.
 
           delete item._fhirVariables[varName];
+          console.log("%%% expression = " + ext.valueExpression.expression);
 
           if (ext.valueExpression.language == "text/fhirpath") {
             newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
@@ -26176,15 +26184,19 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
               // context (set via LForms.Util.setFHIRContext), use that to send
               // the query; otherwise just use fetch.
               // TBD -- do not approve until resolved
-              this.pendingQueries_.push(fetch(queryURI).then(function (response) {
-                return response.json();
-              }).then(function (parsedJSON) {
-                newVal = self.queryCache_[queryURI] = parsedJSON;
-                return self.updateItemVariable(item, varName, newVal);
-              }, function fail() {
-                console.error("Unable to load FHIR data from " + queryURI);
-                return self.updateItemVariable(item, varName, undefined);
-              }));
+              if (!/https?:/.test(queryURI) && LForms.fhirContext) {
+                fhirContext.getFHIRAPI().search(queryURI); // TBD
+              } else {
+                this.pendingQueries_.push(fetch(queryURI).then(function (response) {
+                  return response.json();
+                }).then(function (parsedJSON) {
+                  newVal = self.queryCache_[queryURI] = parsedJSON;
+                  return self.updateItemVariable(item, varName, newVal);
+                }, function fail() {
+                  console.error("Unable to load FHIR data from " + queryURI);
+                  return self.updateItemVariable(item, varName, undefined);
+                }));
+              }
             }
           } // else CQL (TBD)
 
@@ -26323,6 +26335,9 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
     /**
      *  Evaluates the given FHIRPath expression defined in an extension on the
      *  given item.
+     * @param item an LFormsData item.
+     * @param expression the FHIRPath to evaluate with the context of item's
+     *i  equivalent node in the QuestionnaireResponse.
      * @returns the result of the expression.
      */
     _evaluateFHIRPath: function _evaluateFHIRPath(item, expression) {
@@ -26339,14 +26354,15 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
           fVars[k] = itemVars[k];
         }
 
-        var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
+        var _fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
+
         var compiledExpr = this._compiledExpressions[expression];
 
         if (!compiledExpr) {
           compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
         }
 
-        fhirPathVal = compiledExpr(fhirContext, fVars);
+        fhirPathVal = compiledExpr(_fhirContext, fVars);
       } catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
         // yet.

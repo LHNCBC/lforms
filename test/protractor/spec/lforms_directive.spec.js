@@ -58,8 +58,12 @@ describe('directive: ', function() {
       // the second row has a '-' button
       expect(element.all(by.css('.lf-float-button')).get(3).getText()).toBe('-');
       // and an add button
-      expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('+ Add another "This family member\'s history of disease"');
+      browser.wait(function() {
+        return element.all(by.css('.lf-float-button')).get(4).getText().then(text=>
+          text == '+ Add another "This family member\'s history of disease"');
+      }, 5000);
     });
+
 
     describe('autocomp list inside lforms directive', function() {
 

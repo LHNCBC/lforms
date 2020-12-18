@@ -107,7 +107,7 @@
           "valueExpression" : {
             "name": "X",
             "language": "text/fhirpath",
-            "expression": "%resource.repeat(item).where(linkId='/groupA/fieldC').answer.valueInteger",
+            "expression": "%resource.repeat(item).where(linkId='/groupA/fieldC').answer[0].valueInteger",
             "comment":  "Pulls value from outside of this group's scope, and re-uses name 'X'"
           }
         }
