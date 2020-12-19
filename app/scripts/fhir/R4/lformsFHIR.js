@@ -26098,7 +26098,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      */
     updateItemVariable: function updateItemVariable(item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
-      console.log("%%% newVal = " + newVal);
+      console.log("%%% newVal of " + varName + " = " + newVal);
       item._fhirVariables[varName] = newVal;
 
       if (!deepEqual(oldVal, newVal)) {
@@ -26111,64 +26111,87 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      * @param item an LFormsData or item from LFormsData.
      */
     _evaluateVariables: function _evaluateVariables(item) {
+      var _this = this;
+
       var self = this;
       var rtn = false;
       var sdc = this._fhir.SDC;
       var variableExts = item._fhirExt && item._fhirExt[sdc.fhirExtVariable];
 
       if (variableExts) {
-        for (var i = 0, len = variableExts.length; i < len; ++i) {
+        var _loop = function _loop(i, len) {
           var ext = variableExts[i];
-          var oldVal, newVal;
+          var oldVal = void 0,
+              newVal = void 0;
           var varName = ext.valueExpression.name;
           if (item._fhirVariables) oldVal = item._fhirVariables[varName];else {
             // Create a hash for variables that will have access to
             // variables defined higher up in the tree.
-            item._fhirVariables = Object.create(this._itemWithVars(item)._fhirVariables);
-          } // Delete the old value, so we don't have circular references.
-
-          delete item._fhirVariables[varName];
+            item._fhirVariables = Object.create(_this._itemWithVars(item)._fhirVariables);
+          }
           console.log("%%% expression = " + ext.valueExpression.expression);
 
           if (ext.valueExpression.language == "text/fhirpath") {
-            newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-            this.updateItemVariable(item, varName, newVal);
+            // Temporarily delete the old value, so we don't have circular references.
+            var _oldVal = item._fhirVariables[varName];
+            delete item._fhirVariables[varName];
+            newVal = _this._evaluateFHIRPath(item, ext.valueExpression.expression);
+            item._fhirVariables[varName] = _oldVal; // restore deleted old value
+
+            _this.updateItemVariable(item, varName, newVal); // compares new with old
+
           } else if (ext.valueExpression.language == "application/x-fhir-query") {
-            var queryURI = ext.valueExpression.expression; // The expression might have embedded FHIRPath in the URI, inside {{...}}
+            var queryURI = ext.valueExpression.expression;
+            var undefinedExprVal = false; // The expression might have embedded FHIRPath in the URI, inside {{...}}
 
             queryURI = queryURI.replace(/\{\{([^}]+)\}\}/g, function (match, fpExp) {
               // Replace the FHIRPath with the evaluated expressions
               var result = self._evaluateFHIRPath(item, fpExp)[0];
 
-              return result === null || result === undefined ? '' : '' + result;
-            });
-            var hasCachedResult = this.queryCache_.hasOwnProperty(queryURI);
+              if (result === null || result === undefined) undefinedExprVal = true; // i.e., URL likely not usable
 
-            if (hasCachedResult) {
-              newVal = this.queryCache_[queryURI];
-              this.updateItemVariable(item, varName, newVal);
-            } else {
-              // query not cached
-              // If the queryURI is a relative URL, then if there is a FHIR
-              // context (set via LForms.Util.setFHIRContext), use that to send
-              // the query; otherwise just use fetch.
-              // TBD -- do not approve until resolved
-              if (!/https?:/.test(queryURI) && LForms.fhirContext) {
-                fhirContext.getFHIRAPI().search(queryURI); // TBD
-              } else {
-                this.pendingQueries_.push(fetch(queryURI).then(function (response) {
-                  return response.json();
-                }).then(function (parsedJSON) {
-                  newVal = self.queryCache_[queryURI] = parsedJSON;
-                  return self.updateItemVariable(item, varName, newVal);
-                }, function fail() {
-                  console.error("Unable to load FHIR data from " + queryURI);
-                  return self.updateItemVariable(item, varName, undefined);
-                }));
+              return undefinedExprVal ? '' : '' + result;
+            });
+            if (!item._currentFhirQueryURIs) item._currentFhirQueryURIs = {};
+            var oldQueryURI = item._currentFhirQueryURIs[varName]; // If queryURI is not a new value, we don't need to do anything
+
+            if (queryURI != oldQueryURI) {
+              item._currentFhirQueryURIs[varName] = queryURI;
+              if (undefinedExprVal) _this.updateItemVariable(item, varName, undefined);else {
+                var hasCachedResult = _this.queryCache_.hasOwnProperty(queryURI);
+
+                if (hasCachedResult) {
+                  newVal = _this.queryCache_[queryURI];
+
+                  _this.updateItemVariable(item, varName, newVal);
+                } else {
+                  // query not cached
+                  // If the queryURI is a relative URL, then if there is a FHIR
+                  // context (set via LForms.Util.setFHIRContext), use that to send
+                  // the query; otherwise just use fetch.
+                  var fetchPromise;
+                  if (!/https?:/.test(queryURI) && LForms.fhirContext) fetchPromise = LForms.fhirContext.request(queryURI);else {
+                    fetchPromise = fetch(queryURI).then(function (response) {
+                      return response.json();
+                    });
+                  }
+
+                  _this.pendingQueries_.push(fetchPromise.then(function (parsedJSON) {
+                    newVal = self.queryCache_[queryURI] = parsedJSON;
+                    return self.updateItemVariable(item, varName, newVal);
+                  }, function fail() {
+                    console.error("Unable to load FHIR data from " + queryURI);
+                    return self.updateItemVariable(item, varName, undefined);
+                  }));
+                }
               }
             }
           } // else CQL (TBD)
 
+        };
+
+        for (var i = 0, len = variableExts.length; i < len; ++i) {
+          _loop(i, len);
         }
 
         rtn = item._varChanged;
@@ -26252,6 +26275,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
               if (ext && ext.valueExpression.language == "text/fhirpath") {
                 var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
 
+                console.log("%%% " + ext.valueExpression.expression + " = " + JSON.stringify(newVal));
                 var fieldChanged = ext.url == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal);
                 if (!changed) changed = fieldChanged;
               }
@@ -26323,15 +26347,14 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
           fVars[k] = itemVars[k];
         }
 
-        var _fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
-
+        var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
         var compiledExpr = this._compiledExpressions[expression];
 
         if (!compiledExpr) {
           compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
         }
 
-        fhirPathVal = compiledExpr(_fhirContext, fVars);
+        fhirPathVal = compiledExpr(fhirContext, fVars);
       } catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
         // yet.
@@ -26439,15 +26462,19 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *  Assigns the given list result to the item.  If the list has changed, the
      *  field is cleared.
      * @param list an array of list items computed from a FHIRPath expression.
+     * @return true if the list changed
      */
     _setItemListFromFHIRPath: function _setItemListFromFHIRPath(item, list) {
+      console.log("%%% Setting list for '" + item.question + "' to " + JSON.stringify(list));
       var currentList = item.answers;
-      var hasCurrentList = !!currentList;
-      var changed = false;
-      var newList = [];
+      var hasCurrentList = !!currentList && Array.isArray(currentList);
+      var listHasData = !!list && Array.isArray(list);
+      var changed = hasCurrentList != listHasData || listHasData && list.length != currentList.length;
+      var newList = []; // a reformatted version of "list"
+
       var scoreURI = this._fhir.SDC.fhirExtUrlOptionScore;
 
-      if (list && Array.isArray(list)) {
+      if (listHasData) {
         // list should be an array of any item type, including Coding.
         // (In R5, FHIR will start suppoing lists of types other than Coding.)
         for (var i = 0, len = list.length; i < len; ++i) {
@@ -26478,7 +26505,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
             changed = !hasCurrentList || !this._lfData._objectEqual(newEntry, currentList[i]);
           }
         }
-      } else changed = !!currentList;
+      }
 
       if (changed) {
         item.answers = newList;
@@ -26493,6 +26520,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
 
         item.value = null;
       }
+
+      return changed;
     },
 
     /**
