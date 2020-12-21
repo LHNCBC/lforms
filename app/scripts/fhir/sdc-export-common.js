@@ -993,6 +993,24 @@ function addCommonSDCExportFns(ns) {
       }
     }
   };
+
+  
+  /**
+   * Get the extract value for the item or the closest parent
+   * @param item an item in Questionnaire
+   */
+  self._getExtractValue = function (item) {
+    let currentItem = item;
+
+    while (true) {
+      if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
+        return currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+      } else if (!currentItem._parentItem) {
+        return false;
+      }
+      currentItem = currentItem._parentItem;
+    }
+  };
 }
 
 export default addCommonSDCExportFns;

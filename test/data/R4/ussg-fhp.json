@@ -359,6 +359,10 @@
                 "system": "http://unitsofmeasure.org",
                 "code": "a"
               }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
             }
           ],
           "required": false,
@@ -390,6 +394,10 @@
                 "system": "http://unitsofmeasure.org",
                 "code": "a"
               }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
             }
           ],
           "required": false,

@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"27.1.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"28.0.0\"}");
 
 /***/ }),
 /* 7 */
@@ -2500,7 +2500,7 @@ LForms.Util = {
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
    *  * extract:  a flag for QuestionnaireReponse that data should be extracted
-   *    (using the observationLinkPeriod extension).  In this case the returned
+   *    (using the observationExtract extension).  In this case the returned
    *    resource will be an array consisting of the QuestionnaireResponse and any
    *    extracted Observations.
    *  * subject: A local FHIR resource that is the subject of the output resource.

@@ -22218,7 +22218,7 @@ var self = {
     for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
       var item = lfData.itemList[i];
 
-      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
+      if (self._getExtractValue(item) && item.value) {
         var obs = this._commonExport._createObservation(item);
 
         for (var j = 0, jLen = obs.length; j < jLen; j++) {
@@ -23653,6 +23653,25 @@ function addCommonSDCExportFns(ns) {
       }
     }
   };
+  /**
+   * Get the extract value for the item or the closest parent
+   * @param item an item in Questionnaire
+   */
+
+
+  self._getExtractValue = function (item) {
+    var currentItem = item;
+
+    while (true) {
+      if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
+        return currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+      } else if (!currentItem._parentItem) {
+        return false;
+      }
+
+      currentItem = currentItem._parentItem;
+    }
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
@@ -24725,6 +24744,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
   self.fhirExtInitialExp = "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression";
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
+  self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
