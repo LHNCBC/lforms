@@ -23458,7 +23458,7 @@ function addCommonSDCExportFns(ns) {
 
   self._lfItemValueToFhirAnswer = function (item) {
     // item could have an empty value if its sub-item has a value
-    if (!item.value) return null;
+    if (item.value === undefined || item.value === null || item.value === '') return null;
 
     var dataType = this._getAssumedDataTypeForExport(item);
 
