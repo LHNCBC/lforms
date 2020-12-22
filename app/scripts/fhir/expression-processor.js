@@ -118,7 +118,7 @@ console.trace();
 console.log("%%% in _asyncRunCalc");
       const self = this;
       const lfData = this._lfData;
-      var changed; // whether the calculations result in changed values
+      var changed = false; // whether the calculations result in changed values
       if (firstCall) {
         this._regenerateQuestionnaireResp();
         changed = this._evaluateVariables(lfData);
@@ -126,6 +126,10 @@ console.log("%%% in _asyncRunCalc");
       return this._handlePendingQueries(changed || firstCall, function() {
         let fieldsChanged =
           self._evaluateFieldExpressions(lfData, includeInitialExpr, !firstCall);
+        // Field expressions can also be x-fhir-query (e.g. for fields of type
+        // Reference).  We don't yet support that datatype, but the logic here
+        // looks ahead to when there might be pending queries from the previous
+        // call.
         return self._handlePendingQueries(fieldsChanged, function() {
           return self._asyncRunCalculations(false, false);
         });
@@ -264,6 +268,7 @@ console.log("%%% expression = "+ext.valueExpression.expression);
      *  loaded).
      * @param changesOnly whether to run all field expressions, or just the ones
      *  that are likely to have been affected by changes from variable expressions.
+     * @return whether any of the fields changed (value or list)
      */
     _evaluateFieldExpressions: function(item, includeInitialExpr, changesOnly) {
       var rtn = false;
