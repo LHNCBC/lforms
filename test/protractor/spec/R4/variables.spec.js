@@ -52,7 +52,7 @@ describe('FHIR variables', function() {
     });
   });
 
-  fdescribe("x-fhir-query variable test form", function() {
+  describe("x-fhir-query variable test form", function() {
     beforeAll(function () {
       var fhirMock = require('./fhir_context');
       browser.executeScript(function(fhirVersion, mockFHIRContext, mockData) {
@@ -67,31 +67,31 @@ describe('FHIR variables', function() {
       let listSelField = elID('listSelection/1');
       tp.Autocomp.helpers.autocompPickFirst(listSelField, 'la'); // language
       let urlFetchField = elID('listViewFromURL/1');
-      urlFetchField.click(); // show the list
-      expect(tp.Autocomp.helpers.shownItemCount()).toBe(2);
-      urlFetchField.sendKeys(protractor.Key.ESCAPE); // close the list
+      // Wait for the other field lists to update
+      browser.wait(function() {
+        return testUtil.fieldListLength(urlFetchField).then((val)=> {
+          return val == 2;
+        });
+      });
+      expect(testUtil.fieldListLength(urlFetchField)).toBe(2);
       let contextField = elID('listViewFromContext/1');
-      contextField.click();
-      expect(tp.Autocomp.helpers.shownItemCount()).toBe(2);
+      expect(testUtil.fieldListLength(contextField)).toBe(2);
 
       // After picking the language list, pick the second list, for which there
       // is no mock data, so only the first listView field should have a list.
       // Testing this here after the previous test checks that the second
       // listView field's list is empty.
-      // This test code actually does not catch the bug which prompted it, but I am
-      // leaving it here.
-browser.sleep(2000);
-tp.Autocomp.helpers.clearField(listSelField);
-//      listSelField.click();
-//      listSelField.
-browser.sleep(20000);
+      // This test code actually does not catch the bug which prompted it (and
+      // in fact the problem does not happen when the test code is run), but I
+      // am leaving the test here.
       tp.Autocomp.helpers.autocompPickFirst(listSelField, 've'); // verification
-browser.sleep(20000);
-      urlFetchField.click(); // show the list
-      expect(tp.Autocomp.helpers.shownItemCount()).toBe(6);
-      urlFetchField.sendKeys(protractor.Key.ESCAPE); // close the list
-      contextField.click();
-      expect(tp.Autocomp.helpers.shownItemCount()).toBe(0);
+      // Wait for the other field lists to update
+      browser.wait(function() {
+        return testUtil.fieldListLength(urlFetchField).then((val)=> {
+          return val == 6;
+        });
+      });
+      expect(testUtil.fieldListLength(contextField)).toBe(0);
     });
   });
 });

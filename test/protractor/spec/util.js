@@ -152,6 +152,26 @@ var util = {
 
 
   /**
+   *  For fields with an autocomplete-lhc list, this returns a promise that
+   *  resolves to the number items in the list.  (For other fields, it will
+   *  resolve to zero.)
+   * @param field the element finder for the field.
+   */
+  fieldListLength: function(field) {
+    return browser.executeScript(function(htmlField) {
+      let size = 0;
+      let autocomp = htmlField.autocomp;
+      if (autocomp) {
+        let rawList = autocomp.rawList_;
+        if (rawList)
+          size = rawList.length;
+      }
+      return size;
+    }, field.getWebElement());
+  },
+
+
+  /**
    *  Clicks the given add/remove repeating item button, and sleeps a bit to let the page stop moving.
    */
   clickAddRemoveButton: function (button) {
