@@ -88,7 +88,7 @@ console.trace();
       return Promise.allSettled(this.pendingQueries_).then(function(results) {
         self.pendingQueries_ = []; // reset
         for (let i=0, len=results.length; !runNextStep && i<len; ++i) {
-          if (results[i].value)
+          if (results[i].value) // indicates a change
             runNextStep = true;
         }
         if (runNextStep)
@@ -154,12 +154,16 @@ console.log("%%% newVal of "+varName+" = "+newVal);
       if (!deepEqual(oldVal, newVal)) {
         item._varChanged = true; // flag for re-running expressions.
       }
+      return item._varChanged;
     },
 
 
     /**
      *  Evaluates variables on the given item.
      * @param item an LFormsData or item from LFormsData.
+     * @return true if one of the variables changed.  If false is returned,
+     *  there might still be a variable that will change due to an x-fhir-query,
+     *  the promises for which are in pendingQueries).
      */
     _evaluateVariables: function(item) {
       const self = this;
