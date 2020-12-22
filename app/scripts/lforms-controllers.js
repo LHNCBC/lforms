@@ -596,7 +596,6 @@ angular.module('lformsWidget')
                     });
                   }, function() {
                     if (lfData)
-console.log("%%% in watch, calling runCalculations");
                       lfData._expressionProcessor.runCalculations(false).then(
                         () => $scope.$apply()); // pick up asynchronous model changes
                       ;

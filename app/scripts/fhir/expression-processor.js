@@ -52,8 +52,6 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *   there are no pending runs left to do.
      */
     runCalculations: function(includeInitialExpr) {
-console.log("%%% in runCalc");
-console.trace();
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
       if (this.deferRuns_)
@@ -115,7 +113,6 @@ console.trace();
      *  processed have been processed and the values have stablized.
      */
     _asyncRunCalculations: function(includeInitialExpr, firstCall) {
-console.log("%%% in _asyncRunCalc");
       const self = this;
       const lfData = this._lfData;
       var changed = false; // whether the calculations result in changed values
@@ -153,7 +150,6 @@ console.log("%%% in _asyncRunCalc");
      */
     updateItemVariable(item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
-console.log("%%% newVal of "+varName+" = "+newVal);
       item._fhirVariables[varName] = newVal;
       if (!deepEqual(oldVal, newVal)) {
         item._varChanged = true; // flag for re-running expressions.
@@ -187,7 +183,6 @@ console.log("%%% newVal of "+varName+" = "+newVal);
             item._fhirVariables = Object.create(
               this._itemWithVars(item)._fhirVariables);
           }
-console.log("%%% expression = "+ext.valueExpression.expression);
           if (ext.valueExpression.language=="text/fhirpath") {
             // Temporarily delete the old value, so we don't have circular references.
             let oldVal = item._fhirVariables[varName];
@@ -308,7 +303,6 @@ console.log("%%% expression = "+ext.valueExpression.expression);
               var ext = exts[i];
               if (ext && ext.valueExpression.language=="text/fhirpath") {
                 var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-                console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                 var fieldChanged = (ext.url == sdc.fhirExtAnswerExp) ?
                   this._setItemListFromFHIRPath(item, newVal) :
                   this._setItemValueFromFHIRPath(item, newVal);
@@ -486,7 +480,6 @@ console.log("%%% expression = "+ext.valueExpression.expression);
      * @return true if the list changed
      */
     _setItemListFromFHIRPath: function(item, list) {
-console.log("%%% Setting list for '"+item.question+"' to "+JSON.stringify(list));
       let currentList = item.answers;
       let hasCurrentList = !!currentList && Array.isArray(currentList);
       let listHasData = !!list && Array.isArray(list);
