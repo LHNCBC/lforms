@@ -10,7 +10,53 @@
   },
   "title": "Multiple observationLinkPeriod code test",
   "name": "Multiple observationLinkPeriod code test",
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+      "valueBoolean": true
+    }
+  ],
   "item": [
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod",
+          "valueDuration": {
+            "value": "1",
+            "unit": "year",
+            "system": "http://unitsofmeasure.org",
+            "code": "a"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+          "valueBoolean": true
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "kg"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "/29463-7",
+      "code": [
+        {
+          "system": "http://example.org",
+          "code": "example",
+          "display": "Example"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Weight"
+        }
+      ],
+      "text": "Weight",
+      "type": "decimal"
+    },
     {
       "extension": [
         {
@@ -31,7 +77,47 @@
         }
       ],
       "required": false,
-      "linkId": "/29463-7",
+      "linkId": "2",
+      "code": [
+        {
+          "system": "http://example.org",
+          "code": "example",
+          "display": "Example"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Weight"
+        }
+      ],
+      "text": "Weight",
+      "type": "decimal"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod",
+          "valueDuration": {
+            "value": "1",
+            "unit": "year",
+            "system": "http://unitsofmeasure.org",
+            "code": "a"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+          "valueBoolean": false
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "kg"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "3",
       "code": [
         {
           "system": "http://example.org",

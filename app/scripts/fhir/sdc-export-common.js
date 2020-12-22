@@ -827,7 +827,7 @@ function addCommonSDCExportFns(ns) {
   self._lfItemValueToFhirAnswer = function(item) {
 
     // item could have an empty value if its sub-item has a value
-    if (!item.value)
+    if (item.value === undefined || item.value === null || item.value === '')
        return null;
 
     var dataType = this._getAssumedDataTypeForExport(item);
@@ -991,6 +991,24 @@ function addCommonSDCExportFns(ns) {
           this._processRepeatingItemValues(subItem);
         }
       }
+    }
+  };
+
+  
+  /**
+   * Get the extract value for the item or the closest parent
+   * @param item an item in Questionnaire
+   */
+  self._getExtractValue = function (item) {
+    let currentItem = item;
+
+    while (true) {
+      if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
+        return currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+      } else if (!currentItem._parentItem) {
+        return false;
+      }
+      currentItem = currentItem._parentItem;
     }
   };
 }

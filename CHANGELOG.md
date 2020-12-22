@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [28.0.0] 2020-12-10
+### Changed
+- Breaking change to FHIR support. Changed the extract behavior to use the Observation Extract Extension
+  http://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-observationExtract.html.
+
+## [27.1.1] 2020-12-17
+### Fixed
+- Fixed a bug that nummeric value of 0 was not exported in QuestionnaireResponse
+
 ## [27.1.0] 2020-12-09
 ### Added
 - Support for the FHIR questionnaire choice orientation extension.

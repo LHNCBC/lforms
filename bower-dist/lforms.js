@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"27.1.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"28.0.0\"}");
 
 /***/ }),
 /* 7 */
@@ -1388,12 +1388,9 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
                 return key.indexOf('_') === 0 || key.indexOf('$$') === 0 ? undefined : val;
               });
             }, function () {
-              if (lfData) console.log("%%% in watch, calling runCalculations");
-
-              lfData._expressionProcessor.runCalculations(false).then(function () {
+              if (lfData) lfData._expressionProcessor.runCalculations(false).then(function () {
                 return $scope.$apply();
               }); // pick up asynchronous model changes
-
 
               ;
             });
@@ -2507,7 +2504,7 @@ LForms.Util = {
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
    *  * extract:  a flag for QuestionnaireReponse that data should be extracted
-   *    (using the observationLinkPeriod extension).  In this case the returned
+   *    (using the observationExtract extension).  In this case the returned
    *    resource will be an array consisting of the QuestionnaireResponse and any
    *    extracted Observations.
    *  * subject: A local FHIR resource that is the subject of the output resource.

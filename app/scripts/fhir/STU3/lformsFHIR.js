@@ -22218,7 +22218,7 @@ var self = {
     for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
       var item = lfData.itemList[i];
 
-      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
+      if (self._getExtractValue(item) && item.value) {
         var obs = this._commonExport._createObservation(item);
 
         for (var j = 0, jLen = obs.length; j < jLen; j++) {
@@ -23473,7 +23473,7 @@ function addCommonSDCExportFns(ns) {
 
   self._lfItemValueToFhirAnswer = function (item) {
     // item could have an empty value if its sub-item has a value
-    if (!item.value) return null;
+    if (item.value === undefined || item.value === null || item.value === '') return null;
 
     var dataType = this._getAssumedDataTypeForExport(item);
 
@@ -23651,6 +23651,25 @@ function addCommonSDCExportFns(ns) {
           this._processRepeatingItemValues(subItem);
         }
       }
+    }
+  };
+  /**
+   * Get the extract value for the item or the closest parent
+   * @param item an item in Questionnaire
+   */
+
+
+  self._getExtractValue = function (item) {
+    var currentItem = item;
+
+    while (true) {
+      if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
+        return currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+      } else if (!currentItem._parentItem) {
+        return false;
+      }
+
+      currentItem = currentItem._parentItem;
     }
   };
 }
@@ -24725,6 +24744,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
   self.fhirExtInitialExp = "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression";
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
+  self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext";
@@ -26031,10 +26051,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *   there are no pending runs left to do.
      */
     runCalculations: function runCalculations(includeInitialExpr) {
-      console.log("%%% in runCalc");
-      console.trace(); // Defer running calculations while we are waiting for earlier runs to
+      // Defer running calculations while we are waiting for earlier runs to
       // finish.
-
       if (this.deferRuns_) this.pendingRun_ = true; // so we know to run them when we can
       else {
           this.pendingRun_ = false; // clear this because we are running them now
@@ -26068,7 +26086,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         self.pendingQueries_ = []; // reset
 
         for (var i = 0, len = results.length; !runNextStep && i < len; ++i) {
-          if (results[i].value) runNextStep = true;
+          if (results[i].value) // indicates a change
+            runNextStep = true;
         }
 
         if (runNextStep) return nextStep();
@@ -26093,10 +26112,9 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *  processed have been processed and the values have stablized.
      */
     _asyncRunCalculations: function _asyncRunCalculations(includeInitialExpr, firstCall) {
-      console.log("%%% in _asyncRunCalc");
       var self = this;
       var lfData = this._lfData;
-      var changed; // whether the calculations result in changed values
+      var changed = false; // whether the calculations result in changed values
 
       if (firstCall) {
         this._regenerateQuestionnaireResp();
@@ -26105,7 +26123,11 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
       }
 
       return this._handlePendingQueries(changed || firstCall, function () {
-        var fieldsChanged = self._evaluateFieldExpressions(lfData, includeInitialExpr, !firstCall);
+        var fieldsChanged = self._evaluateFieldExpressions(lfData, includeInitialExpr, !firstCall); // Field expressions can also be x-fhir-query (e.g. for fields of type
+        // Reference).  We don't yet support that datatype, but the logic here
+        // looks ahead to when there might be pending queries from the previous
+        // call.
+
 
         return self._handlePendingQueries(fieldsChanged, function () {
           return self._asyncRunCalculations(false, false);
@@ -26129,17 +26151,21 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      */
     updateItemVariable: function updateItemVariable(item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
-      console.log("%%% newVal of " + varName + " = " + newVal);
       item._fhirVariables[varName] = newVal;
 
       if (!deepEqual(oldVal, newVal)) {
         item._varChanged = true; // flag for re-running expressions.
       }
+
+      return item._varChanged;
     },
 
     /**
      *  Evaluates variables on the given item.
      * @param item an LFormsData or item from LFormsData.
+     * @return true if one of the variables changed.  If false is returned,
+     *  there might still be a variable that will change due to an x-fhir-query,
+     *  the promises for which are in pendingQueries).
      */
     _evaluateVariables: function _evaluateVariables(item) {
       var _this = this;
@@ -26160,7 +26186,6 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
             // variables defined higher up in the tree.
             item._fhirVariables = Object.create(_this._itemWithVars(item)._fhirVariables);
           }
-          console.log("%%% expression = " + ext.valueExpression.expression);
 
           if (ext.valueExpression.language == "text/fhirpath") {
             // Temporarily delete the old value, so we don't have circular references.
@@ -26248,6 +26273,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *  loaded).
      * @param changesOnly whether to run all field expressions, or just the ones
      *  that are likely to have been affected by changes from variable expressions.
+     * @return whether any of the fields changed (value or list)
      */
     _evaluateFieldExpressions: function _evaluateFieldExpressions(item, includeInitialExpr, changesOnly) {
       var rtn = false; // If changesOnly, for any item that has _varChanged set, we run any field
@@ -26306,7 +26332,6 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
               if (ext && ext.valueExpression.language == "text/fhirpath") {
                 var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
 
-                console.log("%%% " + ext.valueExpression.expression + " = " + JSON.stringify(newVal));
                 var fieldChanged = ext.url == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal);
                 if (!changed) changed = fieldChanged;
               }
@@ -26496,7 +26521,6 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      * @return true if the list changed
      */
     _setItemListFromFHIRPath: function _setItemListFromFHIRPath(item, list) {
-      console.log("%%% Setting list for '" + item.question + "' to " + JSON.stringify(list));
       var currentList = item.answers;
       var hasCurrentList = !!currentList && Array.isArray(currentList);
       var listHasData = !!list && Array.isArray(list);
