@@ -83,6 +83,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *  pending re-run request.
      */
     _handlePendingQueries: function(runNextStep, nextStep) {
+      const self = this;
       return Promise.allSettled(this.pendingQueries_).then(function(results) {
         self.pendingQueries_ = []; // reset
         for (let i=0, len=results.length; !runNextStep && i<len; ++i) {

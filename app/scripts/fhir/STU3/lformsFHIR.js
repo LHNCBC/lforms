@@ -26082,6 +26082,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      *  pending re-run request.
      */
     _handlePendingQueries: function _handlePendingQueries(runNextStep, nextStep) {
+      var self = this;
       return Promise.allSettled(this.pendingQueries_).then(function (results) {
         self.pendingQueries_ = []; // reset
 
