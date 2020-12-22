@@ -1,3 +1,5 @@
+const testUtil = require('./util');
+
 describe('directive: ', function() {
   describe('horizontal table', function() {
 
@@ -35,7 +37,13 @@ describe('directive: ', function() {
     });
 
     it('should have three remove buttons visible after the user adds a row', function() {
-      element.all(by.css('.lf-float-button')).get(4).click();
+      testUtil.safeClick(element.all(by.css('.lf-float-button')).get(4));
+
+      // Wait for the page to update.  (Shouldn't be necessary?)
+      // The count is the number of add and remove buttons anywhere on the page
+      browser.wait(function() {
+        return element.all(by.css('.lf-float-button')).count().then(n=>n==7);
+      });
 
       // the first row has a '-' button only
       expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('-');
@@ -50,7 +58,13 @@ describe('directive: ', function() {
     });
 
     it('should have the 2 rows after the user removes the 2nd row', function() {
-      element.all(by.css('.lf-float-button')).get(3).click();
+      testUtil.safeClick(element.all(by.css('.lf-float-button')).get(3));
+
+      // Wait for the page to update.  (Shouldn't be necessary?)
+      // The count is the number of add and remove buttons anywhere on the page
+      browser.wait(function() {
+        return element.all(by.css('.lf-float-button')).count().then(n=>n==6);
+      });
 
       // the first row has a '-' button only
       expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('-');
