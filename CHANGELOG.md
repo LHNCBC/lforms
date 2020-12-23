@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.0.0] 2020-12-23
+### Changes
+- Breaking change to FHIR support. The launchContext URI has changed to
+  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext  
+
 ## [28.0.0] 2020-12-10
 ### Changed
 - Breaking change to FHIR support. Changed the extract behavior to use the Observation Extract Extension
