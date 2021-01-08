@@ -26032,15 +26032,15 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
 
   ExpressionProcessor.prototype = {
     // A cache of x-fhir-query URIs to results
-    queryCache_: {},
+    _queryCache: {},
     // An array of pending x-fhir-query results
-    pendingQueries_: [],
+    _pendingQueries: [],
     // Keeps track of whether a request to run the calculations has come in
     // while we were already busy.
-    pendingRun_: false,
+    _pendingRun: false,
     // Whether we are deferring running calculations until a batch of queries is
     // finished being processed.
-    deferRuns_: false,
+    _deferRuns: false,
 
     /**
      *   Runs the FHIR expressions in the form.
@@ -26053,9 +26053,11 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
     runCalculations: function runCalculations(includeInitialExpr) {
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
-      if (this.deferRuns_) this.pendingRun_ = true; // so we know to run them when we can
+      if (this._deferRuns) this._pendingRun = true; // so we know to run them when we can
       else {
-          this.pendingRun_ = false; // clear this because we are running them now
+          this._deferRuns = true; // defer any more requests until we are done
+
+          this._pendingRun = false; // clear this because we are running them now
 
           this.runStart_ = new Date(); // Create an export of Questionnaire for the %questionnaire variable in
           // FHIRPath.  We only need to do this once per form.
@@ -26083,8 +26085,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      */
     _handlePendingQueries: function _handlePendingQueries(runNextStep, nextStep) {
       var self = this;
-      return Promise.allSettled(this.pendingQueries_).then(function (results) {
-        self.pendingQueries_ = []; // reset
+      return Promise.allSettled(this._pendingQueries).then(function (results) {
+        self._pendingQueries = []; // reset
 
         for (var i = 0, len = results.length; !runNextStep && i < len; ++i) {
           if (results[i].value) // indicates a change
@@ -26135,10 +26137,10 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         });
       }).then(function () {
         // At this point, every promise for the pending queries has been resolved, and we are done.
-        self.deferRuns_ = false; // we are done
+        self._deferRuns = false; // we are done
 
         console.log("Ran FHIRPath expressions in " + (new Date() - self.runStart_) + " ms");
-        if (self.pendingRun_) return self.runCalculations(false);
+        if (self._pendingRun) return self.runCalculations(false);
       });
     },
 
@@ -26215,10 +26217,10 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
             if (queryURI != oldQueryURI) {
               item._currentFhirQueryURIs[varName] = queryURI;
               if (undefinedExprVal) _this.updateItemVariable(item, varName, undefined);else {
-                var hasCachedResult = _this.queryCache_.hasOwnProperty(queryURI);
+                var hasCachedResult = _this._queryCache.hasOwnProperty(queryURI);
 
                 if (hasCachedResult) {
-                  newVal = _this.queryCache_[queryURI];
+                  newVal = _this._queryCache[queryURI];
 
                   _this.updateItemVariable(item, varName, newVal);
                 } else {
@@ -26227,14 +26229,14 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
                   // context (set via LForms.Util.setFHIRContext), use that to send
                   // the query; otherwise just use fetch.
                   var fetchPromise;
-                  if (!/https?:/.test(queryURI) && LForms.fhirContext) fetchPromise = LForms.fhirContext.request(queryURI);else {
+                  if (!/^https?:/.test(queryURI) && LForms.fhirContext) fetchPromise = LForms.fhirContext.request(queryURI);else {
                     fetchPromise = fetch(queryURI).then(function (response) {
                       return response.json();
                     });
                   }
 
-                  _this.pendingQueries_.push(fetchPromise.then(function (parsedJSON) {
-                    newVal = self.queryCache_[queryURI] = parsedJSON;
+                  _this._pendingQueries.push(fetchPromise.then(function (parsedJSON) {
+                    newVal = self._queryCache[queryURI] = parsedJSON;
                     return self.updateItemVariable(item, varName, newVal);
                   }, function fail() {
                     console.error("Unable to load FHIR data from " + queryURI);

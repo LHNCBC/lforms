@@ -29,18 +29,18 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
   ExpressionProcessor.prototype = {
     // A cache of x-fhir-query URIs to results
-    queryCache_: {},
+    _queryCache: {},
 
     // An array of pending x-fhir-query results
-    pendingQueries_: [],
+    _pendingQueries: [],
 
     // Keeps track of whether a request to run the calculations has come in
     // while we were already busy.
-    pendingRun_: false,
+    _pendingRun: false,
 
     // Whether we are deferring running calculations until a batch of queries is
     // finished being processed.
-    deferRuns_: false,
+    _deferRuns: false,
 
 
     /**
@@ -54,10 +54,11 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
     runCalculations: function(includeInitialExpr) {
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
-      if (this.deferRuns_)
-        this.pendingRun_ = true; // so we know to run them when we can
+      if (this._deferRuns)
+        this._pendingRun = true; // so we know to run them when we can
       else {
-        this.pendingRun_ = false; // clear this because we are running them now
+        this._deferRuns = true; // defer any more requests until we are done
+        this._pendingRun = false; // clear this because we are running them now
         this.runStart_ = new Date();
         // Create an export of Questionnaire for the %questionnaire variable in
         // FHIRPath.  We only need to do this once per form.
@@ -72,6 +73,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       return this.currentRunPromise_;
     },
 
+
     /**
      *  Waits any pending queries and runs the next step IF the pending queries
      *  indicate something has changed, or if runNextStep is true.
@@ -84,8 +86,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      */
     _handlePendingQueries: function(runNextStep, nextStep) {
       const self = this;
-      return Promise.allSettled(this.pendingQueries_).then(function(results) {
-        self.pendingQueries_ = []; // reset
+      return Promise.allSettled(this._pendingQueries).then(function(results) {
+        self._pendingQueries = []; // reset
         for (let i=0, len=results.length; !runNextStep && i<len; ++i) {
           if (results[i].value) // indicates a change
             runNextStep = true;
@@ -133,9 +135,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         });
       }).then(()=>{
         // At this point, every promise for the pending queries has been resolved, and we are done.
-        self.deferRuns_ = false; // we are done
+        self._deferRuns = false; // we are done
         console.log("Ran FHIRPath expressions in "+(new Date()-self.runStart_)+" ms");
-        if (self.pendingRun_)
+        if (self._pendingRun)
           return self.runCalculations(false);
       });
     },
@@ -212,9 +214,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
               if (undefinedExprVal)
                 this.updateItemVariable(item, varName, undefined);
               else {
-                let hasCachedResult = this.queryCache_.hasOwnProperty(queryURI);
+                let hasCachedResult = this._queryCache.hasOwnProperty(queryURI);
                 if (hasCachedResult) {
-                  newVal = this.queryCache_[queryURI];
+                  newVal = this._queryCache[queryURI];
                   this.updateItemVariable(item, varName, newVal);
                 }
                 else { // query not cached
@@ -222,15 +224,15 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                   // context (set via LForms.Util.setFHIRContext), use that to send
                   // the query; otherwise just use fetch.
                   let fetchPromise;
-                  if (!/https?:/.test(queryURI) && LForms.fhirContext)
+                  if (!/^https?:/.test(queryURI) && LForms.fhirContext)
                     fetchPromise = LForms.fhirContext.request(queryURI);
                   else {
                     fetchPromise = fetch(queryURI).then(function(response) {
                       return response.json();
                     });
                   }
-                  this.pendingQueries_.push(fetchPromise.then(function(parsedJSON) {
-                    newVal = (self.queryCache_[queryURI] = parsedJSON);
+                  this._pendingQueries.push(fetchPromise.then(function(parsedJSON) {
+                    newVal = (self._queryCache[queryURI] = parsedJSON);
                     return self.updateItemVariable(item, varName, newVal);
                   }, function fail() {
                     console.error("Unable to load FHIR data from "+queryURI);
