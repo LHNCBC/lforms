@@ -159,8 +159,7 @@ var TestPage = function() {
               JSON.stringify(expectedEntries)+ " but got " +
               JSON.stringify(textArray) +", retrying until timeout");
             // Sleep a bit and try again.
-            //rtn = browser.sleep(100).then(()=>false);
-            rtn = browser.sleep(100000000).then(()=>false);
+            rtn = browser.sleep(100).then(()=>false);
           }
           return rtn;
         });

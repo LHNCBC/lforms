@@ -109,7 +109,7 @@ var util = {
    * @return {Promise}
    */
   scrollIntoView: function (elementFinder) {
-  console.log("%%% scrollInfoView called for "+elementFinder.locator().value);
+    // console.log("scrollInfoView called for "+elementFinder.locator().value);
     return elementFinder.getWebElement().then((element) => {
       return browser.executeScript(function (element) {
         if (element.scrollIntoViewIfNeeded) {
