@@ -151,7 +151,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param newVal the new value of the variable.
      * @return whether the value changed.
      */
-    updateItemVariable(item, varName, newVal) {
+    _updateItemVariable: function (item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
       item._fhirVariables[varName] = newVal;
       if (!deepEqual(oldVal, newVal)) {
@@ -192,7 +192,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             delete item._fhirVariables[varName];
             newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
             item._fhirVariables[varName] = oldVal; // restore deleted old value
-            this.updateItemVariable(item, varName, newVal); // compares new with old
+            this._updateItemVariable(item, varName, newVal); // compares new with old
           }
           else if (ext.valueExpression.language=="application/x-fhir-query") {
             let queryURI = ext.valueExpression.expression;
@@ -212,12 +212,12 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             if (queryURI != oldQueryURI) {
               item._currentFhirQueryURIs[varName] = queryURI;
               if (undefinedExprVal)
-                this.updateItemVariable(item, varName, undefined);
+                this._updateItemVariable(item, varName, undefined);
               else {
                 let hasCachedResult = this._queryCache.hasOwnProperty(queryURI);
                 if (hasCachedResult) {
                   newVal = this._queryCache[queryURI];
-                  this.updateItemVariable(item, varName, newVal);
+                  this._updateItemVariable(item, varName, newVal);
                 }
                 else { // query not cached
                   // If the queryURI is a relative URL, then if there is a FHIR
@@ -233,10 +233,10 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                   }
                   this._pendingQueries.push(fetchPromise.then(function(parsedJSON) {
                     newVal = (self._queryCache[queryURI] = parsedJSON);
-                    return self.updateItemVariable(item, varName, newVal);
+                    return self._updateItemVariable(item, varName, newVal);
                   }, function fail() {
                     console.error("Unable to load FHIR data from "+queryURI);
-                    return self.updateItemVariable(item, varName, undefined);
+                    return self._updateItemVariable(item, varName, undefined);
                   }));
                 }
               }
@@ -359,7 +359,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *  given item.
      * @param item an LFormsData item.
      * @param expression the FHIRPath to evaluate with the context of item's
-     *i  equivalent node in the QuestionnaireResponse.
+     *  equivalent node in the QuestionnaireResponse.
      * @returns the result of the expression.
      */
     _evaluateFHIRPath: function(item, expression) {
