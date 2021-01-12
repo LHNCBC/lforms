@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [28.1.0] 2021-01-11
+### Added
+- Support for x-fhir-query variables, and with embedded FHIRPath in the URLs
+  as described at
+  http://build.fhir.org/ig/HL7/sdc/expressions.html#x-fhir-query-enhancements.
+  The variable extension is documented at
+  http://hl7.org/fhir/R4/extension-variable.html
+
 ## [28.0.0] 2020-12-10
 ### Changed
 - Breaking change to FHIR support. Changed the extract behavior to use the Observation Extract Extension
