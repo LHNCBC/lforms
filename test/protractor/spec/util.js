@@ -1,4 +1,5 @@
 // Helper functions for the tests
+const EC = protractor.ExpectedConditions;
 
 var util = {
   /**
@@ -83,6 +84,90 @@ var util = {
     field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
     field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
     return this.waitForValue(field, '');
+  },
+
+
+  /**
+   *  Returns a promise that resolves when scrolling has stopped.
+   */
+  waitForScrollStop: function() {
+    return browser.executeScript("return window.scrollY").then(originalScrollY => {
+      // Sleep to let some scrolling happen, if it is going to.
+      return browser.sleep(100).then(() =>
+        browser.executeScript("return window.scrollY").then(newScrollY => {
+          console.log("originalScrollY="+originalScrollY+"; newScrollY="+newScrollY);
+          return (originalScrollY == newScrollY) ? true : util.waitForScrollStop()
+        })
+      );
+    });
+  },
+
+
+  /**
+   * Scrolls an element's parent container such that the element is visible to the user
+   * @param {ElementFinder} elementFinder - protractor object to represent the element
+   * @return {Promise}
+   */
+  scrollIntoView: function (elementFinder) {
+    // console.log("scrollInfoView called for "+elementFinder.locator().value);
+    return elementFinder.getWebElement().then((element) => {
+      return browser.executeScript(function (element) {
+        if (element.scrollIntoViewIfNeeded) {
+          element.scrollIntoViewIfNeeded(true);
+        } else {
+          element.scrollIntoView({block: 'center'});
+        }
+      }, element).then(
+        () => util.waitForScrollStop()
+      );
+    });
+  },
+
+
+  /**
+   * Scrolls an element into view and clicks on it when it becomes clickable
+   * @param {ElementFinder} elementFinder - protractor object to represent the element
+   * @return {Promise}
+   */
+  safeClick: function (elementFinder) {
+    // Borrowed Yury's code from fhir-obs-viewer.
+    return browser.wait(EC.elementToBeClickable(elementFinder), 5000).then(()=>
+      this.scrollIntoView(elementFinder).then(() => {
+        console.log("Clicking "+elementFinder.locator().value);
+        return elementFinder.click()
+      })
+    );
+    // For when debugging is needed.
+    /*
+    return browser.wait(EC.presenceOf(elementFinder)).then(() => {
+      console.log("%%% safeClick:  element present");
+      return browser.wait(()=>elementFinder.isDisplayed()).then(() => {
+      //return browser.wait(EC.visibilityOf(elementFinder)).then(() => {
+        console.log("%%% safeClick:  element visible");
+        return this.scrollIntoView(elementFinder).then(() => elementFinder.click());
+      });
+    });
+    */
+  },
+
+
+  /**
+   *  For fields with an autocomplete-lhc list, this returns a promise that
+   *  resolves to the number items in the list.  (For other fields, it will
+   *  resolve to zero.)
+   * @param field the element finder for the field.
+   */
+  fieldListLength: function(field) {
+    return browser.executeScript(function(htmlField) {
+      let size = 0;
+      let autocomp = htmlField.autocomp;
+      if (autocomp) {
+        let rawList = autocomp.rawList_;
+        if (rawList)
+          size = rawList.length;
+      }
+      return size;
+    }, field.getWebElement());
   },
 
 

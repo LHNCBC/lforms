@@ -2,7 +2,7 @@ var fhirVersion = 'R4'; // for questionnaire resources
 
 var po = require('../addFormToPageTest.po');
 var tp = require('../lforms_testpage.po.js');
-var mockFHIRContext = require('./fhir_context');
+var mockFHIRContext = require('./fhir_context').mockFHIRContext;
 var EC = protractor.ExpectedConditions;
 
 /**

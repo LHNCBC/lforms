@@ -1,6 +1,7 @@
 // Processes FHIR Expression Extensions
 
 export let ExpressionProcessor;
+const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
 (function() {
   "use strict";
@@ -27,81 +28,235 @@ export let ExpressionProcessor;
 
 
   ExpressionProcessor.prototype = {
+    // A cache of x-fhir-query URIs to results
+    _queryCache: {},
+
+    // An array of pending x-fhir-query results
+    _pendingQueries: [],
+
+    // Keeps track of whether a request to run the calculations has come in
+    // while we were already busy.
+    _pendingRun: false,
+
+    // Whether we are deferring running calculations until a batch of queries is
+    // finished being processed.
+    _deferRuns: false,
+
 
     /**
      *   Runs the FHIR expressions in the form.
      *  @param includeInitialExpr whether to include the "initialExpression"
      *   expressions (which should only be run once, after asynchronous loads
      *   from questionnaire-launchContext have been completed).
+     *  @return a Promise that resolves when the expressions have been run, and
+     *   there are no pending runs left to do.
      */
     runCalculations: function(includeInitialExpr) {
-      // Create an export of Questionnaire for the %questionnaire variable in
-      // FHIRPath.  We only need to do this once per form.
-      var lfData = this._lfData;
-      if (!lfData._fhirVariables.questionnaire) {
-        lfData._fhirVariables.questionnaire =
-          this._fhir.SDC.convertLFormsToQuestionnaire(this._lfData);
-      }
-      var firstRun = true;
-      var changed = true;
-      var start = new Date();
-      while (changed) {
-        if (changed || firstRun) {
-          this._regenerateQuestionnaireResp();
-          changed = this._evaluateVariables(lfData, !firstRun);
+      // Defer running calculations while we are waiting for earlier runs to
+      // finish.
+      if (this._deferRuns)
+        this._pendingRun = true; // so we know to run them when we can
+      else {
+        this._deferRuns = true; // defer any more requests until we are done
+        this._pendingRun = false; // clear this because we are running them now
+        this.runStart_ = new Date();
+        // Create an export of Questionnaire for the %questionnaire variable in
+        // FHIRPath.  We only need to do this once per form.
+        var lfData = this._lfData;
+        if (!lfData._fhirVariables.questionnaire) {
+          lfData._fhirVariables.questionnaire =
+            this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
         }
-        if (changed || firstRun)
-          changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
-        firstRun = false;
+        this.currentRunPromise_ =
+          this._asyncRunCalculations(includeInitialExpr, true);
       }
-      console.log("Ran FHIRPath expressions in "+(new Date()-start)+" ms");
+      return this.currentRunPromise_;
+    },
+
+
+    /**
+     *  Waits any pending queries and runs the next step IF the pending queries
+     *  indicate something has changed, or if runNextStep is true.
+     * @param runNextStep if set to true, nextStep will be run even if the
+     *  pending queries do not indicate a change.
+     * @param nextStep the function to run the next step, that returns a promise
+     *  which resolves when it is finished.
+     * @return a Promise the resolves when everything is finished, including any
+     *  pending re-run request.
+     */
+    _handlePendingQueries: function(runNextStep, nextStep) {
+      const self = this;
+      return Promise.allSettled(this._pendingQueries).then(function(results) {
+        self._pendingQueries = []; // reset
+        for (let i=0, len=results.length; !runNextStep && i<len; ++i) {
+          if (results[i].value) // indicates a change
+            runNextStep = true;
+        }
+        if (runNextStep)
+          return nextStep();
+      });
+    },
+
+
+    /**
+     *  This is conceptually a part of runCalculations, but it is this part of
+     *  it that might need to call itself if fields or variables update.
+     *  The basic algorithm is that first we evaluate the variables, and wait
+     *  for any AJAX-based variables to finish loading.  Then we evaluate field
+     *  expressions (calculatedExpression and answerExpresion) and again wait
+     *  for any AJAX based expressions to finish loading.  If something has
+     *  changed, we do it again.
+     * @param includeInitialExpr whether to include the "initialExpression"
+     *   expressions (which should only be run once, after asynchronous loads
+     *   from questionnaire-launchContext have been completed).
+     * @param firstCall whether this is the first call in a possibly recursive
+     *  sequence.  We use this to optimize whether there is a need to evaluate
+     *  all of the expressions or just the ones that might have changed.
+     * @return a promise that resolves when all Expressions which needed to be
+     *  processed have been processed and the values have stablized.
+     */
+    _asyncRunCalculations: function(includeInitialExpr, firstCall) {
+      const self = this;
+      const lfData = this._lfData;
+      var changed = false; // whether the calculations result in changed values
+      if (firstCall) {
+        this._regenerateQuestionnaireResp();
+        changed = this._evaluateVariables(lfData);
+      }
+      return this._handlePendingQueries(changed || firstCall, function() {
+        let fieldsChanged =
+          self._evaluateFieldExpressions(lfData, includeInitialExpr, !firstCall);
+        // Field expressions can also be x-fhir-query (e.g. for fields of type
+        // Reference).  We don't yet support that datatype, but the logic here
+        // looks ahead to when there might be pending queries from the previous
+        // call.
+        return self._handlePendingQueries(fieldsChanged, function() {
+          return self._asyncRunCalculations(false, false);
+        });
+      }).then(()=>{
+        // At this point, every promise for the pending queries has been resolved, and we are done.
+        self._deferRuns = false; // we are done
+        console.log("Ran FHIRPath expressions in "+(new Date()-self.runStart_)+" ms");
+        if (self._pendingRun)
+          return self.runCalculations(false);
+      });
+    },
+
+
+    /**
+     *  Updates the value of an item's FHIR variable.  If the variable value has changed,
+     *  item._varChanged will be set to true.
+     * @param item the item on which the variable is defined
+     * @param varName the name of the variable
+     * @param newVal the new value of the variable.
+     * @return whether the value changed.
+     */
+    _updateItemVariable: function (item, varName, newVal) {
+      var oldVal = item._fhirVariables[varName];
+      item._fhirVariables[varName] = newVal;
+      if (!deepEqual(oldVal, newVal)) {
+        item._varChanged = true; // flag for re-running expressions.
+      }
+      return item._varChanged;
     },
 
 
     /**
      *  Evaluates variables on the given item.
      * @param item an LFormsData or item from LFormsData.
+     * @return true if one of the variables changed.  If false is returned,
+     *  there might still be a variable that will change due to an x-fhir-query,
+     *  the promises for which are in pendingQueries).
      */
     _evaluateVariables: function(item) {
-      var rtn = false;
-      var sdc = this._fhir.SDC;
-      var variableExts = item._fhirExt && item._fhirExt[sdc.fhirExtVariable];
+      const self = this;
+      let rtn = false;
+      const sdc = this._fhir.SDC;
+      let variableExts = item._fhirExt && item._fhirExt[sdc.fhirExtVariable];
       if (variableExts) {
         for (let i=0, len=variableExts.length; i<len; ++i) {
-          var ext = variableExts[i];
-          if (ext && ext.valueExpression.language=="text/fhirpath") {
-            var varName = ext.valueExpression.name;
-            var oldVal;
-            if (item._fhirVariables)
-              oldVal = item._fhirVariables[varName];
-            else {
-              // Create a hash for variables that will have access to
-              // variables defined higher up in the tree.
-              item._fhirVariables = Object.create(
-                this._itemWithVars(item)._fhirVariables);
-            }
-            // Delete the old value, so we don't have circular references.
+          let ext = variableExts[i];
+          let oldVal, newVal;
+          let varName = ext.valueExpression.name;
+          if (item._fhirVariables)
+            oldVal = item._fhirVariables[varName];
+          else {
+            // Create a hash for variables that will have access to
+            // variables defined higher up in the tree.
+            item._fhirVariables = Object.create(
+              this._itemWithVars(item)._fhirVariables);
+          }
+          if (ext.valueExpression.language=="text/fhirpath") {
+            // Temporarily delete the old value, so we don't have circular references.
+            let oldVal = item._fhirVariables[varName];
             delete item._fhirVariables[varName];
-            var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-            if (newVal !== undefined)
-              item._fhirVariables[varName] = newVal;
-            var varChanged = JSON.stringify(oldVal) != JSON.stringify(newVal);
-            if (varChanged) {
-              item._varChanged = true; // flag for re-running expressions.
+            newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+            item._fhirVariables[varName] = oldVal; // restore deleted old value
+            this._updateItemVariable(item, varName, newVal); // compares new with old
+          }
+          else if (ext.valueExpression.language=="application/x-fhir-query") {
+            let queryURI = ext.valueExpression.expression;
+            let undefinedExprVal = false;
+            // The expression might have embedded FHIRPath in the URI, inside {{...}}
+            queryURI = queryURI.replace(/\{\{([^}]+)\}\}/g, function(match, fpExp) {
+              // Replace the FHIRPath with the evaluated expressions
+              let result = self._evaluateFHIRPath(item, fpExp)[0];
+              if (result === null || result === undefined)
+                undefinedExprVal = true; // i.e., URL likely not usable
+              return undefinedExprVal ? '' : '' + result;
+            });
+            if (!item._currentFhirQueryURIs)
+              item._currentFhirQueryURIs = {};
+            let oldQueryURI = item._currentFhirQueryURIs[varName];
+            // If queryURI is not a new value, we don't need to do anything
+            if (queryURI != oldQueryURI) {
+              item._currentFhirQueryURIs[varName] = queryURI;
+              if (undefinedExprVal)
+                this._updateItemVariable(item, varName, undefined);
+              else {
+                let hasCachedResult = this._queryCache.hasOwnProperty(queryURI);
+                if (hasCachedResult) {
+                  newVal = this._queryCache[queryURI];
+                  this._updateItemVariable(item, varName, newVal);
+                }
+                else { // query not cached
+                  // If the queryURI is a relative URL, then if there is a FHIR
+                  // context (set via LForms.Util.setFHIRContext), use that to send
+                  // the query; otherwise just use fetch.
+                  let fetchPromise;
+                  if (!/^https?:/.test(queryURI) && LForms.fhirContext)
+                    fetchPromise = LForms.fhirContext.request(queryURI);
+                  else {
+                    fetchPromise = fetch(queryURI).then(function(response) {
+                      return response.json();
+                    });
+                  }
+                  this._pendingQueries.push(fetchPromise.then(function(parsedJSON) {
+                    newVal = (self._queryCache[queryURI] = parsedJSON);
+                    return self._updateItemVariable(item, varName, newVal);
+                  }, function fail() {
+                    console.error("Unable to load FHIR data from "+queryURI);
+                    return self._updateItemVariable(item, varName, undefined);
+                  }));
+                }
+              }
             }
           }
-          // else maybe x-fhir-query, asynchronous (TBD)
+          // else CQL (TBD)
         }
-      }
+
+        rtn = item._varChanged;
+      } // if variableExts
       if (item.items) {
         for (let i=0, len=item.items.length; i<len; ++i) {
-          var changed = this._evaluateVariables(item.items[i]);
+          let changed = this._evaluateVariables(item.items[i]);
           if (!rtn)
             rtn = changed;
         }
       }
       return rtn;
     },
+
 
     /**
      *  Evaluates the expressions that set field values for the given item.
@@ -111,6 +266,7 @@ export let ExpressionProcessor;
      *  loaded).
      * @param changesOnly whether to run all field expressions, or just the ones
      *  that are likely to have been affected by changes from variable expressions.
+     * @return whether any of the fields changed (value or list)
      */
     _evaluateFieldExpressions: function(item, includeInitialExpr, changesOnly) {
       var rtn = false;
@@ -119,10 +275,10 @@ export let ExpressionProcessor;
       if (changesOnly) {
         if (item.items && item._varChanged) {
           item._varChanged = false; // clear flag
-          changesOnly = false; // process all child items
+          changesOnly = false; // process this and all child items
         }
       }
-      else { // if (!changesOnly) process this and all child items
+      if (!changesOnly) { // process this and all child items
         item._varChanged = false; // clear flag in case it was set
         const fhirExt = item._fhirExt;
         if (fhirExt) {
@@ -201,6 +357,9 @@ export let ExpressionProcessor;
     /**
      *  Evaluates the given FHIRPath expression defined in an extension on the
      *  given item.
+     * @param item an LFormsData item.
+     * @param expression the FHIRPath to evaluate with the context of item's
+     *  equivalent node in the QuestionnaireResponse.
      * @returns the result of the expression.
      */
     _evaluateFHIRPath: function(item, expression) {
@@ -321,14 +480,17 @@ export let ExpressionProcessor;
      *  Assigns the given list result to the item.  If the list has changed, the
      *  field is cleared.
      * @param list an array of list items computed from a FHIRPath expression.
+     * @return true if the list changed
      */
     _setItemListFromFHIRPath: function(item, list) {
       let currentList = item.answers;
-      let hasCurrentList = !!currentList;
-      let changed = false;
-      let newList = [];
+      let hasCurrentList = !!currentList && Array.isArray(currentList);
+      let listHasData = !!list && Array.isArray(list);
+      let changed = (hasCurrentList != listHasData) ||
+        listHasData && (list.length != currentList.length);
+      let newList = []; // a reformatted version of "list"
       const scoreURI = this._fhir.SDC.fhirExtUrlOptionScore;
-      if (list && Array.isArray(list)) {
+      if (listHasData) {
         // list should be an array of any item type, including Coding.
         // (In R5, FHIR will start suppoing lists of types other than Coding.)
         for (let i=0, len=list.length; i<len; ++i) {
@@ -362,8 +524,6 @@ export let ExpressionProcessor;
           }
         }
       }
-      else
-        changed = !!currentList;
 
       if (changed) {
         item.answers = newList;
@@ -376,6 +536,7 @@ export let ExpressionProcessor;
         // For now, just wipe the field.
         item.value = null;
       }
+      return changed;
     },
 
 

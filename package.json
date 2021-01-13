@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "28.0.0",
+  "version": "28.1.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -12,14 +12,15 @@
   ],
   "dependencies": {
     "@lhncbc/ucum-lhc": "^4.1.3",
-    "angular": "^1.8.0",
-    "angular-animate": "1.8.0",
+    "angular": "^1.8.2",
+    "angular-animate": "1.8.2",
     "angular-ui-bootstrap": "^1.3.3",
     "autocomplete-lhc": "^18.1.1",
     "bootstrap": "^3.4.1",
     "bootstrap-ui-datetime-picker": "^2.6.4",
     "element-resize-detector": "^1.1.15",
     "es6-promise": "^4.2.8",
+    "fast-deep-equal": "^3.1.3",
     "fhirpath": "^2.6.1",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",

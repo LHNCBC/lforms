@@ -1,7 +1,7 @@
 // Tests for ExpressionProcessor
 describe('ExpresssionProcessor', function () {
   describe('_evaluateFHIRPath', function() {
-    it('should use the FHIR model', function() {
+    it('should use the FHIR model', function(done) {
       // Test by checking that QR.item.answer.value works to return a value (as
       // opposed to "valueString", which is what it would be without model information).
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
@@ -9,7 +9,7 @@ describe('ExpresssionProcessor', function () {
       }, {
         linkId: '/q2', dataType: 'ST',
         extension: [{
-          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "url": LForms.FHIR.R4.SDC.fhirExtCalculatedExp,
           "valueExpression": {
             "language": "text/fhirpath",
             "expression": "%resource.item.where(linkId='/q1').answer.value"
@@ -17,8 +17,11 @@ describe('ExpresssionProcessor', function () {
         }]
       }]});
       var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
-      exp.runCalculations();
-      assert.equal(lfData.items[1].value, lfData.items[0].value);
+      exp.runCalculations().then(() => {
+        assert.equal(lfData.items[1].value, lfData.items[0].value);
+        assert.equal(lfData.items[1].value, lfData.items[0].value);
+        done();
+      });
     });
   }),
 

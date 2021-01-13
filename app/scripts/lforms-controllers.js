@@ -596,7 +596,9 @@ angular.module('lformsWidget')
                     });
                   }, function() {
                     if (lfData)
-                      lfData._expressionProcessor.runCalculations(false);
+                      lfData._expressionProcessor.runCalculations(false).then(
+                        () => $scope.$apply()); // pick up asynchronous model changes
+                      ;
                   });
                 }
               }
