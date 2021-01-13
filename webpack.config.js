@@ -105,7 +105,10 @@ function makeConfigs(env) {
     // The Bower package needs a single, transpiled lforms.js file that does
     // not include other bower packages (angular, etc.)
     let bowerConfig = commonConfig();
-    bowerConfig.entry = ['whatwg-fetch', './app/scripts/bower-index.js']; // includes fetch polyfill
+    let polyfills = [ // in addition to app/scripts/lib/polyfill.js]
+     'promise-polyfill/src/polyfill', // used by whatwg-fetch, and by our own code
+     'whatwg-fetch'];
+    bowerConfig.entry = [...polyfills, './app/scripts/bower-index.js'];
     bowerConfig.output.path = require('path').resolve(__dirname, './bower-dist');
     bowerConfig.output.filename = 'lforms.js';
     bowerConfig.output.library = 'LForms'; // global variable for the library
@@ -120,7 +123,7 @@ function makeConfigs(env) {
     // The browser-ready dist package needs all of the dependencies in a single file
     // (except for the versioned FHIR files).
     let lformsConfig = commonConfig();
-    lformsConfig.entry = ['whatwg-fetch', './app/scripts/index.js'];
+    lformsConfig.entry = [...polyfills, './app/scripts/index.js'];
     lformsConfig.output.path = versionedDistPath;
     lformsConfig.output.filename = 'lforms.min.js';
     lformsConfig.output.library = 'LForms';
