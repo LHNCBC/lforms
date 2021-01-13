@@ -26107,12 +26107,12 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         console.log("Ran expressions in " + (new Date() - self._runStart) + " ms");
         self._currentRunPromise = undefined;
         if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
-      }, function failure(reason) {
+      }, function (failureReason) {
         console.log("Run of expressions failed; reason follows");
-        console.log(reason);
+        console.log(failureReason);
         self._currentRunPromise = undefined;
         self._pendingRun = false;
-        throw reason;
+        throw failureReason;
       });
     },
 
