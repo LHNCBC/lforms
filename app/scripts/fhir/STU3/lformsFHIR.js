@@ -26038,9 +26038,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
     // Keeps track of whether a request to run the calculations has come in
     // while we were already busy.
     _pendingRun: false,
-    // Whether we are deferring running calculations until a batch of queries is
-    // finished being processed.
-    _deferRuns: false,
+    // The promise returned by runCalculations, when a run is active.
+    _currentRunPromise: undefined,
 
     /**
      *   Runs the FHIR expressions in the form.
@@ -26053,13 +26052,12 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
     runCalculations: function runCalculations(includeInitialExpr) {
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
-      if (this._deferRuns) this._pendingRun = true; // so we know to run them when we can
+      if (this._currentRunPromise) // then we will just return that promise
+        this._pendingRun = true; // so we know to run them when we can
       else {
-          this._deferRuns = true; // defer any more requests until we are done
-
           this._pendingRun = false; // clear this because we are running them now
 
-          this.runStart_ = new Date(); // Create an export of Questionnaire for the %questionnaire variable in
+          this._runStart = new Date(); // Create an export of Questionnaire for the %questionnaire variable in
           // FHIRPath.  We only need to do this once per form.
 
           var lfData = this._lfData;
@@ -26068,9 +26066,9 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
             lfData._fhirVariables.questionnaire = this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
           }
 
-          this.currentRunPromise_ = this._asyncRunCalculations(includeInitialExpr, true);
+          this._currentRunPromise = this._asyncRunCalculations(includeInitialExpr, true);
         }
-      return this.currentRunPromise_;
+      return this._currentRunPromise;
     },
 
     /**
@@ -26137,10 +26135,15 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         });
       }).then(function () {
         // At this point, every promise for the pending queries has been resolved, and we are done.
-        self._deferRuns = false; // we are done
-
-        console.log("Ran FHIRPath expressions in " + (new Date() - self.runStart_) + " ms");
-        if (self._pendingRun) return self.runCalculations(false);
+        console.log("Ran expressions in " + (new Date() - self._runStart) + " ms");
+        self._currentRunPromise = undefined;
+        if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
+      }, function failure(reason) {
+        console.log("Run of expressions failed; reason follows");
+        console.log(reason);
+        self._currentRunPromise = undefined;
+        self._pendingRun = false;
+        throw reason;
       });
     },
 

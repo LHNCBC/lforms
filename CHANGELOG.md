@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [28.1.1] 2021-01-13
+### Fixed
+- Added missing polyfills for IE 11.
+- Fixed error handling logic for FHIR expressions.
+
 ## [28.1.0] 2021-01-11
 ### Added
 - Support for x-fhir-query variables, and with embedded FHIRPath in the URLs
