@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "28.1.1",
+  "version": "28.1.2",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -23,6 +23,7 @@
     "fhirpath": "^2.6.1",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
+    "js-class": "0.0.3",
     "moment": "^2.24.0",
     "ngSmoothScroll": "^2.0.1",
     "promise-polyfill": "^8.2.0",

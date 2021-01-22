@@ -6,8 +6,8 @@
   "use strict";
 
   var LForms = require('../../lforms');
-  var Class = require("./js-class.js");
-  LForms.LFormsData = Class.extend({
+  var Class = require("js-class");
+  LForms.LFormsData = Class({
 
     // constants
     _CONSTANTS: {
@@ -175,7 +175,7 @@
      *       (see https://confluence.hl7.org/display/FHIR/NPM+Package+Specification),
      *       plus a 'fileContent' field that contains the actual file contents.
      */
-    init: function(data, packageStore) {
+    constructor: function(data, packageStore) {
       this.lformsVersion = LForms.lformsVersion;
 
       if (packageStore) {

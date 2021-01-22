@@ -1665,7 +1665,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"28.1.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"28.1.2\"}");
 
 /***/ }),
 /* 15 */
@@ -5520,7 +5520,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
   var Class = __webpack_require__(28);
 
-  LForms.LFormsData = Class.extend({
+  LForms.LFormsData = Class({
     // constants
     _CONSTANTS: {
       DATA_CONTROL: {
@@ -5722,7 +5722,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      *       (see https://confluence.hl7.org/display/FHIR/NPM+Package+Specification),
      *       plus a 'fileContent' field that contains the actual file contents.
      */
-    init: function init(data, packageStore) {
+    constructor: function constructor(data, packageStore) {
       this.lformsVersion = LForms.lformsVersion;
 
       if (packageStore) {
@@ -9288,64 +9288,156 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 /***/ }),
 /* 28 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-/* Simple JavaScript Inheritance
- * By John Resig http://ejohn.org/
- * MIT Licensed.
- */
-// Inspired by base2 and Prototype
-(function () {
-  var initializing = false,
-      fnTest = /xyz/.test(function () {
-    xyz;
-  }) ? /\b_super\b/ : /.*/; // The base Class implementation (does nothing)
+/** @preserve http://github.com/easeway/js-class */
+// Class Definition using ECMA5 prototype chain
+function inherit(dest, src, noParent) {
+  while (src && src !== Object.prototype) {
+    Object.getOwnPropertyNames(src).forEach(function (name) {
+      if (name != '.class' && !dest.hasOwnProperty(name)) {
+        var desc = Object.getOwnPropertyDescriptor(src, name);
+        Object.defineProperty(dest, name, desc);
+      }
+    });
 
-  var Class = function Class() {}; // Create a new Class that inherits from this class
+    if (noParent) {
+      break;
+    }
 
+    src = src.__proto__;
+  }
 
-  Class.extend = function (prop) {
-    var _super = this.prototype; // Instantiate a base class (but only create the instance,
-    // don't run the init constructor)
+  return dest;
+}
 
-    initializing = true;
-    var prototype = new this();
-    initializing = false; // Copy the properties over onto the new prototype
+var Class = function Class(base, proto, options) {
+  if (typeof base != 'function') {
+    options = proto;
+    proto = base;
+    base = Object;
+  }
 
-    for (var name in prop) {
-      // Check if we're overwriting an existing function
-      prototype[name] = typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name]) ? function (name, fn) {
-        return function () {
-          var tmp = this._super; // Add a new ._super() method that is the same method
-          // but on the super-class
+  if (!proto) {
+    proto = {};
+  }
 
-          this._super = _super[name]; // The method only need to be bound temporarily, so we
-          // remove it when we're done executing
+  if (!options) {
+    options = {};
+  }
 
-          var ret = fn.apply(this, arguments);
-          this._super = tmp;
-          return ret;
-        };
-      }(name, prop[name]) : prop[name];
-    } // The dummy class constructor
+  var meta = {
+    name: options.name,
+    base: base,
+    implements: []
+  };
+  var classProto = Class.clone(proto);
 
+  if (options.implements) {
+    (Array.isArray(options.implements) ? options.implements : [options.implements]).forEach(function (implementedType) {
+      if (typeof implementedType == 'function' && implementedType.prototype) {
+        meta.implements.push(implementedType);
+        Class.extend(classProto, implementedType.prototype);
+      }
+    });
+  }
 
-    function Class() {
-      // All construction is actually done in the init method
-      if (!initializing && this.init) this.init.apply(this, arguments);
-    } // Populate our constructed prototype object
+  classProto.__proto__ = base.prototype;
 
-
-    Class.prototype = prototype; // Enforce the constructor to be what we expect
-
-    Class.prototype.constructor = Class; // And make this class extendable
-
-    Class.extend = arguments.callee;
-    return Class;
+  var theClass = function theClass() {
+    if (typeof this.constructor == 'function') {
+      this.constructor.apply(this, arguments);
+    }
   };
 
+  meta.type = theClass;
+  theClass.prototype = classProto;
+  Object.defineProperty(theClass, '.class.meta', {
+    value: meta,
+    enumerable: false,
+    configurable: false,
+    writable: false
+  });
+  Object.defineProperty(classProto, '.class', {
+    value: theClass,
+    enumerable: false,
+    configurable: false,
+    writable: false
+  });
+
+  if (options.statics) {
+    Class.extend(theClass, options.statics);
+  }
+
+  return theClass;
+};
+
+Class.extend = inherit;
+
+Class.clone = function (object) {
+  return inherit({}, object);
+};
+
+function findType(meta, type) {
+  while (meta) {
+    if (meta.type.prototype === type.prototype) {
+      return true;
+    }
+
+    for (var i in meta.implements) {
+      var implType = meta.implements[i];
+      var implMeta = implType['.class.meta'];
+
+      if (implMeta) {
+        if (findType(implMeta, type)) {
+          return true;
+        }
+      } else {
+        for (var proto = implType.prototype; proto; proto = proto.__proto__) {
+          if (proto === type.prototype) {
+            return true;
+          }
+        }
+      }
+    }
+
+    meta = meta.base ? meta.base['.class.meta'] : undefined;
+  }
+
+  return false;
+}
+
+var Checker = Class({
+  constructor: function constructor(object) {
+    this.object = object;
+  },
+  typeOf: function typeOf(type) {
+    if (this.object instanceof type) {
+      return true;
+    }
+
+    var meta = Class.typeInfo(this.object);
+    return meta && findType(meta, type);
+  }
+}); // aliases
+
+Checker.prototype.a = Checker.prototype.typeOf;
+Checker.prototype.an = Checker.prototype.typeOf;
+
+Class.is = function (object) {
+  return new Checker(object);
+};
+
+Class.typeInfo = function (object) {
+  var theClass = object.__proto__['.class'];
+  return theClass ? theClass['.class.meta'] : undefined;
+};
+
+Class.VERSION = [0, 0, 2];
+
+if (true) {
   module.exports = Class;
-})();
+} else {}
 
 /***/ }),
 /* 29 */
