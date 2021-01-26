@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [28.1.2] 2021-01-21
+### Fixed
+- Replaced local js-class.js with npm js-class package.
+- Changed requiring a json package using .json extension.
+
 ## [28.1.1] 2021-01-13
 ### Fixed
 - Added missing polyfills for IE 11.

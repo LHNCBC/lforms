@@ -49,5 +49,5 @@
 })();
 
 // Define the top-level namespace object
-var LForms = Object.assign({}, require('./version'));
+var LForms = Object.assign({}, require('./version.json'));
 module.exports = LForms;
