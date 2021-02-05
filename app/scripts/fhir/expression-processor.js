@@ -228,6 +228,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                   // If the queryURI is a relative URL, then if there is a FHIR
                   // context (set via LForms.Util.setFHIRContext), use that to send
                   // the query; otherwise just use fetch.
+                  // Also, set the format to JSON.
+                  queryURI += (queryURI.indexOf('?')>0 ? '&' : '?')+'_format=json';
                   let fetchPromise;
                   if (!/^https?:/.test(queryURI) && LForms.fhirContext)
                     fetchPromise = LForms.fhirContext.request(queryURI);
@@ -531,6 +533,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }
 
       if (changed) {
+        let oldAnswers = item.answers;
         item.answers = newList;
         this._lfData._updateAutocompOptions(item, true);
         // The SDC specification says that implementations "SHOULD" preserve the
@@ -538,8 +541,23 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         // That is inconsistent with the behavior of LForms in other situations,
         // e.g. data control, where we wipe the field value when the list is
         // set.  So, we need to decide whether to switch to that behavior.
-        // For now, just wipe the field.
-        item.value = null;
+        // For now, just wipe the field -- unless the original list was not set
+        // (e.g. when a QuestionnaireResponse is being rendered and
+        // answerExpression has just run, but there is saved data).
+        if (oldAnswers && oldAnswers.length > 0)
+          item.value = null;
+        else {
+          // As long as the old value is in the list, keep it.
+          let inList = false;
+          for (let a of item.answers) {
+            if (this.lfData._areTwoAnswersSame(a, item.value)) {
+              inList = true;
+              break;
+            }
+          }
+          if (!inList)
+            item.value = null;
+        }
       }
       return changed;
     },

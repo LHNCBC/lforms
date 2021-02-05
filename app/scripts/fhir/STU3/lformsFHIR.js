@@ -26231,6 +26231,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
                   // If the queryURI is a relative URL, then if there is a FHIR
                   // context (set via LForms.Util.setFHIRContext), use that to send
                   // the query; otherwise just use fetch.
+                  // Also, set the format to JSON.
+                  queryURI += (queryURI.indexOf('?') > 0 ? '&' : '?') + '_format=json';
                   var fetchPromise;
                   if (!/^https?:/.test(queryURI) && LForms.fhirContext) fetchPromise = LForms.fhirContext.request(queryURI);else {
                     fetchPromise = fetch(queryURI).then(function (response) {
@@ -26569,17 +26571,53 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
       }
 
       if (changed) {
+        console.log("item.value: ");
+        console.log(item.value);
+        var oldAnswers = item.answers;
+        console.log("item._modifiedAnswers: ");
+        console.log(item._modifiedAnswers);
         item.answers = newList;
 
-        this._lfData._updateAutocompOptions(item, true); // The SDC specification says that implementations "SHOULD" preserve the
+        this._lfData._updateAutocompOptions(item, true);
+
+        console.log("item._modifiedAnswers2: ");
+        console.log(item._modifiedAnswers);
+        console.log("item.value2: ");
+        console.log(item.value); // The SDC specification says that implementations "SHOULD" preserve the
         // field value (marking it invalid if that is the case in the new list).
         // That is inconsistent with the behavior of LForms in other situations,
         // e.g. data control, where we wipe the field value when the list is
         // set.  So, we need to decide whether to switch to that behavior.
-        // For now, just wipe the field.
+        // For now, just wipe the field -- unless the original list was not set
+        // (e.g. when a QuestionnaireResponse is being rendered and
+        // answerExpression has just run, but there is saved data).
 
+        if (oldAnswers && oldAnswers.length > 0) item.value = null;else {
+          // As long as the old value is in the list, keep it.
+          var inList = false;
 
-        item.value = null;
+          var _iterator2 = _createForOfIteratorHelper(item.answers),
+              _step2;
+
+          try {
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var a = _step2.value;
+
+              if (this.lfData._areTwoAnswersSame(a, item.value)) {
+                inList = true;
+                break;
+              }
+            }
+          } catch (err) {
+            _iterator2.e(err);
+          } finally {
+            _iterator2.f();
+          }
+
+          if (!inList) item.value = null;
+          console.log(item.value);
+          console.log(newList);
+        }
       }
 
       return changed;

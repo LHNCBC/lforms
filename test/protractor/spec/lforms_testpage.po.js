@@ -386,6 +386,39 @@ var TestPage = function() {
 
 
     /**
+     *  Returns the full path to a  JSON form definition file in the test/data
+     *  directory.
+     * @param filepath the path to the form definition file, relative to
+     *  test/data/fhirVersion (or just test/data if fhirVersion is not
+     *  provided.)
+     * @param fhirVersion (optional) the version of FHIR to use.
+     */
+    getTestDataPathName: function(filepath, fhirVersion) {
+      let pathParts = [__dirname, '../../data/']
+      if (fhirVersion) {
+        this.setFHIRVersion(fhirVersion);
+        pathParts.push(fhirVersion);
+      }
+      pathParts.push(filepath);
+      return require('path').join(...pathParts);
+    },
+
+
+    /**
+     *  Returns a JSON form definition  file from the test/data
+     *  directory.
+     * @param filepath the path to the form definition file, relative to
+     *  test/data/fhirVersion (or just test/data if fhirVersion is not
+     *  provided.)
+     * @param fhirVersion (optional) the version of FHIR to use.
+     */
+    getTestData: function(filepath, fhirVersion) {
+      let testFile = this.getTestDataPathName(filepath, fhirVersion);
+      return require('fs').readFileSync(testFile, 'utf8');
+    },
+
+
+    /**
      *  Loads a form from a JSON form definition file from the test/data
      *  directory, and displays the form.
      * @param filepath the path to the form definition file, relative to
@@ -394,16 +427,9 @@ var TestPage = function() {
      * @param fhirVersion (optional) the version of FHIR to use.
      */
     loadFromTestData: function(filepath, fhirVersion) {
-      let pathParts = [__dirname, '../../data/']
-      if (fhirVersion) {
-        this.setFHIRVersion(fhirVersion);
-        pathParts.push(fhirVersion);
-      }
-      pathParts.push(filepath);
-
+      let testFile = this.getTestDataPathName(filepath, fhirVersion);
       // Temporarily unhide the file input element.
       let fileInput = $('#fileAnchor');
-      let testFile = require('path').join(...pathParts);
       browser.executeScript("$('#fileAnchor')[0].className = ''");
       testUtil.sendKeys(fileInput, testFile);
       // Re-hide the file input element
