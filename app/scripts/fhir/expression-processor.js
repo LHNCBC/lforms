@@ -533,31 +533,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }
 
       if (changed) {
-        let oldAnswers = item.answers;
         item.answers = newList;
         this._lfData._updateAutocompOptions(item, true);
-        // The SDC specification says that implementations "SHOULD" preserve the
-        // field value (marking it invalid if that is the case in the new list).
-        // That is inconsistent with the behavior of LForms in other situations,
-        // e.g. data control, where we wipe the field value when the list is
-        // set.  So, we need to decide whether to switch to that behavior.
-        // For now, just wipe the field -- unless the original list was not set
-        // (e.g. when a QuestionnaireResponse is being rendered and
-        // answerExpression has just run, but there is saved data).
-        if (oldAnswers && oldAnswers.length > 0)
-          item.value = null;
-        else {
-          // As long as the old value is in the list, keep it.
-          let inList = false;
-          for (let a of item.answers) {
-            if (this.lfData._areTwoAnswersSame(a, item.value)) {
-              inList = true;
-              break;
-            }
-          }
-          if (!inList)
-            item.value = null;
-        }
       }
       return changed;
     },

@@ -276,7 +276,6 @@ var util = {
    *  for the value 'true'.
    */
   showQQR: function(q, qr, elemID) {
-console.log("elemID = "+elemID);
     return browser.executeScript(() => {
       var q2 = arguments[0];
       var qr2 = arguments[1];
@@ -285,9 +284,11 @@ console.log("elemID = "+elemID);
       var merged = LForms.Util.mergeFHIRDataIntoLForms(
         'QuestionnaireResponse', qr2, lfd, 'R4');
       console.log(JSON.stringify(merged));
+
       // Set a flag so we know when the render is done.
       var formElem = document.getElementById(elemID);
       formElem.setAttribute('lformsReady', 'false');
+      merged = new LForms.LFormsData(merged);
       merged.addAsyncChangeListener(function() {
         formElem.setAttribute('lformsReady', 'true');
       });

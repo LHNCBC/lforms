@@ -61,7 +61,7 @@ describe('answerExpression', function() {
     });
   });
 
-  fit('should not clear a list field if the list field had no list and the value is in the new list', function () {
+  it('should not clear a list field if the list field had no list and the value is in the new list', function () {
     // This is the case when a QuestionnaireResponse is loaded in that has a
     // value in a field whose list comes from an answerExpression.  Initially,
     // there is no list, but when the answerExpression runs, a list is obtained,
@@ -91,19 +91,19 @@ describe('answerExpression', function() {
       browser.executeScript('LForms.Util.addFormToPage({}, "formContainer")');
       browser.executeScript('LForms.Util.addFormToPage({}, "formContainer2")');
       var q = JSON.parse(tp.getTestData('rxterms.R4.json', 'R4'));
-      return testUtil.showQQR(q, qr, 'formContainer');
-    }).then(()=>{
+      testUtil.showQQR(q, qr, 'formContainer');
+
       // Wait for the strength field to get its list again.
       browser.wait(testUtil.fieldHasList(strengthField));
       // Make sure it and the rxcui field have not lost their value.
       browser.wait(()=>strengthField.getAttribute('value').then((v)=>v != ''), 5000);
       browser.wait(()=>rxcuiField.getAttribute('value').then((v)=>v != ''), 5000);
+
       // Now confirm that if the value in the strength field does not match its
       // list, it gets cleared.
-console.log(JSON.stringify(qr, null, 2));
-      qr.item[1].answer[0].valueCoding = {code: 'I am not in the list'};
-      return testUtil.showQQR(q, qr, 'formContainer');
-    }).then(()=>{
+      qr.item[0].item[1].answer[0].valueCoding = {code: 'I am not in the list'};
+      testUtil.showQQR(q, qr, 'formContainer');
+
       // Wait for the strength field to get its list again.
       browser.wait(testUtil.fieldHasList(strengthField));
       // Wait for LForms to finish rendering the form

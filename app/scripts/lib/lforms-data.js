@@ -3026,6 +3026,15 @@
           // there is just one item in the list, use that as the default value.
           if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
             options.defaultValue = options.listItems[0];
+          // If this is a saved form with user data, and this field has not yet
+          // had its list set (e.g. because its list comes from
+          // answerExpression) and there is already a value in the field, set
+          // that as the default so that when the list is set, the value is
+          // restored. (autocomplete-lhc wipes the field when the list is
+          // changed.)
+          else if (this.hasSavedData && item.value && !item._hasHadNonEmptyList)
+            options.defaultValue = item.value.code? {code: item.value.code} : item.value.text;
+          item._hasHadNonEmptyList = item._hasHadNonEmptyList || item._modifiedAnswers.length;
         }
         item._autocompOptions = options;
       } // end of list
