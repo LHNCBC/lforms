@@ -21,7 +21,7 @@ See [LICENSE.md](LICENSE.md).
 
 ## Customizing and Contributing
 If you wish to revise this package, the following steps will allow you to make
-changs and test them:
+changes and test them:
 
 * Install Node.js (version 10 is what we are currently using, but it should work with later versions)
 * Clone the lforms repository and cd to its directory
