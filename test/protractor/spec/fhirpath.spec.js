@@ -61,7 +61,7 @@ describe('answerExpression', function() {
     });
   });
 
-  it('should not clear a list field if the list field had no list and the value is in the new list', function () {
+  it('should not clear a list field if the list field has not been assigned a list before and the value is in the new list', function () {
     // This is the case when a QuestionnaireResponse is loaded in that has a
     // value in a field whose list comes from an answerExpression.  Initially,
     // there is no list, but when the answerExpression runs, a list is obtained,
