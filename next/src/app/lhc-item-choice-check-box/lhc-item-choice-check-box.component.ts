@@ -1,0 +1,89 @@
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonUtilsService } from '../../lib/common-utils.service';
+
+@Component({
+  selector: 'lhc-item-choice-check-box',
+  templateUrl: './lhc-item-choice-check-box.component.html',
+  styleUrls: ['./lhc-item-choice-check-box.component.css'],
+  encapsulation: ViewEncapsulation.Emulated
+})
+export class LhcItemChoiceCheckBoxComponent implements OnInit {
+
+  @Input() item;
+
+  // internal data models
+  otherValue: string = null ;
+  checkboxModels: boolean[] = [];
+  otherCheckboxModel: boolean = null;
+
+  constructor(private commonUtils: CommonUtilsService) { }
+
+
+  /**
+   * Set initial status of the component
+   */
+  setInitialValue(): void {
+    // console.log('in setInitialValue')
+
+    if (this.item && this.item.value  && Array.isArray(this.item.value)
+    && this.item._modifiedAnswers && Array.isArray(this.item._modifiedAnswers)) {
+      let iLen = this.item._modifiedAnswers.length;
+      this.checkboxModels = new Array(iLen)
+
+      for(let j=0, jLen=this.item.value.length; j < jLen; j++ ) {
+        let value = this.item.value[j]
+        if (value._notOnList) {
+          this.otherCheckboxModel = true;
+          this.otherValue = value.text;
+        }
+        else {
+          for(let i=0; i < iLen; i++ ) {
+            let answer = this.item._modifiedAnswers[i];
+            if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
+              this.checkboxModels[i] = true;
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+
+  /**
+   * Initialize the component
+   */
+  ngOnInit(): void {
+    this.setInitialValue();
+
+  }
+
+
+  /**
+   * Invoked when the selection of checkbox changes
+   * @param value
+   */
+  onCheckboxModelChange(value: any): void {
+    console.log(value);
+    this.item.value = value;
+  }
+
+
+  /**
+   * Invoked when the value in the input field of 'other' changes
+   * @param value change event
+   */
+  onOtherValueChange(value: any) : void {
+    console.log(value);
+    if (this.otherCheckboxModel) {
+      this.item.value = this.item.value.map(answer => {
+        if (answer._notOnList) {
+          answer.text = this.otherValue;
+        }
+        return answer;
+      })
+    }
+    console.log(this.item.value)
+  }
+
+}

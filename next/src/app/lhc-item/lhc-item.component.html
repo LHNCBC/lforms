@@ -1,0 +1,21 @@
+<ng-container *ngIf="item">
+    <ng-container [ngSwitch]="item.dataType">
+      <ng-container *ngSwitchCase="'INT'">
+        <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
+      </ng-container>
+      <ng-container *ngSwitchCase="'REAL'">
+        <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
+      </ng-container>
+      <ng-container *ngSwitchCase="'QTY'">
+        <lhc-item-quantity [item]="item"></lhc-item-quantity>
+      </ng-container>
+      <ng-container *ngSwitchCase="'CWE'">
+        <lhc-item-choice [item]="item"></lhc-item-choice>
+      </ng-container>
+      <ng-container *ngSwitchCase="'CNE'">
+        <lhc-item-choice [item]="item"></lhc-item-choice>
+      </ng-container>
+
+    </ng-container>
+
+  </ng-container>

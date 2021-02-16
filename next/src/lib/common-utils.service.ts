@@ -1,0 +1,42 @@
+import { Injectable } from '@angular/core';
+
+import Utils from './lforms-common-utils.js';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CommonUtilsService {
+
+  constructor() { }
+
+  /**
+   * Check if two answers can be treated as same
+   * @param answer an answer item that could have part of the attributes set
+   * @param completeAnswer an answer in the answer list that usually has more attributes set
+   * @param item the lforms item that has the completeAnswer in the answer list
+   * @private
+   */
+  areTwoAnswersSame(answer: any, completeAnswer: any, item: any): boolean {
+    return Utils.areTwoAnswersSame(answer, completeAnswer, item);
+  }
+
+
+  /**
+   * Convert a string to a number
+   * @param value string value
+   * @param dataType the data type of the converted value. 'integer' or 'decimal'
+   */
+  str2num(value, dataType) {
+    let newValue: number=null;
+    if (dataType === "integer") {
+      let intValue = parseInt(value)
+      newValue = isNaN(intValue) ? null : intValue;
+    }
+    else if (dataType === "decimal") {
+      let floatValue = parseFloat(value);
+      newValue = isNaN(floatValue) ? null : floatValue;
+    }
+
+    return newValue;
+  }
+}

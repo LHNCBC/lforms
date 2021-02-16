@@ -1,0 +1,12 @@
+/* @import "~ng-zorro-antd/style/index.css";
+@import "~ng-zorro-antd/checkbox/style/index.css";
+@import "~ng-zorro-antd/grid/style/index.css"; */
+
+.lhc-answer-other-input {
+  height: 22px;
+}
+
+.ant-checkbox-group,
+.ant-checkbox-wrapper {
+  color: rgba(0,0,0,0.85);
+}

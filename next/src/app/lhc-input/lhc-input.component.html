@@ -1,0 +1,8 @@
+<ng-container *ngIf="item">
+  <input id="{{item._elementId}}"
+         [readonly]="item._readOnly"
+         [(ngModel)]="item.value"
+         placeholder="{{item._toolTip}}"
+         >
+</ng-container>
+

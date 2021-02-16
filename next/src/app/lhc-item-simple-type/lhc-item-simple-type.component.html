@@ -1,0 +1,14 @@
+<ng-container *ngIf="item && isSimpleType">
+  <lhc-input [item]="item"></lhc-input>
+  <!-- single unit -->
+  <ng-container *ngIf="hasSingleUnit">
+    <input
+      class="units"
+      type="text"
+      id="{{unitElementId}}"
+      value="{{item.unit.name}}"
+      aria-labelledby="th_Units"
+      readonly
+    >
+  </ng-container>
+</ng-container>

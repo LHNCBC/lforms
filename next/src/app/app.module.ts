@@ -1,0 +1,76 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule, Injector,  CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import  { createCustomElement } from '@angular/elements';
+
+import { LhcItemChoiceComponent } from './lhc-item-choice/lhc-item-choice.component';
+import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box/lhc-item-choice-check-box.component';
+import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button/lhc-item-choice-radio-button.component';
+import { FormsModule } from "@angular/forms";
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { en_US } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+
+//import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
+
+import { CommonUtilsService } from '../lib/common-utils.service';
+import { LhcItemChoiceAutocompleteComponent } from './lhc-item-choice-autocomplete/lhc-item-choice-autocomplete.component';
+import { LhcItemComponent } from './lhc-item/lhc-item.component';
+import { LhcUnitComponent } from './lhc-unit/lhc-unit.component';
+import { LhcInputComponent } from './lhc-input/lhc-input.component';
+import { LhcItemSimpleTypeComponent } from './lhc-item-simple-type/lhc-item-simple-type.component';
+import { LhcItemQuantityComponent } from './lhc-item-quantity/lhc-item-quantity.component';
+import { LhcAutocompleteComponent } from './common/lhc-autocomplete/lhc-autocomplete.component';
+
+registerLocaleData(en);
+
+@NgModule({
+  declarations: [
+    LhcItemChoiceComponent,
+    LhcItemChoiceCheckBoxComponent,
+    LhcItemChoiceRadioButtonComponent,
+    LhcItemChoiceAutocompleteComponent,
+    LhcItemComponent,
+    LhcUnitComponent,
+    LhcItemSimpleTypeComponent,
+    LhcInputComponent,
+    LhcItemQuantityComponent,
+    LhcAutocompleteComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    NzRadioModule,
+    NzCheckboxModule,
+    NzDatePickerModule,
+    NzGridModule
+  ],
+  providers: [{ provide: NZ_I18N, useValue: en_US }, CommonUtilsService],
+  bootstrap: [],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+    // NO_ERRORS_SCHEMA
+  ],
+})
+
+export class AppModule {
+  constructor(private injector: Injector) {
+
+    //customElements.define('wc-lhc-item-choice', createCustomElement(LhcItemChoiceComponent,
+    //  { injector: injector, strategyFactory: new ElementZoneStrategyFactory(LhcItemChoiceComponent, injector) }));
+
+    customElements.define('wc-lhc-item', createCustomElement(LhcItemComponent, { injector: this.injector }));
+  }
+  ngDoBootstrap() {}
+}
+

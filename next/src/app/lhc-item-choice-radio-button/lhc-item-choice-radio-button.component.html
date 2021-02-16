@@ -1,0 +1,23 @@
+
+<div *ngIf="item" >
+  <nz-radio-group [(ngModel)]="radioValue" (ngModelChange)="onRadioModelChange($event)"
+  [nzDisabled]="item._readOnly" nz-row class="lhc-radio-group">
+      <label *ngFor="let answer of item._modifiedAnswers; index as i" class="lhc-answer" nz-radio
+        [nzValue]="answer" [(ngModel)]="radioModels[i]" [id]="item._elementId + answer.code" nz-col
+        [nzSpan]="item._choiceOrientation === 'vertical' ? '24' : '8'">
+        {{answer._displayText}}
+      </label>
+
+      <label *ngIf="item.dataType=== 'CWE'" nz-radio [nzValue]="{'text': otherValue, '_notOnList': true}"
+      [(ngModel)]="otherRadioModel" [id]="item._elementId + '_other'" nz-col
+      [nzSpan]="item._choiceOrientation === 'vertical' ? '24' : '8'" class="lhc-answer">Other
+        <input type="text" [(ngModel)]="otherValue" class="lhc-answer-other-input"
+        [id]="item._elementId + '_otherValue'" nz-input
+        *ngIf="radioValue && radioValue._notOnList" (keyup)="onOtherValueChange($event)"/>
+      </label>
+
+  </nz-radio-group>
+
+</div>
+
+
