@@ -281,8 +281,6 @@ var util = {
       var lfd = LForms.Util.convertFHIRQuestionnaireToLForms(q2, 'R4');
       var merged = LForms.Util.mergeFHIRDataIntoLForms(
         'QuestionnaireResponse', qr2, lfd, 'R4');
-console.log(JSON.stringify(qr2));
-console.log(JSON.stringify(merged));
 
       // Set a flag so we know when the render is done.
       var formElem = document.getElementById(elemID);

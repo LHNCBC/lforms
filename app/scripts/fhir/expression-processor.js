@@ -137,9 +137,6 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         self._currentRunPromise = undefined;
         if (self._pendingRun)
           return self.runCalculations(false); // will set self._currentRunPromise again
-        // Set the flag that marks lfData as having run its expressions at least
-        // once.
-        //lfData._firstExpressionRunComplete = true; // first, and or more
       },
       (failureReason) => {
         console.log("Run of expressions failed; reason follows");

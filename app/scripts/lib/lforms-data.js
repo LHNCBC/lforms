@@ -3028,13 +3028,7 @@
           // there is just one item in the list, use that as the default value.
           if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
             options.defaultValue = options.listItems[0];
-          item._hasHadNonEmptyList = item._hasHadNonEmptyList || item._modifiedAnswers.length;
         }
-        // See note in field-answers.html for the purpose of showListField.
-        item._hideListField = item._hasListExpr && !this._firstExpressionRunComplete;
-        item._showListField = item._hasHadNonEmptyList || !item.value ||
-          (item._modifiedAnswers && item._modifiedAnswers.length) ||
-          item.externallyDefined || item.answerValueSet;
         item._autocompOptions = options;
       } // end of list
     },

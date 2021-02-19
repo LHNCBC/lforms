@@ -2,6 +2,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('field-answers.html',
+    "<!-- Do not create a list that does not exist yet (e.g. one based on an\n" +
+    "     Expression that has not yet been evalulated). Once the list is created,\n" +
+    "     autocomplete-lhc will erase the model data if the list is changed.\n" +
+    "     We do show the empty list if a list did exist and now does not. -->\n" +
     "<div class=\"lf-field-answers\" ng-if=\"lfData._firstExpressionRunComplete || !item._hasListExpr\"\n" +
     "  ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
@@ -57,10 +61,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" +
     "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" +
-    "    <!-- Do not create a list that does not exist yet (e.g. one based on an\n" +
-    "         Expression that has not yet been evalulated). Once the list is created,\n" +
-    "         autocomplete-lhc will erase the model data if the list is changed.\n" +
-    "         We do show the empty list if a list did exist and now does not. -->\n" +
     "    <input name=\"{{item._text +'_'+ $id}}\" type=\"text\"\n" +
     "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "           ng-disabled=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +

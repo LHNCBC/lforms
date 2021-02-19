@@ -26154,9 +26154,6 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         console.log("Ran expressions in " + (new Date() - self._runStart) + " ms");
         self._currentRunPromise = undefined;
         if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
-        // Set the flag that marks lfData as having run its expressions at least
-        // once.
-        //lfData._firstExpressionRunComplete = true; // first, and or more
       }, function (failureReason) {
         console.log("Run of expressions failed; reason follows");
         console.log(failureReason);

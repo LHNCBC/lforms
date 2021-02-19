@@ -4,7 +4,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [28.1.2] 2021-02-18
 ### Fixed
-- Processing of FHIR expressions for fields with multi-select lists.
+- Processing of FHIR expressions for fields with multi-select lists, and
+  for fields with radio buttons.
 
 ## [28.1.1] 2021-01-13
 ### Fixed

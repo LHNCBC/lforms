@@ -61,7 +61,7 @@ describe('answerExpression', function() {
     });
   });
 
-  fit('should not clear a list field if the form has just loaded with saved data', function () {
+  it('should not clear a list field if the form has just loaded with saved data', function () {
     // This is the case when a QuestionnaireResponse is loaded in that has a
     // value in a field whose list comes from an answerExpression or a
     // cqf-expression.  Initially, there is no list, but when the expression
@@ -109,6 +109,7 @@ describe('answerExpression', function() {
       var qrOrig = JSON.parse(JSON.stringify(qr)); // a copy
       testUtil.showQQR(q, qr, 'formContainer');
       // Wait for the strength field to get its list again.
+      browser.wait(EC.presenceOf(strengthField));
       browser.wait(testUtil.fieldHasList(strengthField));
       checkSavedDataPresent();
 
