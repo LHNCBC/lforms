@@ -1,4 +1,5 @@
-<div class="lf-field-answers" ng-switch on="item.displayControl.answerLayout.type">
+<div class="lf-field-answers" ng-if="lfData._firstExpressionRunComplete || !item._hasListExpr"
+  ng-switch on="item.displayControl.answerLayout.type">
   <!--list style-->
   <div ng-switch-when="RADIO_CHECKBOX" class="lf-answer-type-list"
    role="radiogroup" aria-labeledby="label-{{ item._elementId }}"
@@ -52,6 +53,10 @@
 
   <!--COMBO_BOX style (default is 'COMBO_BOX')-->
   <div ng-switch-default class="lf-answer-type-combo">
+    <!-- Do not create a list that does not exist yet (e.g. one based on an
+         Expression that has not yet been evalulated). Once the list is created,
+         autocomplete-lhc will erase the model data if the list is changed.
+         We do show the empty list if a list did exist and now does not. -->
     <input name="{{item._text +'_'+ $id}}" type="text"
            ng-model="item.value" autocomplete-lhc="item._autocompOptions"
            ng-disabled="item._readOnly" placeholder="{{item._toolTip}}"
@@ -59,3 +64,4 @@
            ng-focus="setActiveRow(item)" ng-blur="activeRowOnBlur(item)">
   </div>
 </div>
+<div ng-if="!lfData._firstExpressionRunComplete && item._hasListExpr">Waiting for list data</div>

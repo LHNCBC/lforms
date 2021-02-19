@@ -336,7 +336,7 @@
 
     /**
      *  Loads FHIR resources necessary to show the form.  These are loaded
-     *  asynchronously.  When the asynchous requests have completed, if
+     *  asynchronously.  When the asynchronous requests have completed, if
      *  "prepoluate" is set to true, the form will be partially filled in with
      *  values from the resources as extensions indicate (e.g.
      *  observationLinkPeriod and initialExpression).
@@ -362,7 +362,7 @@
         pendingPromises.push(this._requestLinkedObs());
 
       return Promise.all(pendingPromises).then(function() {
-        lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
+        lfData._notifyAsyncChangeListeners();
       });
     },
 
@@ -1130,6 +1130,8 @@
               this._fhir.SDC.hasResponsiveExpression(item);
             this._hasInitialExpr = this._hasInitialExpr ||
               this._fhir.SDC.hasInitialExpression(item);
+            item._hasListExpr =
+              this._fhir.SDC.hasListExpression(item);
           }
         }
 
@@ -3026,16 +3028,13 @@
           // there is just one item in the list, use that as the default value.
           if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
             options.defaultValue = options.listItems[0];
-          // If this is a saved form with user data, and this field has not yet
-          // had its list set (e.g. because its list comes from
-          // answerExpression) and there is already a value in the field, set
-          // that as the default so that when the list is set, the value is
-          // restored. (autocomplete-lhc wipes the field when the list is
-          // changed.)
-          else if (this.hasSavedData && item.value && !item._hasHadNonEmptyList)
-            options.defaultValue = item.value.code? {code: item.value.code} : item.value.text;
           item._hasHadNonEmptyList = item._hasHadNonEmptyList || item._modifiedAnswers.length;
         }
+        // See note in field-answers.html for the purpose of showListField.
+        item._hideListField = item._hasListExpr && !this._firstExpressionRunComplete;
+        item._showListField = item._hasHadNonEmptyList || !item.value ||
+          (item._modifiedAnswers && item._modifiedAnswers.length) ||
+          item.externallyDefined || item.answerValueSet;
         item._autocompOptions = options;
       } // end of list
     },

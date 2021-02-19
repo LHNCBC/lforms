@@ -271,9 +271,7 @@ var util = {
    * @param qr the QuestionnaireResponse
    * @param elemID the ID of an element into which the form should be shown.
    * @return a promise that resolves when the browser has been instructed to
-   *  render the form.  To actually know when it has finsihed rendering and
-   *  loading resources, check the lformsReady attribute on the elemID element
-   *  for the value 'true'.
+   *  render the form.
    */
   showQQR: function(q, qr, elemID) {
     return browser.executeScript(() => {
@@ -283,18 +281,16 @@ var util = {
       var lfd = LForms.Util.convertFHIRQuestionnaireToLForms(q2, 'R4');
       var merged = LForms.Util.mergeFHIRDataIntoLForms(
         'QuestionnaireResponse', qr2, lfd, 'R4');
-      console.log(JSON.stringify(merged));
+console.log(JSON.stringify(qr2));
+console.log(JSON.stringify(merged));
 
       // Set a flag so we know when the render is done.
       var formElem = document.getElementById(elemID);
-      formElem.setAttribute('lformsReady', 'false');
       merged = new LForms.LFormsData(merged);
-      merged.addAsyncChangeListener(function() {
-        formElem.setAttribute('lformsReady', 'true');
-      });
       LForms.Util.addFormToPage(merged, elemID);
     }, q, qr, elemID);
-  }
+  },
+
 };
 
 module.exports = util;

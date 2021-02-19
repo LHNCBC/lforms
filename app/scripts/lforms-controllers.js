@@ -595,15 +595,20 @@ angular.module('lformsWidget')
                       return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
                     });
                   }, function() {
-                    if (lfData)
-                      lfData._expressionProcessor.runCalculations(false).then(
-                        () => $scope.$apply()); // pick up asynchronous model changes
-                      ;
+                    if (lfData) {
+                      lfData._expressionProcessor.runCalculations(false).then(()=>{
+                        // We might or might not be in a digest cycle.
+                        $scope.$evalAsync(); // will trigger a digest cycle
+                      }); // pick up asynchronous model changes
+                    }
                   });
                 }
               }
               if (!lfData._controllerInit && (lfData._hasResponsiveExpr || lfData._hasInitialExpr)) {
-                lfData._expressionProcessor.runCalculations(true);
+                lfData._expressionProcessor.runCalculations(true).then(() => {
+                  // We might or might not be in a digest cycle.
+                  $scope.$evalAsync(()=>lfData._firstExpressionRunComplete = true);
+                });
               }
               // Angular calls this twice for the same lfData.  Set a flag.
               // Note:  For some reason the watches still need to be set up both times.

@@ -24542,6 +24542,22 @@ function addCommonSDCFns(ns) {
     return ext ? !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
   };
   /**
+   *  Returns true if the given item has an expression
+   *  which sets the list.
+   * @param itemOrLFData the item to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+
+
+  self.hasListExpression = function (item) {
+    var ext = item._fhirExt; // This should one day include a check for cqf-expression, when we add
+    // support for it
+
+    return ext ? !!ext[self.fhirExtAnswerExp] : false;
+  };
+  /**
    *  Returns true if the given item (or LFormsData) has an expression
    *  which needs to be evaluated only once, when form is first rendered.
    * @param itemOrLFData the item or LFormsData to be checked.  It is assumed
@@ -26072,7 +26088,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
     },
 
     /**
-     *  Waits any pending queries and runs the next step IF the pending queries
+     *  Waits for any pending queries and runs the next step IF the pending queries
      *  indicate something has changed, or if runNextStep is true.
      * @param runNextStep if set to true, nextStep will be run even if the
      *  pending queries do not indicate a change.
@@ -26138,6 +26154,9 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         console.log("Ran expressions in " + (new Date() - self._runStart) + " ms");
         self._currentRunPromise = undefined;
         if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
+        // Set the flag that marks lfData as having run its expressions at least
+        // once.
+        //lfData._firstExpressionRunComplete = true; // first, and or more
       }, function (failureReason) {
         console.log("Run of expressions failed; reason follows");
         console.log(failureReason);
@@ -26461,7 +26480,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
           //
           // Also, for a repeating question, there will be multiple answers on an
           // qrItem.item, but repeats of the item in lfItem.items with one answer
-          // each.
+          // each, unless answerCardinality is '*' (list items), in which case
+          // there can be multiple answers per lforms item.
           // LForms does not currently support items that contain both answers
           // and child items, but I am trying to accomodate that here for the
           // future.
@@ -26490,17 +26510,18 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
                 // there are answers on the qrIthItem item
                 var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
 
-                for (var a = 0; a < numAnswers; ++a, ++i) {
+                for (var a = 0; a < numAnswers; ++i) {
                   if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+                  var _lfIthItem = lfItems[i];
 
-                  var _newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+                  var _newlyAdded = this._addToIDtoQRItemMap(_lfIthItem, qrIthItem, map);
 
-                  if (_newlyAdded === 0) {
-                    // lfItems[i] was blank; try next lfItem
-                    --a;
-                  } else {
-                    added += _newlyAdded;
+                  if (_newlyAdded != 0) {
+                    // lfItems[i] was not blank
+                    if (Array.isArray(_lfIthItem.value)) a += _lfIthItem.value.length;else a += 1;
                   }
+
+                  added += _newlyAdded;
                 }
               }
             }
@@ -26511,7 +26532,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
           if (!qrItem) {
             // if there is data in lfItem, there should be a qrItem
-            throw new Error('Logic error in _addToIDtoQRItemMap');
+            throw new Error('Logic error in _addToIDtoQRItemMap; missing qrItem');
           } else {
             map[lfItem._elementId] = qrItem;
             added += 1;
@@ -26574,6 +26595,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         item.answers = newList;
 
         this._lfData._updateAutocompOptions(item, true);
+
+        this._lfData._resetItemValueWithModifiedAnswers(item);
       }
 
       return changed;

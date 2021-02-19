@@ -542,6 +542,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (changed) {
         item.answers = newList;
         this._lfData._updateAutocompOptions(item, true);
+        this._lfData._resetItemValueWithModifiedAnswers(item);
       }
       return changed;
     },
