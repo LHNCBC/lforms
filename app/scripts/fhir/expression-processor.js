@@ -73,7 +73,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
 
     /**
-     *  Waits any pending queries and runs the next step IF the pending queries
+     *  Waits for any pending queries and runs the next step IF the pending queries
      *  indicate something has changed, or if runNextStep is true.
      * @param runNextStep if set to true, nextStep will be run even if the
      *  pending queries do not indicate a change.
@@ -137,6 +137,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         self._currentRunPromise = undefined;
         if (self._pendingRun)
           return self.runCalculations(false); // will set self._currentRunPromise again
+        // Set the flag that marks lfData as having run its expressions at least
+        // once.
+        //lfData._firstExpressionRunComplete = true; // first, and or more
       },
       (failureReason) => {
         console.log("Run of expressions failed; reason follows");
@@ -428,7 +431,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           //
           // Also, for a repeating question, there will be multiple answers on an
           // qrItem.item, but repeats of the item in lfItem.items with one answer
-          // each.
+          // each, unless answerCardinality is '*' (list items), in which case
+          // there can be multiple answers per lforms item.
+
           // LForms does not currently support items that contain both answers
           // and child items, but I am trying to accomodate that here for the
           // future.
@@ -453,16 +458,18 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
               }
               else { // there are answers on the qrIthItem item
                 var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
-                for (var a=0; a<numAnswers; ++a, ++i) {
+                for (var a=0; a<numAnswers; ++i) {
                   if (i >= numLFItems)
                     throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
-                  let newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
-                  if (newlyAdded === 0) { // lfItems[i] was blank; try next lfItem
-                    --a;
+                  let lfIthItem = lfItems[i];
+                  let newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
+                  if (newlyAdded != 0) { // lfItems[i] was not blank
+                    if (Array.isArray(lfIthItem.value))
+                      a += lfIthItem.value.length;
+                    else
+                      a += 1;
                   }
-                  else {
-                    added += newlyAdded;
-                  }
+                  added += newlyAdded;
                 }
               }
             }
@@ -472,7 +479,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         // this item has _elementId and has a value
         if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
           if (!qrItem) { // if there is data in lfItem, there should be a qrItem
-            throw new Error('Logic error in _addToIDtoQRItemMap');
+            throw new Error('Logic error in _addToIDtoQRItemMap; missing qrItem');
           }
           else {
             map[lfItem._elementId] = qrItem;

@@ -133,5 +133,29 @@ describe('ExpresssionProcessor', function () {
       exp._addToIDtoQRItemMap(lfData, qr, map);
       assert.deepEqual(map, {'/g2A/1': qr.item[0], '/g2A/q2/1/1': qr.item[0].item[0]});
     });
+
+
+    it('should handle repeated answers from a list', function() {
+      // Repeats on a list question are handled with just one item in LForms.
+      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
+        linkId: '/g1A', items: [{
+          linkId: '/g1A/q1',
+          questionCardinality: {"min": "1", "max": "1"},
+          answerCardinality: {"min": "0", "max": "*"},
+          value: ['a', 'b']
+        }]}
+      ]});
+      var qr = {item:[{
+        linkId: '/g1A', item: [{
+          linkId: '/g1A/q1',
+          answer: ['a', 'b']
+        }]
+      }]};
+      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
+      var map = {};
+      exp._addToIDtoQRItemMap(lfData, qr, map);
+      assert.deepEqual(map, {'/g1A/1': qr.item[0], '/g1A/q1/1/1': qr.item[0].item[0]});
+    });
   });
+
 });
