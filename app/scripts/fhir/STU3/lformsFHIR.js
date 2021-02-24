@@ -24544,7 +24544,7 @@ function addCommonSDCFns(ns) {
   /**
    *  Returns true if the given item has an expression
    *  which sets the list.
-   * @param itemOrLFData the item to be checked.  It is assumed
+   * @param item the item to be checked.  It is assumed
    *  that the relevant extensions will be in an _fhirExt hash where
    *  the key is the URI of the extension and the values are arrays of the FHIR
    *  extension structure.
