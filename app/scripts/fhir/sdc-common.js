@@ -167,6 +167,23 @@ function addCommonSDCFns(ns) {
       !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
   };
 
+
+  /**
+   *  Returns true if the given item has an expression
+   *  which sets the list.
+   * @param item the item to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+  self.hasListExpression = function(item) {
+    var ext = item._fhirExt;
+    // This should one day include a check for cqf-expression, when we add
+    // support for it
+    return ext ? !!(ext[self.fhirExtAnswerExp]) : false;
+  };
+
+
   /**
    *  Returns true if the given item (or LFormsData) has an expression
    *  which needs to be evaluated only once, when form is first rendered.

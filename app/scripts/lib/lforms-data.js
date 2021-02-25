@@ -336,7 +336,7 @@
 
     /**
      *  Loads FHIR resources necessary to show the form.  These are loaded
-     *  asynchronously.  When the asynchous requests have completed, if
+     *  asynchronously.  When the asynchronous requests have completed, if
      *  "prepoluate" is set to true, the form will be partially filled in with
      *  values from the resources as extensions indicate (e.g.
      *  observationLinkPeriod and initialExpression).
@@ -362,7 +362,7 @@
         pendingPromises.push(this._requestLinkedObs());
 
       return Promise.all(pendingPromises).then(function() {
-        lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
+        lfData._notifyAsyncChangeListeners();
       });
     },
 
@@ -1130,6 +1130,8 @@
               this._fhir.SDC.hasResponsiveExpression(item);
             this._hasInitialExpr = this._hasInitialExpr ||
               this._fhir.SDC.hasInitialExpression(item);
+            item._hasListExpr =
+              this._fhir.SDC.hasListExpression(item);
           }
         }
 

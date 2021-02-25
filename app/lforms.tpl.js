@@ -2,7 +2,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('field-answers.html',
-    "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
+    "<!-- Do not create a list that does not exist yet (e.g. one based on an\n" +
+    "     Expression that has not yet been evalulated). Once the list is created,\n" +
+    "     autocomplete-lhc will erase the model data if the list is changed.\n" +
+    "     We do show the empty list if a list did exist and now does not. -->\n" +
+    "<div class=\"lf-field-answers\" ng-if=\"lfData._firstExpressionRunComplete || !item._hasListExpr\"\n" +
+    "  ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\"\n" +
     "   role=\"radiogroup\" aria-labeledby=\"label-{{ item._elementId }}\"\n" +
@@ -62,7 +67,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "           id=\"{{item._elementId}}\"\n" +
     "           ng-focus=\"setActiveRow(item)\" ng-blur=\"activeRowOnBlur(item)\">\n" +
     "  </div>\n" +
-    "</div>\n"
+    "</div>\n" +
+    "<div ng-if=\"!lfData._firstExpressionRunComplete && item._hasListExpr\">Waiting for list data</div>\n"
   );
 
 
@@ -506,11 +512,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "      <td ng-repeat=\"cell in row.cells\"\n" +
     "          class=\"hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}\"\n" +
-    "          ng-switch on=\"cell.dataType\">\n" +
+    "          ng-switch on=\"(!lfData._firstExpressionRunComplete && cell._hasListExpr) ? 'Loading List' : cell.dataType\">\n" +
     "        <ng-form name=\"innerForm2\">\n" +
     "          <div class=\"lf-form-item-data tooltipContainer\">\n" +
     "            <div class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></div>\n" +
     "            <span ng-switch-when=\"\" > </span>\n" +
+    "            <span ng-switch-when=\"Loading List\">Loading list data...</span>\n" +
     "            <input ng-switch-when=\"CNE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
     "                   ng-model=\"cell.value\"\n" +
     "                   autocomplete-lhc=\"cell._autocompOptions\"\n" +

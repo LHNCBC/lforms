@@ -73,7 +73,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
 
     /**
-     *  Waits any pending queries and runs the next step IF the pending queries
+     *  Waits for any pending queries and runs the next step IF the pending queries
      *  indicate something has changed, or if runNextStep is true.
      * @param runNextStep if set to true, nextStep will be run even if the
      *  pending queries do not indicate a change.
@@ -228,6 +228,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                   // If the queryURI is a relative URL, then if there is a FHIR
                   // context (set via LForms.Util.setFHIRContext), use that to send
                   // the query; otherwise just use fetch.
+                  // Also, set the format to JSON.
+                  queryURI += (queryURI.indexOf('?')>0 ? '&' : '?')+'_format=json';
                   let fetchPromise;
                   if (!/^https?:/.test(queryURI) && LForms.fhirContext)
                     fetchPromise = LForms.fhirContext.request(queryURI);
@@ -426,7 +428,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           //
           // Also, for a repeating question, there will be multiple answers on an
           // qrItem.item, but repeats of the item in lfItem.items with one answer
-          // each.
+          // each, unless answerCardinality is '*' (list items), in which case
+          // there can be multiple answers per lforms item.
+
           // LForms does not currently support items that contain both answers
           // and child items, but I am trying to accomodate that here for the
           // future.
@@ -451,16 +455,18 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
               }
               else { // there are answers on the qrIthItem item
                 var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
-                for (var a=0; a<numAnswers; ++a, ++i) {
+                for (var a=0; a<numAnswers; ++i) {
                   if (i >= numLFItems)
                     throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
-                  let newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
-                  if (newlyAdded === 0) { // lfItems[i] was blank; try next lfItem
-                    --a;
+                  let lfIthItem = lfItems[i];
+                  let newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
+                  if (newlyAdded != 0) { // lfItems[i] was not blank
+                    if (Array.isArray(lfIthItem.value))
+                      a += lfIthItem.value.length;
+                    else
+                      a += 1;
                   }
-                  else {
-                    added += newlyAdded;
-                  }
+                  added += newlyAdded;
                 }
               }
             }
@@ -470,7 +476,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         // this item has _elementId and has a value
         if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
           if (!qrItem) { // if there is data in lfItem, there should be a qrItem
-            throw new Error('Logic error in _addToIDtoQRItemMap');
+            throw new Error('Logic error in _addToIDtoQRItemMap; missing qrItem');
           }
           else {
             map[lfItem._elementId] = qrItem;
@@ -533,13 +539,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (changed) {
         item.answers = newList;
         this._lfData._updateAutocompOptions(item, true);
-        // The SDC specification says that implementations "SHOULD" preserve the
-        // field value (marking it invalid if that is the case in the new list).
-        // That is inconsistent with the behavior of LForms in other situations,
-        // e.g. data control, where we wipe the field value when the list is
-        // set.  So, we need to decide whether to switch to that behavior.
-        // For now, just wipe the field.
-        item.value = null;
+        this._lfData._resetItemValueWithModifiedAnswers(item);
       }
       return changed;
     },
