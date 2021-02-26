@@ -1,3 +1,5 @@
+import {requestLinkedObs} from './obs-prepop.mjs';
+
 /**
  *  Defines SDC functions (used by both import and export, or for other
  *  SDC-related purposes) that are the same across the different FHIR versions.
@@ -8,6 +10,7 @@ function addCommonSDCFns(ns) {
 "use strict";
 
   var self = ns;
+  self.requestLinkedObs = requestLinkedObs;
 
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   self._lformsTypesToFHIRTypes = {
