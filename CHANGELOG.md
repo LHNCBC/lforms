@@ -6,6 +6,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Processing of FHIR expressions for fields with multi-select lists, and
   for fields with radio buttons.
+- Fixed a bug in FHIR expression processing which caused issues if more than one
+  form was added to the page.
 
 ## [28.1.2] 2021-01-21
 ### Fixed

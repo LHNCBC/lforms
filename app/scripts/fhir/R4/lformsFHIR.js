@@ -26122,6 +26122,15 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
    */
 
   ExpressionProcessor = function ExpressionProcessor(lfData) {
+    // A cache of x-fhir-query URIs to results
+    this._queryCache = {}; // An array of pending x-fhir-query results
+
+    this._pendingQueries = []; // Keeps track of whether a request to run the calculations has come in
+    // while we were already busy.
+
+    this._pendingRun = false; // The promise returned by runCalculations, when a run is active.
+
+    this._currentRunPromise = undefined;
     this._lfData = lfData;
     if (!lfData._fhir) throw new Error('lfData._fhir should be set');
     this._fhir = lfData._fhir;
@@ -26135,16 +26144,6 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
   };
 
   ExpressionProcessor.prototype = {
-    // A cache of x-fhir-query URIs to results
-    _queryCache: {},
-    // An array of pending x-fhir-query results
-    _pendingQueries: [],
-    // Keeps track of whether a request to run the calculations has come in
-    // while we were already busy.
-    _pendingRun: false,
-    // The promise returned by runCalculations, when a run is active.
-    _currentRunPromise: undefined,
-
     /**
      *   Runs the FHIR expressions in the form.
      *  @param includeInitialExpr whether to include the "initialExpression"
