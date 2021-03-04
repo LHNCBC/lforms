@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [28.1.4] 2021-03-03
 ### Fixed
-- A FHIR Observation-based prepoluation issue:  the Observations were not
+- A FHIR Observation-based prepoluation issue: the Observations were not
   being filtered by status.
 - A problem in FHIR expression processing which caused issues if more than one
   form was added to the page.
