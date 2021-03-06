@@ -97,9 +97,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(91);
 /* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(92);
 /* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(93);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(94);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(95);
-/* harmony import */ var _expression_processor_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(97);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(95);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(96);
+/* harmony import */ var _expression_processor_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(98);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -24344,11 +24344,13 @@ function addSDCImportFns(ns) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _obs_prepop_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(94);
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 /**
  *  Defines SDC functions (used by both import and export, or for other
@@ -24356,10 +24358,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  *  The function takes SDC namespace object defined in the sdc export code,
  *  and adds additional functions to it.
  */
+
 function addCommonSDCFns(ns) {
   "use strict";
 
-  var self = ns; // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
+  var self = ns;
+  self.requestLinkedObs = _obs_prepop_mjs__WEBPACK_IMPORTED_MODULE_0__["requestLinkedObs"]; // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
 
   self._lformsTypesToFHIRTypes = {
     "SECTION": 'group',
@@ -24690,6 +24694,121 @@ function addCommonSDCFns(ns) {
 
 /***/ }),
 /* 94 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "requestLinkedObs", function() { return requestLinkedObs; });
+// A module for Observation-based pre-population.
+
+/**
+ *  Starts the (likely asynchronous) requests to retrieve linked Observation
+ *  resources for pre-population.  When the resources have been retrieved,
+ *  prepoluation will be performed.
+ * @param lfData the LFormsData object for the form being prepopulated.
+ * @return a promise resolving after the resources have been retrieved and
+ *  any prepopulation has been performed.
+ */
+function requestLinkedObs(lfData) {
+  if (LForms.fhirContext && lfData._fhir) {
+    // We will need to know what version of FHIR the server is using.  Make
+    // sure that is available before continuing.
+    if (!LForms._serverFHIRReleaseID) {
+      // Go fetch the server's FHIR version first before continuing
+      return new Promise(function (resolve, reject) {
+        LForms.Util.getServerFHIRReleaseID(function (relID) {
+          if (!relID) reject("Unable to obtain the server's FHIR version");else resolve(requestLinkedObs(lfData));
+        });
+      });
+    } else {
+      var pendingPromises = [];
+      LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
+      var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+      var obsLinkURI = lfData._fhir.SDC.fhirExtObsLinkPeriod;
+
+      var _loop = function _loop() {
+        var item = lfData.itemList[i];
+        var obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
+
+        if (obsExt) {
+          // an array of at least 1 if present
+          duration = obsExt[0].valueDuration; // optional
+
+          fhirClient = LForms.fhirContext; // Get a comma separated list of codes
+
+          var codeQuery = item.codeList.map(function (code) {
+            var codeSystem = code.system === 'LOINC' ? serverFHIR.LOINC_URI : code.system;
+            return [codeSystem, code.code].join('|');
+          }).join(',');
+          var queryParams = {
+            code: codeQuery,
+            _sort: '-date',
+            status: 'final,amended,corrected',
+            _count: 5 // only need one, but we need to filter out focus=true below
+
+          }; // Temporarily disabling the addition of the focus search
+          // parameter, because of support issues.  Instead, for now, we
+          // will check the focus parameter when the Observation is
+          // returned.  Later, we might query the server to find out whether
+          // :missing is supported.
+          //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+          //  queryParams.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
+          // Constrain the date range
+
+          if (duration && duration.value && duration.code) {
+            // Convert value to milliseconds
+            result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+
+            if (result.status === 'succeeded') {
+              date = new Date(new Date() - result.toVal);
+              queryParams.date = 'gt' + date.toISOString();
+            }
+          }
+
+          pendingPromises.push(fhirClient.patient.request(lfData._buildURL(['Observation'], queryParams)).then(function (successData) {
+            var bundle = successData;
+
+            if (bundle.entry) {
+              var foundObs;
+
+              for (var j = 0, jLen = bundle.entry.length; j < jLen && !foundObs; ++j) {
+                var obs = bundle.entry[j].resource;
+
+                if (!obs.focus) {
+                  // in case we couldn't use focus:missing above
+                  serverFHIR.SDC.importObsValue(item, obs);
+
+                  if (item.value) {
+                    // obs.value[x] could be missing
+                    foundObs = true;
+                    if (item.unit) lfData._setUnitDisplay(item.unit);
+                  }
+                }
+              }
+            }
+
+            return item.questionCode; // code is not needed, but useful for debugging
+          }));
+        }
+      };
+
+      for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
+        var duration;
+        var fhirClient;
+        var result;
+        var date;
+
+        _loop();
+      }
+
+      return Promise.all(pendingPromises);
+    }
+  }
+}
+;
+
+/***/ }),
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25902,13 +26021,13 @@ function addCommonSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(96);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(97);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -25944,7 +26063,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25973,7 +26092,7 @@ function processExtension(lfNode, fieldName, extNode) {
 });
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25990,7 +26109,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 // Processes FHIR Expression Extensions
 var ExpressionProcessor;
 
-var deepEqual = __webpack_require__(98); // faster than JSON.stringify
+var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
 
 (function () {
@@ -26003,6 +26122,15 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
    */
 
   ExpressionProcessor = function ExpressionProcessor(lfData) {
+    // A cache of x-fhir-query URIs to results
+    this._queryCache = {}; // An array of pending x-fhir-query results
+
+    this._pendingQueries = []; // Keeps track of whether a request to run the calculations has come in
+    // while we were already busy.
+
+    this._pendingRun = false; // The promise returned by runCalculations, when a run is active.
+
+    this._currentRunPromise = undefined;
     this._lfData = lfData;
     if (!lfData._fhir) throw new Error('lfData._fhir should be set');
     this._fhir = lfData._fhir;
@@ -26016,16 +26144,6 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
   };
 
   ExpressionProcessor.prototype = {
-    // A cache of x-fhir-query URIs to results
-    _queryCache: {},
-    // An array of pending x-fhir-query results
-    _pendingQueries: [],
-    // Keeps track of whether a request to run the calculations has come in
-    // while we were already busy.
-    _pendingRun: false,
-    // The promise returned by runCalculations, when a run is active.
-    _currentRunPromise: undefined,
-
     /**
      *   Runs the FHIR expressions in the form.
      *  @param includeInitialExpr whether to include the "initialExpression"
@@ -26586,7 +26704,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
 })();
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
