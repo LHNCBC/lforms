@@ -94,6 +94,7 @@
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:version && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')",
+    "debug-karma": "karma start karma.conf.js --browsers=Chrome --single-run=false",
     "start": "grunt serve"
   }
 }

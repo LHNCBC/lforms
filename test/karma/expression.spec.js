@@ -194,9 +194,11 @@ describe('ExpresssionProcessor', function () {
       it('should not update values if user has edited the field', function() {
         return testLFData._expressionProcessor.runCalculations(true).then(()=>{
           assert.equal(bmiItem.value, undefined);
-          bmiItem.value = 20; // edited
           weightItem.value = 70;
           heightItem.value = 80;
+          return testLFData._expressionProcessor.runCalculations(false);
+        }).then(()=>{
+          bmiItem.value = 20; // edited
           return testLFData._expressionProcessor.runCalculations(false);
         }).then(()=>{
           assert.equal(bmiItem.value, 20);
