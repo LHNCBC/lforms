@@ -158,7 +158,6 @@ describe('ExpresssionProcessor', function () {
     });
   });
 
-
   describe('for editable calculated fields', function() {
     let testQ, testLFData, bmiItem, weightItem, heightItem;
     before(function(done) {
@@ -234,6 +233,17 @@ describe('ExpresssionProcessor', function () {
           });
         });
       });
+    });
+  });
+
+  describe('_queryCache', function() {
+    it('should be unique for each ExpressionProcessor', function() {
+      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: []});
+      var exp1 = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
+      exp1._queryCache[1] = 2;
+      var exp2 = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
+      assert.equal(Object.keys(exp2._queryCache).length, 0);
+      assert.equal(Object.keys(exp1._queryCache).length, 1);
     });
   });
 });

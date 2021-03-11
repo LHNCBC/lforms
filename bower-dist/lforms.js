@@ -1665,7 +1665,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"28.1.3\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"28.1.4\"}");
 
 /***/ }),
 /* 15 */
@@ -5907,7 +5907,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       var pendingPromises = sdc.loadLaunchContext(this); // answerValueSet (for prefetched lists)
 
       pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
-      if (prepopulate) pendingPromises.push(this._requestLinkedObs());
+      if (prepopulate) pendingPromises.push(sdc.requestLinkedObs(this));
       return Promise.all(pendingPromises).then(function () {
         lfData._notifyAsyncChangeListeners();
       });
@@ -6012,108 +6012,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       if (noUnits) {
         this.templateOptions.hideUnits = true;
-      }
-    },
-
-    /**
-     *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-population.  When the resources have been retrieved,
-     *  prepoluation will be performed.
-     * @return a promise resolving after the resources have been retrieved and
-     *  any prepopulation has been performed.
-     */
-    _requestLinkedObs: function _requestLinkedObs() {
-      var _this = this;
-
-      if (LForms.fhirContext && this._fhir) {
-        // We will need to know what version of FHIR the server is using.  Make
-        // sure that is available before continuing.
-        var lfData = this;
-
-        if (!LForms._serverFHIRReleaseID) {
-          // Go fetch the server's FHIR version first before continuing
-          return new Promise(function (resolve, reject) {
-            LForms.Util.getServerFHIRReleaseID(function (relID) {
-              if (!relID) reject("Unable to obtain the server's FHIR version");else resolve(lfData._requestLinkedObs());
-            });
-          });
-        } else {
-          var pendingPromises = [];
-          LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
-          var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
-          var obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
-
-          var _loop = function _loop() {
-            var item = _this.itemList[i];
-            var obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
-
-            if (obsExt) {
-              // an array of at least 1 if present
-              duration = obsExt[0].valueDuration; // optional
-
-              fhirClient = LForms.fhirContext; // Get a comma separated list of codes
-
-              var codeQuery = item.codeList.map(function (code) {
-                var codeSystem = code.system === 'LOINC' ? serverFHIR.LOINC_URI : code.system;
-                return [codeSystem, code.code].join('|');
-              }).join(',');
-              var queryParams = {
-                code: codeQuery,
-                _sort: '-date',
-                _count: 5 // only need one, but we need to filter out focus=true below
-
-              }; // Temporarily disabling the addition of the focus search
-              // parameter, because of support issues.  Instead, for now, we
-              // will check the focus parameter when the Observation is
-              // returned.  Later, we might query the server to find out whether
-              // :missing is supported.
-              //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-              //  queryParams.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
-
-              if (duration && duration.value && duration.code) {
-                // Convert value to milliseconds
-                result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
-
-                if (result.status === 'succeeded') {
-                  date = new Date(new Date() - result.toVal);
-                  queryParams._lastUpdated = 'gt' + date.toISOString();
-                }
-              }
-
-              pendingPromises.push(fhirClient.patient.request(_this._buildURL(['Observation'], queryParams)).then(function (successData) {
-                var bundle = successData;
-
-                if (bundle.entry) {
-                  var foundObs;
-
-                  for (var j = 0, jLen = bundle.entry.length; j < jLen && !foundObs; ++j) {
-                    var obs = bundle.entry[j].resource;
-
-                    if (!obs.focus) {
-                      // in case we couldn't use focus:missing above
-                      serverFHIR.SDC.importObsValue(item, obs);
-                      if (item.value) foundObs = true;
-                      if (item.unit) lfData._setUnitDisplay(item.unit);
-                    }
-                  }
-                }
-
-                return item.questionCode; // code is not needed, but useful for debugging
-              }));
-            }
-          };
-
-          for (var i = 0, len = this.itemList.length; i < len; ++i) {
-            var duration;
-            var fhirClient;
-            var result;
-            var date;
-
-            _loop();
-          }
-
-          return Promise.all(pendingPromises);
-        }
       }
     },
 
@@ -7069,15 +6967,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @returns {Array<string> | null} list of errors or null if no errors
      */
     checkValidity: function checkValidity() {
-      var _this2 = this;
+      var _this = this;
 
       var errors = [];
       var itemListLength = this.itemList.length;
 
-      var _loop2 = function _loop2(i) {
-        var item = _this2.itemList[i];
+      var _loop = function _loop(i) {
+        var item = _this.itemList[i];
 
-        _this2._checkValidations(item);
+        _this._checkValidations(item);
 
         if (item._validationErrors !== undefined && item._validationErrors.length) {
           var errorDetails = item._validationErrors.map(function (e) {
@@ -7089,7 +6987,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       };
 
       for (var i = 0; i < itemListLength; i++) {
-        _loop2(i);
+        _loop(i);
       }
 
       if (errors.length) {
