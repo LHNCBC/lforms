@@ -26728,46 +26728,6 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
       return changed;
     }
-    /**
-     *  Gets called when the first run of the FHIR expressions has been
-     *  completed.
-     */
-
-    /*
-    _firstExpressionRunCompleted: function() {
-      if (!this._firstExpressionRunComplete) { // ensure this only runs once
-        this._firstExpressionRunComplete = true;
-        // If there is saved data, then for editable calculated fields if the
-        // calculated value did not match the field value we need to disable
-        // further calculations.  (For the first run, with saved data, we did not
-        // update the calculated fields' values.)
-        if (this._lfData.hasSavedData) {
-          const itemList = this._lfData.itemList;
-          const sdc = this._fhir.SDC;
-          for (var i=0, len=itemList.length, item; i<len; ++i) {
-            item = itemList[i];
-            if(item._fhirExt && item._fhirExt[sdc.fhirExtCalculatedExp]) {
-              if (item._readOnly) {
-                // In this case go ahead and set it.  The user will not have
-                // edited it, but it could have changed if the expression was time
-                // dependent (e.g. "now()").
-                item.value = item._calculatedValue; // might be different
-              }
-              else {
-                // Do not set the value, which might be user edited.  Per the SDC
-                // specification, we check for user edits based on whether the
-                // value has changed (even though it might be changed anyway if
-                // the expression was time-dependent).
-                if (!deepEqual(item._calculatedValue, item.value))
-                  item._userModifiedCalculatedValue = true;
-              }
-            }
-          }
-        }
-      }
-    }
-    */
-
   };
 })();
 
