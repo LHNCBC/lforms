@@ -84,6 +84,7 @@
     "webpack:r4": "webpack --env.r4Only=true",
     "webpack:main": "webpack --env.mainOnly=true",
     "test": "npm run update-webdriver && grunt test",
+    "test:e2e": "npm run update-webdriver && grunt test:e2e",
     "build:clean": "rm -rf dist bower-dist app/generated .tmp",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
     "build:version": "node -e 'require(\"fs\").writeFileSync(\"app/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",

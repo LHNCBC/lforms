@@ -2,7 +2,7 @@
      Expression that has not yet been evalulated). Once the list is created,
      autocomplete-lhc will erase the model data if the list is changed.
      We do show the empty list if a list did exist and now does not. -->
-<div class="lf-field-answers" ng-if="lfData._firstExpressionRunComplete || !item._hasListExpr"
+<div class="lf-field-answers" ng-if="lfData._expressionProcessor._firstExpressionRunComplete || !item._hasListExpr"
   ng-switch on="item.displayControl.answerLayout.type">
   <!--list style-->
   <div ng-switch-when="RADIO_CHECKBOX" class="lf-answer-type-list"
@@ -64,4 +64,4 @@
            ng-focus="setActiveRow(item)" ng-blur="activeRowOnBlur(item)">
   </div>
 </div>
-<div ng-if="!lfData._firstExpressionRunComplete && item._hasListExpr">Waiting for list data</div>
+<div ng-if="!lfData._expressionProcessor._firstExpressionRunComplete && item._hasListExpr">Waiting for list data</div>

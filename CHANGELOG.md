@@ -2,12 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [28.1.5] 2021-03-11
+### Fixed
+- FHIR calculatedExpressions on editable fields now stop calculating if the user
+  edits them.
+
 ## [28.1.4] 2021-03-03
 ### Fixed
 - A FHIR Observation-based prepoluation issue: the Observations were not
   being filtered by status.
 - A problem in FHIR expression processing which caused issues if more than one
   form was added to the page.
+- Sorting was corrected for FHIR Observation-based prepoluation.  It now takes
+  the latest by "date", not "_lastUpdated".
 
 ## [28.1.3] 2021-02-18
 ### Fixed
