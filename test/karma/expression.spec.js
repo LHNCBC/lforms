@@ -158,6 +158,84 @@ describe('ExpresssionProcessor', function () {
     });
   });
 
+  describe('for editable calculated fields', function() {
+    let testQ, testLFData, bmiItem, weightItem, heightItem;
+    before(function(done) {
+      var file = 'test/data/R4/weightHeightQuestionnaire.json';
+      $.get(file, function (parsedJson) {
+        testQ = parsedJson;
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+        testQ, 'R4');
+      testLFData = new LForms.LFormsData(lformsDef);
+      weightItem = testLFData.itemList[0];
+      heightItem = testLFData.itemList[2];
+      bmiItem = testLFData.itemList[3];
+      bmiItem._readOnly = false; // make it editable
+    });
+
+    describe('when there is no saved data', function() {
+      it('should update values if user has not edited the field', function() {
+        return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+          assert.equal(bmiItem.value, undefined);
+          weightItem.value = 70;
+          heightItem.value = 80;
+          return testLFData._expressionProcessor.runCalculations(false).then(()=>{
+            assert.equal(bmiItem.value, 17.0);
+          });
+        });
+      });
+
+      it('should not update values if user has edited the field', function() {
+        return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+          assert.equal(bmiItem.value, undefined);
+          weightItem.value = 70;
+          heightItem.value = 80;
+          return testLFData._expressionProcessor.runCalculations(false);
+        }).then(()=>{
+          bmiItem.value = 20; // edited
+          return testLFData._expressionProcessor.runCalculations(false);
+        }).then(()=>{
+          assert.equal(bmiItem.value, 20);
+        });
+      });
+    });
+
+    describe('when there is saved data', function() {
+      beforeEach(function () {
+        testLFData.hasSavedData = true;
+        weightItem.value = 55;
+        heightItem.value = 75;
+      });
+
+      it('should update values if the initial value matched the calculated value', ()=>{
+        bmiItem.value = 15.2; // same as calculated value
+        return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+          assert.equal(bmiItem.value, 15.2);
+          weightItem.value = 65;
+          return testLFData._expressionProcessor.runCalculations(false).then(()=>{
+            assert.equal(bmiItem.value, '17.9');
+          });
+        });
+      });
+
+      it('should not update values if the initial value did not match the calculated', ()=>{
+        bmiItem.value = 15.3; // edited
+        return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+          assert.equal(bmiItem.value, 15.3);
+          weightItem.value = 65;
+          return testLFData._expressionProcessor.runCalculations(false).then(()=>{
+            assert.equal(bmiItem.value, '15.3');
+          });
+        });
+      });
+    });
+  });
+
   describe('_queryCache', function() {
     it('should be unique for each ExpressionProcessor', function() {
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: []});

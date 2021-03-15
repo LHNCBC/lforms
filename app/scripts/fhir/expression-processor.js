@@ -133,6 +133,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }).then(()=>{
         // At this point, every promise for the pending queries has been resolved, and we are done.
         console.log("Ran expressions in "+(new Date()-self._runStart)+" ms");
+        if (!self._firstExpressionRunComplete) // if this is the first run
+          self._firstExpressionRunComplete = true;
         self._currentRunPromise = undefined;
         if (self._pendingRun)
           return self.runCalculations(false); // will set self._currentRunPromise again
@@ -310,13 +312,26 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             let changed = false;
             for (let i=0, len=exts.length; i<len; ++i) {
               var ext = exts[i];
-              if (ext && ext.valueExpression.language=="text/fhirpath") {
-                var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-                var fieldChanged = (ext.url == sdc.fhirExtAnswerExp) ?
-                  this._setItemListFromFHIRPath(item, newVal) :
-                  this._setItemValueFromFHIRPath(item, newVal);
-                if (!changed)
-                  changed = fieldChanged;
+              // Skip calculated expressions of editable fields for which the user has
+              // edited the value.
+              let isCalcExp = ext.url == sdc.fhirExtCalculatedExp;
+              // Compare the item.value to the last calculated value (if any).  If
+              // they differ, then the user has edited the field, and in that case we
+              // skip setting the value and halt further calculations for the field.
+              if (isCalcExp && item._calculatedValue &&
+                  !deepEqual(item._calculatedValue, item.value)) {
+                item._userModifiedCalculatedValue = true;
+              }
+
+              if (!item._userModifiedCalculatedValue || !isCalcExp) {
+                if (ext.valueExpression.language=="text/fhirpath") {
+                  var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+                  var fieldChanged = (ext.url == sdc.fhirExtAnswerExp) ?
+                    this._setItemListFromFHIRPath(item, newVal) :
+                    this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
+                  if (!changed)
+                    changed = fieldChanged;
+                }
               }
             }
             rtn = changed;
@@ -486,6 +501,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       return added;
     },
 
+
     /**
      *  Assigns the given list result to the item.  If the list has changed, the
      *  field is cleared.
@@ -549,9 +565,11 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param item the item from the LFormsData object that is receiving the new
      *  value.
      * @param fhirPathRes the result of a FHIRPath evaluation.
+     * @param isCalcExp whether this is from a calculated expression, in which
+     *  case a decision will be made whether to skip setting the value.
      * @return true if the value changed
      */
-    _setItemValueFromFHIRPath: function(item, fhirPathRes) {
+    _setItemValueFromFHIRPath: function(item, fhirPathRes, isCalcExp) {
       var oldVal = item.value;
       var fhirPathVal;
       if (fhirPathRes !== undefined)
@@ -559,8 +577,21 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (fhirPathVal === null || fhirPathVal === undefined)
         item.value = undefined;
       else
-        this._fhir.SDC._processFHIRValues(item, fhirPathRes);
-      return oldVal != item.value;
-    }
+        this._fhir.SDC._processFHIRValues(item, fhirPathRes); // sets item.value
+      let changed = !deepEqual(oldVal, item.value);
+      item._calculatedValue = item.value;
+      // If this is the first run of the expressions, and there is
+      // saved user data, then we check whether the calculated value matches
+      // what the user entered (or erased) and if it doesn't, we halt further
+      // calculations for this field and restore the saved value.
+      if (changed && isCalcExp && !this._firstExpressionRunComplete
+          && this._lfData.hasSavedData) {
+        item._userModifiedCalculatedValue = true;
+        item.value = oldVal;
+        changed = false;
+      }
+      return changed
+    },
   };
+
 })();

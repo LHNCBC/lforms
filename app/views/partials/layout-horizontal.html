@@ -64,7 +64,7 @@
 
       <td ng-repeat="cell in row.cells"
           class="hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}"
-          ng-switch on="(!lfData._firstExpressionRunComplete && cell._hasListExpr) ? 'Loading List' : cell.dataType">
+          ng-switch on="(!lfData._expressionProcessor._firstExpressionRunComplete && cell._hasListExpr) ? 'Loading List' : cell.dataType">
         <ng-form name="innerForm2">
           <div class="lf-form-item-data tooltipContainer">
             <div class="tooltipContent" lf-validate="cell" ng-model="cell.value" ng-if="cell._hasValidation"></div>

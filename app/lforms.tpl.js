@@ -6,7 +6,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "     Expression that has not yet been evalulated). Once the list is created,\n" +
     "     autocomplete-lhc will erase the model data if the list is changed.\n" +
     "     We do show the empty list if a list did exist and now does not. -->\n" +
-    "<div class=\"lf-field-answers\" ng-if=\"lfData._firstExpressionRunComplete || !item._hasListExpr\"\n" +
+    "<div class=\"lf-field-answers\" ng-if=\"lfData._expressionProcessor._firstExpressionRunComplete || !item._hasListExpr\"\n" +
     "  ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\"\n" +
@@ -68,7 +68,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "           ng-focus=\"setActiveRow(item)\" ng-blur=\"activeRowOnBlur(item)\">\n" +
     "  </div>\n" +
     "</div>\n" +
-    "<div ng-if=\"!lfData._firstExpressionRunComplete && item._hasListExpr\">Waiting for list data</div>\n"
+    "<div ng-if=\"!lfData._expressionProcessor._firstExpressionRunComplete && item._hasListExpr\">Waiting for list data</div>\n"
   );
 
 
@@ -512,7 +512,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "      <td ng-repeat=\"cell in row.cells\"\n" +
     "          class=\"hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}\"\n" +
-    "          ng-switch on=\"(!lfData._firstExpressionRunComplete && cell._hasListExpr) ? 'Loading List' : cell.dataType\">\n" +
+    "          ng-switch on=\"(!lfData._expressionProcessor._firstExpressionRunComplete && cell._hasListExpr) ? 'Loading List' : cell.dataType\">\n" +
     "        <ng-form name=\"innerForm2\">\n" +
     "          <div class=\"lf-form-item-data tooltipContainer\">\n" +
     "            <div class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></div>\n" +

@@ -607,7 +607,7 @@ angular.module('lformsWidget')
               if (!lfData._controllerInit && (lfData._hasResponsiveExpr || lfData._hasInitialExpr)) {
                 lfData._expressionProcessor.runCalculations(true).then(() => {
                   // We might or might not be in a digest cycle.
-                  $scope.$evalAsync(()=>lfData._firstExpressionRunComplete = true);
+                  $scope.$evalAsync(); // will trigger a digest cycle
                 });
               }
               // Angular calls this twice for the same lfData.  Set a flag.
