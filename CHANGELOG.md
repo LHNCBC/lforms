@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [28.1.6] 2021-03-24
+### Fixed
+- Updated jQuery to 3.6.0.
+
 ## [28.1.5] 2021-03-11
 ### Fixed
 - FHIR calculatedExpressions on editable fields now stop calculating if the user
