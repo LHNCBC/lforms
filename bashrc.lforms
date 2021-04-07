@@ -13,9 +13,12 @@ PATH=~/${NODE_DIR}/bin:/bin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/etc
 
 # Add node_modules/.bin to the path. We can find that from `npm bin`, but that
 # takes a second or two, and slows things down.
-script_dir=`dirname ${BASH_SOURCE}`
-npm_bin=`readlink -f $script_dir/node_modules/.bin`
-PATH=$PATH:$npm_bin
+dir=$(cd $(dirname ${BASH_SOURCE}); pwd)
+
+if [[ -e "$dir/node_modules" ]]
+then
+  PATH=${PATH}:${dir}/node_modules/.bin
+fi
 
 # Set node in development mode
 unset NODE_ENV

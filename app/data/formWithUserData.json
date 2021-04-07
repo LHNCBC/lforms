@@ -1152,6 +1152,40 @@
     },
     {
       "questionCode": "cwe-radio-user-value",
+      "question": "RADIO layout --CWE, with answer from list",
+      "dataType": "CWE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": "2"
+        }
+      },
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer A"
+        },
+        {
+          "code": "c2",
+          "text": "Answer B"
+        },
+        {
+          "code": "c3",
+          "text": "Answer C"
+        }
+      ],
+      "value": {
+        "code": "c2",
+        "text": "Answer B"
+      },
+      "linkId": "/cwe-radio-list-value"
+    },
+     {
+      "questionCode": "cwe-radio-user-value",
       "question": "RADIO layout --CWE, with user typed value",
       "dataType": "CWE",
       "answerCardinality": {

@@ -1,7 +1,7 @@
 var port = 9001;
 exports.config = {
   port: port,
-  baseUrl: 'http://localhost.nlm.nih.gov:' + (process.env.PORT || port),
+  baseUrl: 'http://localhost:' + (process.env.PORT || port),
 
   directConnect: true,
   //Capabilities to be passed to the webdriver instance.
@@ -22,8 +22,10 @@ exports.config = {
     // Replace default dot reporter with something better.
     var SpecReporter = require('jasmine-spec-reporter');
     // add jasmine spec reporter
-    jasmine.getEnv().addReporter(new
-    SpecReporter({displayStacktrace: true}));
+    var jasmineEnv = jasmine.getEnv();
+    jasmineEnv.clearReporters(); // remove default dot reporter
+    jasmineEnv.addReporter(new
+    SpecReporter({displayStacktrace: 'specs'}));
 
     // disable animation
     // http://stackoverflow.com/questions/26584451/how-to-disable-animations-in-protractor-for-angular-js-appliction

@@ -1,0 +1,127 @@
+{
+  "status": "draft",
+  "name": "x-fhir-query test",
+  "title": "A test of x-fhir-query variables and answerExpression",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 25.1.3"
+      }
+    ]
+  },
+  "extension": [
+    {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+        "name": "vsExpansionFromURL",
+        "language": "application/x-fhir-query",
+        "expression": "https://lforms-fhir.nlm.nih.gov/baseR4/ValueSet/{{item.where(linkId='listSelection').answer.valueCoding.code}}/$expand"
+      }
+    },
+    {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+        "name": "vsExpansionFromContext",
+        "language": "application/x-fhir-query",
+        "expression": "ValueSet/{{item.where(linkId='listSelection').answer.valueCoding.code}}/$expand"
+      }
+    }
+  ],
+  "item": [
+    {
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        }
+      ],
+      "required": false,
+      "text": "Select a list",
+      "linkId": "listSelection",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "verificationresult-status",
+            "display": "verificationresult-status"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "language-preference-type",
+            "display": "language-preference-type"
+          }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+          "valueExpression" : {
+            "language": "text/fhirpath",
+            "expression": "%vsExpansionFromURL.expansion.contains"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "listViewFromURL",
+      "text": "View selected list (fetched via full URL)"
+    },
+    {
+      "type": "open-choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+          "valueExpression" : {
+            "language": "text/fhirpath",
+            "expression": "%vsExpansionFromContext.expansion.contains"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "listViewFromContext",
+      "text": "View selected list (fetched from FHIR context)"
+    }
+  ]
+}

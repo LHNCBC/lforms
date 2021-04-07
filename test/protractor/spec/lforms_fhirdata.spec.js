@@ -727,6 +727,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             element(by.id("merge-qr")).click();
 
+            browser.wait(EC.presenceOf(element(by.id(ff.nameID))), 5000);
             browser.wait(function() {
               return element(by.id(ff.nameID)).isDisplayed(); // .name is sometimes stale
             }, tp.WAIT_TIMEOUT_1);

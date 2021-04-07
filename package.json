@@ -12,19 +12,21 @@
   ],
   "dependencies": {
     "@lhncbc/ucum-lhc": "^4.1.3",
-    "angular": "^1.8.0",
-    "angular-animate": "1.8.0",
+    "angular": "^1.8.2",
+    "angular-animate": "1.8.2",
     "angular-ui-bootstrap": "^1.3.3",
     "autocomplete-lhc": "^18.1.1",
     "bootstrap": "^3.4.1",
     "bootstrap-ui-datetime-picker": "^2.6.4",
     "element-resize-detector": "^1.1.15",
-    "es6-promise": "^4.2.8",
+    "fast-deep-equal": "^3.1.3",
     "fhirpath": "^2.6.1",
-    "jquery": "^3.4.0",
+    "jquery": "^3.6.0",
     "jquery-ui": "^1.12.1",
+    "js-class": "0.0.3",
     "moment": "^2.24.0",
     "ngSmoothScroll": "^2.0.1",
+    "promise-polyfill": "^8.2.0",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
@@ -82,6 +84,7 @@
     "webpack:r4": "webpack --env.r4Only=true",
     "webpack:main": "webpack --env.mainOnly=true",
     "test": "npm run update-webdriver && grunt test",
+    "test:e2e": "npm run update-webdriver && grunt test:e2e",
     "build:clean": "rm -rf dist bower-dist app/generated .tmp",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
     "build:version": "node -e 'require(\"fs\").writeFileSync(\"app/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",
@@ -92,6 +95,7 @@
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:version && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')",
+    "debug-karma": "karma start karma.conf.js --browsers=Chrome --single-run=false",
     "start": "grunt serve"
   }
 }

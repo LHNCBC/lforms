@@ -6,8 +6,8 @@
   "use strict";
 
   var LForms = require('../../lforms');
-  var Class = require("./js-class.js");
-  LForms.LFormsData = Class.extend({
+  var Class = require("js-class");
+  LForms.LFormsData = Class({
 
     // constants
     _CONSTANTS: {
@@ -175,7 +175,7 @@
      *       (see https://confluence.hl7.org/display/FHIR/NPM+Package+Specification),
      *       plus a 'fileContent' field that contains the actual file contents.
      */
-    init: function(data, packageStore) {
+    constructor: function(data, packageStore) {
       this.lformsVersion = LForms.lformsVersion;
 
       if (packageStore) {
@@ -336,7 +336,7 @@
 
     /**
      *  Loads FHIR resources necessary to show the form.  These are loaded
-     *  asynchronously.  When the asynchous requests have completed, if
+     *  asynchronously.  When the asynchronous requests have completed, if
      *  "prepoluate" is set to true, the form will be partially filled in with
      *  values from the resources as extensions indicate (e.g.
      *  observationLinkPeriod and initialExpression).
@@ -359,10 +359,10 @@
       pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
 
       if (prepopulate)
-        pendingPromises.push(this._requestLinkedObs());
+        pendingPromises.push(sdc.requestLinkedObs(this));
 
       return Promise.all(pendingPromises).then(function() {
-        lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
+        lfData._notifyAsyncChangeListeners();
       });
     },
 
@@ -465,95 +465,6 @@
       }
       if (noUnits) {
         this.templateOptions.hideUnits = true;
-      }
-    },
-
-
-    /**
-     *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-population.  When the resources have been retrieved,
-     *  prepoluation will be performed.
-     * @return a promise resolving after the resources have been retrieved and
-     *  any prepopulation has been performed.
-     */
-    _requestLinkedObs: function() {
-      if (LForms.fhirContext && this._fhir) {
-        // We will need to know what version of FHIR the server is using.  Make
-        // sure that is available before continuing.
-        var lfData = this;
-        if (!LForms._serverFHIRReleaseID) {
-          // Go fetch the server's FHIR version first before continuing
-          return new Promise(function(resolve, reject) {
-            LForms.Util.getServerFHIRReleaseID(function(relID) {
-              if (!relID)
-                reject("Unable to obtain the server's FHIR version");
-              else
-                resolve(lfData._requestLinkedObs());
-            });
-          });
-        }
-        else {
-          var pendingPromises = [];
-          LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
-          var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
-          let obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
-          for (var i=0, len=this.itemList.length; i<len; ++i) {
-            let item = this.itemList[i];
-            const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
-            if (obsExt) { // an array of at least 1 if present
-              var duration = obsExt[0].valueDuration; // optional
-              var fhirClient = LForms.fhirContext;
-
-              // Get a comma separated list of codes
-              const codeQuery = item.codeList.map((code) => {
-                const codeSystem = code.system === 'LOINC' ? serverFHIR.LOINC_URI : code.system;
-                return [codeSystem, code.code].join('|');
-              }).join(',');
-
-              const queryParams = {
-                code: codeQuery, _sort: '-date',
-                _count: 5  // only need one, but we need to filter out focus=true below
-              };
-              // Temporarily disabling the addition of the focus search
-              // parameter, because of support issues.  Instead, for now, we
-              // will check the focus parameter when the Observation is
-              // returned.  Later, we might query the server to find out whether
-              // :missing is supported.
-              //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-              //  queryParams.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
-              if (duration && duration.value && duration.code) {
-                // Convert value to milliseconds
-                var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
-                if (result.status === 'succeeded') {
-                  var date = new Date(new Date() - result.toVal);
-                  queryParams._lastUpdated = 'gt'+date.toISOString();
-                }
-              }
-              pendingPromises.push(
-                fhirClient.patient.request(this._buildURL(['Observation'],
-                  queryParams)
-                ).then(function(successData) {
-                  var bundle = successData;
-                  if (bundle.entry) {
-                    var foundObs;
-                    for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
-                      var obs = bundle.entry[j].resource;
-                      if (!obs.focus) { // in case we couldn't use focus:missing above
-                        serverFHIR.SDC.importObsValue(item, obs);
-                        if (item.value)
-                          foundObs = true;
-                        if (item.unit)
-                          lfData._setUnitDisplay(item.unit);
-                      }
-                    }
-                  }
-                  return item.questionCode; // code is not needed, but useful for debugging
-                })
-              );
-            }
-          }
-          return Promise.all(pendingPromises);
-        }
       }
     },
 
@@ -1130,6 +1041,8 @@
               this._fhir.SDC.hasResponsiveExpression(item);
             this._hasInitialExpr = this._hasInitialExpr ||
               this._fhir.SDC.hasInitialExpression(item);
+            item._hasListExpr =
+              this._fhir.SDC.hasListExpression(item);
           }
         }
 

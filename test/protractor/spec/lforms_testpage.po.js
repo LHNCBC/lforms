@@ -130,6 +130,15 @@ var TestPage = function() {
   };
   USSGFHTVertical.name = element(by.id(USSGFHTVertical.nameID));
 
+  /**
+   *  Returns true if two arrays are equal (a shallow comparison)
+   */
+  function arraysEqual(array1, array2) {
+    // https://stackoverflow.com/a/19746771
+    return array1.length === array2.length &&
+      array1.every(function(value, index) { return value === array2[index]});
+  };
+
 
   Object.assign(rtnObj, {
     WAIT_TIMEOUT_1: 20000,
@@ -141,6 +150,21 @@ var TestPage = function() {
     heightLabel: element(by.css('label[for="' + heightFieldID + '"]')),
     readerLog: $('#reader_log'),
     readerLogEntries: element.all(by.css('#reader_log p')),
+    expectReaderLogEntries: function(expectedEntries) {
+      browser.wait(function() {
+        return rtnObj.readerLogEntries.getText().then((textArray) => {
+          var rtn = arraysEqual(textArray, expectedEntries);
+          if (!rtn) {
+            console.log("Screen reader log test:  expecting +"+
+              JSON.stringify(expectedEntries)+ " but got " +
+              JSON.stringify(textArray) +", retrying until timeout");
+            // Sleep a bit and try again.
+            rtn = browser.sleep(100).then(()=>false);
+          }
+          return rtn;
+        });
+      }, 5000);
+    },
 
     Autocomp: {
       listFieldID: '/54126-8/54132-6/1/1', // "Were you born a twin?"
@@ -362,6 +386,39 @@ var TestPage = function() {
 
 
     /**
+     *  Returns the full path to a  JSON form definition file in the test/data
+     *  directory.
+     * @param filepath the path to the form definition file, relative to
+     *  test/data/fhirVersion (or just test/data if fhirVersion is not
+     *  provided.)
+     * @param fhirVersion (optional) the version of FHIR to use.
+     */
+    getTestDataPathName: function(filepath, fhirVersion) {
+      let pathParts = [__dirname, '../../data/']
+      if (fhirVersion) {
+        this.setFHIRVersion(fhirVersion);
+        pathParts.push(fhirVersion);
+      }
+      pathParts.push(filepath);
+      return require('path').join(...pathParts);
+    },
+
+
+    /**
+     *  Returns a JSON form definition  file from the test/data
+     *  directory.
+     * @param filepath the path to the form definition file, relative to
+     *  test/data/fhirVersion (or just test/data if fhirVersion is not
+     *  provided.)
+     * @param fhirVersion (optional) the version of FHIR to use.
+     */
+    getTestData: function(filepath, fhirVersion) {
+      let testFile = this.getTestDataPathName(filepath, fhirVersion);
+      return require('fs').readFileSync(testFile, 'utf8');
+    },
+
+
+    /**
      *  Loads a form from a JSON form definition file from the test/data
      *  directory, and displays the form.
      * @param filepath the path to the form definition file, relative to
@@ -370,16 +427,9 @@ var TestPage = function() {
      * @param fhirVersion (optional) the version of FHIR to use.
      */
     loadFromTestData: function(filepath, fhirVersion) {
-      let pathParts = [__dirname, '../../data/']
-      if (fhirVersion) {
-        this.setFHIRVersion(fhirVersion);
-        pathParts.push(fhirVersion);
-      }
-      pathParts.push(filepath);
-
+      let testFile = this.getTestDataPathName(filepath, fhirVersion);
       // Temporarily unhide the file input element.
       let fileInput = $('#fileAnchor');
-      let testFile = require('path').join(...pathParts);
       browser.executeScript("$('#fileAnchor')[0].className = ''");
       testUtil.sendKeys(fileInput, testFile);
       // Re-hide the file input element
