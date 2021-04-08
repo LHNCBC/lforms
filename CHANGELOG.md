@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.0.0] 2020-12-23
+### Changes
+- Breaking change to FHIR support. The launchContext URI has changed to
+  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext
+
 ## [28.1.6] 2021-03-24
 ### Fixed
 - Updated jQuery to 3.6.0.
