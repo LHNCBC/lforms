@@ -172,6 +172,19 @@ var util = {
 
 
   /**
+   *  For fields with an autocomplete-lhc list, this returns a promise that
+   *  resolved to a boolean indicating whether the field has a list of a at
+   *  least one item.
+   * @param field the element finder for the field.
+   */
+  fieldHasList: function(field) {
+    return this.fieldListLength(field).then((length)=>{
+      return length > 0;
+    });
+  },
+
+
+   /**
    *  Clicks the given add/remove repeating item button, and sleeps a bit to let the page stop moving.
    */
   clickAddRemoveButton: function (button) {
@@ -249,7 +262,33 @@ var util = {
       + ' ' +
       [(100 + date.getHours()).toString().substr(1),
       (100 + date.getMinutes()).toString().substr(1)].join(':');
-  }
+  },
+
+  /**
+   *  Converts a Questionnaire and QuestionnaireResponse into an LFormsData
+   *  object, and uses addFormToPage to render it in the specified element.
+   * @param q the Questionnaire (parsed)
+   * @param qr the QuestionnaireResponse
+   * @param elemID the ID of an element into which the form should be shown.
+   * @return a promise that resolves when the browser has been instructed to
+   *  render the form.
+   */
+  showQQR: function(q, qr, elemID) {
+    return browser.executeScript(() => {
+      var q2 = arguments[0];
+      var qr2 = arguments[1];
+      var elemID = arguments[2];
+      var lfd = LForms.Util.convertFHIRQuestionnaireToLForms(q2, 'R4');
+      var merged = LForms.Util.mergeFHIRDataIntoLForms(
+        'QuestionnaireResponse', qr2, lfd, 'R4');
+
+      // Set a flag so we know when the render is done.
+      var formElem = document.getElementById(elemID);
+      merged = new LForms.LFormsData(merged);
+      LForms.Util.addFormToPage(merged, elemID);
+    }, q, qr, elemID);
+  },
+
 };
 
 module.exports = util;

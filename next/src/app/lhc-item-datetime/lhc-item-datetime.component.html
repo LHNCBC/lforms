@@ -1,0 +1,12 @@
+<ng-container *ngIf="item">
+  <nz-date-picker
+      class="lhc-datetime-picker"
+      nzShowTime
+      nzFormat="MM/dd/yyyy HH:mm:ss"
+      nzPlaceHolder="MM/dd/yyyy HH:mm:ss"
+      nzSize="small"
+      [(ngModel)]="item.value"
+      (ngModelChange)="onChange($event)"
+      (nzOnOk)="onOk($event)"
+    ></nz-date-picker>
+</ng-container>

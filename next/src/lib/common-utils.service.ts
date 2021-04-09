@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import Utils from './lforms-common-utils.js';
+import CommonUtils from './lforms/lhc-common-utils.js';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class CommonUtilsService {
    * @private
    */
   areTwoAnswersSame(answer: any, completeAnswer: any, item: any): boolean {
-    return Utils.areTwoAnswersSame(answer, completeAnswer, item);
+    return CommonUtils.areTwoAnswersSame(answer, completeAnswer, item);
   }
 
 

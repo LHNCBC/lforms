@@ -18,3 +18,21 @@ page](http://lhncbc.github.io/lforms/).
 
 ## Licensing and Copyright Notice
 See [LICENSE.md](LICENSE.md).
+
+## Customizing and Contributing
+If you wish to revise this package, the following steps will allow you to make
+changes and test them:
+
+* Install Node.js (version 10 is what we are currently using, but it should work with later versions)
+* Clone the lforms repository and cd to its directory
+* npm ci
+* Make sure node_modules/.bin is in your path
+* bower install
+* npm run build
+* npm run start # starts the app we use for testing
+* npm run test # runs the tests
+* Templates are in app/views; CSS in app/styles
+
+If you are planning to contribute new functionality back to us, please
+coordinate with us, so that the new code is in the right places, and so that
+you don't accidentally add something that we are also working on.

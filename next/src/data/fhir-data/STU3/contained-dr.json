@@ -1,0 +1,164 @@
+{
+  "resourceType": "DiagnosticReport",
+  "id": "54127-6N-160970",
+  "status": "final",
+  "code": {
+    "coding": [{
+      "system": "http://loinc.org",
+      "code": "54127-6N",
+      "display": "USSG-FHT, (with mock-up items for skip logic demo)"
+    }], "text": "USSG-FHT, (with mock-up items for skip logic demo)"
+  },
+  "result": [{"reference": "#54126-8-330542"}],
+  "contained": [{
+    "resourceType": "Observation",
+    "id": "54125-0-83713",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54125-0"}], "text": "Name"},
+    "valueString": "name 1"
+  }, {
+    "resourceType": "Observation",
+    "id": "54125-0-496426",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54125-0"}], "text": "Name"},
+    "valueString": "name 2"
+  }, {
+    "resourceType": "Observation",
+    "id": "54131-8-695810",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54131-8"}], "text": "Gender"},
+    "valueCodeableConcept": {
+      "coding": [{"system": "http://loinc.org", "code": "LA2-8", "display": "Male"}],
+      "text": "Male"
+    }
+  }, {
+    "resourceType": "Observation",
+    "id": "21112-8-485677",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "21112-8"}], "text": "Date of Birth"},
+    "valueDate": "2016-10-27"
+  }, {
+    "resourceType": "Observation",
+    "id": "8302-2-245473",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "8302-2"}], "text": "Height"},
+    "valueQuantity": {"value": 70, "unit": "inches", "system": "http://unitsofmeasure.org", "code": "inches"}
+  }, {
+    "resourceType": "Observation",
+    "id": "29463-7-371462",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "29463-7"}], "text": "Weight"},
+    "valueQuantity": {"value": 170, "unit": "lbs", "system": "http://unitsofmeasure.org", "code": "lbs"}
+  }, {
+    "resourceType": "Observation",
+    "id": "39156-5-909830",
+    "status": "final",
+    "code": {
+      "coding": [{"system": "http://loinc.org", "code": "39156-5"}],
+      "text": "Mock-up item: Body mass index (BMI) [Ratio]"
+    },
+    "valueString": "24.39"
+  }, {
+    "resourceType": "Observation",
+    "id": "54134-2-867048",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54134-2"}], "text": "Race"},
+    "valueCodeableConcept": {
+      "coding": [{
+        "system": "http://loinc.org",
+        "code": "LA10608-0",
+        "display": "American Indian or Alaska Native"
+      }],
+      "text": "American Indian or Alaska Native"
+    }
+  },{
+    "resourceType": "Observation",
+    "id": "54134-2-867048-1",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54134-2"}], "text": "Race"},
+    "valueCodeableConcept": {
+      "coding": [{
+        "system": "http://loinc.org",
+        "code": "LA6156-9",
+        "display": "Asian"
+      }],
+      "text": "Asian"
+    }
+  }, {
+    "resourceType": "Observation",
+    "id": "54140-9-345437",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54140-9"}], "text": "Disease or Condition"},
+    "valueCodeableConcept": {
+      "coding": [{"system": "http://loinc.org", "code": "LA10533-0", "display": "Blood Clots"}],
+      "text": "Blood Clots"
+    }
+  }, {
+    "resourceType": "Observation",
+    "id": "54130-0-984913",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54130-0"}], "text": "Age at Diagnosis"},
+    "valueCodeableConcept": {
+      "coding": [{"system": "http://loinc.org", "code": "LA10403-6", "display": "Newborn"}],
+      "text": "Newborn"
+    }
+  }, {
+    "resourceType": "Observation",
+    "id": "54137-5-580928",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54137-5"}], "text": "Your diseases history"},
+    "related": [{"type": "has-member", "target": {"reference": "#54140-9-345437"}}, {
+      "type": "has-member",
+      "target": {"reference": "#54130-0-984913"}
+    }]
+  }, {
+    "resourceType": "Observation",
+    "id": "54140-9-469817",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54140-9"}], "text": "Disease or Condition"},
+    "valueCodeableConcept": {
+      "coding": [{
+        "system": "http://loinc.org",
+        "code": "LA10572-8",
+        "display": "-- Blood Clot in Leg"
+      }], "text": "-- Blood Clot in Leg"
+    }
+  }, {
+    "resourceType": "Observation",
+    "id": "54130-0-758834",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54130-0"}], "text": "Age at Diagnosis"},
+    "valueCodeableConcept": {
+      "coding": [{"system": "http://loinc.org", "code": "LA10394-7", "display": "Infancy"}],
+      "text": "Infancy"
+    }
+  }, {
+    "resourceType": "Observation",
+    "id": "54137-5-976637",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54137-5"}], "text": "Your diseases history"},
+    "related": [{"type": "has-member", "target": {"reference": "#54140-9-469817"}}, {
+      "type": "has-member",
+      "target": {"reference": "#54130-0-758834"}
+    }]
+  }, {
+    "resourceType": "Observation",
+    "id": "54126-8-330542",
+    "status": "final",
+    "code": {"coding": [{"system": "http://loinc.org", "code": "54126-8"}], "text": "Your health information"},
+    "related": [
+      {"type": "has-member", "target": {"reference": "#54125-0-83713"}},
+      {"type": "has-member", "target": {"reference": "#54125-0-496426"}},
+      {"type": "has-member", "target": {"reference": "#54131-8-695810"}},
+      {"type": "has-member", "target": {"reference": "#21112-8-485677"}},
+      {"type": "has-member", "target": {"reference": "#8302-2-245473"}},
+      {"type": "has-member", "target": {"reference": "#29463-7-371462"}},
+      {"type": "has-member", "target": {"reference": "#39156-5-909830"}},
+      {"type": "has-member", "target": {"reference": "#54134-2-867048"}},
+      {"type": "has-member", "target": {"reference": "#54134-2-867048-1"}},
+      {"type": "has-member", "target": {"reference": "#54137-5-580928"}},
+      {"type": "has-member", "target": {"reference": "#54137-5-976637"}}
+    ]
+  }],
+  "issued": "2016-10-27T16:46:10-04:00"
+}

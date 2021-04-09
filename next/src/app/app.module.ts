@@ -5,7 +5,7 @@ import  { createCustomElement } from '@angular/elements';
 import { LhcItemChoiceComponent } from './lhc-item-choice/lhc-item-choice.component';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box/lhc-item-choice-check-box.component';
 import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button/lhc-item-choice-radio-button.component';
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
@@ -15,13 +15,19 @@ import en from '@angular/common/locales/en';
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 
 //import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 
 import { CommonUtilsService } from '../lib/common-utils.service';
+import { ValidateService } from '../lib/validate.service';
+import { LhcDataService } from '../lib/lhc-data.service';
+import { WindowService } from '../lib/window.service';
+
 import { LhcItemChoiceAutocompleteComponent } from './lhc-item-choice-autocomplete/lhc-item-choice-autocomplete.component';
 import { LhcItemComponent } from './lhc-item/lhc-item.component';
 import { LhcUnitComponent } from './lhc-unit/lhc-unit.component';
@@ -29,6 +35,18 @@ import { LhcInputComponent } from './lhc-input/lhc-input.component';
 import { LhcItemSimpleTypeComponent } from './lhc-item-simple-type/lhc-item-simple-type.component';
 import { LhcItemQuantityComponent } from './lhc-item-quantity/lhc-item-quantity.component';
 import { LhcAutocompleteComponent } from './common/lhc-autocomplete/lhc-autocomplete.component';
+import { LhcValidateComponent } from './lhc-validate/lhc-validate.component';
+import { LhcFormComponent } from './lhc-form/lhc-form.component';
+import { LhcItemGroupComponent } from './lhc-item-group/lhc-item-group.component';
+import { LhcItemBooleanComponent } from './lhc-item-boolean/lhc-item-boolean.component';
+import { LhcItemDateComponent } from './lhc-item-date/lhc-item-date.component';
+import { LhcItemTimeComponent } from './lhc-item-time/lhc-item-time.component';
+import { LhcItemDatetimeComponent } from './lhc-item-datetime/lhc-item-datetime.component';
+import { LhcItemTextComponent } from './lhc-item-text/lhc-item-text.component';
+import { LhcItemQuestionTextComponent } from './lhc-item-question-text/lhc-item-question-text.component';
+import { LhcItemPopoverComponent } from './lhc-item-popover/lhc-item-popover.component';
+import { LhcItemQuestionComponent } from './lhc-item-question/lhc-item-question.component';
+import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.component';
 
 registerLocaleData(en);
 
@@ -43,19 +61,39 @@ registerLocaleData(en);
     LhcItemSimpleTypeComponent,
     LhcInputComponent,
     LhcItemQuantityComponent,
-    LhcAutocompleteComponent
+    LhcAutocompleteComponent,
+    LhcValidateComponent,
+    LhcFormComponent,
+    LhcItemGroupComponent,
+    LhcItemBooleanComponent,
+    LhcItemDateComponent,
+    LhcItemTimeComponent,
+    LhcItemDatetimeComponent,
+    LhcItemTextComponent,
+    LhcItemQuestionTextComponent,
+    LhcItemPopoverComponent,
+    LhcItemQuestionComponent,
+    LhcItemDisplayComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     NzRadioModule,
     NzCheckboxModule,
     NzDatePickerModule,
-    NzGridModule
+    NzTimePickerModule,
+    NzGridModule,
+    NzPopoverModule,
+    NzIconModule
   ],
-  providers: [{ provide: NZ_I18N, useValue: en_US }, CommonUtilsService],
+  providers: [{ provide: NZ_I18N, useValue: en_US },
+    CommonUtilsService,
+    ValidateService,
+    LhcDataService,
+    WindowService],
   bootstrap: [],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
@@ -70,6 +108,7 @@ export class AppModule {
     //  { injector: injector, strategyFactory: new ElementZoneStrategyFactory(LhcItemChoiceComponent, injector) }));
 
     customElements.define('wc-lhc-item', createCustomElement(LhcItemComponent, { injector: this.injector }));
+    customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));
   }
   ngDoBootstrap() {}
 }

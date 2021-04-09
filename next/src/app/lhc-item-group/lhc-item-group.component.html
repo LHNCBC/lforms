@@ -1,0 +1,11 @@
+
+<!--sub sections, check each item's layout -->
+<div class="lhc-item-group-title">
+  <lhc-item-question-text [item]="item"></lhc-item-question-text>  
+</div>
+
+<div *ngIf="item.items" class="lhc-item-group-body">
+  <ng-container *ngFor="let item of item.items">
+    <lhc-item [item]="item" class="lhc-item {{getSiblingStatus(item)}} {{getRowClass(item)}}"></lhc-item>
+  </ng-container>
+</div>

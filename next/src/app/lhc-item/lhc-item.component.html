@@ -1,21 +1,20 @@
 <ng-container *ngIf="item">
-    <ng-container [ngSwitch]="item.dataType">
-      <ng-container *ngSwitchCase="'INT'">
-        <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
+  <!-- <div class="lhc-item {{getSiblingStatus(item)}} {{getRowClass(item)}}"> -->
+  <!-- <lhc-validate [item]="item"></lhc-validate> -->
+    <ng-container  [ngSwitch]="item.dataType">
+      <!-- 'group' -->
+      <ng-container *ngSwitchCase="'SECTION'">
+        <lhc-item-group [item]="item"></lhc-item-group>
       </ng-container>
-      <ng-container *ngSwitchCase="'REAL'">
-        <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
+      <!-- 'display' -->
+      <ng-container *ngSwitchCase="'TITLE'">
+        <lhc-item-display [item]="item"></lhc-item-display>
       </ng-container>
-      <ng-container *ngSwitchCase="'QTY'">
-        <lhc-item-quantity [item]="item"></lhc-item-quantity>
+      <!-- 'question' -->
+      <ng-container *ngSwitchDefault>
+        <lhc-item-question [item]="item" class="lhc-de"></lhc-item-question>
       </ng-container>
-      <ng-container *ngSwitchCase="'CWE'">
-        <lhc-item-choice [item]="item"></lhc-item-choice>
-      </ng-container>
-      <ng-container *ngSwitchCase="'CNE'">
-        <lhc-item-choice [item]="item"></lhc-item-choice>
-      </ng-container>
-
     </ng-container>
 
-  </ng-container>
+  <!-- </div> -->
+</ng-container>

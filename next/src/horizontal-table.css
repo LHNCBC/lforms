@@ -1,0 +1,53 @@
+/* horizontal table */
+/* title */
+.lf-form-horizontal-table-title {
+  background: #e6f1ff; /*#E8E8E8;*/
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 0 0 1px;
+  text-align: left;
+
+  border-width: 0;
+  border-top: 2px solid white; /* leave space between headers */
+  padding: 4px 0 4px 0;
+}
+/* column headers in tables */
+.lf-form-horizontal-table-header {
+  overflow: hidden;
+  vertical-align: top;
+  background: none repeat scroll 0 0 #E8E8E8;
+  padding: 4px 2px;
+  text-align: left ;
+  color: #666666;
+  font-weight: 400;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.lf-form-horizontal-table td.lhc-de-button {
+  padding-left: 2px;
+  border-right: none;
+}
+.lf-form-horizontal-table {
+  border: none;
+  margin: 2px 4px 0 1px;
+}
+.lf-form-horizontal-table tr {
+  border: none;
+}
+.lf-form-horizontal-table tr td {
+  border-right: none;
+  border-left: none;
+}
+.lf-form-horizontal-table .lhc-de-button {
+  width: 2.5em;
+  min-width: 2em;
+}
+.lf-layout-horizontal .lf-form-table-row.button-row {
+  margin-right: 0;
+  border: 0;
+}
+/* end of horizontal table */

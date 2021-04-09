@@ -1,0 +1,412 @@
+{
+  "resourceType": "Bundle",
+  "id": "6ed7ea2e-dac7-4563-98af-b6612d5d9947",
+  "meta": {
+    "lastUpdated": "2018-01-17T17:19:14.462+00:00"
+  },
+  "type": "searchset",
+  "total": 1,
+  "link": [
+    {
+      "relation": "self",
+      "url": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport%3Aresult&_include%3Arecurse=Observation%3Arelated-target&_pretty=true"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport/178952",
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "id": "178952",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><div class=\"hapiHeaderText\"> US Surgeon General family health portrait </div><table class=\"hapiPropertyTable\"><tbody><tr><td>Status</td><td>FINAL</td></tr><tr><td>Issued</td><td>10 January 2018 22:21:30</td></tr></tbody></table></div>"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54127-6",
+              "display": "US Surgeon General family health portrait"
+            }
+          ],
+          "text": "US Surgeon General family health portrait"
+        },
+        "issued": "2018-01-10T17:21:30-05:00",
+        "result": [
+          {
+            "reference": "Observation/178961"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178961",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178961",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54126-8"
+            }
+          ],
+          "text": "My health history"
+        },
+        "related": [
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178953"
+            }
+          },
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178954"
+            }
+          },
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178955"
+            }
+          },
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178956"
+            }
+          },
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178957"
+            }
+          },
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178957-1"
+            }
+          },
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178960"
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178960",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178960",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54137-5"
+            }
+          ],
+          "text": "Diseases history panel"
+        },
+        "related": [
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178958"
+            }
+          },
+          {
+            "type": "has-member",
+            "target": {
+              "reference": "Observation/178959"
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178954",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178954",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54131-8"
+            }
+          ],
+          "text": "Gender"
+        },
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA2-8",
+              "display": "Male"
+            }
+          ],
+          "text": "Male"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178955",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178955",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "21112-8"
+            }
+          ],
+          "text": "Birth Date"
+        },
+        "valueDate": "2018-01-10"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178953",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178953",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54125-0"
+            }
+          ],
+          "text": "Name"
+        },
+        "valueString": "12"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178956",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178956",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54132-6"
+            }
+          ],
+          "text": "Twin"
+        },
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA10427-5",
+              "display": "Yes - Identical (Same)"
+            }
+          ],
+          "text": "Yes - Identical (Same)"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178957",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178957",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54134-2"
+            }
+          ],
+          "text": "Race"
+        },
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA10608-0",
+              "display": "American Indian or Alaska Native"
+            }
+          ]
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178957-1",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178957-1",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54134-2"
+            }
+          ],
+          "text": "Race"
+        },
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA6156-9",
+              "display": "Asian"
+            }
+          ]
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178958",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178958",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54140-9"
+            }
+          ],
+          "text": "History of diseases"
+        },
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "code": "LA7444-8",
+              "display": "Hypertension",
+              "system": "http://loinc.org"
+            }
+          ],
+          "text": "Hypertension"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/Observation/178959",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "178959",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2018-01-12T18:39:00.806+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "54130-0"
+            }
+          ],
+          "text": "Age range at onset of disease"
+        },
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA10403-6",
+              "display": "Newborn"
+            }
+          ],
+          "text": "Newborn"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ]
+}
+
+
