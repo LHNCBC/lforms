@@ -26,7 +26,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           let relativeAdopted = element(by.id('/54114-4/54122-7/1/1'));
           relativeAdopted.click();
           tp.Autocomp.helpers.thirdSearchRes.click();
-          expect(relativeAdopted.getAttribute('value')).toBe("Medium");
+          expect(relativeAdopted.getAttribute('value')).toBe("High");
         });
       });
 

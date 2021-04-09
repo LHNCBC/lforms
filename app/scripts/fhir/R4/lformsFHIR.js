@@ -97,9 +97,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(91);
 /* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(92);
 /* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(93);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(94);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(95);
-/* harmony import */ var _expression_processor_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(97);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(95);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(96);
+/* harmony import */ var _expression_processor_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(98);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -24344,11 +24344,13 @@ function addSDCImportFns(ns) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _obs_prepop_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(94);
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 /**
  *  Defines SDC functions (used by both import and export, or for other
@@ -24356,10 +24358,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  *  The function takes SDC namespace object defined in the sdc export code,
  *  and adds additional functions to it.
  */
+
 function addCommonSDCFns(ns) {
   "use strict";
 
-  var self = ns; // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
+  var self = ns;
+  self.requestLinkedObs = _obs_prepop_mjs__WEBPACK_IMPORTED_MODULE_0__["requestLinkedObs"]; // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
 
   self._lformsTypesToFHIRTypes = {
     "SECTION": 'group',
@@ -24509,6 +24513,22 @@ function addCommonSDCFns(ns) {
   self.hasResponsiveExpression = function (itemOrLFData) {
     var ext = itemOrLFData._fhirExt;
     return ext ? !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
+  };
+  /**
+   *  Returns true if the given item has an expression
+   *  which sets the list.
+   * @param item the item to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+
+
+  self.hasListExpression = function (item) {
+    var ext = item._fhirExt; // This should one day include a check for cqf-expression, when we add
+    // support for it
+
+    return ext ? !!ext[self.fhirExtAnswerExp] : false;
   };
   /**
    *  Returns true if the given item (or LFormsData) has an expression
@@ -24674,6 +24694,121 @@ function addCommonSDCFns(ns) {
 
 /***/ }),
 /* 94 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "requestLinkedObs", function() { return requestLinkedObs; });
+// A module for Observation-based pre-population.
+
+/**
+ *  Starts the (likely asynchronous) requests to retrieve linked Observation
+ *  resources for pre-population.  When the resources have been retrieved,
+ *  prepoluation will be performed.
+ * @param lfData the LFormsData object for the form being prepopulated.
+ * @return a promise resolving after the resources have been retrieved and
+ *  any prepopulation has been performed.
+ */
+function requestLinkedObs(lfData) {
+  if (LForms.fhirContext && lfData._fhir) {
+    // We will need to know what version of FHIR the server is using.  Make
+    // sure that is available before continuing.
+    if (!LForms._serverFHIRReleaseID) {
+      // Go fetch the server's FHIR version first before continuing
+      return new Promise(function (resolve, reject) {
+        LForms.Util.getServerFHIRReleaseID(function (relID) {
+          if (!relID) reject("Unable to obtain the server's FHIR version");else resolve(requestLinkedObs(lfData));
+        });
+      });
+    } else {
+      var pendingPromises = [];
+      LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
+      var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+      var obsLinkURI = lfData._fhir.SDC.fhirExtObsLinkPeriod;
+
+      var _loop = function _loop() {
+        var item = lfData.itemList[i];
+        var obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
+
+        if (obsExt) {
+          // an array of at least 1 if present
+          duration = obsExt[0].valueDuration; // optional
+
+          fhirClient = LForms.fhirContext; // Get a comma separated list of codes
+
+          var codeQuery = item.codeList.map(function (code) {
+            var codeSystem = code.system === 'LOINC' ? serverFHIR.LOINC_URI : code.system;
+            return [codeSystem, code.code].join('|');
+          }).join(',');
+          var queryParams = {
+            code: codeQuery,
+            _sort: '-date',
+            status: 'final,amended,corrected',
+            _count: 5 // only need one, but we need to filter out focus=true below
+
+          }; // Temporarily disabling the addition of the focus search
+          // parameter, because of support issues.  Instead, for now, we
+          // will check the focus parameter when the Observation is
+          // returned.  Later, we might query the server to find out whether
+          // :missing is supported.
+          //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+          //  queryParams.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
+          // Constrain the date range
+
+          if (duration && duration.value && duration.code) {
+            // Convert value to milliseconds
+            result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+
+            if (result.status === 'succeeded') {
+              date = new Date(new Date() - result.toVal);
+              queryParams.date = 'gt' + date.toISOString();
+            }
+          }
+
+          pendingPromises.push(fhirClient.patient.request(lfData._buildURL(['Observation'], queryParams)).then(function (successData) {
+            var bundle = successData;
+
+            if (bundle.entry) {
+              var foundObs;
+
+              for (var j = 0, jLen = bundle.entry.length; j < jLen && !foundObs; ++j) {
+                var obs = bundle.entry[j].resource;
+
+                if (!obs.focus) {
+                  // in case we couldn't use focus:missing above
+                  serverFHIR.SDC.importObsValue(item, obs);
+
+                  if (item.value) {
+                    // obs.value[x] could be missing
+                    foundObs = true;
+                    if (item.unit) lfData._setUnitDisplay(item.unit);
+                  }
+                }
+              }
+            }
+
+            return item.questionCode; // code is not needed, but useful for debugging
+          }));
+        }
+      };
+
+      for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
+        var duration;
+        var fhirClient;
+        var result;
+        var date;
+
+        _loop();
+      }
+
+      return Promise.all(pendingPromises);
+    }
+  }
+}
+;
+
+/***/ }),
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24716,7 +24851,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
-  self.fhirExtLaunchContext = "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext";
+  self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
 
@@ -25886,13 +26021,13 @@ function addCommonSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(96);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(97);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -25928,7 +26063,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25957,7 +26092,7 @@ function processExtension(lfNode, fieldName, extNode) {
 });
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25974,7 +26109,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 // Processes FHIR Expression Extensions
 var ExpressionProcessor;
 
-var deepEqual = __webpack_require__(98); // faster than JSON.stringify
+var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
 
 (function () {
@@ -25987,6 +26122,15 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
    */
 
   ExpressionProcessor = function ExpressionProcessor(lfData) {
+    // A cache of x-fhir-query URIs to results
+    this._queryCache = {}; // An array of pending x-fhir-query results
+
+    this._pendingQueries = []; // Keeps track of whether a request to run the calculations has come in
+    // while we were already busy.
+
+    this._pendingRun = false; // The promise returned by runCalculations, when a run is active.
+
+    this._currentRunPromise = undefined;
     this._lfData = lfData;
     if (!lfData._fhir) throw new Error('lfData._fhir should be set');
     this._fhir = lfData._fhir;
@@ -26000,16 +26144,6 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
   };
 
   ExpressionProcessor.prototype = {
-    // A cache of x-fhir-query URIs to results
-    _queryCache: {},
-    // An array of pending x-fhir-query results
-    _pendingQueries: [],
-    // Keeps track of whether a request to run the calculations has come in
-    // while we were already busy.
-    _pendingRun: false,
-    // The promise returned by runCalculations, when a run is active.
-    _currentRunPromise: undefined,
-
     /**
      *   Runs the FHIR expressions in the form.
      *  @param includeInitialExpr whether to include the "initialExpression"
@@ -26041,7 +26175,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
     },
 
     /**
-     *  Waits any pending queries and runs the next step IF the pending queries
+     *  Waits for any pending queries and runs the next step IF the pending queries
      *  indicate something has changed, or if runNextStep is true.
      * @param runNextStep if set to true, nextStep will be run even if the
      *  pending queries do not indicate a change.
@@ -26105,6 +26239,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
       }).then(function () {
         // At this point, every promise for the pending queries has been resolved, and we are done.
         console.log("Ran expressions in " + (new Date() - self._runStart) + " ms");
+        if (!self._firstExpressionRunComplete) // if this is the first run
+          self._firstExpressionRunComplete = true;
         self._currentRunPromise = undefined;
         if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
       }, function (failureReason) {
@@ -26200,6 +26336,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
                   // If the queryURI is a relative URL, then if there is a FHIR
                   // context (set via LForms.Util.setFHIRContext), use that to send
                   // the query; otherwise just use fetch.
+                  // Also, set the format to JSON.
+                  queryURI += (queryURI.indexOf('?') > 0 ? '&' : '?') + '_format=json';
                   var fetchPromise;
                   if (!/^https?:/.test(queryURI) && LForms.fhirContext) fetchPromise = LForms.fhirContext.request(queryURI);else {
                     fetchPromise = fetch(queryURI).then(function (response) {
@@ -26302,13 +26440,24 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
             var changed = false;
 
             for (var i = 0, len = exts.length; i < len; ++i) {
-              var ext = exts[i];
+              var ext = exts[i]; // Skip calculated expressions of editable fields for which the user has
+              // edited the value.
 
-              if (ext && ext.valueExpression.language == "text/fhirpath") {
-                var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+              var isCalcExp = ext.url == sdc.fhirExtCalculatedExp; // Compare the item.value to the last calculated value (if any).  If
+              // they differ, then the user has edited the field, and in that case we
+              // skip setting the value and halt further calculations for the field.
 
-                var fieldChanged = ext.url == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal);
-                if (!changed) changed = fieldChanged;
+              if (isCalcExp && item._calculatedValue && !deepEqual(item._calculatedValue, item.value)) {
+                item._userModifiedCalculatedValue = true;
+              }
+
+              if (!item._userModifiedCalculatedValue || !isCalcExp) {
+                if (ext.valueExpression.language == "text/fhirpath") {
+                  var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+
+                  var fieldChanged = ext.url == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
+                  if (!changed) changed = fieldChanged;
+                }
               }
             }
 
@@ -26428,7 +26577,8 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
           //
           // Also, for a repeating question, there will be multiple answers on an
           // qrItem.item, but repeats of the item in lfItem.items with one answer
-          // each.
+          // each, unless answerCardinality is '*' (list items), in which case
+          // there can be multiple answers per lforms item.
           // LForms does not currently support items that contain both answers
           // and child items, but I am trying to accomodate that here for the
           // future.
@@ -26457,17 +26607,18 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
                 // there are answers on the qrIthItem item
                 var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
 
-                for (var a = 0; a < numAnswers; ++a, ++i) {
+                for (var a = 0; a < numAnswers; ++i) {
                   if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+                  var _lfIthItem = lfItems[i];
 
-                  var _newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+                  var _newlyAdded = this._addToIDtoQRItemMap(_lfIthItem, qrIthItem, map);
 
-                  if (_newlyAdded === 0) {
-                    // lfItems[i] was blank; try next lfItem
-                    --a;
-                  } else {
-                    added += _newlyAdded;
+                  if (_newlyAdded != 0) {
+                    // lfItems[i] was not blank
+                    if (Array.isArray(_lfIthItem.value)) a += _lfIthItem.value.length;else a += 1;
                   }
+
+                  added += _newlyAdded;
                 }
               }
             }
@@ -26478,7 +26629,7 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
         if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
           if (!qrItem) {
             // if there is data in lfItem, there should be a qrItem
-            throw new Error('Logic error in _addToIDtoQRItemMap');
+            throw new Error('Logic error in _addToIDtoQRItemMap; missing qrItem');
           } else {
             map[lfItem._elementId] = qrItem;
             added += 1;
@@ -26540,15 +26691,9 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
       if (changed) {
         item.answers = newList;
 
-        this._lfData._updateAutocompOptions(item, true); // The SDC specification says that implementations "SHOULD" preserve the
-        // field value (marking it invalid if that is the case in the new list).
-        // That is inconsistent with the behavior of LForms in other situations,
-        // e.g. data control, where we wipe the field value when the list is
-        // set.  So, we need to decide whether to switch to that behavior.
-        // For now, just wipe the field.
+        this._lfData._updateAutocompOptions(item, true);
 
-
-        item.value = null;
+        this._lfData._resetItemValueWithModifiedAnswers(item);
       }
 
       return changed;
@@ -26559,20 +26704,35 @@ var deepEqual = __webpack_require__(98); // faster than JSON.stringify
      * @param item the item from the LFormsData object that is receiving the new
      *  value.
      * @param fhirPathRes the result of a FHIRPath evaluation.
+     * @param isCalcExp whether this is from a calculated expression, in which
+     *  case a decision will be made whether to skip setting the value.
      * @return true if the value changed
      */
-    _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes) {
+    _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes, isCalcExp) {
       var oldVal = item.value;
       var fhirPathVal;
       if (fhirPathRes !== undefined) fhirPathVal = fhirPathRes[0];
-      if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else this._fhir.SDC._processFHIRValues(item, fhirPathRes);
-      return oldVal != item.value;
+      if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else this._fhir.SDC._processFHIRValues(item, fhirPathRes); // sets item.value
+
+      var changed = !deepEqual(oldVal, item.value);
+      item._calculatedValue = item.value; // If this is the first run of the expressions, and there is
+      // saved user data, then we check whether the calculated value matches
+      // what the user entered (or erased) and if it doesn't, we halt further
+      // calculations for this field and restore the saved value.
+
+      if (changed && isCalcExp && !this._firstExpressionRunComplete && this._lfData.hasSavedData) {
+        item._userModifiedCalculatedValue = true;
+        item.value = oldVal;
+        changed = false;
+      }
+
+      return changed;
     }
   };
 })();
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

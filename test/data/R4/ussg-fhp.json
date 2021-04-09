@@ -28,7 +28,7 @@
     "Person"
   ],
   "extension": [{
-    "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
+    "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext",
     "extension" : [{
       "url" : "name",
       "valueId" : "patient"

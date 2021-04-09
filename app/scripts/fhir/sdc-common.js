@@ -1,3 +1,5 @@
+import {requestLinkedObs} from './obs-prepop.mjs';
+
 /**
  *  Defines SDC functions (used by both import and export, or for other
  *  SDC-related purposes) that are the same across the different FHIR versions.
@@ -8,6 +10,7 @@ function addCommonSDCFns(ns) {
 "use strict";
 
   var self = ns;
+  self.requestLinkedObs = requestLinkedObs;
 
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   self._lformsTypesToFHIRTypes = {
@@ -166,6 +169,23 @@ function addCommonSDCFns(ns) {
     return ext ?
       !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
   };
+
+
+  /**
+   *  Returns true if the given item has an expression
+   *  which sets the list.
+   * @param item the item to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+  self.hasListExpression = function(item) {
+    var ext = item._fhirExt;
+    // This should one day include a check for cqf-expression, when we add
+    // support for it
+    return ext ? !!(ext[self.fhirExtAnswerExp]) : false;
+  };
+
 
   /**
    *  Returns true if the given item (or LFormsData) has an expression

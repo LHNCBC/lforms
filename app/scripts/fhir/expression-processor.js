@@ -13,6 +13,19 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
    *   should be set before this is called.
    */
   ExpressionProcessor = function(lfData) {
+    // A cache of x-fhir-query URIs to results
+    this._queryCache = {};
+
+    // An array of pending x-fhir-query results
+    this._pendingQueries = [];
+
+    // Keeps track of whether a request to run the calculations has come in
+    // while we were already busy.
+    this._pendingRun = false;
+
+    // The promise returned by runCalculations, when a run is active.
+    this._currentRunPromise = undefined;
+
     this._lfData = lfData;
     if (!lfData._fhir)
       throw new Error('lfData._fhir should be set');
@@ -28,20 +41,6 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
 
   ExpressionProcessor.prototype = {
-    // A cache of x-fhir-query URIs to results
-    _queryCache: {},
-
-    // An array of pending x-fhir-query results
-    _pendingQueries: [],
-
-    // Keeps track of whether a request to run the calculations has come in
-    // while we were already busy.
-    _pendingRun: false,
-
-    // The promise returned by runCalculations, when a run is active.
-    _currentRunPromise: undefined,
-
-
     /**
      *   Runs the FHIR expressions in the form.
      *  @param includeInitialExpr whether to include the "initialExpression"
@@ -73,7 +72,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
 
     /**
-     *  Waits any pending queries and runs the next step IF the pending queries
+     *  Waits for any pending queries and runs the next step IF the pending queries
      *  indicate something has changed, or if runNextStep is true.
      * @param runNextStep if set to true, nextStep will be run even if the
      *  pending queries do not indicate a change.
@@ -134,6 +133,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }).then(()=>{
         // At this point, every promise for the pending queries has been resolved, and we are done.
         console.log("Ran expressions in "+(new Date()-self._runStart)+" ms");
+        if (!self._firstExpressionRunComplete) // if this is the first run
+          self._firstExpressionRunComplete = true;
         self._currentRunPromise = undefined;
         if (self._pendingRun)
           return self.runCalculations(false); // will set self._currentRunPromise again
@@ -228,6 +229,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                   // If the queryURI is a relative URL, then if there is a FHIR
                   // context (set via LForms.Util.setFHIRContext), use that to send
                   // the query; otherwise just use fetch.
+                  // Also, set the format to JSON.
+                  queryURI += (queryURI.indexOf('?')>0 ? '&' : '?')+'_format=json';
                   let fetchPromise;
                   if (!/^https?:/.test(queryURI) && LForms.fhirContext)
                     fetchPromise = LForms.fhirContext.request(queryURI);
@@ -309,13 +312,26 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             let changed = false;
             for (let i=0, len=exts.length; i<len; ++i) {
               var ext = exts[i];
-              if (ext && ext.valueExpression.language=="text/fhirpath") {
-                var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-                var fieldChanged = (ext.url == sdc.fhirExtAnswerExp) ?
-                  this._setItemListFromFHIRPath(item, newVal) :
-                  this._setItemValueFromFHIRPath(item, newVal);
-                if (!changed)
-                  changed = fieldChanged;
+              // Skip calculated expressions of editable fields for which the user has
+              // edited the value.
+              let isCalcExp = ext.url == sdc.fhirExtCalculatedExp;
+              // Compare the item.value to the last calculated value (if any).  If
+              // they differ, then the user has edited the field, and in that case we
+              // skip setting the value and halt further calculations for the field.
+              if (isCalcExp && item._calculatedValue &&
+                  !deepEqual(item._calculatedValue, item.value)) {
+                item._userModifiedCalculatedValue = true;
+              }
+
+              if (!item._userModifiedCalculatedValue || !isCalcExp) {
+                if (ext.valueExpression.language=="text/fhirpath") {
+                  var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+                  var fieldChanged = (ext.url == sdc.fhirExtAnswerExp) ?
+                    this._setItemListFromFHIRPath(item, newVal) :
+                    this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
+                  if (!changed)
+                    changed = fieldChanged;
+                }
               }
             }
             rtn = changed;
@@ -426,7 +442,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           //
           // Also, for a repeating question, there will be multiple answers on an
           // qrItem.item, but repeats of the item in lfItem.items with one answer
-          // each.
+          // each, unless answerCardinality is '*' (list items), in which case
+          // there can be multiple answers per lforms item.
+
           // LForms does not currently support items that contain both answers
           // and child items, but I am trying to accomodate that here for the
           // future.
@@ -451,16 +469,18 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
               }
               else { // there are answers on the qrIthItem item
                 var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
-                for (var a=0; a<numAnswers; ++a, ++i) {
+                for (var a=0; a<numAnswers; ++i) {
                   if (i >= numLFItems)
                     throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
-                  let newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
-                  if (newlyAdded === 0) { // lfItems[i] was blank; try next lfItem
-                    --a;
+                  let lfIthItem = lfItems[i];
+                  let newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
+                  if (newlyAdded != 0) { // lfItems[i] was not blank
+                    if (Array.isArray(lfIthItem.value))
+                      a += lfIthItem.value.length;
+                    else
+                      a += 1;
                   }
-                  else {
-                    added += newlyAdded;
-                  }
+                  added += newlyAdded;
                 }
               }
             }
@@ -470,7 +490,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         // this item has _elementId and has a value
         if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
           if (!qrItem) { // if there is data in lfItem, there should be a qrItem
-            throw new Error('Logic error in _addToIDtoQRItemMap');
+            throw new Error('Logic error in _addToIDtoQRItemMap; missing qrItem');
           }
           else {
             map[lfItem._elementId] = qrItem;
@@ -480,6 +500,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }
       return added;
     },
+
 
     /**
      *  Assigns the given list result to the item.  If the list has changed, the
@@ -533,13 +554,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (changed) {
         item.answers = newList;
         this._lfData._updateAutocompOptions(item, true);
-        // The SDC specification says that implementations "SHOULD" preserve the
-        // field value (marking it invalid if that is the case in the new list).
-        // That is inconsistent with the behavior of LForms in other situations,
-        // e.g. data control, where we wipe the field value when the list is
-        // set.  So, we need to decide whether to switch to that behavior.
-        // For now, just wipe the field.
-        item.value = null;
+        this._lfData._resetItemValueWithModifiedAnswers(item);
       }
       return changed;
     },
@@ -550,9 +565,11 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param item the item from the LFormsData object that is receiving the new
      *  value.
      * @param fhirPathRes the result of a FHIRPath evaluation.
+     * @param isCalcExp whether this is from a calculated expression, in which
+     *  case a decision will be made whether to skip setting the value.
      * @return true if the value changed
      */
-    _setItemValueFromFHIRPath: function(item, fhirPathRes) {
+    _setItemValueFromFHIRPath: function(item, fhirPathRes, isCalcExp) {
       var oldVal = item.value;
       var fhirPathVal;
       if (fhirPathRes !== undefined)
@@ -560,8 +577,21 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (fhirPathVal === null || fhirPathVal === undefined)
         item.value = undefined;
       else
-        this._fhir.SDC._processFHIRValues(item, fhirPathRes);
-      return oldVal != item.value;
-    }
+        this._fhir.SDC._processFHIRValues(item, fhirPathRes); // sets item.value
+      let changed = !deepEqual(oldVal, item.value);
+      item._calculatedValue = item.value;
+      // If this is the first run of the expressions, and there is
+      // saved user data, then we check whether the calculated value matches
+      // what the user entered (or erased) and if it doesn't, we halt further
+      // calculations for this field and restore the saved value.
+      if (changed && isCalcExp && !this._firstExpressionRunComplete
+          && this._lfData.hasSavedData) {
+        item._userModifiedCalculatedValue = true;
+        item.value = oldVal;
+        changed = false;
+      }
+      return changed
+    },
   };
+
 })();

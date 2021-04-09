@@ -86,6 +86,10 @@ const rtn = {
                 ],
                 "text": "Body Weight"
               };
+              // Include a more recent entry that does not have a value
+              entries.push(entry);
+              entry = JSON.parse(JSON.stringify(entry));
+              entry.effectiveDateTime = "2015-06-29T19:14:57-04:00";
               entry.resource.valueQuantity = weightQuantity;
               entries.push(entry);
               break;
