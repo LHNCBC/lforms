@@ -174,6 +174,40 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(qData.name, questionnaire.name);
           });
 
+          it('should correctly translate minValue and maxValue fields', function (){
+            var questionnaire = {
+              "status": "draft",
+              "resourceType": "Questionnaire",
+              "meta": {
+                "profile": ["http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"],
+                "tag": [{ "code": "lformsVersion: 25.1.3" }]
+              },
+              "item": [
+                {
+                  "type": "integer",
+                  "extension": [
+                    { "url": "http://hl7.org/fhir/StructureDefinition/minValue", "valueInteger": 0 },
+                    { "url": "http://hl7.org/fhir/StructureDefinition/maxValue", "valueInteger": 1 }              
+                  ],
+                  "required": false,
+                  "linkId": "q2",
+                  "text": "q2"
+                }
+              ]
+            }
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            console.log(lfData.items[0])
+            assert.equal(lfData.items[0].restrictions['minInclusive'], 0);
+            assert.equal(lfData.items[0].restrictions['maxInclusive'], 1);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.deepEqual(qData.item[0].extension, [
+              { "url": "http://hl7.org/fhir/StructureDefinition/minValue", "valueInteger": 0 },
+              { "url": "http://hl7.org/fhir/StructureDefinition/maxValue", "valueInteger": 1 }              
+            ]);
+            
+          });
+
+          
           it('should add lformsVersion if not present', function (){
             var questionnaire = {
               name: 'FHP'

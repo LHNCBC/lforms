@@ -24043,7 +24043,7 @@ function addSDCImportFns(ns) {
 
       var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
 
-      if (val) {
+      if (val !== undefined && val !== null) {
         if (restriction.url.match(/minValue$/)) {
           // TODO -
           // There is no distinction between inclusive and exclusive.

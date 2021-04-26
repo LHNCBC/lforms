@@ -316,7 +316,7 @@ function addSDCImportFns(ns) {
     for(var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
       var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
-      if (val) {
+      if (val !== undefined && val !== null) {
 
         if(restriction.url.match(/minValue$/)) {
           // TODO -
