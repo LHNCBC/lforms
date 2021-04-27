@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.0.1] 2021-04-30
+### Fixed
+- Fixed a bug that minValue extention is not imported correctly when the value is 0
+
 ## [29.0.0] 2020-12-23
 ### Changes
 - Breaking change to FHIR support. The launchContext URI has changed to
