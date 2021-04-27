@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.0.2] 2021-04-27
+### Fixed
+- Fixed a bug that item.repeats is not converted correctly in some cases.
+
 ## [29.0.0] 2020-12-23
 ### Changes
 - Breaking change to FHIR support. The launchContext URI has changed to

@@ -162,6 +162,105 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(qData._title, questionnaire._title);
           });
 
+          it('should correctly translate between questionCardinality/answerCardinality and item.repeats, maxOccurs', function (){
+            var questionnaire = {
+              "code": [
+                  {
+                      "code": "cardinality-testing",
+                      "display": "cardinality testing"
+                  }
+              ],
+              "title": "cardinality testing",
+              "resourceType": "Questionnaire",
+              "status": "draft",
+              "meta": {
+                  "profile": [
+                      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+                  ]
+              },
+              "item": [
+                {
+                  "type": "string",
+                  "code": [
+                      {
+                          "code": "q1",
+                          "display": "A Repeating Item"
+                      }
+                  ],
+                  "repeats": true,
+                  "linkId": "/q1",
+                  "text": "A Repeating Item"
+                },
+                {
+                  "type": "choice",
+                  "code": [
+                      {
+                          "code": "q2",
+                          "display": "Multi Selection on CNE"
+                      }
+                  ],
+                  "repeats": true,
+                  "linkId": "/q2",
+                  "text": "Multi Selection on CNE",
+                  "answerOption": [
+                      {
+                          "valueCoding": {
+                              "code": "c1",
+                              "display": "Answer 1"
+                          }
+                      },
+                      {
+                          "valueCoding": {
+                              "code": "c2",
+                              "display": "Answer 2"
+                          }
+                      }
+                  ]
+                },
+                {
+                  "type": "string",
+                  "code": [
+                      {
+                          "code": "q3",
+                          "display": "Another Repeating Item"
+                      }
+                  ],
+                  "repeats": true,
+                  "linkId": "/q3",
+                  "text": "Another Repeating Item",
+                  "extension": [
+                    { "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+                      "valueInteger": 5
+                    }
+                  ]
+                },
+              ]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            console.log("0")
+            console.log(lfData.items[0].answerCardinality)
+            console.log(lfData.items[0].questionCardinality)
+            console.log("1")
+            console.log(lfData.items[1].answerCardinality)
+            console.log(lfData.items[1].questionCardinality)
+
+            assert.deepEqual(lfData.items[0].questionCardinality, {min: '1', max:"*"});
+            assert.equal(lfData.items[0].answerCardinality, undefined);
+            assert.equal(lfData.items[1].questionCardinality, undefined);
+            assert.deepEqual(lfData.items[1].answerCardinality, {min: "0", max:"*"});
+            assert.deepEqual(lfData.items[2].questionCardinality, {min: '1', max: '5'});
+            assert.equal(lfData.items[2].answerCardinality, undefined);
+            
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.equal(qData.item[0].repeats, true);
+            assert.equal(qData.item[1].repeats, true);
+            assert.equal(qData.item[2].repeats, true);
+            assert.deepEqual(qData.item[2].extension[0], 
+              { "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs", "valueInteger": 5});
+            
+            
+          });
+
           it('should correctly translate name & title fields', function (){
             var questionnaire = {
               name: 'FHP',

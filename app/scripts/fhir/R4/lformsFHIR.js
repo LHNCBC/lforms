@@ -22896,13 +22896,20 @@ function addCommonSDCExportFns(ns) {
         maxOccurs = 0;
     var qCard = item.questionCardinality,
         aCard = item.answerCardinality;
-    var cardMax = qCard && qCard.max ? qCard.max : aCard && aCard.max;
+    var qCardMax = qCard && qCard.max !== undefined && qCard.max !== null ? qCard.max : null;
+    var aCardMax = aCard && aCard.max !== undefined && aCard.max !== null ? aCard.max : null;
+    var intQCardMax = parseInt(qCardMax),
+        intACardMax = parseInt(aCardMax);
 
-    if (cardMax) {
-      var intCardMax = parseInt(cardMax);
-      repeats = cardMax === "*" || intCardMax > 1;
-      if (intCardMax > 1) maxOccurs = intCardMax;
+    if (!isNaN(intQCardMax) && !isNaN(intACardMax)) {
+      maxOccurs = Math.max(intQCardMax, intACardMax);
+    } else if (!isNaN(intQCardMax)) {
+      maxOccurs = intQCardMax;
+    } else if (!isNaN(intACardMax)) {
+      maxOccurs = intACardMax;
     }
+
+    repeats = qCardMax === "*" || aCardMax === "*" || intQCardMax > 1 || intACardMax > 1;
 
     if (repeats && item.dataType !== "TITLE") {
       targetItem.repeats = true;
