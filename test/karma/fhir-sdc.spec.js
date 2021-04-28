@@ -237,12 +237,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ]
             };
             var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
-            console.log("0")
-            console.log(lfData.items[0].answerCardinality)
-            console.log(lfData.items[0].questionCardinality)
-            console.log("1")
-            console.log(lfData.items[1].answerCardinality)
-            console.log(lfData.items[1].questionCardinality)
 
             assert.deepEqual(lfData.items[0].questionCardinality, {min: '1', max:"*"});
             assert.equal(lfData.items[0].answerCardinality, undefined);

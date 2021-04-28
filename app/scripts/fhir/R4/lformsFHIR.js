@@ -22892,35 +22892,42 @@ function addCommonSDCExportFns(ns) {
 
 
   self._processQuestionAndAnswerCardinality = function (targetItem, item) {
-    var repeats = false,
-        maxOccurs = 0;
+    var maxOccurs = 0;
     var qCard = item.questionCardinality,
         aCard = item.answerCardinality;
-    var qCardMax = qCard && qCard.max !== undefined && qCard.max !== null ? qCard.max : null;
-    var aCardMax = aCard && aCard.max !== undefined && aCard.max !== null ? aCard.max : null;
-    var intQCardMax = parseInt(qCardMax),
-        intACardMax = parseInt(aCardMax);
+    var qCardMax = qCard && qCard.max !== undefined ? qCard.max : null;
+    var aCardMax = aCard && aCard.max !== undefined ? aCard.max : null; // unlimited repeats, no need to set maxOccurs
 
-    if (!isNaN(intQCardMax) && !isNaN(intACardMax)) {
-      maxOccurs = Math.max(intQCardMax, intACardMax);
-    } else if (!isNaN(intQCardMax)) {
-      maxOccurs = intQCardMax;
-    } else if (!isNaN(intACardMax)) {
-      maxOccurs = intACardMax;
-    }
-
-    repeats = qCardMax === "*" || aCardMax === "*" || intQCardMax > 1 || intACardMax > 1;
-
-    if (repeats && item.dataType !== "TITLE") {
-      targetItem.repeats = true;
-
-      if (maxOccurs > 1) {
-        targetItem.extension.push({
-          "url": self.fhirExtUrlCardinalityMax,
-          "valueInteger": maxOccurs
-        });
+    if (qCardMax === "*" || aCardMax === "*") {
+      if (item.dataType !== "TITLE") {
+        targetItem.repeats = true;
       }
-    }
+    } // not unlinited repeats
+    else {
+        var intQCardMax = parseInt(qCardMax),
+            intACardMax = parseInt(aCardMax); // has a maxOcurrs value
+
+        if (intQCardMax > 1 || intACardMax > 1) {
+          if (item.dataType !== "TITLE") {
+            targetItem.repeats = true; // get the maxOccurs value
+
+            if (!isNaN(intQCardMax) && !isNaN(intACardMax)) {
+              maxOccurs = Math.max(intQCardMax, intACardMax);
+            } else if (!isNaN(intQCardMax)) {
+              maxOccurs = intQCardMax;
+            } else if (!isNaN(intACardMax)) {
+              maxOccurs = intACardMax;
+            }
+
+            if (maxOccurs > 1) {
+              targetItem.extension.push({
+                "url": self.fhirExtUrlCardinalityMax,
+                "valueInteger": maxOccurs
+              });
+            }
+          }
+        }
+      }
   };
   /**
    * Process an item's externally defined answer list
