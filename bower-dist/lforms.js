@@ -6975,14 +6975,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       var _loop = function _loop(i) {
         var item = _this.itemList[i];
 
-        _this._checkValidations(item);
+        if (item._skipLogicStatus !== _this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+          _this._checkValidations(item);
 
-        if (item._validationErrors !== undefined && item._validationErrors.length) {
-          var errorDetails = item._validationErrors.map(function (e) {
-            return "".concat(item.question, " ").concat(e);
-          });
+          if (item._validationErrors !== undefined && item._validationErrors.length) {
+            var errorDetails = item._validationErrors.map(function (e) {
+              return "".concat(item.question, " ").concat(e);
+            });
 
-          Array.prototype.push.apply(errors, errorDetails);
+            Array.prototype.push.apply(errors, errorDetails);
+          }
         }
       };
 
