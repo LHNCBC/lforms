@@ -54,8 +54,18 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit {
    * Initialize the component
    */
   ngOnInit(): void {
-    this.setInitialValue();
+    //this.setInitialValue();
 
+  }
+
+  
+  /**
+   * Invokded when the properties change
+   * @param changes changes.prop contains the old and the new value...
+   */
+   ngOnChanges(changes) {
+    // reset initial status
+    this.setInitialValue();
   }
 
 

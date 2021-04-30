@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { LhcItemBaseComponent} from "../common/lhc-item-base/lhc-item-base.component";
+import { LhcDataService} from '../../lib/lhc-data.service';
+
 @Component({
   selector: 'lhc-item-question-text',
   templateUrl: './lhc-item-question-text.component.html',
@@ -9,7 +11,9 @@ export class LhcItemQuestionTextComponent extends LhcItemBaseComponent implement
 
   @Input() item: any;
 
-  constructor() { 
+  constructor(
+    public lhcDataService: LhcDataService
+  ) { 
     super();
   }
 

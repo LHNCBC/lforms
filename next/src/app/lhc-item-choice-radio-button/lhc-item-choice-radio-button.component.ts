@@ -32,7 +32,8 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
     //   console.log(this.item._modifiedAnswers.length);
     // }
     // set the initial status if there are data in item.value
-    this.setInitialValue();
+    
+    //this.setInitialValue();
 
   }
 

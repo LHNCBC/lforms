@@ -1,7 +1,7 @@
 <ng-container>
   <!-- label -->
   <div class="lhc-de-label">
-    <span *ngIf="item._questionRepeatable" class="lf-sn">{{getRepeatingSN(item) }}</span>
+    <span *ngIf="item._questionRepeatable" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
     <span class="lf-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
         <span *ngIf="item.prefix" class="prefix" style="{{item._obj_prefixCSS}}">{{item.prefix}}</span>
@@ -19,7 +19,7 @@
 
   <!-- button -->
   <!-- <div class="lhc-de-button">
-    <button ng-if="!hasOneRepeatingItem(item)" class="lf-float-button" type="button"
+    <button ng-if="!hasOneRepeatingItem(item)" class="lhc-float-button lhc-button" type="button"
             id="del-{{item._elementId}}"
             title='Remove this "{{ item._text }}"'>-</button>
   </div> -->

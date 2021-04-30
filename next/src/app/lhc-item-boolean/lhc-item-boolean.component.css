@@ -1,0 +1,4 @@
+:host {
+  display: block;
+  padding: 4.3125px 2px; /* to make the item's height 33px */
+}
