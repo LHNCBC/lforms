@@ -23992,47 +23992,6 @@ function addSDCImportFns(ns) {
     }
   };
   /**
-   * Parse questionnaire item for restrictions
-   *
-   * @param lfItem {object} - LForms item object to assign restrictions
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  self._processRestrictions = function (lfItem, qItem) {
-    var restrictions = {};
-
-    if (typeof qItem.maxLength !== 'undefined') {
-      restrictions['maxLength'] = qItem.maxLength.toString();
-    }
-
-    for (var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
-      var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
-
-      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
-
-      if (val) {
-        if (restriction.url.match(/minValue$/)) {
-          // TODO -
-          // There is no distinction between inclusive and exclusive.
-          // Lforms looses this information when converting back and forth.
-          restrictions['minInclusive'] = val;
-        } else if (restriction.url.match(/maxValue$/)) {
-          restrictions['maxInclusive'] = val;
-        } else if (restriction.url.match(/minLength$/)) {
-          restrictions['minLength'] = val;
-        } else if (restriction.url.match(/regex$/)) {
-          restrictions['pattern'] = val;
-        }
-      }
-    }
-
-    if (!jQuery.isEmptyObject(restrictions)) {
-      lfItem.restrictions = restrictions;
-    }
-  };
-  /**
    * Parse questionnaire item for data type
    *
    * @param lfItem {object} - LForms item object to assign data type
@@ -26014,6 +25973,47 @@ function addCommonSDCImportFns(ns) {
     if (numAnswersWithItems > 0) {
       qrItemInfo.numAnswersWithItems = numAnswersWithItems;
       qrItemInfo.qrAnswersItemsInfo = answersItemsInfo;
+    }
+  };
+  /**
+   * Parse questionnaire item for restrictions
+   *
+   * @param lfItem {object} - LForms item object to assign restrictions
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processRestrictions = function (lfItem, qItem) {
+    var restrictions = {};
+
+    if (typeof qItem.maxLength !== 'undefined') {
+      restrictions['maxLength'] = qItem.maxLength.toString();
+    }
+
+    for (var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
+      var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
+
+      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
+
+      if (val !== undefined && val !== null) {
+        if (restriction.url.match(/minValue$/)) {
+          // TODO -
+          // There is no distinction between inclusive and exclusive.
+          // Lforms looses this information when converting back and forth.
+          restrictions['minInclusive'] = val;
+        } else if (restriction.url.match(/maxValue$/)) {
+          restrictions['maxInclusive'] = val;
+        } else if (restriction.url.match(/minLength$/)) {
+          restrictions['minLength'] = val;
+        } else if (restriction.url.match(/regex$/)) {
+          restrictions['pattern'] = val;
+        }
+      }
+    }
+
+    if (!jQuery.isEmptyObject(restrictions)) {
+      lfItem.restrictions = restrictions;
     }
   };
 }
