@@ -705,6 +705,8 @@ describe('Validations:', function() {
       ]);
 
       const skipLogicTrigger = element(by.id('/sl_source_to_test_required/1'));
+      // Entering 1 will show a previously hidden section with required inputs to make sure they now
+      // trigger the validation
       testUtil.sendKeys(skipLogicTrigger, '1');
 
       const errorsAfterSkipLogic = browser.driver.executeScript('return LForms.Util.checkValidity()');
@@ -713,8 +715,8 @@ describe('Validations:', function() {
         'Required DTM field requires a value',
         'Required TX field requires a value',
         'Required ST field requires a value',
-        'Required RT1: Shown when \'Skip Logic Required Source\' == 1 requires a value',
-        'RT4: Shown when my section header is shown requires a value',
+        'Required RT1: Shown when \'Skip Logic Required Source\' == 1; requires a value',
+        'RT4: Shown when my section header is shown; requires a value',
       ]);
     });
 
@@ -728,10 +730,10 @@ describe('Validations:', function() {
       testUtil.sendKeys(txEl, 'test');
       const stEl = element(by.id('/required_st/1'));
       testUtil.sendKeys(stEl, 'test');
-      const hiddenEl1 = element(by.id('/sl_target_to_test_required1/1'));
-      testUtil.sendKeys(hiddenEl1, 'test');
-      const hiddenSubEl1 = element(by.id('/sl_target_header/sl_target_to_test_required/1/1'));
-      testUtil.sendKeys(hiddenSubEl1, 'test');
+      const originalHiddenEl1 = element(by.id('/sl_target_to_test_required1/1'));
+      testUtil.sendKeys(originalHiddenEl1, 'test');
+      const originalHiddenSubEl1 = element(by.id('/sl_target_header/sl_target_to_test_required/1/1'));
+      testUtil.sendKeys(originalHiddenSubEl1, 'test');
 
       const errors = browser.driver.executeScript('return LForms.Util.checkValidity()');
       expect(errors).toEqual(null);
