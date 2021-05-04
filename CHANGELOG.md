@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.0.3] 2021-05-03
+### Fixed
+- Fixed a bug where hidden items were triggering validation to fail.
+
 ## [29.0.2] 2021-04-30
 ### Fixed
 - Fixed a bug that item.repeats is not converted correctly in some cases.
