@@ -15,10 +15,6 @@ export class LhcItemTimeComponent implements OnInit {
   }
 
   time: Date | null = null;
-
-  log(time: Date): void {
-    console.log(time && time.toTimeString());
-  }
   
   onChange(result: Date): void {
     console.log('Selected Time: ', result);

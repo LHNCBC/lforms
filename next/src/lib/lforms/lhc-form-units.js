@@ -1,6 +1,5 @@
 /**
  * Units modules
- * Embedded in lforms-data.js. To be separated as a independent file.
  */
 export let Units = {
     getValueInStandardUnit: function (value, unit) {
@@ -35,7 +34,6 @@ export let Units = {
 
 /**
  * Formula modules
- * Embedded in lforms-data.js. To be separated as a independent file.
  */
 export let Formulas = {
     calculations_: {
