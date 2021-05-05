@@ -269,20 +269,18 @@ export class LhcAutocompleteComponent implements OnInit {
       }
       // multiple selection
       else {
-        // The item was removed
+        // remove the item
         if (eventData.removed) {
-          for (let i = 0, len = this.selectedItems.length; i < len; ++i) {
-            if (itemText === this.selectedItems[i].text) {
-              this.selectedItems.splice(i, 1);
-              break;
-            }
-          }
+          // (create a new array so that change detection is triggered)
+          this.selectedItems = this.selectedItems.filter(item => itemText !==item.text)
         }
         // new item, in the search result
         else {
           let newItem = this.getSearchItemModelData(itemText, onList);
           if (newItem) {
-            this.selectedItems.push(newItem);
+              // add the new item
+              // (create a new array so that change detection is triggered)
+              this.selectedItems = [...this.selectedItems, newItem];
           }
         }
       }

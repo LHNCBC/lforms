@@ -179,6 +179,42 @@
         "action": "show"
       },
       "linkId": "/54114-4/54139-1/54113-6"
+    },
+    {
+      "questionCode": "q10",
+      "dataType": "CWE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "question": "Multi Selection on CWE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q10"
+    },
+    {
+      "questionCode": "q11",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "question": "Multi Selection on CNE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q11"
+    },
+    {
+      "questionCode": "q10a",
+      "dataType": "CWE",
+      "question": "Single Selection on CWE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q10a"
+    },
+    {
+      "questionCode": "q11a",
+      "dataType": "CNE",
+      "question": "Single Selection on CNE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q11a"
     }
   ],
   "lformsVersion": "24.0.0"
