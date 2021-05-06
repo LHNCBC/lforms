@@ -3,6 +3,10 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
+
+/**
+ * A data service for the form data object that is used by various components
+ */
 export class LhcDataService {
 
   constructor() { }

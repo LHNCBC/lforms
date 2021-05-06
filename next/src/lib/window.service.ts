@@ -4,6 +4,10 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
+/**
+ * Get the real time size (and styles) from the window object.
+ */
 export class WindowService {
 
   private _windowWidth$: BehaviorSubject<number> = null;
@@ -69,7 +73,7 @@ export class WindowService {
    * Get the window's current width as an obserable
    * @returns a number as an observable
    */
-  get windowWidth() {
+  get windowWidth(): Observable<number> {
     return this._windowWidth$.asObservable();
   }
 
@@ -77,7 +81,7 @@ export class WindowService {
    * Get view mode CSS class as an obserable
    * @returns a CSS class string as an observable
    */
-  get viewModeClass() {
+  get viewModeClass(): Observable<string> {
     return this._viewModeClass$.asObservable();
   }
 
