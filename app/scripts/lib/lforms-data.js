@@ -1035,8 +1035,8 @@
         }
 
         if (item.extension) {
-          this._fhir.SDC.buildExtensionMap(item);
           if (this._fhir) {
+            this._fhir.SDC.buildExtensionMap(item);
             this._hasResponsiveExpr = this._hasResponsiveExpr ||
               this._fhir.SDC.hasResponsiveExpression(item);
             this._hasInitialExpr = this._hasInitialExpr ||

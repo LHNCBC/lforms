@@ -6578,9 +6578,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         }
 
         if (item.extension) {
-          this._fhir.SDC.buildExtensionMap(item);
-
           if (this._fhir) {
+            this._fhir.SDC.buildExtensionMap(item);
+
             this._hasResponsiveExpr = this._hasResponsiveExpr || this._fhir.SDC.hasResponsiveExpression(item);
             this._hasInitialExpr = this._hasInitialExpr || this._fhir.SDC.hasInitialExpression(item);
             item._hasListExpr = this._fhir.SDC.hasListExpression(item);
