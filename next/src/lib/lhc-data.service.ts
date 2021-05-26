@@ -279,37 +279,37 @@ export class LhcDataService {
       //       "time": new Date()
       //     });
 
-      setTimeout(function() {
-        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      // setTimeout(function() {
+      //   var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-        var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
-        var btnDel = document.getElementById("del-" + newItem._elementId);
-        // vertical table, find the header item
-        if (headerItem) {
-          var anchorItem = headerItem;
-        }
-        // horizontal table, find the '-' button
-        else if (btnDel) {
-          var anchorItem = btnDel;
-        }
+      //   var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
+      //   var btnDel = document.getElementById("del-" + newItem._elementId);
+      //   // vertical table, find the header item
+      //   if (headerItem) {
+      //     var anchorItem = headerItem;
+      //   }
+      //   // horizontal table, find the '-' button
+      //   else if (btnDel) {
+      //     var anchorItem = btnDel;
+      //   }
 
-        if (anchorItem) {
-          var anchorPosition = anchorItem.getBoundingClientRect();
-          // scroll down to show about 2 rows of the newly added section
-          // if the new header item is close enough to the bottom so that the first 2 questions are not visible
-          // if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
-          //   smoothScroll(anchorItem, {
-          //     duration: 500,
-          //     easing: 'easeInQuad',
-          //     offset: viewportHeight - 105
-          //   });
-          // }
-          // move the focus to the '-' button of the newly added item/section
-          // a table from the '-' button moves the focus to the next input field
-          if (btnDel)
-            btnDel.focus();
-        }
-      }, 1);
+      //   if (anchorItem) {
+      //     var anchorPosition = anchorItem.getBoundingClientRect();
+      //     // scroll down to show about 2 rows of the newly added section
+      //     // if the new header item is close enough to the bottom so that the first 2 questions are not visible
+      //     // if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
+      //     //   smoothScroll(anchorItem, {
+      //     //     duration: 500,
+      //     //     easing: 'easeInQuad',
+      //     //     offset: viewportHeight - 105
+      //     //   });
+      //     // }
+      //     // move the focus to the '-' button of the newly added item/section
+      //     // a table from the '-' button moves the focus to the next input field
+      //     if (btnDel)
+      //       btnDel.focus();
+      //   }
+      // }, 1);
     }
   }
 
@@ -372,6 +372,160 @@ export class LhcDataService {
     }
   }
 
+
+  getHorizontalTableInfo() {
+    return this.lhcFormData._horizontalTableInfo;
+  }
+
+  // horizontal table trackby functions to avoid unnecessary recreating DOM elements in the horizontal tables
+  /**
+   * Track by item's element id for each cell in a table row
+   * @param index *ngFor index
+   * @param item *ngFor item, an item of the form 
+   * @returns 
+   */
+  trackByElementId(index, item) {
+    return item._elementId;
+  }
+
+  /**
+   * Track by each row's group header item's element id for each row in a horizontal table
+   * @param index *ngFor index
+   * @param item *ngFor item, the group/section item of a form 
+   * @returns 
+   */
+  trackByRowHeaderElementId(index, row) {
+    return row.header._elementId;
+  }
+
+  /**
+   * Track by column's id, which is "col" + the item's element id in the first row
+   * @param index *ngFor index
+   * @param item *ngFor item, an item in the headers array of the horizontal table structure
+   * @returns 
+   */
+  trackByColumnHeaderId(index, col) {
+    return col.id;
+  }
+
+  isSequentialHorizontalTableGroupItem(item) {
+    return item && item.displayControl && item.displayControl.questionLayout === "horizontal" && !item._horizontalTableHeader;
+  }
+
+
+  /**
+   * Updates the value for an item whose answers are displayed as a list of checkboxes,
+   * one of which has just been selected or deselected
+   * @param item a form item that has an answer list and supports multiple selections
+   * @param answer an answer object in the answer list
+   */
+  updateCheckboxList(item, answer) {
+    if (item.value && Array.isArray(item.value)) {
+      var index, selected = false;
+      for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+        if (this.lhcFormData._objectEqual(item.value[i],answer)) {
+          selected = true;
+          index = i;
+          break;
+        }
+      }
+      // if answer is currently selected
+      if (selected) {
+        // remove the answer from the selected list
+        item.value.splice(index, 1);
+      }
+      // if answer is not currently selected
+      else {
+        // add the answer to the selected list
+        item.value.push(answer);
+      }
+    }
+    // the value is not accessed before
+    else {
+      // add the answer to the selected list
+      item.value = [answer];
+    }
+  };
+
+
+  /**
+   * Updates the value for an item with the user typed data.
+   * The item's answers are displayed as a list of checkboxes, and users have an option to type their own answer.
+   * Update the item.value based on selection of extra data input by users
+   * Note: In the checkbox display layout only one "OTHER" value is allowed, while in autocomplete multiple
+   * "OTHER" values are allowed.
+   * @param item a form item that has an answer list and supports multiple selections and user typed data.
+   * @param otherValue the user typed string value for the "OTHER" checkbox
+   */
+  updateCheckboxListForOther(item, otherValue) {
+    var other = {"text": otherValue, "_notOnList": true};
+
+    // add/update the other value
+    if (item._otherValueChecked) {
+      // the list is not empty
+      if (item.value && Array.isArray(item.value)) {
+        var found = false;
+        for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+          if (item.value[i]._notOnList) {
+            item.value[i] = other;
+            found = true;
+            break;
+          }
+        }
+        // if the other value is not already in the list
+        if (!found) {
+          // add the other value to the list
+          item.value.push(other);
+        }
+      }
+      // the list is empty
+      else {
+        // add the other value to the list
+        item.value = [other];
+      }
+    }
+    // remove other value
+    else {
+      if (item.value && Array.isArray(item.value)) {
+        var index, found = false;
+        for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+          if (item.value[i]._notOnList) {
+            found = true;
+            index = i;
+            break;
+          }
+        }
+        if (found) {
+          item.value.splice(index, 1);
+        }
+      }
+    }
+  };
+
+
+  /**
+   *
+   * Update the item.value based on selection of an answer by users
+   * @param item a form item that has an answer list and support single selections
+   */
+  updateRadioList(item) {
+    item._otherValueChecked = false;
+  };
+
+
+  /**
+   * Update the item.value based on selection of extra data input by users
+   * @param item a form item that has an answer list and support single selections
+   * @param otherValue the user typed string value for the "OTHER" radio button
+   */
+  updateRadioListForOther(item, otherValue) {
+
+    // add/update the other value
+    if (item._otherValueChecked) {
+      item.value = { "text": otherValue, "_notOnList": true};
+    }
+  };
+  
 }
 
 

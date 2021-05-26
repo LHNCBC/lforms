@@ -14,4 +14,8 @@ export class LhcItemBooleanComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnDestroy() : void {
+    console.log('lhc-item-boolean, ngOnDestroy')
+  }
+
 }

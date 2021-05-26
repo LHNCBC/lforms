@@ -50,6 +50,9 @@ import { LhcItemQuestionComponent } from './lhc-item-question/lhc-item-question.
 import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.component';
 import { LhcChangeDetectionComponent } from './lhc-change-detection/lhc-change-detection.component';
 import { LhcWatcherComponent} from './lhc-watcher/lhc-watcher.component';
+import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertical.component';
+import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
+import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
 
 registerLocaleData(en);
 
@@ -78,7 +81,10 @@ registerLocaleData(en);
     LhcItemQuestionComponent,
     LhcItemDisplayComponent,
     LhcChangeDetectionComponent,
-    LhcWatcherComponent
+    LhcWatcherComponent,
+    LhcGroupVerticalComponent,
+    LhcGroupHorizontalComponent,
+    LhcGroupMatrixComponent
   ],
   imports: [
     BrowserModule,

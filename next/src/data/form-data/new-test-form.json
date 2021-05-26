@@ -215,7 +215,263 @@
       "question": "Single Selection on CNE, a search field",
       "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
       "linkId": "/q11a"
+    },
+    {
+      "questionCode": "verticalTable",
+      "question": "A repeating vertical table",
+      "questionCardinality": {
+        "min": "1",
+        "max": "*"
+      },
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "vertical"
+      },
+      "items": [
+        {
+          "questionCode": "colA",
+          "question": "A ST",
+          "dataType": "ST",
+          "displayControl": {
+            "colCSS": [
+              {
+                "name": "width",
+                "value": "25%"
+              },
+              {
+                "name": "min-width",
+                "value": "10%"
+              }
+            ]
+          },
+          "linkId": "/verticalTable/colA"
+        },
+        {
+          "questionCode": "colB",
+          "question": "A TX",
+          "dataType": "TX",
+          "displayControl": {
+            "colCSS": [
+              {
+                "name": "width",
+                "value": "25%"
+              },
+              {
+                "name": "min-width",
+                "value": "15%"
+              }
+            ]
+          },
+          "linkId": "/verticalTable/colB"
+        },
+        {
+          "questionCode": "colC",
+          "question": "A CNE",
+          "dataType": "CNE",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "other": null
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "other": null
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "other": null
+            }
+          ],
+          "displayControl": {
+            "colCSS": [
+              {
+                "name": "width",
+                "value": "50%"
+              }
+            ]
+          },
+          "linkId": "/verticalTable/colC"
+        }
+      ],
+      "linkId": "/verticalTable"
+    },
+    {
+      "questionCode": "horizontalTable",
+      "question": "A non-repeating horizontal table",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "horizontal"
+      },
+      "items": [
+        {
+          "questionCode": "colA",
+          "question": "A ST",
+          "dataType": "ST",
+          "displayControl": {
+            "colCSS": [
+              {
+                "name": "width",
+                "value": "25%"
+              },
+              {
+                "name": "min-width",
+                "value": "10%"
+              }
+            ]
+          },
+          "linkId": "/horizontalTable/colA"
+        },
+        {
+          "questionCode": "colB",
+          "question": "A TX",
+          "dataType": "TX",
+          "displayControl": {
+            "colCSS": [
+              {
+                "name": "width",
+                "value": "25%"
+              },
+              {
+                "name": "min-width",
+                "value": "15%"
+              }
+            ]
+          },
+          "linkId": "/horizontalTable/colB"
+        },
+        {
+          "questionCode": "colC",
+          "question": "A CNE",
+          "dataType": "CNE",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "other": null
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "other": null
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "other": null
+            }
+          ],
+          "displayControl": {
+            "colCSS": [
+              {
+                "name": "width",
+                "value": "50%"
+              }
+            ]
+          },
+          "linkId": "/horizontalTable/colC"
+        }
+      ],
+      "linkId": "/horizontalTable"
+    },
+    {
+      "questionCode": "g2",
+      "question": "A repeating group with horizontal layout",
+      "header": true,
+      "questionCardinality": {
+        "min": "1",
+        "max": "*"
+      },
+      "displayControl": {
+        "questionLayout": "horizontal"
+      },
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "ST",
+          "question": "Question #1",
+          "answerCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "linkId": "/g2/g1m1"
+        },
+        {
+          "questionCode": "9269-2",
+          "dataType": "INT",
+          "units": [
+            {
+              "name": "{score}"
+            },
+            {
+              "name": "{score2}"
+            }
+          ],
+          "question": "GCS total",
+          "linkId": "/9269-2"
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            }
+          ],
+          "linkId": "/g2/g1m2"
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            }
+          ],
+          "linkId": "/g2/g1m3"
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #4",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            }
+          ],
+          "linkId": "/g2/g1m4"
+        }
+      ],
+      "linkId": "/g2"
     }
+
   ],
   "lformsVersion": "24.0.0"
 }

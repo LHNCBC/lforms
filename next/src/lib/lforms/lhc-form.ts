@@ -135,7 +135,7 @@ export default class LhcFormData {
   _displayLevel = 0;
   _linkToDef = null;
   _formDone;
-  _horizontalTableInfo;
+  _horizontalTableInfo = {};
   itemList;
   itemHash;
   _asyncChangeListeners;
@@ -460,10 +460,9 @@ export default class LhcFormData {
     //// TODO
     //this._standardizeScoreRule(this.itemList);
 
-    //// TODO
     // create horizontal table info
-    //this._resetHorizontalTableInfo();
-    //this._adjustLastSiblingListForHorizontalLayout();
+    this._resetHorizontalTableInfo();
+    this._adjustLastSiblingListForHorizontalLayout();
 
     //// TODO
     // create a navigation map
@@ -606,10 +605,9 @@ export default class LhcFormData {
     //// TODO
     // this._standardizeScoreRule(this.itemList);
 
-    //// TODO
-    // // create horizontal table info
-    // this._resetHorizontalTableInfo();
-    // this._adjustLastSiblingListForHorizontalLayout();
+    // create horizontal table info
+    this._resetHorizontalTableInfo();
+    this._adjustLastSiblingListForHorizontalLayout();
 
     //// TODO
     // // create a navigation map
@@ -1123,6 +1121,7 @@ export default class LhcFormData {
       item._text = item.prefix ? item.prefix + " " + item.question : item.question;
 
       // set default dataType
+      // TODO: header is kept for backward compatibility. it should not be used any more.
       if (item.header) {
         if (item.dataType !== CONSTANTS.DATA_TYPE.TITLE)
           item.dataType = CONSTANTS.DATA_TYPE.SECTION;
@@ -1664,14 +1663,15 @@ export default class LhcFormData {
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
       // or if the item is hidden and the flag is set to ignore hidden items
       if (noDisabledItem && item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ||
-          noEmptyValue && !item._itemOrSubtreeHasValue && !item.header) {
+          noEmptyValue && !item._itemOrSubtreeHasValue && item.dataType!==CONSTANTS.DATA_TYPE.SECTION &&
+          item.dataType!==CONSTANTS.DATA_TYPE.TITLE ) {
         continue;
       }
       // include only the code and the value (and unit, other value) if no form definition data is needed
       if (noFormDefData) {
         itemData.questionCode = item.questionCode;
-        // not a header
-        if (!item.header) {
+        // not a group or title item
+        if (item.dataType!==CONSTANTS.DATA_TYPE.SECTION && item.dataType!==CONSTANTS.DATA_TYPE.TITLE) {
           if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType);
           if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
         }
@@ -1956,19 +1956,24 @@ export default class LhcFormData {
    */
   _resetHorizontalTableInfo() {
 
+    // returning a new object make the horizontal table view reset without value/answerlist/etc.
     this._horizontalTableInfo = {};
+    // if (this._horizontalTableInfo) {
+    //   for (var tableId in this._horizontalTableInfo) delete this._horizontalTableInfo[tableId];
+    // }
 
     var tableHeaderLinkIdAndParentIdPath = null;
     var lastHeaderId = null;
 
     for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
-      // header item and horizontal layout
-      if (item.header && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
+      // section item and horizontal layout
+      if (item.dataType===CONSTANTS.DATA_TYPE.SECTION && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
         // same methods for repeating items could be used for repeating and non-repeating items.
         // (need to rename function names in those 'repeatable' functions.)
         var itemsInRow = [];
         var columnHeaders = [];
+
         item._inHorizontalTable = true;
         var itemLinkIdAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
         lastHeaderId = item._elementId;
@@ -2020,6 +2025,77 @@ export default class LhcFormData {
     }
   }
 
+
+  // _resetHorizontalTableInfo() {
+
+  //   // returning a new object make the horizontal table view reset without value/answerlist/etc.
+  //   // this._horizontalTableInfo = {};
+  //   if (this._horizontalTableInfo) {
+  //     for (var tableId in this._horizontalTableInfo) delete this._horizontalTableInfo[tableId];
+  //   }
+
+  //   var tableHeaderLinkIdAndParentIdPath = null;
+  //   var lastHeaderId = null;
+
+  //   for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
+  //     var item = this.itemList[i];
+  //     // section item and horizontal layout
+  //     if (item.dataType===CONSTANTS.DATA_TYPE.SECTION && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
+  //       // same methods for repeating items could be used for repeating and non-repeating items.
+  //       // (need to rename function names in those 'repeatable' functions.)
+  //       var itemsInRow = [];
+  //       var columnHeaders = [];
+
+  //       item._inHorizontalTable = true;
+  //       var itemLinkIdAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
+  //       lastHeaderId = item._elementId;
+  //       // if it's the first row (header) of the first table,
+  //       if (tableHeaderLinkIdAndParentIdPath === null ||
+  //         tableHeaderLinkIdAndParentIdPath !== itemLinkIdAndParentIdPath) {
+  //         // indicate this item is the table header
+  //         tableHeaderLinkIdAndParentIdPath = itemLinkIdAndParentIdPath;
+  //         item._horizontalTableHeader = true;
+  //         item._horizontalTableId = tableHeaderLinkIdAndParentIdPath;
+
+  //         itemsInRow = item.items;
+  //         for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
+  //           var itemInRow = itemsInRow[j];
+  //           columnHeaders.push({item: itemInRow, id: "col" + itemInRow._elementId, displayControl: itemInRow.displayControl});
+  //           // indicate the item is in a horizontal table
+  //           itemsInRow[j]._inHorizontalTable = true;
+  //         }
+
+  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath] = {
+  //           tableStartIndex: i,
+  //           tableEndIndex: i+itemsInRow.length,
+  //           columnHeaders: columnHeaders,
+  //           tableRows: [{ header: item, cells : itemsInRow }],
+  //           tableHeaders: [item]
+  //         };
+
+  //         // set the last table/row in horizontal group/table flag
+  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+  //       }
+  //       // if it's the following rows, update the tableRows and tableEndIndex
+  //       else if (tableHeaderLinkIdAndParentIdPath === itemLinkIdAndParentIdPath ) {
+  //         item._horizontalTableHeader = false;
+  //         itemsInRow = item.items;
+  //         for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
+  //           // indicate the item is in a horizontal table
+  //           itemsInRow[j]._inHorizontalTable = true;
+  //         }
+  //         // update rows index
+  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableRows.push({header: item, cells : itemsInRow});
+  //         // update headers index (hidden)
+  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableHeaders.push(item);
+  //         // update last item index in the table
+  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableEndIndex = i + itemsInRow.length;
+  //         // set the last table/row in horizontal group/table flag
+  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+  //       }
+  //     }
+  //   }
+  // }
 
   /**
    * Adjust the last sibling list for the first header item of horizontal tables
@@ -2157,37 +2233,41 @@ export default class LhcFormData {
 
     var isEmpty = true;
     // 
-    if (item.value === undefined || item.value === null || item.value ==="") {
-      return isEmpty;
-    }
-    //if it is not hidden
-    if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
-      // multiple selection answer list (array is also an object)
-      if (Array.isArray(item.value) && item.value.length > 0) {
-        var notEmpty = false;
-        for(var i= 0, iLen=item.value.length; i<iLen; i++) {
-          if (item.value[i].text)
-          notEmpty = item.value[i].text !== undefined && item.value[i].text !== null && item.value[i].text !=="";
-          if (notEmpty) break;
+    if (item.dataType !== CONSTANTS.DATA_TYPE.SECTION) {
+      if (item.value === undefined || item.value === null || item.value ==="") {
+        return isEmpty;
+      }
+      // it's a question item, and it is not hidden
+      if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {    
+        // multiple selection answer list (array is also an object)
+        if (Array.isArray(item.value) && item.value.length > 0) {
+          var notEmpty = false;
+          for(var i= 0, iLen=item.value.length; i<iLen; i++) {
+            if (item.value[i].text)
+            notEmpty = item.value[i].text !== undefined && item.value[i].text !== null && item.value[i].text !=="";
+            if (notEmpty) break;
+          }
+          isEmpty = !notEmpty;
         }
-        isEmpty = !notEmpty;
-      }
-      // single selection answer list
-      else if (typeof item.value === 'object') {
-        isEmpty = item.value.text === undefined || item.value.text === null || item.value.text ==="";
-      }
-      // simple type
-      else if (item.value !== undefined && item.value !== null && item.value !=="") {
-        isEmpty = false;
-      }
-      // check sub items
-      if (isEmpty && item.items) {
-        for (var j= 0, jLen = item.items.length; j<jLen; j++) {
-          isEmpty = this._isRepeatingItemEmpty(item.items[j]);
-          if (!isEmpty) break;
+        // single selection answer list
+        else if (typeof item.value === 'object') {
+          isEmpty = item.value.text === undefined || item.value.text === null || item.value.text ==="";
+        }
+        // simple type
+        else if (item.value !== undefined && item.value !== null && item.value !=="") {
+          isEmpty = false;
         }
       }
     }
+
+    // check sub items
+    if (isEmpty && item.items) {
+      for (var j= 0, jLen = item.items.length; j<jLen; j++) {
+        isEmpty = this._isRepeatingItemEmpty(item.items[j]);
+        if (!isEmpty) break;
+      }
+    }
+    
     return isEmpty;
   }
 
@@ -2291,7 +2371,7 @@ export default class LhcFormData {
    * @param item the item whose type is needed
    */
   itemDescription(item) {
-    return item._inHorizontalTable ?  'row' : item.header? 'section' : 'question';
+    return item._inHorizontalTable ?  'row' : item.dataType===CONSTANTS.DATA_TYPE.SECTION ? 'section' : 'question';
   }
 
 

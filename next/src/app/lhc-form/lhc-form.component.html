@@ -27,17 +27,27 @@
     <!--form body-->
     <div class="lhc-form-body">
       <!--check form level questionLayout for matrix and horizontal layouts-->
-        <!--vertical-->
+      <div *ngIf="lhcFormData.templateOptions.displayControl" [ngSwitch]="lhcFormData.templateOptions.displayControl.questionLayout">
+        <div *ngSwitchCase="'horizontal'">
+          <lhc-group-horizontal [item]="lhcFormData"></lhc-group-horizontal>
+        </div>
+        <div *ngSwitchCase="'matrix'">
+          <lhc-group-matrix [item]="lhcFormData"></lhc-group-matrix>
+        </div>
+        <!-- vertical -->
+        <div *ngSwitchDefault>
           <!-- data row, for each item -->
           <!-- check each top level item's questionLayout -->
           <ng-container *ngIf="lhcFormData.items">
             <ng-container *ngFor ="let item of lhcFormData.items">
-              <lhc-item *ngIf="item && lhcDataService.targetShown(item)" 
+              <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !lhcDataService.isSequentialHorizontalTableGroupItem(item)" 
                 [item]="item" 
                 class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}}">
               </lhc-item>
               <!--header item-->
             </ng-container>
           </ng-container>
+        </div>
+      </div>
     </div>
 </form>

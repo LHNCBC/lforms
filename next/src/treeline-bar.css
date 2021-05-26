@@ -30,16 +30,16 @@
   height: 14px;
 }
 /*no tree lines for form level horizontal and matrix layouts */
-.lf-top-section .lf-layout-horizontal.lhc-item,
-.lf-top-section .lf-layout-matrix.lhc-item {
+.lf-top-section .lhc-layout-horizontal.lhc-item,
+.lf-top-section .lhc-layout-matrix.lhc-item {
   padding: 0 4px 0 3px;
 }
-.lf-top-section .lf-layout-horizontal.lhc-item::before,
-.lf-top-section .lf-layout-matrix.lhc-item::before {
+.lf-top-section .lhc-layout-horizontal.lhc-item::before,
+.lf-top-section .lhc-layout-matrix.lhc-item::before {
   border: 0;
 }
-.lf-top-section .lf-layout-horizontal.lhc-item::after,
-.lf-top-section .lf-layout-matrix.lhc-item::after {
+.lf-top-section .lhc-layout-horizontal.lhc-item::after,
+.lf-top-section .lhc-layout-matrix.lhc-item::after {
   border: 0;
 }
 /* end of tree lines */

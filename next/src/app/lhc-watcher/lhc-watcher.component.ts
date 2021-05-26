@@ -33,7 +33,11 @@ export class LhcWatcherComponent implements OnInit {
     
    if (!changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcData()
+      console.log(lfData);
+      //console.log(lfData.items[0].items[2].value)
       lfData._checkFormControls();
+      console.log(lfData);
+      //console.log(lfData.items[0].items[2].value)
    }
 
     // todo: run form controls here in one place
