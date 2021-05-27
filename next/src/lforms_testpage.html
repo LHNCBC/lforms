@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width">
-  <title>LForms Next</title>
+  <title>LForms Test Page</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -16,7 +16,7 @@
 
   <div id="lforms-form">
     <div class="panel panel-default">
-      <h3 class="panel-heading">LForms-Next Test Page</h3>
+      <h3 class="panel-heading">LForms Test Page</h3>
       <div class="panel-body">
         <p>Select a form from the list and click the button to display the form:</p>
           <select id="form-list" class="form-control">
@@ -110,7 +110,7 @@
         let fhirVersion = document.getElementById("fhirVersion");
 
         if (formList.value) {
-          displayForm("/data/form-data/" + formList.value + ".json")
+          displayForm("/test-data/form-data/" + formList.value + ".json")
         }
       };
 
