@@ -44,8 +44,6 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *   there are no pending runs left to do.
      */
     runCalculations: function(includeInitialExpr) {
-console.log("%%% runCalculations called; trace follows");
-console.trace();
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
       if (this._currentRunPromise) // then we will just return that promise
@@ -98,36 +96,24 @@ console.trace();
     /**
      *  This is conceptually a part of runCalculations, but it is this part of
      *  it that might need to call itself if fields or variables update.
-     *  The basic algorithm is that first we evaluate the variables, and wait
-     *  for any AJAX-based variables to finish loading.  Then we evaluate field
-     *  expressions (calculatedExpression and answerExpresion) and again wait
-     *  for any AJAX based expressions to finish loading.  If something has
-     *  changed, we do it again.
+     *  The basic algorithm is a depth-first traversal of the items to run their
+     *  expressions.  Some of those might be asynchronous (e.g. x-fhir-query
+     *  variables), so we wait for those to complete before looking at what has
+     *  changed and deciding whether to run the expressions again.
      * @param includeInitialExpr whether to include the "initialExpression"
-     *   expressions (which should only be run once, after asynchronous loads
-     *   from questionnaire-launchContext have been completed).
-     * @param firstCall whether this is the first call in a possibly recursive
-     *  sequence.  We use this to optimize whether there is a need to evaluate
-     *  all of the expressions or just the ones that might have changed.
+     *  expressions (which should only be run once, after asynchronous loads
+     *  from questionnaire-launchContext have been completed).
+     * @param changesOnly whether to run all field expressions, or just the ones
+     *  that are likely to have been affected by changes from variable expressions.
      * @return a promise that resolves when all Expressions which needed to be
      *  processed have been processed and the values have stablized.
      */
     _asyncRunCalculations: function(includeInitialExpr, changesOnly) {
-/* Just some notes, to be deleted prior to PR.
-Pass 1:  All expressions in depth-first order
-Pass 2:  If only variables changed, the only do those branches that could be affected by the changed variables, otherwise back to Pass1
-If nothing changed, done
-Note 1:  When setting a field value, the QR needs to be updated
-Note 2:  When setting a field value, the item type needs to be checked
-*/
       const self = this;
       const lfData = this._lfData;
       var changes = null; // data about what the calculations changed
       changes = this._evaluateExpressions(lfData, includeInitialExpr, changesOnly);
-console.log(changes);
       return this._handlePendingQueries().then(function(queryChanges) {
-console.log("queryChanges");
-console.log(queryChanges);
         let varsChanged = changes.variables || queryChanges.variables;
         let fieldsChanged = changes.fields || queryChanges.fields;
         if (varsChanged || fieldsChanged) {
@@ -135,7 +121,6 @@ console.log(queryChanges);
           if (fieldsChanged)
             self._regenerateQuestionnaireResp();
           let onlyVarsChanged = !fieldsChanged;
-console.log("%%% calling _asyncRunCalculations again because either variables or fields changed")
           return self._asyncRunCalculations(includeInitialExpr, onlyVarsChanged);
         }
       }).then(()=>{
@@ -146,7 +131,6 @@ console.log("%%% calling _asyncRunCalculations again because either variables or
           self._firstExpressionRunComplete = true;
         self._currentRunPromise = undefined;
         if (self._pendingRun) {
-console.log("%%% calling runCalculations again because _pendingRun was set")
           return self.runCalculations(false); // will set self._currentRunPromise again
         }
       },
@@ -236,7 +220,6 @@ console.log("%%% calling runCalculations again because _pendingRun was set")
                   var oldVal;
                   let newVal;
                   var updateValue = false
-console.log("%%% Processing " +ext.valueExpression.expression);
                   if (ext.valueExpression.language=="text/fhirpath") {
                     if (varName) {
                       // Temporarily delete the old value, so we don't have
@@ -246,7 +229,6 @@ console.log("%%% Processing " +ext.valueExpression.expression);
                     }
                     newVal = this._evaluateFHIRPath(item,
                       ext.valueExpression.expression);
-console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                     updateValue = true;
                     if (varName)
                       item._fhirVariables[varName] = oldVal; // update handled below
@@ -272,14 +254,12 @@ console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                         let hasCachedResult = this._queryCache.hasOwnProperty(queryURL);
                         if (hasCachedResult) {
                           newVal = this._queryCache[queryURL];
-console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                           updateValue = true;
                         }
                         else { // query not cached
                           let fetchPromise = this._fetch(queryURL);
                           this._pendingQueries.push(fetchPromise.then(function(parsedJSON) {
                             newVal = (self._queryCache[queryURL] = parsedJSON);
-console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                           }, function fail(e) {
                             console.error("Unable to load FHIR data from "+queryURL);
                           }).then(function() {
@@ -570,10 +550,8 @@ console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
       queryURL += (queryURL.indexOf('?')>0 ? '&' : '?')+'_format=json';
       if (!/^https?:/.test(queryURL) && LForms.fhirContext) {
         fetchPromise = LForms.fhirContext.request(queryURL);
-console.log("%%% used request");
       }
       else {
-console.log("%%% used fetch");
         fetchPromise = fetch(queryURL).then(function(response) {
           return response.json();
         });
