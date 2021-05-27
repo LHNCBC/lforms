@@ -44,6 +44,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *   there are no pending runs left to do.
      */
     runCalculations: function(includeInitialExpr) {
+console.log("%%% runCalculations called; trace follows");
+console.trace();
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
       if (this._currentRunPromise) // then we will just return that promise
@@ -133,6 +135,7 @@ console.log(queryChanges);
           if (fieldsChanged)
             self._regenerateQuestionnaireResp();
           let onlyVarsChanged = !fieldsChanged;
+console.log("%%% calling _asyncRunCalculations again because either variables or fields changed")
           return self._asyncRunCalculations(includeInitialExpr, onlyVarsChanged);
         }
       }).then(()=>{
@@ -142,8 +145,10 @@ console.log(queryChanges);
         if (!self._firstExpressionRunComplete) // if this is the first run
           self._firstExpressionRunComplete = true;
         self._currentRunPromise = undefined;
-        if (self._pendingRun)
+        if (self._pendingRun) {
+console.log("%%% calling runCalculations again because _pendingRun was set")
           return self.runCalculations(false); // will set self._currentRunPromise again
+        }
       },
       (failureReason) => {
         console.log("Run of expressions failed; reason follows");
@@ -199,6 +204,7 @@ console.log(queryChanges);
         }
       }
       if (!changesOnly) { // process this and all child items
+        item._varChanged = false; // clear flag in case it was set
         var fhirExt = item._fhirExt;
         if (fhirExt) {
           var sdc = this._fhir.SDC;
@@ -230,6 +236,7 @@ console.log(queryChanges);
                   var oldVal;
                   let newVal;
                   var updateValue = false
+console.log("%%% Processing " +ext.valueExpression.expression);
                   if (ext.valueExpression.language=="text/fhirpath") {
                     if (varName) {
                       // Temporarily delete the old value, so we don't have
@@ -239,6 +246,7 @@ console.log(queryChanges);
                     }
                     newVal = this._evaluateFHIRPath(item,
                       ext.valueExpression.expression);
+console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                     updateValue = true;
                     if (varName)
                       item._fhirVariables[varName] = oldVal; // update handled below
@@ -264,20 +272,17 @@ console.log(queryChanges);
                         let hasCachedResult = this._queryCache.hasOwnProperty(queryURL);
                         if (hasCachedResult) {
                           newVal = this._queryCache[queryURL];
+console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                           updateValue = true;
                         }
                         else { // query not cached
-console.log("%%% queryURL = "+queryURL);
                           let fetchPromise = this._fetch(queryURL);
                           this._pendingQueries.push(fetchPromise.then(function(parsedJSON) {
                             newVal = (self._queryCache[queryURL] = parsedJSON);
-console.log("%%% newVal=");
-console.log(JSON.stringify(newVal));
+console.log("%%% "+ext.valueExpression.expression+" = "+JSON.stringify(newVal));
                           }, function fail(e) {
-console.log(e);
                             console.error("Unable to load FHIR data from "+queryURL);
                           }).then(function() {
-console.log("%%% setting "+varName+"="+newVal+" on "+item.linkId);
                             var fChanged = self._updateItemFromExp(
                               item, ext.url, varName, newVal, isCalcExp);
                             if (varName) {
@@ -308,18 +313,17 @@ console.log("%%% setting "+varName+"="+newVal+" on "+item.linkId);
       }
 
       // Process child items
-      var childChanges, childVariables, childFields;
       if (item.items) {
-        for (let i=0, len=item.items.length; i<len; ++i) {
-          childChanges = this._evaluateExpressions(item.items[i], includeInitialExpr, changesOnly);
-          childVariables = childVariables || childChanges.variables;
-          childFields = childFields || childChanges.fields;
+        var childChanges;
+        for (var j=0, len=item.items.length; j<len; ++j) {
+          childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesOnly);
+          if (childChanges.fields)
+            rtn.fields = true;
+          if (childChanges.variables)
+            rtn.variables = true;
         }
       }
-      if (childChanges) {
-        rtn = {variables: rtn.variables || childChanges.variables,
-               fields: rtn.fields || childChanges.fields}
-      }
+
       return rtn;
     },
 

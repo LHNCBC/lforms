@@ -26192,8 +26192,10 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
      *   there are no pending runs left to do.
      */
     runCalculations: function runCalculations(includeInitialExpr) {
-      // Defer running calculations while we are waiting for earlier runs to
+      console.log("%%% runCalculations called; trace follows");
+      console.trace(); // Defer running calculations while we are waiting for earlier runs to
       // finish.
+
       if (this._currentRunPromise) // then we will just return that promise
         this._pendingRun = true; // so we know to run them when we can
       else {
@@ -26287,6 +26289,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
           // Run again
           if (fieldsChanged) self._regenerateQuestionnaireResp();
           var onlyVarsChanged = !fieldsChanged;
+          console.log("%%% calling _asyncRunCalculations again because either variables or fields changed");
           return self._asyncRunCalculations(includeInitialExpr, onlyVarsChanged);
         }
       }).then(function () {
@@ -26296,7 +26299,11 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
         if (!self._firstExpressionRunComplete) // if this is the first run
           self._firstExpressionRunComplete = true;
         self._currentRunPromise = undefined;
-        if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
+
+        if (self._pendingRun) {
+          console.log("%%% calling runCalculations again because _pendingRun was set");
+          return self.runCalculations(false); // will set self._currentRunPromise again
+        }
       }, function (failureReason) {
         console.log("Run of expressions failed; reason follows");
         console.log(failureReason);
@@ -26356,6 +26363,8 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
       if (!changesOnly) {
         // process this and all child items
+        item._varChanged = false; // clear flag in case it was set
+
         var fhirExt = item._fhirExt;
 
         if (fhirExt) {
@@ -26366,7 +26375,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
             var fieldChanged = false;
             var self = this;
 
-            var _loop = function _loop(i, len) {
+            var _loop = function _loop(i, _len) {
               var ext = exts[i]; // Skip initialExpressions if we are not including those.
 
               if (includeInitialExpr || ext.url != sdc.fhirExtInitialExp) {
@@ -26386,6 +26395,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
                   if (varName) itemVars = _this._getItemVariables(item);
                   var newVal;
                   updateValue = false;
+                  console.log("%%% Processing " + ext.valueExpression.expression);
 
                   if (ext.valueExpression.language == "text/fhirpath") {
                     if (varName) {
@@ -26396,6 +26406,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
                     }
 
                     newVal = _this._evaluateFHIRPath(item, ext.valueExpression.expression);
+                    console.log("%%% " + ext.valueExpression.expression + " = " + JSON.stringify(newVal));
                     updateValue = true;
                     if (varName) item._fhirVariables[varName] = oldVal; // update handled below
                   } else if (ext.valueExpression.language == "application/x-fhir-query") {
@@ -26421,23 +26432,18 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
                         if (hasCachedResult) {
                           newVal = _this._queryCache[queryURL];
+                          console.log("%%% " + ext.valueExpression.expression + " = " + JSON.stringify(newVal));
                           updateValue = true;
                         } else {
                           // query not cached
-                          console.log("%%% queryURL = " + queryURL);
-
                           var fetchPromise = _this._fetch(queryURL);
 
                           _this._pendingQueries.push(fetchPromise.then(function (parsedJSON) {
                             newVal = self._queryCache[queryURL] = parsedJSON;
-                            console.log("%%% newVal=");
-                            console.log(JSON.stringify(newVal));
+                            console.log("%%% " + ext.valueExpression.expression + " = " + JSON.stringify(newVal));
                           }, function fail(e) {
-                            console.log(e);
                             console.error("Unable to load FHIR data from " + queryURL);
                           }).then(function () {
-                            console.log("%%% setting " + varName + "=" + newVal + " on " + item.linkId);
-
                             var fChanged = self._updateItemFromExp(item, ext.url, varName, newVal, isCalcExp);
 
                             if (varName) {
@@ -26464,13 +26470,13 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
               }
             };
 
-            for (var i = 0, len = exts.length; i < len; ++i) {
+            for (var i = 0, _len = exts.length; i < _len; ++i) {
               var itemVars;
               var oldVal;
               var updateValue;
               var fChanged;
 
-              _loop(i, len);
+              _loop(i, _len);
             }
 
             rtn = {
@@ -26482,21 +26488,14 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
       } // Process child items
 
 
-      var childChanges, childVariables, childFields;
-
       if (item.items) {
-        for (var _i = 0, _len = item.items.length; _i < _len; ++_i) {
-          childChanges = this._evaluateExpressions(item.items[_i], includeInitialExpr, changesOnly);
-          childVariables = childVariables || childChanges.variables;
-          childFields = childFields || childChanges.fields;
-        }
-      }
+        var childChanges;
 
-      if (childChanges) {
-        rtn = {
-          variables: rtn.variables || childChanges.variables,
-          fields: rtn.fields || childChanges.fields
-        };
+        for (var j = 0, len = item.items.length; j < len; ++j) {
+          childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesOnly);
+          if (childChanges.fields) rtn.fields = true;
+          if (childChanges.variables) rtn.variables = true;
+        }
       }
 
       return rtn;
@@ -26599,8 +26598,8 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
 
       if (item.items) {
-        for (var _i2 = 0, _len2 = item.items.length; _i2 < _len2; ++_i2) {
-          var changed = this._evaluateVariables(item.items[_i2]);
+        for (var _i = 0, _len2 = item.items.length; _i < _len2; ++_i) {
+          var changed = this._evaluateVariables(item.items[_i]);
 
           if (!rtn) rtn = changed;
         }
@@ -26699,8 +26698,8 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
 
       if (item.items) {
-        for (var _i3 = 0, _len3 = item.items.length; _i3 < _len3; ++_i3) {
-          var _changed = this._evaluateFieldExpressions(item.items[_i3], includeInitialExpr, changesOnly);
+        for (var _i2 = 0, _len3 = item.items.length; _i2 < _len3; ++_i2) {
+          var _changed = this._evaluateFieldExpressions(item.items[_i2], includeInitialExpr, changesOnly);
 
           if (!rtn) rtn = _changed;
         }
