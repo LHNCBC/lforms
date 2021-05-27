@@ -3,6 +3,9 @@
          [readonly]="item._readOnly"
          [(ngModel)]="item.value"
          placeholder="{{item._toolTip}}"
+         aria-describedby="help-{{ item._elementId }}"
+         aria-required="{{ item._answerRequired }}"
+         type="text"
          >
 </ng-container>
 

@@ -1,0 +1,126 @@
+{
+  "type": "LOINC",
+  "code": "matrix-layout2",
+  "name": "Another form with matrix layout, single selection",
+  "template": "table",
+  "templateOptions": {
+    "displayControl": {
+      "questionLayout": "matrix"
+    }
+  },
+  "items": [
+    {
+      "questionCode": "g1m1",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "question": "Question #1",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer a"
+        },
+        {
+          "code": "c2",
+          "text": "Answer b"
+        },
+        {
+          "code": "c3",
+          "text": "Answer c"
+        },
+        {
+          "code": "c4",
+          "text": "Answer d"
+        }
+      ],
+      "linkId": "/g1m1"
+    },
+    {
+      "questionCode": "g1m2",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "question": "Question #2",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer a"
+        },
+        {
+          "code": "c2",
+          "text": "Answer b"
+        },
+        {
+          "code": "c3",
+          "text": "Answer c"
+        },
+        {
+          "code": "c4",
+          "text": "Answer d"
+        }
+      ],
+      "linkId": "/g1m2"
+    },
+    {
+      "questionCode": "g1m3",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "question": "Question #3",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer a"
+        },
+        {
+          "code": "c2",
+          "text": "Answer b"
+        },
+        {
+          "code": "c3",
+          "text": "Answer c"
+        },
+        {
+          "code": "c4",
+          "text": "Answer d"
+        }
+      ],
+      "linkId": "/g1m3"
+    },
+    {
+      "questionCode": "g1m4",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "question": "Question #4",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer a"
+        },
+        {
+          "code": "c2",
+          "text": "Answer b"
+        },
+        {
+          "code": "c3",
+          "text": "Answer c"
+        },
+        {
+          "code": "c4",
+          "text": "Answer d"
+        }
+      ],
+      "linkId": "/g1m4"
+    }
+  ],
+  "lformsVersion": "24.0.0"
+}

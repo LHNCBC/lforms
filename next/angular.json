@@ -3,32 +3,41 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "web-components": {
+    "lforms-next": {
       "projectType": "library",
       "schematics": {},
       "root": "",
       "sourceRoot": "src",
-      "prefix": "custom",
+      "prefix": "",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/web-components",
-            "index": "src/index.html",
+            "outputPath": "dist/lforms-next",
+            "index": "src/lforms_testpage.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/test-data"
             ],
             "styles": [
               "src/styles.css",
+              "src/lhc-form.css",
+              "src/flexible-row.css",
+              "src/treeline-bar.css",
+              "src/lhc-form-new-adjustments.css",
               "node_modules/ng-zorro-antd/style/index.min.css",
               "node_modules/ng-zorro-antd/checkbox/style/index.min.css",
               "node_modules/ng-zorro-antd/radio/style/index.min.css",
               "node_modules/ng-zorro-antd/grid/style/index.min.css",
+              "node_modules/ng-zorro-antd/popover/style/index.min.css",
+              "node_modules/ng-zorro-antd/icon/style/index.min.css",
+              "node_modules/ng-zorro-antd/date-picker/style/index.min.css",
+              "node_modules/ng-zorro-antd/time-picker/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
             "scripts": ["./node_modules/jquery/dist/jquery.min.js"]
@@ -66,18 +75,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "web-components:build"
+            "browserTarget": "lforms-next:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "web-components:build:production"
+              "browserTarget": "lforms-next:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "web-components:build"
+            "browserTarget": "lforms-next:build"
           }
         },
         "test": {
@@ -93,13 +102,21 @@
             ],
             "styles": [
               "src/styles.css",
+              "src/lhc-form.css",
+              "src/flexible-row.css",
+              "src/treeline-bar.css",
+              "src/lhc-form-new-adjustments.css",
               "node_modules/ng-zorro-antd/style/index.min.css",
               "node_modules/ng-zorro-antd/checkbox/style/index.min.css",
               "node_modules/ng-zorro-antd/radio/style/index.min.css",
               "node_modules/ng-zorro-antd/grid/style/index.min.css",
+              "node_modules/ng-zorro-antd/popover/style/index.min.css",
+              "node_modules/ng-zorro-antd/icon/style/index.min.css",
+              "node_modules/ng-zorro-antd/date-picker/style/index.min.css",
+              "node_modules/ng-zorro-antd/time-picker/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
-            "scripts": []
+            "scripts": ["./node_modules/jquery/dist/jquery.min.js"]
           }
         },
         "lint": {
@@ -119,16 +136,16 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "web-components:serve"
+            "devServerTarget": "lforms-next:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "web-components:serve:production"
+              "devServerTarget": "lforms-next:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "web-components"
+  "defaultProject": "lforms-next"
 }

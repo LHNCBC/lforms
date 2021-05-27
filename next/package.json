@@ -1,5 +1,5 @@
 {
-  "name": "lhc-forms-wc",
+  "name": "lforms-next",
   "version": "0.1.0",
   "scripts": {
     "ng": "ng",
@@ -21,11 +21,13 @@
     "@angular/platform-browser": "~11.2.1",
     "@angular/platform-browser-dynamic": "~11.2.1",
     "@angular/router": "~11.2.1",
+    "@types/jquery": "^3.5.5",
     "autocomplete-lhc": "^18.1.1",
     "document-register-element": "^1.14.3",
-    "elements-zone-strategy": "^10.0.0",
+    "fast-copy": "^2.1.1",
     "jquery": "^3.5.1",
     "ng-zorro-antd": "^11.1.0",
+    "resize-observer-polyfill": "^1.5.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

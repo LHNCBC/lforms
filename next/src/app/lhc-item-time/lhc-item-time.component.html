@@ -1,0 +1,9 @@
+<ng-container *ngIf="item">
+  <nz-time-picker 
+    class="lhc-time-picker" 
+    nzFormat="HH:mm:ss"
+    nzPlaceHolder="HH:mm:ss"
+    nzSize="small"
+    [(ngModel)]="item.value" 
+    (ngModelChange)="onChange($event)"></nz-time-picker>
+</ng-container>

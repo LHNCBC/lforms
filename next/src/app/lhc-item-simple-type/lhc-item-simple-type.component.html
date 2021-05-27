@@ -1,14 +1,18 @@
 <ng-container *ngIf="item && isSimpleType">
-  <lhc-input [item]="item"></lhc-input>
+  <div class="lhc-de-input values hasTooltip">
+    <lhc-input [item]="item"></lhc-input>
+  </div>
   <!-- single unit -->
-  <ng-container *ngIf="hasSingleUnit">
-    <input
-      class="units"
-      type="text"
-      id="{{unitElementId}}"
-      value="{{item.unit.name}}"
-      aria-labelledby="th_Units"
-      readonly
-    >
-  </ng-container>
+  <div class="lhc-de-unit" *ngIf="hasSingleUnit">
+    <div class="lf-field-units" >
+      <input
+        class="units"
+        type="text"
+        id="{{unitElementId}}"
+        value="{{item.unit.name}}"
+        aria-labelledby="th_Units"
+        readonly
+      >
+    </div>  
+  </div>
 </ng-container>
