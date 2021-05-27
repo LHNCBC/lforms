@@ -59,8 +59,27 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
         }
         this._regenerateQuestionnaireResp();
+        self = this;
         this._currentRunPromise =
-          this._asyncRunCalculations(includeInitialExpr, false);
+          this._asyncRunCalculations(includeInitialExpr, false).then(()=>{
+            // At this point, every promise for the pending queries has been
+            // resolved, and we are done.
+            console.log("Ran expressions in "+(new Date()-self._runStart)+" ms");
+            if (!self._firstExpressionRunComplete) // if this is the first run
+              self._firstExpressionRunComplete = true;
+            self._currentRunPromise = undefined;
+            if (self._pendingRun) {
+              return self.runCalculations(false); // will set self._currentRunPromise again
+            }
+          },
+          (failureReason) => {
+            console.log("Run of expressions failed; reason follows");
+            console.log(failureReason);
+            self._currentRunPromise = undefined;
+            self._pendingRun = false;
+            self._pendingQueries = []; // reset
+            throw failureReason;
+          });
       }
       return this._currentRunPromise;
     },
@@ -123,24 +142,6 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           let onlyVarsChanged = !fieldsChanged;
           return self._asyncRunCalculations(includeInitialExpr, onlyVarsChanged);
         }
-      }).then(()=>{
-        // At this point, every promise for the pending queries has been
-        // resolved, and we are done.
-        console.log("Ran expressions in "+(new Date()-self._runStart)+" ms");
-        if (!self._firstExpressionRunComplete) // if this is the first run
-          self._firstExpressionRunComplete = true;
-        self._currentRunPromise = undefined;
-        if (self._pendingRun) {
-          return self.runCalculations(false); // will set self._currentRunPromise again
-        }
-      },
-      (failureReason) => {
-        console.log("Run of expressions failed; reason follows");
-        console.log(failureReason);
-        self._currentRunPromise = undefined;
-        self._pendingRun = false;
-        self._pendingQueries = []; // reset
-        throw failureReason;
       });
     },
 
