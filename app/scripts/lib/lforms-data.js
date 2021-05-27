@@ -1446,12 +1446,14 @@
       for (let i = 0; i < itemListLength; i++) {
         const item = this.itemList[i];
 
-        this._checkValidations(item);
+        if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+          this._checkValidations(item);
 
-        if (item._validationErrors !== undefined && item._validationErrors.length) {
-          const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
+          if (item._validationErrors !== undefined && item._validationErrors.length) {
+            const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
 
-          Array.prototype.push.apply(errors, errorDetails);
+            Array.prototype.push.apply(errors, errorDetails);
+          }
         }
       }
 
