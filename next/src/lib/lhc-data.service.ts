@@ -283,37 +283,37 @@ export class LhcDataService {
       //       "time": new Date()
       //     });
 
-      setTimeout(function() {
-        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      // setTimeout(function() {
+      //   var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-        var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
-        var btnDel = document.getElementById("del-" + newItem._elementId);
-        // vertical table, find the header item
-        if (headerItem) {
-          var anchorItem = headerItem;
-        }
-        // horizontal table, find the '-' button
-        else if (btnDel) {
-          var anchorItem = btnDel;
-        }
+      //   var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
+      //   var btnDel = document.getElementById("del-" + newItem._elementId);
+      //   // vertical table, find the header item
+      //   if (headerItem) {
+      //     var anchorItem = headerItem;
+      //   }
+      //   // horizontal table, find the '-' button
+      //   else if (btnDel) {
+      //     var anchorItem = btnDel;
+      //   }
 
-        if (anchorItem) {
-          var anchorPosition = anchorItem.getBoundingClientRect();
-          // scroll down to show about 2 rows of the newly added section
-          // if the new header item is close enough to the bottom so that the first 2 questions are not visible
-          // if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
-          //   smoothScroll(anchorItem, {
-          //     duration: 500,
-          //     easing: 'easeInQuad',
-          //     offset: viewportHeight - 105
-          //   });
-          // }
-          // move the focus to the '-' button of the newly added item/section
-          // a table from the '-' button moves the focus to the next input field
-          if (btnDel)
-            btnDel.focus();
-        }
-      }, 1);
+      //   if (anchorItem) {
+      //     var anchorPosition = anchorItem.getBoundingClientRect();
+      //     // scroll down to show about 2 rows of the newly added section
+      //     // if the new header item is close enough to the bottom so that the first 2 questions are not visible
+      //     // if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
+      //     //   smoothScroll(anchorItem, {
+      //     //     duration: 500,
+      //     //     easing: 'easeInQuad',
+      //     //     offset: viewportHeight - 105
+      //     //   });
+      //     // }
+      //     // move the focus to the '-' button of the newly added item/section
+      //     // a table from the '-' button moves the focus to the next input field
+      //     if (btnDel)
+      //       btnDel.focus();
+      //   }
+      // }, 1);
     }
   }
 

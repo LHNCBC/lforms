@@ -10,7 +10,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemQuestionComponent implements OnInit {
 
 
-  @Input() item;
+  @Input() item: any;
 
   eleStyle: object = null;
 
@@ -27,19 +27,6 @@ export class LhcItemQuestionComponent implements OnInit {
   ngOnInit(): void {
     
   }
-
-  test(): void {
-    console.log("in test")
-    this.item.question += "TESTING: "
-  }
-
-  // hasOneRepeatingItem(item): boolean {
-  //   return this.lhcDataService.hasOneRepeatingItem(item);
-  // }
-
-  // removeOneRepeatingItem(item): void {
-  //   this.lhcDataService.removeOneRepeatingItem(item)
-  // }
 
 }
 
