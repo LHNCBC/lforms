@@ -28,6 +28,11 @@ export class LhcItemSimpleTypeComponent implements OnInit {
    * Initialize the component
    */
   ngOnInit(): void {
+    
+  }
+
+  ngOnChange(): void {
+    // not expecting item.dataType to change (might move the code to ngOnInit)
     if (this.item) {
       this.isSimpleType = this.item.dataType === "INT" ||
         this.item.dataType === "REAL" ||
@@ -39,9 +44,5 @@ export class LhcItemSimpleTypeComponent implements OnInit {
 
     }
   }
-
-  ngOnChange(): void {
-
-  }
-  //TODO: maintain a value in FHIR format
+  
 }

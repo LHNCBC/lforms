@@ -38,7 +38,7 @@ export class LhcFormComponent implements OnInit, OnDestroy {
         debounceTime(100)
       )
       .subscribe((eleWidth:number) => {
-        console.log('after debounce:', eleWidth)
+        //console.log('after debounce:', eleWidth)
         this.winService.setWindowWidth(eleWidth);
     });
 
@@ -55,7 +55,7 @@ export class LhcFormComponent implements OnInit, OnDestroy {
       this.lhcDataService.setLhcData(this.lhcFormData);
     }
 
-    console.log(this.host)
+    //console.log(this.host)
     this.observer = new ResizeObserver(entries => {
       //console.log(entries)
 
@@ -67,7 +67,7 @@ export class LhcFormComponent implements OnInit, OnDestroy {
       this.zone.run(() => {
         let width = entries[0].contentRect.width;
         this.changeSize.next(width);
-        console.log("in Resize observer:", width);
+        //console.log("in Resize observer:", width);
       });
       
     });

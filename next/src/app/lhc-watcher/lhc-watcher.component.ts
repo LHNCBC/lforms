@@ -9,7 +9,6 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcWatcherComponent implements OnInit {
 
   @Input() value: any;
-  @Input() _skipLogicStatus: string;
 
   constructor(private lhcDataService: LhcDataService) { }
 
@@ -24,15 +23,15 @@ export class LhcWatcherComponent implements OnInit {
   // for answer list with ac (single choice, mulitple choice), prefect or search field. all worked finally.
   ngOnChanges(changes) {
 
-    console.log("in lhc-watcher: on changes")
-    if (!changes.value.firstChange) {
-      console.log(changes);
-    }
+    // console.log("in lhc-watcher: on changes")
+    // if (!changes.value.firstChange) {
+    //   console.log(changes);
+    // }
     
-   if (!changes.value.firstChange) {
+    if (!changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcData()
       lfData._checkFormControls();
-   }
+    }
 
     // todo: run form controls here in one place
     // skip logic

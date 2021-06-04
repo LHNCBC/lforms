@@ -27,7 +27,7 @@
     "document-register-element": "^1.14.3",
     "fast-copy": "^2.1.1",
     "jquery": "^3.5.1",
-    "ng-zorro-antd": "^11.1.0",
+    "ng-zorro-antd": "^11.4.1",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
