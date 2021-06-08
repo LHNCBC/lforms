@@ -26160,6 +26160,29 @@ __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // Processes FHIR Expression Extensions
+// There are three types of expressions: FHIRPath, x-fhir-query (to a FHIR
+// server), and CQL (but we do not yet support CQL).
+// Various extensions have an Expression as a value, such as variable,
+// initialExpression, calculatedExpression, and answerExpression.  When the
+// Expression contains a name, that creates a variable which can be used by
+// other Expressions defined either on the same item or a child item.
+//
+// The general processing pattern is depth-first traversal of the "tree" of the
+// Questionnaire's items, and while we go through the expressions we keep track
+// of whether a field has changed and whether a variable has changed.  If there
+// are any changes, we traverse the tree again, but if the only things that
+// changed were variables, then we only have to traverse the parts of the tree
+// for which those variables are in scope.
+//
+// A further complication is that x-fhir-query Expressions require an
+// asynchronous call.  So, after each traversal, we have to wait for those to
+// complete before starting the next traversal (if one is needed).  This is also
+// why the main function, runCalculations, returns a promise that resolves
+// when the expression run has been completed.
+//
+// Also, because there is possibility of asynchronous queries, we have to handle
+// the fact that runCalculations might get called again while before the first
+// call has finished.
 var ExpressionProcessor;
 
 var deepEqual = __webpack_require__(99); // faster than JSON.stringify
@@ -26192,7 +26215,8 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
   ExpressionProcessor.prototype = {
     /**
-     *   Runs the FHIR expressions in the form.
+     *   Runs the FHIR expressions in the form.  This the main function in this
+     *   module.
      *  @param includeInitialExpr whether to include the "initialExpression"
      *   expressions (which should only be run once, after asynchronous loads
      *   from questionnaire-launchContext have been completed).
@@ -26226,10 +26250,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
             if (!self._firstExpressionRunComplete) // if this is the first run
               self._firstExpressionRunComplete = true;
             self._currentRunPromise = undefined;
-
-            if (self._pendingRun) {
-              return self.runCalculations(false); // will set self._currentRunPromise again
-            }
+            if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
           }, function (failureReason) {
             console.log("Run of expressions failed; reason follows");
             console.log(failureReason);
@@ -26247,7 +26268,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
      *  Waits for any pending queries.
      * @return a Promise the resolves when everything is finished, including any
      *  pending re-run request.  The returned promise will be rejected if something
-     *  went wrong.
+     *  goes wrong.
      * @return the same map about changes as in _evaluateExpressions.
      */
     _handlePendingQueries: function _handlePendingQueries() {
@@ -26284,18 +26305,20 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
      * @param includeInitialExpr whether to include the "initialExpression"
      *  expressions (which should only be run once, after asynchronous loads
      *  from questionnaire-launchContext have been completed).
-     * @param changesOnly whether to run all field expressions, or just the ones
+     * @param changesByVarsOnly whether to run all field expressions, or just the ones
      *  that are likely to have been affected by changes from variable expressions.
      * @return a promise that resolves when all Expressions which needed to be
      *  processed have been processed and the values have stablized.
      */
-    _asyncRunCalculations: function _asyncRunCalculations(includeInitialExpr, changesOnly) {
+    _asyncRunCalculations: function _asyncRunCalculations(includeInitialExpr, changesByVarsOnly) {
       var self = this;
       var lfData = this._lfData;
       var changes = null; // data about what the calculations changed
 
-      changes = this._evaluateExpressions(lfData, includeInitialExpr, changesOnly);
+      changes = this._evaluateExpressions(lfData, includeInitialExpr, changesByVarsOnly); // Wait for any asynchronous queries to complete
+
       return this._handlePendingQueries().then(function (queryChanges) {
+        // Two types of reported changes are possible -- variables and field values
         var varsChanged = changes.variables || queryChanges.variables;
         var fieldsChanged = changes.fields || queryChanges.fields;
 
@@ -26333,28 +26356,26 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
      * @param includeInitialExpr whether or not to run expressions from
      *  initialExpression extensions (which should only be run when the form is
      *  loaded).
-     * @param changesOnly whether to run all field expressions, or just the ones
+     * @param changesByVarsOnly whether to run all field expressions, or just the ones
      *  that are likely to have been affected by changes from variable expressions.
      * @return a map with two fields, "variables" and "fields", which will be
      *  present and set to true if the evaluation changed variables (including
      *  implicit variables created by named expressions of some other
      *  non-variable type) or field values, respectively.
      */
-    _evaluateExpressions: function _evaluateExpressions(item, includeInitialExpr, changesOnly) {
+    _evaluateExpressions: function _evaluateExpressions(item, includeInitialExpr, changesByVarsOnly) {
       var _this = this;
 
-      var rtn = {}; // If changesOnly, for any item that has _varChanged set, we run any field
+      var rtn = {}; // If changesByVarsOnly, for any item that has _varChanged set, we run any field
       // expressions that are within that group (or item).
 
-      if (changesOnly) {
-        if (item.items && item._varChanged) {
-          item._varChanged = false; // clear flag
+      if (changesByVarsOnly && item.items && item._varChanged) {
+        item._varChanged = false; // clear flag
 
-          changesOnly = false; // clear it, so we process this and all child items
-        }
+        changesByVarsOnly = false; // clear it, so we process this and all child items
       }
 
-      if (!changesOnly) {
+      if (!changesByVarsOnly) {
         // process this and all child items
         item._varChanged = false; // clear flag in case it was set
 
@@ -26401,9 +26422,12 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
                     updateValue = true;
                     if (varName) item._fhirVariables[varName] = oldVal; // update handled below
                   } else if (ext.valueExpression.language == "application/x-fhir-query") {
-                    var queryURL = ext.valueExpression.expression;
-                    var undefinedExprVal = false; // The expression might have embedded FHIRPath in the URI, inside {{...}}
+                    var queryURL = ext.valueExpression.expression; // The expression might have embedded FHIRPath in the URI, inside {{...}}
+                    // Use "undefinedExprVal" to keep track of whether one of
+                    // the embedded FHIRPath expressions returns undefined (or
+                    // null).
 
+                    var undefinedExprVal = false;
                     queryURL = queryURL.replace(/\{\{([^}]+)\}\}/g, function (match, fpExp) {
                       // Replace the FHIRPath with the evaluated expressions
                       var result = self._evaluateFHIRPath(item, fpExp)[0];
@@ -26419,20 +26443,23 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
                       item._currentFhirQueryURLs[varName] = queryURL;
 
                       if (!undefinedExprVal) {
-                        var hasCachedResult = _this._queryCache.hasOwnProperty(queryURL);
-
-                        if (hasCachedResult) {
+                        // Look for a cached result
+                        if (_this._queryCache.hasOwnProperty(queryURL)) {
                           newVal = _this._queryCache[queryURL];
                           updateValue = true;
                         } else {
                           // query not cached
-                          var fetchPromise = _this._fetch(queryURL);
+                          var fetchPromise = _this._fetch(queryURL); // Store the promise that handles the response. We
+                          // will have to wait for it later.
+
 
                           _this._pendingQueries.push(fetchPromise.then(function (parsedJSON) {
                             newVal = self._queryCache[queryURL] = parsedJSON;
                           }, function fail(e) {
                             console.error("Unable to load FHIR data from " + queryURL);
                           }).then(function () {
+                            // Update the item with the fetched value, and
+                            // update the variable if there was a name defined.
                             var fChanged = self._updateItemFromExp(item, ext.url, varName, newVal, isCalcExp);
 
                             if (varName) {
@@ -26451,6 +26478,8 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
 
                   if (updateValue) {
+                    // Update the item with the fetched value, and
+                    // update the variable if there was a name defined.
                     fChanged = _this._updateItemFromExp(item, ext.url, varName, newVal, isCalcExp);
                     fieldChanged = fieldChanged || fChanged;
                     if (varName) _this._updateItemVariable(item, varName, newVal);
@@ -26481,7 +26510,9 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
         var childChanges;
 
         for (var j = 0, len = item.items.length; j < len; ++j) {
-          childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesOnly);
+          // Note:  We need to process all the child items; we cannot do an
+          // early loop exit based on rtn.
+          childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesByVarsOnly);
           if (childChanges.fields) rtn.fields = true;
           if (childChanges.variables) rtn.variables = true;
         }

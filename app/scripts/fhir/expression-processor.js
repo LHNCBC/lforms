@@ -1,4 +1,27 @@
 // Processes FHIR Expression Extensions
+// There are three types of expressions: FHIRPath, x-fhir-query (to a FHIR
+// server), and CQL (but we do not yet support CQL).
+// Various extensions have an Expression as a value, such as variable,
+// initialExpression, calculatedExpression, and answerExpression.  When the
+// Expression contains a name, that creates a variable which can be used by
+// other Expressions defined either on the same item or a child item.
+//
+// The general processing pattern is depth-first traversal of the "tree" of the
+// Questionnaire's items, and while we go through the expressions we keep track
+// of whether a field has changed and whether a variable has changed.  If there
+// are any changes, we traverse the tree again, but if the only things that
+// changed were variables, then we only have to traverse the parts of the tree
+// for which those variables are in scope.
+//
+// A further complication is that x-fhir-query Expressions require an
+// asynchronous call.  So, after each traversal, we have to wait for those to
+// complete before starting the next traversal (if one is needed).  This is also
+// why the main function, runCalculations, returns a promise that resolves
+// when the expression run has been completed.
+//
+// Also, because there is possibility of asynchronous queries, we have to handle
+// the fact that runCalculations might get called again while before the first
+// call has finished.
 
 export let ExpressionProcessor;
 const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
@@ -36,7 +59,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
   ExpressionProcessor.prototype = {
     /**
-     *   Runs the FHIR expressions in the form.
+     *   Runs the FHIR expressions in the form.  This the main function in this
+     *   module.
      *  @param includeInitialExpr whether to include the "initialExpression"
      *   expressions (which should only be run once, after asynchronous loads
      *   from questionnaire-launchContext have been completed).
@@ -68,9 +92,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             if (!self._firstExpressionRunComplete) // if this is the first run
               self._firstExpressionRunComplete = true;
             self._currentRunPromise = undefined;
-            if (self._pendingRun) {
+            if (self._pendingRun)
               return self.runCalculations(false); // will set self._currentRunPromise again
-            }
           },
           (failureReason) => {
             console.log("Run of expressions failed; reason follows");
@@ -89,7 +112,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *  Waits for any pending queries.
      * @return a Promise the resolves when everything is finished, including any
      *  pending re-run request.  The returned promise will be rejected if something
-     *  went wrong.
+     *  goes wrong.
      * @return the same map about changes as in _evaluateExpressions.
      */
     _handlePendingQueries: function() {
@@ -122,17 +145,19 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param includeInitialExpr whether to include the "initialExpression"
      *  expressions (which should only be run once, after asynchronous loads
      *  from questionnaire-launchContext have been completed).
-     * @param changesOnly whether to run all field expressions, or just the ones
+     * @param changesByVarsOnly whether to run all field expressions, or just the ones
      *  that are likely to have been affected by changes from variable expressions.
      * @return a promise that resolves when all Expressions which needed to be
      *  processed have been processed and the values have stablized.
      */
-    _asyncRunCalculations: function(includeInitialExpr, changesOnly) {
+    _asyncRunCalculations: function(includeInitialExpr, changesByVarsOnly) {
       const self = this;
       const lfData = this._lfData;
       var changes = null; // data about what the calculations changed
-      changes = this._evaluateExpressions(lfData, includeInitialExpr, changesOnly);
+      changes = this._evaluateExpressions(lfData, includeInitialExpr, changesByVarsOnly);
+      // Wait for any asynchronous queries to complete
       return this._handlePendingQueries().then(function(queryChanges) {
+        // Two types of reported changes are possible -- variables and field values
         let varsChanged = changes.variables || queryChanges.variables;
         let fieldsChanged = changes.fields || queryChanges.fields;
         if (varsChanged || fieldsChanged) {
@@ -171,24 +196,22 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param includeInitialExpr whether or not to run expressions from
      *  initialExpression extensions (which should only be run when the form is
      *  loaded).
-     * @param changesOnly whether to run all field expressions, or just the ones
+     * @param changesByVarsOnly whether to run all field expressions, or just the ones
      *  that are likely to have been affected by changes from variable expressions.
      * @return a map with two fields, "variables" and "fields", which will be
      *  present and set to true if the evaluation changed variables (including
      *  implicit variables created by named expressions of some other
      *  non-variable type) or field values, respectively.
      */
-    _evaluateExpressions: function(item, includeInitialExpr, changesOnly) {
+    _evaluateExpressions: function(item, includeInitialExpr, changesByVarsOnly) {
       var rtn = {};
-      // If changesOnly, for any item that has _varChanged set, we run any field
+      // If changesByVarsOnly, for any item that has _varChanged set, we run any field
       // expressions that are within that group (or item).
-      if (changesOnly) {
-        if (item.items && item._varChanged) {
-          item._varChanged = false; // clear flag
-          changesOnly = false; // clear it, so we process this and all child items
-        }
+      if (changesByVarsOnly && item.items && item._varChanged) {
+        item._varChanged = false; // clear flag
+        changesByVarsOnly = false; // clear it, so we process this and all child items
       }
-      if (!changesOnly) { // process this and all child items
+      if (!changesByVarsOnly) { // process this and all child items
         item._varChanged = false; // clear flag in case it was set
         var fhirExt = item._fhirExt;
         if (fhirExt) {
@@ -236,8 +259,11 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                   }
                   else if (ext.valueExpression.language=="application/x-fhir-query") {
                     let queryURL = ext.valueExpression.expression;
-                    let undefinedExprVal = false;
                     // The expression might have embedded FHIRPath in the URI, inside {{...}}
+                    // Use "undefinedExprVal" to keep track of whether one of
+                    // the embedded FHIRPath expressions returns undefined (or
+                    // null).
+                    let undefinedExprVal = false;
                     queryURL = queryURL.replace(/\{\{([^}]+)\}\}/g, function(match, fpExp) {
                       // Replace the FHIRPath with the evaluated expressions
                       let result = self._evaluateFHIRPath(item, fpExp)[0];
@@ -252,18 +278,22 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                     if (queryURL != oldQueryURL) {
                       item._currentFhirQueryURLs[varName] = queryURL;
                       if (!undefinedExprVal) {
-                        let hasCachedResult = this._queryCache.hasOwnProperty(queryURL);
-                        if (hasCachedResult) {
+                        // Look for a cached result
+                        if (this._queryCache.hasOwnProperty(queryURL)) {
                           newVal = this._queryCache[queryURL];
                           updateValue = true;
                         }
                         else { // query not cached
                           let fetchPromise = this._fetch(queryURL);
+                          // Store the promise that handles the response. We
+                          // will have to wait for it later.
                           this._pendingQueries.push(fetchPromise.then(function(parsedJSON) {
                             newVal = (self._queryCache[queryURL] = parsedJSON);
                           }, function fail(e) {
                             console.error("Unable to load FHIR data from "+queryURL);
                           }).then(function() {
+                            // Update the item with the fetched value, and
+                            // update the variable if there was a name defined.
                             var fChanged = self._updateItemFromExp(
                               item, ext.url, varName, newVal, isCalcExp);
                             if (varName) {
@@ -279,6 +309,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                   // else CQL (TBD)
 
                   if (updateValue) {
+                    // Update the item with the fetched value, and
+                    // update the variable if there was a name defined.
                     var fChanged = this._updateItemFromExp(
                       item, ext.url, varName, newVal, isCalcExp);
                     fieldChanged = fieldChanged || fChanged;
@@ -297,7 +329,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (item.items) {
         var childChanges;
         for (var j=0, len=item.items.length; j<len; ++j) {
-          childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesOnly);
+          // Note:  We need to process all the child items; we cannot do an
+          // early loop exit based on rtn.
+          childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesByVarsOnly);
           if (childChanges.fields)
             rtn.fields = true;
           if (childChanges.variables)
