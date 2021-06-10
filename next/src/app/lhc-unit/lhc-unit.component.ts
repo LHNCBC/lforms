@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-unit',
@@ -25,7 +26,7 @@ export class LhcUnitComponent implements OnInit {
 
   hasUnitAutocomplete: boolean = false;
 
-  constructor() { }
+  constructor(public lhcDataService: LhcDataService) { }
 
   /**
    * Initialize the component

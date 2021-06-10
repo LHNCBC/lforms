@@ -42,7 +42,7 @@
             <ng-container *ngFor ="let item of lhcFormData.items">
               <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !lhcDataService.isSequentialHorizontalTableGroupItem(item)" 
                 [item]="item" 
-                class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}}">
+                class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
               </lhc-item>
               <!--header item-->
             </ng-container>

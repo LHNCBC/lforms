@@ -1,0 +1,25 @@
+{
+  "type": "LOINC",
+  "code": "validationTest",
+  "name": "Validation Test",
+  "items": [    
+    {
+      "questionCode": "INT",
+      "dataType": "INT",
+      "answerCardinality": null,
+      "question": "INT",
+      "linkId": "/INT"
+    },
+    {
+      "questionCode": "REAL",
+      "dataType": "REAL",
+      "answerCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "question": "REAL",
+      "linkId": "/REAL"
+    }  
+  ],
+  "lformsVersion": "24.0.0"
+}

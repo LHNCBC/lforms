@@ -27,21 +27,25 @@ export class LhcWatcherComponent implements OnInit {
   ngOnChanges(changes) {
 
     console.log("in lhc-watcher: on changes")
-    // if (!changes.value.firstChange) {
-    //   console.log(changes);
-    // }
-    
-   if (!changes.value.firstChange) {
-      let lfData = this.lhcDataService.getLhcData()
-      console.log(lfData);
-      //console.log(lfData.items[0].items[2].value)
-      lfData._checkFormControls();
-      console.log(lfData);
-      //console.log(lfData.items[0].items[2].value)
-   }
+   
+    let lfData = this.lhcDataService.getLhcData()
+    //console.log(lfData);
+   
+    if (lfData) {
+      if (!changes.value.firstChange) {
+        // console.log("***not first change")
+        // check skip logic, data controls, formulas
+        lfData._checkFormControls();
+        
+        // check validations
+        lfData.checkValidity();
+        
+      }
 
-    // todo: run form controls here in one place
-    // skip logic
+      
+    }
+
+    // TODO: 
     // fhir expression (converting to fhir q/qr and run functions on them)
     // other functions that were handled in $watch in angularjs version of lforms.
   }

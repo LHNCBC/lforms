@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'lhc-validate',
@@ -10,15 +10,12 @@ export class LhcValidateComponent implements OnInit {
   @Input() item: any;
 
   constructor() {
-
   }
 
   /**
    * Initialize the component
    */
   ngOnInit(): void {
-    this.item._validationErrors = ['is required', 'must be a number']
-
   }
 
 }

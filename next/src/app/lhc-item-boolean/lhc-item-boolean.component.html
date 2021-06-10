@@ -1,5 +1,7 @@
 <ng-container *ngIf="item">    
-  <nz-switch [(ngModel)]="item.value" [nzCheckedChildren]="checkedTemplate" [nzUnCheckedChildren]="unCheckedTemplate"></nz-switch>
+  <nz-switch [(ngModel)]="item.value" [nzCheckedChildren]="checkedTemplate" [nzUnCheckedChildren]="unCheckedTemplate"
+      (focus)="lhcDataService.setActiveRow(item)">
+  </nz-switch>
 </ng-container>
 <ng-template #checkedTemplate><i nz-icon nzType="check"></i></ng-template>
 <ng-template #unCheckedTemplate><i nz-icon nzType="close"></i></ng-template>

@@ -196,7 +196,7 @@
 
 
 /* active row */
-.lhc-form-table-row.active-row {
+.lhc-item-question.lhc-active-row {
   background-color: #AFEEEE;
 }
 
@@ -318,5 +318,22 @@
 /* prefix */
 .lhc-form .prefix {
   padding-right: 0.25em; /* space between the prefix and the question */
+}
+
+
+
+/* popover is attached to page under <body> */
+div.ant-popover {
+  top: 10px;
+}
+div.ant-popover-arrow:after,
+div.ant-popover-inner-content {
+  background-color: #fcf8e3;
+}
+
+.lhc-validate-class.ant-popover-placement-topLeft>.ant-popover-content>.ant-popover-arrow {
+  bottom: 6.2px;
+  box-shadow: 3px 3px 7px rgb(0 0 0 / 7%);
+  border-color: transparent #fcf8e3 #fcf8e3 transparent;
 }
 

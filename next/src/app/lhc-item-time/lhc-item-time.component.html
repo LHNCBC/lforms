@@ -5,5 +5,7 @@
     nzPlaceHolder="HH:mm:ss"
     nzSize="small"
     [(ngModel)]="item.value" 
-    (ngModelChange)="onChange($event)"></nz-time-picker>
+    (ngModelChange)="onChange($event)"
+    (focus)="lhcDataService.setActiveRow(item)">
+  </nz-time-picker>
 </ng-container>

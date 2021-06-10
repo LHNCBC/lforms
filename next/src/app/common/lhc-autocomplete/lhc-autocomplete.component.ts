@@ -17,7 +17,11 @@ export class LhcAutocompleteComponent implements OnInit {
   @Input() options: any;
   // two-way data binding for dataModel
   @Input() dataModel: any;
-  @Output() dataModelChange = new EventEmitter<any>();
+  @Output() dataModelChange: EventEmitter<any>  = new EventEmitter<any>();
+
+  // emit the 'focus' and 'blue' events on the input fields
+  @Output() onFocusFn: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onBlurFn: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild("ac") ac: ElementRef<any>;
 
@@ -42,7 +46,7 @@ export class LhcAutocompleteComponent implements OnInit {
    * Initialize the component
    */
   ngOnInit(): void {
-    console.log("lhc-autocomplete, ngOnInit")
+    //console.log("lhc-autocomplete, ngOnInit")
   }
 
 
@@ -53,8 +57,8 @@ export class LhcAutocompleteComponent implements OnInit {
    */
   ngOnChanges(changes) {
 
-    console.log("lhc-autocomplete, ngOnChange")
-    console.log(changes)
+    //console.log("lhc-autocomplete, ngOnChange")
+    //console.log(changes)
     // reset autocomplete when 'options' changes
     // ignore changes on 'dataModel'
     if (changes.options) {
@@ -78,7 +82,7 @@ export class LhcAutocompleteComponent implements OnInit {
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
-    console.log("lhc-autocomplete, ngAfterViewInit")
+    //console.log("lhc-autocomplete, ngAfterViewInit")
     this.setupAutocomplete();
     this.viewInitialized = true;
   }
@@ -88,7 +92,7 @@ export class LhcAutocompleteComponent implements OnInit {
    * Clean up the autocomplete instance
    */
   ngOnDestroy() {
-    console.log("lhc-autocomplete, ngOnDestroy")
+    //console.log("lhc-autocomplete, ngOnDestroy")
     // if there's an autocomp
     // this.acInstance and this.ac.nativeElement.autocomp are always undefined?!
     if (this.acInstance) {
@@ -101,6 +105,14 @@ export class LhcAutocompleteComponent implements OnInit {
     // }
   }
 
+
+  onInputBlur() {
+    this.onBlurFn.emit();
+  }
+
+  onInputFocus() {
+    this.onFocusFn.emit();
+  }
 
   /**
    * Set up the autocompleter

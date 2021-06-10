@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-simple-type',
@@ -22,7 +23,7 @@ export class LhcItemSimpleTypeComponent implements OnInit {
   hasSingleUnit: boolean = false;
   unitElementId: string = "";
 
-  constructor() { }
+  constructor(public lhcDataService: LhcDataService) { }
 
   /**
    * Initialize the component

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-text',
@@ -7,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class LhcItemTextComponent implements OnInit {
   @Input() item: any;
-  constructor() { }
+  constructor(public lhcDataService: LhcDataService) { }
 
   ngOnInit(): void {
   }

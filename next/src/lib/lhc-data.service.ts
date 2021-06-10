@@ -30,6 +30,38 @@ export class LhcDataService {
     this.lhcFormData.setActiveRow(item);
   }
 
+
+  /**
+   * Set up a timer to make validation messages disappear in 2 seconds when the input field loses focus
+   * @param item the item which onBlur event happens on its input field
+   */
+   activeRowOnBlur(item) {
+
+    // the first visit to the field (and leaving the field), show validation messages for a certain time
+    if (!item._visitedBefore) {
+      item._showValidation = true;
+
+      // use $interval instead of $timeout so that protractor will not wait on $timeout
+      // var intervalCanceller = $interval(function() {
+      //   // not to show validation messages after 2 seconds
+      //   item._showValidation = false;
+      //   item._visitedBefore = true;
+      //   $interval.cancel(intervalCanceller);
+      // }, $scope.validationInitialShowTime);
+
+      setTimeout(()=>{
+        // not to show validation messages after 2 seconds
+        item._showValidation = false;
+        item._visitedBefore = true;
+      }, 1500);
+    }
+    // the following visits (and leaving the field), not to show validation messages
+    // hover over the field still shows the validation messages
+    else {
+      item._showValidation = false;
+    }
+  }
+
   /**
    * Get the css class for the active row
    * @param item an item
@@ -236,15 +268,17 @@ export class LhcDataService {
       eleClass += ' lf-empty-question';
     }
     if (item._visitedBefore) {
-      eleClass += ' lf-visited-before';
+      eleClass += ' lhc-visited-before';
     }
     if (item._showValidation) {
-      eleClass += ' lf-show-validation';
+      eleClass += ' lhc-show-validation';
     }
     if (item._isHiddenFromView) {
       eleClass += ' lf-hidden-from-view';
     }
-    
+    if (Array.isArray(item._validationErrors) && item._validationErrors.length > 0) {
+      eleClass += ' lhc-invalid'
+    }
 
     return eleClass;
   }

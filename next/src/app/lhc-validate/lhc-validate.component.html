@@ -1,21 +1,4 @@
-<!--
-<div *ngFor="let error of item._validationErrors; index as i">
-  <div class="validation-error">{{item.question}} {{error}}</div>
-</div> -->
-
-
-<button nz-button nz-popover
-  class="lhc-error-button"
-  [nzPopoverTitle]="titleTemplate"
-  [nzPopoverContent]="contentTemplate"
-  nzPopoverPlacement="topLeft"
-  nzPopoverTrigger="click"
-  [nzPopoverMouseEnterDelay]=0
->
-  show errors
-</button>
-<ng-template #titleTemplate><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i> Validation Errors</ng-template>
-<ng-template #contentTemplate>
+<div class="lhc-validation-popover" *ngIf="item._hasValidation">
   <div *ngFor="let error of item._validationErrors; index as i">
     <div class="validation-error">
       <i class="lhc-error-icon" nz-icon nzType="close"></i>
@@ -23,4 +6,4 @@
       <span class="lhc-error-msg">{{error}}</span>
     </div>
   </div>
-</ng-template>
+</div>

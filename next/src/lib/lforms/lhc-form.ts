@@ -691,6 +691,10 @@ export default class LhcFormData {
       var errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
       item._validationErrors = errors;
 
+      // if (errors.length >0) {
+      //   console.log(item.question)
+      //   console.log(errors)
+      // }
     }
   }
 
@@ -3493,7 +3497,7 @@ export default class LhcFormData {
   getActiveRowClass(item) {
     var ret = "";
     if (this._activeItem && this._activeItem._elementId === item._elementId) {
-      ret = "active-row";
+      ret = "lhc-active-row";
     }
     return ret;
   }

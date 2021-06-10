@@ -20,7 +20,7 @@
   <ng-container *ngFor="let item of item.items">
     <lhc-item *ngIf="item && lhcDataService.targetShown(item)" 
       [item]="item" 
-      class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}}">
+      class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
     </lhc-item>
   </ng-container>
 </div>

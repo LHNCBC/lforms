@@ -81,7 +81,7 @@
       </td>
 
       <td *ngFor="let cell of row.cells; trackBy: lhcDataService.trackByElementId"
-          class="hasTooltip {{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
+          class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
         <div class="lf-form-item-data tooltipContainer">
           <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
         </div>
