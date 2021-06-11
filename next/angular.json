@@ -102,7 +102,10 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/test-data",
+              "src/test-data/form-data",
+              "src/test-data/fhir-data"
             ],
             "styles": [
               "src/styles.css",

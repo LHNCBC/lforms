@@ -52,7 +52,7 @@ export class LhcFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.lfData) {
       this.lhcFormData = new LhcFormData(this.lfData)
-      this.lhcDataService.setLhcData(this.lhcFormData);
+      this.lhcDataService.setLhcFormData(this.lhcFormData);
     }
 
     //console.log(this.host)
@@ -85,7 +85,7 @@ export class LhcFormComponent implements OnInit, OnDestroy {
     console.log(changes)
     if (this.lfData) {
       this.lhcFormData = new LhcFormData(this.lfData)
-      this.lhcDataService.setLhcData(this.lhcFormData);
+      this.lhcDataService.setLhcFormData(this.lhcFormData);
       console.log(this.lhcFormData)
     }
   }

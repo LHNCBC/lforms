@@ -39,7 +39,7 @@ export class LhcItemSimpleTypeComponent implements OnInit {
         this.item.dataType === "ST" ||
         !this.item.dataType
 
-      this.hasSingleUnit = this.item && this.item.unit && this.item._unitReadonly;
+      this.hasSingleUnit = this.item.unit && this.item._unitReadonly;
       this.unitElementId = "unit_" + this.item._elementId;
 
     }

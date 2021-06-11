@@ -13,11 +13,11 @@ export class LhcDataService {
 
   constructor() { }
 
-  getLhcData(): any {
+  getLhcFormData(): any {
     return this.lhcFormData;
   }
 
-  setLhcData(data:any): void {
+  setLhcFormData(data:any): void {
     this.lhcFormData = data;
   }
 
