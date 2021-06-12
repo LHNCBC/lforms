@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.1.0] 2021-05-27
+### Added
+- Support for named FHIR expressions.  Any supported FHIR expression can now
+  have a name, which acts like a variable for other expressions.
+
 ## [29.0.3] 2021-05-03
 ### Fixed
 - Fixed a bug where hidden items were triggering validation to fail.
