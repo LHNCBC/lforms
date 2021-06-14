@@ -1665,7 +1665,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"29.0.3\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"29.1.0\"}");
 
 /***/ }),
 /* 15 */
@@ -6577,14 +6577,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
         }
 
-        if (item.extension) {
+        if (item.extension && this._fhir) {
           this._fhir.SDC.buildExtensionMap(item);
 
-          if (this._fhir) {
-            this._hasResponsiveExpr = this._hasResponsiveExpr || this._fhir.SDC.hasResponsiveExpression(item);
-            this._hasInitialExpr = this._hasInitialExpr || this._fhir.SDC.hasInitialExpression(item);
-            item._hasListExpr = this._fhir.SDC.hasListExpression(item);
-          }
+          this._hasResponsiveExpr = this._hasResponsiveExpr || this._fhir.SDC.hasResponsiveExpression(item);
+          this._hasInitialExpr = this._hasInitialExpr || this._fhir.SDC.hasInitialExpression(item);
+          item._hasListExpr = this._fhir.SDC.hasListExpression(item);
         }
 
         this._updateItemAttrs(item); // reset answers if it is an answer list id
