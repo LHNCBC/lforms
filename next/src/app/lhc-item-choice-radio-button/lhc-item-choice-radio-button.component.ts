@@ -25,16 +25,6 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
    * Initialize the component
    */
   ngOnInit(): void {
-
-    // console.log("in lhc-item-choice-radio-button")
-    // if (this.item) {
-    //   console.log(this.item);
-    //   console.log(this.item._modifiedAnswers.length);
-    // }
-    // set the initial status if there are data in item.value
-    
-    //this.setInitialValue();
-
   }
 
   ngOnDestroy() : void {
@@ -45,16 +35,17 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
    * Set initial status
    */
   setInitialValue(): void {
-    // console.log('in setInitialValue')
+    // there is a saved value and there is an answer list
     if (this.item && this.item.value &&
       this.item._modifiedAnswers && Array.isArray(this.item._modifiedAnswers)) {
 
       this.radioValue = this.item.value;
-
+      // saved value is not on the answer list
       if (this.item.value._notOnList) {
         this.otherValue = this.item.value.text;
         this.otherRadioModel = true;
       }
+      // saved value is on the answer list
       else {
         let iLen = this.item._modifiedAnswers.length;
         this.radioModels = new Array(iLen)
@@ -63,12 +54,13 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
           let answer = this.item._modifiedAnswers[i];
           if (this.commonUtils.areTwoAnswersSame(this.item.value, answer, this.item)) {
             this.radioModels[i] = true;
+            break;    
           }
         }
       }
     }
-
   }
+
 
   /**
    * Invokded when the properties change
@@ -76,11 +68,6 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
    */
   ngOnChanges(changes) {
     // changes.prop contains the old and the new value...
-
-    // console.log("in lhc-item-choice-radio-button: on changes")
-    // console.log(changes);
-    // console.log(this.item);
-
     // reset initial status
     this.setInitialValue();
   }
@@ -91,7 +78,6 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
    * @param value the value object for 'other'
    */
   onRadioModelChange(value: any): void {
-    // console.log(value);
     this.item.value = this.radioValue;
   }
 
@@ -101,8 +87,6 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
    * @param value
    */
   onOtherValueChange(value: any) : void {
-    // console.log(this.radioValue);
-    // console.log(this.otherValue)
     if (this.radioValue._notOnList) {
       this.item.value = this.radioValue = { "text": this.otherValue, "_notOnList": true};
     }

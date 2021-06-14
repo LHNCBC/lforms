@@ -32,18 +32,5 @@ export class LhcItemQuestionComponent implements OnInit {
     // console.log(this.options)
   }
 
-  test(): void {
-    console.log("in test")
-    this.item.question += "TESTING: "
-  }
-
-  // hasOneRepeatingItem(item): boolean {
-  //   return this.lhcDataService.hasOneRepeatingItem(item);
-  // }
-
-  // removeOneRepeatingItem(item): void {
-  //   this.lhcDataService.removeOneRepeatingItem(item)
-  // }
-
 }
 

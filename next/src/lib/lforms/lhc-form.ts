@@ -502,6 +502,7 @@ export default class LhcFormData {
   }
 
 //// TODO: FHIR
+//// This function has been moved to script/fhir.
   /**
    *  Starts the (likely asynchronous) requests to retrieve linked Observation
    *  resources for pre-population.  When the resources have been retrieved,

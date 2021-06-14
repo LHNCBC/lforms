@@ -1,0 +1,91 @@
+{
+  "status": "draft",
+  "title": "Variable Test with Loop",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 25.1.3"
+      }
+    ]
+  },
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+      "valueExpression": {
+        "name": "varD",
+        "language": "text/fhirpath",
+        "expression": "%resource.item.where(linkId='idB').answer.value + 2"
+      }
+    }
+  ],
+  "item": [
+    {
+      "type": "integer",
+      "required": false,
+      "linkId": "idA",
+      "text": "A"
+    },
+    {
+      "type": "integer",
+      "required": false,
+      "linkId": "idB",
+      "text": "B = A + 1",
+      "readOnly": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "name": "varB",
+            "language": "text/fhirpath",
+            "expression": "%resource.item.where(linkId='idA').answer.value + 1"
+          }
+        }
+
+      ],
+      "item":  [{
+        "type": "integer",
+        "required": false,
+        "linkId": "idB.1",
+        "text": "B.1 = B + 1",
+        "readOnly": true,
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+            "valueExpression": {
+              "language": "text/fhirpath",
+              "expression": "%varB + 1"
+            }
+          }
+        ]
+      }]
+    },
+    {
+      "type": "integer",
+      "required": false,
+      "linkId": "idC",
+      "text": "C = varE(=varD(=varB+2) + 1)+1",
+      "readOnly": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "varE",
+            "language": "text/fhirpath",
+            "expression": "%varD + 1"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+            "expression": "%varE + 1"
+          }
+        }
+      ]
+    }
+  ]
+}

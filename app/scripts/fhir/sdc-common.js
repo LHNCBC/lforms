@@ -202,20 +202,35 @@ function addCommonSDCFns(ns) {
 
   /**
    *  Builds a map from extension URIs to arrays of the FHIR extension
-   *  structures.
+   *  structures, and stores it on the item.  Also builds an array of all
+   *  Expression extensions.
+   *
    * @param itemOrLFData a form item or an LFormsData which possibly contain
    *  FHIR extensions (in an "extension" property).
    */
   self.buildExtensionMap = function(itemOrLFData) {
+    // Initialize a map for testing whether an extension is an Expression extension.
+    // The keys are the URIs, and the values are see to true.
+    if (!self.isExpressionExtension) {
+      self.isExpressionExtension = [self.fhirExtCalculatedExp, self.fhirExtInitialExp,
+        self.fhirExtAnswerExp, self.fhirExtVariable].reduce((x, k)=>{
+        x[k]=true; return x}, {});
+    }
+
     if (itemOrLFData.extension) {
       var m = {};
+      var exprExtensions = [];
       for (let ext of itemOrLFData.extension) {
         var extArray = m[ext.url];
         if (!extArray)
           extArray =  m[ext.url] = [];
         extArray.push(ext);
+        if (self.isExpressionExtension[ext.url])
+          exprExtensions.push(ext);
       }
       itemOrLFData._fhirExt = m;
+      if (exprExtensions.length)
+        itemOrLFData._exprExtensions = exprExtensions;
     }
   };
 

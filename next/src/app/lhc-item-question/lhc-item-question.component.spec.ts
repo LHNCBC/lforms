@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LhcItemQuestionComponent } from './lhc-item-question.component';
+import { LhcItemQuestionTextComponent } from '../lhc-item-question-text/lhc-item-question-text.component';
 
 describe('LhcItemQuestionComponent', () => {
   let component: LhcItemQuestionComponent;
@@ -8,7 +9,10 @@ describe('LhcItemQuestionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemQuestionComponent ]
+      declarations: [ 
+        LhcItemQuestionComponent,
+        LhcItemQuestionTextComponent 
+      ]
     })
     .compileComponents();
   });

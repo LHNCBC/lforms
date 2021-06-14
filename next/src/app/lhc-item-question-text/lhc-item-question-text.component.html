@@ -1,4 +1,4 @@
-<ng-container>
+<ng-container *ngIf="item">
   <!-- label -->
   <div class="lhc-de-label">
     <span *ngIf="item._questionRepeatable" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>

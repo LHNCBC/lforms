@@ -9,7 +9,6 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcWatcherComponent implements OnInit {
 
   @Input() value: any;
-  @Input() _skipLogicStatus: string;
 
   constructor(private lhcDataService: LhcDataService) { }
 
@@ -21,24 +20,18 @@ export class LhcWatcherComponent implements OnInit {
   // primitive data types (int, real, string)
   // and boolean, date, datetime, time 
   // for answer list with radio/checkboxes, all worked including cwe user typed values.
-  // for answer list with ac (single choise, mulitple choice), cne
-  //     for cwe, user typed value didn't trigger this event when it is a SEARCH field. it works when it is a prefetch list.
-  
+  // for answer list with ac (single choice, mulitple choice), prefect or search field. all worked finally.
   ngOnChanges(changes) {
 
-    console.log("in lhc-watcher: on changes")
+    // console.log("in lhc-watcher: on changes")
     // if (!changes.value.firstChange) {
     //   console.log(changes);
     // }
     
-   if (!changes.value.firstChange) {
-      let lfData = this.lhcDataService.getLhcData()
-      console.log(lfData);
-      //console.log(lfData.items[0].items[2].value)
+    if (!changes.value.firstChange) {
+      let lfData = this.lhcDataService.getLhcFormData()
       lfData._checkFormControls();
-      console.log(lfData);
-      //console.log(lfData.items[0].items[2].value)
-   }
+    }
 
     // todo: run form controls here in one place
     // skip logic

@@ -533,7 +533,7 @@ const LhcFormUtils = {
     var formObj;
     if (!element) element = jQuery("body");
 
-    // class="lhc-form"> is the element that contains rendered form.
+    // class="lhc-form" is the element that contains rendered form.
     var lfForms = jQuery(element).find(".lhc-form");
     angular.forEach(lfForms, function(ele, index) {
       var lfForm = angular.element(ele);

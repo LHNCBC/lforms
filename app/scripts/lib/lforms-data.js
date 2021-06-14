@@ -1034,16 +1034,14 @@
           }
         }
 
-        if (item.extension) {
+        if (item.extension && this._fhir) {
           this._fhir.SDC.buildExtensionMap(item);
-          if (this._fhir) {
-            this._hasResponsiveExpr = this._hasResponsiveExpr ||
-              this._fhir.SDC.hasResponsiveExpression(item);
-            this._hasInitialExpr = this._hasInitialExpr ||
-              this._fhir.SDC.hasInitialExpression(item);
-            item._hasListExpr =
-              this._fhir.SDC.hasListExpression(item);
-          }
+          this._hasResponsiveExpr = this._hasResponsiveExpr ||
+            this._fhir.SDC.hasResponsiveExpression(item);
+          this._hasInitialExpr = this._hasInitialExpr ||
+            this._fhir.SDC.hasInitialExpression(item);
+          item._hasListExpr =
+            this._fhir.SDC.hasListExpression(item);
         }
 
         this._updateItemAttrs(item);
@@ -1446,12 +1444,14 @@
       for (let i = 0; i < itemListLength; i++) {
         const item = this.itemList[i];
 
-        this._checkValidations(item);
+        if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+          this._checkValidations(item);
 
-        if (item._validationErrors !== undefined && item._validationErrors.length) {
-          const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
+          if (item._validationErrors !== undefined && item._validationErrors.length) {
+            const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
 
-          Array.prototype.push.apply(errors, errorDetails);
+            Array.prototype.push.apply(errors, errorDetails);
+          }
         }
       }
 
