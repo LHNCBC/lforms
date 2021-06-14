@@ -17,7 +17,7 @@ export class WindowService {
   constructor() { 
     this._windowWidth$ = new BehaviorSubject(window.innerWidth);
     this._viewModeClass$ = new BehaviorSubject('lhc-view-lg');
-    console.log("in window.service constructor: " + this._windowWidth$.getValue());
+    //console.log("in window.service constructor: " + this._windowWidth$.getValue());
   }
   
   /**

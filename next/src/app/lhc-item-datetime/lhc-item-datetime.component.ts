@@ -15,15 +15,15 @@ export class LhcItemDatetimeComponent implements OnInit {
   }
 
   onChange(result: Date): void {
-    console.log('Selected DateTime: ', result);
+    //console.log('Selected DateTime: ', result);
   }
 
   onOk(result: Date | Date[] | null): void {
-    console.log('onOk', result);
+    //console.log('onOk', result);
   }
 
   onCalendarChange(result: Array<Date | null>): void {
-    console.log('onCalendarChange', result);
+    //console.log('onCalendarChange', result);
   }
   
 }

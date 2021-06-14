@@ -15,6 +15,6 @@ export class LhcItemDateComponent implements OnInit {
   }
 
   onChange(result: Date): void {
-    console.log('Selected Date: ', result);
+    //console.log('Selected Date: ', result);
   }
 } 

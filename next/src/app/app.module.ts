@@ -20,6 +20,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 //import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 
@@ -47,6 +48,8 @@ import { LhcItemQuestionTextComponent } from './lhc-item-question-text/lhc-item-
 import { LhcItemPopoverComponent } from './lhc-item-popover/lhc-item-popover.component';
 import { LhcItemQuestionComponent } from './lhc-item-question/lhc-item-question.component';
 import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.component';
+import { LhcChangeDetectionComponent } from './lhc-change-detection/lhc-change-detection.component';
+import { LhcWatcherComponent} from './lhc-watcher/lhc-watcher.component';
 
 registerLocaleData(en);
 
@@ -73,7 +76,9 @@ registerLocaleData(en);
     LhcItemQuestionTextComponent,
     LhcItemPopoverComponent,
     LhcItemQuestionComponent,
-    LhcItemDisplayComponent
+    LhcItemDisplayComponent,
+    LhcChangeDetectionComponent,
+    LhcWatcherComponent
   ],
   imports: [
     BrowserModule,
@@ -87,7 +92,8 @@ registerLocaleData(en);
     NzTimePickerModule,
     NzGridModule,
     NzPopoverModule,
-    NzIconModule
+    NzIconModule,
+    NzSwitchModule
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US },
     CommonUtilsService,

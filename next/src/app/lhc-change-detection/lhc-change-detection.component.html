@@ -1,0 +1,10 @@
+<<ng-container *ngIf="lhcFormData">
+  <div *ngFor ="let item of lhcFormData.itemList">
+    <lhc-watcher 
+      [value]="item.value"
+    >
+    </lhc-watcher>
+  </div>  
+</ng-container>
+  
+  

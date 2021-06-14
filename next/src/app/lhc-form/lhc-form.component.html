@@ -1,8 +1,11 @@
-<form *ngIf="lhcFormData" class="lhc-form lf-template-table novalidate {{viewModeClass}}" autocomplete="false" #lhcFormContainer>
+<div *ngIf="lhcFormData">
+  <lhc-change-detection [lhcFormData]="lhcFormData"></lhc-change-detection>
+</div>
+<form *ngIf="lhcFormData" class="lhc-form lf-template-table novalidate {{viewModeClass}}" autocomplete="off" #lhcFormContainer>
 
     <div class="lhc-form-title" role="heading" aria-level=1>
       <span id="label-{{ lhcFormData.code }}" class="lf-question"
-       style="{{lhcFormData._obj_titleCSS}}">{{lhcFormData.name || lhcFormData.fhirQName}}</span>
+       >{{lhcFormData.name || lhcFormData.fhirQName}}</span>
       <span class="lf-item-code" ng-if="lhcFormData.templateOptions.showQuestionCode">
             <a *ngIf="lhcFormData._linkToDef" href="{{ lhcFormData._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ lhcFormData.code }}]</a>
             <span *ngIf="!lhcFormData._linkToDef">[{{ lhcFormData.code }}]</span>
@@ -29,7 +32,10 @@
           <!-- check each top level item's questionLayout -->
           <ng-container *ngIf="lhcFormData.items">
             <ng-container *ngFor ="let item of lhcFormData.items">
-              <lhc-item [item]="item" class="lhc-item {{getSiblingStatus(item)}} {{getRowClass(item)}}"></lhc-item>
+              <lhc-item *ngIf="item && lhcDataService.targetShown(item)" 
+                [item]="item" 
+                class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}}">
+              </lhc-item>
               <!--header item-->
             </ng-container>
           </ng-container>

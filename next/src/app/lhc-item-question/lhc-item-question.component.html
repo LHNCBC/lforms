@@ -1,8 +1,19 @@
 
-<ng-container [ngSwitch]="item.dataType">
+<ng-container [ngSwitch]="item.dataType" *ngIf="item">
   
   <div class="lhc-de-label-button">
-    <lhc-item-question-text [item]="item" ></lhc-item-question-text>
+    <div class="lhc-de-label">
+      <lhc-item-question-text [item]="item" ></lhc-item-question-text>
+    </div>
+    <div class="lhc-de-button">
+      <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" class="lhc-float-button lhc-button" type="button"
+              (click)="lhcDataService.removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
+              title='Remove this "{{ item._text }}"'>-</button>
+      <!-- <button class="lhc-float-button" type="button"
+              id="del-{{item._elementId}}"
+              title='Remove this "{{ item._text }}"'
+              (click)="test()">-</button> -->
+    </div>
   </div>
   
   <div class="lhc-de-input-unit" [ngStyle]="eleStyle">

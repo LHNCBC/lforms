@@ -2157,6 +2157,10 @@ export default class LhcFormData {
   _isRepeatingItemEmpty(item) {
 
     var isEmpty = true;
+    // 
+    if (item.value === undefined || item.value === null || item.value ==="") {
+      return isEmpty;
+    }
     //if it is not hidden
     if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
       // multiple selection answer list (array is also an object)
@@ -3287,6 +3291,7 @@ export default class LhcFormData {
         // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
         // the only key is "value", for now
         case CONSTANTS.DATA_TYPE.ST:
+        case CONSTANTS.DATA_TYPE.TX:  
         // boolean: {"value": true}, {"value": false}
         // the only key is "value"
         case CONSTANTS.DATA_TYPE.BL:

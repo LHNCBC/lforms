@@ -8,16 +8,15 @@ import { Component, Input, OnInit } from '@angular/core';
 export class LhcItemTimeComponent implements OnInit {
 
   @Input() item: any;
+  time: Date | null = null;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  time: Date | null = null;
-  
   onChange(result: Date): void {
-    console.log('Selected Time: ', result);
+    //console.log('Selected Time: ', result);
   }
 
 }

@@ -22,7 +22,9 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/test-data"
+              "src/test-data",
+              "src/test-data/form-data",
+              "src/test-data/fhir-data"
             ],
             "styles": [
               "src/styles.css",
@@ -30,6 +32,7 @@
               "src/flexible-row.css",
               "src/treeline-bar.css",
               "src/lhc-form-new-adjustments.css",
+              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "node_modules/ng-zorro-antd/style/index.min.css",
               "node_modules/ng-zorro-antd/checkbox/style/index.min.css",
               "node_modules/ng-zorro-antd/radio/style/index.min.css",
@@ -38,6 +41,7 @@
               "node_modules/ng-zorro-antd/icon/style/index.min.css",
               "node_modules/ng-zorro-antd/date-picker/style/index.min.css",
               "node_modules/ng-zorro-antd/time-picker/style/index.min.css",
+              "node_modules/ng-zorro-antd/switch/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
             "scripts": ["./node_modules/jquery/dist/jquery.min.js"]
@@ -98,7 +102,10 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/test-data",
+              "src/test-data/form-data",
+              "src/test-data/fhir-data"
             ],
             "styles": [
               "src/styles.css",
@@ -106,6 +113,7 @@
               "src/flexible-row.css",
               "src/treeline-bar.css",
               "src/lhc-form-new-adjustments.css",
+              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "node_modules/ng-zorro-antd/style/index.min.css",
               "node_modules/ng-zorro-antd/checkbox/style/index.min.css",
               "node_modules/ng-zorro-antd/radio/style/index.min.css",
@@ -114,6 +122,7 @@
               "node_modules/ng-zorro-antd/icon/style/index.min.css",
               "node_modules/ng-zorro-antd/date-picker/style/index.min.css",
               "node_modules/ng-zorro-antd/time-picker/style/index.min.css",
+              "node_modules/ng-zorro-antd/switch/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
             "scripts": ["./node_modules/jquery/dist/jquery.min.js"]

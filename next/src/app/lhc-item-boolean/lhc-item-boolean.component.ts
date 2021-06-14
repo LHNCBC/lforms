@@ -7,6 +7,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class LhcItemBooleanComponent implements OnInit {
   @Input() item: any;
+
   constructor() { }
 
   ngOnInit(): void {

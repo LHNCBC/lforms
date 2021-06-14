@@ -1,5 +1,6 @@
 import { Component, OnInit, Input} from '@angular/core';
 import { WindowService } from '../../lib/window.service';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-question',
@@ -9,12 +10,13 @@ import { WindowService } from '../../lib/window.service';
 export class LhcItemQuestionComponent implements OnInit {
 
 
-  @Input() item;
+  @Input() item: any;
 
   eleStyle: object = null;
 
   constructor(
-    private winService: WindowService
+    private winService: WindowService,
+    public lhcDataService: LhcDataService,
   ) {     
     winService.windowWidth.subscribe(updatedWidth => {
       let viewClass = winService.getViewModeClass();
@@ -23,6 +25,7 @@ export class LhcItemQuestionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
   }
 
 }
