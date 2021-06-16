@@ -7,10 +7,6 @@
       <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" class="lhc-float-button lhc-button" type="button"
                 (click)="lhcDataService.removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
                 title='Remove this "{{ item._text }}"'>-</button>
-                <!-- <button class="lhc-float-button" type="button"
-                id="del-{{item._elementId}}"
-                title='Remove this "{{ item._text }}"'
-                (click)="test()">-</button> -->
     </div>
     
   </div>

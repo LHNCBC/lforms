@@ -84,7 +84,8 @@ registerLocaleData(en);
     LhcWatcherComponent,
     LhcGroupVerticalComponent,
     LhcGroupHorizontalComponent,
-    LhcGroupMatrixComponent
+    LhcGroupMatrixComponent,
+    TttttComponent
   ],
   imports: [
     BrowserModule,

@@ -367,28 +367,32 @@ export class LhcDataService {
 
 
   /**
-  * Unset the flag to hide the warning about unused repeating items
-  * @param item a repeating item
-  */
+   * Unset the flag to hide the warning about unused repeating items
+   * @param item a repeating item
+   */
   hideUnusedItemWarning(item) {
     if (this.lhcFormData && !this.lhcFormData.templateOptions.allowMultipleEmptyRepeatingItems) {
       item._showUnusedItemWarning = false;
     }
   }
 
-
+  /**
+   * Return the horizontal table structure of the form
+   * @returns {object}
+   */
   getHorizontalTableInfo() {
     return this.lhcFormData._horizontalTableInfo;
   }
 
-  // horizontal table trackby functions to avoid unnecessary recreating DOM elements in the horizontal tables
+
   /**
    * Track by item's element id for each cell in a table row
-   * @param index *ngFor index
+   * @param index *ngFor index, not used
    * @param item *ngFor item, an item of the form 
    * @returns 
    */
   trackByElementId(index, item) {
+    // index is not used since item._elementId is unique
     return item._elementId;
   }
 
@@ -404,7 +408,7 @@ export class LhcDataService {
 
   /**
    * Track by column's id, which is "col" + the item's element id in the first row
-   * @param index *ngFor index
+   * @param index *ngFor index, not used
    * @param item *ngFor item, an item in the headers array of the horizontal table structure
    * @returns 
    */
@@ -412,6 +416,12 @@ export class LhcDataService {
     return col.id;
   }
 
+
+  /**
+   * Check if the item is a requential item of a horizontal group item, which is handled separately
+   * @param item a form item
+   * @returns {boolean}
+   */
   isSequentialHorizontalTableGroupItem(item) {
     return item && item.displayControl && item.displayControl.questionLayout === "horizontal" && !item._horizontalTableHeader;
   }
