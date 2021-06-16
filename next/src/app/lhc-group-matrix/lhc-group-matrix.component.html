@@ -1,4 +1,4 @@
-<div class="lhc-layout-matrix lf-table-item {{lhcDataService.getSiblingStatus(item)}}">
+<div *ngIf="item" class="lhc-layout-matrix lf-table-item {{lhcDataService.getSiblingStatus(item)}}">
   <div class="lf-form-matrix-table-title lf-de-label">
     <span class="lf-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">

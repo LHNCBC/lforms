@@ -1,8 +1,5 @@
 {
-  "codeSystem": "LOINC",
-  "code": "54127-6N",
-  "name": "USSG-FHT, (with mock-up items for skip logic demo)",
-  "template": "table",
+  "name": "New LForms: Skip logic, repeating items",
   "items": [
     {
       "questionCode": "54125-0",

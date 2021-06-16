@@ -151,14 +151,14 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
       imports: [FormsModule, NzCheckboxModule, NzGridModule]
     })
     .compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(LhcItemChoiceCheckBoxComponent);
     component = fixture.componentInstance;
     element = fixture.nativeElement;
     fixture.detectChanges();
-
-  });
-
+  })
 
   it('should create', () => {
     expect(component).toBeTruthy();
