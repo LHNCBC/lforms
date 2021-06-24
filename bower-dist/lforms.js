@@ -4267,6 +4267,14 @@ LForms.Util = {
   getAnswersResourceStatus: function getAnswersResourceStatus(formDataSource) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
     return formDataSource.checkAnswersResourceStatus();
+  },
+
+  /**
+   * A wrapper function to deep copy an object so that FHIR lib does not use "angular" directly
+   * @param {*} object 
+   */
+  deepCopy: function deepCopy(object) {
+    return angular.copy(object);
   }
 };
 

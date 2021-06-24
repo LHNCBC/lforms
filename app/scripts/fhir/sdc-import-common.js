@@ -376,7 +376,7 @@ function addCommonSDCImportFns(ns) {
         if (matchData) {
           ret = obj[key];
           if (ret && typeof ret === 'object') {
-            ret = angular.copy(ret); // Work with clone
+            ret = LForms.Util.deepCopy(ret); // Work with clone
             ret._type = key.substring(matchData[0].length);
           }
           break;
@@ -695,7 +695,7 @@ function addCommonSDCImportFns(ns) {
             // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
             if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
               for (var j=1; j<qrItemInfo.total; j++) {
-                var newQRItemInfo = angular.copy(qrItemInfo);
+                var newQRItemInfo = LForms.Util.deepCopy(qrItemInfo);
                 newQRItemInfo.index = j;
                 newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
                 if(qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo[j]) {

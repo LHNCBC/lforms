@@ -263,7 +263,7 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = angular.copy(qItem.initialCoding);
+    var val = LForms.Util.deepCopy(qItem.initialCoding);
     if (val)
       val._type = 'Coding';
     else
@@ -429,7 +429,7 @@ function addSDCImportFns(ns) {
         // insert new items
         if (item) {
           while(total > 1) {
-            var newItem = angular.copy(item);
+            var newItem = LForms.Util.deepCopy(item);
             parentItem.items.splice(i, 0, newItem);
             total -= 1;
           }

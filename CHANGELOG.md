@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.1.1] 2021-06-24
+### Changed
+- Removed direct refereces to angular in FHIR lib files.
+
 ## [29.1.0] 2021-05-27
 ### Added
 - Support for named FHIR expressions.  Any supported FHIR expression can now
