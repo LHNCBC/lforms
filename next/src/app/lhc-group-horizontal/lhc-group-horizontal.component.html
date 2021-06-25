@@ -94,17 +94,18 @@
 
     <!-- a button at the end of each repeating section -->
     <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item)" class="{{lhcDataService.getSkipLogicClass(item)}}">
-      <button type="button"
-            class="lhc-float-button lhc-button" id="add-{{item._elementId}}"
-            (click)="lhcDataService.addOneRepeatingItem(item, true)"
-            (blur)="lhcDataService.hideUnusedItemWarning(item)"
-            nz-popover
-            [(nzPopoverVisible)]="item._showUnusedItemWarning"
-            [nzPopoverContent]="item._unusedItemWarning"
-            nzPopoverPlacement="topLeft"
-            [nzPopoverTrigger]="click"
+      <button 
+        type="button"
+        class="lhc-float-button lhc-button" id="add-{{item._elementId}}"
+        (click)="lhcDataService.addOneRepeatingItem(item, true)"
+        (blur)="lhcDataService.hideUnusedItemWarning(item)"
+        nz-popover
+        [(nzPopoverVisible)]="item._showUnusedItemWarning"
+        [nzPopoverContent]="item._unusedItemWarning"
+        nzPopoverPlacement="topLeft"
+        [nzPopoverTrigger]="click"
       >
-      + Add another "{{item._text}}"
+        + Add another row of "{{item._text}}"
       </button>
     </div>
   </div>

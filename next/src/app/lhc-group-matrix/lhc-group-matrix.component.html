@@ -111,12 +111,12 @@
           <span class="lf-form-matrix-answer">
             <label *ngIf="subItem._multipleAnswers">
               <input type="checkbox" id="{{subItem._elementId + answer.code}}"
-               (click)="lhcDataService.updateCheckboxList(subItem, answer)" aria-labeledby="answer-{{index}}">
+               (click)="lhcDataService.updateCheckboxListValue(subItem, answer)" aria-labeledby="answer-{{index}}">
             </label>
             <label *ngIf="!subItem._multipleAnswers">
               <input type="radio" id="{{subItem._elementId + answer.code}}"
                aria-labeledby="answer-{{index}}" [(ngModel)]="subItem.value" [value]="answer"
-                     name="{{subItem._elementId}}" (change)="lhcDataService.updateRadioList(subItem)">
+                     name="{{subItem._elementId}}" (change)="lhcDataService.resetRadioListOtherValue(subItem)">
             </label>
           </span>
         </td>
@@ -127,12 +127,12 @@
             <label>
               <input type="checkbox" [(ngModel)]="subItem._otherValueChecked"
                      id="{{subItem._elementId + '_other'}}"
-                     (change)="updateCheckboxListForOther(subItem, subitem._answerOther)">
+                     (change)="updateCheckboxListValueForOther(subItem, subitem._answerOther)">
             </label>
             <label>
               <input type="text" [(ngModel)]="subItem._answerOther"
                      id="{{subItem._elementId + '_otherValue'}}"
-                     (change)="updateCheckboxListForOther(subItem, subitem._answerOther)">
+                     (change)="updateCheckboxListValueForOther(subItem, subitem._answerOther)">
             </label>
           </span>
           <!--for single answer-->
@@ -140,11 +140,11 @@
             <label>
               <input type="radio" id="{{subItem._elementId + '_other'}}" [(ngModel)]="subItem._otherValueChecked"
                      [value]="'true'" name="{{subItem._elementId}}"
-                     (change)="updateRadioListForOther(subItem, subitem._answerOther)">
+                     (change)="updateRadioListValueForOther(subItem, subitem._answerOther)">
             </label>
             <label>
               <input type="text" id="{{subItem._elementId + '_otherValue'}}" [(ngModel)]="subitem._answerOther"
-                     (change)="updateRadioListForOther(subItem, subitem._answerOther)">
+                     (change)="updateRadioListValueForOther(subItem, subitem._answerOther)">
             </label>
           </span>
         </td>

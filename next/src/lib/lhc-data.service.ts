@@ -418,11 +418,11 @@ export class LhcDataService {
 
 
   /**
-   * Check if the item is a requential item of a horizontal group item, which is handled separately
+   * Check if the item is a subsequent item of a horizontal group item, which is handled separately
    * @param item a form item
    * @returns {boolean}
    */
-  isSequentialHorizontalTableGroupItem(item) {
+  isSubsequentHorizontalTableGroupItem(item) {
     return item && item.displayControl && item.displayControl.questionLayout === "horizontal" && !item._horizontalTableHeader;
   }
 
@@ -433,7 +433,7 @@ export class LhcDataService {
    * @param item a form item that has an answer list and supports multiple selections
    * @param answer an answer object in the answer list
    */
-  updateCheckboxList(item, answer) {
+  updateCheckboxListValue(item, answer) {
     if (item.value && Array.isArray(item.value)) {
       var index, selected = false;
       for(var i= 0,iLen=item.value.length; i<iLen; i++) {
@@ -471,7 +471,7 @@ export class LhcDataService {
    * @param item a form item that has an answer list and supports multiple selections and user typed data.
    * @param otherValue the user typed string value for the "OTHER" checkbox
    */
-  updateCheckboxListForOther(item, otherValue) {
+  updateCheckboxListValueForOther(item, otherValue) {
     var other = {"text": otherValue, "_notOnList": true};
 
     // add/update the other value
@@ -518,11 +518,10 @@ export class LhcDataService {
 
 
   /**
-   *
-   * Update the item.value based on selection of an answer by users
+   * Reset the 'otherValue' when an answer from the list is selected by user
    * @param item a form item that has an answer list and support single selections
    */
-  updateRadioList(item) {
+  resetRadioListOtherValue(item) {
     item._otherValueChecked = false;
   };
 
@@ -532,7 +531,7 @@ export class LhcDataService {
    * @param item a form item that has an answer list and support single selections
    * @param otherValue the user typed string value for the "OTHER" radio button
    */
-  updateRadioListForOther(item, otherValue) {
+  updateRadioListValueForOther(item, otherValue) {
 
     // add/update the other value
     if (item._otherValueChecked) {
