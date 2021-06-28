@@ -10,10 +10,11 @@ export class LhcItemGroupComponent implements OnInit {
 
   @Input() item: any;
 
-  constructor(public lhcDataService: LhcDataService) {
-  }
+  constructor(public lhcDataService: LhcDataService) { }
 
   ngOnInit(): void {
+    // console.log('lhc-item-group') 
+    // console.log(this.item)
   }
 
 }

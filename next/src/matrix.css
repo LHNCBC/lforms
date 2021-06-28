@@ -1,8 +1,8 @@
 /*** matrix layout ***/
-.lf-layout-matrix.lhc-item  {
+.lhc-form .lhc-layout-matrix.lhc-item  {
   padding-bottom: 2px;
 }
-.lf-form-matrix-table {
+.lhc-form .lf-form-matrix-table {
   border-collapse: separate;
   border-radius: 4px;
   box-sizing: border-box;
@@ -10,10 +10,10 @@
   text-align: left;
   border: 1px solid #ced5d9;
 }
-.lf-form-matrix-table .lf-form-table-header {
+.lhc-form .lf-form-matrix-table .lhc-matrix-table-header-row {
   background: #E8E8E8;
 }
-.lf-form-matrix-table-title {
+.lhc-form .lf-form-matrix-table-title {
   background: #e6f1ff; /*#E8E8E8;*/
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -27,22 +27,21 @@
   border-top: 2px solid white; /* leave space between headers */
   padding: 4px 0 4px 0;
 }
-
-.lf-form .lf-form-matrix-table .lf-question {
+.lhc-form .lf-form-matrix-table .lf-question {
   width: 25%;
 }
-.lf-form .lf-form-matrix-answer {
+.lhc-form .lf-form-matrix-answer {
   padding-left: 5px;
   padding-right: 5px;
 }
-.lf-form .lf-form-matrix-cell,
-.lf-form .lf-form-matrix-cell-other {
+.lhc-form .lf-form-matrix-cell,
+.lhc-form .lf-form-matrix-cell-other {
   text-align: center;
 }
-.lf-form .lf-form-matrix-table th {
+.lhc-form .lf-form-matrix-table th {
   padding: 4px;
 }
-.lf-form .lf-form-matrix-table td {
+.lhc-form .lf-form-matrix-table td {
   padding: 4px;
   border-top: 1px solid #ced5d9;
 }

@@ -1,25 +1,11 @@
-
-<!--sub sections, check each item's layout -->
-<ng-container *ngIf="item">
-  <div class="lhc-item-group-title lhc-de-label-button">
-    <div class="lhc-de-label">
-      <lhc-item-question-text [item]="item"></lhc-item-question-text>  
-    </div>
-    <div class="lhc-de-button">
-      <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" class="lhc-float-button lhc-button" type="button"
-                (click)="lhcDataService.removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
-                title='Remove this "{{ item._text }}"'>-</button>
-                <!-- <button class="lhc-float-button" type="button"
-                id="del-{{item._elementId}}"
-                title='Remove this "{{ item._text }}"'
-                (click)="test()">-</button> -->
-    </div>
-    
+<div *ngIf="item" [ngSwitch]="item.displayControl.questionLayout">
+  <div *ngSwitchCase="'horizontal'">
+    <lhc-group-horizontal [item]="item"></lhc-group-horizontal>
   </div>
-  
-  <!-- <div *ngIf="item.items" class="lhc-item-group-body">
-    <ng-container *ngFor="let item of item.items">
-      <lhc-item [item]="item" class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}}"></lhc-item>
-    </ng-container>
-  </div> -->
-</ng-container>
+  <div *ngSwitchCase="'matrix'">
+    <lhc-group-matrix [item]="item"></lhc-group-matrix>
+  </div>
+  <div *ngSwitchCase="'vertical'">
+    <lhc-group-vertical [item]="item"></lhc-group-vertical>
+  </div>
+</div>

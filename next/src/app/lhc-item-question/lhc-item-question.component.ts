@@ -10,7 +10,8 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemQuestionComponent implements OnInit {
 
 
-  @Input() item: any;
+  @Input() item;
+  @Input() options;
 
   eleStyle: object = null;
 
@@ -22,10 +23,13 @@ export class LhcItemQuestionComponent implements OnInit {
       let viewClass = winService.getViewModeClass();
       this.eleStyle = viewClass === "lhc-view-lg" ? {"width": updatedWidth/2 + "px"} : null;
     });  
+
   }
 
   ngOnInit(): void {
-    
+    // console.log("in lhc-item-question")
+    // console.log(this.item.question)
+    // console.log(this.options)
   }
 
 }

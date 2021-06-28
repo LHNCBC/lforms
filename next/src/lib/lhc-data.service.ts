@@ -367,15 +367,178 @@ export class LhcDataService {
 
 
   /**
-  * Unset the flag to hide the warning about unused repeating items
-  * @param item a repeating item
-  */
+   * Unset the flag to hide the warning about unused repeating items
+   * @param item a repeating item
+   */
   hideUnusedItemWarning(item) {
     if (this.lhcFormData && !this.lhcFormData.templateOptions.allowMultipleEmptyRepeatingItems) {
       item._showUnusedItemWarning = false;
     }
   }
 
+  /**
+   * Return the horizontal table structure of the form
+   * @returns {object}
+   */
+  getHorizontalTableInfo() {
+    return this.lhcFormData._horizontalTableInfo;
+  }
+
+
+  /**
+   * Track by item's element id for each cell in a table row
+   * @param index *ngFor index, not used
+   * @param item *ngFor item, an item of the form 
+   * @returns 
+   */
+  trackByElementId(index, item) {
+    // index is not used since item._elementId is unique
+    return item._elementId;
+  }
+
+  /**
+   * Track by each row's group header item's element id for each row in a horizontal table
+   * @param index *ngFor index
+   * @param item *ngFor item, the group/section item of a form 
+   * @returns 
+   */
+  trackByRowHeaderElementId(index, row) {
+    return row.header._elementId;
+  }
+
+  /**
+   * Track by column's id, which is "col" + the item's element id in the first row
+   * @param index *ngFor index, not used
+   * @param item *ngFor item, an item in the headers array of the horizontal table structure
+   * @returns 
+   */
+  trackByColumnHeaderId(index, col) {
+    return col.id;
+  }
+
+
+  /**
+   * Check if the item is a subsequent item of a horizontal group item, which is handled separately
+   * @param item a form item
+   * @returns {boolean}
+   */
+  isSubsequentHorizontalTableGroupItem(item) {
+    return item && item.displayControl && item.displayControl.questionLayout === "horizontal" && !item._horizontalTableHeader;
+  }
+
+
+  /**
+   * Updates the value for an item whose answers are displayed as a list of checkboxes,
+   * one of which has just been selected or deselected
+   * @param item a form item that has an answer list and supports multiple selections
+   * @param answer an answer object in the answer list
+   */
+  updateCheckboxListValue(item, answer) {
+    if (item.value && Array.isArray(item.value)) {
+      var index, selected = false;
+      for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+        if (this.lhcFormData._objectEqual(item.value[i],answer)) {
+          selected = true;
+          index = i;
+          break;
+        }
+      }
+      // if answer is currently selected
+      if (selected) {
+        // remove the answer from the selected list
+        item.value.splice(index, 1);
+      }
+      // if answer is not currently selected
+      else {
+        // add the answer to the selected list
+        item.value.push(answer);
+      }
+    }
+    // the value is not accessed before
+    else {
+      // add the answer to the selected list
+      item.value = [answer];
+    }
+  };
+
+
+  /**
+   * Updates the value for an item with the user typed data.
+   * The item's answers are displayed as a list of checkboxes, and users have an option to type their own answer.
+   * Update the item.value based on selection of extra data input by users
+   * Note: In the checkbox display layout only one "OTHER" value is allowed, while in autocomplete multiple
+   * "OTHER" values are allowed.
+   * @param item a form item that has an answer list and supports multiple selections and user typed data.
+   * @param otherValue the user typed string value for the "OTHER" checkbox
+   */
+  updateCheckboxListValueForOther(item, otherValue) {
+    var other = {"text": otherValue, "_notOnList": true};
+
+    // add/update the other value
+    if (item._otherValueChecked) {
+      // the list is not empty
+      if (item.value && Array.isArray(item.value)) {
+        var found = false;
+        for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+          if (item.value[i]._notOnList) {
+            item.value[i] = other;
+            found = true;
+            break;
+          }
+        }
+        // if the other value is not already in the list
+        if (!found) {
+          // add the other value to the list
+          item.value.push(other);
+        }
+      }
+      // the list is empty
+      else {
+        // add the other value to the list
+        item.value = [other];
+      }
+    }
+    // remove other value
+    else {
+      if (item.value && Array.isArray(item.value)) {
+        var index, found = false;
+        for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+          if (item.value[i]._notOnList) {
+            found = true;
+            index = i;
+            break;
+          }
+        }
+        if (found) {
+          item.value.splice(index, 1);
+        }
+      }
+    }
+  };
+
+
+  /**
+   * Reset the 'otherValue' when an answer from the list is selected by user
+   * @param item a form item that has an answer list and support single selections
+   */
+  resetRadioListOtherValue(item) {
+    item._otherValueChecked = false;
+  };
+
+
+  /**
+   * Update the item.value based on selection of extra data input by users
+   * @param item a form item that has an answer list and support single selections
+   * @param otherValue the user typed string value for the "OTHER" radio button
+   */
+  updateRadioListValueForOther(item, otherValue) {
+
+    // add/update the other value
+    if (item._otherValueChecked) {
+      item.value = { "text": otherValue, "_notOnList": true};
+    }
+  };
+  
 }
 
 

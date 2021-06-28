@@ -253,14 +253,14 @@
   padding: 2px 0;
 }
 
-.lhc-form.lf-template-table .lf-layout-horizontal,
-.lhc-form.lf-template-table .lf-layout-matrix {
+.lhc-form.lf-template-table .lhc-layout-horizontal,
+.lhc-form.lf-template-table .lhc-layout-matrix {
   padding-right: 6px;
 }
 
 /* not to show title when the entire form is in horizontal or matrix layout */
-.lf-top-section .lf-layout-horizontal .lhc-form-horizontal-table-title,
-.lf-top-section .lf-layout-matrix .lhc-form-matrix-table-title {
+.lf-top-section .lhc-layout-horizontal .lhc-form-horizontal-table-title,
+.lf-top-section .lhc-layout-matrix .lhc-form-matrix-table-title {
   display: none;
 }
 

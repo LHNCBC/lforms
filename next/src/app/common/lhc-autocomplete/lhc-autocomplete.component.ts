@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, ViewEncapsulation, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
 
 @Component({
@@ -18,6 +18,8 @@ export class LhcAutocompleteComponent implements OnInit {
   // two-way data binding for dataModel
   @Input() dataModel: any;
   @Output() dataModelChange = new EventEmitter<any>();
+
+  @ViewChild("ac") ac: ElementRef<any>;
 
   selectedItems: any[] = [];
   multipleSelections: boolean = false;
@@ -40,6 +42,7 @@ export class LhcAutocompleteComponent implements OnInit {
    * Initialize the component
    */
   ngOnInit(): void {
+    //console.log("lhc-autocomplete, ngOnInit")
   }
 
 
@@ -49,6 +52,8 @@ export class LhcAutocompleteComponent implements OnInit {
    * @param changes changes.prop contains the old and the new value
    */
   ngOnChanges(changes) {
+
+    //console.log("lhc-autocomplete, ngOnChange")
 
     // reset autocomplete when 'options' changes
     // ignore changes on 'dataModel'
@@ -73,6 +78,7 @@ export class LhcAutocompleteComponent implements OnInit {
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
+    console.log("lhc-autocomplete, ngAfterViewInit")
     this.setupAutocomplete();
     this.viewInitialized = true;
   }
@@ -82,11 +88,13 @@ export class LhcAutocompleteComponent implements OnInit {
    * Clean up the autocomplete instance
    */
   ngOnDestroy() {
+    //console.log("lhc-autocomplete, ngOnDestroy")
     // if there's an autocomp
     if (this.acInstance) {
       // Destroy the existing autocomp
       this.acInstance.destroy();
     }
+
   }
 
 
@@ -95,6 +103,7 @@ export class LhcAutocompleteComponent implements OnInit {
    */
   setupAutocomplete(): void {
     // if there's an autocomp already
+    
     if (this.acInstance) {
       // Destroy the existing autocomp
       this.acInstance.destroy();
@@ -124,12 +133,16 @@ export class LhcAutocompleteComponent implements OnInit {
 
         this.acType = 'prefetch';
         // acOptions has matchListValue, maxSelected, codes
-        this.acInstance = new Def.Autocompleter.Prefetch(this.options.elementId, listItemsText, acOptions);
-
+        // Using this.options.elementId causes the autocomplete to be refreshed without an autocomplete created in a horizontal table. 
+        // (where the rows lists are created as a new array, instead of keeping the same reference. Not confirmed, but I suspect this is the reason.)
+        // It works with vertical layout though.
+        // Using this.ac.nativeElement works in both cases.
+        //   this.acInstance = new Def.Autocompleter.Prefetch(this.options.elementId, listItemsText, acOptions);
+        this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
       }
       else {
         this.acType = 'search'
-        this.acInstance = new Def.Autocompleter.Search(this.options.elementId, acOptions.url, acOptions);
+        this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
 
       let defaultItem =  this.prefetchTextToItem[acOptions.defaultValue];

@@ -27,6 +27,9 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnDestroy() : void {
+    console.log('lhc-item-choice-raido-button, ngOnDestroy')
+  }
 
   /**
    * Set initial status
