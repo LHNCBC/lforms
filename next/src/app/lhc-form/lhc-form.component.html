@@ -40,7 +40,7 @@
           <!-- check each top level item's questionLayout -->
           <ng-container *ngIf="lhcFormData.items">
             <ng-container *ngFor ="let item of lhcFormData.items">
-              <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !lhcDataService.isSequentialHorizontalTableGroupItem(item)" 
+              <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)" 
                 [item]="item" 
                 class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
               </lhc-item>

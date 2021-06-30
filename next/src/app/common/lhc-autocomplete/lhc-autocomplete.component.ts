@@ -58,7 +58,6 @@ export class LhcAutocompleteComponent implements OnInit {
   ngOnChanges(changes) {
 
     //console.log("lhc-autocomplete, ngOnChange")
-    //console.log(changes)
     // reset autocomplete when 'options' changes
     // ignore changes on 'dataModel'
     if (changes.options) {
@@ -94,15 +93,11 @@ export class LhcAutocompleteComponent implements OnInit {
   ngOnDestroy() {
     //console.log("lhc-autocomplete, ngOnDestroy")
     // if there's an autocomp
-    // this.acInstance and this.ac.nativeElement.autocomp are always undefined?!
     if (this.acInstance) {
       // Destroy the existing autocomp
       this.acInstance.destroy();
     }
 
-    // if (this.ac.nativeElement.autocomp) {
-    //   this.ac.nativeElement.autocomp.destroy();
-    // }
   }
 
 
@@ -124,10 +119,6 @@ export class LhcAutocompleteComponent implements OnInit {
       // Destroy the existing autocomp
       this.acInstance.destroy();
     }
-
-    // if (this.ac.nativeElement.autocomp) {
-    //   this.ac.nativeElement.autocomp.destroy();
-    // }
 
     // if there are options for autocomplete
     if (this.options && this.options.acOptions) {
@@ -153,17 +144,15 @@ export class LhcAutocompleteComponent implements OnInit {
 
         this.acType = 'prefetch';
         // acOptions has matchListValue, maxSelected, codes
-        // using this.options.eleemtnId causes the autocomplete refreshed without an autocomplete created in a horizontal table. 
-        // (where the rows lists are created as a new array, instead of keeping the same referece. not confirmed, but I suspect this is the reason.)
-        // it works with vertical layout though.
-        // useing this.ac.nativeElement works in both cases.
-//        this.acInstance = new Def.Autocompleter.Prefetch(this.options.elementId, listItemsText, acOptions);
-//        this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
+        // Using this.options.elementId causes the autocomplete to be refreshed without an autocomplete created in a horizontal table. 
+        // (where the rows lists are created as a new array, instead of keeping the same reference. Not confirmed, but I suspect this is the reason.)
+        // It works with vertical layout though.
+        // Using this.ac.nativeElement works in both cases.
+        //   this.acInstance = new Def.Autocompleter.Prefetch(this.options.elementId, listItemsText, acOptions);
         this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
       }
       else {
         this.acType = 'search'
-//        this.acInstance = new Def.Autocompleter.Search(this.options.elementId, acOptions.url, acOptions);
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
 

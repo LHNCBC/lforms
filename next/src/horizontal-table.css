@@ -1,6 +1,6 @@
 /* horizontal table */
 /* title */
-.lhc-layout-horizontal .lf-form-horizontal-table-title {
+.lhc-layout-horizontal .lhc-form-horizontal-table-title {
   background: #e6f1ff; /*#E8E8E8;*/
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -15,7 +15,7 @@
   padding: 4px 0 4px 0;
 }
 /* column headers in tables */
-.lhc-layout-horizontal .lf-form-horizontal-table-header {
+.lhc-layout-horizontal .lhc-form-horizontal-table-header {
   overflow: hidden;
   vertical-align: top;
   background: none repeat scroll 0 0 #E8E8E8;
@@ -27,30 +27,29 @@
   border-radius: 4px;
 }
 
-.lhc-layout-horizontal .lf-form-horizontal-table td.lhc-de-button {
+.lhc-layout-horizontal .lhc-form-horizontal-table td.lhc-de-button {
   padding-left: 2px;
   border-right: none;
 }
-.lhc-layout-horizontal table.lf-form-horizontal-table {
+.lhc-layout-horizontal table.lhc-form-horizontal-table {
   border: none;
   margin: 2px 4px 0 1px;
 }
-.lhc-layout-horizontal .lf-form-horizontal-table tr {
+.lhc-layout-horizontal .lhc-form-horizontal-table tr {
   border: none;
 }
-.lhc-layout-horizontal .lf-form-horizontal-table tr td {
+.lhc-layout-horizontal .lhc-form-horizontal-table tr td {
   border-right: none;
   border-left: none;
 }
-.lhc-layout-horizontal .lf-form-horizontal-table .lhc-de-button {
+.lhc-layout-horizontal .lhc-form-horizontal-table .lhc-de-button {
   width: 2.1em;
   min-width: 2em;
 }
-.lhc-layout-horizontal .lf-form-table-row.button-row {
+/* .lhc-layout-horizontal .lf-form-table-row.button-row {
   margin-right: 0;
   border: 0;
-}
-/* end of horizontal table */
+} */
 
 
 .lhc-layout-horizontal div.lhc-de-input-unit {
@@ -59,23 +58,6 @@
   flex-shrink: 1;
 
 }
-/* .lhc-layout-horizontal lhc-item-simple-type {
-  display: flex;
-
-}.lhc-layout-horizontal lhc-item-simple-type div.lhc-de-input {
-  order: 1;
-  flex-grow: 1;
-}
-.lhc-layout-horizontal lhc-item-quantity {
-  display: flex;
-
-}.lhc-layout-horizontal lhc-item-quantity lhc-input {
-  order: 1;
-  flex-grow: 1;
-}.lhc-layout-horizontal lhc-item-quantity lhc-unit {
-  order: 2;
-  flex-grow: 1;
-} */
 
 .lhc-layout-horizontal lhc-item-question {
   border: 0;
@@ -88,3 +70,5 @@
 .lhc-layout-horizontal td.lhc-item-question {
   padding: 0;
 }
+
+/* end of horizontal table */

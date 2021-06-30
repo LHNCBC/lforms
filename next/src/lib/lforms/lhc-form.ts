@@ -502,6 +502,7 @@ export default class LhcFormData {
   }
 
 //// TODO: FHIR
+//// This function has been moved to script/fhir.
   /**
    *  Starts the (likely asynchronous) requests to retrieve linked Observation
    *  resources for pre-population.  When the resources have been retrieved,
@@ -1960,11 +1961,7 @@ export default class LhcFormData {
    */
   _resetHorizontalTableInfo() {
 
-    // returning a new object make the horizontal table view reset without value/answerlist/etc.
     this._horizontalTableInfo = {};
-    // if (this._horizontalTableInfo) {
-    //   for (var tableId in this._horizontalTableInfo) delete this._horizontalTableInfo[tableId];
-    // }
 
     var tableHeaderLinkIdAndParentIdPath = null;
     var lastHeaderId = null;
@@ -2029,77 +2026,6 @@ export default class LhcFormData {
     }
   }
 
-
-  // _resetHorizontalTableInfo() {
-
-  //   // returning a new object make the horizontal table view reset without value/answerlist/etc.
-  //   // this._horizontalTableInfo = {};
-  //   if (this._horizontalTableInfo) {
-  //     for (var tableId in this._horizontalTableInfo) delete this._horizontalTableInfo[tableId];
-  //   }
-
-  //   var tableHeaderLinkIdAndParentIdPath = null;
-  //   var lastHeaderId = null;
-
-  //   for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
-  //     var item = this.itemList[i];
-  //     // section item and horizontal layout
-  //     if (item.dataType===CONSTANTS.DATA_TYPE.SECTION && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
-  //       // same methods for repeating items could be used for repeating and non-repeating items.
-  //       // (need to rename function names in those 'repeatable' functions.)
-  //       var itemsInRow = [];
-  //       var columnHeaders = [];
-
-  //       item._inHorizontalTable = true;
-  //       var itemLinkIdAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
-  //       lastHeaderId = item._elementId;
-  //       // if it's the first row (header) of the first table,
-  //       if (tableHeaderLinkIdAndParentIdPath === null ||
-  //         tableHeaderLinkIdAndParentIdPath !== itemLinkIdAndParentIdPath) {
-  //         // indicate this item is the table header
-  //         tableHeaderLinkIdAndParentIdPath = itemLinkIdAndParentIdPath;
-  //         item._horizontalTableHeader = true;
-  //         item._horizontalTableId = tableHeaderLinkIdAndParentIdPath;
-
-  //         itemsInRow = item.items;
-  //         for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-  //           var itemInRow = itemsInRow[j];
-  //           columnHeaders.push({item: itemInRow, id: "col" + itemInRow._elementId, displayControl: itemInRow.displayControl});
-  //           // indicate the item is in a horizontal table
-  //           itemsInRow[j]._inHorizontalTable = true;
-  //         }
-
-  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath] = {
-  //           tableStartIndex: i,
-  //           tableEndIndex: i+itemsInRow.length,
-  //           columnHeaders: columnHeaders,
-  //           tableRows: [{ header: item, cells : itemsInRow }],
-  //           tableHeaders: [item]
-  //         };
-
-  //         // set the last table/row in horizontal group/table flag
-  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
-  //       }
-  //       // if it's the following rows, update the tableRows and tableEndIndex
-  //       else if (tableHeaderLinkIdAndParentIdPath === itemLinkIdAndParentIdPath ) {
-  //         item._horizontalTableHeader = false;
-  //         itemsInRow = item.items;
-  //         for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-  //           // indicate the item is in a horizontal table
-  //           itemsInRow[j]._inHorizontalTable = true;
-  //         }
-  //         // update rows index
-  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableRows.push({header: item, cells : itemsInRow});
-  //         // update headers index (hidden)
-  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableHeaders.push(item);
-  //         // update last item index in the table
-  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableEndIndex = i + itemsInRow.length;
-  //         // set the last table/row in horizontal group/table flag
-  //         this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
-  //       }
-  //     }
-  //   }
-  // }
 
   /**
    * Adjust the last sibling list for the first header item of horizontal tables

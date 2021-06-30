@@ -1,109 +1,113 @@
-<div class="lhc-layout-horizontal lf-table-item {{lhcDataService.getSiblingStatus(item)}} " *ngIf="item._horizontalTableHeader && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId]">
-  <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
-       ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
-       class="lf-form-horizontal-table-title lf-de-label">
-    <span class="lf-question">
-      <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
-        <span *ngIf="item.prefix" class="prefix" [ngStyle]="item._obj_prefixCSS">{{item.prefix}}</span>
-        <span class="question" [ngStyle]="item._obj_textCSS"> {{item.question}}
-          <span *ngIf="item._answerRequired" class="required" title="Required">&nbsp;*</span>
-        </span>
-      </label>
-    </span>
-    <!-- <span class="lf-item-code" *ngIf="lhcData.templateOptions.showQuestionCode">
-      <a *ngIf="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
-      <span *ngIf="!item._linkToDef">[{{ item.questionCode }}]</span>
-    </span> -->
-    <!-- <span *ngSwitch="getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
-        <span *ngSwitchCase="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
-        <span *ngSwitchCase="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"></span>
-        <button *ngSwitchCase="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
-                popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                type="button" id="help-{{item._elementId}}" aria-label="Help"
-                aria-describedby="label-{{ item._elementId }}">
-          <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-        </button>
-        <button *ngSwitchCase="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
-                popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                type="button" id="help-{{item._elementId}}" aria-label="Help"
-                aria-describedby="label-{{ item._elementId }}">
-          <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-        </button>
-    </span> -->
-    <!-- <button *ngIf="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
-            class="lf-copyright-button btn-sm" uib-popover="{{item.copyrightNotice}}"
-            popover-trigger="focus" popover-placement="right" popover-title="Copyright"
-            aria-label="Copyright notice" aria-describedby="label-{{ item._elementId }}">
-      <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
-    </button>
-    <button *ngIf="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
-            ng-click="hideShowItemOptionPanel(item)" aria-label="Item controls"
-            aria-describedby="label-{{ item._elementId }}">
-      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-    </button> -->
+<ng-container *ngIf="item">
+  <div class="lhc-layout-horizontal lf-table-item {{lhcDataService.getSiblingStatus(item)}} " 
+    *ngIf="item._horizontalTableHeader && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId]">
+    <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
+        ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
+        class="lhc-form-horizontal-table-title lhc-de-label">
+      <span class="lf-question">
+        <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
+          <span *ngIf="item.prefix" class="prefix" [ngStyle]="item._obj_prefixCSS">{{item.prefix}}</span>
+          <span class="question" [ngStyle]="item._obj_textCSS"> {{item.question}}
+            <span *ngIf="item._answerRequired" class="required" title="Required">&nbsp;*</span>
+          </span>
+        </label>
+      </span>
+      <!-- <span class="lf-item-code" *ngIf="lhcData.templateOptions.showQuestionCode">
+        <a *ngIf="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
+        <span *ngIf="!item._linkToDef">[{{ item.questionCode }}]</span>
+      </span> -->
+      <!-- <span *ngSwitch="getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
+          <span *ngSwitchCase="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
+          <span *ngSwitchCase="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"></span>
+          <button *ngSwitchCase="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
+                  popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                  type="button" id="help-{{item._elementId}}" aria-label="Help"
+                  aria-describedby="label-{{ item._elementId }}">
+            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+          </button>
+          <button *ngSwitchCase="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
+                  popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                  type="button" id="help-{{item._elementId}}" aria-label="Help"
+                  aria-describedby="label-{{ item._elementId }}">
+            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+          </button>
+      </span> -->
+      <!-- <button *ngIf="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
+              class="lf-copyright-button btn-sm" uib-popover="{{item.copyrightNotice}}"
+              popover-trigger="focus" popover-placement="right" popover-title="Copyright"
+              aria-label="Copyright notice" aria-describedby="label-{{ item._elementId }}">
+        <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
+      </button>
+      <button *ngIf="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
+              ng-click="hideShowItemOptionPanel(item)" aria-label="Item controls"
+              aria-describedby="label-{{ item._elementId }}">
+        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+      </button> -->
 
-    <!-- <lf-item-options></lf-item-options> -->
+      <!-- <lf-item-options></lf-item-options> -->
 
+    </div>
+
+    <table class="lhc-form-horizontal-table">
+      <colgroup>
+        <col class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
+        <col *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId"
+            [ngSstyle]="lhcDataService.getTableColumnStyle(col)">
+      </colgroup>
+      <thead>
+      <tr>
+        <th class="lhc-form-horizontal-table-header" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1"></th>
+        <th *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId"
+            class="lhc-form-horizontal-table-header"
+            id="{{col.id}}">
+          <span class="lf-question">
+            <label id="label-{{ col.item._elementId }}" for="{{col.item._elementId}}">
+              <span *ngIf="col.item.prefix" class="prefix" [ngStyle]="col.item._obj_prefixCSS">{{col.item.prefix}}</span>
+              <span class="question" [ngStyle]="col.item._obj_textCSS"> {{col.item.question}}
+                <span *ngIf="col.item._answerRequired" class="required" title="Required">&nbsp;*</span>
+              </span>
+            </label>
+          </span>
+        </th>
+            <!-- <ng-include src="'itemPrefixAndText.html'"></th> -->
+      </tr>
+      </thead>
+      <tbody id="" class="">
+      <tr *ngFor="let row of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows; trackBy: lhcDataService.trackByRowHeaderElementId"
+          class="lhc-data-row has-ng-animate">
+        <td class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
+          <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" type="button"
+                  id="del-{{row.header._elementId}}"
+                  class="lhc-float-button lhc-button" (click)="lhcDataService.removeOneRepeatingItem(row.header)"
+                  title='Remove this row of "{{ row.header.question }}"'>-</button>
+        </td>
+
+        <td *ngFor="let cell of row.cells; trackBy: lhcDataService.trackByElementId"
+            class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
+          <div class="lf-form-item-data tooltipContainer">
+            <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- a button at the end of each repeating section -->
+    <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item)" class="{{lhcDataService.getSkipLogicClass(item)}}">
+      <button 
+        type="button"
+        class="lhc-float-button lhc-button" id="add-{{item._elementId}}"
+        (click)="lhcDataService.addOneRepeatingItem(item, true)"
+        (blur)="lhcDataService.hideUnusedItemWarning(item)"
+        nz-popover
+        [(nzPopoverVisible)]="item._showUnusedItemWarning"
+        [nzPopoverContent]="item._unusedItemWarning"
+        nzPopoverPlacement="topLeft"
+        [nzPopoverTrigger]="click"
+      >
+        + Add another row of "{{item._text}}"
+      </button>
+    </div>
   </div>
 
-  <table class="lf-form-horizontal-table">
-    <colgroup>
-      <col class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
-      <col *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId"
-           [ngSstyle]="lhcDataService.getTableColumnStyle(col)">
-    </colgroup>
-    <thead>
-    <tr>
-      <th class="lf-form-horizontal-table-header" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1"></th>
-      <th *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId"
-          class="lf-form-horizontal-table-header"
-          id="{{col.id}}">
-        <span class="lf-question">
-          <label id="label-{{ col.item._elementId }}" for="{{col.item._elementId}}">
-            <span *ngIf="col.item.prefix" class="prefix" [ngStyle]="col.item._obj_prefixCSS">{{col.item.prefix}}</span>
-            <span class="question" [ngStyle]="col.item._obj_textCSS"> {{col.item.question}}
-              <span *ngIf="col.item._answerRequired" class="required" title="Required">&nbsp;*</span>
-            </span>
-          </label>
-        </span>
-      </th>
-          <!-- <ng-include src="'itemPrefixAndText.html'"></th> -->
-    </tr>
-    </thead>
-    <tbody id="" class="">
-    <tr *ngFor="let row of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows; trackBy: lhcDataService.trackByRowHeaderElementId"
-        class="data-row has-ng-animate">
-      <td class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
-        <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" type="button"
-                id="del-{{row.header._elementId}}"
-                class="lhc-float-button lhc-button" (click)="lhcDataService.removeOneRepeatingItem(row.header)"
-                title='Remove this row of "{{ row.header.question }}"'>-</button>
-      </td>
-
-      <td *ngFor="let cell of row.cells; trackBy: lhcDataService.trackByElementId"
-          class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
-        <div class="lf-form-item-data tooltipContainer">
-          <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <!-- a button at the end of each repeating section -->
-  <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item)" class="{{lhcDataService.getSkipLogicClass(item)}}">
-    <button type="button"
-          class="lhc-float-button lhc-button" id="add-{{item._elementId}}"
-          (click)="lhcDataService.addOneRepeatingItem(item, true)"
-          (blur)="lhcDataService.hideUnusedItemWarning(item)"
-          nz-popover
-          [(nzPopoverVisible)]="item._showUnusedItemWarning"
-          [nzPopoverContent]="item._unusedItemWarning"
-          nzPopoverPlacement="topLeft"
-          [nzPopoverTrigger]="click"
-    >
-    + Add another "{{item._text}}"
-    </button>
-  </div>
-</div>
-
+</ng-container>

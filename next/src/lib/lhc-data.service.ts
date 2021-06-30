@@ -3,17 +3,21 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
+
+/**
+ * A data service for the form data object that is used by various components
+ */
 export class LhcDataService {
 
   private lhcFormData:any;
 
   constructor() { }
 
-  getLhcData(): any {
+  getLhcFormData(): any {
     return this.lhcFormData;
   }
 
-  setLhcData(data:any): void {
+  setLhcFormData(data:any): void {
     this.lhcFormData = data;
   }
 
@@ -397,28 +401,32 @@ export class LhcDataService {
 
 
   /**
-  * Unset the flag to hide the warning about unused repeating items
-  * @param item a repeating item
-  */
+   * Unset the flag to hide the warning about unused repeating items
+   * @param item a repeating item
+   */
   hideUnusedItemWarning(item) {
     if (this.lhcFormData && !this.lhcFormData.templateOptions.allowMultipleEmptyRepeatingItems) {
       item._showUnusedItemWarning = false;
     }
   }
 
-
+  /**
+   * Return the horizontal table structure of the form
+   * @returns {object}
+   */
   getHorizontalTableInfo() {
     return this.lhcFormData._horizontalTableInfo;
   }
 
-  // horizontal table trackby functions to avoid unnecessary recreating DOM elements in the horizontal tables
+
   /**
    * Track by item's element id for each cell in a table row
-   * @param index *ngFor index
+   * @param index *ngFor index, not used
    * @param item *ngFor item, an item of the form 
    * @returns 
    */
   trackByElementId(index, item) {
+    // index is not used since item._elementId is unique
     return item._elementId;
   }
 
@@ -434,7 +442,7 @@ export class LhcDataService {
 
   /**
    * Track by column's id, which is "col" + the item's element id in the first row
-   * @param index *ngFor index
+   * @param index *ngFor index, not used
    * @param item *ngFor item, an item in the headers array of the horizontal table structure
    * @returns 
    */
@@ -442,7 +450,13 @@ export class LhcDataService {
     return col.id;
   }
 
-  isSequentialHorizontalTableGroupItem(item) {
+
+  /**
+   * Check if the item is a subsequent item of a horizontal group item, which is handled separately
+   * @param item a form item
+   * @returns {boolean}
+   */
+  isSubsequentHorizontalTableGroupItem(item) {
     return item && item.displayControl && item.displayControl.questionLayout === "horizontal" && !item._horizontalTableHeader;
   }
 
@@ -453,7 +467,7 @@ export class LhcDataService {
    * @param item a form item that has an answer list and supports multiple selections
    * @param answer an answer object in the answer list
    */
-  updateCheckboxList(item, answer) {
+  updateCheckboxListValue(item, answer) {
     if (item.value && Array.isArray(item.value)) {
       var index, selected = false;
       for(var i= 0,iLen=item.value.length; i<iLen; i++) {
@@ -491,7 +505,7 @@ export class LhcDataService {
    * @param item a form item that has an answer list and supports multiple selections and user typed data.
    * @param otherValue the user typed string value for the "OTHER" checkbox
    */
-  updateCheckboxListForOther(item, otherValue) {
+  updateCheckboxListValueForOther(item, otherValue) {
     var other = {"text": otherValue, "_notOnList": true};
 
     // add/update the other value
@@ -538,11 +552,10 @@ export class LhcDataService {
 
 
   /**
-   *
-   * Update the item.value based on selection of an answer by users
+   * Reset the 'otherValue' when an answer from the list is selected by user
    * @param item a form item that has an answer list and support single selections
    */
-  updateRadioList(item) {
+  resetRadioListOtherValue(item) {
     item._otherValueChecked = false;
   };
 
@@ -552,7 +565,7 @@ export class LhcDataService {
    * @param item a form item that has an answer list and support single selections
    * @param otherValue the user typed string value for the "OTHER" radio button
    */
-  updateRadioListForOther(item, otherValue) {
+  updateRadioListValueForOther(item, otherValue) {
 
     // add/update the other value
     if (item._otherValueChecked) {

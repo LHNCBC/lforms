@@ -3,7 +3,7 @@ exports.config = {
   port: port,
   baseUrl: 'http://localhost:' + (process.env.PORT || port),
 
-  directConnect: true,
+  directConnect: false,
   //Capabilities to be passed to the webdriver instance.
   capabilities: {
     'browserName': 'chrome',

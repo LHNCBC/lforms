@@ -32,31 +32,6 @@ export class LhcItemQuestionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-//    console.log("lhc-item-question")
-//    console.log(this.deInputElement)
-    // console.log(this.options)
-  }
-
-  ngAfterViewInit(): void {
-    //console.log("lhc-item-question: ngAfterViewInit")
-    //console.log(this.deInputElement)
-  }
-
-  test(): void {
-    console.log("in test")
-    this.item.question += "TESTING: "
-  }
-
-  // hasOneRepeatingItem(item): boolean {
-  //   return this.lhcDataService.hasOneRepeatingItem(item);
-  // }
-
-  // removeOneRepeatingItem(item): void {
-  //   this.lhcDataService.removeOneRepeatingItem(item)
-  // }
-
-  change(value: boolean): void {
-    console.log(value);
   }
   
   checkErrors(): boolean {

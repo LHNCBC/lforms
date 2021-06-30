@@ -1,11 +1,15 @@
 /**
- *  Returns a mock for a FHIR context, as one gets for a SMART on FHIR app.
- * @param fhirVersion the FHIR version number (string) that should be reported for this
- * fake "server".
- * @param weightQuantity the quantity to return from a search for a weight.
- * @param resources A hash from resource type to hashes of resource ID to resource.
+ *  Defines an object with a function that returns a mock FHIR context, and also
+ *  a structure of mock FHIR data.
  */
-const rtn = {
+const fhirMock = {
+  /**
+   *  Returns a mock for a FHIR context, as one gets for a SMART on FHIR app.
+   * @param fhirVersion the FHIR version number (string) that should be reported for this
+   * fake "server".
+   * @param weightQuantity the quantity to return from a search for a weight.
+   * @param resources A hash from resource type to hashes of resource ID to resource.
+   */
   mockFHIRContext: function(fhirVersion, weightQuantity, resources) {
     if (!weightQuantity) {
       weightQuantity = {
@@ -31,17 +35,14 @@ const rtn = {
             rtnData = resources.ValueSet[vsID];
           }
         }
-        return {
-          then: function(callback, error) {
-            if (rtnData) {
-              setTimeout(function() { // preserve expected async behavior
-                callback(rtnData);
-              });
-            }
+        return new Promise((resolve, reject)=>{
+          setTimeout(function() { // preserve expected async behavior
+            if (rtnData)
+              resolve(rtnData);
             else
-              setTimeout(function() {error('Not found')});
-          }
-        }
+              reject('Not found');
+          });
+        });
       },
 
       patient: {
@@ -170,7 +171,7 @@ const rtn = {
 
 // Populate ValueSet expansions
 let vsID = 'language-preference-type';
-rtn.mockData.ValueSet[vsID] = require('../../../data/R4/ValueSet/'+vsID+'.json');
+fhirMock.mockData.ValueSet[vsID] = require('../../../data/R4/ValueSet/'+vsID+'.json');
 
 
-module.exports = rtn;
+module.exports = fhirMock;

@@ -9,20 +9,15 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemTimeComponent implements OnInit {
 
   @Input() item: any;
+  time: Date | null = null;
 
   constructor(public lhcDataService: LhcDataService) { }
 
   ngOnInit(): void {
   }
 
-  time: Date | null = null;
-
-  log(time: Date): void {
-    console.log(time && time.toTimeString());
-  }
-  
   onChange(result: Date): void {
-    console.log('Selected Time: ', result);
+    //console.log('Selected Time: ', result);
   }
 
 }

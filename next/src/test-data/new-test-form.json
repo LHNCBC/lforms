@@ -1,0 +1,218 @@
+{
+  "name": "New LForms: Skip logic, repeating items",
+  "items": [
+    {
+      "questionCode": "54125-0",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "question": "Name",
+      "answers": "",
+      "dataType": "TX",
+      "units": "",
+      "header": false,
+      "linkId": "/54126-8/54125-0"
+    },
+    {
+      "questionCode": "54128-4",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "question": "Were you adopted?",
+      "answers": 361,
+      "dataType": "CNE",
+      "units": "",
+      "header": false,
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "/54126-8/54125-0",
+            "trigger": {
+              "value": "Alex"
+            }
+          }
+        ],
+        "action": "show"
+      },
+      "linkId": "/54126-8/54128-4"
+    },
+
+    {
+      "questionCode": "54139-1",
+      "answerCodeSystem": "http://loinc.org",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "question": "Living?",
+      "answers": [
+        {
+          "text": "Yes",
+          "code": "LA33-6"
+        },
+        {
+          "text": "No",
+          "code": "LA32-8"
+        }
+      ],
+      "dataType": "CNE",
+      "units": "",
+      "header": false,
+      "items": [
+        {
+          "questionCode": "54124-3",
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "question": "Date of Birth, 1, Yes-sub",
+          "answers": "",
+          "dataType": "DT",
+          "units": "",
+          "header": false,
+          "skipLogic": {
+            "conditions": [
+              {
+                "source": "/54114-4/54139-1",
+                "trigger": {
+                  "value": {
+                    "code": "LA33-6",
+                    "system": "http://loinc.org"
+                  }
+                }
+              }
+            ],
+            "action": "show"
+          },
+          "linkId": "/54114-4/54139-1/54124-3"
+        },
+        
+        {
+          "questionCode": "54112-8",
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "question": "Cause of Death, 2 No-sub",
+          "answers": 627,
+          "dataType": "CNE",
+          "units": "",
+          "header": false,
+          "skipLogic": {
+            "conditions": [
+              {
+                "source": "/54114-4/54139-1",
+                "trigger": {
+                  "value": {
+                    "code": "LA32-8",
+                    "system": "http://loinc.org"
+                  }
+                }
+              }
+            ],
+            "action": "show"
+          },
+          "linkId": "/54114-4/54139-1/54112-8"
+        }
+        
+      ],
+      "linkId": "/54114-4/54139-1"
+    },
+
+    {
+      "questionCode": "54141-7",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "question": "Age, 3, Yes",
+      "answers": "",
+      "dataType": "REAL",
+      "units": "",
+      "header": false,
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "/54114-4/54139-1",
+            "trigger": {
+              "value": {
+                "code": "LA33-6",
+                "system": "http://loinc.org"
+              }
+            }
+          }
+        ],
+        "action": "show"
+      },
+      "linkId": "/54114-4/54139-1/54141-7"
+    },
+
+    {
+      "questionCode": "54113-6",
+      "answerCodeSystem": "http://loinc.org",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "question": "Age at Death, 4, No",
+      "answers": 619,
+      "dataType": "CNE",
+      "units": "",
+      "header": false,
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "/54114-4/54139-1",
+            "trigger": {
+              "value": {
+                "code": "LA32-8",
+                "system": "http://loinc.org"
+              }
+            }
+          }
+        ],
+        "action": "show"
+      },
+      "linkId": "/54114-4/54139-1/54113-6"
+    },
+    {
+      "questionCode": "q10",
+      "dataType": "CWE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "question": "Multi Selection on CWE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q10"
+    },
+    {
+      "questionCode": "q11",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "question": "Multi Selection on CNE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q11"
+    },
+    {
+      "questionCode": "q10a",
+      "dataType": "CWE",
+      "question": "Single Selection on CWE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q10a"
+    },
+    {
+      "questionCode": "q11a",
+      "dataType": "CNE",
+      "question": "Single Selection on CNE, a search field",
+      "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "linkId": "/q11a"
+    }
+  ],
+  "lformsVersion": "24.0.0"
+}

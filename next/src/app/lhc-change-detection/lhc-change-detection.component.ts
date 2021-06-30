@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewEncapsulation} from '@angular/core';
 
 /**
  * A hidden {display: none} that contains all the necessary item.value and 
- * other attributes in lhcFormFata to catch the change event on them.
+ * other attributes in lhcFormData to catch the change event on them.
  */
 @Component({
   selector: 'lhc-change-detection',

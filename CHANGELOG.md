@@ -2,6 +2,23 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.1.0] 2021-05-27
+### Added
+- Support for named FHIR expressions.  Any supported FHIR expression can now
+  have a name, which acts like a variable for other expressions.
+
+## [29.0.3] 2021-05-03
+### Fixed
+- Fixed a bug where hidden items were triggering validation to fail.
+
+## [29.0.2] 2021-04-30
+### Fixed
+- Fixed a bug that item.repeats is not converted correctly in some cases.
+
+## [29.0.1] 2021-04-29
+### Fixed
+- Fixed a bug that minValue extention is not imported correctly when the value is 0
+
 ## [29.0.0] 2020-12-23
 ### Changes
 - Breaking change to FHIR support. The launchContext URI has changed to

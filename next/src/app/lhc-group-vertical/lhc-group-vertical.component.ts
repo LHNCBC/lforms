@@ -13,8 +13,8 @@ export class LhcGroupVerticalComponent implements OnInit {
   constructor(public lhcDataService: LhcDataService) {}
 
   ngOnInit(): void {
-    console.log("lhc-group-vertical")
-    console.log(this.item)
+    // console.log("lhc-group-vertical")
+    // console.log(this.item)
   }
 
 }

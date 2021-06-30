@@ -1,12 +1,6 @@
 {
-  "codeSystem": "LOINC",
-  "code": "54127-6N",
-  "name": "USSG-FHT, (with mock-up items for skip logic demo)",
-  "template": "table",
+  "name": "New LForms: Horizontal Layout",
   "items": [
-   
-    
-    
     {
       "questionCode": "horizontalTable",
       "linkId":"/horizontalTable",
