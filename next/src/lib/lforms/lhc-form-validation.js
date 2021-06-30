@@ -1,7 +1,6 @@
 /**
  * A package to process user data validations in LForms
  */
-import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
 
 const Validation = {

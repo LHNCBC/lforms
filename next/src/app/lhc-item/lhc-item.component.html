@@ -1,6 +1,4 @@
 <ng-container *ngIf="item && lhcDataService.targetShown(item)">
-  <!-- <div class="lhc-item {{getSiblingStatus(item)}} {{getRowClass(item)}}"> -->
-    <!-- <lhc-validate [item]="item" [deInput]='deInput'></lhc-validate> -->
     <ng-container  [ngSwitch]="item.dataType">
       <!-- 'group' -->
       <ng-container *ngSwitchCase="'SECTION'">

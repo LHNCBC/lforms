@@ -692,10 +692,6 @@ export default class LhcFormData {
       var errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
       item._validationErrors = errors;
 
-      // if (errors.length >0) {
-      //   console.log(item.question)
-      //   console.log(errors)
-      // }
     }
   }
 
