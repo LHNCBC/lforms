@@ -54,7 +54,7 @@ export class LhcDataService {
       // }, $scope.validationInitialShowTime);
 
       setTimeout(()=>{
-        // not to show validation messages after 2 seconds
+        // not to show validation messages after 1.5 seconds
         item._showValidation = false;
         item._visitedBefore = true;
       }, 1500);

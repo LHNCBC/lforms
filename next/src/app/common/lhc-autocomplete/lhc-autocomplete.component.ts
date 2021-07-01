@@ -19,7 +19,7 @@ export class LhcAutocompleteComponent implements OnInit {
   @Input() dataModel: any;
   @Output() dataModelChange: EventEmitter<any>  = new EventEmitter<any>();
 
-  // emit the 'focus' and 'blue' events on the input fields
+  // emit the 'focus' and 'blur' events on the input fields
   @Output() onFocusFn: EventEmitter<any> = new EventEmitter<any>();
   @Output() onBlurFn: EventEmitter<any> = new EventEmitter<any>();
 
