@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ScreenReaderLog } from './screen-reader-log';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,11 @@ import { Injectable } from '@angular/core';
 export class LhcDataService {
 
   private lhcFormData:any;
+  private srLog: ScreenReaderLog;
 
-  constructor() { }
+  constructor() {
+    this.srLog = new ScreenReaderLog();
+   }
 
   getLhcFormData(): any {
     return this.lhcFormData;
@@ -32,6 +36,14 @@ export class LhcDataService {
    */
    setActiveRow(item) {
     this.lhcFormData.setActiveRow(item);
+
+    // for screen reader (only the newly added messages will be read by screen readers)
+    if (item._validationErrors) {
+      item._validationErrors.forEach(error => {
+        this.sendMsgToScreenReader(`${item.question} ${error}`)
+      });
+    }
+
   }
 
 
@@ -573,6 +585,32 @@ export class LhcDataService {
     }
   };
   
+
+  /**
+   * Writes a single message to the reader_log element on the page
+   * so that screen readers can read it.
+   * @param msg the message to be read
+   */
+   sendMsgToScreenReader(msg) {
+    this.srLog.add(msg);
+  };
+
+
+  /**
+   * Write action logs from the lforms to reader_log element on the page
+   * so that screen readers can read.
+   */
+  sendActionsToScreenReader() {
+    
+    if (this.lhcFormData && this.lhcFormData._actionLogs.length > 0) {
+      this.lhcFormData._actionLogs.forEach(function(log) {
+        this.srLog.add(log);
+      });
+      // clean up logs
+      this.lhcFormData._actionLogs = [];
+    }
+  };
+
 }
 
 
