@@ -1,9 +1,6 @@
 /**
  *  This manages a log meant to be used in assisting users with screen readers.
- *  For backwards compatibility, in addition to the constructor,
- *  Def.ScreenReaderLog.add(msg) will log msg to a DOM element with id
- *  "reader_log".  However, that usage is deprecated.
- *  Current usage:  var myLog = new Def.ScreenReaderLog(); myLog.add(msg);
+ *  Usage:  var myLog = new ScreenReaderLog(); myLog.add(msg);
  */
  export class ScreenReaderLog {
    logElement: any;
