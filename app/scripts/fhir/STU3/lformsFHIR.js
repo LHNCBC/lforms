@@ -21748,7 +21748,7 @@ var dr = {
 
       if (item && !((item.dataType === "CNE" || item.dataType === "CWE") && item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1))) {
         while (total > 1) {
-          var newItem = angular.copy(item);
+          var newItem = LForms.Util.deepCopy(item);
           parentItem.items.splice(i, 0, newItem);
           total -= 1;
         }
@@ -22715,7 +22715,7 @@ function addCommonSDCExportFns(ns) {
     var target = {};
 
     if (lfData) {
-      var source = angular.copy(lfData);
+      var source = LForms.Util.deepCopy(lfData);
 
       if (!(source instanceof LForms.LFormsData)) {
         source = new LForms.LFormsData(source);
@@ -24002,7 +24002,7 @@ function addSDCImportFns(ns) {
 
 
   self._processDefaultAnswer = function (lfItem, qItem) {
-    var val = angular.copy(qItem.initialCoding);
+    var val = LForms.Util.deepCopy(qItem.initialCoding);
     if (val) val._type = 'Coding';else val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
 
     if (val) {
@@ -24173,7 +24173,7 @@ function addSDCImportFns(ns) {
 
         if (item) {
           while (total > 1) {
-            var newItem = angular.copy(item);
+            var newItem = LForms.Util.deepCopy(item);
             parentItem.items.splice(i, 0, newItem);
             total -= 1;
           }
@@ -25150,7 +25150,7 @@ function addCommonSDCImportFns(ns) {
           ret = obj[key];
 
           if (ret && _typeof(ret) === 'object') {
-            ret = angular.copy(ret); // Work with clone
+            ret = LForms.Util.deepCopy(ret); // Work with clone
 
             ret._type = key.substring(matchData[0].length);
           }
@@ -25502,7 +25502,7 @@ function addCommonSDCImportFns(ns) {
 
             if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
               for (var j = 1; j < qrItemInfo.total; j++) {
-                var newQRItemInfo = angular.copy(qrItemInfo);
+                var newQRItemInfo = LForms.Util.deepCopy(qrItemInfo);
                 newQRItemInfo.index = j;
                 newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
 

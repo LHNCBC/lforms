@@ -1665,7 +1665,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"29.1.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"29.1.1\"}");
 
 /***/ }),
 /* 15 */
@@ -4267,6 +4267,14 @@ LForms.Util = {
   getAnswersResourceStatus: function getAnswersResourceStatus(formDataSource) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
     return formDataSource.checkAnswersResourceStatus();
+  },
+
+  /**
+   * A wrapper function to deep copy an object so that FHIR lib does not use "angular" directly
+   * @param {*} object 
+   */
+  deepCopy: function deepCopy(object) {
+    return angular.copy(object);
   }
 };
 

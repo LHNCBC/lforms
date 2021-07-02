@@ -54,7 +54,7 @@ function addCommonSDCExportFns(ns) {
     var target = {};
 
     if (lfData) {
-      var source = angular.copy(lfData);
+      var source = LForms.Util.deepCopy(lfData);
       if(! (source instanceof LForms.LFormsData)) {
         source = new LForms.LFormsData(source);
       }
