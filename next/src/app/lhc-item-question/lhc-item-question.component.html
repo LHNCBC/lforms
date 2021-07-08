@@ -16,7 +16,7 @@
   [ngStyle]="!options || !options.hideQuestionText ? eleStyle : null">
     <div class="lhc-de-input-unit-content">
       
-      <lhc-validate [item]="item"></lhc-validate>
+      <lhc-validate [item]="item" [value]="item.value"></lhc-validate>
 
       <ng-container [ngSwitch]="item.dataType">
       

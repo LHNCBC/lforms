@@ -27,12 +27,13 @@ export class LhcWatcherComponent implements OnInit {
       let lfData = this.lhcDataService.getLhcFormData()
       lfData._checkFormControls();
 
-      // check validations
-      lfData.checkValidity();
     }
 
     // fhir expression (converting to fhir q/qr and run functions on them)
     // other functions that were handled in $watch in angularjs version of lforms.
+
+    //TODO: since lhc-validate is also detecting changes on the item.value, it might be efficient 
+    // to run some functions that need to be executed only when an item's value changes.
   }
 
 }
