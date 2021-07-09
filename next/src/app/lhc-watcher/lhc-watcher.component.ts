@@ -22,21 +22,18 @@ export class LhcWatcherComponent implements OnInit {
   // for answer list with radio/checkboxes, all worked including cwe user typed values.
   // for answer list with ac (single choice, mulitple choice), prefect or search field. all worked finally.
   ngOnChanges(changes) {
-
-    // console.log("in lhc-watcher: on changes")
-    // if (!changes.value.firstChange) {
-    //   console.log(changes);
-    // }
     
     if (!changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcFormData()
       lfData._checkFormControls();
+
     }
 
-    // todo: run form controls here in one place
-    // skip logic
     // fhir expression (converting to fhir q/qr and run functions on them)
     // other functions that were handled in $watch in angularjs version of lforms.
+
+    //TODO: since lhc-validate is also detecting changes on the item.value, it might be efficient 
+    // to run some functions that need to be executed only when an item's value changes.
   }
 
 }

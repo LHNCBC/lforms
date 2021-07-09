@@ -1,6 +1,6 @@
 <ng-container *ngIf="item">
   <!-- label -->
-  <div class="lhc-de-label">
+  <div class="lhc-de-label" (focus)="lhcDataService.setActiveRow(item)">
     <span *ngIf="item._questionRepeatable" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
     <span class="lf-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">

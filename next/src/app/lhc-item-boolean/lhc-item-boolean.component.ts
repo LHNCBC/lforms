@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-boolean',
@@ -8,13 +9,13 @@ import { Component, Input, OnInit } from '@angular/core';
 export class LhcItemBooleanComponent implements OnInit {
   @Input() item: any;
 
-  constructor() { }
+  constructor(public lhcDataService: LhcDataService) { }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy() : void {
-    console.log('lhc-item-boolean, ngOnDestroy')
+    //console.log('lhc-item-boolean, ngOnDestroy')
   }
 
 }

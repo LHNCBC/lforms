@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ScreenReaderLog } from './screen-reader-log';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,11 @@ import { Injectable } from '@angular/core';
 export class LhcDataService {
 
   private lhcFormData:any;
+  private srLog: ScreenReaderLog;
 
-  constructor() { }
+  constructor() {
+    this.srLog = new ScreenReaderLog();
+   }
 
   getLhcFormData(): any {
     return this.lhcFormData;
@@ -32,6 +36,46 @@ export class LhcDataService {
    */
    setActiveRow(item) {
     this.lhcFormData.setActiveRow(item);
+
+    // for screen reader (only the newly added messages will be read by screen readers)
+    if (item._validationErrors) {
+      item._validationErrors.forEach(error => {
+        this.sendMsgToScreenReader(`${item.question} ${error}`)
+      });
+    }
+
+  }
+
+
+  /**
+   * Set up a timer to make validation messages disappear in 2 seconds when the input field loses focus
+   * @param item the item which onBlur event happens on its input field
+   */
+   activeRowOnBlur(item) {
+
+    // the first visit to the field (and leaving the field), show validation messages for a certain time
+    if (!item._visitedBefore) {
+      item._showValidation = true;
+
+      // use $interval instead of $timeout so that protractor will not wait on $timeout
+      // var intervalCanceller = $interval(function() {
+      //   // not to show validation messages after 2 seconds
+      //   item._showValidation = false;
+      //   item._visitedBefore = true;
+      //   $interval.cancel(intervalCanceller);
+      // }, $scope.validationInitialShowTime);
+
+      setTimeout(()=>{
+        // not to show validation messages after 1.5 seconds
+        item._showValidation = false;
+        item._visitedBefore = true;
+      }, 1500);
+    }
+    // the following visits (and leaving the field), not to show validation messages
+    // hover over the field still shows the validation messages
+    else {
+      item._showValidation = false;
+    }
   }
 
   /**
@@ -240,15 +284,17 @@ export class LhcDataService {
       eleClass += ' lf-empty-question';
     }
     if (item._visitedBefore) {
-      eleClass += ' lf-visited-before';
+      eleClass += ' lhc-visited-before';
     }
     if (item._showValidation) {
-      eleClass += ' lf-show-validation';
+      eleClass += ' lhc-show-validation';
     }
     if (item._isHiddenFromView) {
       eleClass += ' lf-hidden-from-view';
     }
-    
+    if (Array.isArray(item._validationErrors) && item._validationErrors.length > 0) {
+      eleClass += ' lhc-invalid'
+    }
 
     return eleClass;
   }
@@ -539,6 +585,32 @@ export class LhcDataService {
     }
   };
   
+
+  /**
+   * Writes a single message to the reader_log element on the page
+   * so that screen readers can read it.
+   * @param msg the message to be read
+   */
+   sendMsgToScreenReader(msg) {
+    this.srLog.add(msg);
+  };
+
+
+  /**
+   * Write action logs from the lforms to reader_log element on the page
+   * so that screen readers can read.
+   */
+  sendActionsToScreenReader() {
+    
+    if (this.lhcFormData && this.lhcFormData._actionLogs.length > 0) {
+      this.lhcFormData._actionLogs.forEach(function(log) {
+        this.srLog.add(log);
+      });
+      // clean up logs
+      this.lhcFormData._actionLogs = [];
+    }
+  };
+
 }
 
 

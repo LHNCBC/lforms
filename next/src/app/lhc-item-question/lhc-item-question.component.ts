@@ -1,4 +1,4 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
@@ -12,8 +12,13 @@ export class LhcItemQuestionComponent implements OnInit {
 
   @Input() item;
   @Input() options;
+  @ViewChild("deInput") deInputElement: ElementRef<any>; 
 
   eleStyle: object = null;
+ 
+  showErrorPopover: boolean = false;
+  
+  //popoverStyle: object = {'background-color': '#fcf8e3'}
 
   constructor(
     private winService: WindowService,
@@ -27,9 +32,17 @@ export class LhcItemQuestionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // console.log("in lhc-item-question")
-    // console.log(this.item.question)
-    // console.log(this.options)
+  }
+  
+  checkErrors(): boolean {
+    let show = false;
+    if (this.item._validationErrors && this.item._validationErrors.length > 0) {
+      show = true;
+    }
+
+    this.showErrorPopover = show;
+    console.log("checkErrors: " + show)
+    return show;
   }
 
 }

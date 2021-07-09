@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { LhcItemBaseComponent} from "../common/lhc-item-base/lhc-item-base.component";
 import { LhcDataService} from '../../lib/lhc-data.service';
 
@@ -10,6 +10,8 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemComponent extends LhcItemBaseComponent implements OnInit {
 
   @Input() item;
+
+  //@ViewChild("deInput") deInput: ElementRef<any>; 
 
   constructor(
     public lhcDataService: LhcDataService

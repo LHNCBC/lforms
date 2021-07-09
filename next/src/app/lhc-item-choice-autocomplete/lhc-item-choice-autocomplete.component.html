@@ -1,3 +1,6 @@
 <div *ngIf="item">
-  <lhc-autocomplete [options]="options" [(dataModel)]="item.value"></lhc-autocomplete>
+  <lhc-autocomplete [options]="options" [(dataModel)]="item.value"
+    (onBlurFn)="lhcDataService.activeRowOnBlur(item)"
+    (onFocusFn)="lhcDataService.setActiveRow(item)"
+  ></lhc-autocomplete>
 </div>

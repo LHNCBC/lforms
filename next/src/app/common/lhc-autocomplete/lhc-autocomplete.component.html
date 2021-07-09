@@ -3,6 +3,8 @@
          [readonly]="options.readOnly"
          placeholder="{{options.toolTip}}"
          id="{{options.elementId}}"
+         (blur)="onInputBlur()"
+         (focus)="onInputFocus()"
          #ac
   >
 </div>

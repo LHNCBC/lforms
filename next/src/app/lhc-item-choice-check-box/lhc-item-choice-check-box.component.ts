@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonUtilsService } from '../../lib/common-utils.service';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-choice-check-box',
@@ -16,7 +17,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit {
   checkboxModels: boolean[] = [];
   otherCheckboxModel: boolean = null;
 
-  constructor(private commonUtils: CommonUtilsService) { }
+  constructor(
+    private commonUtils: CommonUtilsService,
+    public lhcDataService: LhcDataService) { }
 
 
   /**

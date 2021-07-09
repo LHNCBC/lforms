@@ -8,3 +8,25 @@
   width: 100%;
 }
 
+.lhc-error-icon {
+  color: red;
+  font-weight: bold;
+}
+
+.lhc-error-msg {
+  color: red;
+}
+
+.lhc-error-msg, .lhc-error-item {
+  margin-left: 0.5em;
+}
+
+/* popover is attached to page under <body>
+div.ant-popover {
+  top: 10px;
+  background-color: #fcf8e3;
+} */
+
+.lhc-validate-class {
+  background-color: #fcf8e3;
+}

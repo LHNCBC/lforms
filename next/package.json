@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-public": "ng serve --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
     "build:elements": "ng build --prod --output-hashing none && node concatenate.js",
     "test": "ng test --watch=false",

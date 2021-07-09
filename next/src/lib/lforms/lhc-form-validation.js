@@ -1,6 +1,7 @@
 /**
  * A package to process user data validations in LForms
  */
+import CommonUtils from "./lhc-common-utils.js";
 
 const Validation = {
   // supported keys in restrictions
@@ -145,7 +146,7 @@ const Validation = {
           valid = regex.test(value);
           break;
         case "DT":  // date, handled by date directive
-          valid = LForms.Util.isValidDate(value);
+          valid = CommonUtils.isValidDate(value);
           break;
         case "ST":  // not needed
         case "DTM": // dataTime, handled by the datetime directive (datetime picker)

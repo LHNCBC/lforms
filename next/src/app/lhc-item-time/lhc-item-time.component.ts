@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-time',
@@ -10,7 +11,7 @@ export class LhcItemTimeComponent implements OnInit {
   @Input() item: any;
   time: Date | null = null;
 
-  constructor() { }
+  constructor(public lhcDataService: LhcDataService) { }
 
   ngOnInit(): void {
   }

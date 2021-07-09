@@ -8,5 +8,6 @@
       [(ngModel)]="item.value"
       (ngModelChange)="onChange($event)"
       (nzOnOk)="onOk($event)"
+      (focus)="lhcDataService.setActiveRow(item)"
     ></nz-date-picker>
 </ng-container>

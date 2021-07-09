@@ -6,6 +6,8 @@
          aria-describedby="help-{{ item._elementId }}"
          aria-required="{{ item._answerRequired }}"
          type="text"
+         (blur)="lhcDataService.activeRowOnBlur(item)"
+         (focus)="lhcDataService.setActiveRow(item)"
          >
 </ng-container>
 

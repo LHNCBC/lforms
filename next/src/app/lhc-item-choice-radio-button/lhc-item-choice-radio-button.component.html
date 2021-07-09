@@ -13,7 +13,8 @@
       [nzSpan]="item._choiceOrientation === 'vertical' ? '24' : '8'" class="lhc-answer">Other
         <input type="text" [(ngModel)]="otherValue" class="lhc-answer-other-input"
         [id]="item._elementId + '_otherValue'" nz-input
-        *ngIf="radioValue && radioValue._notOnList" (keyup)="onOtherValueChange($event)"/>
+        *ngIf="radioValue && radioValue._notOnList" (keyup)="onOtherValueChange($event)"
+        (focus)="lhcDataService.setActiveRow(item)"/>
       </label>
 
   </nz-radio-group>

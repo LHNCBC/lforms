@@ -3419,7 +3419,7 @@ export default class LhcFormData {
   getActiveRowClass(item) {
     var ret = "";
     if (this._activeItem && this._activeItem._elementId === item._elementId) {
-      ret = "active-row";
+      ret = "lhc-active-row";
     }
     return ret;
   }

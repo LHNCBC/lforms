@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-simple-type',
@@ -22,16 +23,15 @@ export class LhcItemSimpleTypeComponent implements OnInit {
   hasSingleUnit: boolean = false;
   unitElementId: string = "";
 
-  constructor() { }
+  constructor(public lhcDataService: LhcDataService) { }
 
   /**
    * Initialize the component
    */
   ngOnInit(): void {
-    
   }
 
-  ngOnChange(): void {
+  ngOnChanges(): void {
     // not expecting item.dataType to change (might move the code to ngOnInit)
     if (this.item) {
       this.isSimpleType = this.item.dataType === "INT" ||

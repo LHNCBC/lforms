@@ -81,8 +81,8 @@ export class LhcFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnChanges(changes) {
-    console.log("in lhc-form's ngOnChange")
-    console.log(changes)
+    //console.log("in lhc-form's ngOnChange")
+    //console.log(changes)
     if (this.lfData) {
       this.lhcFormData = new LhcFormData(this.lfData)
       this.lhcDataService.setLhcFormData(this.lhcFormData);

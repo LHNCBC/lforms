@@ -5,5 +5,8 @@
     nzPlaceHolder="MM/dd/yyyy"
     nzSize="small"
     [(ngModel)]="item.value" 
+    (ngModelChange)="onChange($event)"
+    (focus)="lhcDataService.setActiveRow(item)" 
   ></nz-date-picker>
+  <!--(focus) is not triggered-->
 </ng-container>
