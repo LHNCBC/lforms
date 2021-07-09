@@ -4,9 +4,9 @@
          [(ngModel)]="item.value"
          placeholder="{{item._toolTip}}"
          aria-describedby="help-{{ item._elementId }}"
-         aria-required="{{ item._answerRequired }}"     
+         aria-required="{{ item._answerRequired }}"
          (blur)="lhcDataService.activeRowOnBlur(item)"
-         (focus)="lhcDataService.setActiveRow(item)"    
+         (focus)="lhcDataService.setActiveRow(item)"
          >
   </textarea>
 </ng-container>

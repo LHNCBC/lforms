@@ -1,5 +1,10 @@
 <!-- unit list -->
 <ng-container *ngIf="hasUnitAutocomplete">
-  <lhc-autocomplete [options]="options" [(dataModel)]="item.unit"></lhc-autocomplete>
+  <lhc-autocomplete 
+    [options]="options" 
+    [(dataModel)]="item.unit"
+    (onBlurFn)="lhcDataService.activeRowOnBlur(item)"
+    (onFocusFn)="lhcDataService.setActiveRow(item)"
+    ></lhc-autocomplete>
 </ng-container>
 

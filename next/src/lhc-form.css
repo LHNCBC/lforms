@@ -337,3 +337,12 @@ div.ant-popover-inner-content {
   border-color: transparent #fcf8e3 #fcf8e3 transparent;
 }
 
+/* screen reader log */
+screen_reader_only {
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  position: fixed;
+  left: -1000px;
+  top: -1000px;
+}

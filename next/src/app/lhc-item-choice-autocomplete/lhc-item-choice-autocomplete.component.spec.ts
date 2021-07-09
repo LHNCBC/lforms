@@ -7,7 +7,7 @@ describe('LhcItemChoiceAutocompleteComponent', () => {
   let fixture: ComponentFixture<LhcItemChoiceAutocompleteComponent>;
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       declarations: [ LhcItemChoiceAutocompleteComponent ]
     })
     .compileComponents();

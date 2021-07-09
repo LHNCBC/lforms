@@ -9,14 +9,13 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemBooleanComponent implements OnInit {
   @Input() item: any;
 
-  status: boolean = false;
   constructor(public lhcDataService: LhcDataService) { }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy() : void {
-    console.log('lhc-item-boolean, ngOnDestroy')
+    //console.log('lhc-item-boolean, ngOnDestroy')
   }
 
 }

@@ -8,7 +8,7 @@ describe('LhcItemChoiceComponent', () => {
   let fixture: ComponentFixture<LhcItemChoiceComponent>;
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       declarations: [ LhcItemChoiceComponent ],
       imports: [FormsModule]
     })

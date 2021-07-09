@@ -13,23 +13,19 @@ export class LhcGroupHorizontalComponent implements OnInit {
   // horizontalTableInfo: object = null;
 
   constructor(public lhcDataService: LhcDataService) {
-    // this.horizontalTableInfo = this.lhcDataService.getLhcData()._horizontalTableInfo;
-    // console.log(this.horizontalTableInfo)
   }
 
   ngOnInit(): void {
-    console.log("lhc-group-horizontal, ngOnInit")
+    // console.log("lhc-group-horizontal, ngOnInit")
     // console.log(this.horizontalTableInfo)
-    console.log(this.lhcDataService.getHorizontalTableInfo())
-    console.log(this.item)
+    // console.log(this.lhcDataService.getHorizontalTableInfo())
+    // console.log(this.item)
   }
 
   ngOnChange(): void {
-    console.log("lhc-group-horizontal, ngOnChange")
-    //this.horizontalTableInfo = this.lhcDataService.getLhcData()._horizontalTableInfo;
-    // console.log(this.horizontalTableInfo)
-    console.log(this.lhcDataService.getHorizontalTableInfo())
-    console.log(this.item)
+    // console.log("lhc-group-horizontal, ngOnChange")
+    // console.log(this.lhcDataService.getHorizontalTableInfo())
+    // console.log(this.item)
   }
 
 }

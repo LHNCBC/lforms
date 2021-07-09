@@ -94,4 +94,19 @@ describe('FHIR variables', function() {
       expect(testUtil.fieldListLength(contextField)).toBe(0);
     });
   });
+
+  describe('variables from named expressions', function() {
+    it('should be useable by other expressions', function() {
+      tp.loadFromTestData('named-expressions.json', 'R4');
+      let fieldA = elID('idA/1');
+      testUtil.sendKeys(fieldA, '1');
+      let fieldC = elID('idC/1');
+      expect(fieldC.getAttribute('value')).toBe('6');
+      testUtil.clearField(fieldA);
+      expect(fieldC.getAttribute('value')).toBe('');
+      testUtil.sendKeys(fieldA, '2');
+      expect(fieldC.getAttribute('value')).toBe('7');
+    });
+  });
+
 });

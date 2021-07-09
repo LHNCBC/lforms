@@ -57,8 +57,6 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit {
    * Initialize the component
    */
   ngOnInit(): void {
-    //this.setInitialValue();
-
   }
 
   

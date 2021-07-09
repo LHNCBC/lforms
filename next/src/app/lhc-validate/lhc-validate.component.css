@@ -11,7 +11,7 @@
   margin-left: 0.5em;
 }
 
-/* temp */
-.lhc-error-button {
-  /* height: 2px; */
+/* item.value that needs to detect changes but are hidden */
+.lhc-watched-value {
+  display: none;
 }

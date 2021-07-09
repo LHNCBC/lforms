@@ -4,11 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-public": "ng serve --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
     "build:elements": "ng build --prod --output-hashing none && node concatenate.js",
     "test": "ng test --watch=false",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "test-coverage": "ng test --no-watch --code-coverage"
   },
   "private": true,
   "dependencies": {
@@ -27,14 +29,14 @@
     "document-register-element": "^1.14.3",
     "fast-copy": "^2.1.1",
     "jquery": "^3.5.1",
-    "ng-zorro-antd": "^11.1.0",
+    "ng-zorro-antd": "^11.4.1",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.1102.1",
+    "@angular-devkit/build-angular": "^0.1102.13",
     "@angular/cli": "^11.2.1",
     "@angular/compiler-cli": "~11.2.1",
     "@types/jasmine": "~3.6.0",
@@ -47,7 +49,7 @@
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.1.1",
     "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage-istanbul-reporter": "~3.0.2",
+    "karma-coverage": "^2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",

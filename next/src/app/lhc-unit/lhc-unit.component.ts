@@ -21,9 +21,7 @@ export class LhcUnitComponent implements OnInit {
   // }],
 
   @Input() item;
-
   options: any={};
-
   hasUnitAutocomplete: boolean = false;
 
   constructor(public lhcDataService: LhcDataService) { }
@@ -31,8 +29,7 @@ export class LhcUnitComponent implements OnInit {
   /**
    * Initialize the component
    */
-  ngOnInit(): void {    
-  }
+  ngOnInit(): void { }
 
   /**
    * Invoked when the properties change
@@ -40,16 +37,13 @@ export class LhcUnitComponent implements OnInit {
    * @param changes changes.prop contains the old and the new value
    */
   ngOnChanges(changes) {
-    // console.log("in lhc-item-unit-autocomplete: on changes")
     if (this.item) {
       this.hasUnitAutocomplete = !!this.item._unitAutocompOptions;
-
       this.options.elementId = "unit_" + this.item._elementId
       this.options.acOptions = this.item._unitAutocompOptions;
       this.options.tooltip = this.item._toolTip;
       this.options.readOnly = this.item._readOnly;
     }
-
   }
 
 }
