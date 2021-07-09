@@ -19,8 +19,10 @@ export class LhcFormComponent implements OnInit, OnDestroy {
 
   @Input() lfData: any;
   @Input() lfOptions: any;
+  // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
+  @Input() lhcFormData: any; 
 
-  lhcFormData: any;
+  //lhcFormData: any;
   viewModeClass = "";
   _inputFieldWidth = null
 

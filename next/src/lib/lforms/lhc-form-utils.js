@@ -1,7 +1,10 @@
 /**
- * LForms Utility tools
+ * LForms Utility tools, export an LhcFormUtils that merges CommonUtils and FormUtils.
+ * LhcFormUtils is also set as window.LForms.Util, which is used by the externally loaded lformsFHIR js lib.
  */
-const LhcFormUtils = {
+import CommonUtils from "./lhc-common-utils.js";
+
+const FormUtils = {
   /**
    *  Adds an LForms form to the page.
    * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
@@ -531,18 +534,26 @@ const LhcFormUtils = {
   _getFormObjectInScope: function(element) {
     // find the scope that has the LForms data
     var formObj;
-    if (!element) element = jQuery("body");
-
-    // class="lhc-form"> is the element that contains rendered form.
-    var lfForms = jQuery(element).find(".lhc-form");
-    angular.forEach(lfForms, function(ele, index) {
-      var lfForm = angular.element(ele);
-      if (lfForm.scope() && lfForm.scope().lfData) {
-        formObj = lfForm.scope().lfData;
-        return false; // break the loop
+    var lhcFormElements;
+    if (!element) {
+      var bodyElement = document.getElementsByTagName("body");
+      if (bodyElement && bodyElement.length > 0) {
+        element = bodyElement[0];
+        lhcFormElements = element.getElementsByTagName("wc-lhc-form");        
       }
-    });
-
+      else {
+        lhcFormElements = document.getElementsByTagName("wc-lhc-form");        
+      }
+    }
+    else {
+      lhcFormElements = element.getElementsByTagName("wc-lhc-form");        
+    }
+    
+    for (let formElement of lhcFormElements) {
+      formObj = formElement.lhcFormData;
+      break;
+    }
+  
     return formObj;
   },
 
@@ -825,8 +836,59 @@ const LhcFormUtils = {
       formDataSource = this._getFormObjectInScope(formDataSource);
 
     return formDataSource.checkAnswersResourceStatus();
-  }
+  },
 
+  // /**
+  //  * Used in lformsFHIR.min.js as LForms.Util.deepCopy
+  //  * @param {*} sourceObj 
+  //  * @returns 
+  //  */
+
+  // deepCopy: function(sourceObj) {
+  //   return CommonUtils.deepCopy(sourceObj);
+  // },
+
+  // /**
+  //  * Used in lformsFHIR.min.js as LForms.Util.pruneNulls
+  //  *
+  //  * @param collectionObj
+  //  */
+  //  pruneNulls: function (collectionObj) {
+  //   CommonUtils.pruneNulls(collectionObj)
+  // },
+
+  // /**
+  //  * Used in lformsFHIR.min.js as LForms.Util.stringToDate
+  //  * @param {*} strDate 
+  //  * @param {*} looseParsing 
+  //  * @returns 
+  //  */
+  // stringToDate: function(strDate, looseParsing) {
+  //   return CommonUtils.stringToDate(strDate, looseParsing)
+  // },
+
+  // /**
+  //  * sed in lformsFHIR.min.js as LForms.Util.dateToDTMString
+  //  * @param {*} objDate 
+  //  * @returns 
+  //  */
+  // dateToDTMString: function(objDate) {
+  //   return CommonUtils.dateToDTMString(objDate)
+  // },
+
+  // /**
+  //  * Used in lformsFHIR.min.js as LForms.Util.findObjectInArray
+  //  * @param {*} targetObjects 
+  //  * @param {*} key 
+  //  * @param {*} matchingValue 
+  //  * @param {*} starting_index 
+  //  * @param {*} all 
+  //  */
+  // findObjectInArray: function(targetObjects, key, matchingValue, starting_index, all) {
+  //   return CommonUtils.findObjectInArray(targetObjects, key, matchingValue, starting_index, all) 
+  // }
 };
 
-export default LhcFormUtils;
+const LhcFormUtils = {...CommonUtils,  ...FormUtils};
+
+export default LhcFormUtils

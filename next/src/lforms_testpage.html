@@ -10,6 +10,36 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    .btn {
+      display: inline-block;
+      margin: 1px;
+      font-weight: normal;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      border: 1px solid transparent;
+      padding: 2px 6px;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+
+    .btn-success {
+      color: #fff;
+      background-color: #5cb85c;
+      border-color: #4cae4c;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background-color: #337ab7;
+      border-color: #2e6da4;
+    }
+
+    .hide {
+      display: none;
+    }
+  </style>
 </head>
   
 <body>
@@ -30,21 +60,24 @@
         </select>
         <button id="change-option" class="btn btn-primary" onclick="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
         <button id="toggle-units-col" class="btn btn-primary" onclick="toggleUnitsCol()">Hide/Show Units Column</button>
-        <button id="reset-form-with-same-data" class="btn btn-primary" onclick="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
-        <button id="get-hl7" class="btn btn-primary" onclick="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
-        <button id="get-fhir" class="btn btn-primary" onclick="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
-        <button id="get-fhir-bundle1" class="btn btn-primary" onclick="showFHIRResourceBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle</button>
-        <button id="get-fhir-bundle2" class="btn btn-primary" onclick="showFHIRResourceBundle2()">Show FHIR DiagnosticReport in "collection" Bundle</button>
-        <button id="get-sdc-questionnaire" class="btn btn-primary" onclick="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
-        <button id="get-questionnaire" class="btn btn-primary" onclick="showFHIRQuestionnaire()">Show FHIR Questionnaire</button>
-        <button id="get-sdc-response" class="btn btn-primary" onclick="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
+        <button id="reset-form-with-same-data" class="btn btn-primary" onclick="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)[&#10004;]</button>
+        <button id="get-hl7" class="btn btn-primary" onclick="showHL7Segments()">Show HL7 OBR/OBX Segments[&#10004;]</button>
+        <button id="get-fhir" class="btn btn-primary" onclick="showFHIRResource()">Show FHIR DiagnosticReport Content[&#10004;]</button>
+        <button id="get-fhir-bundle1" class="btn btn-primary" onclick="showFHIRResourceBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle[&#10004;]</button>
+        <button id="get-fhir-bundle2" class="btn btn-primary" onclick="showFHIRResourceBundle2()">Show FHIR DiagnosticReport in "collection" Bundle[&#10004;]</button>
+        <button id="get-sdc-questionnaire" class="btn btn-primary" onclick="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire[&#10004;]</button>
+        <button id="get-questionnaire" class="btn btn-primary" onclick="showFHIRQuestionnaire()">Show FHIR Questionnaire[&#10004;]</button>
+        <button id="get-sdc-response" class="btn btn-primary" onclick="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response[&#10004;]</button>
         <button id="change-columns" class="btn btn-primary" onclick="changeObxObr()">Change OBR/OBX Options</button>
-        <button id="merge-dr" class="btn btn-primary" onclick="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
-        <button id="merge-bundle-dr" class="btn btn-primary" onclick="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
-        <button id="merge-dr-default-values" class="btn btn-primary" onclick="testMergeDR2LFormsWithDefaultValues()">Merge DiagnosticReport (contained) to LForms (Default Values)</button>
-        <button id="merge-qr" class="btn btn-primary" onclick="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
-        <button id="merge-qr-cwe" class="btn btn-primary" onclick="testMergeQR2LForms_CWE()">Merge QuestionnaireResponse to LForms (Full-Featured, w/ CWE user data)</button>
+        <button id="merge-dr" class="btn btn-primary" onclick="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)[&#10004;]</button>
+        <button id="merge-bundle-dr" class="btn btn-primary" onclick="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)[&#10004;]</button>
+        <button id="merge-dr-default-values" class="btn btn-primary" onclick="testMergeDR2LFormsWithDefaultValues()">Merge DiagnosticReport (contained) to LForms (Default Values)[&#10004;]</button>
+        <button id="merge-qr" class="btn btn-primary" onclick="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)[&#10004;]</button>
+        <button id="merge-qr-cwe" class="btn btn-primary" onclick="testMergeQR2LForms_CWE()">Merge QuestionnaireResponse to LForms (Full-Featured, w/ CWE user data)[&#10004;]</button>
         <button id="test" class="btn btn-primary" onclick="testSearchOnFHIRServer()">Search on FHIR Server</button>
+
+        <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
+        <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
 
       </div>
     </div>
@@ -57,17 +90,6 @@
     <!-- <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script> -->
 
     <script type="text/javascript">
-
-      async function loadJsonFromUrl(url) {
-        return await fetch(url).then( 
-          response => response.json());
-      }
-
-      async function displayForm(formUrl) {
-        let testForm = document.getElementById('test-form');
-        let formJson = await loadJsonFromUrl(formUrl);        
-        testForm.lfData = formJson;
-      }
 
       const testForms = [
         {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: 'FHTData'},
@@ -91,10 +113,11 @@
         {text: "Master HL7 genetic variant reporting panel (2017-06-06)", id: "newGenetic"},
         {text: "A Form with two TOTALSCORE fields", id: "twoTotalScore"},
         {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", id: "vitalSign"},
-        {text: "Items with QTY data type", id: "QTYDemo"},
-        {text: 'New Test Form: skiplogic, autocomplete, horizontal layout', id: 'new-test-form'},
-        {text: 'validation', id: 'new-validation-form'},
+        {text: "Items with QTY data type", id: "QTYDemo"}
       ];
+
+
+      testForm = document.getElementById('test-form');
 
       function loadFormList() {
         let formList = document.getElementById("form-list");
@@ -106,9 +129,22 @@
         })
       }
 
+
+      async function loadJsonFromUrl(url) {
+        return await fetch(url).then( 
+          response => response.json());
+      }
+
+      async function displayForm(formUrl) {
+        //let testForm = document.getElementById('test-form');
+        let formJson = await loadJsonFromUrl(formUrl);   
+        testForm.lfData = formJson;
+      }
+
+
       function useForm() {
         let formList = document.getElementById("form-list");
-        let fhirVersion = document.getElementById("fhirVersion");
+        let fhirVersion = this.getFHIRVersion();
 
         if (formList.value) {
           displayForm("/data/form-data/" + formList.value + ".json")
@@ -117,10 +153,215 @@
 
       loadFormList();
 
+      function getFHIRVersion() {
+        let fhirVersion = document.getElementById("fhirVersion");
+
+        let version = fhirVersion.value;
+        if (!version)
+          throw 'Please select a FHIR version';
+        return version;
+      }
+
+      function getFHIR() {
+        return LForms.FHIR[getFHIRVersion()];
+      }
+
+      // lfOptions / templateOptions not implmented yet. 
+      function toggleCodingInstructionFormat() {
+        if (testForm.lfData) {
+          let lfOptions = {allowHTMLInInstructions: testForm.lfData.templateOptions.allowHTMLInInstructions}; // allowHTMLInInstructions not implemented yet
+          testForm.lfOptions = lfOptions;
+        }
+      }
+
+      // lfOptions / templateOptions not implmented yet. 
+      // it does not make sense to hide unit ?!
+      function toggleUnitsCol() {
+        if (testForm.lfData) {
+          testForm.lfData.templateOptions.hideUnits = testForm.lfData.templateOptions.hideUnits; // hideUnits not implemented yet
+        }
+        
+      };
+
+      function getFormDefDataAndResetForm() {
+        if (testForm.lfData) {
+          // change a value
+          testForm.lfData.items[0].items[0].value= 'after reset';
+        }          
+      };
+
+      function showFHIRResource () {
+        if (testForm.lhcFormData) {
+          var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+            getFHIRVersion());
+          var fhirString = JSON.stringify(dr, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+
+      function showFHIRSDCQuestionnaire() {
+        if (testForm.lfData) {
+          var fhir = getFHIR();
+          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.lfData);
+          var fhirString = JSON.stringify(sdc, null, 4);
+          console.log(fhirString);
+          // var convertedLforms = fhir.SDC.convertQuestionnaireToLForms(sdc);
+          // convertedLforms.name = convertedLforms.name + ' (converted from FHIR Questionnaire) ';
+          // $scope.lfData2 = new LForms.LFormsData(convertedLforms);
+          // $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
+        }
+      }
+
+      function showFHIRQuestionnaire() {
+        if (testForm.lfData) {
+          var sdc = getFHIR().SDC.convertLFormsToQuestionnaire(testForm.lfData, true);
+          var fhirString = JSON.stringify(sdc, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      function showHL7Segments() {
+        if (testForm.lhcFormData) {
+          var hl7Seg = LForms.HL7.toHL7Segments(testForm.lhcFormData);
+          console.log(hl7Seg.replace(/\r/g,'\r\n'));
+        }
+      }
+      
+      function showFHIRResourceBundle1() {
+        if (testForm.lhcFormData) {
+          var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+            getFHIRVersion(), null, {bundleType: "transaction"});
+          var fhirString = JSON.stringify(dr, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      function showFHIRResourceBundle2() {
+        if (testForm.lhcFormData) {
+          var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+            getFHIRVersion(), null, {bundleType: "collection"});
+          var fhirString = JSON.stringify(dr, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      
+      function showFHIRSDCResponse() {
+        if (testForm.lhcFormData) {
+          var sdc = getFHIR().SDC.convertLFormsToQuestionnaireResponse(testForm.lhcFormData);
+          var fhirString = JSON.stringify(sdc, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+       async function loadAndMergeFHIRDataFile (fhirFileName, lfDataFileName, resType) {
+
+        let formUrl = 'data/form-data/' + lfDataFileName;
+        let formJson = await loadJsonFromUrl(formUrl);   
+
+        let fhirResUrl = 'data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
+        let fhirJson = await loadJsonFromUrl(fhirResUrl);
+
+        let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                    resType, fhirJson, formJson,
+                    getFHIRVersion());
+            //mergedFormData = new LForms.LFormsData(mergedFormData);
+        testForm.lfData = mergedFormData;
+      };
+
+
+      function testMergeDR2LForms() {
+        loadAndMergeFHIRDataFile('contained-dr.json', 'FHTData.json', 'DiagnosticReport');
+      }
+
+      function testMergeBundleDR2LForms() {
+        loadAndMergeFHIRDataFile('searchset-bundle-dr.json', 'FHTData.json', 'DiagnosticReport');
+      }
+
+      function testMergeDR2LFormsWithDefaultValues() {
+        loadAndMergeFHIRDataFile('with-defaultvalues-contained-dr.json', 'defaultAnswerForm.json', 'DiagnosticReport');
+      }
+
+      function testMergeQR2LForms() {
+        loadAndMergeFHIRDataFile('fhir-sdc-response-ussgfht.json', 'FHTData.json', 'QuestionnaireResponse');
+      }
+          
+      function testMergeQR2LForms_CWE() {
+        loadAndMergeFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', 'allInOne.json', 'QuestionnaireResponse')
+      }
+
+      function testSearchOnFHIRServer() {
+        var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
+        
+        fetch(dataURL, {
+          method: 'GET'
+        })
+        .then(response=> {
+          if (response.ok) {
+            console.log('Succeeded');
+            console.log(response);
+            var fhirString = JSON.stringify(response.data, null, 4);
+            console.log(fhirString);
+          }
+          else {
+            console.log('Failed');
+            console.log(response);
+          }
+        });
+
+      }
+
+      function loadFile(event) {
+        var reader = new FileReader();
+        var fileAnchor = document.querySelector('#fileAnchor');
+        var lfData;
+        reader.onload = function() {
+          var importedData = JSON.parse(reader.result);
+          console.log(importedData)
+
+          // if the imported data is in FHIR Questionnaire format
+          if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
+            // var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
+            // var lfData2 = new LForms.LFormsData(questionnaire);
+            lfData = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
+            // The prepopulateFHIR variable below is a hack for the test code to signal
+            // prepopulation is desired.
+            if (LForms.fhirContext) {
+              // lfData2.loadFHIRResources(window.prepopulateFHIR).then(function() {
+              //   $scope.$apply(function() {
+              //     $scope.lfData2 = lfData2;
+              //   })
+              //   $scope.lfOption2 = {
+              //     allowHTMLInInstructions: true
+              //   }
+              // });
+            }
+          }
+          // in the internal LForms format
+          else {
+            lfData = importedData;
+          }
+          // Reset the field with the filename we can load the same file again if needed.
+          fileAnchor.value = '';
+
+          testForm.lfData = lfData;
+
+        };
+        reader.readAsText(event.target.files[0]); 
+      }
+
+
     </script>
 
-<!-- <script
-src="https://clinicaltables.nlm.nih.gov/lforms-versions/25.1.1/fhir/R4/lformsFHIR.min.js"></script> -->
-
+<script>
+    let fhirLib = document.createElement("script");
+    fhirLib.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/R4/lformsFHIR.min.js");
+    //fhirLib.setAttribute("src", "http://localhost:5000/R4/lformsFHIR.min.js");
+    setTimeout(function() {
+      document.body.appendChild(fhirLib);
+    }, 1000)
+    
+</script>
   </body>
 </html>

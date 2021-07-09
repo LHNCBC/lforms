@@ -152,7 +152,7 @@ export default class LhcFormData {
   copyrightNotice;
   type;
 
-  
+  // TODO: should also take lfOptions
   /**
    * Constructor
    * @param data the lforms form definition data
