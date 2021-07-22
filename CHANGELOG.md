@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.1.2] 2021-07-22
+### Fixed
+- Updated fhirpath.js for improved handling of choice types.
+
 ## [29.1.1] 2021-06-24
 ### Changed
 - Removed direct refereces to angular in FHIR lib files.
