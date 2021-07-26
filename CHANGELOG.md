@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.1.3] 2021-07-26
+### Fixed
+- FHIR answerExpressions that return arrays of strings now work for setting a
+  list (though the type needs to be "choice", not "string", which is something
+  that will be fixed later).
+
 ## [29.1.2] 2021-07-22
 ### Fixed
 - Updated fhirpath.js for improved handling of choice types.
