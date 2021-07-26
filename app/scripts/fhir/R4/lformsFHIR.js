@@ -27053,9 +27053,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 
             var scoreExt = item._fhirExt && item._fhirExt[scoreURI];
             if (scoreExt) newEntry.score = scoreExt[0].valueDecimal;
-          } else newEntry = {
-            'text': '' + entry
-          };
+          } else newEntry.text = '' + entry;
 
           if (!changed) {
             changed = !hasCurrentList || !this._lfData._objectEqual(newEntry, currentList[i]);
