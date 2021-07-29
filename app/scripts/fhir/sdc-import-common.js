@@ -800,6 +800,9 @@ function addCommonSDCImportFns(ns) {
       case "quantity":
         type = 'QTY';
         break;
+      case "attachment":
+        type = 'attachment';
+        break;
     }
     return type;
   };

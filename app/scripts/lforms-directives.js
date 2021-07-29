@@ -218,6 +218,33 @@
           templateUrl: 'form-header.html'
         };
       })
+      .directive('lfFileModel', function () {
+        // Thanks to https://github.com/mistralworks/ng-file-model/blob/master/ng-file-model.js
+        // and https://embed.plnkr.co/plunk/7BBYAa
+        return {
+          scope: {
+            lfFileModel: "="
+          },
+          link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+              var reader = new FileReader();
+              reader.onload = function (loadEvent) {
+                scope.$apply(function () {
+                  scope.lfFileModel = {
+                    lastModified: changeEvent.target.files[0].lastModified,
+                    lastModifiedDate: changeEvent.target.files[0].lastModifiedDate,
+                    name: changeEvent.target.files[0].name,
+                    size: changeEvent.target.files[0].size,
+                    type: changeEvent.target.files[0].type,
+                    data: loadEvent.target.result
+                  };
+                });
+              }
+              reader.readAsDataURL(changeEvent.target.files[0]);
+            });
+          }
+        }
+      })
       .directive('lfValidate', function () {
         return {
           require: 'ngModel',

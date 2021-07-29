@@ -410,6 +410,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "          <input ng-switch-when=\"attachment\" name=\"{{item._text}}\" type=\"file\"\n" +
+    "                 lf-file-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
+    "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
+    "                 aria-required=\"{{ item._answerRequired }}\">\n" +
     "          <input ng-switch-default name=\"{{item._text}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
