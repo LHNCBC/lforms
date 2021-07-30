@@ -22,9 +22,6 @@ export class LhcItemChoiceComponent implements OnInit {
   ngOnChanges(changes) {
     // changes.prop contains the old and the new value...
 
-    // console.log("in lhc-item-choice: on changes")
-    // console.log(changes);
-    // console.log(this.item);
   }
 
 }

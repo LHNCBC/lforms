@@ -21,14 +21,14 @@ export class LhcValidateComponent implements OnInit {
   }
 
   ngOnChanges(changes) {
-    if (!changes.value.firstChange) {
+    if (changes.value && !changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcFormData()
 
       // check validation on the item
       setTimeout(() => {
-        console.log(this.item.value)
+        //console.log(this.item.value)
         lfData._checkValidations(this.item);
-        console.log(this.item._validationErrors)
+        //console.log(this.item._validationErrors)
         if (this.item._validationErrors) {
           this.item._validationErrors.forEach(error => {
             this.lhcDataService.sendMsgToScreenReader(`${this.item.question} ${error}`)

@@ -14,6 +14,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnInit {
   // lhc-autocomplete component
 
   @Input() item;
+  @Input() acOptions; // item._autocompOptions
 
   options: any={};
 
@@ -31,14 +32,20 @@ export class LhcItemChoiceAutocompleteComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  ngOnChanges(): void {
-   //console.log("in lhc-item-choice-autocomplete: on change")
+  ngOnChanges(changes): void {
+    // console.log("in lhc-item-choice-autocomplete: on change")
+    // console.log(changes);
+    // console.log(this.item);
 
-    if (this.item) {
-      this.options.elementId = this.item._elementId;
-      this.options.acOptions = this.item._autocompOptions;
-      this.options.toolTip = this.item._toolTip;
-      this.options.readOnly = this.item._readOnly;
+    if (changes.acOptions) {
+      if (this.item) {
+        this.options = {
+          elementId: this.item._elementId,
+          acOptions: this.item._autocompOptions,
+          toolTip: this.item._toolTip,
+          readOnly: this.item._readOnly
+        }
+      }  
     }
 
   }

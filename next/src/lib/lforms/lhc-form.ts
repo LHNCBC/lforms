@@ -13,8 +13,12 @@ import * as version from "./version.json";
 
 import Validation from "./lhc-form-validation.js"
 
-import LForms from "./lforms";
+//import LForms from "./lforms";
+// const LForms = (window as any).LForms;
+declare var LForms: any;
+
 import {Units, Formulas} from "./lhc-form-units.js";
+
 
 export default class LhcFormData {
 
@@ -190,10 +194,10 @@ export default class LhcFormData {
     // when the skip logic rule says the form is done
     this._formDone = false;
 
-    //// TODO: FHIR
-    // if (LForms.FHIR) {
-    //   this._initializeFormFHIRData(data);
-    // }
+    // TODO: FHIR
+    if (LForms.FHIR) {
+      this._initializeFormFHIRData(data);
+    }
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
@@ -457,8 +461,7 @@ export default class LhcFormData {
     this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
-    //// TODO
-    //this._standardizeScoreRule(this.itemList);
+    this._standardizeScoreRule(this.itemList);
 
     // create horizontal table info
     this._resetHorizontalTableInfo();
@@ -603,8 +606,7 @@ export default class LhcFormData {
     this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
-    //// TODO
-    // this._standardizeScoreRule(this.itemList);
+    this._standardizeScoreRule(this.itemList);
 
     // create horizontal table info
     this._resetHorizontalTableInfo();
@@ -1037,7 +1039,7 @@ export default class LhcFormData {
    * @param newOptions new options to be merged with existing options
    * @param existingOptions existing options in the form data
    */
-  setTemplateOptions(newOptions, existingOptions) {
+  setTemplateOptions(newOptions, existingOptions=null) {
     if (newOptions) {
       if (!existingOptions)
         //existingOptions = angular.copy(this.templateOptions);
@@ -1159,16 +1161,16 @@ export default class LhcFormData {
         }
       }
 
-      //// TODO
-      // if (item.extension) {
-      //   this._fhir.SDC.buildExtensionMap(item);
-      //   if (this._fhir) {
-      //     this._hasResponsiveExpr = this._hasResponsiveExpr ||
-      //       this._fhir.SDC.hasResponsiveExpression(item);
-      //     this._hasInitialExpr = this._hasInitialExpr ||
-      //       this._fhir.SDC.hasInitialExpression(item);
-      //   }
-      // }
+      // TODO
+      if (item.extension) {
+        this._fhir.SDC.buildExtensionMap(item);
+        if (this._fhir) {
+          this._hasResponsiveExpr = this._hasResponsiveExpr ||
+            this._fhir.SDC.hasResponsiveExpression(item);
+          this._hasInitialExpr = this._hasInitialExpr ||
+            this._fhir.SDC.hasInitialExpression(item);
+        }
+      }
 
       this._updateItemAttrs(item);
 
@@ -1451,9 +1453,9 @@ export default class LhcFormData {
       // set the last sibling status
       item._lastSibling = i === lastSiblingIndex;
 
-      // consider if the last sibling is hidden by skip logic
+      // consider if the last sibling is hidden by skip logic, or is hidden by an FHIR extension
       if (!foundLastSibling) {
-        if (item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ) {
+        if (item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._isHiddenFromView) {
           item._lastSibling = false;
           lastSiblingIndex -= 1;
         }
@@ -2649,13 +2651,12 @@ export default class LhcFormData {
 
       var listItems = [], answers = item.units;
       // Modify the label for each unit.
-      var defaultValue, defaultUnit;
+      var defaultUnit;
       for (var i= 0, iLen = answers.length; i<iLen; i++) {
         var listItem = CommonUtils.deepCopy(answers[i]);
         this._setUnitDisplay(listItem);
         if (answers[i].default) {
-          defaultUnit = listItem;
-          defaultValue = listItem._displayUnit;
+          defaultUnit = listItem;          
         }
         // Include only if name or code is specified.
         if(listItem._displayUnit) {
@@ -2690,11 +2691,11 @@ export default class LhcFormData {
           autoFill: true,
           display: "_displayUnit"
         };
-        if (defaultValue !== undefined) {
-          options.defaultValue = defaultValue;
+        if (defaultUnit !== undefined) {
+          options.defaultValue = defaultUnit;
         }
         else if (listItems.length === 1) {
-          options.defaultValue = listItems[0]._displayUnit;
+          options.defaultValue = listItems[0];
         }
 
         item._unitAutocompOptions = options;
@@ -3017,7 +3018,11 @@ export default class LhcFormData {
         if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
           options.defaultValue = options.listItems[0];
       }
-      item._autocompOptions = options;
+      // check if the new option has changed
+      if (JSON.stringify(options) !== JSON.stringify(item._autocompOptions)) {
+        item._autocompOptions = options;
+      }
+      
     } // end of list
   }
 

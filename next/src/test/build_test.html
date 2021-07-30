@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Test for the compressed build of LForms in ES5</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <wc-lhc-form id='test-form'></wc-lhc-form>
+    <!-- why jquery is not in es5 js file? -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./lhc-forms.es5.js"></script>
+    <script>
+      testForm = document.getElementById('test-form');
+
+      async function loadJsonFromUrl(url) {
+        return await fetch(url).then( 
+          response => response.json());
+      }
+
+      async function displayForm(formUrl) {
+        //let testForm = document.getElementById('test-form');
+        let formJson = await loadJsonFromUrl(formUrl);   
+        testForm.lfData = formJson;
+      }
+
+      displayForm("../test-data/form-data/allInOne.json");
+
+    </script>
+  </body>
+</html>

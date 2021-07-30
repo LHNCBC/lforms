@@ -10,6 +10,8 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- compiled css file for the web comoponet of LHC-Forms -->
+  <link rel="stylesheet" href="../styles.css">
   <style>
     .btn {
       display: inline-block;
@@ -53,7 +55,7 @@
             <option value="">--- Please Select ---</option>            
           </select>
         <br><br>
-        <button id="load-form-data" class="btn btn-success" onclick="useForm()">Load Form</button>
+        <button id="load-form-data" class="btn btn-success" onclick="loadFormFromList()">Load Form</button>
         <select id="fhirVersion">
           <option value="R4">R4</option>
           <option value="STU3">STU3</option>
@@ -87,23 +89,33 @@
 
   </div>
 
-    <!-- <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script> -->
-
     <script type="text/javascript">
 
       const testForms = [
         {text: 'USSG-FHT, (with mock-up items for skip logic demo)', name: 'FHTData'},
-        {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', name: 'horizontalFHTData'},
+        {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', name: 'horizontalFHTData',
+            tempOptions: {
+              allowMultipleEmptyRepeatingItems: true
+            }},
         {text: 'Glasgow Coma Score (with score rules)', name: 'glasgow'},
-        {text: 'Full-Featured Demo', name: 'allInOne'},
+        {text: 'Full-Featured Demo', name: 'allInOne', 
+            tempOptions: {
+              allowHTMLInInstructions: true,
+              allowMultipleEmptyRepeatingItems: true,
+              hideFormControls: false,
+              showFormHeader: true
+            }},
         {text: 'Form Builder created test form', name: 'formBuilder'},
         {text: 'Minimum Data Set - version 3.0', name: 'MDS3'},
         {text: 'Form With User Data', name: 'formWithUserData'},
-        {text: 'Form With User Data, hasSavedData=true', name: 'formWithUserData', options: {hasSavedData: true} },
+        {text: 'Form With User Data, hasSavedData=true', name: 'formWithUserData', 
+            formOptions: {
+              hasSavedData: true
+            }},
         {text: 'RxTerms Demo', name: 'rxTerms'},
         {text: 'displayControls (answerLayout and questionLayout)', name: 'displayControlsDemo'},
-        {text: 'Matrix Layout, single selection', name: 'matrixLayout'},
-        {text: 'Matrix Layout, multiple selections', name: 'matrixLayout2'},
+        {text: 'Matrix Layout, single selection', name: 'matrixLayout2'},
+        {text: 'Matrix Layout, multiple selections', name: 'matrixLayout'},
         {text: "Validation Test", name: "validationTestForm"},
         {text: "A form that has a question contains a question or a section", name: "questionInQuestion"},
         {text: "HL7 Genetic Test Panel for Simple Variants", name: "genetic"},
@@ -124,7 +136,10 @@
         testForms.forEach(form => {          
           let option = document.createElement("option");
           option.text = form.text;
-          option.value = "form-data/" + form.name + ".json";
+          option.value = JSON.stringify({
+            url: "/test-data/form-data/" + form.name + ".json", 
+            tempOptions: form.tempOptions,
+            formOptions: form.formOptions})          
           formList.add(option);
         })
       }
@@ -135,19 +150,27 @@
           response => response.json());
       }
 
-      async function displayForm(formUrl) {
-        //let testForm = document.getElementById('test-form');
-        let formJson = await loadJsonFromUrl(formUrl);   
-        testForm.lfData = formJson;
+      async function fetchAndDisplayForm(strForm) {
+        let jsonForm = JSON.parse(strForm)
+        let formData = await loadJsonFromUrl(jsonForm.url);   
+        testForm.lfData = formData;
+        if (jsonForm.formOptions) {
+          Object.assign(formData,jsonForm.formOptions)
+        }
+        if (jsonForm.tempOptions) {
+          testForm.lfOptions = jsonForm.tempOptions;
+        }
+
       }
 
+      var selectedOptions;
 
-      function useForm() {
+      function loadFormFromList() {
         let formList = document.getElementById("form-list");
         let fhirVersion = this.getFHIRVersion();
 
         if (formList.value) {
-          displayForm("/test-data/" + formList.value);
+          fetchAndDisplayForm(formList.value);
         }
       };
 
@@ -266,8 +289,8 @@
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                     resType, fhirJson, formJson,
                     getFHIRVersion());
-            //mergedFormData = new LForms.LFormsData(mergedFormData);
         testForm.lfData = mergedFormData;
+        
       };
 
 
@@ -318,7 +341,6 @@
         var lfData;
         reader.onload = function() {
           var importedData = JSON.parse(reader.result);
-          console.log(importedData)
 
           // if the imported data is in FHIR Questionnaire format
           if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
@@ -344,7 +366,6 @@
           }
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
-
           testForm.lfData = lfData;
 
         };
@@ -354,14 +375,27 @@
 
     </script>
 
-<script>
-    let fhirLib = document.createElement("script");
-    fhirLib.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/R4/lformsFHIR.min.js");
-    //fhirLib.setAttribute("src", "http://localhost:5000/R4/lformsFHIR.min.js");
-    setTimeout(function() {
-      document.body.appendChild(fhirLib);
-    }, 1000)
-    
-</script>
+    <!-- lforms FHIR lib file, loaded after LHC-Forms files are loaded -->
+    <script>
+      function loadFHIRLibs() {
+        let fhirLib4 = document.createElement("script");
+        fhirLib4.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/R4/lformsFHIR.min.js");
+        let fhirLib3 = document.createElement("script");
+        fhirLib3.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/STU3/lformsFHIR.min.js");        
+        document.body.appendChild(fhirLib4);
+        document.body.appendChild(fhirLib3);
+      }
+
+      window.onload = loadFHIRLibs;
+        
+    </script>
+
+    <!-- ES2015 files of the LHC-Forms web component -->
+    <script src="../runtime.js" type="module"></script>
+    <script src="../polyfills.js" type="module"></script>
+    <script src="../scripts.js" defer></script>
+    <script src="../vendor.js" type="module"></script>
+    <script src="../main.js" type="module"></script>
+
   </body>
 </html>

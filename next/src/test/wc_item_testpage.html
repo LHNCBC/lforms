@@ -8,6 +8,8 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- compiled css file for the web comoponet of LHC-Forms -->
+  <link rel="stylesheet" href="../styles.css">
 </head>
 <body onload="setProperty()">
 <script>
@@ -1839,5 +1841,25 @@
 
 <button onclick="getItem()">Get Item</button>
 
+
+
+
+<!-- lforms FHIR lib file, loaded after LHC-Forms files are loaded -->
+<script>
+  let fhirLib = document.createElement("script");
+  fhirLib.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/R4/lformsFHIR.min.js");
+  //fhirLib.setAttribute("src", "http://localhost:5000/R4/lformsFHIR.min.js");
+  setTimeout(function() {
+    document.body.appendChild(fhirLib);
+  }, 1000)
+  
+</script>
+
+<!-- ES2015 files of the LHC-Forms web component -->
+<script src="../runtime.js" type="module"></script>
+<script src="../polyfills.js" type="module"></script>
+<script src="../scripts.js" defer></script>
+<script src="../vendor.js" type="module"></script>
+<script src="../main.js" type="module"></script>
 </body>
 </html>

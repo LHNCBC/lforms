@@ -13,8 +13,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "preserveSymlinks": true,
             "outputPath": "dist/lforms-next",
-            "index": "src/lforms_testpage.html",
+            "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
@@ -24,7 +25,8 @@
               "src/assets",
               "src/test-data",
               "src/test-data/form-data",
-              "src/test-data/fhir-data"
+              "src/test-data/fhir-data",
+              "src/test"
             ],
             "styles": [
               "src/styles.css",
@@ -108,7 +110,8 @@
               "src/assets",
               "src/test-data",
               "src/test-data/form-data",
-              "src/test-data/fhir-data"
+              "src/test-data/fhir-data",
+              "src/test"
             ],
             "styles": [
               "src/styles.css",

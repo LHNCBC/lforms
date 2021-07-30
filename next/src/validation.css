@@ -53,7 +53,7 @@
    run through our validation process.
    See below (commented out) on a potential way to deliver the error message - there are still issues to work out.
 */
-.lhc-form lhc-item.lhc-invalid.lf-datatype-DTM .lhc-validation-popover {
+.lhc-form lhc-item.lhc-invalid.lhc-datatype-DTM .lhc-validation-popover {
     display:none;
 }
 

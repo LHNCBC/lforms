@@ -1,5 +1,5 @@
 import { AppPage } from './app.po';
-import { browser, logging, element, by, WebElementPromise } from 'protractor';
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
 
 

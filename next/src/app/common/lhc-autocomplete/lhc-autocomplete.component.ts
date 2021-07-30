@@ -57,19 +57,13 @@ export class LhcAutocompleteComponent implements OnInit {
    */
   ngOnChanges(changes) {
 
-    //console.log("lhc-autocomplete, ngOnChange")
+    // console.log("lhc-autocomplete, ngOnChange")
     // reset autocomplete when 'options' changes
     // ignore changes on 'dataModel'
-    if (changes.options) {
-      this.selectedItems = [];
-      this.multipleSelections = false;
-      this.acType = null;
-      this.acInstance = false;
-      this.allowNotOnList = null;
-      this.prefetchTextToItem = {};
-      if (this.viewInitialized) {
-        this.setupAutocomplete();
-      }
+
+    if (changes.options && this.viewInitialized) {
+      this.cleanupAutocomplete();
+      this.setupAutocomplete();
     }
 
   }
@@ -81,7 +75,7 @@ export class LhcAutocompleteComponent implements OnInit {
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
-    //console.log("lhc-autocomplete, ngAfterViewInit")
+    // console.log("lhc-autocomplete, ngAfterViewInit")
     this.setupAutocomplete();
     this.viewInitialized = true;
   }
@@ -91,12 +85,9 @@ export class LhcAutocompleteComponent implements OnInit {
    * Clean up the autocomplete instance
    */
   ngOnDestroy() {
-    //console.log("lhc-autocomplete, ngOnDestroy")
+    // console.log("lhc-autocomplete, ngOnDestroy")
     // if there's an autocomp
-    if (this.acInstance) {
-      // Destroy the existing autocomp
-      this.acInstance.destroy();
-    }
+    this.cleanupAutocomplete();
 
   }
 
@@ -109,16 +100,31 @@ export class LhcAutocompleteComponent implements OnInit {
     this.onFocusFn.emit();
   }
 
+
+  cleanupAutocomplete(): void {
+    if (this.acInstance) {
+      // // Clear the field value 
+      this.acInstance.setFieldVal('', false);
+      // // clean up model data
+      this.dataModel = null;
+      this.acInstance.destroy();
+    }
+  }
+
   /**
    * Set up the autocompleter
    */
   setupAutocomplete(): void {
     // if there's an autocomp already
-    
-    if (this.acInstance) {
-      // Destroy the existing autocomp
-      this.acInstance.destroy();
-    }
+    // console.log("lhc-autocomplete, setupAutocomplete")
+
+    // reset ac status
+    this.selectedItems = [];
+    this.multipleSelections = false;
+    this.acType = null;
+    this.acInstance = false;
+    this.allowNotOnList = null;
+    this.prefetchTextToItem = {};
 
     // if there are options for autocomplete
     if (this.options && this.options.acOptions) {
@@ -156,7 +162,8 @@ export class LhcAutocompleteComponent implements OnInit {
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
 
-      let defaultItem =  this.prefetchTextToItem[acOptions.defaultValue];
+//      let defaultItem =  acOptions.defaultValue ? this.prefetchTextToItem[acOptions.defaultValue.text] : null;
+      let defaultItem =  acOptions.defaultValue
 
       // set up initial values if there is value
       let savedValue = this.dataModel || defaultItem;
@@ -193,6 +200,9 @@ export class LhcAutocompleteComponent implements OnInit {
 
       // add event handler
       Def.Autocompleter.Event.observeListSelections(this.options.elementId, this.onSelectionHandler.bind(this));
+
+      // console.log("lhc-autocomplete, end of setupAutocomplete")
+  
     }
   }
 

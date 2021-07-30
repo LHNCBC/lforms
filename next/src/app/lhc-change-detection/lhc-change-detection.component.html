@@ -4,6 +4,12 @@
       [value]="item.value"
     >
     </lhc-watcher>
+    <ng-container *ngIf="item.units">
+      <lhc-watcher
+        [value]="item.unit"
+      >
+      </lhc-watcher>
+    </ng-container>
   </div>  
 </ng-container>
   
