@@ -15,6 +15,11 @@
   -moz-appearance:textfield;
 }
 
+.lf-form input[type=file] {
+  border: 1px solid gray;
+  display: inline;
+}
+
 /* Keep the font-weight on the questions normal */
 .lf-form label {
   font-weight: normal;
@@ -107,19 +112,29 @@
   padding: 0;
   position: relative;
   background-color: #066aa0; /*#458AC5;*/
+  color: white;
 }
 .lf-form .lf-float-button {
   min-width: 22px;
   -moz-border-radius: 4px;
   border-radius: 4px;
   font-weight: bold;
-  color: white;
   padding: 1px;
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
+.lf-form .lf-attachment-button {
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  border-radius: 4px;
+  margin-left: 0.25em;
+}
+.lf-form progress {
+  vertical-align: text-bottom;
+}
 .lf-form .lf-help-button,
 .lf-form .lf-control-button,
+.lf-form .lf-rm-attachment-button,
 .lf-form .lf-copyright-button {
   font-size: 120%;
   font-weight: bold;
@@ -132,6 +147,7 @@
 }
 .lf-form .lf-help-button:hover,
 .lf-form .lf-control-button:hover,
+.lf-form .lf-rm-attachment-button:hover,
 .lf-form .lf-copyright-button:hover {
   color: #0087fd;
 }

@@ -11,7 +11,8 @@
   else
     widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
   angular.module('lformsWidget', widgetDeps)
-    .config(['$animateProvider', '$rootScopeProvider', function ($animateProvider, $rootScopeProvider) {
+    .config(['$animateProvider', '$rootScopeProvider', '$compileProvider',
+            function ($animateProvider, $rootScopeProvider, $compileProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);
       // AngularJS complains if there are too many levels of nesting in the form
       // (due to directives calling directives....)  Increase the maximum from
@@ -19,6 +20,10 @@
       // still renders, but error messages appear in the console, and it is
       // probably not properly initialized.
       $rootScopeProvider.digestTtl(20);
+      // Allow "data:" URLs to be assigned to an href.
+      console.log($compileProvider.aHrefSanitizationTrustedUrlList());
+      console.log("%%% "+ $compileProvider.aHrefSanitizationTrustedUrlList());
+      $compileProvider.aHrefSanitizationTrustedUrlList(/^(https?|ftp|mailto|data):/);
     }])
     .directive('lforms', function() {
       return {

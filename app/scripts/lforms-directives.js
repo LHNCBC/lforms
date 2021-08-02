@@ -223,24 +223,81 @@
         // and https://embed.plnkr.co/plunk/7BBYAa
         return {
           scope: {
-            lfFileModel: "="
+            item: "=lfFileModel"
           },
           link: function (scope, element, attributes) {
             element.bind("change", function (changeEvent) {
-              var reader = new FileReader();
-              reader.onload = function (loadEvent) {
-                scope.$apply(function () {
-                  scope.lfFileModel = {
-                    lastModified: changeEvent.target.files[0].lastModified,
-                    lastModifiedDate: changeEvent.target.files[0].lastModifiedDate,
-                    name: changeEvent.target.files[0].name,
-                    size: changeEvent.target.files[0].size,
-                    type: changeEvent.target.files[0].type,
-                    data: loadEvent.target.result
-                  };
-                });
+              var newFile = changeEvent.target.files[0];
+              var item = scope.item;
+              if (!newFile.type) {
+                // Per the FHIR specification, we can't proceed without a mime
+                // type.
+                alert('Unknown file type.  Please ensure the file has an '+
+                  'appropriate extension');
+                newFile = null; // don't proceed
               }
-              reader.readAsDataURL(changeEvent.target.files[0]);
+              else if (item.allowedAttachmentTypes &&
+                       item.allowedAttachmentTypes.indexOf(newFile.type)<0) {
+                let types = item.allowedAttachmentTypes;
+                alert('The file '+newFile.name+' is not one of the mime types '+
+                  'permitted by this questionnaire ('+types.slice(0,-1).join(', ')+
+                  ' and ' +types.slice(-1)+').  Please make sure your file has '+
+                  'an appropriate file extension for its type in its filename.');
+                newFile = null; // don't proceed
+              }
+              else if (newFile.size > item.maxAttachmentSize) {
+                var msg = 'The file '+newFile.name+' exceeds the maximum '+
+                  'attachment size of '+item.maxAttachmentSize+' permitted by '+
+                  'this questionnaire.  If you can specify the file with a URL, '+
+                  'use button to open the URL field and enter that instead.';
+                alert(msg);
+                newFile = null; // don't proceed
+              }
+              else if (newFile.size > 500000000) {
+                var msg = 'Adding a large file as an attachment might cause your '+
+                  'computer to run low on memory.  There is a button to enter a '+
+                  'URL instead of attaching the file data.  Are you sure you want '+
+                  'to attach the file data?';
+                if (!confirm(msg))
+                  newFile = null; // don't proceed
+              }
+              if (!newFile)
+                element[0].value = null; // clear the field
+              else {
+                scope.$apply(function () {
+                  // Store the value as a FHIR Attachment
+                  item.value = {
+                    title: newFile.name || 'Unknown filename',
+                    _progress: 0.001 // 0.1% of loading; non-zero to trigger display
+                  }
+                });
+                var reader = new FileReader();
+                reader.onload = function (loadEvent) {
+                  var data = loadEvent.target.result;
+                  var commaIndex = data.indexOf(',');
+                  if (data.indexOf('data:')!=0 || commaIndex<0) {
+                    throw new Error('data URL did not start with expected prefix, but with '+
+                       data.slice(0, 30));
+                  }
+                  scope.$apply(function () {
+                    var value = item.value;
+                    delete value._progress;
+                    value.data = data.slice(commaIndex+1);
+                    value.contentType = newFile.type;
+                    if (newFile.lastModified)
+                      value.creation = new Date(newFile.lastModified).toISOString();
+                    else if (newFile.lastModifiedDate) // IE 11
+                      value.creation = newFile.lastModifiedDate.toISOString();
+                  });
+                };
+                reader.onprogress = function(progressEvent) {
+                  scope.$apply(function() {
+                    item._progress =
+                      progressEvent.loaded/progressEvent.total;
+                  });
+                };
+                reader.readAsDataURL(changeEvent.target.files[0]);
+              }
             });
           }
         }

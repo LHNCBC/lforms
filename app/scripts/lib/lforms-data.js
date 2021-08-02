@@ -2024,7 +2024,9 @@
         }
         // single selection answer list
         else if (angular.isObject(item.value)) {
-          isEmpty = item.value.text === undefined || item.value.text === null || item.value.text ==="";
+          isEmpty = !item.value.title && !item.value.url &&
+            (item.value.text === undefined ||
+             item.value.text === null || item.value.text ==="");
         }
         // simple type
         else if (item.value !== undefined && item.value !== null && item.value !=="") {

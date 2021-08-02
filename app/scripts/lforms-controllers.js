@@ -1189,4 +1189,27 @@ angular.module('lformsWidget')
             }
           }
         };
+
+
+        /**
+         *  Downloads the item's Attachment.
+         * @param attachment the FHIR Attachment.
+         * @param linkElem the "a" element with the download link
+         * @return a "data:" URL (base 64)
+         */
+        $scope.downloadAttachment = function(attachment, linkElem) {
+          var a = document.createElement('a');
+          a.href= 'data:'+(attachment.contentType ? attachment.contentType : '') +';base64,'+attachment.data;
+          a.download = attachment.title;
+          a.click();
+        };
+
+        /**
+         *  Converts an Attachment to a URL.
+         * @param attachment the FHIR Attachment.
+         * @return a "data:" URL (base 64)
+         */
+        $scope.urlFromAttachment = function(attachment) {
+          //return 'data:'+(attachment.contentType ? attachment.contentType : '') +';base64,'+attachment.data;
+        };
       }]);

@@ -410,11 +410,31 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
-    "          <input ng-switch-when=\"attachment\" name=\"{{item._text}}\" type=\"file\"\n" +
-    "                 lf-file-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
-    "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
-    "                 aria-required=\"{{ item._answerRequired }}\">\n" +
+    "          <div ng-switch-when=\"attachment\">\n" +
+    "            <span ng-if=\"!item.value\">\n" +
+    "              <input ng-if=\"!item._useURL\" name=\"{{item._text}}\" type=\"file\"\n" +
+    "                lf-file-model=\"item\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
+    "                id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
+    "                aria-required=\"{{ item._answerRequired }}\">\n" +
+    "              <input ng-if=\"item._useURL\" name=\"{{item._text}}\" type=\"string\"\n" +
+    "               ng-model=\"item.value.url\" placeholder=\"URL for retrieving file\">\n" +
+    "              <button class=\"lf-attachment-button\" title=\"{{item._useURL ?\n" +
+    "                'Upload file instead of setting URL' : 'Enter URL instead of uploading file'}}\"\n" +
+    "                ng-click=\"item._useURL = !item._useURL\">&#x21af;</button>\n" +
+    "            </span>\n" +
+    "            <span ng-if=\"item.value\">\n" +
+    "              <a ng-if=\"!item.value._progress\" button title=\"{{'Download '+item.value.title}}\"\n" +
+    "                target=_blank rel=\"noreferrer\" download={{item.title}}\n" +
+    "                href=\"javascript:void(0)\"\n" +
+    "                ng-click=\"downloadAttachment(item.value)\">{{item.value.title}}</a>\n" +
+    "              <span ng-if=\"item.value._progress\"><label>Download progress:\n" +
+    "                 <progress value=\"{{item.value._progress}}\"></progress></label></span>\n" +
+    "              <button class=\"lf-attachment-button\" ng-if\"!item._readOnly\"\n" +
+    "               type=\"button\" title=\"{{'Remove '+item.value.title}}\"\n" +
+    "               ng-click=\"item.value=null\">&#x2716;</button>\n" +
+    "            </span>\n" +
+    "          </div><!-- attachment -->\n" +
     "          <input ng-switch-default name=\"{{item._text}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
