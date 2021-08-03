@@ -1192,6 +1192,61 @@ angular.module('lformsWidget')
 
 
         /**
+         *  Creates an attachment for an item based on the data entered by the
+         *  user.
+         */
+        $scope.removeAttachment = function(item) {
+          delete item.value;
+          delete item._attachmentName;
+          delete item._attachmentURL;
+          delete item._fileInfo;
+          delete item._useURL;
+        },
+
+
+        /**
+         *  Creates an attachment for an item based on the data entered by the
+         *  user.
+         */
+        $scope.createAttachment = function(item) {
+          item.value = {title: item._attachmentName || item._fileInfo?.name || 'Unknown filename'};
+          var value = item.value;
+          if (item._attachmentURL)
+            value.url = item._attachmentURL;
+          if (item._fileInfo) { // attach the data too
+            var fileInfo = item._fileInfo
+            value.contentType = fileInfo.type
+            if (fileInfo.lastModified)
+              value.creation = new Date(fileInfo.lastModified).toISOString();
+            else if (fileInfo.lastModifiedDate) // IE 11
+              value.creation = fileInfo.lastModifiedDate.toISOString();
+            item.value._progress = 0.001; // 0.1% of loading; non-zero to trigger display
+            var reader = new FileReader();
+            reader.onload = function (loadEvent) {
+              var data = loadEvent.target.result;
+              var commaIndex = data.indexOf(',');
+              if (data.indexOf('data:')!=0 || commaIndex<0) {
+                throw new Error('data URL did not start with expected prefix, but with '+
+                   data.slice(0, 30));
+                alert('Unable to attach the file data.');
+              }
+              $scope.$apply(function () {
+                delete value._progress;
+                value.data = data.slice(commaIndex+1);
+              });
+            };
+            reader.onprogress = function(progressEvent) {
+              $scope.$apply(function() {
+                item._progress =
+                  progressEvent.loaded/progressEvent.total;
+              });
+            };
+            reader.readAsDataURL(fileInfo);
+          }
+        },
+
+
+        /**
          *  Downloads the item's Attachment.
          * @param attachment the FHIR Attachment.
          * @param linkElem the "a" element with the download link
@@ -1203,6 +1258,7 @@ angular.module('lformsWidget')
           a.download = attachment.title;
           a.click();
         };
+
 
         /**
          *  Converts an Attachment to a URL.

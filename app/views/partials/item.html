@@ -100,16 +100,27 @@
                  ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">
           <div ng-switch-when="attachment">
             <span ng-if="!item.value">
-              <input ng-if="!item._useURL" name="{{item._text}}" type="file"
-                lf-file-model="item" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
+              <input name="{{item._text}}" type="file"
+                lf-file-model="item" create-attachment="createAttachment(item)"
+                placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                 id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                 ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}"
                 aria-required="{{ item._answerRequired }}">
-              <input ng-if="item._useURL" name="{{item._text}}" type="string"
-               ng-model="item.value.url" placeholder="URL for retrieving file">
               <button class="lf-attachment-button" title="{{item._useURL ?
-                'Upload file instead of setting URL' : 'Enter URL instead of uploading file'}}"
+                'Hide URL field' : 'Show URL field'}}"
                 ng-click="item._useURL = !item._useURL">&#x21af;</button>
+              <div ng-if="item._useURL">
+                Note:  The URL you enter below will not be downloaded or
+                verified, but simply copied into your response.  Please ensure
+                it works.
+                <label>URL for file:
+                <input type="string"
+                 ng-model="item._attachmentURL" placeholder="URL for retrieving file">
+                <input type="string"
+                 ng-model="item._attachmentName" placeholder="File name (optional)">
+                <button ng-click="createAttachment(item)">Attach URL{{item._fileInfo ?
+                 ' and file data': ''}}</button>
+              </div>
             </span>
             <span ng-if="item.value">
               <a ng-if="!item.value._progress" button title="{{'Download '+item.value.title}}"
@@ -120,7 +131,7 @@
                  <progress value="{{item.value._progress}}"></progress></label></span>
               <button class="lf-attachment-button" ng-if"!item._readOnly"
                type="button" title="{{'Remove '+item.value.title}}"
-               ng-click="item.value=null">&#x2716;</button>
+               ng-click="removeAttachment(item)">&#x2716;</button>
             </span>
           </div><!-- attachment -->
           <input ng-switch-default name="{{item._text}}" type="text"

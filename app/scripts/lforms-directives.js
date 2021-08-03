@@ -223,6 +223,7 @@
         // and https://embed.plnkr.co/plunk/7BBYAa
         return {
           scope: {
+            createAttachment: "&",
             item: "=lfFileModel"
           },
           link: function (scope, element, attributes) {
@@ -263,41 +264,13 @@
               }
               if (!newFile)
                 element[0].value = null; // clear the field
-              else {
+              item._fileInfo = newFile;
+              if (!item._useURL) {
                 scope.$apply(function () {
-                  // Store the value as a FHIR Attachment
-                  item.value = {
-                    title: newFile.name || 'Unknown filename',
-                    _progress: 0.001 // 0.1% of loading; non-zero to trigger display
-                  }
+                  scope.createAttachment(); // see & binding above
                 });
-                var reader = new FileReader();
-                reader.onload = function (loadEvent) {
-                  var data = loadEvent.target.result;
-                  var commaIndex = data.indexOf(',');
-                  if (data.indexOf('data:')!=0 || commaIndex<0) {
-                    throw new Error('data URL did not start with expected prefix, but with '+
-                       data.slice(0, 30));
-                  }
-                  scope.$apply(function () {
-                    var value = item.value;
-                    delete value._progress;
-                    value.data = data.slice(commaIndex+1);
-                    value.contentType = newFile.type;
-                    if (newFile.lastModified)
-                      value.creation = new Date(newFile.lastModified).toISOString();
-                    else if (newFile.lastModifiedDate) // IE 11
-                      value.creation = newFile.lastModifiedDate.toISOString();
-                  });
-                };
-                reader.onprogress = function(progressEvent) {
-                  scope.$apply(function() {
-                    item._progress =
-                      progressEvent.loaded/progressEvent.total;
-                  });
-                };
-                reader.readAsDataURL(changeEvent.target.files[0]);
               }
+              // else Wait for the "create attachment" click
             });
           }
         }
