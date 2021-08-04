@@ -163,6 +163,9 @@
   color: #b4fda7;
 }
 
+.lf-form .download-link {
+  padding-left: 0.5em;
+}
 
 .lf-form-title .popover {
   color: #333333;
