@@ -418,20 +418,20 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
     "                aria-required=\"{{ item._answerRequired }}\">\n" +
-    "              <button class=\"lf-attachment-button\" title=\"{{item._useURL ?\n" +
+    "              <button class=\"lf-attachment-button toggle-attachment-fields\" title=\"{{item._useURL ?\n" +
     "                'Hide URL field' : 'Show URL field'}}\"\n" +
     "                ng-click=\"item._useURL = !item._useURL\">&#x21af;</button>\n" +
     "              <div ng-if=\"item._useURL\">\n" +
     "                Note:  The URL you enter below will not be downloaded or\n" +
     "                verified, but simply copied into your response.  Please ensure\n" +
-    "                it works.\n" +
+    "                that it works.\n" +
     "                <label>URL for file:\n" +
     "                <input type=\"string\"\n" +
     "                 ng-model=\"item._attachmentURL\" placeholder=\"URL for retrieving file\">\n" +
     "                <input type=\"string\"\n" +
     "                 ng-model=\"item._attachmentName\" placeholder=\"File name (optional)\">\n" +
-    "                <button ng-click=\"createAttachment(item)\">Attach URL{{item._fileInfo ?\n" +
-    "                 ' and file data': ''}}</button>\n" +
+    "                <button class=\"lf-float-button attach-button\" ng-click=\"createAttachment(item)\"\n" +
+    "                 >Attach URL{{item._fileInfo ? ' and file data': ''}}</button>\n" +
     "              </div>\n" +
     "            </span>\n" +
     "            <span ng-if=\"item.value\">\n" +
@@ -441,7 +441,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                ng-click=\"downloadAttachment(item.value)\">{{item.value.title}}</a>\n" +
     "              <span ng-if=\"item.value._progress\"><label>Download progress:\n" +
     "                 <progress value=\"{{item.value._progress}}\"></progress></label></span>\n" +
-    "              <button class=\"lf-attachment-button\" ng-if\"!item._readOnly\"\n" +
+    "              <button class=\"lf-attachment-button lf-remove-attachment\" ng-if\"!item._readOnly\"\n" +
     "               type=\"button\" title=\"{{'Remove '+item.value.title}}\"\n" +
     "               ng-click=\"removeAttachment(item)\">&#x2716;</button>\n" +
     "            </span>\n" +

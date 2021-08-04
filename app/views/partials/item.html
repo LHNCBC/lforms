@@ -106,20 +106,20 @@
                 id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                 ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}"
                 aria-required="{{ item._answerRequired }}">
-              <button class="lf-attachment-button" title="{{item._useURL ?
+              <button class="lf-attachment-button toggle-attachment-fields" title="{{item._useURL ?
                 'Hide URL field' : 'Show URL field'}}"
                 ng-click="item._useURL = !item._useURL">&#x21af;</button>
               <div ng-if="item._useURL">
                 Note:  The URL you enter below will not be downloaded or
                 verified, but simply copied into your response.  Please ensure
-                it works.
+                that it works.
                 <label>URL for file:
                 <input type="string"
                  ng-model="item._attachmentURL" placeholder="URL for retrieving file">
                 <input type="string"
                  ng-model="item._attachmentName" placeholder="File name (optional)">
-                <button ng-click="createAttachment(item)">Attach URL{{item._fileInfo ?
-                 ' and file data': ''}}</button>
+                <button class="lf-float-button attach-button" ng-click="createAttachment(item)"
+                 >Attach URL{{item._fileInfo ? ' and file data': ''}}</button>
               </div>
             </span>
             <span ng-if="item.value">
@@ -129,7 +129,7 @@
                 ng-click="downloadAttachment(item.value)">{{item.value.title}}</a>
               <span ng-if="item.value._progress"><label>Download progress:
                  <progress value="{{item.value._progress}}"></progress></label></span>
-              <button class="lf-attachment-button" ng-if"!item._readOnly"
+              <button class="lf-attachment-button lf-remove-attachment" ng-if"!item._readOnly"
                type="button" title="{{'Remove '+item.value.title}}"
                ng-click="removeAttachment(item)">&#x2716;</button>
             </span>

@@ -1,0 +1,38 @@
+{
+  "resourceType": "Questionnaire",
+  "item": [{
+    "text": "Attachment",
+    "linkId": "upload",
+    "repeats": "true",
+    "type": "attachment"
+  }, {
+    "text": "Attachment Table",
+    "linkId": "attachment-table",
+    "repeats": "true",
+    "type": "group",
+    "extension": [
+      {
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/questionnaire-item-control",
+              "code": "gtable",
+              "display": "Group Table"
+            }
+          ],
+          "text": "Group Table"
+        }
+      }
+    ],
+    "item": [{
+      "text": "Attachment",
+      "linkId": "upload-in-table",
+      "type": "attachment"
+    }, {
+      "text": "Description",
+      "linkId": "upload-desc",
+      "type": "string"
+    }]
+  }]
+}

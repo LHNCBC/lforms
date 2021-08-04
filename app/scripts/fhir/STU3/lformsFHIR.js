@@ -23771,12 +23771,12 @@ function addCommonSDCExportFns(ns) {
    * Here are the details for a single value's conversion (to an element in the returned answer array)
    * - For item data type quantity (QTY), a valueQuantity answer element will be created IF
    *   either (or both) item value or item unit is available.
-   * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, and url,
+   * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, attachment, and url,
    *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
    *   an empty string.
    * - For CNE and CWE, a valueCoding entry is created IF at least one of the item value's code, text, or system
    *   is available
-   * - No answer entry will be created in all other cases, e.g., for types reference, title, section, attachment, etc.
+   * - No answer entry will be created in all other cases, e.g., for types reference, title, section, etc.
    * @param item the item whose value is to be converted
    * @return the converted FHIR QuestionnaireResponse answer (an array), or null if the value is not converted -
    *         see the function description above for more details.
@@ -23824,8 +23824,8 @@ function addCommonSDCExportFns(ns) {
             //   "code" : "<code>" // Coded form of the unit
             // }]
             answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
-          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-          else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment
+          else if (this._lformsTypesToFHIRFields[dataType]) {
               var valueKey = this._getValueKeyByDataType("value", item);
 
               answer = _defineProperty({}, valueKey, itemValue);
@@ -24688,6 +24688,7 @@ function addCommonSDCFns(ns) {
   // and initial value fields in FHIR Questionnaire
 
   self._lformsTypesToFHIRFields = {
+    "attachment": "Attachment",
     "INT": 'Integer',
     "REAL": 'Decimal',
     "DT": 'Date',
