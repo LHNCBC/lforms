@@ -31,7 +31,7 @@ function commonConfig() {
               presets: [['@babel/preset-env',
                 {
                   "targets": {
-                    "browsers": "ie >= 10"
+                    "browsers": "ie >= 11"
                   }
                 }
               ]]
