@@ -1,5 +1,8 @@
 // Helper functions for the tests
 const EC = protractor.ExpectedConditions;
+const fs = require ('fs');
+const os = require('os');
+const path = require('path');
 
 var util = {
   /**
@@ -289,6 +292,23 @@ var util = {
     }, q, qr, elemID);
   },
 
+
+  /**
+   *  Creates a temporary file
+   * @param fileName the file name use.  It does not need to be unique, because
+   *  it will put inside a unique directory.
+   * @param content the content to write to the file
+   * @return the full pathname for the temporary file.
+   */
+  createTempFile: function(fileName, content) {
+    const tmp = require('tmp');
+    tmp.setGracefulCleanup();
+    var dirObj = tmp.dirSync({prefix: 'lformsTest2', unsafeCleanup: true});
+    var dirPath = dirObj.name;
+    var pathName = path.join(dirPath, fileName);
+    fs.writeFileSync(pathName, content);
+    return pathName;
+  }
 };
 
 module.exports = util;

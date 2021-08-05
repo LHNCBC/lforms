@@ -3230,11 +3230,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         $scope.urlFromAttachment = function (attachment) {//return 'data:'+(attachment.contentType ? attachment.contentType : '') +';base64,'+attachment.data;
         };
-        /**
-         *  Handles changes to the file input.
-         */
-        //            $scope.fileChange = function(changeEvent) {
-
       }],
       link: function link(scope, element, attributes) {
         element.bind("change", function (changeEvent) {
@@ -3252,7 +3247,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               alert('The file ' + newFile.name + ' is not one of the mime types ' + 'permitted by this questionnaire (' + types.slice(0, -1).join(', ') + ' and ' + types.slice(-1) + ').  Please make sure your file has ' + 'an appropriate file extension for its type in its filename.');
               newFile = null; // don't proceed
             } else if (newFile.size > item.maxAttachmentSize) {
-              var msg = 'The file ' + newFile.name + ' exceeds the maximum ' + 'attachment size of ' + item.maxAttachmentSize + ' permitted by ' + 'this questionnaire.  If you can specify the file with a URL, ' + 'use button to open the URL field and enter that instead.';
+              var msg = 'The file ' + newFile.name + ' exceeds the maximum ' + 'attachment size of ' + item.maxAttachmentSize + ' bytes permitted by ' + 'this questionnaire.  If you can specify the file with a URL, ' + 'use the button to open the URL field and enter that instead.';
               alert(msg);
               newFile = null; // don't proceed
             } else if (newFile.size > 500000000) {
@@ -3260,11 +3255,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               if (!confirm(msg)) newFile = null; // don't proceed
             }
 
-            if (!newFile) element[0].value = null; // clear the field
+            if (!newFile) element[0].getElementsByTagName('input')[0].value = null; // clear the field
 
             item._fileInfo = newFile;
 
-            if (!item._useURL) {
+            if (newFile && !item._useURL) {
               scope.$apply(function () {
                 scope.createAttachment(item); // see & binding above
               });

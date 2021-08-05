@@ -312,11 +312,6 @@
             $scope.urlFromAttachment = function(attachment) {
               //return 'data:'+(attachment.contentType ? attachment.contentType : '') +';base64,'+attachment.data;
             };
-
-            /**
-             *  Handles changes to the file input.
-             */
-//            $scope.fileChange = function(changeEvent) {
           }],
           link: function (scope, element, attributes) {
             element.bind("change", function (changeEvent) {
@@ -341,9 +336,9 @@
                 }
                 else if (newFile.size > item.maxAttachmentSize) {
                   var msg = 'The file '+newFile.name+' exceeds the maximum '+
-                    'attachment size of '+item.maxAttachmentSize+' permitted by '+
+                    'attachment size of '+item.maxAttachmentSize+' bytes permitted by '+
                     'this questionnaire.  If you can specify the file with a URL, '+
-                    'use button to open the URL field and enter that instead.';
+                    'use the button to open the URL field and enter that instead.';
                   alert(msg);
                   newFile = null; // don't proceed
                 }
@@ -356,9 +351,9 @@
                     newFile = null; // don't proceed
                 }
                 if (!newFile)
-                  element[0].value = null; // clear the field
+                  element[0].getElementsByTagName('input')[0].value = null; // clear the field
                 item._fileInfo = newFile;
-                if (!item._useURL) {
+                if (newFile && !item._useURL) {
                   scope.$apply(function () {
                     scope.createAttachment(item); // see & binding above
                   });

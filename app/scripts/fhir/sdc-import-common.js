@@ -35,6 +35,8 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
+  self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
+  self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -64,6 +66,19 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlDataControl,
     self.fhirExtChoiceOrientation
   ]);
+
+  // Simple functions for mapping extensions to properties in the internal structure.
+  // Parameters:
+  //   extension: the FHIR extension object
+  //   item:  The LForms item to be updated
+  self.extensionHandlers = {};
+  self.extensionHandlers[self.fhirExtMaxSize] = function(extension, item) {
+    item.maxAttachmentSize = extension.valueInteger || extension.valueDecimal;
+  };
+  self.extensionHandlers[self.fhirExtMimeType] = function(extension, item) {
+    item.allowedAttachmentTypes || (item.allowedAttachmentTypes = []);
+    item.allowedAttachmentTypes.push(extension.valueCode);
+  };
 
   self.formLevelFields = [
     // Resource
@@ -1119,7 +1134,11 @@ function addCommonSDCImportFns(ns) {
     var extensions = [];
     if (Array.isArray(qItem.extension)) {
       for (var i=0; i < qItem.extension.length; i++) {
-        if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
+        var ext = qItem.extension[i];
+        var extHandler = self.extensionHandlers[ext.url];
+        if (extHandler)
+          extHandler(ext, lfItem);
+        else if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
       }

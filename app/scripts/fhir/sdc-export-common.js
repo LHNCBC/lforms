@@ -226,6 +226,18 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
+    if (item.maxAttachmentSize) {
+      var exts = (targetItem.extension || (targetItem.extension = []));
+      exts.push({url: self.fhirExtMaxSize, valueDecimal: item.maxAttachmentSize});
+    }
+
+    if (item.allowedAttachmentTypes) {
+      exts = (targetItem.extension || (targetItem.extension = []));
+      for (let type of item.allowedAttachmentTypes) {
+        exts.push({url: self.fhirExtMimeType, valueCode: type});
+      }
+    }
+
     // handle special constraints for "display" item
     this._handleSpecialConstraints(targetItem, item);
 

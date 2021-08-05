@@ -22954,6 +22954,12 @@ var self = {
 __webpack_require__.r(__webpack_exports__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 /**
  *  Defines SDC export functions that are the same across the different FHIR
  *  versions.  The function takes the SDC namespace object defined in the sdc export
@@ -23187,6 +23193,35 @@ function addCommonSDCExportFns(ns) {
         targetItem.item.push(helpItem);
       } else {
         targetItem.item = [helpItem];
+      }
+    }
+
+    if (item.maxAttachmentSize) {
+      var exts = targetItem.extension || (targetItem.extension = []);
+      exts.push({
+        url: self.fhirExtMaxSize,
+        valueDecimal: item.maxAttachmentSize
+      });
+    }
+
+    if (item.allowedAttachmentTypes) {
+      exts = targetItem.extension || (targetItem.extension = []);
+
+      var _iterator = _createForOfIteratorHelper(item.allowedAttachmentTypes),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var type = _step.value;
+          exts.push({
+            url: self.fhirExtMimeType,
+            valueCode: type
+          });
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
       }
     } // handle special constraints for "display" item
 
@@ -25171,10 +25206,27 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
+  self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
+  self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
 
-  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer, self.fhirExtUrlDataControl, self.fhirExtChoiceOrientation]);
+  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer, self.fhirExtUrlDataControl, self.fhirExtChoiceOrientation]); // Simple functions for mapping extensions to properties in the internal structure.
+  // Parameters:
+  //   extension: the FHIR extension object
+  //   item:  The LForms item to be updated
+
+  self.extensionHandlers = {};
+
+  self.extensionHandlers[self.fhirExtMaxSize] = function (extension, item) {
+    item.maxAttachmentSize = extension.valueInteger || extension.valueDecimal;
+  };
+
+  self.extensionHandlers[self.fhirExtMimeType] = function (extension, item) {
+    item.allowedAttachmentTypes || (item.allowedAttachmentTypes = []);
+    item.allowedAttachmentTypes.push(extension.valueCode);
+  };
+
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
@@ -26280,7 +26332,9 @@ function addCommonSDCImportFns(ns) {
 
     if (Array.isArray(qItem.extension)) {
       for (var i = 0; i < qItem.extension.length; i++) {
-        if (!self.handledExtensionSet.has(qItem.extension[i].url)) {
+        var ext = qItem.extension[i];
+        var extHandler = self.extensionHandlers[ext.url];
+        if (extHandler) extHandler(ext, lfItem);else if (!self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
       }

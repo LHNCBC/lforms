@@ -5,25 +5,33 @@
     "linkId": "upload",
     "repeats": "true",
     "type": "attachment",
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/maxSize",
+      "valueDecimal": 5000
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+      "valueCode": "application/json"
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+      "valueCode": "text/plain"
+    }],
     "item": [{
       "text": "Some help text describing the attachment field",
       "type": "display",
       "linkId": "upload-help",
-      "extension": [
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-          "valueCodeableConcept": {
-            "text": "Help-Button",
-            "coding": [
-              {
-                "code": "help",
-                "display": "Help-Button",
-                "system": "http://hl7.org/fhir/questionnaire-item-control"
-              }
-            ]
-          }
+      "extension": [{
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+        "valueCodeableConcept": {
+          "text": "Help-Button",
+          "coding": [
+            {
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }
+          ]
         }
-      ]
+      }]
     }]
   }, {
     "text": "Attachment Table",
