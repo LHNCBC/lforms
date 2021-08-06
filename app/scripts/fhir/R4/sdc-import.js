@@ -555,6 +555,9 @@ function addSDCImportFns(ns) {
           case "TX":
             item.value = qrValue.valueString;
             break;
+          case "attachment":
+            item.value = qrValue.valueAttachment;
+            break;
           case "SECTION":
           case "TITLE":
           case "":

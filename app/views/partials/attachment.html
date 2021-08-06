@@ -1,0 +1,37 @@
+<div id="{{item._elementId}}" aria-describedby="help-{{ item._elementId }}"
+ ng-attr-aria-labelledby="{{labelledBy}}">
+  <span ng-if="!item.value">
+    <input name="{{item._text}}" type="file"
+     lf-file-model="item"
+     placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
+     id="{{'file-'+item._elementId}}" ng-focus="setActiveRow(item)"
+     ng-blur="activeRowOnBlur(item)" >
+    <button class="lf-attachment-button toggle-attachment-fields" title="{{item._useURL ?
+     'Hide URL field' : 'Show URL field'}}"
+     ng-click="item._useURL = !item._useURL">&#x21af;</button>
+    <div ng-if="item._useURL">
+      Note:  The URL you enter below will not be downloaded or
+      verified, but simply copied into your response.  Please ensure
+      that it works.
+      <label>URL for file:
+      <input type="string" ng-disabled="item._readOnly"
+       ng-model="item._attachmentURL" placeholder="URL for retrieving file" ng-focus="setActiveRow(item)"
+       ng-blur="activeRowOnBlur(item)" >
+      <input type="string" ng-disabled="item._readOnly" ng-focus="setActiveRow(item)"
+       ng-blur="activeRowOnBlur(item)" ng-model="item._attachmentName" placeholder="File name (optional)">
+      <button class="lf-float-button attach-button" ng-click="createAttachment(item)"
+       >Attach URL{{item._fileInfo ? ' and file data': ''}}</button>
+    </div>
+  </span>
+  <span ng-if="item.value">
+    <a ng-if="!item.value._progress" button title="{{'Download '+item.value.title}}"
+     target=_blank rel="noreferrer" download={{item.title}}
+     href="javascript:void(0)" class="download-link"
+     ng-click="downloadAttachment(item.value)">{{item.value.title}}</a>
+    <span ng-if="item.value._progress"><label>Download progress:
+      <progress value="{{item.value._progress}}"></progress></label></span>
+    <button class="lf-attachment-button lf-remove-attachment" ng-if"!item._readOnly"
+     type="button" title="{{'Remove '+item.value.title}}"
+     ng-click="removeAttachment(item)">&#x2716;</button>
+  </span>
+</div>

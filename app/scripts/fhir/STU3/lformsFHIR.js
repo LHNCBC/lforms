@@ -25219,7 +25219,7 @@ function addCommonSDCImportFns(ns) {
   self.extensionHandlers = {};
 
   self.extensionHandlers[self.fhirExtMaxSize] = function (extension, item) {
-    item.maxAttachmentSize = extension.valueInteger || extension.valueDecimal;
+    item.maxAttachmentSize = extension.valueDecimal || extension.valueInteger; // not sure why it is decimal
   };
 
   self.extensionHandlers[self.fhirExtMimeType] = function (extension, item) {
