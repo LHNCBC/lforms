@@ -14,6 +14,9 @@
     }, {
       "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
       "valueCode": "text/plain"
+    }, {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+      "valueBoolean": true
     }],
     "item": [{
       "text": "Some help text describing the attachment field",

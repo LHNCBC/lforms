@@ -96,6 +96,12 @@ var self = {
           }
         }
         break;
+      case "attachment":
+        values = [{
+          key: "valueAttachment",
+          val: item.value
+        }];
+        break;
       default:
         values = [{
           key: "valueString",

@@ -439,9 +439,12 @@ var TestPage = function() {
 
     /**
      *  Returns the QuestionnaireResponse (as an object) for the form on the page.
+     * @param options options for the getFormFHIRData call (the fourth
+     * parameter).
      */
-    getQuestionnaireResponse: function() {
-      return browser.executeScript("return LForms.Util.getFormFHIRData('QuestionnaireResponse', getFHIRVersion())");
+    getQuestionnaireResponse: function(options) {
+      return browser.executeScript("return LForms.Util.getFormFHIRData("+
+       "'QuestionnaireResponse', getFHIRVersion(), null, arguments[0])", options);
     }
 
 
