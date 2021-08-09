@@ -2,12 +2,23 @@ var tp = require('./lforms_testpage.po.js');
 var testUtil = require('./util.js');
 var EC = protractor.ExpectedConditions;
 
-describe('Attachment support', ()=>{
+fdescribe('Attachment support', ()=>{
   describe('', ()=>{ // series of tests that run together using same beforeAll
     beforeAll(()=>{
       tp.openBaseTestPage();
       tp.loadFromTestData('attachmentQ.json');
     });
+
+    /**
+     *  Removes the first attachment.
+     */
+    function removeFirstAttachment() {
+      browser.wait(EC.not(EC.presenceOf($('#file-upload\\/1'))), 5000);
+      $('.lf-remove-attachment').click(); // remove button
+      // File input should return
+      expect($('#file-upload\\/1').getAttribute('type')).toBe('file');
+    }
+
 
     it('should show file inputs in both vertical and horizontal layouts', ()=>{
       // Waits for the element with id 'abc' to be present on the dom.
@@ -37,10 +48,8 @@ describe('Attachment support', ()=>{
 
 
     it('should allow removal of an attachment', ()=>{
-      browser.wait(EC.not(EC.presenceOf($('#file-upload\\/1'))), 5000);
-      $('.lf-remove-attachment').click(); // remove button
-      // File input should return
-      expect($('#file-upload\\/1').getAttribute('type')).toBe('file');
+      // Assumes an attachment was created above
+      removeFirstAttachment();
     });
 
 
@@ -91,6 +100,33 @@ describe('Attachment support', ()=>{
     });
 
 
+    it('should allow attachment of a URL without file data and without name', ()=>{
+      $('.toggle-attachment-fields').click(); // button
+      let newFields = $$('input[type=string]')
+      expect(newFields.count()).toBe(2);
+      let urlField = newFields.get(0);
+      let nameField = newFields.get(1);
+      testUtil.sendKeys(urlField, 'http://one');
+      $('.attach-button').click();
+      // Confirm the fields are replaced by a link
+      browser.wait(EC.not(EC.presenceOf($('#file-upload\\/1'))), 5000);
+      expect($('a').getText()).toBe('http://one');
+      // Check the href for a URL attachment.  At least on Firefox, the href for
+      // a hostname will have a trailing /.
+      expect($('a').getAttribute('href')).toBe('http://one/');
+      // Check the export into FHIR of the value
+      tp.getQuestionnaireResponse().then((qr)=>{
+        let answer = qr.item[0].answer[0].valueAttachment;
+        expect(answer.title).toBeUndefined();
+        expect(answer.data).toBeUndefined();
+        expect(answer.url).toBe('http://one');
+        expect(answer.creation).toBeUndefined()
+        expect(answer.contentType).toBeUndefined();
+      });
+      removeFirstAttachment();
+    });
+
+
     it('should allow attachment of a URL without file data', ()=>{
       $('.toggle-attachment-fields').click(); // button
       let newFields = $$('input[type=string]')
@@ -103,6 +139,9 @@ describe('Attachment support', ()=>{
       // Confirm the fields are replaced by a link
       browser.wait(EC.not(EC.presenceOf($('#file-upload\\/1'))), 5000);
       expect($('a').getText()).toBe('two');
+      // Check the href for a URL attachment.  At least on Firefox, the href for
+      // a hostname will have a trailing /.
+      expect($('a').getAttribute('href')).toBe('http://one/');
       // Check the export into FHIR of the value
       tp.getQuestionnaireResponse().then((qr)=>{
         let answer = qr.item[0].answer[0].valueAttachment;

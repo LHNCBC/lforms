@@ -30,8 +30,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <span ng-if=\"item.value\">\n" +
     "    <a ng-if=\"!item.value._progress\" button title=\"{{'Download '+item.value.title}}\"\n" +
     "     target=_blank rel=\"noreferrer\" download={{item.title}}\n" +
-    "     href=\"javascript:void(0)\" class=\"download-link\"\n" +
-    "     ng-click=\"downloadAttachment(item.value)\">{{item.value.title}}</a>\n" +
+    "     href=\"{{item.value.url && !item.value.data ? item.value.url : 'javascript:void(0)'}}\" class=\"download-link\"\n" +
+    "     ng-click=\"downloadAttachment(item.value, $event)\"\n" +
+    "     >{{item.value.title || item.value.url || 'Unknown filename'}}</a>\n" +
     "    <span ng-if=\"item.value._progress\"><label>Download progress:\n" +
     "      <progress value=\"{{item.value._progress}}\"></progress></label></span>\n" +
     "    <button class=\"lf-attachment-button lf-remove-attachment\" ng-if\"!item._readOnly\"\n" +

@@ -218,7 +218,7 @@
           templateUrl: 'form-header.html'
         };
       })
-      .directive('lfAttachment', function () {
+      .directive('lfAttachment', ['$timeout', function ($timeout) {
         // Thanks to https://github.com/mistralworks/ng-file-model/blob/master/ng-file-model.js
         // and https://embed.plnkr.co/plunk/7BBYAa
         return {
@@ -252,7 +252,7 @@
                 alert("An attachment must have either a file or a URL (or both).");
               }
               else {
-                item.value = {title: item._attachmentName || item._fileInfo?.name || 'Unknown filename'};
+                item.value = {title: item._attachmentName || item._fileInfo?.name};
                 var value = item.value;
                 if (item._attachmentURL)
                   value.url = item._attachmentURL;
@@ -293,14 +293,20 @@
             /**
              *  Downloads the item's Attachment.
              * @param attachment the FHIR Attachment.
-             * @param linkElem the "a" element with the download link
+             * @param event the click event object
              * @return a "data:" URL (base 64)
              */
-            $scope.downloadAttachment = function(attachment, linkElem) {
-              var a = document.createElement('a');
-              a.href= 'data:'+(attachment.contentType ? attachment.contentType : '') +';base64,'+attachment.data;
-              a.download = attachment.title;
-              a.click();
+            $scope.downloadAttachment = function(attachment, event) {
+              //var a = document.createElement('a');
+              if (attachment.data) {
+                var a = event.target; //document.createElement('a');
+                var originalHref = a.href
+                a.href= 'data:'+(attachment.contentType ? attachment.contentType : '') +';base64,'+attachment.data;
+                a.download = attachment.title;
+                $timeout(function() {
+                  a.href = originalHref;
+                });
+              }
             };
           }],
           link: function (scope, element, attributes) {
@@ -353,7 +359,7 @@
             });
           }
         }
-      })
+      }])
       .directive('lfValidate', function () {
         return {
           require: 'ngModel',
