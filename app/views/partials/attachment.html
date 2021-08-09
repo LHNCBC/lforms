@@ -26,8 +26,8 @@
   <span ng-if="item.value">
     <a ng-if="!item.value._progress" button title="{{'Download '+item.value.title}}"
      target=_blank rel="noreferrer" download={{item.title}}
-     href="javascript:void(0)" class="download-link"
-     ng-click="downloadAttachment(item.value)">{{item.value.title}}</a>
+     href="{{item.value.url && !item.value.data ? item.value.url : 'javascript:void(0)'}}" class="download-link"
+     ng-click="{{item.value.url && !item.value.data ? '' : downloadAttachment(item.value)}}">{{item.value.title}}</a>
     <span ng-if="item.value._progress"><label>Download progress:
       <progress value="{{item.value._progress}}"></progress></label></span>
     <button class="lf-attachment-button lf-remove-attachment" ng-if"!item._readOnly"
