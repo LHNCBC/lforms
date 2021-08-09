@@ -14,9 +14,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "     'Hide URL field' : 'Show URL field'}}\"\n" +
     "     ng-click=\"item._useURL = !item._useURL\">&#x21af;</button>\n" +
     "    <div ng-if=\"item._useURL\">\n" +
-    "      Note:  The URL you enter below will not be downloaded or\n" +
-    "      verified, but simply copied into your response.  Please ensure\n" +
-    "      that it works.\n" +
     "      <label>URL for file:\n" +
     "      <input type=\"string\" ng-disabled=\"item._readOnly\"\n" +
     "       ng-model=\"item._attachmentURL\" placeholder=\"URL for retrieving file\" ng-focus=\"setActiveRow(item)\"\n" +
@@ -24,7 +21,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <input type=\"string\" ng-disabled=\"item._readOnly\" ng-focus=\"setActiveRow(item)\"\n" +
     "       ng-blur=\"activeRowOnBlur(item)\" ng-model=\"item._attachmentName\" placeholder=\"File name (optional)\">\n" +
     "      <button class=\"lf-float-button attach-button\" ng-click=\"createAttachment(item)\"\n" +
-    "       >Attach URL{{item._fileInfo ? ' and file data': ''}}</button>\n" +
+    "       >Attach URL{{item._fileInfo ? ' and file data': ''}}</button><br>\n" +
+    "      Note:  The URL you enter will not be downloaded or\n" +
+    "      verified, but simply copied into your response.  Please ensure\n" +
+    "      that it works.\n" +
     "    </div>\n" +
     "  </span>\n" +
     "  <span ng-if=\"item.value\">\n" +

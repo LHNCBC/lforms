@@ -2,7 +2,7 @@ var tp = require('./lforms_testpage.po.js');
 var testUtil = require('./util.js');
 var EC = protractor.ExpectedConditions;
 
-fdescribe('Attachment support', ()=>{
+describe('Attachment support', ()=>{
   describe('', ()=>{ // series of tests that run together using same beforeAll
     beforeAll(()=>{
       tp.openBaseTestPage();

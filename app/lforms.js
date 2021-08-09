@@ -21,8 +21,6 @@
       // probably not properly initialized.
       $rootScopeProvider.digestTtl(20);
       // Allow "data:" URLs to be assigned to an href.
-      console.log($compileProvider.aHrefSanitizationTrustedUrlList());
-      console.log("%%% "+ $compileProvider.aHrefSanitizationTrustedUrlList());
       $compileProvider.aHrefSanitizationTrustedUrlList(/^(https?|ftp|mailto|data):/);
     }])
     .directive('lforms', function() {
