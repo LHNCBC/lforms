@@ -1,5 +1,16 @@
 {
   "resourceType": "Questionnaire",
+  "title": "Attachment Test",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 29.2.0"
+      }
+    ]
+  },
   "item": [{
     "text": "Attachment",
     "linkId": "upload",
