@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.2.0] 2021-07-26
+### Added
+- Support for attachments, both in FHIR (type="attachment") and in our internal
+  format (dataType="attachment").
+
 ## [29.1.3] 2021-07-26
 ### Fixed
 - FHIR answerExpressions that return arrays of strings now work for setting a

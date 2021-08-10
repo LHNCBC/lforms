@@ -35,6 +35,8 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
+  self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
+  self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -64,6 +66,19 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlDataControl,
     self.fhirExtChoiceOrientation
   ]);
+
+  // Simple functions for mapping extensions to properties in the internal structure.
+  // Parameters:
+  //   extension: the FHIR extension object
+  //   item:  The LForms item to be updated
+  self.extensionHandlers = {};
+  self.extensionHandlers[self.fhirExtMaxSize] = function(extension, item) {
+    item.maxAttachmentSize = extension.valueDecimal || extension.valueInteger; // not sure why it is decimal
+  };
+  self.extensionHandlers[self.fhirExtMimeType] = function(extension, item) {
+    item.allowedAttachmentTypes || (item.allowedAttachmentTypes = []);
+    item.allowedAttachmentTypes.push(extension.valueCode);
+  };
 
   self.formLevelFields = [
     // Resource
@@ -748,6 +763,99 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   * Set value and units on a LForms item
+   * @param linkId an item's linkId
+   * @param answer value for the item
+   * @param item a LForms item
+   * @private
+   */
+  qrImport._setupItemValueAndUnit = function(linkId, answer, item) {
+
+    if (item && linkId === item.linkId && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
+      var dataType = item.dataType;
+
+      // any one has a unit must be a numerical type, let use REAL for now.
+      // dataType conversion should be handled when panel data are added to lforms-service.
+      if ((!dataType || dataType==="ST") && item.units && item.units.length>0 ) {
+        item.dataType = dataType = "REAL";
+      }
+
+      var qrValue = answer[0];
+
+      switch (dataType) {
+        case "BL":
+          if (qrValue.valueBoolean === true || qrValue.valueBoolean === false) {
+            item.value = qrValue.valueBoolean;
+          }
+          break;
+        case "INT":
+          if (qrValue.valueQuantity) {
+            item.value = qrValue.valueQuantity.value;
+            if(qrValue.valueQuantity.code) {
+              item.unit = {name: qrValue.valueQuantity.code};
+            }
+          }
+          else if (qrValue.valueInteger) {
+            item.value = qrValue.valueInteger;
+          }
+          break;
+        case "REAL":
+        case "QTY":
+          if (qrValue.valueQuantity) {
+            item.value = qrValue.valueQuantity.value;
+            if(qrValue.valueQuantity.code) {
+              item.unit = {name: qrValue.valueQuantity.code};
+            }
+          }
+          else if (qrValue.valueDecimal) {
+            item.value = qrValue.valueDecimal;
+          }
+          break;
+        case "DT":
+          item.value = qrValue.valueDate;
+          break;
+        case "DTM":
+          item.value = qrValue.valueDateTime;
+          break;
+        case "CNE":
+        case "CWE":
+          if (ns._answerRepeats(item)) {
+            var value = [];
+            for (var j=0,jLen=answer.length; j<jLen; j++) {
+              var val = ns._processCWECNEValueInQR(answer[j]);
+              if (val) {
+                value.push(val);
+              }
+            }
+            item.value = value;
+          }
+          else {
+            var val = ns._processCWECNEValueInQR(qrValue);
+            if (val) {
+              item.value = val;
+            }
+          }
+          break;
+        case "ST":
+        case "TX":
+          item.value = qrValue.valueString;
+          break;
+        case "attachment":
+          item.value = qrValue.valueAttachment;
+          break;
+        case "SECTION":
+        case "TITLE":
+        case "":
+          // do nothing
+          break;
+        default:
+          item.value = qrValue.valueString;
+      }
+    }
+  }
+
+
+  /**
    * Get LForms data type from questionnaire item
    *
    * @param qItem {object} - Questionnaire item object
@@ -799,6 +907,9 @@ function addCommonSDCImportFns(ns) {
         break;
       case "quantity":
         type = 'QTY';
+        break;
+      case "attachment":
+        type = 'attachment';
         break;
     }
     return type;
@@ -1116,7 +1227,11 @@ function addCommonSDCImportFns(ns) {
     var extensions = [];
     if (Array.isArray(qItem.extension)) {
       for (var i=0; i < qItem.extension.length; i++) {
-        if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
+        var ext = qItem.extension[i];
+        var extHandler = self.extensionHandlers[ext.url];
+        if (extHandler)
+          extHandler(ext, lfItem);
+        else if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
       }

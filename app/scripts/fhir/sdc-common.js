@@ -27,12 +27,14 @@ function addCommonSDCFns(ns) {
     "URL": 'url',
     "CNE": 'choice',
     "CWE": 'open-choice',
-    "QTY": 'quantity'
+    "QTY": 'quantity',
+    "attachment": 'attachment'
   };
 
   // A mapping from LHC-Forms data types to the partial field names of the value fields
   // and initial value fields in FHIR Questionnaire
   self._lformsTypesToFHIRFields = {
+    "attachment": "Attachment",
     "INT": 'Integer',
     "REAL": 'Decimal',
     "DT": 'Date',

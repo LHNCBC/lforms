@@ -1,0 +1,80 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Attachment Test",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 29.2.0"
+      }
+    ]
+  },
+  "item": [{
+    "text": "Attachment",
+    "linkId": "upload",
+    "repeats": "true",
+    "type": "attachment",
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/maxSize",
+      "valueDecimal": 5000
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+      "valueCode": "application/json"
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+      "valueCode": "text/plain"
+    }, {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+      "valueBoolean": true
+    }],
+    "item": [{
+      "text": "Some help text describing the attachment field",
+      "type": "display",
+      "linkId": "upload-help",
+      "extension": [{
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+        "valueCodeableConcept": {
+          "text": "Help-Button",
+          "coding": [
+            {
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }
+          ]
+        }
+      }]
+    }]
+  }, {
+    "text": "Attachment Table",
+    "linkId": "attachment-table",
+    "repeats": "true",
+    "type": "group",
+    "extension": [
+      {
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/questionnaire-item-control",
+              "code": "gtable",
+              "display": "Group Table"
+            }
+          ],
+          "text": "Group Table"
+        }
+      }
+    ],
+    "item": [{
+      "text": "Attachment",
+      "linkId": "upload-in-table",
+      "type": "attachment"
+    }, {
+      "text": "Description",
+      "linkId": "upload-desc",
+      "type": "string"
+    }]
+  }]
+}
