@@ -244,15 +244,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(lfData.items[1].answerCardinality, {min: "0", max:"*"});
             assert.deepEqual(lfData.items[2].questionCardinality, {min: '1', max: '5'});
             assert.equal(lfData.items[2].answerCardinality, undefined);
-            
+
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
             assert.equal(qData.item[0].repeats, true);
             assert.equal(qData.item[1].repeats, true);
             assert.equal(qData.item[2].repeats, true);
-            assert.deepEqual(qData.item[2].extension[0], 
+            assert.deepEqual(qData.item[2].extension[0],
               { "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs", "valueInteger": 5});
-            
-            
+
+
           });
 
           it('should correctly translate name & title fields', function (){
@@ -280,7 +280,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "type": "integer",
                   "extension": [
                     { "url": "http://hl7.org/fhir/StructureDefinition/minValue", "valueInteger": 0 },
-                    { "url": "http://hl7.org/fhir/StructureDefinition/maxValue", "valueInteger": 1 }              
+                    { "url": "http://hl7.org/fhir/StructureDefinition/maxValue", "valueInteger": 1 }
                   ],
                   "required": false,
                   "linkId": "q2",
@@ -295,12 +295,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
             assert.deepEqual(qData.item[0].extension, [
               { "url": "http://hl7.org/fhir/StructureDefinition/minValue", "valueInteger": 0 },
-              { "url": "http://hl7.org/fhir/StructureDefinition/maxValue", "valueInteger": 1 }              
+              { "url": "http://hl7.org/fhir/StructureDefinition/maxValue", "valueInteger": 1 }
             ]);
-            
+
           });
 
-          
+
           it('should add lformsVersion if not present', function (){
             var questionnaire = {
               name: 'FHP'
@@ -561,7 +561,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "valueCode": "horizontal"
               }
             ]);
-            
+
           });
 
           it('should not convert answer layout to choice orientation, if columns is not "0" or "1"', function () {
@@ -606,7 +606,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   }
               }
             ]);
-            
+
           });
 
           it('should convert an item with CNE data type without answerCodeSystem', function () {
@@ -1588,7 +1588,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var out = fhir.SDC._processResponseItem(item);
             assert.equal(out.answer[0].valueInteger, 0);
           });
-          
+
           it('should convert an item of REAL with 0 in the value to valueDecimal in FHIR QuestionnaireResponse', function () {
             var item = {
               "questionCodeSystem":"ad-hoc",
@@ -1737,7 +1737,7 @@ for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
                 {
                   "extension": [
                     {
-                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
+                      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
                       "valueExpression": {
                         "description": "initial BMI",
                         "language" : "text/fhirpath",

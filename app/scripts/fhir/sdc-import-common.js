@@ -29,7 +29,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
   self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
   self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
-  self.fhirExtInitialExp = "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression";
+  self.fhirExtInitialExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression";
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
   self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
@@ -71,6 +71,9 @@ function addCommonSDCImportFns(ns) {
   // Parameters:
   //   extension: the FHIR extension object
   //   item:  The LForms item to be updated
+  // Returns:  true if the extension should still be added to the LForms item
+  //   extension array, and false/undefined otherwise.
+  //
   self.extensionHandlers = {};
   self.extensionHandlers[self.fhirExtMaxSize] = function(extension, item) {
     item.maxAttachmentSize = extension.valueDecimal || extension.valueInteger; // not sure why it is decimal
@@ -78,6 +81,12 @@ function addCommonSDCImportFns(ns) {
   self.extensionHandlers[self.fhirExtMimeType] = function(extension, item) {
     item.allowedAttachmentTypes || (item.allowedAttachmentTypes = []);
     item.allowedAttachmentTypes.push(extension.valueCode);
+  };
+  self.extensionHandlers[
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression"] = function(extension, item) {
+    // Update the URI to the current one.
+    extension.url = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression';
+    return true; // add extension to LForms item
   };
 
   self.formLevelFields = [
@@ -1229,9 +1238,8 @@ function addCommonSDCImportFns(ns) {
       for (var i=0; i < qItem.extension.length; i++) {
         var ext = qItem.extension[i];
         var extHandler = self.extensionHandlers[ext.url];
-        if (extHandler)
-          extHandler(ext, lfItem);
-        else if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
+        if ((extHandler && extHandler(ext, lfItem)) ||
+            !self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
       }

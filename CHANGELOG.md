@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.2.1] 2021-08-23
+### Changed
+- Updated the URI for the FHIR "initialExpression" extension, but the old URI is
+  still supported and will be updated if found in a Questionnaire.  As a
+  side-effect, this means that a re-export back to FHIR will have the updated
+  initialExpression URI.
+
 ## [29.2.0] 2021-07-26
 ### Added
 - Support for attachments, both in FHIR (type="attachment") and in our internal
