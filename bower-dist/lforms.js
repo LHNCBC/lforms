@@ -1667,7 +1667,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"29.2.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"29.2.1\"}");
 
 /***/ }),
 /* 15 */
@@ -3442,20 +3442,31 @@ LForms.Util = {
     formContainer.html('<div ng-controller="' + controller + '">' + '<lforms lf-data="myFormData"></lforms>' + '</div>');
     var rtnPromise = new Promise(function (resolve, reject) {
       angular.module(appName, ["lformsWidget"]).controller(controller, ["$scope", function ($scope) {
-        var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
+        try {
+          var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
 
-        if (LForms.fhirContext) {
-          myFormData.loadFHIRResources(prepop).then(function () {
-            $scope.$apply(function () {
-              $scope.myFormData = myFormData;
-              resolve();
+          if (LForms.fhirContext) {
+            myFormData.loadFHIRResources(prepop).then(function () {
+              $scope.$apply(function () {
+                $scope.myFormData = myFormData;
+                resolve();
+              });
+            }, function failed(e) {
+              reject(e);
             });
-          });
-        } else {
-          $scope.myFormData = myFormData;
-          resolve();
+          } else {
+            $scope.myFormData = myFormData;
+            resolve();
+          }
+        } catch (e) {
+          reject(e);
         }
       }]);
+    }).catch(function (e) {
+      var errMsg = e instanceof Error ? e.message : e.toString();
+      formContainer.html('<div id=lformsErrors style="color: red"><b>Unable to ' + 'display the form, due to the follow errors:</b><p id=lformsErrorContent></p>');
+      $('#lformsErrorContent').text(errMsg);
+      throw e;
     }); // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
 
@@ -4404,7 +4415,7 @@ LForms.Util = {
 
   /**
    * A wrapper function to deep copy an object so that FHIR lib does not use "angular" directly
-   * @param {*} object 
+   * @param {*} object
    */
   deepCopy: function deepCopy(object) {
     return angular.copy(object);
@@ -6051,6 +6062,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       if (prepopulate) pendingPromises.push(sdc.requestLinkedObs(this));
       return Promise.all(pendingPromises).then(function () {
         lfData._notifyAsyncChangeListeners();
+      }, function fail(e) {
+        throw e;
       });
     },
 

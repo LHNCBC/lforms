@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>Test for the compressed build of LForms using addFormToPage</title>
+    <link rel="stylesheet" href="latestBuild/styles/lforms.min.css" />
+  </head>
+  <body>
+    <input type="text" placeholder="FHIR Version" id="fhirVersion" />
+    <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+    <div id="loadMsg" style="color: red"></div>
+    <div id="formContainer2"></div>
+    <script src="latestBuild/lforms.min.js"></script>
+    <script src="latestBuild/fhir/STU3/lformsFHIR.min.js"></script>
+    <script src="latestBuild/fhir/R4/lformsFHIR.min.js"></script>
+    <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
+    <script>
+      var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
+      LForms.Util.setFHIRContext(fhirAPI);
+    </script>
+    <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
+
+
+    <div ng-app="fileUploadApp" ng-controller="fileUploadController">
+      <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
+    </div>
+
+    <script>
+      // Set up FHIR version list
+      var fhirVersions = Object.keys(LForms.Util.FHIRSupport).sort();
+      new LForms.Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+       {matchListValue: true});
+      $('#fhirVersion')[0].value = fhirVersions[0];
+
+      function getFHIR() {
+        var version = $('#fhirVersion')[0].value;
+        if (!version)
+          throw 'Please select a FHIR version';
+        return LForms.FHIR[version];
+      }
+
+
+      // file upload controller
+      angular.module('fileUploadApp', ['lformsWidget', 'angularFileUpload'])
+        .controller('fileUploadController', ['$scope', '$timeout',
+          'lformsConfig', 'LF_CONSTANTS', '$q', '$http', 'FileUploader',
+          function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q, $http,
+            FileUploader) {
+
+            // See https://github.com/nervgh/angular-file-upload/wiki/Introduction on
+            // usage of angular-file-upload.
+            $scope.uploader = new FileUploader({removeAfterUpload: true});
+
+            /**
+             * Callback after the item is selected in the file dialog.
+             *
+             * @param {Object} item - Refer to angular-file-upload for object definition.
+             *   Apart from others, it has selected file reference.
+             */
+            $scope.uploader.onAfterAddingFile = function(item) {
+              var reader = new FileReader(); // Read from local file system.
+              reader.onload = function(event) {
+                var importedData = JSON.parse(event.target.result);
+                // if the imported data is in FHIR Questionnaire format
+                if (importedData.resourceType && importedData.resourceType === "Questionnaire")
+                  importedData = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
+                // addFormToPage returns a promise that resolves when FHIR
+                // resources have finished loading.  Put that a flag on window
+                // so we can test that the promise is working.
+                window.addFormToPageDone = false;
+                try {
+                  $('#loadMsg')[0].innerText = '';
+                  LForms.Util.addFormToPage(importedData, 'formContainer2',
+                    {prepopulate: window.prepopulateFHIR}).then(function() {
+                     window.addFormToPageDone = true});
+                }
+                catch(e){
+                  $('#loadMsg')[0].innerText = 'Unable to render form';
+                }
+              };
+              reader.readAsText(item._file);
+            };
+          }]);
+    </script>
+
+  </body>
+</html>
