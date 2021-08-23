@@ -70,7 +70,7 @@
           "type": "string",
           "extension": [
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
               "valueExpression": {
                 "description": "Name from patient resource",
                 "language" : "text/fhirpath",
@@ -1218,7 +1218,7 @@
               }
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
               "valueExpression": {
                 "description": "Gender from patient resource",
                 "language" : "text/fhirpath",
