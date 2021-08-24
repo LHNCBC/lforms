@@ -1667,7 +1667,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"29.2.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"29.2.2\"}");
 
 /***/ }),
 /* 15 */
@@ -3464,7 +3464,7 @@ LForms.Util = {
       }]);
     }).catch(function (e) {
       var errMsg = e instanceof Error ? e.message : e.toString();
-      formContainer.html('<div id=lformsErrors style="color: red"><b>Unable to ' + 'display the form, due to the follow errors:</b><p id=lformsErrorContent></p>');
+      formContainer.html('<div id=lformsErrors style="color: red"><b>Unable to ' + 'display the form, due to the follow error:</b><p id=lformsErrorContent></p>');
       $('#lformsErrorContent').text(errMsg);
       throw e;
     }); // Bootstrap the element if needed
