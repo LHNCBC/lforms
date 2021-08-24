@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, ViewEncapsulation } from '@angular/core';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
@@ -8,7 +8,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   styleUrls: ['./lhc-item-choice-check-box.component.css'],
   encapsulation: ViewEncapsulation.Emulated
 })
-export class LhcItemChoiceCheckBoxComponent implements OnInit {
+export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
 
   @Input() item;
 

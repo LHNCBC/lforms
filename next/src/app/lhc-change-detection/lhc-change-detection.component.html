@@ -2,11 +2,13 @@
   <div *ngFor ="let item of lhcFormData.itemList">
     <lhc-watcher 
       [value]="item.value"
+      [item]="item"
     >
     </lhc-watcher>
     <ng-container *ngIf="item.units">
       <lhc-watcher
         [value]="item.unit"
+        [item]="item"
       >
       </lhc-watcher>
     </ng-container>

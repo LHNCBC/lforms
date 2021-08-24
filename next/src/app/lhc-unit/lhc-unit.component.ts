@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, ViewEncapsulation } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   styleUrls: ['./lhc-unit.component.css'],
   encapsulation: ViewEncapsulation.Emulated
 })
-export class LhcUnitComponent implements OnInit {
+export class LhcUnitComponent implements OnInit, OnChanges {
 
   // Handle the unit list of the "quantity' typed item using the
   // lhc-autocomplete component

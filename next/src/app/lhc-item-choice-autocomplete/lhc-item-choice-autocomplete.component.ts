@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, ViewEncapsulation } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   styleUrls: ['./lhc-item-choice-autocomplete.component.css'],
   encapsulation: ViewEncapsulation.Emulated
 })
-export class LhcItemChoiceAutocompleteComponent implements OnInit {
+export class LhcItemChoiceAutocompleteComponent implements OnInit, OnChanges {
 
 
   // Handle the answer list of the "choice"/"opn-choice" typed item using the
@@ -35,7 +35,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnInit {
   ngOnChanges(changes): void {
     // console.log("in lhc-item-choice-autocomplete: on change")
     // console.log(changes);
-    // console.log(this.item);
+    // console.log(this.item.question);
 
     if (changes.acOptions) {
       if (this.item) {

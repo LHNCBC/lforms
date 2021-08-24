@@ -18,8 +18,7 @@ describe('load saved user data', function() {
 
   it('should load BL, ST, DT, DTM, INT, answer lists', function() {
 
-    // NEXT: TODO, boolean
-    //expect(ff.q0.isSelected()).toBe(true);
+    expect(ff.q0.getAttribute('ng-reflect-model')).toBe("true");
     expect(ff.q1.getAttribute('value')).toBe('no data type');
     expect(ff.q2.getAttribute('value')).toBe('100');
     expect(ff.q3.getAttribute('value')).toBe('user input value');
@@ -30,7 +29,7 @@ describe('load saved user data', function() {
 
     expect(ff.q8.getAttribute('value')).toBe('');
     expect(ff.q9.getAttribute('value')).toBe('');
-    // NEXT: TODO: the saved value is 11/20/2015 10:10
+    // NEXT: the saved value is 11/20/2015 10:10 !!
     expect(ff.q99.getAttribute('value')).toBe('11/20/2015 10:10:00'); //DTM 
     expect(ff.multiAnswers.count()).toBe(6);
     expect(ff.multiAnswers.get(0).getText()).toBe('×Answer 1');
@@ -109,7 +108,7 @@ describe('load saved user data', function() {
   it('skip logic on repeating section should work too', function() {
     ff.rpSrc2.clear();
     TestUtil.sendKeys(ff.rpSrc2, '1');
-    // NEXT: TODO: isPresent() with false is not working 
+    // NEXT: isPresent() with false is not working 
     //expect(ff.rpTarget2a.isPresent()).toBe(false);
     ff.rpSrc2.clear();
     TestUtil.sendKeys(ff.rpSrc2, '2');
@@ -120,7 +119,7 @@ describe('load saved user data', function() {
     expect(ff.rpTarget2b.isDisplayed()).toBe(true);
     ff.rpSrc2.clear();
     TestUtil.sendKeys(ff.rpSrc2, '1');
-    // NEXT: TODO: isPresent() with false is not working 
+    // NEXT: isPresent() with false is not working 
     //expect(ff.rpTarget2a.isPresent()).toBe(false);
     expect(ff.rpTarget2b.isPresent()).toBe(false);
   });

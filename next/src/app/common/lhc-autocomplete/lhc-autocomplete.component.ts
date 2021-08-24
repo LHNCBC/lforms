@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
 
 @Component({
@@ -7,7 +7,7 @@ import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autoc
   styleUrls: ['./lhc-autocomplete.component.css'],
   encapsulation: ViewEncapsulation.Emulated
 })
-export class LhcAutocompleteComponent implements OnInit {
+export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
   // options
   //   .elementId
@@ -57,17 +57,47 @@ export class LhcAutocompleteComponent implements OnInit {
    */
   ngOnChanges(changes) {
 
-    // console.log("lhc-autocomplete, ngOnChange")
-    // reset autocomplete when 'options' changes
-    // ignore changes on 'dataModel'
+    console.log("lhc-autocomplete, ngOnChange")
+    console.log(changes)
+    console.log(this.dataModel)
 
-    if (changes.options && this.viewInitialized) {
-      this.cleanupAutocomplete();
-      this.setupAutocomplete();
+    if (this.viewInitialized) {
+      // reset autocomplete when 'options' changes
+      if (changes.options) {
+        this.cleanupAutocomplete();
+        this.setupAutocomplete();
+      }
+      // item.value changed by data control or fhirpath express after the autocomplete is initialized
+      // Need to find way to distingish the two different changes: 1) emitted by ac itself, which does not need to run updateDisplayedValue, 
+      // 2) from outside ac
+      // 
+      else if (changes.dataModel) {
+        this.updateDisplayedValue(this.dataModel) // TODO: not working for score rules, which has socres in the text
+      }
     }
 
   }
 
+  /**
+   * Update the display value of the autocomplte when the item.value is changed 
+   * changed by data control or fhirpath express after the autocomplete is initialized
+   * @param value the new data in item.value
+   */
+  updateDisplayedValue(itemValue:any) {
+    if (itemValue) {
+      if (!this.multipleSelections) {
+        let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
+        itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
+        if (typeof dispVal === 'string') {
+          //this.acInstance.storeSelectedItem(dispVal, itemValue.code);
+          this.acInstance.setFieldVal(dispVal, false);
+        }
+        else {// handle the case of an empty object as a model
+          this.acInstance.setFieldVal('', false);
+        }
+      }
+    }
+  }
 
   /**
    * Initialize the autocomplete-lhc
@@ -100,7 +130,9 @@ export class LhcAutocompleteComponent implements OnInit {
     this.onFocusFn.emit();
   }
 
-
+  /**
+   * Clean up the autocomplete if there is one
+   */
   cleanupAutocomplete(): void {
     if (this.acInstance) {
       // // Clear the field value 
@@ -167,45 +199,53 @@ export class LhcAutocompleteComponent implements OnInit {
 
       // set up initial values if there is value
       let savedValue = this.dataModel || defaultItem;
-      if (savedValue) {
-        if (this.multipleSelections && Array.isArray(savedValue)) {
-          for (var i=0, len=savedValue.length; i<len; ++i) {
-            let dispVal = this.acType === "prefetch" ? savedValue[i]._notOnList ?
-              savedValue[i].text : savedValue[i][acOptions.display] : savedValue[i].text;
-            this.acInstance.storeSelectedItem(dispVal, savedValue[i].code);
-            this.acInstance.addToSelectedArea(dispVal);
-          }
-          // Clear the field value for multi-select lists
-          this.acInstance.setFieldVal('', false);
-
-          this.selectedItems = savedValue;
-        }
-        else {
-          let dispVal = this.acType === "prefetch" ? savedValue._notOnList ?
-            savedValue.text : savedValue[acOptions.display] : savedValue.text;
-          if (typeof dispVal === 'string') {
-            this.acInstance.storeSelectedItem(dispVal, savedValue.code);
-            this.acInstance.setFieldVal(dispVal, false);
-          }
-          else {// handle the case of an empty object as a model
-            this.acInstance.setFieldVal('', false);
-          }
-
-          this.dataModel = savedValue;
-          // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
-          let that = this;
-          setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
-        }
-      }
+      this.setItemValue(savedValue)
 
       // add event handler
       Def.Autocompleter.Event.observeListSelections(this.options.elementId, this.onSelectionHandler.bind(this));
-
-      // console.log("lhc-autocomplete, end of setupAutocomplete")
   
     }
   }
 
+  /**
+   * Set the item.value to the autocomplete when the autcomplete is being set up or 
+   * the item.value is changed later
+   * @param itemValue 
+   */
+  setItemValue(itemValue) {
+    if (itemValue) {
+      if (this.multipleSelections && Array.isArray(itemValue)) {
+        for (var i=0, len=itemValue.length; i<len; ++i) {
+          let dispVal = this.acType === "prefetch" ? itemValue[i]._notOnList ?
+          itemValue[i].text : itemValue[i][this.options.acOptions.display] : itemValue[i].text;
+          this.acInstance.storeSelectedItem(dispVal, itemValue[i].code);
+          this.acInstance.addToSelectedArea(dispVal);
+        }
+        // Clear the field value for multi-select lists
+        this.acInstance.setFieldVal('', false);
+
+        this.selectedItems = itemValue;
+      }
+      else {
+        let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
+        itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
+        if (typeof dispVal === 'string') {
+          this.acInstance.storeSelectedItem(dispVal, itemValue.code);
+          this.acInstance.setFieldVal(dispVal, false);
+        }
+        else {// handle the case of an empty object as a model
+          this.acInstance.setFieldVal('', false);
+        }
+
+        this.dataModel = itemValue;
+        // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
+        let that = this;
+        setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
+      }
+    }
+
+  }
+  
 
   /**
    *

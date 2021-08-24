@@ -50,10 +50,9 @@ describe('autocomp list', function() {
     expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('0');
     // Click first item in list, and then the score field to send the change
     // event.
-    //NEXT: TODO score rules are handled by FHIRPath
     element(by.css('#searchResults li:first-child')).click();
-    // ff.scoreField.click();
-    // expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('1');
+    ff.scoreField.click();
+    expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('1');
     // Now try using keystrokes to select the third item.
     ff.eyeField.click();
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
@@ -61,7 +60,7 @@ describe('autocomp list', function() {
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.TAB);
     expect(TestUtil.getAttribute(ff.eyeField,'value')).toBe("3. Eye opening to verbal command - 3");
-    // expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('3');
+    expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('3');
 
     // Try the 4th answer, which has a null label
     ff.eyeField.click();
@@ -71,7 +70,7 @@ describe('autocomp list', function() {
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.TAB);
     expect(TestUtil.getAttribute(ff.eyeField,'value')).toBe("4. Eyes open spontaneously - 4");
-    // expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('4');
+    expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('4');
   });
 
   it('should receive default values set via defaultAnswer', function() {
@@ -79,8 +78,6 @@ describe('autocomp list', function() {
     expect(TestUtil.getAttribute(tp.FullFeaturedForm.cneField,'value')).toEqual('Answer 2');
   });
 
-  // NEXT: TODO, not stable, sometime get the time out error on isPresent() (it seems to be that the FHIR server is slow)
-  // Error: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL
   it('should set column headers when specified', function() {
     tp.LoadForm.openHL7GeneticPanel();
     // Open the "simple variation" section
@@ -102,7 +99,7 @@ describe('autocomp list', function() {
 
     // Confirm that the header row appears over the search results
     var searchRes = tp.Autocomp.searchResults;
-    expect(searchRes.isPresent()).toBe(true);
+    //expect(searchRes.isPresent()).toBe(true);
     var EC = protractor.ExpectedConditions;
     browser.wait(function() {
       return searchRes.isDisplayed();
@@ -116,17 +113,16 @@ describe('autocomp list', function() {
   it('should autofill lists when there is just one item', function() {
     tp.LoadForm.openRxTerms();
     var rxterms = new RxTerms();
-    // NEXT: TODO autocompPickFirst didn't work. returns null.
-    // tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'AZELEX');
-    // expect(TestUtil.getAttribute(rxterms.strengthAndForm,'value')).toEqual('20% Cream');
+    tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'AZELEX');
+    expect(TestUtil.getAttribute(rxterms.strengthAndForm,'value')).toEqual('20% Cream');
   });
 
-  // NEXT: TODO, not stable, sometime this test failed that textAnswer is not clickable
   it('should not display SeqNum on answers that one of them has a numeric value', function() {
     tp.LoadForm.openFullFeaturedForm();
 
     // no sequence number
     var numericAnswer = element(by.id('/numeric_answer/1'));
+    TestUtil.scrollIntoView(numericAnswer);
     numericAnswer.click();
     expect(element(by.css('#searchResults #completionOptions ul li:first-child')).getText()).toBe('1');
     expect(element(by.css('#searchResults #completionOptions ul li:nth-child(2)')).getText()).toBe('Answer 2');

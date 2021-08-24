@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, NgZone, HostListener, ChangeDetectionStrategy} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, HostListener, ChangeDetectionStrategy} from '@angular/core';
 import { Subject } from 'rxjs';
 import { throttleTime, debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
@@ -15,7 +15,7 @@ declare var ResizeObserver;
   templateUrl: './lhc-form.component.html',
   styleUrls: ['./lhc-form.component.css']
 })
-export class LhcFormComponent implements OnInit, OnDestroy {
+export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() lfData: any;
   @Input() lfOptions: any;
@@ -90,7 +90,6 @@ export class LhcFormComponent implements OnInit, OnDestroy {
       // form data changes, clean up the previous data before loading the new form data
       this.lhcFormData = null;
       this.lhcDataService.setLhcFormData(null);
-
       if (this.lfData) {
         let that = this;
         // reset the data after this thread is done
@@ -111,6 +110,7 @@ export class LhcFormComponent implements OnInit, OnDestroy {
       let lhcFD = this.lhcDataService.getLhcFormData();
       if (lhcFD) {
         lhcFD.setTemplateOptions(this.lfOptions);
+        console.log("in lhc-form's ngOnChange: set templateOptions, alone")
       }    
     }
     

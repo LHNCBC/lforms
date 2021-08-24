@@ -14,6 +14,9 @@ exports.config = {
     // './spec/**/*.e2e-spec.todo.failed.ts'
     './spec/**/*.e2e-spec.done.ts'
     // './spec/**/*.e2e-spec.ts'
+    // './spec/autocomp_list.e2e-spec.done.ts'
+    // './spec/lforms_skiplogic.e2e-spec.todo.failed.ts'
+    // './spec/lforms_matrix_layout.e2e-spec.done.ts'
   ],
   capabilities: {
     'browserName': 'chrome',

@@ -638,16 +638,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             //browser.waitForAngular();
 
             browser.wait(EC.visibilityOf(ff.name), 2000);
-            // NEXT: no needed
-            // browser.wait(function() {
-            //   try {
-            //     return ff.name.isDisplayed(); // sometimes results in a "stale reference" error
-            //   }
-            //   catch (e) {
-            //     // Try to refresh the element
-            //     ff.name = element(ff.name.locator())
-            //   }
-            // }, tp.WAIT_TIMEOUT_1);
 
             expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
@@ -709,18 +699,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 listField = element(by.id('/ansCodeDefault/1'));
 
             browser.wait(EC.presenceOf(intField), 2000);
-
-            // NEXT: no needed
-            // browser.wait(function() {
-            //   try {
-            //     browser.wait(EC.presenceOf(intField), 2000);
-            //     return intField.isDisplayed(); // sometimes results in a "stale reference" error
-            //   }
-            //   catch (e) {
-            //     // Try to refresh the element
-            //     intField = element(by.id('/intField/1'));
-            //   }
-            // }, tp.WAIT_TIMEOUT_1);
 
             expect(TestUtil.getAttribute(intField,'value')).toBe('24'); // it is a value in dr
             expect(TestUtil.getAttribute(decField,'value')).toBe('');
@@ -792,54 +770,39 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(TestUtil.getAttribute(cne,'value')).toBe('');
             expect(TestUtil.getAttribute(st,'value')).toBe('');
 
-            // NEXT: TODO: check antd radio button's value
-            // expect(bl1.isSelected()).toBe(true);
+            //expect(TestUtil.getAttribute(bl1, 'ng-reflect-model')).toBe("true"); // this didn't work. it returns null.
+            expect(bl1.getAttribute('ng-reflect-model')).toBe("true");
 
-            // NEXT: not an angular app
-            // bl1.evaluate('item.value').then(function(val) {
-            //   expect(val).toEqual(true);
-            // });
-
-            // NEXT: TODO: check antd radio button's value
             expect(bl2.isSelected()).toBe(false);
-            // NEXT: not an angular app
-            // bl2.evaluate('item.value').then(function(val) {
-            //   expect(val).toBeFalsy(); //null, not false
-            // });
 
             expect(TestUtil.getAttribute(cwe,'value')).toBe("user typed value");
-            // NEXT: not an angular app
-            // cwe.evaluate('item.value').then(function(val) {
-            //   expect(val.code).toEqual(undefined);
-            //   expect(val.text).toEqual('user typed value');
-            //   expect(val._displayText).toEqual('user typed value');
-            // });
 
             var cweRepeatsValues = element.all(by.css('.autocomp_selected li'));
             expect(cweRepeatsValues.get(0).getText()).toBe('×Answer 1');
             expect(cweRepeatsValues.get(1).getText()).toBe('×Answer 2');
             expect(cweRepeatsValues.get(2).getText()).toBe('×user value1');
             expect(cweRepeatsValues.get(3).getText()).toBe('×user value2');
-            // NEXT: not an angular app
-            // cweRepeats.evaluate('item.value').then(function(val) {
-            //   expect(val.length).toEqual(4);
-            //   expect(val[0].code).toEqual('c1');
-            //   expect(val[0].text).toEqual('Answer 1');
-            //   expect(val[0]._displayText).toEqual('Answer 1');
-            //   expect(val[0].system).toEqual(undefined);
-            //   expect(val[1].code).toEqual('c2');
-            //   expect(val[1].text).toEqual('Answer 2');
-            //   expect(val[1]._displayText).toEqual('Answer 2');
-            //   expect(val[1].system).toEqual(undefined);
-            //   expect(val[2].code).toEqual(undefined);
-            //   expect(val[2].text).toEqual('user value1');
-            //   expect(val[2]._displayText).toEqual('user value1');
-            //   expect(val[2].system).toEqual(undefined);
-            //   expect(val[3].code).toEqual(undefined);
-            //   expect(val[3].text).toEqual('user value2');
-            //   expect(val[3]._displayText).toEqual('user value2');
-            //   expect(val[3].system).toEqual(undefined);
-            // });
+            browser.driver.executeAsyncScript(function () {
+              var callback = arguments[arguments.length - 1];
+              var fData = LForms.Util.getUserData(null, false, true);
+              callback(fData);
+            }).then(function (formData:any) {
+    
+              expect(formData.itemsData.length).toBe(7);
+              expect(formData.itemsData[0].value).toBe(true);
+              expect(formData.itemsData[1].value).toBe(false);
+              expect(formData.itemsData[2].value).toBe("user typed value");
+              expect(formData.itemsData[3].value.length).toBe(4);
+              expect(formData.itemsData[3].value[0].code).toEqual('c1');
+              expect(formData.itemsData[3].value[0].text).toEqual('Answer 1');
+              expect(formData.itemsData[3].value[0].system).toEqual(undefined);
+              expect(formData.itemsData[3].value[1].code).toEqual('c2');
+              expect(formData.itemsData[3].value[1].text).toEqual('Answer 2');
+              expect(formData.itemsData[3].value[1].system).toEqual(undefined);
+              expect(formData.itemsData[3].value[2]).toEqual('user value1');
+              expect(formData.itemsData[3].value[3]).toEqual('user value2');
+
+            })
 
           });
         });
@@ -974,148 +937,108 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           if (fhirVersion === "R4") {
             // NEXT: new boolean implementation
-            // expect(TestUtil.getAttribute(typeBoolean,'value')).toBe('on');
-            // NEXT: not an angular app
-            // typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual(true);
-            // });
+            expect(typeBoolean.getAttribute('ng-reflect-model')).toBe("true");
 
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
-            // NEXT: not an angular app
-            // typeInteger.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual(123);
-            // });
 
             expect(TestUtil.getAttribute(typeDecimal,'value')).toBe('123.45');
-            // NEXT: not an angular app
-            // typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual(123.45);
-            // });
 
             expect(TestUtil.getAttribute(typeString,'value')).toBe("abc123");
-            // NEXT: not an angular app
-            // typeString.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("abc123");
-            // });
 
             expect(TestUtil.getAttribute(typeDate,'value')).toBe("09/03/2019");
-            // NEXT: not an angular app
-            // typeDate.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("2019-09-03");
-            // });
 
             // initial[x] valueDateTime 
             expect(TestUtil.getAttribute(typeDateTime,'value')).toBe("02/07/2015 13:28:17");
-            // NEXT: not an angular app
-            // typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("2015-02-07T13:28:17-05:00");
-            // });
 
             expect(TestUtil.getAttribute(typeTime,'value')).toBe("13:28:17");
-            // NEXT: not an angular app
-            // typeTime.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("13:28:17");
-            // });
 
             expect(TestUtil.getAttribute(typeChoice,'value')).toBe("Answer 2");
-            // NEXT: not an angular app
-            // typeChoice.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val.code).toEqual("c2");
-            //   expect(val.text).toEqual('Answer 2');
-            // });
 
             expect(TestUtil.getAttribute(typeOpenChoice,'value')).toBe("User typed answer");
-            // NEXT: not an angular app
-            // typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("User typed answer");
-
-            // });
 
             var repeatsElements = element.all(by.css('.autocomp_selected li'));
             expect(repeatsElements.get(0).getText()).toBe('×Answer 1');
             expect(repeatsElements.get(1).getText()).toBe('×Answer 3');
-            // NEXT: not an angular app
-            // typeChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val.length).toEqual(2);
-            //   expect(val[0].code).toEqual('c1');
-            //   expect(val[0].text).toEqual('Answer 1');
-            //   expect(val[1].code).toEqual('c3');
-            //   expect(val[1].text).toEqual('Answer 3');
-            // });
 
             expect(repeatsElements.get(2).getText()).toBe('×Answer 1');
             expect(repeatsElements.get(3).getText()).toBe('×Answer 3');
             expect(repeatsElements.get(4).getText()).toBe('×User typed answer a');
             expect(repeatsElements.get(5).getText()).toBe('×User typed answer b');
-            // NEXT: not an angular app
-            // typeOpenChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val.length).toEqual(4);
-            //   expect(val[0].code).toEqual('c1');
-            //   expect(val[0].text).toEqual('Answer 1');
-            //   expect(val[1].code).toEqual('c3');
-            //   expect(val[1].text).toEqual('Answer 3');
-            //   expect(val[2]).toEqual('User typed answer a');
-            //   expect(val[3]).toEqual('User typed answer b');
-            // });
+
+            browser.driver.executeAsyncScript(function () {
+              var callback = arguments[arguments.length - 1];
+              var fData = LForms.Util.getUserData(null, false, true);
+              callback(fData);
+            }).then(function (formData:any) {
+    
+              expect(formData.itemsData.length).toBe(11);
+              expect(formData.itemsData[0].value).toBe(true);
+              expect(formData.itemsData[1].value).toBe(123);
+              expect(formData.itemsData[2].value).toBe(123.45);
+              expect(formData.itemsData[3].value).toBe('abc123');
+              expect(formData.itemsData[4].value).toBe('2019-09-03');
+              expect(formData.itemsData[5].value).toBe('2015-02-07T18:28:17.000Z'); //"2015-02-07T13:28:17-05:00" in initial value
+              expect(formData.itemsData[6].value).toBe('13:28:17');
+              expect(formData.itemsData[7].value.code).toBe('c2');
+              expect(formData.itemsData[7].value.text).toBe('Answer 2');
+              expect(formData.itemsData[8].value).toBe('User typed answer');
+
+              expect(formData.itemsData[9].value[0].code).toEqual('c1');
+              expect(formData.itemsData[9].value[0].text).toEqual('Answer 1');
+              expect(formData.itemsData[9].value[1].code).toEqual('c3');
+              expect(formData.itemsData[9].value[1].text).toEqual('Answer 3');
+
+              expect(formData.itemsData[10].value[0].code).toEqual('c1');
+              expect(formData.itemsData[10].value[0].text).toEqual('Answer 1');
+              expect(formData.itemsData[10].value[1].code).toEqual('c3');
+              expect(formData.itemsData[10].value[1].text).toEqual('Answer 3');
+              expect(formData.itemsData[10].value[2]).toEqual('User typed answer a');
+              expect(formData.itemsData[10].value[3]).toEqual('User typed answer b');
+
+            })
+
+
 
           }
           if (fhirVersion === "STU3") {
-            // NEXT: new boolean implementation
-            // expect(TestUtil.getAttribute(typeBoolean,'value')).toBe('on');
-            // NEXT: not an angular app
-            // typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual(true);
-            // });
+            // NEXT: new boolean implementation            
+            expect(typeBoolean.getAttribute('ng-reflect-model')).toBe("true");
 
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
-            // NEXT: not an angular app
-            // typeInteger.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual(123);
-            // });
 
             expect(TestUtil.getAttribute(typeDecimal,'value')).toBe('123.45');
-            // NEXT: not an angular app
-            // typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual(123.45);
-            // });
 
             expect(TestUtil.getAttribute(typeString,'value')).toBe("abc123");
-            // NEXT: not an angular app
-            // typeString.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("abc123");
-            // });
 
             expect(TestUtil.getAttribute(typeDate,'value')).toBe("09/03/2019");
-            // NEXT: not an angular app
-            // typeDate.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("2019-09-03");
-            // });
 
             // initial[x] valueDateTime            
             expect(TestUtil.getAttribute(typeDateTime, 'value')).toBe("02/07/2015 13:28:17");
-            // NEXT: not an angular app
-            // typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("2015-02-07T13:28:17-05:00");
-            // });
 
             expect(TestUtil.getAttribute(typeTime,'value')).toBe("13:28:17");
-            // NEXT: not an angular app
-            // typeTime.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("13:28:17");
-            // });
 
             expect(TestUtil.getAttribute(typeChoice,'value')).toBe("Answer 2");
-            // NEXT: not an angular app
-            // typeChoice.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val.code).toEqual("c2");
-            //   expect(val.text).toEqual('Answer 2');
-            // });
 
             expect(TestUtil.getAttribute(typeOpenChoice,'value')).toBe("User typed answer");
-            // NEXT: not an angular app
-            // typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
-            //   expect(val).toEqual("User typed answer");
-            // });
+
+            browser.driver.executeAsyncScript(function () {
+              var callback = arguments[arguments.length - 1];
+              var fData = LForms.Util.getUserData(null, false, true);
+              callback(fData);
+            }).then(function (formData:any) {
+    
+              expect(formData.itemsData.length).toBe(9);
+              expect(formData.itemsData[0].value).toBe(true);
+              expect(formData.itemsData[1].value).toBe(123);
+              expect(formData.itemsData[2].value).toBe(123.45);
+              expect(formData.itemsData[3].value).toBe('abc123');
+              expect(formData.itemsData[4].value).toBe('2019-09-03');
+              expect(formData.itemsData[5].value).toBe('2015-02-07T18:28:17.000Z'); //"2015-02-07T13:28:17-05:00" in initial value
+              expect(formData.itemsData[6].value).toBe('13:28:17');
+              expect(formData.itemsData[7].value.code).toBe('c2');
+              expect(formData.itemsData[7].value.text).toBe('Answer 2');
+              expect(formData.itemsData[8].value).toBe('User typed answer');
+            })
 
           }
         });

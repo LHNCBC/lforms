@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'lhc-item-choice',
@@ -6,7 +6,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
   styleUrls: ['./lhc-item-choice.component.css'],
   encapsulation: ViewEncapsulation.Emulated //None/ShadowDom/Emulated
 })
-export class LhcItemChoiceComponent implements OnInit {
+export class LhcItemChoiceComponent implements OnInit, OnChanges {
 
   @Input() item;
 

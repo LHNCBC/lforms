@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-group-horizontal.component.html',
   styleUrls: ['./lhc-group-horizontal.component.css']
 })
-export class LhcGroupHorizontalComponent implements OnInit {
+export class LhcGroupHorizontalComponent implements OnInit, OnChanges {
 
   @Input() item;
 
@@ -22,7 +22,7 @@ export class LhcGroupHorizontalComponent implements OnInit {
     // console.log(this.item)
   }
 
-  ngOnChange(): void {
+  ngOnChanges(): void {
     // console.log("lhc-group-horizontal, ngOnChange")
     // console.log(this.lhcDataService.getHorizontalTableInfo())
     // console.log(this.item)

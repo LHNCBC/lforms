@@ -60,11 +60,10 @@ describe('formdata: ', function() {
         ff.race.sendKeys(protractor.Key.ARROW_DOWN);
         ff.race.sendKeys(protractor.Key.TAB);
 
-        // NEXT:TODO: formula not working
         TestUtil.sendKeys(ff.height, "70");
-        // expect(ff.bmi.getAttribute('value')).toBe("");
+        expect(ff.bmi.getAttribute('value')).toBe("");
         TestUtil.sendKeys(ff.weight, "170");
-        // expect(ff.bmi.getAttribute('value')).toBe("24.39");
+        expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
         browser.driver.executeAsyncScript(function () {
           var callback = arguments[arguments.length - 1];
@@ -84,8 +83,7 @@ describe('formdata: ', function() {
           expect(formData.itemsData[0].items[2].value).toBe(undefined); // dob
           expect(formData.itemsData[0].items[6].value).toBe(70); // height
           expect(formData.itemsData[0].items[8].value).toBe(170); // weight
-          // NEXT:TODO: formula not working
-          //expect(formData.itemsData[0].items[9].value).toBe("24.39"); // bmi
+          expect(formData.itemsData[0].items[9].value).toBe("24.39"); // bmi
           expect(formData.itemsData[0].items[10].value.length).toBe(2); // race
           expect(formData.itemsData[0].items[10].value[0].text).toBe("American Indian or Alaska Native");
           expect(formData.itemsData[0].items[10].value[1].text).toBe("Asian");
@@ -174,11 +172,10 @@ describe('formdata: ', function() {
       ff.gender.sendKeys(protractor.Key.TAB);
       TestUtil.waitForElementDisplayed(ff.name)
       expect(TestUtil.getFieldValue(ff.gender)).toBe("Male")
-      // NEXT:TODO: formula not working
       TestUtil.sendKeys(ff.height, "70");
       expect(TestUtil.getFieldValue(ff.height)).toBe("70");      
       TestUtil.sendKeys(ff.weight, "170");
-      //expect(ff.bmi.getAttribute('value')).toBe("24.39");
+      expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
       // check the data directly
       browser.driver.executeAsyncScript(function () {
@@ -205,7 +202,6 @@ describe('formdata: ', function() {
         expect(formData.items[0].items[6].unit.name).toBe("inches");
         expect(formData.items[0].items[8].value).toBe(170);
         expect(formData.items[0].items[8].unit.name).toBe("lbs");
-        // NEXT:TODO: formula not working
         expect(formData.items[0].items[9].value).toBe("24.39");
         expect(formData.items[1].items.length).toBe(9);
       });
@@ -219,8 +215,7 @@ describe('formdata: ', function() {
       expect(TestUtil.getFieldValue(ff.gender)).toBe("Male");
       expect(TestUtil.getFieldValue(ff.height)).toBe("70");
       expect(TestUtil.getFieldValue(ff.weight)).toBe("170");
-      // NEXT:TODO: formula not working
-      //expect(ff.bmi.getAttribute('value')).toBe("24.39");
+      expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
       // check the data again, directly
       browser.driver.executeAsyncScript(function () {
@@ -275,12 +270,7 @@ describe('formdata: ', function() {
       tp.LoadForm.openDefaultAnswerForm();
       var blField = element(by.id('/blField/1'));
       browser.wait(ExpectedConditions.presenceOf(blField), 5000);
-      //NEXT: ng-switch not a checkbox
-      //expect(blField.isSelected()).toBe(true);
-      //NEXT: no longer an angular app
-      // blField.evaluate('item.value').then(function(val) {
-      //   expect(val).toEqual(true);
-      // });
+      expect(blField.getAttribute('ng-reflect-model')).toBe("true");
 
       var intField = element(by.id('/intField/1'));
       expect(TestUtil.getFieldValue(intField)).toBe("24");      
@@ -301,7 +291,8 @@ describe('formdata: ', function() {
       }
       var today = zeroPad(now.getMonth()+1) + "/" + zeroPad(now.getDate()) +
         "/" + now.getFullYear();
-      //expect(TestUtil.getFieldValue(element(by.css('#/dateField/1 input')))).toEqual(today);
+      var isoToday = now.getFullYear() + "-" + zeroPad(now.getMonth()+1) + "-" + zeroPad(now.getDate());
+      expect(TestUtil.getFieldValue(element(by.id('/dateField/1')).element(by.css('input')))).toEqual(today);
 
       expect(TestUtil.getFieldValue(element(by.id('/ansLabelDefault/1')))).toEqual('ii. Blue');
       expect(TestUtil.getFieldValue(element(by.id('/ansCodeDefault/1')))).toEqual('ii. Blue');
@@ -315,12 +306,6 @@ describe('formdata: ', function() {
       expect(TestUtil.getAttribute(rr, 'checked')).toBe(false);
       expect(TestUtil.getAttribute(rb, 'checked')).toBe(true);
       expect(TestUtil.getAttribute(rg, 'checked')).toBe(false);
-      //NEXT: not an angular app
-      // element(by.id(radioQCode+'R')).evaluate('item.value').then(function(val) {
-      //   expect(val.code).toEqual('B');
-      //   expect(val.text).toEqual('Blue');
-      //   expect(val._displayText).toEqual('ii. Blue');
-      // });
 
       // Check a radio button question whose answers do not have labels
       var radioQCodeNL = '#\\/radioAnsCodeDefaultNoLabel\\/1';
@@ -331,13 +316,6 @@ describe('formdata: ', function() {
       expect(TestUtil.getAttribute(rb, 'checked')).toBe(true);
       expect(TestUtil.getAttribute(rg, 'checked')).toBe(false);
 
-      //NEXT: not an angular app
-      // element(by.id(radioQCodeNL+'R')).evaluate('item.value').then(function(val) {
-      //   expect(val.code).toEqual('B');
-      //   expect(val.text).toEqual('Blue');
-      //   expect(val._displayText).toEqual('Blue');
-      // });
-
       // Test a check box question
       var cbQCode = '#\\/checkBoxAnsCodeDefault\\/1';
       var cr = element(by.css(cbQCode + "R input"));
@@ -346,23 +324,10 @@ describe('formdata: ', function() {
       expect(TestUtil.getAttribute(cr, 'checked')).toBe(false);
       expect(TestUtil.getAttribute(cb, 'checked')).toBe(true);
       expect(TestUtil.getAttribute(cg, 'checked')).toBe(false);
-      //NEXT: not an angular app
-      // element(by.id(cbQCode+'R')).evaluate('item.value').then(function(val) {
-      //   expect(val[0].code).toEqual('B');
-      //   expect(val[0].text).toEqual('Blue');
-      //   expect(val[0]._displayText).toEqual('ii. Blue');
-      // });
 
       // Check a multi-select list
       var multiSelID = '/multiSelAnsCodeDefault/1';
       var multiSel = element(by.id(multiSelID));
-      //NEXT: not an angular app
-      // multiSel.evaluate('item.value').then(function(value) {
-      //   expect(value.length).toBe(1);
-      //   expect(value[0].text).toEqual('Blue');
-      //   expect(value[0].code).toEqual('B');
-      //   expect(value[0]._displayText).toEqual('ii. Blue');
-      // });
       expect(TestUtil.getFieldValue(multiSel)).toEqual('');
       var escapedID = multiSelID.replace( /\//g, "\\\\/" );
       browser.executeScript('return $("#'+escapedID+'")[0].autocomp.getSelectedCodes()'
@@ -382,8 +347,31 @@ describe('formdata: ', function() {
 
       // Also test the date field default in the templateOptions, to make sure
       // those are getting processed.
-      //NEXT: on templateOption fields
+      //NEXT: no templateOption fields
       //expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
+
+      browser.driver.executeAsyncScript(function () {
+        var callback = arguments[arguments.length - 1];
+        var fData = LForms.Util.getUserData(null, false, true);
+        callback(fData);
+      }).then(function (formData:any) {
+
+        expect(formData.itemsData.length).toBe(13);
+        expect(formData.itemsData[0].value).toBe(true);
+        expect(formData.itemsData[1].value).toBe(24);
+        expect(formData.itemsData[2].value).toBe(3.14159);
+        expect(formData.itemsData[3].value).toBe("Green");
+        expect(formData.itemsData[4].value).toBe(isoToday);
+        expect(formData.itemsData[5].value).toEqual({text: "Blue", code: "B", label: "ii"});
+        expect(formData.itemsData[6].value).toEqual({text: "Blue", code: "B", label: "ii"});
+        expect(formData.itemsData[7].value).toEqual({text: "Blue", code: "B"});
+        expect(formData.itemsData[8].value).toEqual({text: "Blue", code: "B", label: "ii"});
+        expect(formData.itemsData[9].value).toEqual([{text: "Blue", code: "B", label: "ii"}]);
+        expect(formData.itemsData[10].value).toEqual({text: "Blue", code: "B"});
+        expect(formData.itemsData[11].value).toEqual([{text: "Blue", code: "B", label: "ii"}]);
+        expect(formData.itemsData[12].value).toEqual({text: "Blue", code: "B"});
+
+      })
     });
 
 

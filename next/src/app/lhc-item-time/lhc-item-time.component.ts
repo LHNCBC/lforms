@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-item-time.component.html',
   styleUrls: ['./lhc-item-time.component.css']
 })
-export class LhcItemTimeComponent implements OnInit {
+export class LhcItemTimeComponent implements OnInit, OnChanges {
 
   @Input() item: any;
   time: Date | null = null;

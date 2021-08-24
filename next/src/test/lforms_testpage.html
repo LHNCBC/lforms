@@ -131,6 +131,9 @@
 
       testForm = document.getElementById('test-form');
 
+      /**
+       * Load the form list to DOM
+       */ 
       function loadFormList() {
         let formList = document.getElementById("form-list");
         testForms.forEach(form => {          
@@ -144,12 +147,17 @@
         })
       }
 
-
+      /**
+       * Get JSON data from a form URL
+       */
       async function loadJsonFromUrl(url) {
         return await fetch(url).then( 
           response => response.json());
       }
 
+      /**
+       * Load and display a form
+       */
       async function fetchAndDisplayForm(strForm) {
         let jsonForm = JSON.parse(strForm)
         let formData = await loadJsonFromUrl(jsonForm.url);   
@@ -163,8 +171,9 @@
 
       }
 
-      var selectedOptions;
-
+      /**
+       * Load form from dropdown form list 
+       */
       function loadFormFromList() {
         let formList = document.getElementById("form-list");
         let fhirVersion = this.getFHIRVersion();
@@ -173,9 +182,13 @@
           fetchAndDisplayForm(formList.value);
         }
       };
-
+      
+      // load the form list into DOM 
       loadFormList();
 
+      /**
+       * Get FHIR version from the version list
+       */
       function getFHIRVersion() {
         let fhirVersion = document.getElementById("fhirVersion");
 
@@ -185,6 +198,9 @@
         return version;
       }
 
+      /**
+       * Get FHIR context from the globale object LForms
+       */
       function getFHIR() {
         return LForms.FHIR[getFHIRVersion()];
       }
@@ -206,6 +222,9 @@
         
       };
 
+      /**
+       * Change the first item's value
+       */
       function getFormDefDataAndResetForm() {
         if (testForm.lfData) {
           // change a value
@@ -213,6 +232,9 @@
         }          
       };
 
+      /**
+       * Get 'DiagnosticReport' data from the form and display it in console
+       */
       function showFHIRResource () {
         if (testForm.lhcFormData) {
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
@@ -222,7 +244,9 @@
         }
       }
 
-
+      /**
+       * Get SDC 'Questionnaire' data from the form and display it in console
+       */
       function showFHIRSDCQuestionnaire() {
         if (testForm.lfData) {
           var fhir = getFHIR();
@@ -236,6 +260,9 @@
         }
       }
 
+      /**
+       * Get 'Questionnaire' data from the form and display it in console
+       */
       function showFHIRQuestionnaire() {
         if (testForm.lfData) {
           var sdc = getFHIR().SDC.convertLFormsToQuestionnaire(testForm.lfData, true);
@@ -244,6 +271,9 @@
         }
       }
 
+      /**
+       * Get HL7 v2 data from the form and display it in console
+       */
       function showHL7Segments() {
         if (testForm.lhcFormData) {
           var hl7Seg = LForms.HL7.toHL7Segments(testForm.lhcFormData);
@@ -251,6 +281,9 @@
         }
       }
       
+      /**
+       * Get 'DiagnosticReport' as a "transaction" bundle from the form and display it in console
+       */
       function showFHIRResourceBundle1() {
         if (testForm.lhcFormData) {
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
@@ -260,6 +293,9 @@
         }
       }
 
+      /**
+       * Get 'DiagnosticReport' as a "collection" bundle from the form and display it in console
+       */
       function showFHIRResourceBundle2() {
         if (testForm.lhcFormData) {
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
@@ -269,7 +305,9 @@
         }
       }
 
-      
+      /**
+       * Get 'QuestionnaireResponse' data from the form and display it in console
+       */      
       function showFHIRSDCResponse() {
         if (testForm.lhcFormData) {
           var sdc = getFHIR().SDC.convertLFormsToQuestionnaireResponse(testForm.lhcFormData);
@@ -278,7 +316,10 @@
         }
       }
 
-       async function loadAndMergeFHIRDataFile (fhirFileName, lfDataFileName, resType) {
+      /**
+       * Load a FHIR data file and a form data file, and merge them
+       */
+      async function loadAndMergeFHIRDataFile (fhirFileName, lfDataFileName, resType) {
 
         let formUrl = 'test-data/form-data/' + lfDataFileName;
         let formJson = await loadJsonFromUrl(formUrl);   
@@ -335,6 +376,9 @@
 
       }
 
+      /**
+       * Load a data file from local file system
+       */
       function loadFile(event) {
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');

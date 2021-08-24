@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation} from '@angular/core';
+import { Component, OnInit, OnChanges, Input, ViewEncapsulation} from '@angular/core';
 
 /**
  * A hidden {display: none} that contains all the necessary item.value and 
@@ -10,7 +10,7 @@ import { Component, OnInit, Input, ViewEncapsulation} from '@angular/core';
   styleUrls: ['./lhc-change-detection.component.css']
   //encapsulation: ViewEncapsulation.ShadowDom
 })
-export class LhcChangeDetectionComponent implements OnInit {
+export class LhcChangeDetectionComponent implements OnInit, OnChanges {
 
   @Input() lhcFormData: any;
 
@@ -19,4 +19,8 @@ export class LhcChangeDetectionComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnChanges(changes): void {
+    // console.log("in lhc-change-detection ngOnChanges")
+    // console.log(changes)
+  }
 }

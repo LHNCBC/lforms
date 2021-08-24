@@ -1,6 +1,7 @@
 import { TestPage } from "./lforms_testpage.po";
 import TestUtil from "./util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
 
 describe('Form level Matrix layout', function() {
   let tp: TestPage; 
@@ -28,11 +29,6 @@ describe('Form level Matrix layout', function() {
     expect(item4answer4.isDisplayed()).toBe(true);
 
     // first question
-    // NEXT: evaluate is for angularjs app
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value).toBe(null);
-    // });
-
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -45,10 +41,6 @@ describe('Form level Matrix layout', function() {
     })
 
     item1answer1.click();
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.code).toBe('c1');
-    //   expect(value.text).toBe('Answer a');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -62,10 +54,6 @@ describe('Form level Matrix layout', function() {
     })
 
     item1answer2.click();
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.code).toBe('c2');
-    //   expect(value.text).toBe('Answer b');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -77,16 +65,8 @@ describe('Form level Matrix layout', function() {
       expect(formData.itemsData[2].value).toBe(undefined);
       expect(formData.itemsData[3].value).toBe(undefined);
     })
-    // fourth question
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value).toBe(null);
-    // });
 
     item4answer1.click();
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value.code).toBe('c1');
-    //   expect(value.text).toBe('Answer a');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -100,10 +80,6 @@ describe('Form level Matrix layout', function() {
       expect(formData.itemsData[3].value.text).toBe('Answer a');
     })
     item4answer4.click();
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value.code).toBe('c4');
-    //   expect(value.text).toBe('Answer d');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -116,12 +92,6 @@ describe('Form level Matrix layout', function() {
       expect(formData.itemsData[3].value.code).toBe('c4');
       expect(formData.itemsData[3].value.text).toBe('Answer d');
     })
-
-    // the value on the first question does not change
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.code).toBe('c2');
-    //   expect(value.text).toBe('Answer b');
-    // });
 
   });
 
@@ -145,9 +115,6 @@ describe('Form level Matrix layout', function() {
     expect(item4answer4.isDisplayed()).toBe(true);
 
     // first question
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value).toBe(null);
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -160,11 +127,6 @@ describe('Form level Matrix layout', function() {
     })
 
     item1answer1.click();
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(1);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -178,13 +140,6 @@ describe('Form level Matrix layout', function() {
     })
 
     item1answer2.click();
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(2);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c2');
-    //   expect(value[1].text).toBe('Answer 2');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -200,15 +155,6 @@ describe('Form level Matrix layout', function() {
     })
 
     item1Other.click();
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(3);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c2');
-    //   expect(value[1].text).toBe('Answer 2');
-    //   expect(value[2].code == null).toBeTruthy(); // allow undefined
-    //   expect(value[2].text == null).toBeTruthy(); // allow undefined
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -226,6 +172,8 @@ describe('Form level Matrix layout', function() {
     })
     TestUtil.sendKeys(item1OtherValue, 'other values');
     TestUtil.waitForValue(item1OtherValue, 'other values');
+    // for test only: trigger a change event
+    item1OtherValue.sendKeys(protractor.Key.TAB);
 
     // item1answer1.evaluate("subItem.value").then(function(value) {
     //   expect(value.length).toBe(3);
@@ -247,7 +195,7 @@ describe('Form level Matrix layout', function() {
         expect(formData.itemsData[0].value[1].code).toBe('c2');
         expect(formData.itemsData[0].value[1].text).toBe('Answer 2');
         expect(formData.itemsData[0].value[2].code).toBe(undefined);
-        //expect(formData.itemsData[0].value[2].text).toBe('other values');  // NEXT: TODO: in the test, it is still the previous value: null
+        expect(formData.itemsData[0].value[2].text).toBe('other values'); 
         expect(formData.itemsData[1].value).toBe(undefined);
         expect(formData.itemsData[2].value).toBe(undefined);
         expect(formData.itemsData[3].value).toBe(undefined);
@@ -257,17 +205,9 @@ describe('Form level Matrix layout', function() {
     // change the other value alone will update the data model when the checkbox is checked.
     item1OtherValue.clear();
     TestUtil.sendKeys(item1OtherValue, 'other values again');
+    // for test only: trigger a change event
+    item1OtherValue.sendKeys(protractor.Key.TAB);
     
-
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(3);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c2');
-    //   expect(value[1].text).toBe('Answer 2');
-    //   expect(value[2].code).toBe(undefined);
-    //   expect(value[2].text).toBe('other values again');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -278,22 +218,13 @@ describe('Form level Matrix layout', function() {
       expect(formData.itemsData[0].value[1].code).toBe('c2');
       expect(formData.itemsData[0].value[1].text).toBe('Answer 2');
       expect(formData.itemsData[0].value[2].code).toBe(undefined);
-      //expect(formData.itemsData[0].value[2].text).toBe('other values again'); // NEXT: TODO: in the test, it is still the previous value: other values
+      expect(formData.itemsData[0].value[2].text).toBe('other values again');
       expect(formData.itemsData[1].value).toBe(undefined);
       expect(formData.itemsData[2].value).toBe(undefined);
       expect(formData.itemsData[3].value).toBe(undefined);
     })
     // fourth question
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value).toBe(null);
-    // });
-
     item4answer1.click();
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(1);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -311,13 +242,6 @@ describe('Form level Matrix layout', function() {
       expect(formData.itemsData[3].value[0].text).toBe('Answer 1');
     })
     item4answer4.click();
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(2);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c4');
-    //   expect(value[1].text).toBe('Answer 4');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -338,13 +262,6 @@ describe('Form level Matrix layout', function() {
     })
     TestUtil.sendKeys(item4OtherValue, 'others');
     // model value does not change when the checkbox is not checked
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(2);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c4');
-    //   expect(value[1].text).toBe('Answer 4');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -367,15 +284,6 @@ describe('Form level Matrix layout', function() {
 
     // mode value changes after the checkbox is clicked
     item4Other.click();
-    // item4answer4.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(3);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c4');
-    //   expect(value[1].text).toBe('Answer 4');
-    //   expect(value[2].code).toBe(undefined);
-    //   expect(value[2].text).toBe('others');
-    // });
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
       var fData = LForms.Util.getUserData();
@@ -398,15 +306,6 @@ describe('Form level Matrix layout', function() {
       expect(formData.itemsData[3].value[2].text).toBe('others');
     })
     // the value on the first question does not change
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(3);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c2');
-    //   expect(value[1].text).toBe('Answer 2');
-    //   expect(value[2].code).toBe(undefined);
-    //   expect(value[2].text).toBe('other values again');
-    // });
 
   });
 

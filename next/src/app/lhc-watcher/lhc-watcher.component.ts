@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
-
+import equal from "fast-deep-equal";
 //let LForms:any = (global as any).LForms;
 
 declare var LForms: any;
@@ -10,9 +10,10 @@ declare var LForms: any;
   templateUrl: './lhc-watcher.component.html',
   styleUrls: ['./lhc-watcher.component.css']
 })
-export class LhcWatcherComponent implements OnInit {
+export class LhcWatcherComponent implements OnInit, OnChanges {
 
   @Input() value: any;
+  @Input() item: any;
 
   constructor(private lhcDataService: LhcDataService) { }
 
@@ -26,10 +27,10 @@ export class LhcWatcherComponent implements OnInit {
   // for answer list with radio/checkboxes, all worked including cwe user typed values.
   // for answer list with ac (single choice, mulitple choice), prefect or search field. all worked finally.
   ngOnChanges(changes) {
-    
-    if (!changes.value.firstChange) {
+    if (!changes.value.firstChange && !equal(changes.value.currentValue, changes.value.previousValue)) {
+      // if (!changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcFormData()
-      lfData._checkFormControls();
+      lfData.updateOnSourceItemChange(this.item)
 
       // FHIR
       // Only when lfData changes as a whole do we check whether the new
