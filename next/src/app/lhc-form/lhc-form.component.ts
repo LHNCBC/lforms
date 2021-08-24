@@ -6,7 +6,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 
 import LhcFormData from '../../lib/lforms/lhc-form';
 
-
+declare var LForms: any;
 declare var ResizeObserver;
 
 @Component({
@@ -102,6 +102,17 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             }
           }      
           that.lhcDataService.setLhcFormData(that.lhcFormData);  
+
+          // when a new form is loaded, run initial FHIRPATH expression
+          if (LForms.FHIR) {
+            if (this.lfData) { // sometimes set to null to clear the page
+              if (this.lfData._hasResponsiveExpr || this.lfData._hasInitialExpr) {
+                this.lfData._expressionProcessor.runCalculations(true).then(() => {
+                  console.log('fhir path run with true')
+                });
+              }
+            }        
+          }
         },1)
       }
     }
