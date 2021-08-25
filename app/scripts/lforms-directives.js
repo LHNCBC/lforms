@@ -218,6 +218,148 @@
           templateUrl: 'form-header.html'
         };
       })
+      .directive('lfAttachment', ['$timeout', function ($timeout) {
+        // Thanks to https://github.com/mistralworks/ng-file-model/blob/master/ng-file-model.js
+        // and https://embed.plnkr.co/plunk/7BBYAa
+        return {
+          restrict: 'E',
+          templateUrl: 'attachment.html',
+          scope: {
+            item: "=",
+            labelledBy: "=",
+          },
+          controller: ['$scope', function ($scope) {
+
+            /**
+             *  Creates an attachment for an item based on the data entered by the
+             *  user.
+             */
+            $scope.removeAttachment = function(item) {
+              delete item.value;
+              delete item._attachmentName;
+              delete item._attachmentURL;
+              delete item._fileInfo;
+              delete item._useURL;
+            },
+
+
+            /**
+             *  Creates an attachment for an item based on the data entered by the
+             *  user.
+             */
+            $scope.createAttachment = function(item) {
+              if (!item._fileInfo && !item._attachmentURL) {
+                alert("An attachment must have either a file or a URL (or both).");
+              }
+              else {
+                item.value = {title: item._attachmentName || item._fileInfo?.name};
+                var value = item.value;
+                if (item._attachmentURL)
+                  value.url = item._attachmentURL;
+                if (item._fileInfo) { // attach the data too
+                  var fileInfo = item._fileInfo
+                  value.contentType = fileInfo.type
+                  if (fileInfo.lastModified)
+                    value.creation = new Date(fileInfo.lastModified).toISOString();
+                  else if (fileInfo.lastModifiedDate) // IE 11
+                    value.creation = fileInfo.lastModifiedDate.toISOString();
+                  item.value._progress = 0.001; // 0.1% of loading; non-zero to trigger display
+                  var reader = new FileReader();
+                  reader.onload = function (loadEvent) {
+                    var data = loadEvent.target.result;
+                    var commaIndex = data.indexOf(',');
+                    if (data.indexOf('data:')!=0 || commaIndex<0) {
+                      throw new Error('data URL did not start with expected prefix, but with '+
+                         data.slice(0, 30));
+                      alert('Unable to attach the file data.');
+                    }
+                    $scope.$apply(function () {
+                      delete value._progress;
+                      value.data = data.slice(commaIndex+1);
+                    });
+                  };
+                  reader.onprogress = function(progressEvent) {
+                    $scope.$apply(function() {
+                      item._progress =
+                        progressEvent.loaded/progressEvent.total;
+                    });
+                  };
+                  reader.readAsDataURL(fileInfo);
+                }
+              }
+            },
+
+
+            /**
+             *  Downloads the item's Attachment.
+             * @param attachment the FHIR Attachment.
+             * @param event the click event object
+             * @return a "data:" URL (base 64)
+             */
+            $scope.downloadAttachment = function(attachment, event) {
+              //var a = document.createElement('a');
+              if (attachment.data) {
+                var a = event.target; //document.createElement('a');
+                var originalHref = a.href
+                a.href= 'data:'+(attachment.contentType ? attachment.contentType : '') +';base64,'+attachment.data;
+                a.download = attachment.title;
+                $timeout(function() {
+                  a.href = originalHref;
+                });
+              }
+            };
+          }],
+          link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+              if (changeEvent.target.files) {
+                var newFile = changeEvent.target.files[0];
+                var item = scope.item;
+                if (!newFile.type) {
+                  // Per the FHIR specification, we can't proceed without a mime
+                  // type.
+                  alert('Unknown file type.  Please ensure the file has an '+
+                    'appropriate extension');
+                  newFile = null; // don't proceed
+                }
+                else if (item.allowedAttachmentTypes &&
+                         item.allowedAttachmentTypes.indexOf(newFile.type)<0) {
+                  let types = item.allowedAttachmentTypes;
+                  alert('The file '+newFile.name+' is not one of the mime types '+
+                    'permitted by this questionnaire ('+types.slice(0,-1).join(', ')+
+                    ' and ' +types.slice(-1)+').  Please make sure your file has '+
+                    'an appropriate file extension for its type in its filename.');
+                  newFile = null; // don't proceed
+                }
+                else if (newFile.size > item.maxAttachmentSize) {
+                  var msg = 'The file '+newFile.name+' exceeds the maximum '+
+                    'attachment size of '+item.maxAttachmentSize+' bytes permitted by '+
+                    'this questionnaire.  If you can specify the file with a URL, '+
+                    'use the button to open the URL field and enter that instead.';
+                  alert(msg);
+                  newFile = null; // don't proceed
+                }
+                else if (newFile.size > 500000000) {
+                  var msg = 'Adding a large file as an attachment might cause your '+
+                    'computer to run low on memory.  There is a button to enter a '+
+                    'URL instead of attaching the file data.  Are you sure you want '+
+                    'to attach the file data?';
+                  if (!confirm(msg))
+                    newFile = null; // don't proceed
+                }
+                if (!newFile)
+                  element[0].getElementsByTagName('input')[0].value = null; // clear the field
+                item._fileInfo = newFile;
+                if (newFile && !item._useURL) {
+                  scope.$apply(function () {
+                    scope.createAttachment(item); // see & binding above
+                  });
+                }
+                // else Wait for the "create attachment" click
+              }
+            });
+          }
+        }
+      }])
       .directive('lfValidate', function () {
         return {
           require: 'ngModel',

@@ -98,6 +98,8 @@
                  id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                  ng-true-value="true" ng-false-value="false"
                  ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">
+          <lf-attachment ng-switch-when="attachment" item="item"
+           create-attachment="createAttachment(item)" id="item._elementId"></lf-attachment>
           <input ng-switch-default name="{{item._text}}" type="text"
                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                  id="{{item._elementId}}" ng-focus="setActiveRow(item)"

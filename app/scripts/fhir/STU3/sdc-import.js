@@ -263,7 +263,7 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = angular.copy(qItem.initialCoding);
+    var val = LForms.Util.deepCopy(qItem.initialCoding);
     if (val)
       val._type = 'Coding';
     else
@@ -429,7 +429,7 @@ function addSDCImportFns(ns) {
         // insert new items
         if (item) {
           while(total > 1) {
-            var newItem = angular.copy(item);
+            var newItem = LForms.Util.deepCopy(item);
             parentItem.items.splice(i, 0, newItem);
             total -= 1;
           }
@@ -485,97 +485,8 @@ function addSDCImportFns(ns) {
         }
       }
       return item;
-    },
-
-
-    /**
-     * Set value and units on a LForms item
-     * @param linkId an item's linkId
-     * @param answer value for the item
-     * @param item a LForms item
-     * @private
-     */
-    _setupItemValueAndUnit : function(linkId, answer, item) {
-
-      if (item && linkId === item.linkId && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
-        var dataType = item.dataType;
-
-        // any one has a unit must be a numerical type, let use REAL for now.
-        // dataType conversion should be handled when panel data are added to lforms-service.
-        if ((!dataType || dataType==="ST") && item.units && item.units.length>0 ) {
-          item.dataType = dataType = "REAL";
-        }
-
-        var qrValue = answer[0];
-
-        switch (dataType) {
-          case "BL":
-            if (qrValue.valueBoolean === true || qrValue.valueBoolean === false) {
-              item.value = qrValue.valueBoolean;
-            }
-            break;
-          case "INT":
-            if (qrValue.valueQuantity) {
-              item.value = qrValue.valueQuantity.value;
-              if(qrValue.valueQuantity.code) {
-                item.unit = {name: qrValue.valueQuantity.code};
-              }
-            }
-            else if (qrValue.valueInteger) {
-              item.value = qrValue.valueInteger;
-            }
-            break;
-          case "REAL":
-          case "QTY":
-            if (qrValue.valueQuantity) {
-              item.value = qrValue.valueQuantity.value;
-              if(qrValue.valueQuantity.code) {
-                item.unit = {name: qrValue.valueQuantity.code};
-              }
-            }
-            else if (qrValue.valueDecimal) {
-              item.value = qrValue.valueDecimal;
-            }
-            break;
-          case "DT":
-            item.value = qrValue.valueDate;
-            break;
-          case "DTM":
-            item.value = qrValue.valueDateTime;
-            break;
-          case "CNE":
-          case "CWE":
-            if (ns._answerRepeats(item)) {
-              var value = [];
-              for (var j=0,jLen=answer.length; j<jLen; j++) {
-                var val = ns._processCWECNEValueInQR(answer[j]);
-                if (val) {
-                  value.push(val);
-                }
-              }
-              item.value = value;
-            }
-            else {
-              var val = ns._processCWECNEValueInQR(qrValue);
-              if (val) {
-                item.value = val;
-              }
-            }
-            break;
-          case "ST":
-          case "TX":
-            item.value = qrValue.valueString;
-            break;
-          case "SECTION":
-          case "TITLE":
-          case "":
-            // do nothing
-            break;
-          default:
-            item.value = qrValue.valueString;
-        }
-      }
     }
+
   }
 
 }

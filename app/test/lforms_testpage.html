@@ -202,14 +202,14 @@
               }
             };
 
-            function getFHIRVersion() {
+            window.getFHIRVersion = function () {
               var version = $('#fhirVersion')[0].value;
               if (!version)
                 throw 'Please select a FHIR version';
               return version;
             }
 
-            function getFHIR() {
+            window.getFHIR = function() {
               return LForms.FHIR[getFHIRVersion()];
             }
 
