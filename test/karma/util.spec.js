@@ -276,7 +276,7 @@ describe('Util library', function() {
               }
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
               "valueExpression": {
                 "description": "BMI calculation",
                 "language" : "text/fhirpath",

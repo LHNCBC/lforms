@@ -600,7 +600,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
               newEntry.score = scoreExt[0].valueDecimal;
           }
           else
-            newEntry = {'text': '' + entry};
+            newEntry.text = '' + entry;
           if (!changed) {
             changed = (!hasCurrentList ||
               !this._lfData._objectEqual(newEntry, currentList[i]));

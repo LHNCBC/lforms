@@ -121,6 +121,10 @@
                       aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
                       ng-keyup="autoExpand($event)" rows="1"
                       ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)"></textarea>
+            <lf-attachment ng-switch-when="attachment" item="cell"
+             create-attachment="createAttachment(item)"
+             labelled-by=lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id
+            ></lf-attachment>
             <input ng-switch-default name="{{cell.question}}" type="text"
                    ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-disabled="cell._readOnly"
                    id="{{cell._elementId}}"

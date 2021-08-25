@@ -572,7 +572,7 @@ var dr = {
           item.answerCardinality &&
           (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1))) {
         while(total > 1) {
-          var newItem = angular.copy(item);
+          var newItem = LForms.Util.deepCopy(item);
           parentItem.items.splice(i, 0, newItem);
           total -= 1;
         }

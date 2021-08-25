@@ -61,6 +61,25 @@ describe('answerExpression', function() {
     });
   });
 
+  it('should be able to fetch a list of strings', function() {
+    // Note that this test case is using an item of type Coding with an answerExpression
+    // that returns an array of strings.  The R4 spec is ambiguous, but there
+    // was a discussion thread that clarifies the type type should be string for
+    // this case.  We don't support non-coding lists at this point (though we
+    // could easily support string).  I propose we preserve this non-standard
+    // behavior to avoid breaking things for a (known) user, even after we add
+    // support for lists for type "string".
+
+    // Fill in some string values for the repeating "string" question.
+    testUtil.sendKeys(element(by.id('q1/1')), 'aaa');
+    element(by.id('add-q1/1')).click();
+    testUtil.sendKeys(element(by.id('q1/2')), 'bbb');
+    element(by.id('add-q1/2')).click();
+    testUtil.fieldListLength(element(by.id('q1List/1'))).then((count)=> {
+      expect(count).toBe(2);
+    });
+  }),
+
   it('should not clear a list field if the form has just loaded with saved data', function () {
     // This is the case when a QuestionnaireResponse is loaded in that has a
     // value in a field whose list comes from an answerExpression or a

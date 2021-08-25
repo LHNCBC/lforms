@@ -2,6 +2,32 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.2.1] 2021-08-23
+### Changed
+- Updated the URI for the FHIR "initialExpression" extension, but the old URI is
+  still supported and will be updated if found in a Questionnaire.  As a
+  side-effect, this means that a re-export back to FHIR will have the updated
+  initialExpression URI.
+
+## [29.2.0] 2021-07-26
+### Added
+- Support for attachments, both in FHIR (type="attachment") and in our internal
+  format (dataType="attachment").
+
+## [29.1.3] 2021-07-26
+### Fixed
+- FHIR answerExpressions that return arrays of strings now work for setting a
+  list (though the type needs to be "choice", not "string", which is something
+  that will be fixed later).
+
+## [29.1.2] 2021-07-22
+### Fixed
+- Updated fhirpath.js for improved handling of choice types.
+
+## [29.1.1] 2021-06-24
+### Changed
+- Removed direct refereces to angular in FHIR lib files.
+
 ## [29.1.0] 2021-05-27
 ### Added
 - Support for named FHIR expressions.  Any supported FHIR expression can now
