@@ -208,11 +208,11 @@ var existence = __webpack_require__(70);
 
 var filtering = __webpack_require__(71);
 
-var aggregate = __webpack_require__(73);
+var aggregate = __webpack_require__(72);
 
-var combining = __webpack_require__(74);
+var combining = __webpack_require__(73);
 
-var misc = __webpack_require__(72);
+var misc = __webpack_require__(74);
 
 var equality = __webpack_require__(75);
 
@@ -300,12 +300,6 @@ engine.invocationTable = {
     fn: filtering.whereMacro,
     arity: {
       1: ["Expr"]
-    }
-  },
-  extension: {
-    fn: filtering.extension,
-    arity: {
-      1: ["String"]
     }
   },
   select: {
@@ -466,12 +460,6 @@ engine.invocationTable = {
       1: ["String"]
     }
   },
-  upper: {
-    fn: strings.upper
-  },
-  lower: {
-    fn: strings.lower
-  },
   replace: {
     fn: strings.replace,
     arity: {
@@ -492,9 +480,6 @@ engine.invocationTable = {
   },
   length: {
     fn: strings.length
-  },
-  toChars: {
-    fn: strings.toChars
   },
   abs: {
     fn: math.abs
@@ -776,15 +761,10 @@ engine.ExternalConstantTerm = function (ctx, parentData, node) {
   var extConstant = node.children[0];
   var identifier = extConstant.children[0];
   var varName = engine.Identifier(ctx, parentData, identifier)[0];
-  var value = ctx.vars[varName];
-
-  if (!(varName in ctx.vars)) {
-    throw new Error("Attempting to access an undefined environment variable: " + varName);
-  } // For convenience, we all variable values to be passed in without their array
+  var value = ctx.vars[varName]; // For convenience, we all variable values to be passed in without their array
   // wrapper.  However, when evaluating, we need to put the array back in.
 
-
-  return value === undefined || value === null ? [] : value instanceof Array ? value : [value];
+  return value === undefined ? [] : value instanceof Array ? value : [value];
 };
 
 engine.LiteralTerm = function (ctx, parentData, node) {
@@ -882,8 +862,7 @@ engine.MemberInvocation = function (ctx, parentData, node) {
           if (defPath) childPath = defPath;
         }
 
-        var toAdd, _toAdd;
-
+        var toAdd;
         var actualTypes = model && model.choiceTypePaths[childPath];
 
         if (actualTypes) {
@@ -897,12 +876,9 @@ engine.MemberInvocation = function (ctx, parentData, node) {
               var field = key + t;
               toAdd = res.data[field];
 
-              if (toAdd !== undefined) {
+              if (toAdd) {
                 childPath = t;
-                _toAdd = res.data['_' + key];
                 break;
-              } else {
-                toAdd = res._data[key];
               }
             }
           } catch (err) {
@@ -910,27 +886,15 @@ engine.MemberInvocation = function (ctx, parentData, node) {
           } finally {
             _iterator.f();
           }
-        } else {
-          toAdd = res.data[key];
-
-          if (toAdd !== undefined) {
-            _toAdd = res.data['_' + key];
-          } else {
-            toAdd = res._data[key];
-          }
-
-          if (key === 'extension') {
-            childPath = 'Extension';
-          }
-        }
+        } else toAdd = res.data[key];
 
         if (util.isSome(toAdd)) {
           if (Array.isArray(toAdd)) {
-            acc = acc.concat(toAdd.map(function (x, i) {
-              return makeResNode(x, childPath, _toAdd && _toAdd[i]);
+            acc = acc.concat(toAdd.map(function (x) {
+              return makeResNode(x, childPath);
             }));
           } else {
-            acc.push(makeResNode(toAdd, childPath, _toAdd));
+            acc.push(makeResNode(toAdd, childPath));
           }
 
           return acc;
@@ -979,16 +943,56 @@ engine.realizeParams = function (ctx, parentData, args) {
   }
 };
 
+var paramTable = {
+  "Integer": function Integer(val) {
+    var d = util.valData(val);
+
+    if (typeof d !== "number" || !Number.isInteger(d)) {
+      throw new Error("Expected integer, got: " + JSON.stringify(d));
+    }
+
+    return d;
+  },
+  "Boolean": function Boolean(val) {
+    var d = util.valData(val);
+
+    if (d === true || d === false) {
+      return d;
+    }
+
+    throw new Error("Expected boolean, got: " + JSON.stringify(d));
+  },
+  "Number": function Number(val) {
+    var d = util.valData(val);
+
+    if (typeof d !== "number") {
+      throw new Error("Expected number, got: " + JSON.stringify(d));
+    }
+
+    return d;
+  },
+  "String": function String(val) {
+    var d = util.valData(val);
+
+    if (typeof d !== "string") {
+      throw new Error("Expected string, got: " + JSON.stringify(d));
+    }
+
+    return d;
+  }
+};
+
 function makeParam(ctx, parentData, type, param) {
+  // this is hack for $this
+  ctx.currentData = parentData;
+
   if (type === "Expr") {
     return function (data) {
-      ctx.$this = data;
       return engine.doEval(ctx, util.arraify(data), param);
     };
   }
 
   if (type === "AnyAtRoot") {
-    ctx.$this = ctx.dataRoot;
     return engine.doEval(ctx, ctx.dataRoot, param);
   }
 
@@ -1004,7 +1008,6 @@ function makeParam(ctx, parentData, type, param) {
     return engine.TypeSpecifier(ctx, parentData, param);
   }
 
-  ctx.$this = parentData;
   var res = engine.doEval(ctx, parentData, param);
 
   if (type === "Any") {
@@ -1019,7 +1022,20 @@ function makeParam(ctx, parentData, type, param) {
     }
   }
 
-  return misc.singleton(res, type);
+  var maker = paramTable[type];
+
+  if (res.length > 1) {
+    throw new Error("Unexpected collection" + JSON.stringify(res) + "; expected singleton of type " + type);
+  }
+
+  if (res.length == 0) {
+    return [];
+  } else if (maker) {
+    return maker(res[0]);
+  } else {
+    console.error(type, param);
+    throw new Error("IMPL me for " + type);
+  }
 }
 
 function doInvoke(ctx, fnName, data, rawParams) {
@@ -1129,7 +1145,7 @@ engine.UnionExpression = function (ctx, parentData, node) {
 };
 
 engine.ThisInvocation = function (ctx) {
-  return util.arraify(ctx.$this);
+  return util.arraify(ctx.currentData);
 };
 
 engine.TotalInvocation = function (ctx) {
@@ -1186,7 +1202,6 @@ engine.evalTable = {
     "in": "inOp"
   }),
   NullLiteral: engine.NullLiteral,
-  EntireExpression: engine.InvocationTerm,
   InvocationTerm: engine.InvocationTerm,
   LiteralTerm: engine.LiteralTerm,
   MemberInvocation: engine.MemberInvocation,
@@ -1269,25 +1284,19 @@ function applyParsedPath(resource, parsedPath, context, model) {
   return rtn;
 }
 /**
- *  Evaluates the "path" FHIRPath expression on the given resource or part of the resource,
- *  using data from "context" for variables mentioned in the "path" expression.
- * @param {(object|object[])} fhirData -  FHIR resource, part of a resource (in this case
- *  path.base should be provided), bundle as js object or array of resources.
- *  This object/array will be modified by this function to add type information.
- * @param {string|object} path - string with fhirpath expression, sample 'Patient.name.given',
- *  or object, if fhirData represents the part of the FHIR resource:
- * @param {string} path.base - base path in resource from which fhirData was extracted
- * @param {string} path.expression - fhirpath expression relative to path.base
+ *  Evaluates the "path" FHIRPath expression on the given resource, using data
+ *  from "context" for variables mentioned in the "path" expression.
+ * @param {(object|object[])} resource -  FHIR resource, bundle as js object or array of resources
+ *  This resource will be modified by this function to add type information.
+ * @param {string} path - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
  * @param {object} model - The "model" data object specific to a domain, e.g. R4.
  *  For example, you could pass in the result of require("fhirpath/fhir-context/r4");
  */
 
 
-var evaluate = function evaluate(fhirData, path, context, model) {
-  var pathIsObject = _typeof(path) === 'object';
-  var resource = pathIsObject ? makeResNode(fhirData, path.base) : fhirData;
-  var node = parser.parse(pathIsObject ? path.expression : path);
+var evaluate = function evaluate(resource, path, context, model) {
+  var node = parser.parse(path);
   return applyParsedPath(resource, node, context, model);
 };
 /**
@@ -1360,7 +1369,7 @@ var parse = function parse(path) {
   lexer.addErrorListener(listener);
   parser.removeErrorListeners();
   parser.addErrorListener(listener);
-  var tree = parser.entireExpression();
+  var tree = parser.expression();
 
   function PathListener() {
     Listener.call(this); // inherit default listener
@@ -14608,7 +14617,7 @@ var antlr4 = __webpack_require__(4);
 var FHIRPathListener = __webpack_require__(51).FHIRPathListener;
 
 var grammarFileName = "FHIRPath.g4";
-var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x03A\x9C\x04\x02\t\x02\x04\x03\t\x03\x04\x04\t", "\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t\x07\x04", "\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04\f\t\f\x04", "\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x03", "\x02\x03\x02\x03\x02\x03\x03\x03\x03\x03\x03\x03", "\x03\x05\x03(\n\x03\x03\x03\x03\x03\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03P", "\n\x03\f\x03\x0E\x03S\x0B\x03\x03\x04\x03\x04\x03", "\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04\\", "\n\x04\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05", "\x03\x05\x03\x05\x03\x05\x05\x05f\n\x05\x03\x06", "\x03\x06\x03\x06\x05\x06k\n\x06\x03\x07\x03\x07", "\x03\x07\x03\x07\x03\x07\x05\x07r\n\x07\x03\b\x03", "\b\x03\b\x05\bw\n\b\x03\b\x03\b\x03\t\x03\t\x03\t\x07", "\t~\n\t\f\t\x0E\t\x81\x0B\t\x03\n\x03\n\x05\n\x85\n\n", "\x03\x0B\x03\x0B\x03\x0B\x05\x0B\x8A\n\x0B\x03", "\f\x03\f\x03\r\x03\r\x03\x0E\x03\x0E\x03\x0F\x03", "\x0F\x03\x0F\x07\x0F\x95\n\x0F\f\x0F\x0E\x0F\x98", "\x0B\x0F\x03\x10\x03\x10\x03\x10\x02\x03\x04\x11", "\x02\x04\x06\b\n\f\x0E\x10\x12\x14\x16\x18\x1A\x1C", "\x1E\x02\x0E\x03\x02\x06\x07\x03\x02\b\x0B\x04", "\x02\x06\x07\f\f\x03\x02\x0E\x11\x03\x02\x14\x17", "\x03\x02\x18\x19\x03\x02\x1B\x1C\x03\x02\x12\x13", "\x03\x02\"#\x03\x02)0\x03\x0218\x05\x02\x12\x13", "\x18\x19;<\x02\xAD\x02 \x03\x02\x02\x02\x04'\x03", "\x02\x02\x02\x06[\x03\x02\x02\x02\be\x03\x02\x02", "\x02\ng\x03\x02\x02\x02\fq\x03\x02\x02\x02\x0Es", "\x03\x02\x02\x02\x10z\x03\x02\x02\x02\x12\x82", "\x03\x02\x02\x02\x14\x89\x03\x02\x02\x02\x16\x8B", "\x03\x02\x02\x02\x18\x8D\x03\x02\x02\x02\x1A\x8F", "\x03\x02\x02\x02\x1C\x91\x03\x02\x02\x02\x1E\x99", "\x03\x02\x02\x02 !\x05\x04\x03\x02!\"\x07\x02\x02", "\x03\"\x03\x03\x02\x02\x02#$\b\x03\x01\x02$(\x05", "\x06\x04\x02%&\t\x02\x02\x02&(\x05\x04\x03\r'#\x03", "\x02\x02\x02'%\x03\x02\x02\x02(Q\x03\x02\x02\x02", ")*\f\f\x02\x02*+\t\x03\x02\x02+P\x05\x04\x03\r,-\f\x0B", "\x02\x02-.\t\x04\x02\x02.P\x05\x04\x03\f/0\f\n\x02", "\x0201\x07\r\x02\x021P\x05\x04\x03\x0B23\f\t\x02\x02", "34\t\x05\x02\x024P\x05\x04\x03\n56\f\x07\x02\x026", "7\t\x06\x02\x027P\x05\x04\x03\b89\f\x06\x02\x029:", "\t\x07\x02\x02:P\x05\x04\x03\x07;<\f\x05\x02\x02", "<=\x07\x1A\x02\x02=P\x05\x04\x03\x06>?\f\x04\x02", "\x02?@\t\b\x02\x02@P\x05\x04\x03\x05AB\f\x03\x02\x02", "BC\x07\x1D\x02\x02CP\x05\x04\x03\x04DE\f\x0F\x02", "\x02EF\x07\x03\x02\x02FP\x05\f\x07\x02GH\f\x0E\x02", "\x02HI\x07\x04\x02\x02IJ\x05\x04\x03\x02JK\x07\x05", "\x02\x02KP\x03\x02\x02\x02LM\f\b\x02\x02MN\t\t\x02", "\x02NP\x05\x1A\x0E\x02O)\x03\x02\x02\x02O,\x03\x02", "\x02\x02O/\x03\x02\x02\x02O2\x03\x02\x02\x02O5\x03", "\x02\x02\x02O8\x03\x02\x02\x02O;\x03\x02\x02\x02", "O>\x03\x02\x02\x02OA\x03\x02\x02\x02OD\x03\x02\x02", "\x02OG\x03\x02\x02\x02OL\x03\x02\x02\x02PS\x03\x02", "\x02\x02QO\x03\x02\x02\x02QR\x03\x02\x02\x02R\x05", "\x03\x02\x02\x02SQ\x03\x02\x02\x02T\\\x05\f\x07", "\x02U\\\x05\b\x05\x02V\\\x05\n\x06\x02WX\x07\x1E\x02", "\x02XY\x05\x04\x03\x02YZ\x07\x1F\x02\x02Z\\\x03", "\x02\x02\x02[T\x03\x02\x02\x02[U\x03\x02\x02\x02", "[V\x03\x02\x02\x02[W\x03\x02\x02\x02\\\x07\x03\x02", "\x02\x02]^\x07 \x02\x02^f\x07!\x02\x02_f\t\n\x02\x02", "`f\x07=\x02\x02af\x07>\x02\x02bf\x079\x02\x02cf\x07", ":\x02\x02df\x05\x12\n\x02e]\x03\x02\x02\x02e_\x03", "\x02\x02\x02e`\x03\x02\x02\x02ea\x03\x02\x02\x02", "eb\x03\x02\x02\x02ec\x03\x02\x02\x02ed\x03\x02\x02", "\x02f\t\x03\x02\x02\x02gj\x07$\x02\x02hk\x05\x1E", "\x10\x02ik\x07=\x02\x02jh\x03\x02\x02\x02ji\x03", "\x02\x02\x02k\x0B\x03\x02\x02\x02lr\x05\x1E\x10", "\x02mr\x05\x0E\b\x02nr\x07%\x02\x02or\x07&\x02\x02", "pr\x07'\x02\x02ql\x03\x02\x02\x02qm\x03\x02\x02", "\x02qn\x03\x02\x02\x02qo\x03\x02\x02\x02qp\x03\x02", "\x02\x02r\r\x03\x02\x02\x02st\x05\x1E\x10\x02tv", "\x07\x1E\x02\x02uw\x05\x10\t\x02vu\x03\x02\x02\x02", "vw\x03\x02\x02\x02wx\x03\x02\x02\x02xy\x07\x1F\x02", "\x02y\x0F\x03\x02\x02\x02z\x7F\x05\x04\x03\x02", "{|\x07(\x02\x02|~\x05\x04\x03\x02}{\x03\x02\x02", "\x02~\x81\x03\x02\x02\x02\x7F}\x03\x02\x02\x02", "\x7F\x80\x03\x02\x02\x02\x80\x11\x03\x02\x02\x02", "\x81\x7F\x03\x02\x02\x02\x82\x84\x07>\x02\x02", "\x83\x85\x05\x14\x0B\x02\x84\x83\x03\x02\x02\x02", "\x84\x85\x03\x02\x02\x02\x85\x13\x03\x02\x02\x02", "\x86\x8A\x05\x16\f\x02\x87\x8A\x05\x18\r\x02\x88", "\x8A\x07=\x02\x02\x89\x86\x03\x02\x02\x02\x89", "\x87\x03\x02\x02\x02\x89\x88\x03\x02\x02\x02\x8A", "\x15\x03\x02\x02\x02\x8B\x8C\t\x0B\x02\x02\x8C", "\x17\x03\x02\x02\x02\x8D\x8E\t\f\x02\x02\x8E\x19", "\x03\x02\x02\x02\x8F\x90\x05\x1C\x0F\x02\x90\x1B", "\x03\x02\x02\x02\x91\x96\x05\x1E\x10\x02\x92\x93", "\x07\x03\x02\x02\x93\x95\x05\x1E\x10\x02\x94\x92", "\x03\x02\x02\x02\x95\x98\x03\x02\x02\x02\x96\x94", "\x03\x02\x02\x02\x96\x97\x03\x02\x02\x02\x97\x1D", "\x03\x02\x02\x02\x98\x96\x03\x02\x02\x02\x99\x9A", "\t\r\x02\x02\x9A\x1F\x03\x02\x02\x02\x0E'OQ[ejqv", "\x7F\x84\x89\x96"].join("");
+var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x03A\x97\x04\x02\t\x02\x04\x03\t\x03\x04\x04\t", "\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t\x07\x04", "\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04\f\t\f\x04", "\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x03\x02\x03\x02", "\x03\x02\x03\x02\x05\x02#\n\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x07\x02K\n\x02\f\x02\x0E\x02N\x0B\x02\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05", "\x03W\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03", "\x04\x03\x04\x03\x04\x03\x04\x05\x04a\n\x04\x03", "\x05\x03\x05\x03\x05\x05\x05f\n\x05\x03\x06\x03", "\x06\x03\x06\x03\x06\x03\x06\x05\x06m\n\x06\x03", "\x07\x03\x07\x03\x07\x05\x07r\n\x07\x03\x07\x03", "\x07\x03\b\x03\b\x03\b\x07\by\n\b\f\b\x0E\b|\x0B\b\x03", "\t\x03\t\x05\t\x80\n\t\x03\n\x03\n\x03\n\x05\n\x85\n", "\n\x03\x0B\x03\x0B\x03\f\x03\f\x03\r\x03\r\x03\x0E", "\x03\x0E\x03\x0E\x07\x0E\x90\n\x0E\f\x0E\x0E\x0E", "\x93\x0B\x0E\x03\x0F\x03\x0F\x03\x0F\x02\x03\x02", "\x10\x02\x04\x06\b\n\f\x0E\x10\x12\x14\x16\x18\x1A", "\x1C\x02\x0E\x03\x02\x06\x07\x03\x02\b\x0B\x04", "\x02\x06\x07\f\f\x03\x02\x0E\x11\x03\x02\x14\x17", "\x03\x02\x18\x19\x03\x02\x1B\x1C\x03\x02\x12\x13", "\x03\x02\"#\x03\x02)0\x03\x0218\x05\x02\x12\x13", "\x18\x19;<\x02\xA9\x02\"\x03\x02\x02\x02\x04V\x03", "\x02\x02\x02\x06`\x03\x02\x02\x02\bb\x03\x02\x02", "\x02\nl\x03\x02\x02\x02\fn\x03\x02\x02\x02\x0Eu", "\x03\x02\x02\x02\x10}\x03\x02\x02\x02\x12\x84", "\x03\x02\x02\x02\x14\x86\x03\x02\x02\x02\x16\x88", "\x03\x02\x02\x02\x18\x8A\x03\x02\x02\x02\x1A\x8C", "\x03\x02\x02\x02\x1C\x94\x03\x02\x02\x02\x1E\x1F", "\b\x02\x01\x02\x1F#\x05\x04\x03\x02 !\t\x02\x02", "\x02!#\x05\x02\x02\r\"\x1E\x03\x02\x02\x02\" \x03", "\x02\x02\x02#L\x03\x02\x02\x02$%\f\f\x02\x02%&\t\x03", "\x02\x02&K\x05\x02\x02\r'(\f\x0B\x02\x02()\t\x04", "\x02\x02)K\x05\x02\x02\f*+\f\n\x02\x02+,\x07\r\x02", "\x02,K\x05\x02\x02\x0B-.\f\t\x02\x02./\t\x05\x02\x02", "/K\x05\x02\x02\n01\f\x07\x02\x0212\t\x06\x02\x022", "K\x05\x02\x02\b34\f\x06\x02\x0245\t\x07\x02\x025K", "\x05\x02\x02\x0767\f\x05\x02\x0278\x07\x1A\x02\x02", "8K\x05\x02\x02\x069:\f\x04\x02\x02:;\t\b\x02\x02;", "K\x05\x02\x02\x05<=\f\x03\x02\x02=>\x07\x1D\x02", "\x02>K\x05\x02\x02\x04?@\f\x0F\x02\x02@A\x07\x03", "\x02\x02AK\x05\n\x06\x02BC\f\x0E\x02\x02CD\x07\x04", "\x02\x02DE\x05\x02\x02\x02EF\x07\x05\x02\x02FK\x03", "\x02\x02\x02GH\f\b\x02\x02HI\t\t\x02\x02IK\x05\x18", "\r\x02J$\x03\x02\x02\x02J'\x03\x02\x02\x02J*\x03", "\x02\x02\x02J-\x03\x02\x02\x02J0\x03\x02\x02\x02", "J3\x03\x02\x02\x02J6\x03\x02\x02\x02J9\x03\x02\x02", "\x02J<\x03\x02\x02\x02J?\x03\x02\x02\x02JB\x03\x02", "\x02\x02JG\x03\x02\x02\x02KN\x03\x02\x02\x02LJ\x03", "\x02\x02\x02LM\x03\x02\x02\x02M\x03\x03\x02\x02", "\x02NL\x03\x02\x02\x02OW\x05\n\x06\x02PW\x05\x06", "\x04\x02QW\x05\b\x05\x02RS\x07\x1E\x02\x02ST\x05", "\x02\x02\x02TU\x07\x1F\x02\x02UW\x03\x02\x02\x02", "VO\x03\x02\x02\x02VP\x03\x02\x02\x02VQ\x03\x02\x02", "\x02VR\x03\x02\x02\x02W\x05\x03\x02\x02\x02XY\x07", " \x02\x02Ya\x07!\x02\x02Za\t\n\x02\x02[a\x07=\x02", "\x02\\a\x07>\x02\x02]a\x079\x02\x02^a\x07:\x02\x02", "_a\x05\x10\t\x02`X\x03\x02\x02\x02`Z\x03\x02\x02", "\x02`[\x03\x02\x02\x02`\\\x03\x02\x02\x02`]\x03", "\x02\x02\x02`^\x03\x02\x02\x02`_\x03\x02\x02\x02", "a\x07\x03\x02\x02\x02be\x07$\x02\x02cf\x05\x1C\x0F", "\x02df\x07=\x02\x02ec\x03\x02\x02\x02ed\x03\x02", "\x02\x02f\t\x03\x02\x02\x02gm\x05\x1C\x0F\x02hm", "\x05\f\x07\x02im\x07%\x02\x02jm\x07&\x02\x02km\x07", "'\x02\x02lg\x03\x02\x02\x02lh\x03\x02\x02\x02l", "i\x03\x02\x02\x02lj\x03\x02\x02\x02lk\x03\x02\x02", "\x02m\x0B\x03\x02\x02\x02no\x05\x1C\x0F\x02oq\x07", "\x1E\x02\x02pr\x05\x0E\b\x02qp\x03\x02\x02\x02q", "r\x03\x02\x02\x02rs\x03\x02\x02\x02st\x07\x1F\x02", "\x02t\r\x03\x02\x02\x02uz\x05\x02\x02\x02vw\x07", "(\x02\x02wy\x05\x02\x02\x02xv\x03\x02\x02\x02y|", "\x03\x02\x02\x02zx\x03\x02\x02\x02z{\x03\x02\x02", "\x02{\x0F\x03\x02\x02\x02|z\x03\x02\x02\x02}\x7F", "\x07>\x02\x02~\x80\x05\x12\n\x02\x7F~\x03\x02\x02", "\x02\x7F\x80\x03\x02\x02\x02\x80\x11\x03\x02\x02", "\x02\x81\x85\x05\x14\x0B\x02\x82\x85\x05\x16\f", "\x02\x83\x85\x07=\x02\x02\x84\x81\x03\x02\x02", "\x02\x84\x82\x03\x02\x02\x02\x84\x83\x03\x02\x02", "\x02\x85\x13\x03\x02\x02\x02\x86\x87\t\x0B\x02", "\x02\x87\x15\x03\x02\x02\x02\x88\x89\t\f\x02\x02", "\x89\x17\x03\x02\x02\x02\x8A\x8B\x05\x1A\x0E\x02", "\x8B\x19\x03\x02\x02\x02\x8C\x91\x05\x1C\x0F\x02", "\x8D\x8E\x07\x03\x02\x02\x8E\x90\x05\x1C\x0F\x02", "\x8F\x8D\x03\x02\x02\x02\x90\x93\x03\x02\x02\x02", "\x91\x8F\x03\x02\x02\x02\x91\x92\x03\x02\x02\x02", "\x92\x1B\x03\x02\x02\x02\x93\x91\x03\x02\x02\x02", "\x94\x95\t\r\x02\x02\x95\x1D\x03\x02\x02\x02\x0E", "\"JLV`elqz\x7F\x84\x91"].join("");
 var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
 var decisionsToDFA = atn.decisionToState.map(function (ds, index) {
   return new antlr4.dfa.DFA(ds, index);
@@ -14616,7 +14625,7 @@ var decisionsToDFA = atn.decisionToState.map(function (ds, index) {
 var sharedContextCache = new antlr4.PredictionContextCache();
 var literalNames = [null, "'.'", "'['", "']'", "'+'", "'-'", "'*'", "'/'", "'div'", "'mod'", "'&'", "'|'", "'<='", "'<'", "'>'", "'>='", "'is'", "'as'", "'='", "'~'", "'!='", "'!~'", "'in'", "'contains'", "'and'", "'or'", "'xor'", "'implies'", "'('", "')'", "'{'", "'}'", "'true'", "'false'", "'%'", "'$this'", "'$index'", "'$total'", "','", "'year'", "'month'", "'week'", "'day'", "'hour'", "'minute'", "'second'", "'millisecond'", "'years'", "'months'", "'weeks'", "'days'", "'hours'", "'minutes'", "'seconds'", "'milliseconds'"];
 var symbolicNames = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "DATETIME", "TIME", "IDENTIFIER", "DELIMITEDIDENTIFIER", "STRING", "NUMBER", "WS", "COMMENT", "LINE_COMMENT"];
-var ruleNames = ["entireExpression", "expression", "term", "literal", "externalConstant", "invocation", "functn", "paramList", "quantity", "unit", "dateTimePrecision", "pluralDateTimePrecision", "typeSpecifier", "qualifiedIdentifier", "identifier"];
+var ruleNames = ["expression", "term", "literal", "externalConstant", "invocation", "functn", "paramList", "quantity", "unit", "dateTimePrecision", "pluralDateTimePrecision", "typeSpecifier", "qualifiedIdentifier", "identifier"];
 
 function FHIRPathParser(input) {
   antlr4.Parser.call(this, input);
@@ -14698,88 +14707,20 @@ FHIRPathParser.NUMBER = 60;
 FHIRPathParser.WS = 61;
 FHIRPathParser.COMMENT = 62;
 FHIRPathParser.LINE_COMMENT = 63;
-FHIRPathParser.RULE_entireExpression = 0;
-FHIRPathParser.RULE_expression = 1;
-FHIRPathParser.RULE_term = 2;
-FHIRPathParser.RULE_literal = 3;
-FHIRPathParser.RULE_externalConstant = 4;
-FHIRPathParser.RULE_invocation = 5;
-FHIRPathParser.RULE_functn = 6;
-FHIRPathParser.RULE_paramList = 7;
-FHIRPathParser.RULE_quantity = 8;
-FHIRPathParser.RULE_unit = 9;
-FHIRPathParser.RULE_dateTimePrecision = 10;
-FHIRPathParser.RULE_pluralDateTimePrecision = 11;
-FHIRPathParser.RULE_typeSpecifier = 12;
-FHIRPathParser.RULE_qualifiedIdentifier = 13;
-FHIRPathParser.RULE_identifier = 14;
-
-function EntireExpressionContext(parser, parent, invokingState) {
-  if (parent === undefined) {
-    parent = null;
-  }
-
-  if (invokingState === undefined || invokingState === null) {
-    invokingState = -1;
-  }
-
-  antlr4.ParserRuleContext.call(this, parent, invokingState);
-  this.parser = parser;
-  this.ruleIndex = FHIRPathParser.RULE_entireExpression;
-  return this;
-}
-
-EntireExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
-EntireExpressionContext.prototype.constructor = EntireExpressionContext;
-
-EntireExpressionContext.prototype.expression = function () {
-  return this.getTypedRuleContext(ExpressionContext, 0);
-};
-
-EntireExpressionContext.prototype.EOF = function () {
-  return this.getToken(FHIRPathParser.EOF, 0);
-};
-
-EntireExpressionContext.prototype.enterRule = function (listener) {
-  if (listener instanceof FHIRPathListener) {
-    listener.enterEntireExpression(this);
-  }
-};
-
-EntireExpressionContext.prototype.exitRule = function (listener) {
-  if (listener instanceof FHIRPathListener) {
-    listener.exitEntireExpression(this);
-  }
-};
-
-FHIRPathParser.EntireExpressionContext = EntireExpressionContext;
-
-FHIRPathParser.prototype.entireExpression = function () {
-  var localctx = new EntireExpressionContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 0, FHIRPathParser.RULE_entireExpression);
-
-  try {
-    this.enterOuterAlt(localctx, 1);
-    this.state = 30;
-    this.expression(0);
-    this.state = 31;
-    this.match(FHIRPathParser.EOF);
-  } catch (re) {
-    if (re instanceof antlr4.error.RecognitionException) {
-      localctx.exception = re;
-
-      this._errHandler.reportError(this, re);
-
-      this._errHandler.recover(this, re);
-    } else {
-      throw re;
-    }
-  } finally {
-    this.exitRule();
-  }
-
-  return localctx;
-};
+FHIRPathParser.RULE_expression = 0;
+FHIRPathParser.RULE_term = 1;
+FHIRPathParser.RULE_literal = 2;
+FHIRPathParser.RULE_externalConstant = 3;
+FHIRPathParser.RULE_invocation = 4;
+FHIRPathParser.RULE_functn = 5;
+FHIRPathParser.RULE_paramList = 6;
+FHIRPathParser.RULE_quantity = 7;
+FHIRPathParser.RULE_unit = 8;
+FHIRPathParser.RULE_dateTimePrecision = 9;
+FHIRPathParser.RULE_pluralDateTimePrecision = 10;
+FHIRPathParser.RULE_typeSpecifier = 11;
+FHIRPathParser.RULE_qualifiedIdentifier = 12;
+FHIRPathParser.RULE_identifier = 13;
 
 function ExpressionContext(parser, parent, invokingState) {
   if (parent === undefined) {
@@ -15264,13 +15205,13 @@ FHIRPathParser.prototype.expression = function (_p) {
   var _parentState = this.state;
   var localctx = new ExpressionContext(this, this._ctx, _parentState);
   var _prevctx = localctx;
-  var _startState = 2;
-  this.enterRecursionRule(localctx, 2, FHIRPathParser.RULE_expression, _p);
+  var _startState = 0;
+  this.enterRecursionRule(localctx, 0, FHIRPathParser.RULE_expression, _p);
   var _la = 0; // Token type
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 37;
+    this.state = 32;
 
     this._errHandler.sync(this);
 
@@ -15296,7 +15237,7 @@ FHIRPathParser.prototype.expression = function (_p) {
         localctx = new TermExpressionContext(this, localctx);
         this._ctx = localctx;
         _prevctx = localctx;
-        this.state = 34;
+        this.state = 29;
         this.term();
         break;
 
@@ -15305,7 +15246,7 @@ FHIRPathParser.prototype.expression = function (_p) {
         localctx = new PolarityExpressionContext(this, localctx);
         this._ctx = localctx;
         _prevctx = localctx;
-        this.state = 35;
+        this.state = 30;
         _la = this._input.LA(1);
 
         if (!(_la === FHIRPathParser.T__3 || _la === FHIRPathParser.T__4)) {
@@ -15316,7 +15257,7 @@ FHIRPathParser.prototype.expression = function (_p) {
           this.consume();
         }
 
-        this.state = 36;
+        this.state = 31;
         this.expression(11);
         break;
 
@@ -15325,7 +15266,7 @@ FHIRPathParser.prototype.expression = function (_p) {
     }
 
     this._ctx.stop = this._input.LT(-1);
-    this.state = 79;
+    this.state = 74;
 
     this._errHandler.sync(this);
 
@@ -15338,7 +15279,7 @@ FHIRPathParser.prototype.expression = function (_p) {
         }
 
         _prevctx = localctx;
-        this.state = 77;
+        this.state = 72;
 
         this._errHandler.sync(this);
 
@@ -15348,13 +15289,13 @@ FHIRPathParser.prototype.expression = function (_p) {
           case 1:
             localctx = new MultiplicativeExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 39;
+            this.state = 34;
 
             if (!this.precpred(this._ctx, 10)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 10)");
             }
 
-            this.state = 40;
+            this.state = 35;
             _la = this._input.LA(1);
 
             if (!((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__5 | 1 << FHIRPathParser.T__6 | 1 << FHIRPathParser.T__7 | 1 << FHIRPathParser.T__8)) !== 0)) {
@@ -15365,20 +15306,20 @@ FHIRPathParser.prototype.expression = function (_p) {
               this.consume();
             }
 
-            this.state = 41;
+            this.state = 36;
             this.expression(11);
             break;
 
           case 2:
             localctx = new AdditiveExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 42;
+            this.state = 37;
 
             if (!this.precpred(this._ctx, 9)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 9)");
             }
 
-            this.state = 43;
+            this.state = 38;
             _la = this._input.LA(1);
 
             if (!((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__3 | 1 << FHIRPathParser.T__4 | 1 << FHIRPathParser.T__9)) !== 0)) {
@@ -15389,35 +15330,35 @@ FHIRPathParser.prototype.expression = function (_p) {
               this.consume();
             }
 
-            this.state = 44;
+            this.state = 39;
             this.expression(10);
             break;
 
           case 3:
             localctx = new UnionExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 45;
+            this.state = 40;
 
             if (!this.precpred(this._ctx, 8)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 8)");
             }
 
-            this.state = 46;
+            this.state = 41;
             this.match(FHIRPathParser.T__10);
-            this.state = 47;
+            this.state = 42;
             this.expression(9);
             break;
 
           case 4:
             localctx = new InequalityExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 48;
+            this.state = 43;
 
             if (!this.precpred(this._ctx, 7)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 7)");
             }
 
-            this.state = 49;
+            this.state = 44;
             _la = this._input.LA(1);
 
             if (!((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__11 | 1 << FHIRPathParser.T__12 | 1 << FHIRPathParser.T__13 | 1 << FHIRPathParser.T__14)) !== 0)) {
@@ -15428,20 +15369,20 @@ FHIRPathParser.prototype.expression = function (_p) {
               this.consume();
             }
 
-            this.state = 50;
+            this.state = 45;
             this.expression(8);
             break;
 
           case 5:
             localctx = new EqualityExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 51;
+            this.state = 46;
 
             if (!this.precpred(this._ctx, 5)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 5)");
             }
 
-            this.state = 52;
+            this.state = 47;
             _la = this._input.LA(1);
 
             if (!((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__17 | 1 << FHIRPathParser.T__18 | 1 << FHIRPathParser.T__19 | 1 << FHIRPathParser.T__20)) !== 0)) {
@@ -15452,20 +15393,20 @@ FHIRPathParser.prototype.expression = function (_p) {
               this.consume();
             }
 
-            this.state = 53;
+            this.state = 48;
             this.expression(6);
             break;
 
           case 6:
             localctx = new MembershipExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 54;
+            this.state = 49;
 
             if (!this.precpred(this._ctx, 4)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 4)");
             }
 
-            this.state = 55;
+            this.state = 50;
             _la = this._input.LA(1);
 
             if (!(_la === FHIRPathParser.T__21 || _la === FHIRPathParser.T__22)) {
@@ -15476,35 +15417,35 @@ FHIRPathParser.prototype.expression = function (_p) {
               this.consume();
             }
 
-            this.state = 56;
+            this.state = 51;
             this.expression(5);
             break;
 
           case 7:
             localctx = new AndExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 57;
+            this.state = 52;
 
             if (!this.precpred(this._ctx, 3)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
             }
 
-            this.state = 58;
+            this.state = 53;
             this.match(FHIRPathParser.T__23);
-            this.state = 59;
+            this.state = 54;
             this.expression(4);
             break;
 
           case 8:
             localctx = new OrExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 60;
+            this.state = 55;
 
             if (!this.precpred(this._ctx, 2)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 2)");
             }
 
-            this.state = 61;
+            this.state = 56;
             _la = this._input.LA(1);
 
             if (!(_la === FHIRPathParser.T__24 || _la === FHIRPathParser.T__25)) {
@@ -15515,67 +15456,67 @@ FHIRPathParser.prototype.expression = function (_p) {
               this.consume();
             }
 
-            this.state = 62;
+            this.state = 57;
             this.expression(3);
             break;
 
           case 9:
             localctx = new ImpliesExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 63;
+            this.state = 58;
 
             if (!this.precpred(this._ctx, 1)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
             }
 
-            this.state = 64;
+            this.state = 59;
             this.match(FHIRPathParser.T__26);
-            this.state = 65;
+            this.state = 60;
             this.expression(2);
             break;
 
           case 10:
             localctx = new InvocationExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 66;
+            this.state = 61;
 
             if (!this.precpred(this._ctx, 13)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 13)");
             }
 
-            this.state = 67;
+            this.state = 62;
             this.match(FHIRPathParser.T__0);
-            this.state = 68;
+            this.state = 63;
             this.invocation();
             break;
 
           case 11:
             localctx = new IndexerExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 69;
+            this.state = 64;
 
             if (!this.precpred(this._ctx, 12)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 12)");
             }
 
-            this.state = 70;
+            this.state = 65;
             this.match(FHIRPathParser.T__1);
-            this.state = 71;
+            this.state = 66;
             this.expression(0);
-            this.state = 72;
+            this.state = 67;
             this.match(FHIRPathParser.T__2);
             break;
 
           case 12:
             localctx = new TypeExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
             this.pushNewRecursionContext(localctx, _startState, FHIRPathParser.RULE_expression);
-            this.state = 74;
+            this.state = 69;
 
             if (!this.precpred(this._ctx, 6)) {
               throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 6)");
             }
 
-            this.state = 75;
+            this.state = 70;
             _la = this._input.LA(1);
 
             if (!(_la === FHIRPathParser.T__15 || _la === FHIRPathParser.T__16)) {
@@ -15586,13 +15527,13 @@ FHIRPathParser.prototype.expression = function (_p) {
               this.consume();
             }
 
-            this.state = 76;
+            this.state = 71;
             this.typeSpecifier();
             break;
         }
       }
 
-      this.state = 81;
+      this.state = 76;
 
       this._errHandler.sync(this);
 
@@ -15745,10 +15686,10 @@ FHIRPathParser.TermContext = TermContext;
 
 FHIRPathParser.prototype.term = function () {
   var localctx = new TermContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 4, FHIRPathParser.RULE_term);
+  this.enterRule(localctx, 2, FHIRPathParser.RULE_term);
 
   try {
-    this.state = 89;
+    this.state = 84;
 
     this._errHandler.sync(this);
 
@@ -15764,7 +15705,7 @@ FHIRPathParser.prototype.term = function () {
       case FHIRPathParser.DELIMITEDIDENTIFIER:
         localctx = new InvocationTermContext(this, localctx);
         this.enterOuterAlt(localctx, 1);
-        this.state = 82;
+        this.state = 77;
         this.invocation();
         break;
 
@@ -15777,25 +15718,25 @@ FHIRPathParser.prototype.term = function () {
       case FHIRPathParser.NUMBER:
         localctx = new LiteralTermContext(this, localctx);
         this.enterOuterAlt(localctx, 2);
-        this.state = 83;
+        this.state = 78;
         this.literal();
         break;
 
       case FHIRPathParser.T__33:
         localctx = new ExternalConstantTermContext(this, localctx);
         this.enterOuterAlt(localctx, 3);
-        this.state = 84;
+        this.state = 79;
         this.externalConstant();
         break;
 
       case FHIRPathParser.T__27:
         localctx = new ParenthesizedTermContext(this, localctx);
         this.enterOuterAlt(localctx, 4);
-        this.state = 85;
+        this.state = 80;
         this.match(FHIRPathParser.T__27);
-        this.state = 86;
+        this.state = 81;
         this.expression(0);
-        this.state = 87;
+        this.state = 82;
         this.match(FHIRPathParser.T__28);
         break;
 
@@ -16019,11 +15960,11 @@ FHIRPathParser.LiteralContext = LiteralContext;
 
 FHIRPathParser.prototype.literal = function () {
   var localctx = new LiteralContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 6, FHIRPathParser.RULE_literal);
+  this.enterRule(localctx, 4, FHIRPathParser.RULE_literal);
   var _la = 0; // Token type
 
   try {
-    this.state = 99;
+    this.state = 94;
 
     this._errHandler.sync(this);
 
@@ -16033,16 +15974,16 @@ FHIRPathParser.prototype.literal = function () {
       case 1:
         localctx = new NullLiteralContext(this, localctx);
         this.enterOuterAlt(localctx, 1);
-        this.state = 91;
+        this.state = 86;
         this.match(FHIRPathParser.T__29);
-        this.state = 92;
+        this.state = 87;
         this.match(FHIRPathParser.T__30);
         break;
 
       case 2:
         localctx = new BooleanLiteralContext(this, localctx);
         this.enterOuterAlt(localctx, 2);
-        this.state = 93;
+        this.state = 88;
         _la = this._input.LA(1);
 
         if (!(_la === FHIRPathParser.T__31 || _la === FHIRPathParser.T__32)) {
@@ -16058,35 +15999,35 @@ FHIRPathParser.prototype.literal = function () {
       case 3:
         localctx = new StringLiteralContext(this, localctx);
         this.enterOuterAlt(localctx, 3);
-        this.state = 94;
+        this.state = 89;
         this.match(FHIRPathParser.STRING);
         break;
 
       case 4:
         localctx = new NumberLiteralContext(this, localctx);
         this.enterOuterAlt(localctx, 4);
-        this.state = 95;
+        this.state = 90;
         this.match(FHIRPathParser.NUMBER);
         break;
 
       case 5:
         localctx = new DateTimeLiteralContext(this, localctx);
         this.enterOuterAlt(localctx, 5);
-        this.state = 96;
+        this.state = 91;
         this.match(FHIRPathParser.DATETIME);
         break;
 
       case 6:
         localctx = new TimeLiteralContext(this, localctx);
         this.enterOuterAlt(localctx, 6);
-        this.state = 97;
+        this.state = 92;
         this.match(FHIRPathParser.TIME);
         break;
 
       case 7:
         localctx = new QuantityLiteralContext(this, localctx);
         this.enterOuterAlt(localctx, 7);
-        this.state = 98;
+        this.state = 93;
         this.quantity();
         break;
     }
@@ -16149,13 +16090,13 @@ FHIRPathParser.ExternalConstantContext = ExternalConstantContext;
 
 FHIRPathParser.prototype.externalConstant = function () {
   var localctx = new ExternalConstantContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 8, FHIRPathParser.RULE_externalConstant);
+  this.enterRule(localctx, 6, FHIRPathParser.RULE_externalConstant);
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 101;
+    this.state = 96;
     this.match(FHIRPathParser.T__33);
-    this.state = 104;
+    this.state = 99;
 
     this._errHandler.sync(this);
 
@@ -16166,12 +16107,12 @@ FHIRPathParser.prototype.externalConstant = function () {
       case FHIRPathParser.T__22:
       case FHIRPathParser.IDENTIFIER:
       case FHIRPathParser.DELIMITEDIDENTIFIER:
-        this.state = 102;
+        this.state = 97;
         this.identifier();
         break;
 
       case FHIRPathParser.STRING:
-        this.state = 103;
+        this.state = 98;
         this.match(FHIRPathParser.STRING);
         break;
 
@@ -16339,10 +16280,10 @@ FHIRPathParser.InvocationContext = InvocationContext;
 
 FHIRPathParser.prototype.invocation = function () {
   var localctx = new InvocationContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 10, FHIRPathParser.RULE_invocation);
+  this.enterRule(localctx, 8, FHIRPathParser.RULE_invocation);
 
   try {
-    this.state = 111;
+    this.state = 106;
 
     this._errHandler.sync(this);
 
@@ -16352,35 +16293,35 @@ FHIRPathParser.prototype.invocation = function () {
       case 1:
         localctx = new MemberInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 1);
-        this.state = 106;
+        this.state = 101;
         this.identifier();
         break;
 
       case 2:
         localctx = new FunctionInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 2);
-        this.state = 107;
+        this.state = 102;
         this.functn();
         break;
 
       case 3:
         localctx = new ThisInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 3);
-        this.state = 108;
+        this.state = 103;
         this.match(FHIRPathParser.T__34);
         break;
 
       case 4:
         localctx = new IndexInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 4);
-        this.state = 109;
+        this.state = 104;
         this.match(FHIRPathParser.T__35);
         break;
 
       case 5:
         localctx = new TotalInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 5);
-        this.state = 110;
+        this.state = 105;
         this.match(FHIRPathParser.T__36);
         break;
     }
@@ -16443,27 +16384,27 @@ FHIRPathParser.FunctnContext = FunctnContext;
 
 FHIRPathParser.prototype.functn = function () {
   var localctx = new FunctnContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 12, FHIRPathParser.RULE_functn);
+  this.enterRule(localctx, 10, FHIRPathParser.RULE_functn);
   var _la = 0; // Token type
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 113;
+    this.state = 108;
     this.identifier();
-    this.state = 114;
+    this.state = 109;
     this.match(FHIRPathParser.T__27);
-    this.state = 116;
+    this.state = 111;
 
     this._errHandler.sync(this);
 
     _la = this._input.LA(1);
 
     if ((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__3 | 1 << FHIRPathParser.T__4 | 1 << FHIRPathParser.T__15 | 1 << FHIRPathParser.T__16 | 1 << FHIRPathParser.T__21 | 1 << FHIRPathParser.T__22 | 1 << FHIRPathParser.T__27 | 1 << FHIRPathParser.T__29)) !== 0 || (_la - 32 & ~0x1f) == 0 && (1 << _la - 32 & (1 << FHIRPathParser.T__31 - 32 | 1 << FHIRPathParser.T__32 - 32 | 1 << FHIRPathParser.T__33 - 32 | 1 << FHIRPathParser.T__34 - 32 | 1 << FHIRPathParser.T__35 - 32 | 1 << FHIRPathParser.T__36 - 32 | 1 << FHIRPathParser.DATETIME - 32 | 1 << FHIRPathParser.TIME - 32 | 1 << FHIRPathParser.IDENTIFIER - 32 | 1 << FHIRPathParser.DELIMITEDIDENTIFIER - 32 | 1 << FHIRPathParser.STRING - 32 | 1 << FHIRPathParser.NUMBER - 32)) !== 0) {
-      this.state = 115;
+      this.state = 110;
       this.paramList();
     }
 
-    this.state = 118;
+    this.state = 113;
     this.match(FHIRPathParser.T__28);
   } catch (re) {
     if (re instanceof antlr4.error.RecognitionException) {
@@ -16528,25 +16469,25 @@ FHIRPathParser.ParamListContext = ParamListContext;
 
 FHIRPathParser.prototype.paramList = function () {
   var localctx = new ParamListContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 14, FHIRPathParser.RULE_paramList);
+  this.enterRule(localctx, 12, FHIRPathParser.RULE_paramList);
   var _la = 0; // Token type
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 120;
+    this.state = 115;
     this.expression(0);
-    this.state = 125;
+    this.state = 120;
 
     this._errHandler.sync(this);
 
     _la = this._input.LA(1);
 
     while (_la === FHIRPathParser.T__37) {
-      this.state = 121;
+      this.state = 116;
       this.match(FHIRPathParser.T__37);
-      this.state = 122;
+      this.state = 117;
       this.expression(0);
-      this.state = 127;
+      this.state = 122;
 
       this._errHandler.sync(this);
 
@@ -16611,20 +16552,20 @@ FHIRPathParser.QuantityContext = QuantityContext;
 
 FHIRPathParser.prototype.quantity = function () {
   var localctx = new QuantityContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 16, FHIRPathParser.RULE_quantity);
+  this.enterRule(localctx, 14, FHIRPathParser.RULE_quantity);
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 128;
+    this.state = 123;
     this.match(FHIRPathParser.NUMBER);
-    this.state = 130;
+    this.state = 125;
 
     this._errHandler.sync(this);
 
     var la_ = this._interp.adaptivePredict(this._input, 9, this._ctx);
 
     if (la_ === 1) {
-      this.state = 129;
+      this.state = 124;
       this.unit();
     }
   } catch (re) {
@@ -16690,10 +16631,10 @@ FHIRPathParser.UnitContext = UnitContext;
 
 FHIRPathParser.prototype.unit = function () {
   var localctx = new UnitContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 18, FHIRPathParser.RULE_unit);
+  this.enterRule(localctx, 16, FHIRPathParser.RULE_unit);
 
   try {
-    this.state = 135;
+    this.state = 130;
 
     this._errHandler.sync(this);
 
@@ -16707,7 +16648,7 @@ FHIRPathParser.prototype.unit = function () {
       case FHIRPathParser.T__44:
       case FHIRPathParser.T__45:
         this.enterOuterAlt(localctx, 1);
-        this.state = 132;
+        this.state = 127;
         this.dateTimePrecision();
         break;
 
@@ -16720,13 +16661,13 @@ FHIRPathParser.prototype.unit = function () {
       case FHIRPathParser.T__52:
       case FHIRPathParser.T__53:
         this.enterOuterAlt(localctx, 2);
-        this.state = 133;
+        this.state = 128;
         this.pluralDateTimePrecision();
         break;
 
       case FHIRPathParser.STRING:
         this.enterOuterAlt(localctx, 3);
-        this.state = 134;
+        this.state = 129;
         this.match(FHIRPathParser.STRING);
         break;
 
@@ -16784,12 +16725,12 @@ FHIRPathParser.DateTimePrecisionContext = DateTimePrecisionContext;
 
 FHIRPathParser.prototype.dateTimePrecision = function () {
   var localctx = new DateTimePrecisionContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 20, FHIRPathParser.RULE_dateTimePrecision);
+  this.enterRule(localctx, 18, FHIRPathParser.RULE_dateTimePrecision);
   var _la = 0; // Token type
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 137;
+    this.state = 132;
     _la = this._input.LA(1);
 
     if (!((_la - 39 & ~0x1f) == 0 && (1 << _la - 39 & (1 << FHIRPathParser.T__38 - 39 | 1 << FHIRPathParser.T__39 - 39 | 1 << FHIRPathParser.T__40 - 39 | 1 << FHIRPathParser.T__41 - 39 | 1 << FHIRPathParser.T__42 - 39 | 1 << FHIRPathParser.T__43 - 39 | 1 << FHIRPathParser.T__44 - 39 | 1 << FHIRPathParser.T__45 - 39)) !== 0)) {
@@ -16850,12 +16791,12 @@ FHIRPathParser.PluralDateTimePrecisionContext = PluralDateTimePrecisionContext;
 
 FHIRPathParser.prototype.pluralDateTimePrecision = function () {
   var localctx = new PluralDateTimePrecisionContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 22, FHIRPathParser.RULE_pluralDateTimePrecision);
+  this.enterRule(localctx, 20, FHIRPathParser.RULE_pluralDateTimePrecision);
   var _la = 0; // Token type
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 139;
+    this.state = 134;
     _la = this._input.LA(1);
 
     if (!((_la - 47 & ~0x1f) == 0 && (1 << _la - 47 & (1 << FHIRPathParser.T__46 - 47 | 1 << FHIRPathParser.T__47 - 47 | 1 << FHIRPathParser.T__48 - 47 | 1 << FHIRPathParser.T__49 - 47 | 1 << FHIRPathParser.T__50 - 47 | 1 << FHIRPathParser.T__51 - 47 | 1 << FHIRPathParser.T__52 - 47 | 1 << FHIRPathParser.T__53 - 47)) !== 0)) {
@@ -16920,11 +16861,11 @@ FHIRPathParser.TypeSpecifierContext = TypeSpecifierContext;
 
 FHIRPathParser.prototype.typeSpecifier = function () {
   var localctx = new TypeSpecifierContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 24, FHIRPathParser.RULE_typeSpecifier);
+  this.enterRule(localctx, 22, FHIRPathParser.RULE_typeSpecifier);
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 141;
+    this.state = 136;
     this.qualifiedIdentifier();
   } catch (re) {
     if (re instanceof antlr4.error.RecognitionException) {
@@ -16989,13 +16930,13 @@ FHIRPathParser.QualifiedIdentifierContext = QualifiedIdentifierContext;
 
 FHIRPathParser.prototype.qualifiedIdentifier = function () {
   var localctx = new QualifiedIdentifierContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 26, FHIRPathParser.RULE_qualifiedIdentifier);
+  this.enterRule(localctx, 24, FHIRPathParser.RULE_qualifiedIdentifier);
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 143;
+    this.state = 138;
     this.identifier();
-    this.state = 148;
+    this.state = 143;
 
     this._errHandler.sync(this);
 
@@ -17003,13 +16944,13 @@ FHIRPathParser.prototype.qualifiedIdentifier = function () {
 
     while (_alt != 2 && _alt != antlr4.atn.ATN.INVALID_ALT_NUMBER) {
       if (_alt === 1) {
-        this.state = 144;
+        this.state = 139;
         this.match(FHIRPathParser.T__0);
-        this.state = 145;
+        this.state = 140;
         this.identifier();
       }
 
-      this.state = 150;
+      this.state = 145;
 
       this._errHandler.sync(this);
 
@@ -17074,12 +17015,12 @@ FHIRPathParser.IdentifierContext = IdentifierContext;
 
 FHIRPathParser.prototype.identifier = function () {
   var localctx = new IdentifierContext(this, this._ctx, this.state);
-  this.enterRule(localctx, 28, FHIRPathParser.RULE_identifier);
+  this.enterRule(localctx, 26, FHIRPathParser.RULE_identifier);
   var _la = 0; // Token type
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 151;
+    this.state = 146;
     _la = this._input.LA(1);
 
     if (!((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__15 | 1 << FHIRPathParser.T__16 | 1 << FHIRPathParser.T__21 | 1 << FHIRPathParser.T__22)) !== 0 || _la === FHIRPathParser.IDENTIFIER || _la === FHIRPathParser.DELIMITEDIDENTIFIER)) {
@@ -17108,7 +17049,7 @@ FHIRPathParser.prototype.identifier = function () {
 
 FHIRPathParser.prototype.sempred = function (localctx, ruleIndex, predIndex) {
   switch (ruleIndex) {
-    case 1:
+    case 0:
       return this.expression_sempred(localctx, predIndex);
 
     default:
@@ -17176,13 +17117,7 @@ function FHIRPathListener() {
 }
 
 FHIRPathListener.prototype = Object.create(antlr4.tree.ParseTreeListener.prototype);
-FHIRPathListener.prototype.constructor = FHIRPathListener; // Enter a parse tree produced by FHIRPathParser#entireExpression.
-
-FHIRPathListener.prototype.enterEntireExpression = function (ctx) {}; // Exit a parse tree produced by FHIRPathParser#entireExpression.
-
-
-FHIRPathListener.prototype.exitEntireExpression = function (ctx) {}; // Enter a parse tree produced by FHIRPathParser#indexerExpression.
-
+FHIRPathListener.prototype.constructor = FHIRPathListener; // Enter a parse tree produced by FHIRPathParser#indexerExpression.
 
 FHIRPathListener.prototype.enterIndexerExpression = function (ctx) {}; // Exit a parse tree produced by FHIRPathParser#indexerExpression.
 
@@ -17534,16 +17469,6 @@ util.arraify = function (x) {
 
 util.valData = function (val) {
   return val instanceof ResourceNode ? val.data : val;
-};
-/**
- * Prepares a string for insertion into a regular expression
- * @param {string} str
- * @return {string}
- */
-
-
-util.escapeStringForRegExp = function (str) {
-  return str.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&');
 };
 
 module.exports = util;
@@ -18105,11 +18030,9 @@ var FP_TimeBase = /*#__PURE__*/function (_FP_Type2) {
       return rtn;
     }
     /**
-     *  Returns a number less than 0, equal to 0 or greater than 0
-     *  if this (date) time is less than, equal to, or greater than otherTime.
-     *  Comparisons are made at the lesser of the two time precisions.
-     *  @param {FP_TimeBase} otherTime
-     *  @return {number}
+     *  Returns -1, 0, or 1 if this (date) time is less then, equal to, or greater
+     *  than otherTime.  Comparisons are made at the lesser of the two time
+     *  precisions.
      */
 
   }, {
@@ -18121,20 +18044,13 @@ var FP_TimeBase = /*#__PURE__*/function (_FP_Type2) {
 
       var thisTimeInt = thisPrecision <= otherPrecision ? this._getDateObj().getTime() : this._dateAtPrecision(otherPrecision).getTime();
       var otherTimeInt = otherPrecision <= thisPrecision ? otherTime._getDateObj().getTime() : otherTime._dateAtPrecision(thisPrecision).getTime();
-
-      if (thisPrecision !== otherPrecision && thisTimeInt === otherTimeInt) {
-        return null;
-      }
-
-      return thisTimeInt - otherTimeInt;
+      return thisTimeInt < otherTimeInt ? -1 : thisTimeInt === otherTimeInt ? 0 : 1;
     }
     /**
      *  Returns a number representing the precision of the time string given to
      *  the constructor.  (Higher means more precise).  The number is the number
      *  of components of the time string (ignoring the time zone) produced by
-     *  matching against the time regular expression, except that milliseconds
-     *  and seconds are counted together as a single of level of precision.
-     *  @return {number}
+     *  matching against the time regular expression.
      */
 
   }, {
@@ -18329,7 +18245,7 @@ var FP_DateTime = /*#__PURE__*/function (_FP_TimeBase) {
   }, {
     key: "_getMatchData",
     value: function _getMatchData() {
-      return _get(_getPrototypeOf(FP_DateTime.prototype), "_getMatchData", this).call(this, dateTimeRE, 5);
+      return _get(_getPrototypeOf(FP_DateTime.prototype), "_getMatchData", this).call(this, dateTimeRE, 6);
     }
     /**
      *  Returns an array of the pieces of the date time string passed into the
@@ -18398,20 +18314,20 @@ var FP_DateTime = /*#__PURE__*/function (_FP_TimeBase) {
       var hour = thisPrecision > 2 ? parseInt(timeParts[3]) : 0;
       var minutes = thisPrecision > 3 ? parseInt(timeParts[4].slice(1)) : 0;
       var seconds = thisPrecision > 4 ? parseInt(timeParts[5].slice(1)) : 0;
-      var ms = timeParts.length > 6 ? parseInt(timeParts[6].slice(1)) : 0;
+      var ms = thisPrecision > 5 ? parseInt(timeParts[6].slice(1)) : 0;
 
       var d = this._createDate(year, month, day, hour, minutes, seconds, ms, timezoneOffset);
 
-      if (precision < thisPrecision) {
+      if (precision < this._getPrecision()) {
         // Adjust the precision
         year = d.getFullYear();
         month = precision > 0 ? d.getMonth() : 0;
         day = precision > 1 ? d.getDate() : 1;
         hour = precision > 2 ? d.getHours() : 0;
-        minutes = precision > 3 ? d.getMinutes() : 0; // Here the precision will always be less than the maximum
-        // due to the condition in the if statement: "precision < thisPrecision"
-
-        d = new Date(year, month, day, hour, minutes);
+        minutes = precision > 3 ? d.getMinutes() : 0;
+        seconds = precision > 4 ? d.getSeconds() : 0;
+        ms = precision > 5 ? d.getMilliseconds() : 0;
+        d = new Date(year, month, day, hour, minutes, seconds, ms);
       }
 
       return d;
@@ -18509,7 +18425,7 @@ var FP_Time = /*#__PURE__*/function (_FP_TimeBase2) {
       var hour = parseInt(timeParts[0]);
       var minutes = thisPrecision > 0 ? parseInt(timeParts[1].slice(1)) : 0;
       var seconds = thisPrecision > 1 ? parseInt(timeParts[2].slice(1)) : 0;
-      var ms = timeParts.length > 3 ? parseInt(timeParts[3].slice(1)) : 0;
+      var ms = thisPrecision > 2 ? parseInt(timeParts[3].slice(1)) : 0;
 
       var d = this._createDate(year, month, day, hour, minutes, seconds, ms, timezoneOffset);
 
@@ -18521,13 +18437,13 @@ var FP_Time = /*#__PURE__*/function (_FP_TimeBase2) {
         d.setDate(day);
       }
 
-      if (precision < thisPrecision) {
+      if (precision < this._getPrecision()) {
         // Adjust the precision
         hour = d.getHours();
-        minutes = precision > 0 ? d.getMinutes() : 0; // Here the precision will always be less than the maximum
-        // due to the condition in the if statement: "precision < thisPrecision"
-
-        d = new Date(year, month, day, hour, minutes);
+        minutes = precision > 0 ? d.getMinutes() : 0;
+        seconds = precision > 1 ? d.getSeconds() : 0;
+        ms = precision > 2 ? d.getMilliseconds() : 0;
+        d = new Date(year, month, day, hour, minutes, seconds, ms);
       }
 
       return d;
@@ -18540,7 +18456,7 @@ var FP_Time = /*#__PURE__*/function (_FP_TimeBase2) {
   }, {
     key: "_getMatchData",
     value: function _getMatchData() {
-      return _get(_getPrototypeOf(FP_Time.prototype), "_getMatchData", this).call(this, timeRE, 2);
+      return _get(_getPrototypeOf(FP_Time.prototype), "_getMatchData", this).call(this, timeRE, 3);
     }
     /**
      *  Returns an array of the pieces of the time string passed into the
@@ -18700,18 +18616,17 @@ var ResourceNode = /*#__PURE__*/function () {
    * @param path the node's path in the resource (e.g. Patient.name).  If the
    *  data's type can be determined from data, that will take precedence over
    *  this parameter.
-   * @param _data additional data stored in a property named with "_" prepended,
-   *  see https://www.hl7.org/fhir/element.html#json for details.
    */
-  function ResourceNode(data, path, _data) {
+  function ResourceNode(data, path) {
     _classCallCheck(this, ResourceNode);
 
+    // console.log('>>>', path);
+    // console.log(JSON.stringify(data, null, 4));
     // If data is a resource (maybe a contained resource) reset the path
     // information to the resource type.
     if (data.resourceType) path = data.resourceType;
     this.path = path;
     this.data = getResourceNodeData(data, path);
-    this._data = _data || {};
   }
   /**
    * Returns resource node type info.
@@ -18772,8 +18687,8 @@ function getResourceNodeData(data, path) {
  */
 
 
-ResourceNode.makeResNode = function (data, path, _data) {
-  return data instanceof ResourceNode ? data : new ResourceNode(data, path, _data);
+ResourceNode.makeResNode = function (data, path) {
+  return data instanceof ResourceNode ? data : new ResourceNode(data, path);
 };
 /**
  * Object class defining type information.
@@ -19790,14 +19705,12 @@ var util = __webpack_require__(52);
 
 var filtering = __webpack_require__(71);
 
-var misc = __webpack_require__(72);
-
 var engine = {};
 engine.emptyFn = util.isEmpty;
 
-engine.notFn = function (coll) {
-  var d = misc.singleton(coll, 'Boolean');
-  return typeof d === 'boolean' ? !d : [];
+engine.notFn = function (x) {
+  var d;
+  return x.length === 1 && typeof (d = util.valData(x[0])) === 'boolean' ? !d : [];
 };
 
 engine.existsMacro = function (coll, expr) {
@@ -19812,8 +19725,6 @@ engine.existsMacro = function (coll, expr) {
 
 engine.allMacro = function (coll, expr) {
   for (var i = 0, len = coll.length; i < len; ++i) {
-    this.$index = i;
-
     if (!util.isTrue(expr(coll[i]))) {
       return [false];
     }
@@ -19984,56 +19895,26 @@ module.exports = engine;
 var util = __webpack_require__(52);
 
 var _require = __webpack_require__(53),
-    TypeInfo = _require.TypeInfo,
-    ResourceNode = _require.ResourceNode;
+    TypeInfo = _require.TypeInfo;
 
 var engine = {};
 
 engine.whereMacro = function (parentData, expr) {
-  var _this = this;
-
   if (parentData !== false && !parentData) {
     return [];
   }
 
-  return util.flatten(parentData.filter(function (x, i) {
-    _this.$index = i;
+  return util.flatten(parentData.filter(function (x) {
     return expr(x)[0];
   }));
 };
 
-engine.extension = function (parentData, url) {
-  var _this2 = this;
-
-  if (parentData !== false && !parentData || !url) {
-    return [];
-  }
-
-  return util.flatten(parentData.map(function (x, i) {
-    _this2.$index = i;
-    var extensions = x && (x.data && x.data.extension || x._data && x._data.extension);
-
-    if (extensions) {
-      return extensions.filter(function (extension) {
-        return extension.url === url;
-      }).map(function (x) {
-        return ResourceNode.makeResNode(x, 'Extension');
-      });
-    }
-
-    return [];
-  }));
-};
-
 engine.selectMacro = function (data, expr) {
-  var _this3 = this;
-
   if (data !== false && !data) {
     return [];
   }
 
-  return util.flatten(data.map(function (x, i) {
-    _this3.$index = i;
+  return util.flatten(data.map(function (x) {
     return expr(x);
   }));
 };
@@ -20106,6 +19987,44 @@ module.exports = engine;
 
 /***/ }),
 /* 72 */
+/***/ (function(module, exports) {
+
+// Contains the FHIRPath Aggregate functions.
+// (Section 7 of the FHIRPath 2.0.0 (N1) specification).
+var engine = {};
+
+engine.aggregateMacro = function (data, expr, initialValue) {
+  var _this = this;
+
+  return data.reduce(function (total, x, i) {
+    _this.$index = i;
+    return _this.$total = expr(x);
+  }, this.$total = initialValue);
+};
+
+module.exports = engine;
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// This file holds code to hande the FHIRPath Combining functions.
+var combineFns = {};
+
+var existence = __webpack_require__(70);
+
+combineFns.union = function (coll1, coll2) {
+  return existence.distinctFn(coll1.concat(coll2));
+};
+
+combineFns.combineFn = function (coll1, coll2) {
+  return coll1.concat(coll2);
+};
+
+module.exports = combineFns;
+
+/***/ }),
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -20352,126 +20271,11 @@ engine.createConvertsToFn = function (toFunction, type) {
   };
 };
 
-var singletonEvalByType = {
-  "Integer": function Integer(coll) {
-    var d = util.valData(coll[0]);
-
-    if (Number.isInteger(d)) {
-      return d;
-    }
-  },
-  "Boolean": function Boolean(coll) {
-    var d = util.valData(coll[0]);
-
-    if (d === true || d === false) {
-      return d;
-    } else if (coll.length === 1) {
-      return true;
-    }
-  },
-  "Number": function Number(coll) {
-    var d = util.valData(coll[0]);
-
-    if (typeof d === "number") {
-      return d;
-    }
-  },
-  "String": function String(coll) {
-    var d = util.valData(coll[0]);
-
-    if (typeof d === "string") {
-      return d;
-    }
-  }
-};
-/**
- * Converts a collection to a singleton of the specified type.
- * The result can be an empty array if input collection is empty.
- * See http://hl7.org/fhirpath/#singleton-evaluation-of-collections for details.
- * @param {Array} coll - collection
- * @param {string} type - 'Integer', 'Boolean', 'Number' or 'String'
- * @throws {Error}  if there is more than one item in input collection,
- *   or an item that is not a specified type
- * @return {*|[]} the value of specified type or empty array
- */
-
-engine.singleton = function (coll, type) {
-  if (coll.length > 1) {
-    throw new Error("Unexpected collection" + JSON.stringify(coll) + "; expected singleton of type " + type);
-  } else if (coll.length === 0) {
-    return [];
-  }
-
-  var toSingleton = singletonEvalByType[type];
-
-  if (toSingleton) {
-    var value = toSingleton(coll);
-
-    if (value !== undefined) {
-      return value;
-    }
-
-    throw new Error("Expected ".concat(type.toLowerCase(), ", but got: ").concat(JSON.stringify(coll)));
-  }
-
-  throw new Error('Not supported type ' + type);
-};
-
 module.exports = engine;
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports) {
-
-// Contains the FHIRPath Aggregate functions.
-// (Section 7 of the FHIRPath 2.0.0 (N1) specification).
-var engine = {};
-
-engine.aggregateMacro = function (data, expr, initialValue) {
-  var _this = this;
-
-  return data.reduce(function (total, x, i) {
-    _this.$index = i;
-    return _this.$total = expr(x);
-  }, this.$total = initialValue);
-};
-
-module.exports = engine;
-
-/***/ }),
-/* 74 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// This file holds code to hande the FHIRPath Combining functions.
-var combineFns = {};
-
-var existence = __webpack_require__(70);
-
-combineFns.union = function (coll1, coll2) {
-  return existence.distinctFn(coll1.concat(coll2));
-};
-
-combineFns.combineFn = function (coll1, coll2) {
-  return coll1.concat(coll2);
-};
-
-module.exports = combineFns;
 
 /***/ }),
 /* 75 */
 /***/ (function(module, exports, __webpack_require__) {
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 // This file holds code to hande the FHIRPath Math functions.
 var util = __webpack_require__(52);
@@ -20567,66 +20371,34 @@ function typecheck(a, b) {
 
 engine.lt = function (a, b) {
   if (!a.length || !b.length) return [];
-
-  var _typecheck = typecheck(a, b),
-      _typecheck2 = _slicedToArray(_typecheck, 2),
-      a0 = _typecheck2[0],
-      b0 = _typecheck2[1];
-
-  if (a0 instanceof FP_Type) {
-    var compare = a0.compare(b0);
-    return compare === null ? [] : compare < 0;
-  }
-
-  return a0 < b0;
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) == -1 : a0 < b0;
 };
 
 engine.gt = function (a, b) {
   if (!a.length || !b.length) return [];
-
-  var _typecheck3 = typecheck(a, b),
-      _typecheck4 = _slicedToArray(_typecheck3, 2),
-      a0 = _typecheck4[0],
-      b0 = _typecheck4[1];
-
-  if (a0 instanceof FP_Type) {
-    var compare = a0.compare(b0);
-    return compare === null ? [] : compare > 0;
-  }
-
-  return a0 > b0;
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) == 1 : a0 > b0;
 };
 
 engine.lte = function (a, b) {
   if (!a.length || !b.length) return [];
-
-  var _typecheck5 = typecheck(a, b),
-      _typecheck6 = _slicedToArray(_typecheck5, 2),
-      a0 = _typecheck6[0],
-      b0 = _typecheck6[1];
-
-  if (a0 instanceof FP_Type) {
-    var compare = a0.compare(b0);
-    return compare === null ? [] : compare <= 0;
-  }
-
-  return a0 <= b0;
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) <= 0 : a0 <= b0;
 };
 
 engine.gte = function (a, b) {
   if (!a.length || !b.length) return [];
-
-  var _typecheck7 = typecheck(a, b),
-      _typecheck8 = _slicedToArray(_typecheck7, 2),
-      a0 = _typecheck8[0],
-      b0 = _typecheck8[1];
-
-  if (a0 instanceof FP_Type) {
-    var compare = a0.compare(b0);
-    return compare === null ? [] : compare >= 0;
-  }
-
-  return a0 >= b0;
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) >= 0 : a0 >= b0;
 };
 
 module.exports = engine;
@@ -21089,50 +20861,27 @@ module.exports = engine;
 
 var util = __webpack_require__(52);
 
-var misc = __webpack_require__(72);
+var engine = {};
 
-var engine = {}; // Cache for rewritten RegExp patterns
+function ensureStringSingleton(x) {
+  var d;
 
-var cachedRegExp = {};
-/**
- * Rewrites RegExp pattern to support single-line mode (dotAll) in IE11:
- * To do that we replace "." with "[^]" in source RegExp pattern,
- * except where "." is escaped or is inside unescaped [].
- * Another way to do the same is using package regexpu-core
- * or packages regjsparser/regjsgen.
- * @param {string} pattern - source RegExp pattern
- * @return {string}
- */
-
-function rewritePatternForDotAll(pattern) {
-  if (!cachedRegExp[pattern]) {
-    cachedRegExp[pattern] = pattern.replace(/\./g, function (_, offset, entirePattern) {
-      // The preceding part of the string
-      var precedingPart = entirePattern.substr(0, offset); // The preceding part of the string without escaped characters: '\', '[' or ']'
-
-      var cleanPrecedingPart = precedingPart.replace(/\\\\/g, '').replace(/\\[\][]/g, ''); // Check if '.' is escaped
-
-      var escaped = cleanPrecedingPart[cleanPrecedingPart.length - 1] === '\\'; // The last index of unescaped '['
-
-      var lastIndexOfOpenBracket = cleanPrecedingPart.lastIndexOf('['); // The last index of unescaped ']'
-
-      var lastIndexOfCloseBracket = cleanPrecedingPart.lastIndexOf(']');
-      return escaped || lastIndexOfOpenBracket > lastIndexOfCloseBracket ? '.' : '[^]';
-    });
+  if (x.length == 1 && typeof (d = util.valData(x[0])) === "string") {
+    return d;
   }
 
-  return cachedRegExp[pattern];
+  throw new Error('Expected string, but got ' + JSON.stringify(d || x));
 }
 
 engine.indexOf = function (coll, substr) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(substr) || util.isEmpty(str) ? [] : str.indexOf(substr);
+  var str = ensureStringSingleton(coll);
+  return str.indexOf(substr);
 };
 
 engine.substring = function (coll, start, length) {
-  var str = misc.singleton(coll, 'String');
+  var str = ensureStringSingleton(coll);
 
-  if (util.isEmpty(str) || util.isEmpty(start) || start < 0 || start >= str.length) {
+  if (util.isEmpty(start) || start < 0 || start >= str.length) {
     return [];
   }
 
@@ -21144,88 +20893,40 @@ engine.substring = function (coll, start, length) {
 };
 
 engine.startsWith = function (coll, prefix) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(prefix) || util.isEmpty(str) ? [] : str.startsWith(prefix);
+  var str = ensureStringSingleton(coll);
+  return str.startsWith(prefix);
 };
 
 engine.endsWith = function (coll, postfix) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(postfix) || util.isEmpty(str) ? [] : str.endsWith(postfix);
+  var str = ensureStringSingleton(coll);
+  return str.endsWith(postfix);
 };
 
 engine.containsFn = function (coll, substr) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(substr) || util.isEmpty(str) ? [] : str.includes(substr);
+  var str = ensureStringSingleton(coll);
+  return str.includes(substr);
 };
 
-engine.upper = function (coll) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(str) ? [] : str.toUpperCase();
+engine.matches = function (coll, regex) {
+  var str = ensureStringSingleton(coll);
+  var reg = new RegExp(regex);
+  return reg.test(str);
 };
 
-engine.lower = function (coll) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(str) ? [] : str.toLowerCase();
-}; // Check if dotAll is supported.
-// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll for details.
-
-
-var dotAllIsSupported = new RegExp('').dotAll === false;
-
-if (dotAllIsSupported) {
-  engine.matches = function (coll, regex) {
-    var str = misc.singleton(coll, 'String');
-
-    if (util.isEmpty(regex) || util.isEmpty(str)) {
-      return [];
-    }
-
-    var reg = new RegExp(regex, 's');
-    return reg.test(str);
-  };
-} else {
-  engine.matches = function (coll, regex) {
-    var str = misc.singleton(coll, 'String');
-
-    if (util.isEmpty(regex) || util.isEmpty(str)) {
-      return [];
-    }
-
-    var reg = new RegExp(rewritePatternForDotAll(regex));
-    return reg.test(str);
-  };
-}
-
-engine.replace = function (coll, pattern, repl) {
-  var str = misc.singleton(coll, 'String');
-
-  if (util.isEmpty(pattern) || util.isEmpty(repl) || util.isEmpty(str)) {
-    return [];
-  }
-
-  var reg = new RegExp(util.escapeStringForRegExp(pattern), 'g');
-  return str.replace(reg, repl);
+engine.replace = function (coll, regex, repl) {
+  var str = ensureStringSingleton(coll);
+  return str.replace(regex, repl);
 };
 
 engine.replaceMatches = function (coll, regex, repl) {
-  var str = misc.singleton(coll, 'String');
-
-  if (util.isEmpty(regex) || util.isEmpty(repl) || util.isEmpty(str)) {
-    return [];
-  }
-
-  var reg = new RegExp(regex, 'g');
+  var str = ensureStringSingleton(coll);
+  var reg = new RegExp(regex);
   return str.replace(reg, repl);
 };
 
 engine.length = function (coll) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(str) ? [] : str.length;
-};
-
-engine.toChars = function (coll) {
-  var str = misc.singleton(coll, 'String');
-  return util.isEmpty(str) ? [] : str.split('');
+  var str = ensureStringSingleton(coll);
+  return str.length;
 };
 
 module.exports = engine;
