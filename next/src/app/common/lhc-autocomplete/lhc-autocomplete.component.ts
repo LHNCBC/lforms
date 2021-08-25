@@ -57,9 +57,9 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
    */
   ngOnChanges(changes) {
 
-    console.log("lhc-autocomplete, ngOnChange")
-    console.log(changes)
-    console.log(this.dataModel)
+    // console.log("lhc-autocomplete, ngOnChange")
+    // console.log(changes)
+    // console.log(this.dataModel)
 
     if (this.viewInitialized) {
       // reset autocomplete when 'options' changes
@@ -80,7 +80,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
   /**
    * Update the display value of the autocomplte when the item.value is changed 
-   * changed by data control or fhirpath express after the autocomplete is initialized
+   * changed by data control or fhirpath expression after the autocomplete is initialized
    * @param value the new data in item.value
    */
   updateDisplayedValue(itemValue:any) {
@@ -208,7 +208,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Set the item.value to the autocomplete when the autcomplete is being set up or 
+   * Set the item.value to the autocompleter when the autcomplete is being set up or 
    * the item.value is changed later
    * @param itemValue 
    */
@@ -216,8 +216,8 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     if (itemValue) {
       if (this.multipleSelections && Array.isArray(itemValue)) {
         for (var i=0, len=itemValue.length; i<len; ++i) {
-          let dispVal = this.acType === "prefetch" ? itemValue[i]._notOnList ?
-          itemValue[i].text : itemValue[i][this.options.acOptions.display] : itemValue[i].text;
+          let dispVal = this.acType === "prefetch" && itemValue[i]._notOnList ?
+            itemValue[i][this.options.acOptions.display] : itemValue[i].text;
           this.acInstance.storeSelectedItem(dispVal, itemValue[i].code);
           this.acInstance.addToSelectedArea(dispVal);
         }

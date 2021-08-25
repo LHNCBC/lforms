@@ -59,7 +59,7 @@ describe('data control', function() {
 
   });
 
-  fit('can control questionCardinality of a horizontal table', async function() {
+  it('can control questionCardinality of a horizontal table', async function() {
     tp.LoadForm.openFullFeaturedForm();
     var src = element(by.id('/cardinalityControl/1'));
     var btnAdd1 = element(by.id('add-/horizontalTable/1'));

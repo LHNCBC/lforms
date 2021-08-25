@@ -1,7 +1,7 @@
 /**
  * A package to generate HL7 messgages from LForms form data
  */
- import CommonUtils from "./lhc-common-utils.js";
+import CommonUtils from "./lhc-common-utils.js";
 
 const LhcHL7 = {
   LOINC_URI: 'http://loinc.org',

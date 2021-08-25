@@ -26,7 +26,8 @@
               "src/test-data",
               "src/test-data/form-data",
               "src/test-data/fhir-data",
-              "src/test"
+              "src/test",
+              "src/test/fhir"
             ],
             "styles": [
               "src/styles.css",

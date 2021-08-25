@@ -64,9 +64,9 @@
         <button id="toggle-units-col" class="btn btn-primary" onclick="toggleUnitsCol()">Hide/Show Units Column</button>
         <button id="reset-form-with-same-data" class="btn btn-primary" onclick="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)[&#10004;]</button>
         <button id="get-hl7" class="btn btn-primary" onclick="showHL7Segments()">Show HL7 OBR/OBX Segments[&#10004;]</button>
-        <button id="get-fhir" class="btn btn-primary" onclick="showFHIRResource()">Show FHIR DiagnosticReport Content[&#10004;]</button>
-        <button id="get-fhir-bundle1" class="btn btn-primary" onclick="showFHIRResourceBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle[&#10004;]</button>
-        <button id="get-fhir-bundle2" class="btn btn-primary" onclick="showFHIRResourceBundle2()">Show FHIR DiagnosticReport in "collection" Bundle[&#10004;]</button>
+        <button id="get-fhir" class="btn btn-primary" onclick="showDiagnosticReport()">Show FHIR DiagnosticReport Content[&#10004;]</button>
+        <button id="get-fhir-bundle1" class="btn btn-primary" onclick="showDiagnosticReportBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle[&#10004;]</button>
+        <button id="get-fhir-bundle2" class="btn btn-primary" onclick="showDiagnosticReportBundle2()">Show FHIR DiagnosticReport in "collection" Bundle[&#10004;]</button>
         <button id="get-sdc-questionnaire" class="btn btn-primary" onclick="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire[&#10004;]</button>
         <button id="get-questionnaire" class="btn btn-primary" onclick="showFHIRQuestionnaire()">Show FHIR Questionnaire[&#10004;]</button>
         <button id="get-sdc-response" class="btn btn-primary" onclick="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response[&#10004;]</button>
@@ -223,7 +223,7 @@
       };
 
       /**
-       * Change the first item's value
+       * Change an item's value in form data (and the form should re-render accordingly)
        */
       function getFormDefDataAndResetForm() {
         if (testForm.lfData) {
@@ -235,7 +235,7 @@
       /**
        * Get 'DiagnosticReport' data from the form and display it in console
        */
-      function showFHIRResource () {
+      function showDiagnosticReport () {
         if (testForm.lhcFormData) {
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
             getFHIRVersion());
@@ -284,7 +284,7 @@
       /**
        * Get 'DiagnosticReport' as a "transaction" bundle from the form and display it in console
        */
-      function showFHIRResourceBundle1() {
+      function showDiagnosticReportBundle1() {
         if (testForm.lhcFormData) {
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
             getFHIRVersion(), null, {bundleType: "transaction"});
@@ -296,7 +296,7 @@
       /**
        * Get 'DiagnosticReport' as a "collection" bundle from the form and display it in console
        */
-      function showFHIRResourceBundle2() {
+      function showDiagnosticReportBundle2() {
         if (testForm.lhcFormData) {
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
             getFHIRVersion(), null, {bundleType: "collection"});
@@ -421,11 +421,19 @@
 
     <!-- lforms FHIR lib file, loaded after LHC-Forms files are loaded -->
     <script>
+      // function loadFHIRLibs() {
+      //   let fhirLib4 = document.createElement("script");
+      //   fhirLib4.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/R4/lformsFHIR.min.js");
+      //   let fhirLib3 = document.createElement("script");
+      //   fhirLib3.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/STU3/lformsFHIR.min.js");        
+      //   document.body.appendChild(fhirLib4);
+      //   document.body.appendChild(fhirLib3);
+      // }
       function loadFHIRLibs() {
         let fhirLib4 = document.createElement("script");
-        fhirLib4.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/R4/lformsFHIR.min.js");
+        fhirLib4.setAttribute("src", "/test/fhir/R4/lformsFHIR.min.js");
         let fhirLib3 = document.createElement("script");
-        fhirLib3.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/STU3/lformsFHIR.min.js");        
+        fhirLib3.setAttribute("src", "/test/fhir/STU3/lformsFHIR.min.js");        
         document.body.appendChild(fhirLib4);
         document.body.appendChild(fhirLib3);
       }

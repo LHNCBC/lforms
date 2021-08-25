@@ -34,7 +34,7 @@ export class LhcWatcherComponent implements OnInit, OnChanges {
 
       // run FHIRPATH expression when there is a data change
       if (LForms.FHIR && lfData) {
-        if (lfData._hasResponsiveExpr || lfData._hasInitialExpr) {
+        if (lfData._hasResponsiveExpr) {
           lfData._expressionProcessor.runCalculations(false).then(()=>{
             console.log('fhir path run with false')
           }); // pick up asynchronous model changes

@@ -6,7 +6,7 @@
     "start": "ng serve",
     "start-public": "ng serve --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
-    "build:elements": "ng build --prod --output-hashing none && node concatenate.js && \\cp elements/lhc-forms.es5.js src/test/",
+    "build:elements": "ng build --prod --output-hashing none && node concatenate.js",
     "test": "ng test --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e --port 4201 --webdriverUpdate=false",

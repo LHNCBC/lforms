@@ -15,7 +15,7 @@ import en from '@angular/common/locales/en';
 
 import * as ucumPkg from '@lhncbc/ucum-lhc';
 import LhcFormUtils from '../lib/lforms/lhc-form-utils.js';
-import LhcFormData  from '../lib/lforms/lhc-form';
+import LhcFormData  from '../lib/lforms/lhc-form-data';
 import LhcHL7 from '../lib/lforms/lhc-hl7.js';
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';

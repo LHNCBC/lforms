@@ -4,7 +4,7 @@ import { throttleTime, debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
-import LhcFormData from '../../lib/lforms/lhc-form';
+import LhcFormData from '../../lib/lforms/lhc-form-data';
 
 declare var LForms: any;
 declare var ResizeObserver;
@@ -103,7 +103,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
           }      
           that.lhcDataService.setLhcFormData(that.lhcFormData);  
 
-          // when a new form is loaded, run initial FHIRPATH expression
+          // when a new form is loaded, run all FHIR Expressions including the initial expresions
           if (LForms.FHIR) {
             if (this.lfData) { // sometimes set to null to clear the page
               if (this.lfData._hasResponsiveExpr || this.lfData._hasInitialExpr) {

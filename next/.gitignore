@@ -5,7 +5,6 @@
 /tmp
 /out-tsc
 /elements
-/src/test/lhc-forms.es5.js
 # Only exists if Bazel was run
 /bazel-out
 
