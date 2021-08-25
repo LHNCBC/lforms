@@ -9,6 +9,7 @@ var TestPage = function() {
   var testPageUrl = testDirURL + '/lforms_testpage.html';
   var buildFHIRPathURL = testDirURL + '/build_test_fhirpath.html';
   var addFormToPageTest = testDirURL + '/addFormToPageTest.html';
+  var addFormToPageTestFHIRContext = testDirURL + '/addFormToPageTest.html';
 
 
   /**
