@@ -62,17 +62,17 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     // console.log(this.dataModel)
 
     if (this.viewInitialized) {
-      // reset autocomplete when 'options' changes
+      // reset autocompleter when 'options' changes
       if (changes.options) {
         this.cleanupAutocomplete();
         this.setupAutocomplete();
       }
-      // item.value changed by data control or fhirpath express after the autocomplete is initialized
+      // item.value changed by data control or fhirpath express after the autocompleter is initialized
       // Need to find way to distingish the two different changes: 1) emitted by ac itself, which does not need to run updateDisplayedValue, 
       // 2) from outside ac
       // 
       else if (changes.dataModel) {
-        this.updateDisplayedValue(this.dataModel) // TODO: not working for score rules, which has socres in the text
+        this.updateDisplayedValue(this.dataModel) 
       }
     }
 
@@ -80,7 +80,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
   /**
    * Update the display value of the autocomplte when the item.value is changed 
-   * changed by data control or fhirpath expression after the autocomplete is initialized
+   * changed by data control or fhirpath expression after the autocompleter is initialized
    * @param value the new data in item.value
    */
   updateDisplayedValue(itemValue:any) {
@@ -89,7 +89,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
         itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
         if (typeof dispVal === 'string') {
-          //this.acInstance.storeSelectedItem(dispVal, itemValue.code);
+          this.acInstance.storeSelectedItem(dispVal, itemValue.code);
           this.acInstance.setFieldVal(dispVal, false);
         }
         else {// handle the case of an empty object as a model
@@ -112,7 +112,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
 
   /**
-   * Clean up the autocomplete instance
+   * Clean up the autocompleter instance
    */
   ngOnDestroy() {
     // console.log("lhc-autocomplete, ngOnDestroy")
@@ -131,7 +131,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Clean up the autocomplete if there is one
+   * Clean up the autocompleter if there is one
    */
   cleanupAutocomplete(): void {
     if (this.acInstance) {
@@ -158,7 +158,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     this.allowNotOnList = null;
     this.prefetchTextToItem = {};
 
-    // if there are options for autocomplete
+    // if there are options for the autocompleter
     if (this.options && this.options.acOptions) {
 
       let acOptions = this.options.acOptions;
@@ -182,7 +182,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
         this.acType = 'prefetch';
         // acOptions has matchListValue, maxSelected, codes
-        // Using this.options.elementId causes the autocomplete to be refreshed without an autocomplete created in a horizontal table. 
+        // Using this.options.elementId causes the autocompleter rto be refreshed without an autocompleter created in a horizontal table. 
         // (where the rows lists are created as a new array, instead of keeping the same reference. Not confirmed, but I suspect this is the reason.)
         // It works with vertical layout though.
         // Using this.ac.nativeElement works in both cases.
@@ -196,7 +196,6 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
 //      let defaultItem =  acOptions.defaultValue ? this.prefetchTextToItem[acOptions.defaultValue.text] : null;
       let defaultItem =  acOptions.defaultValue
-
       // set up initial values if there is value
       let savedValue = this.dataModel || defaultItem;
       this.setItemValue(savedValue)
@@ -208,7 +207,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Set the item.value to the autocompleter when the autcomplete is being set up or 
+   * Set the item.value to the autocompleter when the autcompleter is being set up or 
    * the item.value is changed later
    * @param itemValue 
    */
@@ -216,7 +215,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     if (itemValue) {
       if (this.multipleSelections && Array.isArray(itemValue)) {
         for (var i=0, len=itemValue.length; i<len; ++i) {
-          let dispVal = this.acType === "prefetch" && itemValue[i]._notOnList ?
+          let dispVal = this.acType === "prefetch" && !itemValue[i]._notOnList ?
             itemValue[i][this.options.acOptions.display] : itemValue[i].text;
           this.acInstance.storeSelectedItem(dispVal, itemValue[i].code);
           this.acInstance.addToSelectedArea(dispVal);

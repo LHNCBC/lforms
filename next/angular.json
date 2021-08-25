@@ -27,7 +27,8 @@
               "src/test-data/form-data",
               "src/test-data/fhir-data",
               "src/test",
-              "src/test/fhir"
+              "src/test/fhir",
+              "src/test/elements"
             ],
             "styles": [
               "src/styles.css",
@@ -111,7 +112,9 @@
               "src/test-data",
               "src/test-data/form-data",
               "src/test-data/fhir-data",
-              "src/test"
+              "src/test",
+              "src/test/fhir",
+              "src/test/elements"
             ],
             "styles": [
               "src/styles.css",
