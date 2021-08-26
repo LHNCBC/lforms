@@ -110,7 +110,7 @@ LForms.Util = {
     }).catch(function(e) {
       var errMsg = (e instanceof Error) ? e.message : e.toString();
       formContainer.html('<div id=lformsErrors style="color: red"><b>Unable to '+
-        'display the form, due to the follow error:</b><p id=lformsErrorContent></p>');
+        'display the form, due to the following error:</b><p id=lformsErrorContent></p>');
       $('#lformsErrorContent').text(errMsg);
       throw e;
     });
