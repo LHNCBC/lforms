@@ -1,14 +1,16 @@
-function BuildTestPage() {
-  this.drugNameField = element(by.id('/dataControlExamples/itemWithExtraData/1/1'));
-  this.searchResults = element(by.id('searchResults'));
+//NEXT:  Repurposed. this is now for concatecated es5 js files in the /elements directory
+import { config } from "../../../next/e2e/protractor.conf.js";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+
+export class BuildTestPage {
+  drugNameField = element(by.id('/dataControlExamples/itemWithExtraData/1/1'));
+  searchResults = element(by.id('searchResults'));
 
   /**
    * Opens the test page.
    */
-  this.openPage = function() {
-    var conf = require('../conf').config;
-    browser.get(conf.baseUrl + '/test/build_test.html');
-  };
+  openPage() {
+    browser.get(config.baseUrl + '/test/build_test.html');
+  }
 }
 
-module.exports = new BuildTestPage();

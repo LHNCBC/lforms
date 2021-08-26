@@ -1,35 +1,51 @@
-var tp = require('./lforms_testpage.po.js');
-var testUtil = require('./util.js');
-var ff = tp.USSGFHTVertical;
-var EC = protractor.ExpectedConditions;
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+
+
 
 describe('formdata: ', function() {
+
+  let tp: TestPage; 
+  let ff: any;
+  let LForms: any = (global as any).LForms;
+
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+    tp = new TestPage();
+    ff = tp.USSGFHTVertical;
+    //await tp.navigateTo();
+  });
+
   describe('get form data', function() {
 
     it('should get a form data with 3 optional parameters.', function() {
+      
 
-      tp.openUSSGFHTVertical();
+      tp.LoadForm.openUSSGFHTVertical();
 
       // #1 all fields are empty
       browser.driver.executeAsyncScript(function() {
         var callback = arguments[arguments.length - 1];
         var fData = LForms.Util.getUserData();
         callback(fData);
-      }).then(function(formData) {
+      }).then(function(formData:any) {
         // console.log(JSON.stringify(formData, null, 2));
         expect(formData.itemsData.length).toBe(2);
         expect(formData.itemsData[0].items.length).toBe(13);
         expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
         expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
-        // #2 above fields have values, except dob is still empty
-        testUtil.sendKeys(ff.comment, "Some comments");
-        ff.whereDone.click()
-        // pick the 2nd item, Hospital
-        ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
-        ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
-        ff.whereDone.sendKeys(protractor.Key.TAB);
+        // NEXT: comments, whereDone, whenDone are removed.
+        // // #2 above fields have values, except dob is still empty
+        // TestUtil.sendKeys(ff.comment, "Some comments");
+        // ff.whereDone.click()
+        // // pick the 2nd item, Hospital
+        // ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
+        // ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
+        // ff.whereDone.sendKeys(protractor.Key.TAB);
 
-        testUtil.sendKeys(ff.name, "Not Empty");
+        TestUtil.sendKeys(ff.name, "Not Empty");
 
         ff.gender.click();
         // pick the 1st item, centimeters
@@ -44,19 +60,20 @@ describe('formdata: ', function() {
         ff.race.sendKeys(protractor.Key.ARROW_DOWN);
         ff.race.sendKeys(protractor.Key.TAB);
 
-        testUtil.sendKeys(ff.height, "70");
+        TestUtil.sendKeys(ff.height, "70");
         expect(ff.bmi.getAttribute('value')).toBe("");
-        testUtil.sendKeys(ff.weight, "170");
+        TestUtil.sendKeys(ff.weight, "170");
         expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
         browser.driver.executeAsyncScript(function () {
           var callback = arguments[arguments.length - 1];
           var fData = LForms.Util.getUserData();
           callback(fData);
-        }).then(function (formData) {
-          expect(formData.templateData.length).toBe(4);
-          expect(formData.templateData[2].value).toEqual({ code: '2', text: 'Hospital' })
-          expect(formData.templateData[3].value).toBe("Some comments");
+        }).then(function (formData:any) {
+          // NEXT: comments, whereDone, whenDone are removed.
+          // expect(formData.templateData.length).toBe(4);
+          // expect(formData.templateData[2].value).toEqual({ code: '2', text: 'Hospital' })
+          // expect(formData.templateData[3].value).toBe("Some comments");
 
           expect(formData.itemsData.length).toBe(2);
           expect(formData.itemsData[0].items.length).toBe(13);
@@ -76,7 +93,7 @@ describe('formdata: ', function() {
             var callback = arguments[arguments.length - 1];
             var fData = LForms.Util.getUserData(null, true);
             callback(fData);
-          }).then(function (formData) {
+          }).then(function (formData:any) {
             expect(formData.itemsData.length).toBe(2);
             expect(formData.itemsData[0].items.length).toBe(13);
             expect(formData.itemsData[0].items[0].question).toBeUndefined();
@@ -87,7 +104,7 @@ describe('formdata: ', function() {
               var callback = arguments[arguments.length - 1];
               var fData = LForms.Util.getUserData(null, false, true);
               callback(fData);
-            }).then(function (formData) {
+            }).then(function (formData:any) {
               expect(formData.itemsData.length).toBe(1);
               expect(formData.itemsData[0].items.length).toBe(6);
 
@@ -96,7 +113,7 @@ describe('formdata: ', function() {
                 var callback = arguments[arguments.length - 1];
                 var fData = LForms.Util.getUserData(null, false, false, true);
                 callback(fData);
-              }).then(function (formData) {
+              }).then(function (formData:any) {
                 expect(formData.itemsData.length).toBe(2);
                 expect(formData.itemsData[0].items.length).toBe(11);
               });
@@ -106,27 +123,28 @@ describe('formdata: ', function() {
       });
     });
 
-    it('should be able to get data when LForms directive is used', function() {
-      tp.openDirectiveTest();
+    // NEXT: no more directives
+    // it('should be able to get data when LForms directive is used', function() {
+    //   tp.openDirectiveTest();
 
-      browser.waitForAngular();
-      browser.driver.executeAsyncScript(function() {
-        var callback = arguments[arguments.length - 1];
-        var fData = LForms.Util.getUserData();
-        callback(fData);
-      }).then(function(formData) {
-        // console.log(formData);
-        expect(formData.itemsData.length).toBe(2);
-        expect(formData.itemsData[0].items.length).toBe(13);
-      });
-    });
+    //   browser.waitForAngular();
+    //   browser.driver.executeAsyncScript(function() {
+    //     var callback = arguments[arguments.length - 1];
+    //     var fData = LForms.Util.getUserData();
+    //     callback(fData);
+    //   }).then(function(formData:any) {
+    //     // console.log(formData);
+    //     expect(formData.itemsData.length).toBe(2);
+    //     expect(formData.itemsData[0].items.length).toBe(13);
+    //   });
+    // });
 
     it('should assign a boolean value for type BL fields', function (done) {
-      tp.openFullFeaturedForm();
-      function checkBoolFieldVal(val, done) {
+      tp.LoadForm.openFullFeaturedForm();
+      function checkBoolFieldVal(val, done=null) {
         browser.driver.executeScript(function() {
            return LForms.Util.getUserData();
-        }).then(function(lfData) {
+        }).then(function(lfData:any) {
           let boolQuestion = lfData.itemsData[5];
           expect(boolQuestion.dataType).toBe('BL');
           expect(boolQuestion.value).toBe(val);
@@ -143,20 +161,20 @@ describe('formdata: ', function() {
 
 
     it('should be able to get the complete form definition data and reset the form with the retrieved data', function() {
-      tp.openUSSGFHTVertical();
+      tp.LoadForm.openUSSGFHTVertical();
 
       var resetButton = element(by.id('reset-form-with-same-data'));
-      testUtil.sendKeys(ff.comment, "Some comments");
-      testUtil.sendKeys(ff.name, "Not Empty");
+      //TestUtil.sendKeys(ff.comment, "Some comments");
+      TestUtil.sendKeys(ff.name, "Not Empty");
 
       // pick the 1st item, centimeters
       ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
       ff.gender.sendKeys(protractor.Key.TAB);
-      expect(ff.gender.getAttribute('value')).toBe("Male");
-
-      testUtil.sendKeys(ff.height, "70");
-      expect(ff.bmi.getAttribute('value')).toBe("");
-      testUtil.sendKeys(ff.weight, "170");
+      TestUtil.waitForElementDisplayed(ff.name)
+      expect(TestUtil.getFieldValue(ff.gender)).toBe("Male")
+      TestUtil.sendKeys(ff.height, "70");
+      expect(TestUtil.getFieldValue(ff.height)).toBe("70");      
+      TestUtil.sendKeys(ff.weight, "170");
       expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
       // check the data directly
@@ -164,7 +182,7 @@ describe('formdata: ', function() {
         var callback = arguments[arguments.length - 1];
         var fData = LForms.Util.getFormData();
         callback(fData);
-      }).then(function (formData) {
+      }).then(function (formData:any) {
         expect(formData.code).toBe("54127-6N");
         expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
         expect(formData.template).toBe("table");
@@ -191,12 +209,12 @@ describe('formdata: ', function() {
       // reset the form
       resetButton.click();
 
-      expect(ff.comment.getAttribute('value')).toBe("Some comments");
+      //expect(ff.comment.getAttribute('value')).toBe("Some comments");
       // changed in reset function to be 'after reset', was 'Not Empty'
-      expect(ff.name.getAttribute('value')).toBe("after reset");
-      expect(ff.gender.getAttribute('value')).toBe("Male");
-      expect(ff.height.getAttribute('value')).toBe("70");
-      expect(ff.weight.getAttribute('value')).toBe("170");
+      expect(TestUtil.getFieldValue(ff.name)).toBe("after reset");
+      expect(TestUtil.getFieldValue(ff.gender)).toBe("Male");
+      expect(TestUtil.getFieldValue(ff.height)).toBe("70");
+      expect(TestUtil.getFieldValue(ff.weight)).toBe("170");
       expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
       // check the data again, directly
@@ -204,7 +222,7 @@ describe('formdata: ', function() {
         var callback = arguments[arguments.length - 1];
         var fData = LForms.Util.getFormData();
         callback(fData);
-      }).then(function (formData) {
+      }).then(function (formData:any) {
         expect(formData.code).toBe("54127-6N");
         expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
         expect(formData.template).toBe("table");
@@ -231,36 +249,33 @@ describe('formdata: ', function() {
     });
 
     it('should not get any data with empty values when the noEmptyValue parameter is used', function() {
-      tp.openFullFeaturedForm();
+      tp.LoadForm.openFullFeaturedForm();
 
       // only three fields have data
       browser.driver.executeAsyncScript(function () {
         var callback = arguments[arguments.length - 1];
         var fData = LForms.Util.getFormData(null, true, true);
         callback(fData);
-      }).then(function (formData) {
+      }).then(function (formData:any) {
         expect(formData.items.length).toBe(5);
         expect(formData.items[2].question).toBe("With data type CNE");
         expect(formData.items[2].value).toEqual({code:"c2",other:null,text:"Answer 2"});
       });
     });
+    
   });
-
 
   describe('defaultAnswer', function() {
     it('should work for various data types', function() {
-      tp.openDefaultAnswerForm();
+      tp.LoadForm.openDefaultAnswerForm();
       var blField = element(by.id('/blField/1'));
-      browser.wait(EC.presenceOf(blField), 5000);
-      expect(blField.isSelected()).toBe(true);
-      blField.evaluate('item.value').then(function(val) {
-        expect(val).toEqual(true);
-      });
+      browser.wait(ExpectedConditions.presenceOf(blField), 5000);
+      expect(blField.getAttribute('ng-reflect-model')).toBe("true");
 
       var intField = element(by.id('/intField/1'));
-      expect(intField.getAttribute('value')).toBe("24");
-      expect(element(by.id('/decField/1')).getAttribute('value')).toBe("3.14159");
-      expect(element(by.id('/strField/1')).getAttribute('value')).toBe("Green");
+      expect(TestUtil.getFieldValue(intField)).toBe("24");      
+      expect(TestUtil.getFieldValue(element(by.id('/decField/1')))).toBe("3.14159");
+      expect(TestUtil.getFieldValue(element(by.id('/strField/1')))).toBe("Green");
 
       // Test date field default (with value of "t" -- today)
       var now = new Date();
@@ -276,87 +291,100 @@ describe('formdata: ', function() {
       }
       var today = zeroPad(now.getMonth()+1) + "/" + zeroPad(now.getDate()) +
         "/" + now.getFullYear();
-      expect(element(by.id('/dateField/1')).getAttribute('value')).toEqual(today);
+      var isoToday = now.getFullYear() + "-" + zeroPad(now.getMonth()+1) + "-" + zeroPad(now.getDate());
+      expect(TestUtil.getFieldValue(element(by.id('/dateField/1')).element(by.css('input')))).toEqual(today);
 
-      expect(element(by.id('/ansLabelDefault/1')).getAttribute('value')).toEqual('ii. Blue');
-      expect(element(by.id('/ansCodeDefault/1')).getAttribute('value')).toEqual('ii. Blue');
-      expect(element(by.id('/ansCodeDefaultNoLabel/1')).getAttribute('value')).toEqual('Blue');
+      expect(TestUtil.getFieldValue(element(by.id('/ansLabelDefault/1')))).toEqual('ii. Blue');
+      expect(TestUtil.getFieldValue(element(by.id('/ansCodeDefault/1')))).toEqual('ii. Blue');
+      expect(TestUtil.getFieldValue(element(by.id('/ansCodeDefaultNoLabel/1')))).toEqual('Blue');
 
       // Check a radio button question
-      var radioQCode = '/radioAnsCodeDefault/1';
-      expect(element(by.id(radioQCode+'R')).isSelected()).toBe(false);
-      expect(element(by.id(radioQCode+'B')).isSelected()).toBe(true);
-      expect(element(by.id(radioQCode+'G')).isSelected()).toBe(false);
-      element(by.id(radioQCode+'R')).evaluate('item.value').then(function(val) {
-        expect(val.code).toEqual('B');
-        expect(val.text).toEqual('Blue');
-        expect(val._displayText).toEqual('ii. Blue');
-      });
+      var radioQCode = '#\\/radioAnsCodeDefault\\/1';
+      var rr = element(by.css(radioQCode + "R input"));
+      var rb = element(by.css(radioQCode + "B input"));
+      var rg = element(by.css(radioQCode + "G input"));
+      expect(TestUtil.getAttribute(rr, 'checked')).toBe(false);
+      expect(TestUtil.getAttribute(rb, 'checked')).toBe(true);
+      expect(TestUtil.getAttribute(rg, 'checked')).toBe(false);
 
       // Check a radio button question whose answers do not have labels
-      var radioQCodeNL = '/radioAnsCodeDefaultNoLabel/1';
-      expect(element(by.id(radioQCodeNL+'R')).isSelected()).toBe(false);
-      expect(element(by.id(radioQCodeNL+'B')).isSelected()).toBe(true);
-      expect(element(by.id(radioQCodeNL+'G')).isSelected()).toBe(false);
-      element(by.id(radioQCodeNL+'R')).evaluate('item.value').then(function(val) {
-        expect(val.code).toEqual('B');
-        expect(val.text).toEqual('Blue');
-        expect(val._displayText).toEqual('Blue');
-      });
+      var radioQCodeNL = '#\\/radioAnsCodeDefaultNoLabel\\/1';
+      var rr = element(by.css(radioQCodeNL + "R input"));
+      var rb = element(by.css(radioQCodeNL + "B input"));
+      var rg = element(by.css(radioQCodeNL + "G input"));
+      expect(TestUtil.getAttribute(rr, 'checked')).toBe(false);
+      expect(TestUtil.getAttribute(rb, 'checked')).toBe(true);
+      expect(TestUtil.getAttribute(rg, 'checked')).toBe(false);
 
       // Test a check box question
-      var cbQCode = '/checkBoxAnsCodeDefault/1';
-      expect(element(by.id(cbQCode+'R')).isSelected()).toBe(false);
-      expect(element(by.id(cbQCode+'B')).isSelected()).toBe(true);
-      expect(element(by.id(cbQCode+'G')).isSelected()).toBe(false);
-      element(by.id(cbQCode+'R')).evaluate('item.value').then(function(val) {
-        expect(val[0].code).toEqual('B');
-        expect(val[0].text).toEqual('Blue');
-        expect(val[0]._displayText).toEqual('ii. Blue');
-      });
+      var cbQCode = '#\\/checkBoxAnsCodeDefault\\/1';
+      var cr = element(by.css(cbQCode + "R input"));
+      var cb = element(by.css(cbQCode + "B input"));
+      var cg = element(by.css(cbQCode + "G input"));
+      expect(TestUtil.getAttribute(cr, 'checked')).toBe(false);
+      expect(TestUtil.getAttribute(cb, 'checked')).toBe(true);
+      expect(TestUtil.getAttribute(cg, 'checked')).toBe(false);
 
       // Check a multi-select list
       var multiSelID = '/multiSelAnsCodeDefault/1';
       var multiSel = element(by.id(multiSelID));
-      multiSel.evaluate('item.value').then(function(value) {
-        expect(value.length).toBe(1);
-        expect(value[0].text).toEqual('Blue');
-        expect(value[0].code).toEqual('B');
-        expect(value[0]._displayText).toEqual('ii. Blue');
-      });
-      expect(multiSel.getAttribute('value')).toEqual('');
+      expect(TestUtil.getFieldValue(multiSel)).toEqual('');
       var escapedID = multiSelID.replace( /\//g, "\\\\/" );
       browser.executeScript('return $("#'+escapedID+'")[0].autocomp.getSelectedCodes()'
-       ).then(function(codes) {
+       ).then(function(codes:any) {
         expect(codes.length).toBe(1);
         expect(codes[0]).toEqual('B');
       });
       browser.executeScript('return $("#'+escapedID+'")[0].autocomp.getSelectedItems()'
-       ).then(function(items) {
+       ).then(function(items:any) {
         expect(items.length).toBe(1);
         expect(items[0]).toEqual('ii. Blue');
       });
 
       // Also test specifying by answer text, to preserve the current behavior,
       // even though that is not in the LHC-Forms form specification.
-      expect(element(by.id('/ansTextDefault/1')).getAttribute('value')).toEqual('Blue');
+      expect(TestUtil.getFieldValue(element(by.id('/ansTextDefault/1')))).toEqual('Blue');
 
       // Also test the date field default in the templateOptions, to make sure
       // those are getting processed.
-      expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
+      //NEXT: no templateOption fields
+      //expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
+
+      browser.driver.executeAsyncScript(function () {
+        var callback = arguments[arguments.length - 1];
+        var fData = LForms.Util.getUserData(null, false, true);
+        callback(fData);
+      }).then(function (formData:any) {
+
+        expect(formData.itemsData.length).toBe(13);
+        expect(formData.itemsData[0].value).toBe(true);
+        expect(formData.itemsData[1].value).toBe(24);
+        expect(formData.itemsData[2].value).toBe(3.14159);
+        expect(formData.itemsData[3].value).toBe("Green");
+        expect(formData.itemsData[4].value).toBe(isoToday);
+        expect(formData.itemsData[5].value).toEqual({text: "Blue", code: "B", label: "ii"});
+        expect(formData.itemsData[6].value).toEqual({text: "Blue", code: "B", label: "ii"});
+        expect(formData.itemsData[7].value).toEqual({text: "Blue", code: "B"});
+        expect(formData.itemsData[8].value).toEqual({text: "Blue", code: "B", label: "ii"});
+        expect(formData.itemsData[9].value).toEqual([{text: "Blue", code: "B", label: "ii"}]);
+        expect(formData.itemsData[10].value).toEqual({text: "Blue", code: "B"});
+        expect(formData.itemsData[11].value).toEqual([{text: "Blue", code: "B", label: "ii"}]);
+        expect(formData.itemsData[12].value).toEqual({text: "Blue", code: "B"});
+
+      })
     });
 
 
     it('should not be reset after they are cleared', function() {
-      tp.openDefaultAnswerForm();
+      tp.LoadForm.openDefaultAnswerForm();
       var intField = element(by.id('/intField/1')),
-          whenDone = element(by.id('date_done')),
+          //whenDone = element(by.id('date_done')),
           decField = element(by.id('/decField/1')),
           strField = element(by.id('/strField/1')),
           listField = element(by.id('/ansCodeDefault/1')),
           btnAddStringField = element(by.id('add-/strField/1'));
 
-      whenDone.clear();
+      //whenDone.clear();
       intField.clear();
       decField.clear();
       strField.clear();
@@ -364,18 +392,18 @@ describe('formdata: ', function() {
 
       btnAddStringField.click();
 
-      expect(whenDone.getAttribute('value')).toBe("");
-      expect(intField.getAttribute('value')).toBe("");
-      expect(decField.getAttribute('value')).toBe("");
-      expect(strField.getAttribute('value')).toBe("");
-      expect(listField.getAttribute('value')).toBe("");
+      //expect(whenDone.getAttribute('value')).toBe("");
+      expect(TestUtil.getFieldValue(intField)).toBe("");
+      expect(TestUtil.getFieldValue(decField)).toBe("");
+      expect(TestUtil.getFieldValue(strField)).toBe("");
+      expect(TestUtil.getFieldValue(listField)).toBe("");
     });
 
   });
 
   describe('lists with headings', function() {
     it('should style the heading items', function() {
-      tp.openFullFeaturedForm();
+      tp.LoadForm.openFullFeaturedForm();
       var listField = element(by.id('/listWHeaders/1'));
       listField.click();
       expect(tp.Autocomp.searchResult(1).getAttribute('class')).toEqual('heading');
@@ -385,7 +413,7 @@ describe('formdata: ', function() {
   describe('item.prefix', function() {
 
     it('should be displayed', function () {
-      tp.openFullFeaturedForm();
+      tp.LoadForm.openFullFeaturedForm();
       browser.wait(function () {
         return element(by.id('/type0/1')).isPresent();
       }, tp.WAIT_TIMEOUT_1);
@@ -395,4 +423,5 @@ describe('formdata: ', function() {
     });
   });
 
+  
 });

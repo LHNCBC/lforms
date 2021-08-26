@@ -9,12 +9,27 @@ const { SpecReporter, StacktraceOption } = require('jasmine-spec-reporter');
  */
 exports.config = {
   allScriptsTimeout: 11000,
+  
   specs: [
+    // finished tests
+    '../../test/protractor/spec/argonaut.spec.ts',
+    '../../test/protractor/spec/autocomp_list.spec.ts',
+    '../../test/protractor/spec/buildTest.spec.ts',
+    '../../test/protractor/spec/fhirpath.spec.ts',
+    '../../test/protractor/spec/lforms_datatype.spec.ts',
+    '../../test/protractor/spec/lforms_fhirdata.spec.ts',
+    '../../test/protractor/spec/lforms_formdata.spec.ts',
+    '../../test/protractor/spec/lforms_formula.spec.ts',
+    '../../test/protractor/spec/lforms_hl7.spec.ts',
+    '../../test/protractor/spec/lforms_horizontal.spec.ts',
+    '../../test/protractor/spec/lforms_load_user_data.spec.ts',
+    '../../test/protractor/spec/lforms_matrix_layout.spec.ts'
+    
     // './src/**/*.e2e-spec.ts'
     // './spec/**/*.e2e-spec.todo.failed.ts'
-    './spec/**/*.e2e-spec.done.ts'
+    // './spec/**/*.e2e-spec.done.ts'
     // './spec/**/*.e2e-spec.ts'
-    // './spec/lforms_skiplogic.e2e-spec.todo.failed.ts'
+
   ],
   capabilities: {
     'browserName': 'chrome',

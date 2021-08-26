@@ -9,7 +9,8 @@
     "build:elements": "ng build --prod --output-hashing none && node concatenate.js",
     "test": "ng test --watch=false",
     "lint": "ng lint",
-    "e2e": "npm run build:elements && ng e2e --port 4201 --webdriverUpdate=false",
+    "e2e": "ng e2e --port 4201 --webdriverUpdate=false",
+    "e2e:rebuild": "npm run build:elements && npm run e2e",
     "test-coverage": "ng test --no-watch --code-coverage",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')"
   },
