@@ -24753,7 +24753,7 @@ function addCommonSDCFns(ns) {
 
   self.hasResponsiveExpression = function (itemOrLFData) {
     var ext = itemOrLFData._fhirExt;
-    return ext ? !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
+    return ext ? !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp] || ext[self.fhirExtEnableWhenExp]) : false;
   };
   /**
    *  Returns true if the given item has an expression
@@ -24798,7 +24798,7 @@ function addCommonSDCFns(ns) {
     // Initialize a map for testing whether an extension is an Expression extension.
     // The keys are the URIs, and the values are see to true.
     if (!self.isExpressionExtension) {
-      self.isExpressionExtension = [self.fhirExtCalculatedExp, self.fhirExtInitialExp, self.fhirExtAnswerExp, self.fhirExtVariable].reduce(function (x, k) {
+      self.isExpressionExtension = [self.fhirExtCalculatedExp, self.fhirExtInitialExp, self.fhirExtAnswerExp, self.fhirExtVariable, self.fhirExtEnableWhenExp].reduce(function (x, k) {
         x[k] = true;
         return x;
       }, {});
@@ -25105,6 +25105,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
   self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
+  self.fhirExtEnableWhenExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
   self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
@@ -26987,7 +26988,19 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
       var sdc = this._fhir.SDC;
 
       if (isCalcExp || expURL != sdc.fhirExtVariable) {
-        fieldChanged = expURL == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
+        if (expURL == sdc.fhirExtAnswerExp) fieldChanged = this._setItemListFromFHIRPath(item, newVal);else if (expURL == sdc.fhirExtEnableWhenExp) {
+          newVal = !!newVal[0]; // really this should already be a boolean, TBD
+
+          if (varName) {
+            // if there is a variable name defined, a change in the value matters
+            var oldVal = !!item._enableWhenExpVal; // _enableWhenExpVal could be undefined
+
+            fieldChanged = oldVal != newVal;
+          }
+
+          item._enableWhenExpVal = newVal;
+        } else // else initial or calculated expression
+          fieldChanged = this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
       }
 
       return fieldChanged;

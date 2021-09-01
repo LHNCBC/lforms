@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.3.0] 2021-09-01
+### Added
+- Support for the FHIR enableWhenExpression extension.
+
 ## [29.2.3] 2021-08-26
 ### Fixed
 - Fixed a typo in the error message introduced in 29.2.2.

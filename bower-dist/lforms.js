@@ -2060,7 +2060,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
   $scope.targetShown = function (item) {
-    return $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
+    return item._enableWhenExpVal !== false && $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
   };
   /**
    *  Hide/show the form option panel
@@ -2208,7 +2208,8 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
           watchedSourceItems.push({
             value: item.value,
             unit: item.unit,
-            id: item._elementId
+            id: item._elementId,
+            enableWhenExp: item._enableWhenExpVal
           });
         }
       }
@@ -6427,6 +6428,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
               this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED);
             }
+          /*
+                  else if (item._enableWhenExpVal !== undefined) {
+                    var newStatus = item._enableWhenExpVal ? this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED :
+                      this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+                    this._setSkipLogicStatusValue(item, newStatus);
+                  }
+          */
+
 
           var isDisabled = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
         } // process the sub items

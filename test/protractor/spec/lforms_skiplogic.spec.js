@@ -3,7 +3,33 @@ var testUtil = require('./util');
 var fhirVersions = Object.keys(fhirSupport);
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
+var EC = protractor.ExpectedConditions;
+
 describe('skip logic', function() {
+  fit('should support enableWhenExpression', function() {
+    tp.openBaseTestPage();
+    tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
+    var n1 = element(by.id('n1/1'));
+    var n2 = $('#n2\\/1');
+    var n3 = $('#n3\\/1');
+    var q4 = $('#q4\\/1'); // present when n1+n2+n3 >= 5;
+    browser.wait(EC.presenceOf(n1));
+    expect(q4.isPresent()).toBe(false);
+    n1.click();
+    n1.sendKeys('5');
+    n2.click();
+    expect(q4.isPresent()).toBe(true);
+    n1.clear();
+    n1.click();
+    n1.sendKeys('1');
+    n2.click();
+    n2.sendKeys('2');
+    expect(q4.isPresent()).toBe(false);
+    n3.click();
+    n3.sendKeys('3');
+    n1.click();
+    expect(q4.isPresent()).toBe(true);
+  });
 
   it('target items should be hidden initially', function() {
     tp.openFullFeaturedForm();
