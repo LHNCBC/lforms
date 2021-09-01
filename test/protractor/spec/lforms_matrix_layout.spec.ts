@@ -175,15 +175,6 @@ describe('Form level Matrix layout', function() {
     // for test only: trigger a change event
     item1OtherValue.sendKeys(protractor.Key.TAB);
 
-    // item1answer1.evaluate("subItem.value").then(function(value) {
-    //   expect(value.length).toBe(3);
-    //   expect(value[0].code).toBe('c1');
-    //   expect(value[0].text).toBe('Answer 1');
-    //   expect(value[1].code).toBe('c2');
-    //   expect(value[1].text).toBe('Answer 2');
-    //   expect(value[2].code).toBe(undefined);
-    //   expect(value[2].text).toBe('other values');
-    // });
     item1OtherValue.click().then(()=> {
       browser.driver.executeAsyncScript(function() {
         var callback = arguments[arguments.length - 1];

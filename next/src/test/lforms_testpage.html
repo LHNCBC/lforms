@@ -431,9 +431,10 @@
       // }
       function loadFHIRLibs() {
         let fhirLib4 = document.createElement("script");
-        fhirLib4.setAttribute("src", "/test/fhir/R4/lformsFHIR.min.js");
+        fhirLib4.setAttribute("src", "/test/lib/fhir/R4/lformsFHIR.min.js");
+        
         let fhirLib3 = document.createElement("script");
-        fhirLib3.setAttribute("src", "/test/fhir/STU3/lformsFHIR.min.js");        
+        fhirLib3.setAttribute("src", "/test/lib/fhir/STU3/lformsFHIR.min.js");        
         document.body.appendChild(fhirLib4);
         document.body.appendChild(fhirLib3);
       }

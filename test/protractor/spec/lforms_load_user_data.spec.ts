@@ -108,8 +108,7 @@ describe('load saved user data', function() {
   it('skip logic on repeating section should work too', function() {
     ff.rpSrc2.clear();
     TestUtil.sendKeys(ff.rpSrc2, '1');
-    // NEXT: isPresent() with false is not working 
-    //expect(ff.rpTarget2a.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(ff.rpTarget2a)
     ff.rpSrc2.clear();
     TestUtil.sendKeys(ff.rpSrc2, '2');
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
@@ -119,8 +118,7 @@ describe('load saved user data', function() {
     expect(ff.rpTarget2b.isDisplayed()).toBe(true);
     ff.rpSrc2.clear();
     TestUtil.sendKeys(ff.rpSrc2, '1');
-    // NEXT: isPresent() with false is not working 
-    //expect(ff.rpTarget2a.isPresent()).toBe(false);
+    expect(ff.rpTarget2a.isPresent()).toBe(false); 
     expect(ff.rpTarget2b.isPresent()).toBe(false);
   });
 

@@ -1,3 +1,4 @@
+import { config } from "../../../next/e2e/protractor.conf.js";
 import TestUtil from "./util";
 import { browser, element, by } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
@@ -9,12 +10,11 @@ let $: any = (global as any).jQuery;
 
 export class TestPage {
 
-  testDirURL = 'http://0.0.0.0:4201/test';
-  attrTestUrl = this.testDirURL + '/directiveAttrTest.html';
-  directiveTestUrl = this.testDirURL + '/directiveTest.html';
-  testPageUrl = this.testDirURL + '/lforms_testpage.html';
-  buildFHIRPathURL = this.testDirURL + '/build_test_fhirpath.html';
-  addFormToPageTest = this.testDirURL + '/addFormToPageTest.html';
+  attrTestUrl = config.baseUrl + '/test/directiveAttrTest.html';
+  directiveTestUrl = config.baseUrl + '/test/directiveTest.html';
+  testPageUrl = config.baseUrl + '/test/lforms_testpage.html';
+  buildFHIRPathURL = config.baseUrl + '/test/build_test_fhirpath.html';
+  addFormToPageTest = config.baseUrl + '/test/addFormToPageTest.html';
 
 
   /**

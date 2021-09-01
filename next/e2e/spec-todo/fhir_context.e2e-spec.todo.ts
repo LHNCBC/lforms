@@ -2,8 +2,9 @@ import { TestPage } from "./lforms_testpage.po";
 import TestUtil from "./util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
+import * as FHIRSupport from "../../../app/scripts/fhir/versions.js";
 
-let fhirVersions = ['STU3', 'R4'];
+let fhirVersions = Object.keys(FHIRSupport);
 let tp: TestPage; 
 let LForms: any = (global as any).LForms;
 tp = new TestPage();

@@ -17,7 +17,6 @@ const TestUtil = {
     }
   },
 
-// TODO: not working
   /**
    *  Waits for a field to have the given value.
    * @param field a protractor element locator (e.g. returned by $)
@@ -25,13 +24,11 @@ const TestUtil = {
    * @return a promise that resolves when the field has the expected value.
    */
   waitForValue: function (field, value) {
-    let that = this;
     return browser.wait(function() {
       return field.getAttribute('value').then(function(val) {
-      //return that.getAttribute(field).then(function(val) {
         return val === value;
       })
-    }, 6000);// Debugging: .then(function() {console.log("got "+value)}, function() {console.log("didn't get "+value)});
+    }, 5000);// Debugging: .then(function() {console.log("got "+value)}, function() {console.log("didn't get "+value)});
   },
 
 
@@ -81,15 +78,15 @@ const TestUtil = {
    * @return a promise that resolves when str has been added to the field value
    */
   _sendKeys: function(field, str) {
-    let that = this;
+    let self = this;
     str = '' + str; // convert numbers to strings
     return field.getAttribute('value').then(function(oldVal) {
       var allButLastChar = oldVal+str.slice(0,-1);
       browser.executeScript('arguments[0].value = "'+allButLastChar+'"',
         field.getWebElement()).then(function success() {
-          that.waitForValue(field, allButLastChar);          
+          self.waitForValue(field, allButLastChar);          
           field.sendKeys(str.slice(-1));
-          return that.waitForValue(field, oldVal+str);
+          return self.waitForValue(field, oldVal+str);
         }, function rejected() {
           // For type=file, you can't set the value programmatically.  I think
           // protractor does something special.  Also, the value starts with
@@ -101,7 +98,6 @@ const TestUtil = {
   },
 
 
-  // TODO: not working becuase waitForValue is not working.
   /**
    *  The selenium clearField function does not wait for the field to be cleared
    *  before the next field runs (https://stackoverflow.com/a/43616117) so we
@@ -118,7 +114,7 @@ const TestUtil = {
   /**
    * Clear up the input field of the DOM element and udpate model data
    * The proctractor clear() clears the DOM element but does not update model data.
-   * (if sendKeys(somecharacter) is called after clear(), the model data is update with somecharacter, 
+   * (if sendKeys(somecharacter) is called after clear(), the model data is updated with somecharacter, 
    * so it is not always necessary to call this function)
    * See https://github.com/angular/protractor/issues/301, the bug was fixed and appeared for many times
    * and it is not working again (as of 7/29/2021) for the Web Component, in protractor "~7.0.0" and Angular "~11.2.1"
@@ -265,9 +261,9 @@ const TestUtil = {
   /**
    *  Waits for the given element to not be present on the page.
    */
-  // waitForElementNotPresent: function(elem) {
-  //   browser.wait(function(){return ExpectedConditions.not(browser.isElementPresent(elem))}, 3000);
-  // },
+  waitForElementNotPresent: function(elem) {
+    browser.wait(function(){return ExpectedConditions.not(ExpectedConditions.presenceOf(elem))}, 3000);
+  },
 
   /**
    *  Waits for the given element to be displayed on the page.
@@ -350,6 +346,45 @@ const TestUtil = {
     }, q, qr, elemID);
   },
 
-};
+
+  /**
+   * NOT working quite right. keep for further debugging
+   * A funtion to run LForms.Util.getUserData on the test page.
+
+   * @param element the containing HTML element that includes the LForm's rendered form.
+   * @param noFormDefData optional, to include form definition data, the default is false.
+   * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+   * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
+   * @returns a promise that resolves when the user data of the form is returned
+   */
+  getUserData: function(element=null, noFormDefData=false, noEmptyValue=false, noDisabledItem=false) {    
+    return browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var lfData;
+      switch (arguments.length) {
+        case 5:
+          lfData = LForms.Util.getUserData(arguments[0], arguments[1], arguments[2], arguments[3]);
+          break;
+        case 4:
+          lfData = LForms.Util.getUserData(arguments[0], arguments[1], arguments[2]);
+          break;
+        case 3:
+          lfData = LForms.Util.getUserData(arguments[0], arguments[1]);
+          break;
+        case 2:
+          lfData = LForms.Util.getUserData(arguments[0]);
+          break;
+        case 1:
+          lfData = LForms.Util.getUserData();
+          break;
+        default:
+          lfData = LForms.Util.getUserData();
+      }      
+
+      callback(lfData);
+    })
+  },
+
+}
 
 export default TestUtil;

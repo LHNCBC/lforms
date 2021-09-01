@@ -182,7 +182,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
         this.acType = 'prefetch';
         // acOptions has matchListValue, maxSelected, codes
-        // Using this.options.elementId causes the autocompleter rto be refreshed without an autocompleter created in a horizontal table. 
+        // Using this.options.elementId causes the autocompleter to be refreshed without an autocompleter created in a horizontal table. 
         // (where the rows lists are created as a new array, instead of keeping the same reference. Not confirmed, but I suspect this is the reason.)
         // It works with vertical layout though.
         // Using this.ac.nativeElement works in both cases.
@@ -207,7 +207,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Set the item.value to the autocompleter when the autcompleter is being set up or 
+   * Set the item.value to the autocompleter when the autocompleter is being set up or 
    * the item.value is changed later
    * @param itemValue 
    */

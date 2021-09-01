@@ -3,11 +3,12 @@ import { RxTerms } from "./rxterms.po";
 import TestUtil from "./util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
+import * as FHIRSupport from "../../../app/scripts/fhir/versions.js";
 
+let fhirVersions = Object.keys(FHIRSupport);
 
 // NEXT: TODO: isPresent to be false has a timeout error from Jasmine. Don't know how to test this.
 describe('skip logic', function() {
-  let fhirVersions = ['STU3', 'R4'];
   let tp: TestPage; 
   let ff: any;
   let LForms: any = (global as any).LForms;

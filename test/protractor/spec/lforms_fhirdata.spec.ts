@@ -4,14 +4,15 @@ import { RxTerms } from "./rxterms.po";
 import TestUtil from "./util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
+import * as FHIRSupport from "../../../app/scripts/fhir/versions.js";
 
+let fhirVersions = Object.keys(FHIRSupport);
 let EC = ExpectedConditions;
 
 let tp: TestPage = new TestPage();
 let rxterms = new RxTerms();
 let ff: any = tp.USSGFHTVertical;
 let LForms: any = (global as any).LForms;
-let fhirVersions = ['STU3', 'R4'];
 
 /**
  *  Returns a promise that will resolve to an array of two elements, the first
@@ -905,7 +906,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           TestUtil.sendKeys(dcSource, "ALTABAX (Topical)")
           dcSource.sendKeys(protractor.Key.ARROW_DOWN);
           dcSource.sendKeys(protractor.Key.TAB);
-
+          dcSource.sendKeys(protractor.Key.TAB); // move to next field to avoid getting "" from the input's value
+          TestUtil.waitForValue(dcTarget1, '1% Ointment')
           expect(TestUtil.getAttribute(dcTarget1,'value')).toBe('1% Ointment');
           expect(TestUtil.getAttribute(dcTarget2,'value')).toBe('1% Ointment');
         });
