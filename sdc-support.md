@@ -59,7 +59,7 @@ fields.
 * observationLinkPeriod
 * launchContext
 * variable
-* questionnaire-initialExpression
+* initialExpression
 
 ### Form Data Extraction
 See https://build.fhir.org/ig/HL7/sdc/extraction.html for descriptions of these
@@ -109,14 +109,14 @@ fields.
 ### Form Population
 See https://build.fhir.org/ig/HL7/sdc/populate.html for descriptions of these
 fields.
-* questionnaire-itemPopulationContext
-* sdc-questionnaire-candidateExpression
-* sdc-questionnaire-contextExpression
-* sdc-questionnaire-sourceQueries
-* questionnaire-sourceStructureMap
+* itemPopulationContext
+* candidateExpression
+* contextExpression
+* sourceQueries
+* sourceStructureMap
 
 ### Form Data Extraction
 See https://build.fhir.org/ig/HL7/sdc/extraction.html for descriptions of these
 fields.
-* questionnaire-itemExtractionContext
-* questionnaire-targetStructureMap
+* itemExtractionContext
+* targetStructureMap
