@@ -6,7 +6,7 @@ var ff = tp.FullFeaturedForm;
 var EC = protractor.ExpectedConditions;
 
 describe('skip logic', function() {
-  fit('should support enableWhenExpression', function() {
+  it('should support enableWhenExpression', function() {
     tp.openBaseTestPage();
     tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
     var n1 = element(by.id('n1/1'));
