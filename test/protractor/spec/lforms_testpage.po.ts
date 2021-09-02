@@ -6,8 +6,6 @@ import { protractor } from 'protractor/built/ptor';
 const autoCompBasePage = require("../../../next/node_modules/autocomplete-lhc/test/protractor/basePage").BasePage;
 const elementFactory = TestUtil.elementFactory;
 
-let $: any = (global as any).jQuery;
-
 export class TestPage {
 
   attrTestUrl = config.baseUrl + '/test/directiveAttrTest.html';
@@ -322,7 +320,7 @@ export class TestPage {
    */
   resetReaderLog() {
     browser.driver.executeScript(function () {
-      $('#reader_log').html('')
+      document.getElementById('reader_log').innerHTML = "";
     });
     this.makeReaderLogVisible();
   }
@@ -447,10 +445,10 @@ export class TestPage {
     let testFile = this.getTestDataPathName(filepath, fhirVersion);
     // Temporarily unhide the file input element.
     let fileInput = element(by.css('#fileAnchor'));
-    browser.executeScript("$('#fileAnchor')[0].className = ''");
+    browser.executeScript("document.getElementById('fileAnchor').className = ''");
     TestUtil.sendKeys(fileInput, testFile);
     // Re-hide the file input element
-    browser.executeScript("$('#fileAnchor')[0].className = 'hide'");
+    browser.executeScript("document.getElementById('fileAnchor').className = 'hide'");
     browser.wait(function () { // wait for the form to render
       return element(by.css('.lhc-form-title')).isPresent();
     }, this.WAIT_TIMEOUT_1);
