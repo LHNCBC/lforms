@@ -427,7 +427,14 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         if (expURL == sdc.fhirExtAnswerExp)
           fieldChanged = this._setItemListFromFHIRPath(item, newVal);
         else if (expURL == sdc.fhirExtEnableWhenExp) {
-          newVal = !!(newVal[0]); // really this should already be a boolean, TBD
+          // The new value should be a boolean.  Coerce it to a boolean, and
+          // report a warning if it was not a boolean.
+          var actualNewVal = newVal[0];
+          newVal = !!actualNewVal;
+          if (newVal !== actualNewVal) {
+            LForms.Util.showWarning('An expression from enableWhenExpression '+
+              'did not resolve to a Boolean as required', item);
+          }
           if (varName) { // if there is a variable name defined, a change in the value matters
             var oldVal = !!item._enableWhenExpVal; // _enableWhenExpVal could be undefined
             fieldChanged = oldVal != newVal;

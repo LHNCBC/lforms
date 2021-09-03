@@ -1667,7 +1667,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"29.2.3\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"29.3.0\"}");
 
 /***/ }),
 /* 15 */
@@ -4420,6 +4420,17 @@ LForms.Util = {
    */
   deepCopy: function deepCopy(object) {
     return angular.copy(object);
+  },
+
+  /**
+   *  Shows a warning message, typically about some problem with the form
+   *  definition.
+   * @param msg the message to show
+   * @param item (optional) the item in the form to which the message applies.
+   */
+  showWarning: function showWarning(msg, item) {
+    if (item) msg = 'The question "' + item.text + '" produced the following warning:  ' + msg;
+    console.log(msg); // TBD: add a warning visible on the page.
   }
 };
 
@@ -6428,14 +6439,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
               this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED);
             }
-          /*
-                  else if (item._enableWhenExpVal !== undefined) {
-                    var newStatus = item._enableWhenExpVal ? this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED :
-                      this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
-                    this._setSkipLogicStatusValue(item, newStatus);
-                  }
-          */
-
 
           var isDisabled = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
         } // process the sub items
