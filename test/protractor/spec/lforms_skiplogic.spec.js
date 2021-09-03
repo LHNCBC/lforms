@@ -10,9 +10,9 @@ describe('skip logic', function() {
     tp.openBaseTestPage();
     tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
     var n1 = element(by.id('n1/1'));
-    var n2 = $('#n2\\/1');
-    var n3 = $('#n3\\/1');
-    var q4 = $('#q4\\/1'); // present when n1+n2+n3 >= 5;
+    var n2 = element(by.id('n2/1'));
+    var n3 = element(by.id('n3/1'));
+    var q4 = element(by.id('q4/1')); // present when n1+n2+n3 >= 5;
     browser.wait(EC.presenceOf(n1));
     expect(q4.isPresent()).toBe(false);
     n1.click();
