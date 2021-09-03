@@ -13,8 +13,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "preserveSymlinks": true,
             "outputPath": "dist/lforms-next",
-            "index": "src/lforms_testpage.html",
+            "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
@@ -24,7 +25,9 @@
               "src/assets",
               "src/test-data",
               "src/test-data/form-data",
-              "src/test-data/fhir-data"
+              "src/test-data/fhir-data",
+              "src/test",
+              "src/test/lib/"
             ],
             "styles": [
               "src/styles.css",
@@ -35,7 +38,6 @@
               "src/horizontal-table.css",
               "src/matrix.css",
               "src/validation.css",
-              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "node_modules/ng-zorro-antd/style/index.min.css",
               "node_modules/ng-zorro-antd/checkbox/style/index.min.css",
               "node_modules/ng-zorro-antd/radio/style/index.min.css",
@@ -108,7 +110,10 @@
               "src/assets",
               "src/test-data",
               "src/test-data/form-data",
-              "src/test-data/fhir-data"
+              "src/test-data/fhir-data",
+              "src/test",
+              "src/test/fhir",
+              "src/test/elements"
             ],
             "styles": [
               "src/styles.css",
@@ -119,7 +124,6 @@
               "src/horizontal-table.css",
               "src/matrix.css",
               "src/validation.css",
-              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "node_modules/ng-zorro-antd/style/index.min.css",
               "node_modules/ng-zorro-antd/checkbox/style/index.min.css",
               "node_modules/ng-zorro-antd/radio/style/index.min.css",

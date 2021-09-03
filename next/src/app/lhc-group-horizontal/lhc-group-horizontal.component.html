@@ -6,9 +6,9 @@
         class="lhc-form-horizontal-table-title lhc-de-label">
       <span class="lf-question">
         <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
-          <span *ngIf="item.prefix" class="prefix" [ngStyle]="item._obj_prefixCSS">{{item.prefix}}</span>
-          <span class="question" [ngStyle]="item._obj_textCSS"> {{item.question}}
-            <span *ngIf="item._answerRequired" class="required" title="Required">&nbsp;*</span>
+          <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
+          <span class="question" [style]="item._obj_textCSS">{{item.question}}
+            <span *ngIf="item._answerRequired" class="required" title="Required">*</span>
           </span>
         </label>
       </span>
@@ -62,9 +62,9 @@
             id="{{col.id}}">
           <span class="lf-question">
             <label id="label-{{ col.item._elementId }}" for="{{col.item._elementId}}">
-              <span *ngIf="col.item.prefix" class="prefix" [ngStyle]="col.item._obj_prefixCSS">{{col.item.prefix}}</span>
-              <span class="question" [ngStyle]="col.item._obj_textCSS"> {{col.item.question}}
-                <span *ngIf="col.item._answerRequired" class="required" title="Required">&nbsp;*</span>
+              <span *ngIf="col.item.prefix" class="prefix" [style]="col.item._obj_prefixCSS">{{col.item.prefix}}</span>
+              <span class="question" [style]="col.item._obj_textCSS">{{col.item.question}}
+                <span *ngIf="col.item._answerRequired" class="required" title="Required">*</span>
               </span>
             </label>
           </span>
@@ -93,7 +93,7 @@
     </table>
 
     <!-- a button at the end of each repeating section -->
-    <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item)" class="{{lhcDataService.getSkipLogicClass(item)}}">
+    <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item) && !item._isHiddenFromView" class="{{lhcDataService.getSkipLogicClass(item)}}">
       <button 
         type="button"
         class="lhc-float-button lhc-button" id="add-{{item._elementId}}"

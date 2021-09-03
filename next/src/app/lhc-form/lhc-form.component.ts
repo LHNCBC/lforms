@@ -1,12 +1,12 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, NgZone, HostListener, ChangeDetectionStrategy} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, HostListener, ChangeDetectionStrategy} from '@angular/core';
 import { Subject } from 'rxjs';
 import { throttleTime, debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
-import LhcFormData from '../../lib/lforms/lhc-form';
+import LhcFormData from '../../lib/lforms/lhc-form-data';
 
-
+declare var LForms: any;
 declare var ResizeObserver;
 
 @Component({
@@ -15,12 +15,14 @@ declare var ResizeObserver;
   templateUrl: './lhc-form.component.html',
   styleUrls: ['./lhc-form.component.css']
 })
-export class LhcFormComponent implements OnInit, OnDestroy {
+export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() lfData: any;
   @Input() lfOptions: any;
+  // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
+  @Input() lhcFormData: any; 
 
-  lhcFormData: any;
+  //lhcFormData: any;
   viewModeClass = "";
   _inputFieldWidth = null
 
@@ -50,10 +52,10 @@ export class LhcFormComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit(): void {
-    if (this.lfData) {
-      this.lhcFormData = new LhcFormData(this.lfData)
-      this.lhcDataService.setLhcFormData(this.lhcFormData);
-    }
+    // if (this.lfData) {
+    //   this.lhcFormData = new LhcFormData(this.lfData)
+    //   this.lhcDataService.setLhcFormData(this.lhcFormData);
+    // }
 
     //console.log(this.host)
     this.observer = new ResizeObserver(entries => {
@@ -77,17 +79,58 @@ export class LhcFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.observer.unobserve(this.host.nativeElement);
+    this.observer.unobserve(this.host.nativeElement);    
   }
 
   ngOnChanges(changes) {
-    //console.log("in lhc-form's ngOnChange")
-    //console.log(changes)
-    if (this.lfData) {
-      this.lhcFormData = new LhcFormData(this.lfData)
-      this.lhcDataService.setLhcFormData(this.lhcFormData);
-      console.log(this.lhcFormData)
+    // console.log("in lhc-form's ngOnChange")
+
+    // form data changes
+    if (changes.lfData) {
+      // form data changes, clean up the previous data before loading the new form data
+      this.lhcFormData = null;
+      this.lhcDataService.setLhcFormData(null);
+      if (this.lfData) {
+        let that = this;
+        // reset the data after this thread is done
+        setTimeout(()=> {
+          that.lhcFormData = new LhcFormData(that.lfData)
+          // and options change
+          if (changes.lfOptions) {
+            if (that.lfOptions) {
+              that.lhcFormData.setTemplateOptions(that.lfOptions);  
+            }
+          }      
+          that.lhcDataService.setLhcFormData(that.lhcFormData);  
+
+          // when a new form is loaded, run all FHIR Expressions including the initial expresions
+          if (LForms.FHIR) {
+            if (this.lfData) { // sometimes set to null to clear the page
+              if (this.lfData._hasResponsiveExpr || this.lfData._hasInitialExpr) {
+                this.lfData._expressionProcessor.runCalculations(true).then(() => {
+                  console.log('fhir path run with true')
+                });
+              }
+            }        
+          }
+        },1)
+      }
     }
+    // only options changes
+    else if (changes.lfOptions) {
+      let lhcFD = this.lhcDataService.getLhcFormData();
+      if (lhcFD) {
+        lhcFD.setTemplateOptions(this.lfOptions);
+        console.log("in lhc-form's ngOnChange: set templateOptions, alone")
+      }    
+    }
+    
+    // if (this.lfData) {
+    //   this.lhcFormData = new LhcFormData(this.lfData)
+
+    //   this.lhcDataService.setLhcFormData(this.lhcFormData);
+    //   //console.log(this.lhcFormData)
+    // }
   }
 
   // // called too many times. being called continuously even nothing is touched on the form

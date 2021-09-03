@@ -1,10 +1,22 @@
-"use strict";
-describe('autocomp list', function() {
+import { TestPage } from "./lforms_testpage.po";
+import { RxTerms } from "./rxterms.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
 
-  var tp = require('./lforms_testpage.po.js');
-  var ff = tp.Autocomp;
+describe('autocomp list', function() {
+  let tp: TestPage; 
+  let ff: any;
+  let LForms: any = (global as any).LForms;
+
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+    tp = new TestPage();
+    ff = tp.Autocomp;
+  });
+
   it('should not be visible when the form loads', function() {
-    tp.openUSSGFHTVertical();
+    tp.LoadForm.openUSSGFHTVertical();
     expect(ff.searchResults.isDisplayed()).toBeFalsy();
   });
 
@@ -25,7 +37,7 @@ describe('autocomp list', function() {
   it('should interoperate with score rules', function() {
     // The data model needs to be correctly updated
     // when the user enters a new value.
-    tp.openGlasgowForm();
+    tp.LoadForm.openGlasgowForm();
 
     browser.wait(function() {
       return ff.eyeField.isDisplayed();
@@ -35,20 +47,20 @@ describe('autocomp list', function() {
       return ff.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_2);
     // Check pre-condition
-    expect(ff.scoreField.getAttribute('value')).toEqual('0');
+    expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('0');
     // Click first item in list, and then the score field to send the change
     // event.
-    $('#searchResults li:first-child').click();
+    element(by.css('#searchResults li:first-child')).click();
     ff.scoreField.click();
-    expect(ff.scoreField.getAttribute('value')).toEqual('1');
+    expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('1');
     // Now try using keystrokes to select the third item.
     ff.eyeField.click();
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.TAB);
-    expect(ff.eyeField.getAttribute('value')).toBe("3. Eye opening to verbal command - 3");
-    expect(ff.scoreField.getAttribute('value')).toEqual('3');
+    expect(TestUtil.getAttribute(ff.eyeField,'value')).toBe("3. Eye opening to verbal command - 3");
+    expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('3');
 
     // Try the 4th answer, which has a null label
     ff.eyeField.click();
@@ -57,18 +69,17 @@ describe('autocomp list', function() {
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.TAB);
-    expect(ff.eyeField.getAttribute('value')).toBe("4. Eyes open spontaneously - 4");
-    expect(ff.scoreField.getAttribute('value')).toEqual('4');
+    expect(TestUtil.getAttribute(ff.eyeField,'value')).toBe("4. Eyes open spontaneously - 4");
+    expect(TestUtil.getAttribute(ff.scoreField,'value')).toEqual('4');
   });
 
   it('should receive default values set via defaultAnswer', function() {
-    tp.openFullFeaturedForm();
-    expect(tp.FullFeaturedForm.cneField.getAttribute('value')).toEqual('Answer 2');
+    tp.LoadForm.openFullFeaturedForm();
+    expect(TestUtil.getAttribute(tp.FullFeaturedForm.cneField,'value')).toEqual('Answer 2');
   });
 
-
   it('should set column headers when specified', function() {
-    tp.openHL7GeneticPanel();
+    tp.LoadForm.openHL7GeneticPanel();
     // Open the "simple variation" section
     var kindField = tp.HL7GeneticPanel.kindOfMutations;
     browser.wait(function() {
@@ -88,39 +99,41 @@ describe('autocomp list', function() {
 
     // Confirm that the header row appears over the search results
     var searchRes = tp.Autocomp.searchResults;
-    expect(searchRes.isPresent()).toBe(true);
+    //expect(searchRes.isPresent()).toBe(true);
     var EC = protractor.ExpectedConditions;
     browser.wait(function() {
       return searchRes.isDisplayed();
     }, tp.WAIT_TIMEOUT_2);
     // This test also checks the escaping of HTML tags
-    expect($('#searchResults th:first-child').getText()).toBe('Variant ID <a>');
+    let result = element(by.css('#searchResults th:first-child'))
+    expect(result.getText()).toBe('Variant ID <a>');
   });
 
 
   it('should autofill lists when there is just one item', function() {
-    tp.openRxTerms();
-    var rxterms = require('./rxterms.fo');
+    tp.LoadForm.openRxTerms();
+    var rxterms = new RxTerms();
     tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'AZELEX');
-    expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('20% Cream');
+    expect(TestUtil.getAttribute(rxterms.strengthAndForm,'value')).toEqual('20% Cream');
   });
 
   it('should not display SeqNum on answers that one of them has a numeric value', function() {
-    tp.openFullFeaturedForm();
+    tp.LoadForm.openFullFeaturedForm();
 
     // no sequence number
     var numericAnswer = element(by.id('/numeric_answer/1'));
+    TestUtil.scrollIntoView(numericAnswer);
     numericAnswer.click();
-    expect($('#searchResults #completionOptions ul li:first-child').getText()).toBe('1');
-    expect($('#searchResults #completionOptions ul li:nth-child(2)').getText()).toBe('Answer 2');
-    expect($('#searchResults #completionOptions ul li:nth-child(3)').getText()).toBe('Answer 3');
+    expect(element(by.css('#searchResults #completionOptions ul li:first-child')).getText()).toBe('1');
+    expect(element(by.css('#searchResults #completionOptions ul li:nth-child(2)')).getText()).toBe('Answer 2');
+    expect(element(by.css('#searchResults #completionOptions ul li:nth-child(3)')).getText()).toBe('Answer 3');
 
     // has sequence number
     var textAnswer = element(by.id('/type9/1'));
     textAnswer.click();
-    expect($('#searchResults #completionOptions ul li:first-child').getText()).toBe('1:  Answer 1');
-    expect($('#searchResults #completionOptions ul li:nth-child(2)').getText()).toBe('2:  Answer 2');
-    expect($('#searchResults #completionOptions ul li:nth-child(3)').getText()).toBe('3:  Answer 3');
+    expect(element(by.css('#searchResults #completionOptions ul li:first-child')).getText()).toBe('1:  Answer 1');
+    expect(element(by.css('#searchResults #completionOptions ul li:nth-child(2)')).getText()).toBe('2:  Answer 2');
+    expect(element(by.css('#searchResults #completionOptions ul li:nth-child(3)')).getText()).toBe('3:  Answer 3');
 
 
   });

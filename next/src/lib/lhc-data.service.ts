@@ -265,7 +265,7 @@ export class LhcDataService {
    */
   getRowClass(item) {
     //var eleClass = 'level' + item._displayLevel;
-    var eleClass = ' lf-datatype-' + item.dataType;
+    var eleClass = ' lhc-datatype-' + item.dataType;
     if (item._answerRequired) {
       eleClass += ' lf-answer-required';
     }
@@ -276,9 +276,9 @@ export class LhcDataService {
     else {
       eleClass += ' lhc-item-question';
     }
-    if (item.dataType === 'TITLE') {
-      eleClass += ' lhc-item-display';
-    }
+    // if (item.dataType === 'TITLE') {
+    //   eleClass += ' lhc-item-display';
+    // }
 
     if (!item.question || item.question.length === 0) {
       eleClass += ' lf-empty-question';
@@ -290,7 +290,7 @@ export class LhcDataService {
       eleClass += ' lhc-show-validation';
     }
     if (item._isHiddenFromView) {
-      eleClass += ' lf-hidden-from-view';
+      eleClass += ' lhc-hidden-from-view';
     }
     if (Array.isArray(item._validationErrors) && item._validationErrors.length > 0) {
       eleClass += ' lhc-invalid'

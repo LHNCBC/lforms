@@ -1,14 +1,19 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import equal from "fast-deep-equal";
+//let LForms:any = (global as any).LForms;
+
+declare var LForms: any;
 
 @Component({
   selector: 'lhc-watcher',
   templateUrl: './lhc-watcher.component.html',
   styleUrls: ['./lhc-watcher.component.css']
 })
-export class LhcWatcherComponent implements OnInit {
+export class LhcWatcherComponent implements OnInit, OnChanges {
 
   @Input() value: any;
+  @Input() item: any;
 
   constructor(private lhcDataService: LhcDataService) { }
 
@@ -22,10 +27,19 @@ export class LhcWatcherComponent implements OnInit {
   // for answer list with radio/checkboxes, all worked including cwe user typed values.
   // for answer list with ac (single choice, mulitple choice), prefect or search field. all worked finally.
   ngOnChanges(changes) {
-    
-    if (!changes.value.firstChange) {
+    if (!changes.value.firstChange && !equal(changes.value.currentValue, changes.value.previousValue)) {
+      // if (!changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcFormData()
-      lfData._checkFormControls();
+      lfData.updateOnSourceItemChange(this.item)
+
+      // run FHIRPATH expression when there is a data change
+      if (LForms.FHIR && lfData) {
+        if (lfData._hasResponsiveExpr) {
+          lfData._expressionProcessor.runCalculations(false).then(()=>{
+            console.log('fhir path run with false')
+          }); // pick up asynchronous model changes
+        }
+      }
 
     }
 
@@ -34,6 +48,8 @@ export class LhcWatcherComponent implements OnInit {
 
     //TODO: since lhc-validate is also detecting changes on the item.value, it might be efficient 
     // to run some functions that need to be executed only when an item's value changes.
+
+
   }
 
 }

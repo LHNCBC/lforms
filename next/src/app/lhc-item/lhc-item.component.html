@@ -13,15 +13,15 @@
         <lhc-item-question [item]="item" class="lhc-de"></lhc-item-question>
         <!-- question item could have sub items -->
         <div *ngIf="item.items" class="lhc-item-group-body">
-          <ng-container *ngFor="let item of item.items">
-            <lhc-item *ngIf="item && lhcDataService.targetShown(item)" 
+          <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">
+            <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView" 
               [item]="item" 
               class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
             </lhc-item>
           </ng-container>
         </div>
         <!-- a button at the end of each repeating section -->
-        <div class="lf-table-item {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && lhcDataService.targetShown(item) ">
+        <div class="lf-table-item {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && lhcDataService.targetShown(item) && !item._isHiddenFromView">
           <div class="{{lhcDataService.getSkipLogicClass(item)}}">
               <button type="button"
                     class="lhc-float-button lhc-button" id="add-{{item._elementId}}"

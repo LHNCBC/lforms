@@ -1,23 +1,21 @@
 // Helper functions for the tests
-const EC = protractor.ExpectedConditions;
-const fs = require ('fs');
-const os = require('os');
-const path = require('path');
+import { browser, element, by, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+let LForms: any = (global as any).LForms;
 
-var util = {
+const TestUtil = {
   /**
    *  Returns a function that returns a promise for the given element.
    * @param elemLoc either a string for the ID of an element or a protractor
    *  locator.
    */
-  elementFactory: function (elemLoc) {
+  elementFactory: function(elemLoc) {
     if (typeof elemLoc === 'string')
       elemLoc = by.id(elemLoc);
     return function () {
       return element(elemLoc);
     }
   },
-
 
   /**
    *  Waits for a field to have the given value.
@@ -35,6 +33,43 @@ var util = {
 
 
   /**
+   * Get a value from a DOM element
+   * @param field a DOM element that has a value, i.e. INPUT/TEXTAREA and etc.
+   * @returns 
+   * Note: ele.getAttribute('style') still works.
+   * Note2: it is working again (as of 7/29/2021) in protractor "~7.0.0" and Angular "~11.2.1"
+   * and Linux Chrome Version 92.0.4515.107
+   */
+  getFieldValue: function(field) {
+    return field.getWebElement().then((element) =>
+      browser.executeScript((el) => {
+        return el.value;
+      }, element)
+    )
+  },
+
+
+  /**
+   * Get an attribute value from a DOM element
+   * @param field a DOM element
+   * @param attrName 
+   * @returns 
+   */
+  getAttribute: function(field, attrName) {
+    return field.getWebElement().then((element) =>
+      browser.executeScript((el, attr) => {
+        return el[attr];
+      }, element, attrName)
+    )
+  },
+
+
+  sendKeys(field, value) {
+    field.sendKeys(value)
+  },
+
+  // NOT USED, waitForValue seems not working in some cases.
+  /**
    *  The selenium sendKeys function sends events for each character and the
    *  result is not stable, so we use this instead.  Only the key events for the
    *  last character are sent.
@@ -42,15 +77,16 @@ var util = {
    * @param str the value (either a string or a number)
    * @return a promise that resolves when str has been added to the field value
    */
-  sendKeys: function(field, str) {
+  _sendKeys: function(field, str) {
+    let self = this;
     str = '' + str; // convert numbers to strings
     return field.getAttribute('value').then(function(oldVal) {
       var allButLastChar = oldVal+str.slice(0,-1);
       browser.executeScript('arguments[0].value = "'+allButLastChar+'"',
         field.getWebElement()).then(function success() {
-          util.waitForValue(field, allButLastChar);
+          self.waitForValue(field, allButLastChar);          
           field.sendKeys(str.slice(-1));
-          return util.waitForValue(field, oldVal+str);
+          return self.waitForValue(field, oldVal+str);
         }, function rejected() {
           // For type=file, you can't set the value programmatically.  I think
           // protractor does something special.  Also, the value starts with
@@ -72,6 +108,23 @@ var util = {
   clearField: function(field) {
     field.clear();
     return this.waitForValue(field, '');
+  },
+
+
+  /**
+   * Clear up the input field of the DOM element and udpate model data
+   * The proctractor clear() clears the DOM element but does not update model data.
+   * (if sendKeys(somecharacter) is called after clear(), the model data is updated with somecharacter, 
+   * so it is not always necessary to call this function)
+   * See https://github.com/angular/protractor/issues/301, the bug was fixed and appeared for many times
+   * and it is not working again (as of 7/29/2021) for the Web Component, in protractor "~7.0.0" and Angular "~11.2.1"
+   * @param field a protractor element locator
+   */
+  clear: function(field) {
+    field.click();
+    field.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"));
+    field.sendKeys(protractor.Key.BACK_SPACE);
+    field.clear();
   },
 
 
@@ -99,7 +152,7 @@ var util = {
       return browser.sleep(100).then(() =>
         browser.executeScript("return window.scrollY").then(newScrollY => {
           console.log("originalScrollY="+originalScrollY+"; newScrollY="+newScrollY);
-          return (originalScrollY == newScrollY) ? true : util.waitForScrollStop()
+          return (originalScrollY == newScrollY) ? true : this.waitForScrollStop()
         })
       );
     });
@@ -121,7 +174,7 @@ var util = {
           element.scrollIntoView({block: 'center'});
         }
       }, element).then(
-        () => util.waitForScrollStop()
+        () => this.waitForScrollStop()
       );
     });
   },
@@ -134,7 +187,7 @@ var util = {
    */
   safeClick: function (elementFinder) {
     // Borrowed Yury's code from fhir-obs-viewer.
-    return browser.wait(EC.elementToBeClickable(elementFinder), 5000).then(()=>
+    return browser.wait(ExpectedConditions.elementToBeClickable(elementFinder), 5000).then(()=>
       this.scrollIntoView(elementFinder).then(() => {
         console.log("Clicking "+elementFinder.locator().value);
         return elementFinder.click()
@@ -142,10 +195,10 @@ var util = {
     );
     // For when debugging is needed.
     /*
-    return browser.wait(EC.presenceOf(elementFinder)).then(() => {
+    return browser.wait(ExpectedConditions.presenceOf(elementFinder)).then(() => {
       console.log("%%% safeClick:  element present");
       return browser.wait(()=>elementFinder.isDisplayed()).then(() => {
-      //return browser.wait(EC.visibilityOf(elementFinder)).then(() => {
+      //return browser.wait(ExpectedConditions.visibilityOf(elementFinder)).then(() => {
         console.log("%%% safeClick:  element visible");
         return this.scrollIntoView(elementFinder).then(() => elementFinder.click());
       });
@@ -209,8 +262,7 @@ var util = {
    *  Waits for the given element to not be present on the page.
    */
   waitForElementNotPresent: function(elem) {
-    var EC = protractor.ExpectedConditions;
-    browser.wait(function(){return EC.not(browser.isElementPresent(elem))}, 3000);
+    browser.wait(function(){return ExpectedConditions.not(ExpectedConditions.presenceOf(elem))}, 3000);
   },
 
   /**
@@ -218,10 +270,12 @@ var util = {
    */
   waitForElementDisplayed: function(elem) {
     // Make sure it is displayed first.
-    util.waitForElementPresent(elem);
+    this.waitForElementPresent(elem);
     browser.wait(function(){return elem.isDisplayed()}, 3000);
   },
 
+
+  //TODO: LForms.Def is not avaible
   /**
    *  Disables Autocompleter scrolling (by making the move immediate).
    */
@@ -264,7 +318,7 @@ var util = {
       (10000 + date.getFullYear()).toString().substr(1)].join('/')
       + ' ' +
       [(100 + date.getHours()).toString().substr(1),
-      (100 + date.getMinutes()).toString().substr(1)].join(':');
+      (100 + date.getMinutes()).toString().substr(1), "00"].join(':');
   },
 
   /**
@@ -294,21 +348,43 @@ var util = {
 
 
   /**
-   *  Creates a temporary file
-   * @param fileName the file name use.  It does not need to be unique, because
-   *  it will put inside a unique directory.
-   * @param content the content to write to the file
-   * @return the full pathname for the temporary file.
-   */
-  createTempFile: function(fileName, content) {
-    const tmp = require('tmp');
-    tmp.setGracefulCleanup();
-    var dirObj = tmp.dirSync({prefix: 'lformsTest2', unsafeCleanup: true});
-    var dirPath = dirObj.name;
-    var pathName = path.join(dirPath, fileName);
-    fs.writeFileSync(pathName, content);
-    return pathName;
-  }
-};
+   * NOT working quite right. keep for further debugging
+   * A funtion to run LForms.Util.getUserData on the test page.
 
-module.exports = util;
+   * @param element the containing HTML element that includes the LForm's rendered form.
+   * @param noFormDefData optional, to include form definition data, the default is false.
+   * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+   * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
+   * @returns a promise that resolves when the user data of the form is returned
+   */
+  getUserData: function(element=null, noFormDefData=false, noEmptyValue=false, noDisabledItem=false) {    
+    return browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var lfData;
+      switch (arguments.length) {
+        case 5:
+          lfData = LForms.Util.getUserData(arguments[0], arguments[1], arguments[2], arguments[3]);
+          break;
+        case 4:
+          lfData = LForms.Util.getUserData(arguments[0], arguments[1], arguments[2]);
+          break;
+        case 3:
+          lfData = LForms.Util.getUserData(arguments[0], arguments[1]);
+          break;
+        case 2:
+          lfData = LForms.Util.getUserData(arguments[0]);
+          break;
+        case 1:
+          lfData = LForms.Util.getUserData();
+          break;
+        default:
+          lfData = LForms.Util.getUserData();
+      }      
+
+      callback(lfData);
+    })
+  },
+
+}
+
+export default TestUtil;

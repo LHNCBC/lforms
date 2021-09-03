@@ -4,8 +4,8 @@
 <form *ngIf="lhcFormData" class="lhc-form lf-template-table novalidate {{viewModeClass}}" autocomplete="off" #lhcFormContainer>
 
     <div class="lhc-form-title" role="heading" aria-level=1>
-      <span id="label-{{ lhcFormData.code }}" class="lf-question"
-       >{{lhcFormData.name || lhcFormData.fhirQName}}</span>
+      <span id="label-{{ lhcFormData.code }}" class="lf-question" [style]="lhcFormData._obj_titleCSS"
+        >{{lhcFormData.name || lhcFormData.fhirQName}}</span>
       <span class="lf-item-code" ng-if="lhcFormData.templateOptions.showQuestionCode">
             <a *ngIf="lhcFormData._linkToDef" href="{{ lhcFormData._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ lhcFormData.code }}]</a>
             <span *ngIf="!lhcFormData._linkToDef">[{{ lhcFormData.code }}]</span>
@@ -39,8 +39,8 @@
           <!-- data row, for each item -->
           <!-- check each top level item's questionLayout -->
           <ng-container *ngIf="lhcFormData.items">
-            <ng-container *ngFor ="let item of lhcFormData.items">
-              <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)" 
+            <ng-container *ngFor ="let item of lhcFormData.items; trackBy: lhcDataService.trackByElementId">
+              <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)" 
                 [item]="item" 
                 class="lhc-item {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
               </lhc-item>

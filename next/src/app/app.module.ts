@@ -13,6 +13,11 @@ import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 
+import * as ucumPkg from '@lhncbc/ucum-lhc';
+import LhcFormUtils from '../lib/lforms/lhc-form-utils.js';
+import LhcFormData  from '../lib/lforms/lhc-form-data';
+import LhcHL7 from '../lib/lforms/lhc-hl7.js';
+
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -118,6 +123,23 @@ export class AppModule {
 
     //customElements.define('wc-lhc-item-choice', createCustomElement(LhcItemChoiceComponent,
     //  { injector: injector, strategyFactory: new ElementZoneStrategyFactory(LhcItemChoiceComponent, injector) }));
+
+    let lforms = {
+      LFormsData: LhcFormData,
+      HL7: LhcHL7,
+      ucumPkg: ucumPkg,
+      Util: LhcFormUtils,
+      version: "29.0.0"
+    }
+
+    lforms.Util.FHIRSupport = {
+      'STU3': 'partial',
+      'R4': 'WIP'
+    };
+
+    console.log(lforms);
+
+    window['LForms'] = lforms;
 
     customElements.define('wc-lhc-item', createCustomElement(LhcItemComponent, { injector: this.injector }));
     customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));

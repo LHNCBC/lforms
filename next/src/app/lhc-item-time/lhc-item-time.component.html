@@ -4,8 +4,12 @@
     nzFormat="HH:mm:ss"
     nzPlaceHolder="HH:mm:ss"
     nzSize="small"
-    [(ngModel)]="item.value" 
+    [(ngModel)]="time" 
+    (focus)="lhcDataService.setActiveRow(item)"
+    id="{{item._elementId}}"
+    aria-required="{{ item._answerRequired }}"
     (ngModelChange)="onChange($event)"
-    (focus)="lhcDataService.setActiveRow(item)">
+  >
   </nz-time-picker>
 </ng-container>
+    

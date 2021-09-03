@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, ViewEncapsulation } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-item-simple-type.component.html',
   styleUrls: ['./lhc-item-simple-type.component.css']
 })
-export class LhcItemSimpleTypeComponent implements OnInit {
+export class LhcItemSimpleTypeComponent implements OnInit, OnChanges {
 
   // Handle the item whose type is 'integer' or 'decimal' and has a unit
   // http://hl7.org/fhir/StructureDefinition/questionnaire-unit

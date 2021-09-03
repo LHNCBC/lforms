@@ -4,6 +4,9 @@
 /dist
 /tmp
 /out-tsc
+/elements
+# testing files
+/src/test/lib
 # Only exists if Bazel was run
 /bazel-out
 

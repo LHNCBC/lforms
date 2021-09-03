@@ -2,21 +2,45 @@
 // Protractor configuration file, see link for more information
 // https://github.com/angular/protractor/blob/master/lib/config.ts
 
-const { SpecReporter } = require('jasmine-spec-reporter');
+const { SpecReporter, StacktraceOption } = require('jasmine-spec-reporter');
 
 /**
  * @type { import("protractor").Config }
  */
 exports.config = {
   allScriptsTimeout: 11000,
+  
   specs: [
-    './src/**/*.e2e-spec.ts'
+    // finished tests
+    '../../test/protractor/spec/argonaut.spec.ts',
+    '../../test/protractor/spec/autocomp_list.spec.ts',
+    '../../test/protractor/spec/buildTest.spec.ts',
+    '../../test/protractor/spec/fhirpath.spec.ts',
+    '../../test/protractor/spec/lforms_datatype.spec.ts',
+    '../../test/protractor/spec/lforms_fhirdata.spec.ts',
+    '../../test/protractor/spec/lforms_formdata.spec.ts',
+    '../../test/protractor/spec/lforms_formula.spec.ts',
+    '../../test/protractor/spec/lforms_hl7.spec.ts',
+    '../../test/protractor/spec/lforms_horizontal.spec.ts',
+    '../../test/protractor/spec/lforms_load_user_data.spec.ts',
+    '../../test/protractor/spec/lforms_matrix_layout.spec.ts'
+    
+    // './src/**/*.e2e-spec.ts'
+    // './spec/**/*.e2e-spec.todo.failed.ts'
+    // './spec/**/*.e2e-spec.done.ts'
+    // './spec/**/*.e2e-spec.ts'
+
   ],
   capabilities: {
-    browserName: 'chrome'
+    'browserName': 'chrome',
+    // 'chromeOptions': {
+    //     'args': [
+    //         '--headless'
+    //     ]
+    // }
   },
   directConnect: true,
-  baseUrl: 'http://localhost:4200/',
+  baseUrl: 'http://localhost:4201/',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
@@ -27,8 +51,9 @@ exports.config = {
     require('ts-node').register({
       project: require('path').join(__dirname, './tsconfig.json')
     });
-    jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+    jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: StacktraceOption.PRETTY } }));
 
+    await browser.waitForAngularEnabled(false);
     await browser.manage().window().maximize();
     await browser.manage().timeouts().implicitlyWait(10000);
   }

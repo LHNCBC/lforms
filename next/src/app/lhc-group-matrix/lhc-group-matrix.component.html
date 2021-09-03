@@ -2,9 +2,9 @@
   <div class="lf-form-matrix-table-title lf-de-label">
     <span class="lf-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
-        <span *ngIf="item.prefix" class="prefix" [ngStyle]="item._obj_prefixCSS">{{item.prefix}}</span>
-        <span class="question" [ngStyle]="item._obj_textCSS"> {{item.question}}
-          <span *ngIf="item._answerRequired" class="required" title="Required">&nbsp;*</span>
+        <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
+        <span class="question" [style]="item._obj_textCSS">{{item.question}}
+          <span *ngIf="item._answerRequired" class="required" title="Required">*</span>
         </span>
       </label>
     </span>
@@ -68,9 +68,9 @@
           <div class="lf-de-label">
             <span class="lf-question">
               <label id="label-{{ subItem._elementId }}" for="{{subItem._elementId}}">
-                <span *ngIf="subItem.prefix" class="prefix" [ngStyle]="subItem._obj_prefixCSS">{{subItem.prefix}}</span>
-                <span class="question" [ngStyle]="subItem._obj_textCSS"> {{subItem.question}}
-                  <span *ngIf="subItem._answerRequired" class="required" title="Required">&nbsp;*</span>
+                <span *ngIf="subItem.prefix" class="prefix" [style]="subItem._obj_prefixCSS">{{subItem.prefix}}</span>
+                <span class="question" [style]="subItem._obj_textCSS"> {{subItem.question}}
+                  <span *ngIf="subItem._answerRequired" class="required" title="Required">*</span>
                 </span>
               </label>        
             </span>
@@ -127,12 +127,12 @@
             <label>
               <input type="checkbox" [(ngModel)]="subItem._otherValueChecked"
                      id="{{subItem._elementId + '_other'}}"
-                     (change)="updateCheckboxListValueForOther(subItem, subitem._answerOther)">
+                     (change)="lhcDataService.updateCheckboxListValueForOther(subItem, subItem._answerOther)">
             </label>
             <label>
               <input type="text" [(ngModel)]="subItem._answerOther"
                      id="{{subItem._elementId + '_otherValue'}}"
-                     (change)="updateCheckboxListValueForOther(subItem, subitem._answerOther)">
+                     (change)="lhcDataService.updateCheckboxListValueForOther(subItem, subItem._answerOther)">
             </label>
           </span>
           <!--for single answer-->
@@ -140,11 +140,11 @@
             <label>
               <input type="radio" id="{{subItem._elementId + '_other'}}" [(ngModel)]="subItem._otherValueChecked"
                      [value]="'true'" name="{{subItem._elementId}}"
-                     (change)="updateRadioListValueForOther(subItem, subitem._answerOther)">
+                     (change)="lhcDataService.updateRadioListValueForOther(subItem, subItem._answerOther)">
             </label>
             <label>
-              <input type="text" id="{{subItem._elementId + '_otherValue'}}" [(ngModel)]="subitem._answerOther"
-                     (change)="updateRadioListValueForOther(subItem, subitem._answerOther)">
+              <input type="text" id="{{subItem._elementId + '_otherValue'}}" [(ngModel)]="subItem._answerOther"
+                     (change)="lhcDataService.updateRadioListValueForOther(subItem, subItem._answerOther)">
             </label>
           </span>
         </td>

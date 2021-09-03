@@ -9,5 +9,7 @@
       (ngModelChange)="onChange($event)"
       (nzOnOk)="onOk($event)"
       (focus)="lhcDataService.setActiveRow(item)"
+      id="{{item._elementId}}"
+      aria-required="{{ item._answerRequired }}"
     ></nz-date-picker>
 </ng-container>

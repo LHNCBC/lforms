@@ -2,7 +2,6 @@
  * Common utility functions
  */
 import moment from "moment"
-//import jQuery from "jquery";
 import copy from "fast-copy";
 
 const CommonUtils = {
@@ -109,6 +108,7 @@ const CommonUtils = {
     return objDate.toISOString();
   },
 
+  // TODO: move to lhc-form-utils.js
   /**
    * Parse a formatted date string and create a date object
    * @param strDate a formatted date string
@@ -182,7 +182,7 @@ const CommonUtils = {
     return nextLetter;
   },
 
-
+// TODO: move to lhc-form-utils.js
   /**
    * Finds an object from an array using key/value pair with an optional start index.
    * The matching value should be a primitive type. If start index is not specified,
@@ -265,7 +265,7 @@ const CommonUtils = {
     }
   },
 
-
+// TODO: move to lhc-form-utils.js
   /**
    * Utility to walkthrough recurively through each element in a collection
    *
@@ -291,18 +291,63 @@ const CommonUtils = {
         else if (typeof collectionObj[key] === 'object') {
           this.pruneNulls(collectionObj[key]);
         }
-      });
+      }, this);
     }
   },
 
 
-
+// TODO: move to lhc-form-utils.js
   deepCopy: function(sourceObj) {
     //console.dir(sourceObj);
 
     //return jQuery.extend(true, {}, sourceObj);
     return copy(sourceObj);
-  }
+  },
+
+
+  // TODO: move to lhc-form-utils.js
+  /**
+   * Check if an item's value is empty, where the data has no meaningful use.
+   * @param value the value to be tested
+   * @returns {boolean}
+   * @private
+   */
+   isItemValueEmpty: function(value) {
+    var empty = true;
+    if(value !== null && value !== undefined && value !== '' && typeof value !== 'function') {
+      if(typeof value === 'string' || value instanceof String) {
+        empty = value.trim() === '';
+      }
+      else if(Array.isArray(value)) {
+        for(var i=0; i < value.length; ++i) {
+          if(! this.isItemValueEmpty(value[i])) {
+            empty = false;
+            break;
+          }
+        }
+      }
+      else if(typeof value === 'object') {
+        var keys = Object.keys(value);
+        if(keys.length > 0) {
+          for(var i=0, iLen=keys.length; i<iLen; i++) {
+            if(! this.isItemValueEmpty(value[keys[i]])) {
+              empty = false;
+              break;
+            }
+          }
+        }
+        else if(value.constructor !== Object) { // e.g., a Date object has zero length keys
+          empty = false;
+        }
+      }
+      else {
+        empty = false;
+      }
+    }
+
+    return empty;
+  },
+
 };
 
 export default CommonUtils;

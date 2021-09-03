@@ -310,7 +310,7 @@
   padding: 4px 0 4px 0;
 }
 /* title row */
-.lhc-form .lhc-form-table-row.lhc-item-display  {
+.lhc-form .lhc-item.lhc-datatype-TITLE  {
   background-color: #e6f1ff; /*rgb(67,115,156);*/
   border-top: 2px solid white; /* leave space between headers */
 }

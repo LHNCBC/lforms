@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
 
 @Component({
@@ -7,7 +7,7 @@ import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autoc
   styleUrls: ['./lhc-autocomplete.component.css'],
   encapsulation: ViewEncapsulation.Emulated
 })
-export class LhcAutocompleteComponent implements OnInit {
+export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
   // options
   //   .elementId
@@ -57,23 +57,47 @@ export class LhcAutocompleteComponent implements OnInit {
    */
   ngOnChanges(changes) {
 
-    //console.log("lhc-autocomplete, ngOnChange")
-    // reset autocomplete when 'options' changes
-    // ignore changes on 'dataModel'
-    if (changes.options) {
-      this.selectedItems = [];
-      this.multipleSelections = false;
-      this.acType = null;
-      this.acInstance = false;
-      this.allowNotOnList = null;
-      this.prefetchTextToItem = {};
-      if (this.viewInitialized) {
+    // console.log("lhc-autocomplete, ngOnChange")
+    // console.log(changes)
+    // console.log(this.dataModel)
+
+    if (this.viewInitialized) {
+      // reset autocompleter when 'options' changes
+      if (changes.options) {
+        this.cleanupAutocomplete();
         this.setupAutocomplete();
+      }
+      // item.value changed by data control or fhirpath express after the autocompleter is initialized
+      // Need to find way to distingish the two different changes: 1) emitted by ac itself, which does not need to run updateDisplayedValue, 
+      // 2) from outside ac
+      // 
+      else if (changes.dataModel) {
+        this.updateDisplayedValue(this.dataModel) 
       }
     }
 
   }
 
+  /**
+   * Update the display value of the autocomplte when the item.value is changed 
+   * changed by data control or fhirpath expression after the autocompleter is initialized
+   * @param value the new data in item.value
+   */
+  updateDisplayedValue(itemValue:any) {
+    if (itemValue) {
+      if (!this.multipleSelections) {
+        let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
+        itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
+        if (typeof dispVal === 'string') {
+          this.acInstance.storeSelectedItem(dispVal, itemValue.code);
+          this.acInstance.setFieldVal(dispVal, false);
+        }
+        else {// handle the case of an empty object as a model
+          this.acInstance.setFieldVal('', false);
+        }
+      }
+    }
+  }
 
   /**
    * Initialize the autocomplete-lhc
@@ -81,22 +105,19 @@ export class LhcAutocompleteComponent implements OnInit {
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
-    //console.log("lhc-autocomplete, ngAfterViewInit")
+    // console.log("lhc-autocomplete, ngAfterViewInit")
     this.setupAutocomplete();
     this.viewInitialized = true;
   }
 
 
   /**
-   * Clean up the autocomplete instance
+   * Clean up the autocompleter instance
    */
   ngOnDestroy() {
-    //console.log("lhc-autocomplete, ngOnDestroy")
+    // console.log("lhc-autocomplete, ngOnDestroy")
     // if there's an autocomp
-    if (this.acInstance) {
-      // Destroy the existing autocomp
-      this.acInstance.destroy();
-    }
+    this.cleanupAutocomplete();
 
   }
 
@@ -110,17 +131,34 @@ export class LhcAutocompleteComponent implements OnInit {
   }
 
   /**
+   * Clean up the autocompleter if there is one
+   */
+  cleanupAutocomplete(): void {
+    if (this.acInstance) {
+      // // Clear the field value 
+      this.acInstance.setFieldVal('', false);
+      // // clean up model data
+      this.dataModel = null;
+      this.acInstance.destroy();
+    }
+  }
+
+  /**
    * Set up the autocompleter
    */
   setupAutocomplete(): void {
     // if there's an autocomp already
-    
-    if (this.acInstance) {
-      // Destroy the existing autocomp
-      this.acInstance.destroy();
-    }
+    // console.log("lhc-autocomplete, setupAutocomplete")
 
-    // if there are options for autocomplete
+    // reset ac status
+    this.selectedItems = [];
+    this.multipleSelections = false;
+    this.acType = null;
+    this.acInstance = false;
+    this.allowNotOnList = null;
+    this.prefetchTextToItem = {};
+
+    // if there are options for the autocompleter
     if (this.options && this.options.acOptions) {
 
       let acOptions = this.options.acOptions;
@@ -144,7 +182,7 @@ export class LhcAutocompleteComponent implements OnInit {
 
         this.acType = 'prefetch';
         // acOptions has matchListValue, maxSelected, codes
-        // Using this.options.elementId causes the autocomplete to be refreshed without an autocomplete created in a horizontal table. 
+        // Using this.options.elementId causes the autocompleter to be refreshed without an autocompleter created in a horizontal table. 
         // (where the rows lists are created as a new array, instead of keeping the same reference. Not confirmed, but I suspect this is the reason.)
         // It works with vertical layout though.
         // Using this.ac.nativeElement works in both cases.
@@ -156,46 +194,57 @@ export class LhcAutocompleteComponent implements OnInit {
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
 
-      let defaultItem =  this.prefetchTextToItem[acOptions.defaultValue];
-
+//      let defaultItem =  acOptions.defaultValue ? this.prefetchTextToItem[acOptions.defaultValue.text] : null;
+      let defaultItem =  acOptions.defaultValue
       // set up initial values if there is value
       let savedValue = this.dataModel || defaultItem;
-      if (savedValue) {
-        if (this.multipleSelections && Array.isArray(savedValue)) {
-          for (var i=0, len=savedValue.length; i<len; ++i) {
-            let dispVal = this.acType === "prefetch" ? savedValue[i]._notOnList ?
-              savedValue[i].text : savedValue[i][acOptions.display] : savedValue[i].text;
-            this.acInstance.storeSelectedItem(dispVal, savedValue[i].code);
-            this.acInstance.addToSelectedArea(dispVal);
-          }
-          // Clear the field value for multi-select lists
-          this.acInstance.setFieldVal('', false);
-
-          this.selectedItems = savedValue;
-        }
-        else {
-          let dispVal = this.acType === "prefetch" ? savedValue._notOnList ?
-            savedValue.text : savedValue[acOptions.display] : savedValue.text;
-          if (typeof dispVal === 'string') {
-            this.acInstance.storeSelectedItem(dispVal, savedValue.code);
-            this.acInstance.setFieldVal(dispVal, false);
-          }
-          else {// handle the case of an empty object as a model
-            this.acInstance.setFieldVal('', false);
-          }
-
-          this.dataModel = savedValue;
-          // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
-          let that = this;
-          setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
-        }
-      }
+      this.setItemValue(savedValue)
 
       // add event handler
       Def.Autocompleter.Event.observeListSelections(this.options.elementId, this.onSelectionHandler.bind(this));
+  
     }
   }
 
+  /**
+   * Set the item.value to the autocompleter when the autocompleter is being set up or 
+   * the item.value is changed later
+   * @param itemValue 
+   */
+  setItemValue(itemValue) {
+    if (itemValue) {
+      if (this.multipleSelections && Array.isArray(itemValue)) {
+        for (var i=0, len=itemValue.length; i<len; ++i) {
+          let dispVal = this.acType === "prefetch" && !itemValue[i]._notOnList ?
+            itemValue[i][this.options.acOptions.display] : itemValue[i].text;
+          this.acInstance.storeSelectedItem(dispVal, itemValue[i].code);
+          this.acInstance.addToSelectedArea(dispVal);
+        }
+        // Clear the field value for multi-select lists
+        this.acInstance.setFieldVal('', false);
+
+        this.selectedItems = itemValue;
+      }
+      else {
+        let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
+        itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
+        if (typeof dispVal === 'string') {
+          this.acInstance.storeSelectedItem(dispVal, itemValue.code);
+          this.acInstance.setFieldVal(dispVal, false);
+        }
+        else {// handle the case of an empty object as a model
+          this.acInstance.setFieldVal('', false);
+        }
+
+        this.dataModel = itemValue;
+        // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
+        let that = this;
+        setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
+      }
+    }
+
+  }
+  
 
   /**
    *
