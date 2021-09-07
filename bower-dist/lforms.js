@@ -1667,7 +1667,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"29.2.3\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"29.3.0\"}");
 
 /***/ }),
 /* 15 */
@@ -2060,7 +2060,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
   $scope.targetShown = function (item) {
-    return $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
+    return item._enableWhenExpVal !== false && $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
   };
   /**
    *  Hide/show the form option panel
@@ -2208,7 +2208,8 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
           watchedSourceItems.push({
             value: item.value,
             unit: item.unit,
-            id: item._elementId
+            id: item._elementId,
+            enableWhenExp: item._enableWhenExpVal
           });
         }
       }
@@ -4419,6 +4420,17 @@ LForms.Util = {
    */
   deepCopy: function deepCopy(object) {
     return angular.copy(object);
+  },
+
+  /**
+   *  Shows a warning message, typically about some problem with the form
+   *  definition.
+   * @param msg the message to show
+   * @param item (optional) the item in the form to which the message applies.
+   */
+  showWarning: function showWarning(msg, item) {
+    if (item) msg = 'The question "' + item.text + '" produced the following warning:  ' + msg;
+    console.log(msg); // TBD: add a warning visible on the page.
   }
 };
 
