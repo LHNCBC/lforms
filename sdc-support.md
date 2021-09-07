@@ -51,6 +51,7 @@ fields.
 * initial
 * enableWhen
 * enableBehavior
+* enableWhenExpression
 * ordinalValue
 
 ### Form Population
@@ -100,7 +101,6 @@ fields.
 * cqf-calculatedValue
 * cqf-expression
 * entryMode
-* enableWhenExpression
 * usageMode
 * constraint
 * endPoint
