@@ -2,9 +2,7 @@
 
 <ng-container *ngIf="item">
   <div class="lhc-de-label-button" *ngIf="!options || !options.hideQuestionText" (click)="lhcDataService.setActiveRow(item)">
-    <div class="lhc-de-label">
-      <lhc-item-question-text [item]="item" ></lhc-item-question-text>
-    </div>
+    <lhc-item-question-text [item]="item" ></lhc-item-question-text>
     <div class="lhc-de-button">
       <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" class="lhc-float-button lhc-button" type="button"
               (click)="lhcDataService.removeOneRepeatingItem(item)" id="del-{{item._elementId}}"

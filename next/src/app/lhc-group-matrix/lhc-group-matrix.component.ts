@@ -9,7 +9,8 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcGroupMatrixComponent implements OnInit {
 
   @Input() item;
-
+  @Input() formLevel: boolean = false;
+  
   constructor(public lhcDataService: LhcDataService) {
   }
 

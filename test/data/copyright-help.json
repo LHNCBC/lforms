@@ -1,0 +1,186 @@
+{
+  "type": "LOINC",
+  "code": "copyriht-help",
+  "name": "copyright and help messages in horizontal tables and matrix layouts",
+  "copyrightNotice": "A Copyright notice of the form",
+  "templateOptions": {
+    "allowHTMLInInstructions": true
+  },
+  "items": [
+    {
+      "questionCode": "type0",
+      "codingInstructions": "simple text instructions",
+      "copyrightNotice": "A Copyright notice of the item 1",
+      "question": "no codingInstructionsFormat, simple text codingInstructions",
+      "linkId": "/type0"
+    },
+    {
+      "questionCode": "type1",
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
+      "copyrightNotice": "A Copyright notice of the item 2",
+      "question": "no codingInstructionsFormat, html codingInstructions",
+      "linkId": "/type1"
+    },   
+    {
+      "questionCode": "type2",
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
+      "codingInstructionsFormat": "text",
+      "copyrightNotice": "A Copyright notice of the item 3",
+      "question": "codingInstructionsFormat='text', html codingInstructions",
+      "linkId": "/type2"
+    },
+    {
+      "questionCode": "type3",
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+      "codingInstructionsFormat": "html",
+      "copyrightNotice": "A Copyright notice of the item 3",
+      "question": "codingInstructionsFormat='html', html codingInstructions",
+      "linkId": "/type3"
+    },
+    {
+      "questionCode": "horizontalTable",
+      "question": "A horizontal table",
+      "dataType": "SECTION",
+      "questionCardinality": {
+        "min": "1",
+        "max": "*"
+      },
+      "displayControl": {
+        "questionLayout": "horizontal"
+      },        
+      "items": [
+        {
+          "questionCode": "type0",
+          "codingInstructions": "simple text instructions",
+          "copyrightNotice": "A Copyright notice of the item 1",
+          "question": "no codingInstructionsFormat, simple text codingInstructions",
+          "linkId": "/horizontalTable/type0"
+        },
+        {
+          "questionCode": "type1",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
+          "copyrightNotice": "A Copyright notice of the item 2",
+          "question": "no codingInstructionsFormat, html codingInstructions",
+          "linkId": "/horizontalTable/type1"
+        },
+        
+        {
+          "questionCode": "type2",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
+          "codingInstructionsFormat": "text",
+          "copyrightNotice": "A Copyright notice of the item 3",
+          "question": "codingInstructionsFormat='text', html codingInstructions",
+          "linkId": "/horizontalTable/type2"
+        },
+        {
+          "questionCode": "type3",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+          "codingInstructionsFormat": "html",
+          "copyrightNotice": "A Copyright notice of the item 3",
+          "question": "codingInstructionsFormat='html', html codingInstructions",
+          "linkId": "/horizontalTable/type3"
+        }      
+      ],
+      "linkId": "/horizontalTable"
+    },
+    {
+      "questionCode": "matrixTable",
+      "question": "A matrix layout",
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "matrix"
+      },        
+      "items": [
+        {
+          "questionCode": "type0",
+          "codingInstructions": "simple text instructions",
+          "copyrightNotice": "A Copyright notice of the item 1",
+          "question": "no codingInstructionsFormat, simple text codingInstructions",
+          "linkId": "/matrixTable/type0",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ]
+        },
+        {
+          "questionCode": "type1",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
+          "copyrightNotice": "A Copyright notice of the item 2",
+          "question": "no codingInstructionsFormat, html codingInstructions",
+          "linkId": "/matrixTable/type1",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ]
+        },
+        
+        {
+          "questionCode": "type2",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
+          "codingInstructionsFormat": "text",
+          "copyrightNotice": "A Copyright notice of the item 3",
+          "question": "codingInstructionsFormat='text', html codingInstructions",
+          "linkId": "/matrixTable/type2",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ]
+        },
+        {
+          "questionCode": "type3",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+          "codingInstructionsFormat": "html",
+          "copyrightNotice": "A Copyright notice of the item 3",
+          "question": "codingInstructionsFormat='html', html codingInstructions",
+          "linkId": "/matrixTable/type3",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ]
+        }      
+      ],
+      "linkId": "/matrixTable"
+    }
+ ],
+  "lformsVersion": "29.0.0"
+}

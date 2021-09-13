@@ -9,7 +9,8 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcGroupHorizontalComponent implements OnInit, OnChanges {
 
   @Input() item;
-
+  @Input() formLevel: boolean = false;
+  
   // horizontalTableInfo: object = null;
 
   constructor(public lhcDataService: LhcDataService) {

@@ -2,7 +2,7 @@
   "type": "LOINC",
   "code": "matrix-layout",
   "name": "A form with matrix layout, multiple selections",
-  "copyrightNotice": "This question is not copyrighted",
+  "copyrightNotice": "This form is not copyrighted",
   "codingInstructions": "Choose answer 1 for best results",
   "template": "table",
   "templateOptions": {

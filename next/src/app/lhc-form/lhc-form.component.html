@@ -6,22 +6,27 @@
     <div class="lhc-form-title" role="heading" aria-level=1>
       <span id="label-{{ lhcFormData.code }}" class="lf-question" [style]="lhcFormData._obj_titleCSS"
         >{{lhcFormData.name || lhcFormData.fhirQName}}</span>
-      <span class="lf-item-code" ng-if="lhcFormData.templateOptions.showQuestionCode">
-            <a *ngIf="lhcFormData._linkToDef" href="{{ lhcFormData._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ lhcFormData.code }}]</a>
-            <span *ngIf="!lhcFormData._linkToDef">[{{ lhcFormData.code }}]</span>
-          </span>
-      <!-- <button ng-if="lhcFormData.copyrightNotice" id="copyright-{{lhcFormData.code}}" type="button"
-              class="lf-copyright-button btn-sm" uib-popover="{{lhcFormData.copyrightNotice}}"
-              popover-trigger="focus" popover-placement="right"
-              popover-title="Copyright" aria-label="Copyright notice"
-              aria-describedby="label-{{ lhcFormData.code }}">
-        <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
-      </button> -->
+      <span class="lf-item-code" *ngIf="lhcFormData.templateOptions.showQuestionCode">
+        <a *ngIf="lhcFormData._linkToDef" href="{{ lhcFormData._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ lhcFormData.code }}]</a>
+        <span *ngIf="!lhcFormData._linkToDef">[{{ lhcFormData.code }}]</span>
+      </span>
+      <!-- copyright -->
+      <button *ngIf="lhcFormData.copyrightNotice" id="copyright-{{lhcFormData.code}}" type="button" class="lhc-copyright-button" 
+          nz-popover            
+          nzPopoverContent="{{lhcFormData.copyrightNotice}}"
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right" 
+          nzPopoverTitle="Copyright"
+          nzPopoverOverlayClassName="copyright-class-{{lhcFormData.code}}"
+          aria-label="Copyright notice" 
+          aria-describedby="label-{{ lhcFormData.code }}">
+        <!-- <i nz-icon nzType="copyright-circle" nzTheme="fill"></i> -->
+        <i nz-icon nzType="copyright-circle" nzTheme="outline"></i>
+      </button>
       <button *ngIf="lhcFormData.templateOptions.showFormOptionPanelButton" type="button" class="lf-control-button btn-sm"
               (click)="hideShowFormOptionPanel()" aria-label="Form Option Panel">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-      </button>
-    
+      </button>    
     </div>
 
     <!--form body-->
@@ -29,10 +34,10 @@
       <!--check form level questionLayout for matrix and horizontal layouts-->
       <div *ngIf="lhcFormData.templateOptions.displayControl" [ngSwitch]="lhcFormData.templateOptions.displayControl.questionLayout">
         <div *ngSwitchCase="'horizontal'">
-          <lhc-group-horizontal [item]="lhcFormData"></lhc-group-horizontal>
+          <lhc-group-horizontal [item]="lhcFormData" [formLevel]='true'></lhc-group-horizontal>
         </div>
         <div *ngSwitchCase="'matrix'">
-          <lhc-group-matrix [item]="lhcFormData"></lhc-group-matrix>
+          <lhc-group-matrix [item]="lhcFormData" [formLevel]='true'></lhc-group-matrix>
         </div>
         <!-- vertical -->
         <div *ngSwitchDefault>

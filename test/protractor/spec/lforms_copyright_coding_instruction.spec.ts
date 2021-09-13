@@ -1,84 +1,72 @@
-var tp = require('./lforms_testpage.po.js');
-const testUtil = require('./util.js');
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
 
-function waitForDisplayed(ele) {
-  // Note:  A similiar function with a different implementation exists in
-  // util.js
-  browser.wait(function() {
-    return ele.isDisplayed().then(null, function(err) {
-      // Probably a stale element reference.  Get a new promise.
-      console.log("Got error on isDisplayed(); refreshing element promise");
-      ele = element(ele.locator());
-      return ele.isDisplayed();
-    });
-  }, tp.WAIT_TIMEOUT_1);
-}
-
-function waitForNotPresent(ele) {
-  // Note:  A similiar function with a different implementation exists in
-  // util.js
-  browser.wait(function() {
-    return ele.isPresent().then(function(result){return !result});
-  }, tp.WAIT_TIMEOUT_1);
-}
+let tp: TestPage; 
+let LForms: any = (global as any).LForms;
 
 describe('popover buttons', function() {
+
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+    tp = new TestPage();
+  });
+
   // copyright
   describe('Copyright popover message', function() {
 
-    var formCopyright = element(by.css('div[content="A Copyright notice of the form"]'));
-    var itemCopyright = element(by.css('div[content="A Copyright notice of the item"]'));
+    var copyright = element(by.css('.ant-popover-inner-content'))
 
     it('should show a copyright popover message on the form title', function () {
-      tp.openFullFeaturedForm();
+      tp.LoadForm.openFullFeaturedForm();
       browser.wait(function() {
         return element(by.id('/type0/1')).isPresent();
       }, tp.WAIT_TIMEOUT_1);
       element(by.id("copyright-all-in-one")).click();
-      expect(formCopyright.isDisplayed()).toBe(true);
+      expect(copyright.getText()).toBe("A Copyright notice of the form");
     });
 
     it('should show a copyright popover message on an item', function () {
+      element(by.id("/type0/1")).click();
+      TestUtil.waitForElementNotPresent(copyright)
       element(by.id("copyright-/type0/1")).click();
       browser.wait(function() {
-        return itemCopyright.isPresent();
+        return copyright.isPresent();
       }, tp.WAIT_TIMEOUT_1);
-      expect(itemCopyright.isDisplayed()).toBe(true);
+      expect(copyright.getText()).toBe("A Copyright notice of the item");
     });
   });
 
   // coding instructions
   describe('coding instructions help message', function() {
 
-    var popover = element(by.css('.lf-de-label .popover-content'));
+    var popover = element(by.css('.ant-popover-inner-content'));
     var popoverHTMLLink1 = element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
     var popoverHTMLLink2 = element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
     var popoverHTMLLink3 = element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
 
-    var codeCheckbox = tp.checkboxesFinder.get(1);
-
-    var inline1 = element.all(by.css('.lf-de-label span[ng-switch-when="inline-escaped"]')).get(1);
-    var inline2 = element.all(by.css('.lf-de-label span[ng-switch-when="inline-escaped"]')).get(2);
-    var inline3a = element.all(by.css('.lf-de-label span[ng-switch-when="inline-html"]')).get(0);
-    var inline3b = element.all(by.css('.lf-de-label span[ng-switch-when="inline-escaped"]')).get(3);
+    var inline1 = element(by.id('help-/type1/1'))
+    var inline2 = element(by.id('help-/type2/1'))
+    var inline3 = element(by.id('help-/type3/1'))
+    
 
     var inlineHTMLLink1 = inline1.element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
     var inlineHTMLLink2 = inline2.element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
-    var inlineHTMLLink3a = inline3a.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
-    var inlineHTMLLink3b = inline3b.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
+    var inlineHTMLLink3 = inline3.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
     var helpButton0 = element(by.id("helpButton-/type0/1")); // text formatted content, no 'codingInstructionsFormat'
     var helpButton1 = element(by.id("helpButton-/type1/1")); // html formatted content, no 'codingInstructionsFormat'
     var helpButton2 = element(by.id("helpButton-/type2/1")); // html formatted content, 'codingInstructionsFormat' is 'text'
     var helpButton3 = element(by.id("helpButton-/type3/1")); // html formatted content, 'codingInstructionsFormat' is 'html'
 
-    var field1 = element(by.id("/type0/1"));
+    var field1 = element(by.id("/q_lg/1"));
 
     beforeAll(function() {
-      tp.openFullFeaturedForm();
+      tp.LoadForm.openFullFeaturedForm();
     });
 
 
-    it('should have HTML and/or TEXT content when templateOptions.allowHTMLInInstructions is true', function () {
+    it('should have HTML and/or TEXT content when templateOptions.allowHTMLInInstructions is true', async function () {
       // popover
       expect(helpButton0.isDisplayed()).toBe(true);
       expect(helpButton1.isDisplayed()).toBe(true);
@@ -86,50 +74,64 @@ describe('popover buttons', function() {
       expect(helpButton3.isDisplayed()).toBe(true);
 
       helpButton0.click();
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
       expect(popover.getText()).toBe( "simple text instructions");
 
       field1.click();
-      waitForNotPresent(popover);
+      TestUtil.waitForElementNotPresent(popover);
 
       helpButton1.click();
-      waitForDisplayed(popover);
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popoverHTMLLink1.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(popoverHTMLLink1)
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
 
       field1.click();
-      waitForNotPresent(popover);
+      TestUtil.waitForElementNotPresent(popover)
       helpButton2.click();
-      waitForDisplayed(popover);
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popoverHTMLLink2.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(popoverHTMLLink2)
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
 
       field1.click();
-      waitForNotPresent(popover);
+      TestUtil.waitForElementNotPresent(popover);
       helpButton3.click();
-      waitForDisplayed(popover);
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popoverHTMLLink3.isDisplayed()).toBe(true);
+
+      
+      popoverHTMLLink3 = popover.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
+      TestUtil.waitForElementDisplayed(popoverHTMLLink3); 
+      expect(await popoverHTMLLink3.isDisplayed()).toBe(true); 
 
       // inline
-      codeCheckbox.click();
-      expect(inline1.isDisplayed()).toBe(true);
-      expect(inlineHTMLLink1.isPresent()).toBe(false);
+      browser.driver.executeAsyncScript(function () {
+        let testForm: any = document.getElementById('test-form');
+        testForm.lfOptions = {showCodingInstruction: true}
+        var callback = arguments[arguments.length - 1];        
+        callback();
+      }).then(async function () {
+        expect(inline1.isDisplayed()).toBe(true);
+        TestUtil.waitForElementNotPresent(inlineHTMLLink1);
 
-      expect(inline2.isDisplayed()).toBe(true);
-      expect(inlineHTMLLink2.isPresent()).toBe(false);
+        expect(inline2.isDisplayed()).toBe(true);
+        TestUtil.waitForElementNotPresent(inlineHTMLLink2);
+  
+        expect(inline3.isDisplayed()).toBe(true);
 
-      expect(inline3a.isDisplayed()).toBe(true);
-      expect(inlineHTMLLink3a.isDisplayed()).toBe(true);
-
+        let link = element(by.id('help-/type3/1')).element(by.css('a'))
+        TestUtil.waitForElementDisplayed(link);
+        expect(link.getAttribute('href')).toBe("http://lforms-demo3.nlm.nih.gov/")
+        expect(inlineHTMLLink3.isDisplayed()).toBe(true);
+        });
 
     });
 
     it('should have only escaped TEXT content when templateOptions.allowHTMLInInstructions is false', function () {
 
-      tp.openFullFeaturedForm();
+      tp.LoadForm.openFullFeaturedForm();
 
       element(by.id("change-option")).click();
 
@@ -140,75 +142,209 @@ describe('popover buttons', function() {
       expect(helpButton3.isDisplayed()).toBe(true);
 
       helpButton0.click();
-      waitForDisplayed(popover);
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
       expect(popover.getText()).toBe( "simple text instructions");
 
       field1.click();
-      waitForNotPresent(popover);
+      TestUtil.waitForElementNotPresent(popover);
       helpButton1.click();
-      waitForDisplayed(popover);
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popoverHTMLLink1.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(inlineHTMLLink1);
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
 
       field1.click();
-      waitForNotPresent(popover);
+      TestUtil.waitForElementNotPresent(popover);
       helpButton2.click();
-      waitForDisplayed(popover);
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popoverHTMLLink2.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(inlineHTMLLink2);
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
 
       field1.click();
-      waitForNotPresent(popover);
+      TestUtil.waitForElementNotPresent(popover);
       helpButton3.click();
-      waitForDisplayed(popover);
+      TestUtil.waitForElementDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>");
 
       // inline
-      codeCheckbox.click();
-      expect(inline1.isDisplayed()).toBe(true);
-      expect(inlineHTMLLink1.isPresent()).toBe(false);
-
-      expect(inline2.isDisplayed()).toBe(true);
-      expect(inlineHTMLLink2.isPresent()).toBe(false);
-
-      expect(inline3b.isDisplayed()).toBe(true);
-      expect(inlineHTMLLink3b.isPresent()).toBe(false);
+      browser.driver.executeAsyncScript(function () {
+        let testForm: any = document.getElementById('test-form');
+        testForm.lfOptions = {showCodingInstruction: true}
+        var callback = arguments[arguments.length - 1];        
+        callback();
+      }).then(async function () {
+        expect(inline1.isDisplayed()).toBe(true);
+        TestUtil.waitForElementNotPresent(inlineHTMLLink1);
+  
+        expect(inline2.isDisplayed()).toBe(true);
+        TestUtil.waitForElementNotPresent(inlineHTMLLink2);
+  
+        expect(inline3.isDisplayed()).toBe(true);
+        TestUtil.waitForElementNotPresent(inlineHTMLLink3);
+  
+      });
+      
     });
 
 
     it('should be able to display HTML/Text formatted coding instructions from '+
        'FHIR R4 Questionnaire', function() {
       tp.loadFromTestData('ussg-fhp.json', 'R4');
+      browser.driver.executeAsyncScript(function () {
+        let testForm: any = document.getElementById('test-form');
+        testForm.lfOptions = {allowHTMLInInstructions: true}
+        var callback = arguments[arguments.length - 1];        
+        callback();
+      }).then(async function () {
+        var nameHelpButton = element(by.id("helpButton-/54126-8/54125-0/1/1"));
+        var genderHelpButton = element(by.id("helpButton-/54126-8/54131-8/1/1"));
+        var gender = element(by.id("/54126-8/54131-8/1/1"));
+        var popoverHTMLLink = element(by.css('a[href="http://google.com"]'));
+  
+        var popover = element(by.css('.help-class-54126-8-54125-0-1-1 .ant-popover-inner-content'));
+  
+        TestUtil.waitForElementDisplayed(nameHelpButton);
+        expect(nameHelpButton.isDisplayed()).toBe(true);
+        expect(genderHelpButton.isDisplayed()).toBe(true);
+  
+        // HTML formatted coding instructions
+        nameHelpButton.click();
+        TestUtil.waitForElementDisplayed(popover); 
+        expect(popover.isDisplayed()).toBe(true);
+        var popoverHTMLLink = element(by.css('a[href="http://google.com"]'));
+        
+        TestUtil.waitForElementDisplayed(popoverHTMLLink);  
+        expect(popoverHTMLLink.isDisplayed()).toBe(true); 
+  
+        gender.click()
+        TestUtil.waitForElementNotPresent(popoverHTMLLink);
+  
+        // Text coding instructions
+        genderHelpButton.click();
+        popover = element(by.css('.help-class-54126-8-54131-8-1-1 .ant-popover-content')); 
+        TestUtil.waitForElementDisplayed(popover);
+        expect(popover.isDisplayed()).toBe(true); 
+        TestUtil.waitForElementNotPresent(popoverHTMLLink);
+  
+      });
 
-      var nameHelpButton = element(by.id("helpButton-/54126-8/54125-0/1/1"));
-      var genderHelpButton = element(by.id("helpButton-/54126-8/54131-8/1/1"));
-      var gender = element(by.id("/54126-8/54131-8/1/1"));
-      var popoverHTMLLink = element(by.css('a[href="http://google.com"]'));
+    });
 
-      waitForDisplayed(nameHelpButton);
-      expect(nameHelpButton.isDisplayed()).toBe(true);
-      expect(genderHelpButton.isDisplayed()).toBe(true);
+    function test4PopoverCases(type) {
+      let helpButton0, helpButton1, helpButton2, helpButton3, popover0, popover1, popover2, popover3,
+      copyrightButton0, copyPopover0;
+      switch(type) {
+        case 'vertical':
+          helpButton0 = element(by.id("helpButton-/type0/1")),
+          helpButton1 = element(by.id("helpButton-/type1/1")),
+          helpButton2 = element(by.id("helpButton-/type2/1")),
+          helpButton3 = element(by.id("helpButton-/type3/1")),
+          copyrightButton0 = element(by.id("copyright-/type0/1")),
+          popover0 = element(by.css('.help-class-type0-1 .ant-popover-inner-content')),
+          popover1 = element(by.css('.help-class-type1-1 .ant-popover-inner-content')),
+          popover2 = element(by.css('.help-class-type2-1 .ant-popover-inner-content')),
+          popover3 = element(by.css('.help-class-type3-1 .ant-popover-inner-content')),
+          copyPopover0 = element(by.css('.copyright-class-type0-1 .ant-popover-inner-content'));
+          
+          break;
+        case 'horizontal':
+          helpButton0 = element(by.id("helpButton-/horizontalTable/type0/1/1")),
+          helpButton1 = element(by.id("helpButton-/horizontalTable/type1/1/1")),
+          helpButton2 = element(by.id("helpButton-/horizontalTable/type2/1/1")),
+          helpButton3 = element(by.id("helpButton-/horizontalTable/type3/1/1")),
+          copyrightButton0 = element(by.id("copyright-/horizontalTable/type0/1/1")),
+          
+          popover0 = element(by.css(".help-class-horizontalTable-type0-1-1 .ant-popover-inner-content")),
+          popover1 = element(by.css(".help-class-horizontalTable-type1-1-1 .ant-popover-inner-content")),
+          popover2 = element(by.css(".help-class-horizontalTable-type2-1-1 .ant-popover-inner-content")),
+          popover3 = element(by.css(".help-class-horizontalTable-type3-1-1 .ant-popover-inner-content")),
+          copyPopover0 = element(by.css('.copyright-class-horizontalTable-type0-1-1 .ant-popover-inner-content'));
+          break;
+        case 'matrix':
+          helpButton0 = element(by.id("helpButton-/matrixTable/type0/1/1")),
+          helpButton1 = element(by.id("helpButton-/matrixTable/type1/1/1")),
+          helpButton2 = element(by.id("helpButton-/matrixTable/type2/1/1")),
+          helpButton3 = element(by.id("helpButton-/matrixTable/type3/1/1")),
+          copyrightButton0 = element(by.id("copyright-/matrixTable/type0/1/1")),
+          popover0 = element(by.css(".help-class-matrixTable-type0-1-1 .ant-popover-inner-content")),
+          popover1 = element(by.css(".help-class-matrixTable-type1-1-1 .ant-popover-inner-content")),
+          popover2 = element(by.css(".help-class-matrixTable-type2-1-1 .ant-popover-inner-content")),
+          popover3 = element(by.css(".help-class-matrixTable-type3-1-1 .ant-popover-inner-content")),
+          copyPopover0 = element(by.css('.copyright-class-matrixTable-type0-1-1 .ant-popover-inner-content'));
+          break;
+      }
 
-      // HTML formatted coding instructions
-      nameHelpButton.click();
-      waitForDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
-      testUtil.waitForElementDisplayed(popoverHTMLLink);
-      expect(popoverHTMLLink.isDisplayed()).toBe(true);
+      tp.loadFromTestData('copyright-help.json');
 
-      gender.click()
+      let field1 = element(by.id("/type0/1"));
 
-      // Text coding instructions
-      genderHelpButton.click();
-      popover = element(by.css('.lf-de-label .popover-content')); // refresh
-      waitForDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
-      expect(popoverHTMLLink.isPresent()).toBe(false);
+      TestUtil.waitForElementDisplayed(field1);
+      expect(helpButton0.isDisplayed()).toBe(true);
+      expect(helpButton1.isDisplayed()).toBe(true);
+      expect(helpButton2.isDisplayed()).toBe(true);
+      expect(helpButton3.isDisplayed()).toBe(true);
+      expect(copyrightButton0.isDisplayed()).toBe(true);
 
+      // simple text coding instructions
+      helpButton0.click();
+      TestUtil.waitForElementDisplayed(popover0); 
+      expect(popover0.isDisplayed()).toBe(true);
+      expect(popover0.getText()).toBe("simple text instructions");
+      
+      field1.click()
+      TestUtil.waitForElementNotPresent(popover0);
+
+      // escaped HTML coding instructions
+      helpButton1.click();
+      //popover = element(by.css('.ant-popover-inner-content'));
+      TestUtil.waitForElementDisplayed(popover1); 
+      expect(popover1.isDisplayed()).toBe(true);
+      expect(popover1.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
+
+      field1.click()
+      TestUtil.waitForElementNotPresent(popover1);
+
+      // escaped HTML coding instructions
+      helpButton2.click();
+      TestUtil.waitForElementDisplayed(popover2); 
+      expect(popover2.isDisplayed()).toBe(true);
+      expect(popover2.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
+
+      field1.click()
+      TestUtil.waitForElementNotPresent(popover2);
+      // enabled HTML coding instructions 
+      helpButton3.click();
+      TestUtil.waitForElementDisplayed(popover3); 
+      expect(popover3.isDisplayed()).toBe(true);
+      expect(popover3.getText()).toBe("HTML instructions, with a button and a link LForms Demo 3");
+      let link = popover3.element(by.css('a'));
+      expect(link.getAttribute("href")).toBe('http://lforms-demo3.nlm.nih.gov/') // "/" added to the end of the url
+
+      field1.click()
+      TestUtil.waitForElementNotPresent(popover3);
+
+      //copyright popover
+      copyrightButton0.click();
+      TestUtil.waitForElementDisplayed(copyPopover0); 
+      expect(copyPopover0.isDisplayed()).toBe(true);
+      expect(copyPopover0.getText()).toBe("A Copyright notice of the item 1");
+      
+      field1.click()
+      TestUtil.waitForElementNotPresent(copyPopover0);
+
+    }
+
+    it('should be able to display HTML/Text formatted coding instructions and copyright notice in vertical list layout', async function() {
+      test4PopoverCases('vertical')
+    });
+    it('should be able to display HTML/Text formatted coding instructions and copyright notice in horizontal table layout', async function() {
+      test4PopoverCases('horizontal')
+    });
+    it('should be able to display HTML/Text formatted coding instructions and copyright notice in matrix layout', async function() {
+      test4PopoverCases('matrix')
     });
 
   });

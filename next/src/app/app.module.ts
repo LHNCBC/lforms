@@ -27,6 +27,11 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
+
+import { CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline } from '@ant-design/icons-angular/icons';
+import { IconDefinition } from '@ant-design/icons-angular';
+const icons: IconDefinition[] = [ CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline ];
+
 //import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 
 import { CommonUtilsService } from '../lib/common-utils.service';
@@ -58,6 +63,7 @@ import { LhcWatcherComponent} from './lhc-watcher/lhc-watcher.component';
 import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertical.component';
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
+import { SafeHtmlPipe } from './safe-html.pipe';
 
 registerLocaleData(en);
 
@@ -89,7 +95,8 @@ registerLocaleData(en);
     LhcWatcherComponent,
     LhcGroupVerticalComponent,
     LhcGroupHorizontalComponent,
-    LhcGroupMatrixComponent
+    LhcGroupMatrixComponent,
+    SafeHtmlPipe
   ],
   imports: [
     BrowserModule,
@@ -103,7 +110,7 @@ registerLocaleData(en);
     NzTimePickerModule,
     NzGridModule,
     NzPopoverModule,
-    NzIconModule,
+    NzIconModule.forRoot(icons),
     NzSwitchModule
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US },
@@ -136,8 +143,6 @@ export class AppModule {
       'STU3': 'partial',
       'R4': 'WIP'
     };
-
-    console.log(lforms);
 
     window['LForms'] = lforms;
 
