@@ -1,23 +1,39 @@
-var fhirSupport = require('../../../app/scripts/fhir/versions');
-var testUtil = require('./util');
-var fhirVersions = Object.keys(fhirSupport);
-var tp = require('./lforms_testpage.po.js');
-var ff = tp.FullFeaturedForm;
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+import * as FHIRSupport from "../../../app/scripts/fhir/versions.js";
+
+let fhirVersions = Object.keys(FHIRSupport);
+
 describe('skip logic', function() {
+  let tp: TestPage; 
+  let ff: any;
+  let LForms: any = (global as any).LForms;
+
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+    tp = new TestPage();
+    ff = tp.FullFeaturedForm;
+  });
+
+  beforeEach(function () {
+    tp.LoadForm.openFullFeaturedForm();
+  });
+
 
   it('target items should be hidden initially', function() {
-    tp.openFullFeaturedForm();
-    // initially all hidden
-    expect(ff.t1.isPresent()).toBeFalsy();
-    expect(ff.t2.isPresent()).toBeFalsy();
-    expect(ff.t4.isPresent()).toBeFalsy();
-    expect(ff.t5.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.t1)
+    TestUtil.waitForElementNotPresent(ff.t2)
+    TestUtil.waitForElementNotPresent(ff.t4)
+    TestUtil.waitForElementNotPresent(ff.t5)
+
   });
 
   it('should have correct initial state for CNE/exists trigger targets', function() {
-    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
-    expect(ff.ageIfLivingAnswered.isPresent()).toBeFalsy();
-    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYes)
+    TestUtil.waitForElementNotPresent(ff.ageIfLivingAnswered)
+    TestUtil.waitForElementNotPresent(ff.deathCauseIfLivingNo)
     expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeTruthy();
   });
 
@@ -28,10 +44,11 @@ describe('skip logic', function() {
     ff.cneTriggerSrc1.sendKeys(protractor.Key.TAB);
 
     expect(ff.dobIfLivingYes.isDisplayed()).toBe(true);
-    expect(ff.dobIfLivingYesB.isPresent()).toBeFalsy(); // trigger value has no 'system' while answers have 'system'
+    // trigger value has no 'system' while answers have 'system'
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYesB)
     expect(ff.ageIfLivingAnswered.isDisplayed()).toBe(true);
-    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
-    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.deathCauseIfLivingNo)
+    TestUtil.waitForElementNotPresent(ff.ageDeathIfLivingNotAnswered)
   });
 
   it('should show/hide elements per CNE/exists trigger settings if answered No', function() {
@@ -41,21 +58,22 @@ describe('skip logic', function() {
     ff.cneTriggerSrc1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.cneTriggerSrc1.sendKeys(protractor.Key.TAB);
 
-    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
-    expect(ff.dobIfLivingYesB.isPresent()).toBeFalsy(); // trigger value has no 'system' while answers have 'system'
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYes)
+    // trigger value has no 'system' while answers have 'system'
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYesB)
     expect(ff.ageIfLivingAnswered.isDisplayed()).toBe(true);
     expect(ff.deathCauseIfLivingNo.isDisplayed()).toBe(true);
-    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.ageDeathIfLivingNotAnswered)
   });
 
   it('should show/hide elements per CNE/exists trigger settings if answer cleared', function() {
     // clear the answer to Living
     ff.cneTriggerSrc1.clear();
 
-    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
-    expect(ff.dobIfLivingYesB.isPresent()).toBeFalsy();
-    expect(ff.ageIfLivingAnswered.isPresent()).toBeFalsy();
-    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYes)
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYesB)
+    TestUtil.waitForElementNotPresent(ff.ageIfLivingAnswered)
+    TestUtil.waitForElementNotPresent(ff.deathCauseIfLivingNo)
     expect(ff.ageDeathIfLivingNotAnswered.isDisplayed()).toBe(true);
   });
 
@@ -65,23 +83,25 @@ describe('skip logic', function() {
     ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.cneTriggerSrc2.sendKeys(protractor.Key.TAB);
 
-    expect(ff.dobIfLivingYes2C.isPresent()).toBeFalsy(); // trigger value has 'system' while answers have no 'system'
+    // trigger value has 'system' while answers have no 'system'
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYes2C)
     expect(ff.dobIfLivingYes2D.isDisplayed()).toBe(true);
-    expect(ff.deathCauseIfLivingNoB.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.deathCauseIfLivingNoB)
 
     ff.cneTriggerSrc2.click();
     ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.cneTriggerSrc2.sendKeys(protractor.Key.TAB);
 
-    expect(ff.dobIfLivingYes2C.isPresent()).toBeFalsy(); // trigger value has 'system' while answers have no 'system'
-    expect(ff.dobIfLivingYes2D.isPresent()).toBeFalsy();
+    // trigger value has 'system' while answers have no 'system'
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYes2C)
+    TestUtil.waitForElementNotPresent(ff.dobIfLivingYes2D)
     expect(ff.deathCauseIfLivingNoB.isDisplayed()).toBe(true);
 
   });
 
   it('should show a sibling and two items in a sibling section', function() {
-    testUtil.sendKeys(ff.src, '1');
+    TestUtil.sendKeys(ff.src, '1');
     expect(ff.t1.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
     expect(ff.t5.isDisplayed()).toBe(true);
@@ -89,12 +109,13 @@ describe('skip logic', function() {
 
   it('should hide a sibling and show two items in a sibling section', function() {
     ff.src.clear();
-    expect(ff.t1.isPresent()).toBeFalsy();
-    expect(ff.t2.isPresent()).toBeFalsy();
-    expect(ff.t4.isPresent()).toBeFalsy();
-    expect(ff.t5.isPresent()).toBeFalsy();
-    testUtil.sendKeys(ff.src, '2');
-    expect(ff.t1.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.t1)
+    TestUtil.waitForElementNotPresent(ff.t2)
+    TestUtil.waitForElementNotPresent(ff.t4)
+    TestUtil.waitForElementNotPresent(ff.t5)
+
+    TestUtil.sendKeys(ff.src, '2');
+    TestUtil.waitForElementNotPresent(ff.t1)
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
     expect(ff.t5.isDisplayed()).toBe(true);
@@ -103,86 +124,85 @@ describe('skip logic', function() {
   it('should show/hide a sibling controlled by "notEqual"', function() {
     ff.src.clear();
     expect(ff.t6.isDisplayed()).toBe(true);
-    testUtil.sendKeys(ff.src, '2');
-    expect(ff.t6.isPresent()).toBeFalsy();
-    ff.src.clear();
-    testUtil.sendKeys(ff.src, '6');
+    TestUtil.sendKeys(ff.src, '2');
+    TestUtil.waitForElementNotPresent(ff.t6)
+    ff.src.clear();    
+    TestUtil.sendKeys(ff.src, '6');
     expect(ff.t6.isDisplayed()).toBe(true);
   });
 
   it('should show another sibling and hide two items in a sibling section', function() {
     ff.src.clear();
-    expect(ff.t1.isPresent()).toBeFalsy();
-    expect(ff.t2.isPresent()).toBeFalsy();
-    expect(ff.t4.isPresent()).toBeFalsy();
-    expect(ff.t5.isPresent()).toBeFalsy();
-    testUtil.sendKeys(ff.src, '6');
-    expect(ff.t1.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.t1)
+    TestUtil.waitForElementNotPresent(ff.t2)
+    TestUtil.waitForElementNotPresent(ff.t4)
+    TestUtil.waitForElementNotPresent(ff.t5)
+    TestUtil.sendKeys(ff.src, '6');
+    TestUtil.waitForElementNotPresent(ff.t1)
     expect(ff.t2.isDisplayed()).toBe(true);
-    expect(ff.t4.isPresent()).toBeFalsy();
-    expect(ff.t5.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.t4)
+    TestUtil.waitForElementNotPresent(ff.t5)
   });
 
   it('should work with logic ALL from two different sources', function() {
     // check logic ALL
     ff.allSrc1.clear();
     ff.allSrc2.clear();
-    testUtil.sendKeys(ff.allSrc1, '1');
-    expect(ff.allTarget.isPresent()).toBe(false);
-    testUtil.sendKeys(ff.allSrc2, '2');
+    TestUtil.sendKeys(ff.allSrc1, '1');
+    TestUtil.waitForElementNotPresent(ff.allTarget)
+    TestUtil.sendKeys(ff.allSrc2, '2');
     expect(ff.allTarget.isDisplayed()).toBe(true);
     ff.anySrc1.clear();
-    testUtil.sendKeys(ff.allSrc1, '2');
-    expect(ff.allTarget.isPresent()).toBe(false);
+    TestUtil.sendKeys(ff.allSrc1, '2');
+    TestUtil.waitForElementNotPresent(ff.allTarget)
   });
 
   it('should work with logic ANY from two different sources', function() {
     // check logic ANY
     ff.anySrc1.clear();
     ff.anySrc2.clear();
-    testUtil.sendKeys(ff.anySrc1, '1');
+    TestUtil.sendKeys(ff.anySrc1, '1');
     expect(ff.anyTarget.isDisplayed()).toBe(true);
-    testUtil.sendKeys(ff.anySrc2, '1');
+    TestUtil.sendKeys(ff.anySrc2, '1');
     expect(ff.anyTarget.isDisplayed()).toBe(true);
-    testUtil.sendKeys(ff.anySrc1, '2');
+    TestUtil.sendKeys(ff.anySrc1, '2');
     ff.anySrc1.clear();
-    expect(ff.anyTarget.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(ff.anyTarget)
     ff.anySrc2.clear();
-    testUtil.sendKeys(ff.anySrc2, '2');
+    TestUtil.sendKeys(ff.anySrc2, '2');
     expect(ff.anyTarget.isDisplayed()).toBe(true);
 
   });
 
   it('should be able to be controlled by an ancestors sibling', function() {
 
-    expect(ff.rpTarget2a.isPresent()).toBe(false);
-    expect(ff.rpTarget2b.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(ff.rpTarget2a)
+    TestUtil.waitForElementNotPresent(ff.rpTarget2b)
     ff.rpSrc2.clear();
-    expect(ff.rpTarget2a.isPresent()).toBe(false);
-    expect(ff.rpTarget2b.isPresent()).toBe(false);
-    testUtil.sendKeys(ff.rpSrc2, '1');
-    expect(ff.rpTarget2a.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(ff.rpTarget2a)
+    TestUtil.waitForElementNotPresent(ff.rpTarget2b)
+    TestUtil.sendKeys(ff.rpSrc2, '1');
+    TestUtil.waitForElementNotPresent(ff.rpTarget2a)
     ff.rpSrc2.clear();
-    testUtil.sendKeys(ff.rpSrc2, '2');
+    TestUtil.sendKeys(ff.rpSrc2, '2');
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
 
-    expect(ff.rpTarget1a.isPresent()).toBe(false);
-    expect(ff.rpTarget1ah1.isPresent()).toBe(false);
-    testUtil.sendKeys(ff.rpSubSrc1, '1');
+    TestUtil.waitForElementNotPresent(ff.rpTarget1a)
+    TestUtil.waitForElementNotPresent(ff.rpTarget1ah1)
+    TestUtil.sendKeys(ff.rpSubSrc1, '1');
     expect(ff.rpTarget1a.isDisplayed()).toBe(true);
     expect(ff.rpTarget1ah1.isDisplayed()).toBe(true);
 
     // add a new section
     ff.rpAdd.click();
-    expect(ff.rpTarget1b.isPresent()).toBe(false);
-    expect(ff.rpTarget1bh1.isPresent()).toBe(false);
-
+    TestUtil.waitForElementNotPresent(ff.rpTarget1b)
+    TestUtil.waitForElementNotPresent(ff.rpTarget1bh1)
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
     expect(ff.rpTarget2b.isDisplayed()).toBe(true);
     ff.rpSrc2.clear();
-    testUtil.sendKeys(ff.rpSrc2, '1');
-    expect(ff.rpTarget2a.isPresent()).toBe(false);
-    expect(ff.rpTarget2b.isPresent()).toBe(false);
+    TestUtil.sendKeys(ff.rpSrc2, '1');
+    TestUtil.waitForElementNotPresent(ff.rpTarget2a)
+    TestUtil.waitForElementNotPresent(ff.rpTarget2b)
   });
 
   describe('Skip logic equal and notEqual operators', function () {
@@ -199,21 +219,21 @@ describe('skip logic', function() {
           let targetNotEqual = element(by.id("4.3/1"));
 
           expect(source.isDisplayed()).toBe(true);
-          expect(targetEqual.isPresent()).toBe(false);
+          TestUtil.waitForElementNotPresent(targetEqual)
           expect(targetNotEqual.isDisplayed()).toBe(true);
 
           source.click();
           source.sendKeys(protractor.Key.ARROW_DOWN);
           source.sendKeys(protractor.Key.ENTER);
           expect(targetEqual.isDisplayed()).toBe(true);
-          expect(targetNotEqual.isPresent()).toBe(false);
+          TestUtil.waitForElementNotPresent(targetEqual)
 
           source.click();
           source.sendKeys(protractor.Key.ARROW_DOWN);
           source.sendKeys(protractor.Key.ARROW_DOWN);
           source.sendKeys(protractor.Key.ENTER);
 
-          expect(targetEqual.isPresent()).toBe(false);
+          TestUtil.waitForElementNotPresent(targetEqual)
           expect(targetNotEqual.isDisplayed()).toBe(true);
         });
       }
@@ -227,14 +247,14 @@ describe('skip logic', function() {
 
         // Initial setup
         expect(source.isDisplayed()).toBe(true);
-        expect(targetWithSklSourceExists.isPresent()).toBe(false);
+        TestUtil.waitForElementNotPresent(targetWithSklSourceExists)
         expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
 
         // Select to hide the skip logic target
         source.click();
         source.sendKeys(protractor.Key.ARROW_DOWN);
         source.sendKeys(protractor.Key.ENTER);
-        expect(targetWithSklSourceExists.isPresent()).toBe(false);
+        TestUtil.waitForElementNotPresent(targetWithSklSourceExists)
         expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
 
         // Select to show skip logic target item.
@@ -244,14 +264,14 @@ describe('skip logic', function() {
         source.sendKeys(protractor.Key.ENTER);
         expect(targetEqual.isDisplayed()).toBe(true);
         // Field is displayed but no value entered in the item. The chained targets skip logic is not satisfied.
-        expect(targetWithSklSourceExists.isPresent()).toBe(false);
+        TestUtil.waitForElementNotPresent(targetWithSklSourceExists)
         expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
         // Value entered in the item. The chained targets skip logic is satisfied.
         targetEqual.click();
         targetEqual.clear();
-        testUtil.sendKeys(targetEqual, 'xxx');
+        TestUtil.sendKeys(targetEqual, 'xxx');
         expect(targetWithSklSourceExists.isDisplayed()).toBe(true);
-        expect(targetWithSklSourceNotExists.isPresent()).toBe(false);
+        TestUtil.waitForElementNotPresent(targetWithSklSourceNotExists)
 
       });
     }
@@ -263,26 +283,26 @@ describe('skip logic', function() {
       let dataControlItemWithSourceHavingSkipLogic = element(by.id("3/1"));
 
       expect(source.isDisplayed()).toBe(true);
-      expect(skipLogicItem.isPresent()).toBe(false);
-      expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(skipLogicItem)
+      TestUtil.waitForElementNotPresent(dataControlItemWithSourceHavingSkipLogic)
 
       // Not met skip logic condition ==> skip logic disabled
       source.click();
-      testUtil.sendKeys(source, 'xxx');
-      expect(skipLogicItem.isPresent()).toBe(false);
-      expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
+      TestUtil.sendKeys(source, 'xxx');
+      TestUtil.waitForElementNotPresent(skipLogicItem)
+      TestUtil.waitForElementNotPresent(dataControlItemWithSourceHavingSkipLogic)
 
       // Met skip logic condition
       source.click();
       source.clear();
-      testUtil.sendKeys(source, 'show 2');
+      TestUtil.sendKeys(source, 'show 2');
       expect(skipLogicItem.isDisplayed()).toBe(true);
 
       // skipLogicItem is present but its value does not exists yet.
-      expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(dataControlItemWithSourceHavingSkipLogic)
 
       skipLogicItem.click();
-      testUtil.sendKeys(skipLogicItem, 'xxx');
+      TestUtil.sendKeys(skipLogicItem, 'xxx');
       expect(dataControlItemWithSourceHavingSkipLogic.isDisplayed()).toBe(true);
       expect(dataControlItemWithSourceHavingSkipLogic.getAttribute('value')).toBe('xxx');
     });

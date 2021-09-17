@@ -274,6 +274,20 @@ const TestUtil = {
     browser.wait(function(){return elem.isDisplayed()}, 3000);
   },
 
+  /**
+   *  Waits for the given element to be not displayed on the page.
+   */
+  waitForElementNotDisplayed: function(elem) {
+    browser.wait(function() {
+      // Avoid reporting an error if the element is not even present.
+      return elem.isPresent().then(function(result) {
+        if (!result)
+          return true;
+        else
+          return elem.isDisplayed().then(function(result){return !result});
+      });
+    }, 3000);
+  },
 
   //TODO: LForms.Def is not avaible
   /**

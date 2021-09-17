@@ -34,7 +34,9 @@
   border: 1px solid #eea236;
   font-size: 90%;
 }
-.lhc-form .lhc-layout-horizontal .lhc-invalid .lhc-validation-popover {
+.lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-visited-before:hover .lhc-validation-popover,
+.lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-visited-before.lhc-active-row .lhc-validation-popover,
+.lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-show-validation .lhc-validation-popover {
   bottom: 59px;
 }
 .lhc-form .lhc-invalid .lhc-validation-popover:before {

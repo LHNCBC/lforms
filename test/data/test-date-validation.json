@@ -1,0 +1,126 @@
+{
+  "code": "all-in-one",
+  "name": "Test DT/DTM validations",  
+  "items": [
+    {
+      "questionCode": "required_dt",
+      "question": "Required DT field",
+      "dataType": "DT",
+      "linkId": "/required_dt",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "questionCode": "required_dtm",
+      "question": "Required DTM field",
+      "dataType": "DTM",
+      "linkId": "/required_dtm",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "questionCode": "required_tx",
+      "question": "Required TX field",
+      "dataType": "TX",
+      "linkId": "/required_tx",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "questionCode": "required_st",
+      "question": "Required ST field",
+      "dataType": "ST",
+      "linkId": "/required_st",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "questionCode": "sl_source_to_test_required",
+      "dataType": "INT",
+      "codingInstructions": "1 to show RT1; >=2 to show RT2; <=5 to show header RT3, and its subitmes RT4",
+      "question": "Skip Logic Source to test Required items",
+      "linkId": "/sl_source_to_test_required"
+    },
+    {
+      "questionCode": "sl_target_to_test_required1",
+      "dataType": "ST",
+      "question": "Required RT1: Shown when 'Skip Logic Required Source' == 1;",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "/sl_source_to_test_required",
+            "trigger": {
+              "value": 1
+            }
+          }
+        ],
+        "action": "show"
+      },
+      "linkId": "/sl_target_to_test_required1"
+    },
+    {
+      "questionCode": "sl_target_to_test_required2",
+      "dataType": "ST",
+      "question": "Required RT2: Shown when 'Skip Logic Required Source' > 1",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "/sl_source_to_test_required",
+            "trigger": {
+              "minInclusive": 2
+            }
+          }
+        ],
+        "action": "show"
+      },
+      "linkId": "/sl_target_to_test_required2"
+    },
+    {
+      "questionCode": "sl_target_header",
+      "dataType": "SECTION",
+      "header": true,
+      "question": "RT3: Shown when 'Skip Logic Required Source' <= 5",
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "/sl_source_to_test_required",
+            "trigger": {
+              "maxInclusive": 5
+            }
+          }
+        ],
+        "action": "show"
+      },
+      "items": [
+        {
+          "questionCode": "sl_target_to_test_required",
+          "dataType": "ST",
+          "question": "RT4: Shown when my section header is shown;",
+          "linkId": "/sl_target_header/sl_target_to_test_required",
+          "answerCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ],
+      "linkId": "/sl_target_header"
+    }
+  ],
+  "lformsVersion": "24.0.0"
+}

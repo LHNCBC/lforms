@@ -75,7 +75,7 @@ describe('answerExpression', function() {
   });
 
   // NEXT: TODO: Autocomp.helpers is not available yet
-  // from here to line 330
+  // from here to line 330. this test is supposed to fail.
 
   it('should not clear a list field if the form has just loaded with saved data', function () {
     // This is the case when a QuestionnaireResponse is loaded in that has a

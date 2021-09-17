@@ -1589,25 +1589,27 @@ export default class LhcFormData {
    */
   checkValidity () {
     const errors = [];
-    const itemListLength = this.itemList.length;
+      const itemListLength = this.itemList.length;
 
-    for (let i = 0; i < itemListLength; i++) {
-      const item = this.itemList[i];
+      for (let i = 0; i < itemListLength; i++) {
+        const item = this.itemList[i];
 
-      this._checkValidations(item);
+        if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+          this._checkValidations(item);
 
-      if (item._validationErrors !== undefined && item._validationErrors.length) {
-        const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
+          if (item._validationErrors !== undefined && item._validationErrors.length) {
+            const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
 
-        Array.prototype.push.apply(errors, errorDetails);
+            Array.prototype.push.apply(errors, errorDetails);
+          }
+        }
       }
-    }
 
-    if (errors.length) {
-      return errors;
-    } else {
-      return null;
-    }
+      if (errors.length) {
+        return errors;
+      } else {
+        return null;
+      }
   }
 
 
