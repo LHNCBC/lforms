@@ -13,13 +13,13 @@
       <!-- copyright -->
       <button *ngIf="lhcFormData.copyrightNotice" id="copyright-{{lhcFormData.code}}" type="button" class="lhc-copyright-button" 
           nz-popover            
-          nzPopoverContent="{{lhcFormData.copyrightNotice}}"
+          [nzPopoverContent]="copyrightStrTemplate"
           nzPopoverTrigger="click"
           nzPopoverPlacement="right" 
           nzPopoverTitle="Copyright"
           nzPopoverOverlayClassName="copyright-class-{{lhcFormData.code}}"
-          aria-label="Copyright notice" 
-          aria-describedby="label-{{ lhcFormData.code }}">
+          aria-label="Copyright button for {{lhcFormData.name || lhcFormData.fhirQName}}" 
+          aria-describedby="copyright-button-{{ lhcFormData.code }}">
         <!-- <i nz-icon nzType="copyright-circle" nzTheme="fill"></i> -->
         <i nz-icon nzType="copyright-circle" nzTheme="outline"></i>
       </button>
@@ -56,3 +56,11 @@
       </div>
     </div>
 </form>
+
+
+ <!-- copyright popover template -->
+ <ng-template #copyrightStrTemplate>
+  <span aria-label="Copyright notice for {{lhcFormData.name || lhcFormData.fhirQName}}"
+        aria-describedby="copyright-{{ lhcFormData.code }}"
+  >{{lhcFormData.copyrightNotice}}</span>
+</ng-template>

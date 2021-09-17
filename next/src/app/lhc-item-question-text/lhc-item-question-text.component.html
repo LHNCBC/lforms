@@ -20,51 +20,75 @@
     </span>
     <!-- coding instructions / helps -->
     <span [ngSwitch]="lhcDataService.getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
-      <span *ngSwitchCase="'inline-escaped'" id="help-{{ item._elementId }}"
-       class="lf-prompt" >{{item.codingInstructions}}</span>
-      <span *ngSwitchCase="'inline-html'" id="help-{{ item._elementId }}"
-       class="lf-prompt" [innerHTML]="item.codingInstructions | safeHtml"></span>
+      <span *ngSwitchCase="'inline-escaped'" 
+            id="help-{{ item._elementId }}"
+            class="lf-prompt" 
+            aria-label="Help for question {{item.question}}"
+            aria-describedby="label-{{ item._elementId }}"
+       >{{item.codingInstructions}}</span>
+      <span *ngSwitchCase="'inline-html'" 
+            id="help-{{ item._elementId }}"
+            class="lf-prompt" 
+            [innerHTML]="item.codingInstructions | safeHtml"
+            aria-label="Help for question {{item.question}}"
+            aria-describedby="label-{{ item._elementId }}"
+       ></span>
       <button *ngSwitchCase="'popover-escaped'" id="helpButton-{{ item._elementId }}" type="button" class="lhc-help-button"  
               nz-popover
-              nzPopoverContent="{{item.codingInstructions}}"
+              [nzPopoverContent]="helpStrTemplate"
               nzPopoverTrigger="click" 
               nzPopoverPlacement="right"  
               nzPopoverTitle="Instruction"
               nzPopoverOverlayClassName="help-class{{ item._elementId.replaceAll('/','-') }}"
-              aria-label="Help"
-              aria-describedby="label-{{ item._elementId }}">
-              
+              aria-label="Help button for question {{item.question}}"
+              aria-describedby="help-button-{{ item._elementId }}">              
         <i nz-icon nzType="question-circle" nzTheme="fill"></i>
       </button>
       <button *ngSwitchCase="'popover-html'" id="helpButton-{{ item._elementId }}" type="button" class="lhc-help-button"  
               nz-popover
-              [nzPopoverContent]="contentTemplate"
+              [nzPopoverContent]="helpHtmlTemplate"
               nzPopoverTrigger="click" 
               nzPopoverPlacement="right"  
               nzPopoverTitle="Instruction"
               nzPopoverOverlayClassName="help-class{{ item._elementId.replaceAll('/','-') }}"
-              aria-label="Help"
-              aria-describedby="label-{{ item._elementId }}">
+              aria-label="Help button for question {{item.question}}"
+              aria-describedby="help-button-{{ item._elementId }}">
         <i nz-icon nzType="question-circle" nzTheme="fill"></i>
       </button>
     </span>
     <!-- copyright -->
     <button *ngIf="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button" class="lhc-copyright-button" 
             nz-popover            
-            nzPopoverContent="{{item.copyrightNotice}}"
+            [nzPopoverContent]="copyrightStrTemplate"
             nzPopoverTrigger="click"
-            nzPopoverPlacement="right" 
+            nzPopoverPlacement="right"
             nzPopoverTitle="Copyright"
             nzPopoverOverlayClassName="copyright-class{{ item._elementId.replaceAll('/','-') }}"
-            aria-label="Copyright notice" 
-            aria-describedby="label-{{ item._elementId }}">
+            aria-label="Copyright button for question {{item.question}}" 
+            aria-describedby="copyright-button-{{ item._elementId }}">
       <i nz-icon nzType="copyright-circle" nzTheme="fill"></i>
     </button>
   </div>
 
-  <!-- popover template with trusted html -->
-  <ng-template #contentTemplate>
-    <span [innerHTML]="item.codingInstructions | safeHtml"></span>
+  <!-- help popover template with trusted html -->
+  <ng-template #helpHtmlTemplate>
+    <span aria-label="Help for question {{item.question}}"
+          aria-describedby="help-{{item._elementId}}"
+          [innerHTML]="item.codingInstructions | safeHtml"></span>
   </ng-template>
 
+  <!-- help popover template -->
+  <ng-template #helpStrTemplate>
+    <span aria-label="Help for question {{item.question}}"
+          aria-describedby="help-{{item._elementId}}"
+    >{{item.codingInstructions}}</span>
+  </ng-template>
+
+  <!-- copyright popover template -->
+  <ng-template #copyrightStrTemplate>
+    <span aria-label="Copyright notice for question {{item.question}}"
+          aria-describedby="copyright-{{item._elementId}}"
+    >{{item.copyrightNotice}}</span>
+  </ng-template>
+  
 </ng-container>

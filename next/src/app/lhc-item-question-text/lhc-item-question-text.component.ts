@@ -21,8 +21,8 @@ export class LhcItemQuestionTextComponent implements OnInit {
   }
 
   // Note: if this is done here, the function is called endlessly. Moving it to a pipe works fine, with just one call.
-  trustedHtml(value: string): any { 
-    return this.sanitizer.bypassSecurityTrustHtml(value);
-  }
+  // trustedHtml(value: string): any { 
+  //   return this.sanitizer.bypassSecurityTrustHtml(value);
+  // }
 
 }
