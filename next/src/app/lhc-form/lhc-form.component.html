@@ -11,18 +11,7 @@
         <span *ngIf="!lhcFormData._linkToDef">[{{ lhcFormData.code }}]</span>
       </span>
       <!-- copyright -->
-      <button *ngIf="lhcFormData.copyrightNotice" id="copyright-{{lhcFormData.code}}" type="button" class="lhc-copyright-button" 
-          nz-popover            
-          [nzPopoverContent]="copyrightStrTemplate"
-          nzPopoverTrigger="click"
-          nzPopoverPlacement="right" 
-          nzPopoverTitle="Copyright"
-          nzPopoverOverlayClassName="copyright-class-{{lhcFormData.code}}"
-          aria-label="Copyright button for {{lhcFormData.name || lhcFormData.fhirQName}}" 
-          aria-describedby="copyright-button-{{ lhcFormData.code }}">
-        <!-- <i nz-icon nzType="copyright-circle" nzTheme="fill"></i> -->
-        <i nz-icon nzType="copyright-circle" nzTheme="outline"></i>
-      </button>
+      <lhc-popover *ngIf="lhcFormData.copyrightNotice" [item]="lhcFormData" [popoverType]="'copyright-string'" [formLevel]="true"></lhc-popover>
       <button *ngIf="lhcFormData.templateOptions.showFormOptionPanelButton" type="button" class="lf-control-button btn-sm"
               (click)="hideShowFormOptionPanel()" aria-label="Form Option Panel">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -56,11 +45,3 @@
       </div>
     </div>
 </form>
-
-
- <!-- copyright popover template -->
- <ng-template #copyrightStrTemplate>
-  <span aria-label="Copyright notice for {{lhcFormData.name || lhcFormData.fhirQName}}"
-        aria-describedby="copyright-{{ lhcFormData.code }}"
-  >{{lhcFormData.copyrightNotice}}</span>
-</ng-template>

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+//import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
   selector: 'lhc-item-question-text',
   templateUrl: './lhc-item-question-text.component.html',
@@ -13,7 +13,7 @@ export class LhcItemQuestionTextComponent implements OnInit {
 
   constructor(
     public lhcDataService: LhcDataService,
-    private sanitizer: DomSanitizer
+  //  private sanitizer: DomSanitizer
   ) { 
   }
 
