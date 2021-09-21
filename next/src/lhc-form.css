@@ -143,6 +143,11 @@
 .lhc-form .lhc-form-title .lhc-copyright-button:hover {
   color: #b4fda7;
 }
+.lhc-form .lhc-help-button i,
+.lhc-form .lf-control-button i,
+.lhc-form .lhc-copyright-button i{
+  font-size: medium;
+}
 
 .lhc-form-title .popover {
   color: #333333;

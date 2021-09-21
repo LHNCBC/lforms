@@ -297,7 +297,7 @@ describe('popover buttons', function() {
       field1.click()
       TestUtil.waitForElementNotPresent(popover0);
 
-      // escaped HTML coding instructions
+      // escaped HTML coding instructions, when "codingInstructionsFormat" is not set
       helpButton1.click();
       //popover = element(by.css('.ant-popover-inner-content'));
       TestUtil.waitForElementDisplayed(popover1); 
@@ -307,7 +307,7 @@ describe('popover buttons', function() {
       field1.click()
       TestUtil.waitForElementNotPresent(popover1);
 
-      // escaped HTML coding instructions
+      // escaped HTML coding instructions, when "codingInstructionsFormat" = "text",
       helpButton2.click();
       TestUtil.waitForElementDisplayed(popover2); 
       expect(popover2.isDisplayed()).toBe(true);
@@ -315,7 +315,7 @@ describe('popover buttons', function() {
 
       field1.click()
       TestUtil.waitForElementNotPresent(popover2);
-      // enabled HTML coding instructions 
+      // enabled HTML coding instructions, when "codingInstructionsFormat" = "html",
       helpButton3.click();
       TestUtil.waitForElementDisplayed(popover3); 
       expect(popover3.isDisplayed()).toBe(true);
