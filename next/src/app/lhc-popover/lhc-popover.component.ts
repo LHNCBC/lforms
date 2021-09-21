@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-popover',
@@ -11,8 +12,25 @@ export class LhcPopoverComponent implements OnInit {
   @Input() popoverType: string;
   @Input() formLevel: boolean = false;
 
-  constructor() { }
+  constructor(private lhcDataService: LhcDataService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  /**
+   * Send the popover content to screen reader log when the popover button is clicked
+   */
+  onShowingPopver(): void {
+    let title = this.popoverType === "copyright-string" ? "Copyright notice:" : "Instruction:"
+    let content 
+
+    if (this.popoverType === "copyright-string") {
+      title = "Copyright notice:"
+      content = this.item.copyrightNotice;
+    }
+    else {
+      title = "Instruction:"
+      content = this.item.codingInstructions;
+    }
+    this.lhcDataService.sendMsgToScreenReader(`${title} ${content}`)
   }
 }
