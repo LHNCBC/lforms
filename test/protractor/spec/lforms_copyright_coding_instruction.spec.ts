@@ -23,14 +23,14 @@ describe('popover buttons', function() {
       browser.wait(function() {
         return element(by.id('/type0/1')).isPresent();
       }, tp.WAIT_TIMEOUT_1);
-      element(by.id("copyright-all-in-one")).click();
+      element(by.id("copyright-button-all-in-one")).click();
       expect(copyright.getText()).toBe("A Copyright notice of the form");
     });
 
     it('should show a copyright popover message on an item', function () {
       element(by.id("/type0/1")).click();
       TestUtil.waitForElementNotPresent(copyright)
-      element(by.id("copyright-/type0/1")).click();
+      element(by.id("copyright-button-/type0/1")).click();
       browser.wait(function() {
         return copyright.isPresent();
       }, tp.WAIT_TIMEOUT_1);
@@ -54,10 +54,10 @@ describe('popover buttons', function() {
     var inlineHTMLLink1 = inline1.element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
     var inlineHTMLLink2 = inline2.element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
     var inlineHTMLLink3 = inline3.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
-    var helpButton0 = element(by.id("helpButton-/type0/1")); // text formatted content, no 'codingInstructionsFormat'
-    var helpButton1 = element(by.id("helpButton-/type1/1")); // html formatted content, no 'codingInstructionsFormat'
-    var helpButton2 = element(by.id("helpButton-/type2/1")); // html formatted content, 'codingInstructionsFormat' is 'text'
-    var helpButton3 = element(by.id("helpButton-/type3/1")); // html formatted content, 'codingInstructionsFormat' is 'html'
+    var helpButton0 = element(by.id("help-button-/type0/1")); // text formatted content, no 'codingInstructionsFormat'
+    var helpButton1 = element(by.id("help-button-/type1/1")); // html formatted content, no 'codingInstructionsFormat'
+    var helpButton2 = element(by.id("help-button-/type2/1")); // html formatted content, 'codingInstructionsFormat' is 'text'
+    var helpButton3 = element(by.id("help-button-/type3/1")); // html formatted content, 'codingInstructionsFormat' is 'html'
 
     var field1 = element(by.id("/q_lg/1"));
 
@@ -199,8 +199,8 @@ describe('popover buttons', function() {
         var callback = arguments[arguments.length - 1];        
         callback();
       }).then(async function () {
-        var nameHelpButton = element(by.id("helpButton-/54126-8/54125-0/1/1"));
-        var genderHelpButton = element(by.id("helpButton-/54126-8/54131-8/1/1"));
+        var nameHelpButton = element(by.id("help-button-/54126-8/54125-0/1/1"));
+        var genderHelpButton = element(by.id("help-button-/54126-8/54131-8/1/1"));
         var gender = element(by.id("/54126-8/54131-8/1/1"));
         var popoverHTMLLink = element(by.css('a[href="http://google.com"]'));
   
@@ -238,11 +238,11 @@ describe('popover buttons', function() {
       copyrightButton0, copyPopover0;
       switch(type) {
         case 'vertical':
-          helpButton0 = element(by.id("helpButton-/type0/1")),
-          helpButton1 = element(by.id("helpButton-/type1/1")),
-          helpButton2 = element(by.id("helpButton-/type2/1")),
-          helpButton3 = element(by.id("helpButton-/type3/1")),
-          copyrightButton0 = element(by.id("copyright-/type0/1")),
+          helpButton0 = element(by.id("help-button-/type0/1")),
+          helpButton1 = element(by.id("help-button-/type1/1")),
+          helpButton2 = element(by.id("help-button-/type2/1")),
+          helpButton3 = element(by.id("help-button-/type3/1")),
+          copyrightButton0 = element(by.id("copyright-button-/type0/1")),
           popover0 = element(by.css('.help-class-type0-1 .ant-popover-inner-content')),
           popover1 = element(by.css('.help-class-type1-1 .ant-popover-inner-content')),
           popover2 = element(by.css('.help-class-type2-1 .ant-popover-inner-content')),
@@ -251,11 +251,11 @@ describe('popover buttons', function() {
           
           break;
         case 'horizontal':
-          helpButton0 = element(by.id("helpButton-/horizontalTable/type0/1/1")),
-          helpButton1 = element(by.id("helpButton-/horizontalTable/type1/1/1")),
-          helpButton2 = element(by.id("helpButton-/horizontalTable/type2/1/1")),
-          helpButton3 = element(by.id("helpButton-/horizontalTable/type3/1/1")),
-          copyrightButton0 = element(by.id("copyright-/horizontalTable/type0/1/1")),
+          helpButton0 = element(by.id("help-button-/horizontalTable/type0/1/1")),
+          helpButton1 = element(by.id("help-button-/horizontalTable/type1/1/1")),
+          helpButton2 = element(by.id("help-button-/horizontalTable/type2/1/1")),
+          helpButton3 = element(by.id("help-button-/horizontalTable/type3/1/1")),
+          copyrightButton0 = element(by.id("copyright-button-/horizontalTable/type0/1/1")),
           
           popover0 = element(by.css(".help-class-horizontalTable-type0-1-1 .ant-popover-inner-content")),
           popover1 = element(by.css(".help-class-horizontalTable-type1-1-1 .ant-popover-inner-content")),
@@ -264,11 +264,11 @@ describe('popover buttons', function() {
           copyPopover0 = element(by.css('.copyright-class-horizontalTable-type0-1-1 .ant-popover-inner-content'));
           break;
         case 'matrix':
-          helpButton0 = element(by.id("helpButton-/matrixTable/type0/1/1")),
-          helpButton1 = element(by.id("helpButton-/matrixTable/type1/1/1")),
-          helpButton2 = element(by.id("helpButton-/matrixTable/type2/1/1")),
-          helpButton3 = element(by.id("helpButton-/matrixTable/type3/1/1")),
-          copyrightButton0 = element(by.id("copyright-/matrixTable/type0/1/1")),
+          helpButton0 = element(by.id("help-button-/matrixTable/type0/1/1")),
+          helpButton1 = element(by.id("help-button-/matrixTable/type1/1/1")),
+          helpButton2 = element(by.id("help-button-/matrixTable/type2/1/1")),
+          helpButton3 = element(by.id("help-button-/matrixTable/type3/1/1")),
+          copyrightButton0 = element(by.id("copyright-button-/matrixTable/type0/1/1")),
           popover0 = element(by.css(".help-class-matrixTable-type0-1-1 .ant-popover-inner-content")),
           popover1 = element(by.css(".help-class-matrixTable-type1-1-1 .ant-popover-inner-content")),
           popover2 = element(by.css(".help-class-matrixTable-type2-1-1 .ant-popover-inner-content")),
