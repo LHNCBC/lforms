@@ -3,49 +3,8 @@
     *ngIf="item._horizontalTableHeader && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId]">
     <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
         ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
-        class="lhc-form-horizontal-table-title lhc-de-label">
-      <span class="lf-question">
-        <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
-          <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
-          <span class="question" [style]="item._obj_textCSS">{{item.question}}
-            <span *ngIf="item._answerRequired" class="required" title="Required">*</span>
-          </span>
-        </label>
-      </span>
-      <!-- <span class="lf-item-code" *ngIf="lhcData.templateOptions.showQuestionCode">
-        <a *ngIf="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
-        <span *ngIf="!item._linkToDef">[{{ item.questionCode }}]</span>
-      </span> -->
-      <!-- <span *ngSwitch="getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
-          <span *ngSwitchCase="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
-          <span *ngSwitchCase="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"></span>
-          <button *ngSwitchCase="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
-                  popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                  type="button" id="help-{{item._elementId}}" aria-label="Help"
-                  aria-describedby="label-{{ item._elementId }}">
-            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-          </button>
-          <button *ngSwitchCase="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
-                  popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                  type="button" id="help-{{item._elementId}}" aria-label="Help"
-                  aria-describedby="label-{{ item._elementId }}">
-            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-          </button>
-      </span> -->
-      <!-- <button *ngIf="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
-              class="lf-copyright-button btn-sm" uib-popover="{{item.copyrightNotice}}"
-              popover-trigger="focus" popover-placement="right" popover-title="Copyright"
-              aria-label="Copyright notice" aria-describedby="label-{{ item._elementId }}">
-        <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
-      </button>
-      <button *ngIf="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
-              ng-click="hideShowItemOptionPanel(item)" aria-label="Item controls"
-              aria-describedby="label-{{ item._elementId }}">
-        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-      </button> -->
-
-      <!-- <lf-item-options></lf-item-options> -->
-
+        class="lhc-form-horizontal-table-title" *ngIf="!formLevel">
+      <lhc-item-question-text [item]="item" ></lhc-item-question-text>
     </div>
 
     <table class="lhc-form-horizontal-table">
@@ -60,16 +19,8 @@
         <th *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId"
             class="lhc-form-horizontal-table-header"
             id="{{col.id}}">
-          <span class="lf-question">
-            <label id="label-{{ col.item._elementId }}" for="{{col.item._elementId}}">
-              <span *ngIf="col.item.prefix" class="prefix" [style]="col.item._obj_prefixCSS">{{col.item.prefix}}</span>
-              <span class="question" [style]="col.item._obj_textCSS">{{col.item.question}}
-                <span *ngIf="col.item._answerRequired" class="required" title="Required">*</span>
-              </span>
-            </label>
-          </span>
+            <lhc-item-question-text [item]="col.item" ></lhc-item-question-text>
         </th>
-            <!-- <ng-include src="'itemPrefixAndText.html'"></th> -->
       </tr>
       </thead>
       <tbody id="" class="">

@@ -208,7 +208,7 @@
       // lfOptions / templateOptions not implmented yet. 
       function toggleCodingInstructionFormat() {
         if (testForm.lfData) {
-          let lfOptions = {allowHTMLInInstructions: testForm.lfData.templateOptions.allowHTMLInInstructions}; // allowHTMLInInstructions not implemented yet
+          let lfOptions = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
           testForm.lfOptions = lfOptions;
         }
       }

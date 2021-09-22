@@ -27,6 +27,11 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
+
+import { CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline } from '@ant-design/icons-angular/icons';
+import { IconDefinition } from '@ant-design/icons-angular';
+const icons: IconDefinition[] = [ CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline ];
+
 //import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 
 import { CommonUtilsService } from '../lib/common-utils.service';
@@ -50,7 +55,6 @@ import { LhcItemTimeComponent } from './lhc-item-time/lhc-item-time.component';
 import { LhcItemDatetimeComponent } from './lhc-item-datetime/lhc-item-datetime.component';
 import { LhcItemTextComponent } from './lhc-item-text/lhc-item-text.component';
 import { LhcItemQuestionTextComponent } from './lhc-item-question-text/lhc-item-question-text.component';
-import { LhcItemPopoverComponent } from './lhc-item-popover/lhc-item-popover.component';
 import { LhcItemQuestionComponent } from './lhc-item-question/lhc-item-question.component';
 import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.component';
 import { LhcChangeDetectionComponent } from './lhc-change-detection/lhc-change-detection.component';
@@ -58,6 +62,8 @@ import { LhcWatcherComponent} from './lhc-watcher/lhc-watcher.component';
 import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertical.component';
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
+import { SafeHtmlPipe } from './safe-html.pipe';
+import { LhcPopoverComponent } from './lhc-popover/lhc-popover.component';
 
 registerLocaleData(en);
 
@@ -82,14 +88,15 @@ registerLocaleData(en);
     LhcItemDatetimeComponent,
     LhcItemTextComponent,
     LhcItemQuestionTextComponent,
-    LhcItemPopoverComponent,
     LhcItemQuestionComponent,
     LhcItemDisplayComponent,
     LhcChangeDetectionComponent,
     LhcWatcherComponent,
     LhcGroupVerticalComponent,
     LhcGroupHorizontalComponent,
-    LhcGroupMatrixComponent
+    LhcGroupMatrixComponent,
+    SafeHtmlPipe,
+    LhcPopoverComponent
   ],
   imports: [
     BrowserModule,
@@ -103,7 +110,7 @@ registerLocaleData(en);
     NzTimePickerModule,
     NzGridModule,
     NzPopoverModule,
-    NzIconModule,
+    NzIconModule.forRoot(icons),
     NzSwitchModule
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US },
@@ -136,8 +143,6 @@ export class AppModule {
       'STU3': 'partial',
       'R4': 'WIP'
     };
-
-    console.log(lforms);
 
     window['LForms'] = lforms;
 

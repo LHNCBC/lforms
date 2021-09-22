@@ -23,8 +23,9 @@ exports.config = {
     '../../test/protractor/spec/lforms_hl7.spec.ts',
     '../../test/protractor/spec/lforms_horizontal.spec.ts',
     '../../test/protractor/spec/lforms_load_user_data.spec.ts',
-    '../../test/protractor/spec/lforms_matrix_layout.spec.ts'
-    
+    '../../test/protractor/spec/lforms_matrix_layout.spec.ts',
+    '../../test/protractor/spec/lforms_copyright_coding_instruction.spec.ts'
+
     // './src/**/*.e2e-spec.ts'
     // './spec/**/*.e2e-spec.todo.failed.ts'
     // './spec/**/*.e2e-spec.done.ts'

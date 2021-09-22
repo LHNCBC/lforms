@@ -114,35 +114,40 @@
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
-.lhc-form .lf-help-button,
+.lhc-form .lhc-help-button,
 .lhc-form .lf-control-button,
-.lhc-form .lf-copyright-button {
-  font-size: 120%;
-  font-weight: bold;
+.lhc-form .lhc-copyright-button {
   padding: 0;
   margin-right: 2px;
   margin-left:2px;
   vertical-align: middle;
   background-color: transparent;
   color: #066aa0; /*#458AC5;*/
+  border: none;
 }
-.lhc-form .lf-help-button:hover,
+.lhc-form .lhc-help-button:hover,
 .lhc-form .lf-control-button:hover,
-.lhc-form .lf-copyright-button:hover {
+.lhc-form .lhc-copyright-button:hover {
   color: #0087fd;
+  cursor: pointer;
 }
-.lhc-form .lhc-form-title .lf-help-button,
+.lhc-form .lhc-form-title .lhc-help-button,
 .lhc-form .lhc-form-title .lf-control-button,
-.lhc-form .lhc-form-title .lf-copyright-button {
+.lhc-form .lhc-form-title .lhc-copyright-button {
   background-color: inherit;
   color: white;
+  font-weight: bold;
 }
-.lhc-form .lhc-form-title .lf-help-button:hover,
+.lhc-form .lhc-form-title .lhc-help-button:hover,
 .lhc-form .lhc-form-title .lf-control-button:hover,
-.lhc-form .lhc-form-title .lf-copyright-button:hover {
+.lhc-form .lhc-form-title .lhc-copyright-button:hover {
   color: #b4fda7;
 }
-
+.lhc-form .lhc-help-button i,
+.lhc-form .lf-control-button i,
+.lhc-form .lhc-copyright-button i{
+  font-size: medium;
+}
 
 .lhc-form-title .popover {
   color: #333333;
@@ -166,8 +171,9 @@
 }
 
 /* required indicator */
-.lhc-form .required {
+.lhc-form .lhc-required {
   color: darkred;
+  font-weight: bold;
 }
 
 /* form stop sign */
@@ -323,7 +329,13 @@
 
 
 /* popover is attached to page under <body> */
-div.ant-popover {
+div.ant-popover-title {
+  background-color: #f7f7f7;
+}
+div.cdk-overlay-pane {
+  max-width: 66%;
+}
+/* div.ant-popover {
   top: 10px;
 }
 div.ant-popover-arrow:after,
@@ -335,7 +347,7 @@ div.ant-popover-inner-content {
   bottom: 6.2px;
   box-shadow: 3px 3px 7px rgb(0 0 0 / 7%);
   border-color: transparent #fcf8e3 #fcf8e3 transparent;
-}
+} */
 
 /* screen reader log */
 screen_reader_only {

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LhcItemPopoverComponent } from './lhc-item-popover.component';
+import { LhcPopoverComponent } from './lhc-popover.component';
 
-describe('LhcItemPopoverComponent', () => {
-  let component: LhcItemPopoverComponent;
-  let fixture: ComponentFixture<LhcItemPopoverComponent>;
+describe('LhcPopoverComponent', () => {
+  let component: LhcPopoverComponent;
+  let fixture: ComponentFixture<LhcPopoverComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemPopoverComponent ]
+      declarations: [ LhcPopoverComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LhcItemPopoverComponent);
+    fixture = TestBed.createComponent(LhcPopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

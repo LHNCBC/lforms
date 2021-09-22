@@ -56,7 +56,6 @@ lhc-item-time .ant-picker-input>input[type="text"] {
 lhc-item-date .ant-picker-input>input::placeholder,
 lhc-item-datetime .ant-picker-input>input::placeholder,
 lhc-item-time .ant-picker-input>input::placeholder {
-  font-size: 85%;
   font-weight: 500;
   color: #999999;
   opacity: 1;
@@ -66,7 +65,6 @@ lhc-item-time .ant-picker-input>input::placeholder {
 lhc-item-date .ant-picker-input>input:-ms-input-placeholder,
 lhc-item-datetime .ant-picker-input>input:-ms-input-placeholder,
 lhc-item-time .ant-picker-input>input:-ms-input-placeholder {
-  font-size: 85%;
   font-weight: 500;
   color: #999999;
   opacity: 1;
@@ -75,7 +73,6 @@ lhc-item-time .ant-picker-input>input:-ms-input-placeholder {
 lhc-item-date .ant-picker-input>input::-ms-input-placeholder,
 lhc-item-datetime .ant-picker-input>input::-ms-input-placeholder,
 lhc-item-time .ant-picker-input>input::-ms-input-placeholder {
-  font-size: 85%;
   font-weight: 500;
   color: #999999;
   opacity: 1;
@@ -85,7 +82,6 @@ lhc-item-time .ant-picker-input>input::-ms-input-placeholder {
 /* place holder */
 .lhc-form input::placeholder,
 .lhc-form textarea::placeholder {
-  font-size: 85%;
   font-weight: 500;
   color: #999999;
   opacity: 1;
@@ -94,7 +90,6 @@ lhc-item-time .ant-picker-input>input::-ms-input-placeholder {
    with -moz-placeholder */
 .lhc-form input:-ms-input-placeholder,
 .lhc-form textarea:-ms-input-placeholder {
-  font-size: 85%;
   font-weight: 500;
   color: #999999;
   opacity: 1;
@@ -102,7 +97,6 @@ lhc-item-time .ant-picker-input>input::-ms-input-placeholder {
 /* edge */
 .lhc-form input::-ms-input-placeholder,
 .lhc-form textarea::-ms-input-placeholder {
-  font-size: 85%;
   font-weight: 500;
   color: #999999;
   opacity: 1;

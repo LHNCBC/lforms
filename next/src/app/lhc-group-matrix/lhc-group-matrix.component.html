@@ -1,47 +1,6 @@
 <div *ngIf="item" class="lhc-layout-matrix lf-table-item {{lhcDataService.getSiblingStatus(item)}}">
-  <div class="lf-form-matrix-table-title lf-de-label">
-    <span class="lf-question">
-      <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
-        <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
-        <span class="question" [style]="item._obj_textCSS">{{item.question}}
-          <span *ngIf="item._answerRequired" class="required" title="Required">*</span>
-        </span>
-      </label>
-    </span>
-    <!-- <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
-      <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
-      <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
-    </span>
-    <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions">
-      <span ng-switch-when="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(item)"
-       id="help-{{ item._elementId }}"></span>
-      <span ng-switch-when="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"
-       id="help-{{ item._elementId }}"></span>
-      <button ng-switch-when="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
-              popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-              type="button" id="helpButton-{{item._elementId}}" aria-label="Help"
-              aria-describedby="label-{{ item._elementId }}">
-        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-      </button>
-      <button ng-switch-when="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
-              popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-              type="button" id="helpButton-{{item._elementId}}" aria-label="Help"
-              aria-describedby="label-{{ item._elementId }}">
-        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-      </button>
-    </span>
-    <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
-            class="lf-copyright-button btn-sm" uib-popover="{{item.copyrightNotice}}"
-            popover-trigger="focus" popover-placement="right" popover-title="Copyright"
-            aria-label="Copyright notice" aria-describedby="label-{{ item._elementId }}">
-      <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
-    </button>
-    <button ng-if="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
-            ng-click="hideShowItemOptionPanel(item)" aria-label="Item controls"
-            aria-describedby="label-{{item._elementId}}">
-      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-    </button>
-    <lf-item-options></lf-item-options> -->
+  <div class="lf-form-matrix-table-title" *ngIf="!formLevel">
+    <lhc-item-question-text [item]="item" ></lhc-item-question-text>
   </div>
   
   <table class="lf-form-matrix-table lf-form-table">
@@ -65,46 +24,7 @@
          aria-labeledby="label-{{subItem._elementId }}"
          aria-describedby="help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}">
         <td class="lf-question">
-          <div class="lf-de-label">
-            <span class="lf-question">
-              <label id="label-{{ subItem._elementId }}" for="{{subItem._elementId}}">
-                <span *ngIf="subItem.prefix" class="prefix" [style]="subItem._obj_prefixCSS">{{subItem.prefix}}</span>
-                <span class="question" [style]="subItem._obj_textCSS"> {{subItem.question}}
-                  <span *ngIf="subItem._answerRequired" class="required" title="Required">*</span>
-                </span>
-              </label>        
-            </span>
-
-            <!-- <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
-              <a ng-if="subItem._linkToDef" href="{{ subItem._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ subItem.questionCode }}]</a>
-              <span ng-if="!subItem._linkToDef">[{{ subItem.questionCode }}]</span>
-            </span>
-            <span ng-switch on="getCodingInstructionsDisplayType(subItem)" ng-if="subItem.codingInstructions">
-              <span ng-switch-when="inline-html" id="help-{{subItem._elementId}}"
-               class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(subItem)"></span>
-              <span ng-switch-when="inline-escaped" id="help-{{subItem._elementId}}"
-               class="lf-prompt" ng-bind="subItem.codingInstructions"></span>
-              <button ng-switch-when="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
-                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                      type="button" id="helpButton-{{subItem._elementId}}"
-                      aria-label="Help" aria-describedby="label-{{ subItem._elementId }}">
-                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-              </button>
-              <button ng-switch-when="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{subItem.codingInstructions}}"
-                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                      type="button" id="helpButton-{{subItem._elementId}}" aria-label="Help"
-                      aria-describedby="label-{{ subItem._elementId }}">
-                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-              </button>
-            </span>
-            <button ng-if="subItem.copyrightNotice" id="copyright-{{subItem._elementId}}" type="button"
-                    class="lf-copyright-button btn-sm" uib-popover="{{subItem.copyrightNotice}}"
-                    popover-trigger="focus" popover-placement="right" popover-title="Copyright"
-                    aria-label="Copyright notice"
-                    aria-describedby="label-{{ subItem._elementId }}">
-              <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
-            </button> -->
-          </div>
+          <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
         </td>
         <td *ngFor="let answer of item.items[0].answers; index as i"
          class="lf-form-matrix-cell">
