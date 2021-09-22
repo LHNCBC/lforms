@@ -14,23 +14,29 @@ export class LhcPopoverComponent implements OnInit {
 
   constructor(private lhcDataService: LhcDataService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {    
+  }
 
   /**
    * Send the popover content to screen reader log when the popover button is clicked
    */
   onShowingPopver(): void {
     let title = this.popoverType === "copyright-string" ? "Copyright notice:" : "Instruction:"
-    let content 
+    let content, contentId;
 
     if (this.popoverType === "copyright-string") {
       title = "Copyright notice:"
-      content = this.item.copyrightNotice;
+      contentId = "copyright-content-" + (this.formLevel ? this.item.code : this.item._elementId);
     }
     else {
       title = "Instruction:"
-      content = this.item.codingInstructions;
+      contentId = "help-content-" + (this.formLevel ? this.item.code : this.item._elementId);
     }
-    this.lhcDataService.sendMsgToScreenReader(`${title} ${content}`)
+
+    setTimeout(() => {
+      // get the displayed text instead of possible HTML content
+      let content = document.getElementById(contentId).textContent;
+      this.lhcDataService.sendMsgToScreenReader(`${title} ${content}`)
+    }, 10)
   }
 }

@@ -62,7 +62,9 @@
         role="region"
         attr.aria-label="Instruction for {{item.question}}"
         attr.aria-describedby="help-content-{{item._elementId}}"
-        [innerHTML]="item.codingInstructions | safeHtml"></span>
+        id="help-content-{{item._elementId}}"
+        [innerHTML]="item.codingInstructions | safeHtml"
+  ></span>
 </ng-template>
 
 <!-- help popover template -->
@@ -71,6 +73,7 @@
         role="region"
         attr.aria-label="Instruction for {{item.question}}"
         attr.aria-describedby="help-content-{{item._elementId}}"
+        id="help-content-{{item._elementId}}"
   >{{item.codingInstructions}}</span>
 </ng-template>
 
@@ -80,7 +83,8 @@
         attr.aria-labelledby="copyright-button-{{item._elementId}}"
         role="region"
         attr.aria-label="Copyright notice for {{item.question}}" 
-        attr.aria-describedby="copyright-{{item._elementId}}"
+        attr.aria-describedby="copyright-content-{{item._elementId}}"
+        id="copyright-content-{{item._elementId}}"
   >{{item.copyrightNotice}}</span>
   <span *ngIf="formLevel"
         id="copyright-content-{{item.code}}"
@@ -88,5 +92,6 @@
         role="region"
         attr.aria-label="Copyright notice for {{item.name || item.fhirQName}}" 
         attr.aria-describedby="copyright-content-{{item.code}}"
+        id="copyright-content-{{item.code}}"
   >{{item.copyrightNotice}}</span>  
 </ng-template>
