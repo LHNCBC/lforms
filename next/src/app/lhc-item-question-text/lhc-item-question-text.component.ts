@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+//import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
   selector: 'lhc-item-question-text',
   templateUrl: './lhc-item-question-text.component.html',
@@ -13,7 +13,7 @@ export class LhcItemQuestionTextComponent implements OnInit {
 
   constructor(
     public lhcDataService: LhcDataService,
-    private sanitizer: DomSanitizer
+  //  private sanitizer: DomSanitizer
   ) { 
   }
 
@@ -21,8 +21,8 @@ export class LhcItemQuestionTextComponent implements OnInit {
   }
 
   // Note: if this is done here, the function is called endlessly. Moving it to a pipe works fine, with just one call.
-  trustedHtml(value: string): any { 
-    return this.sanitizer.bypassSecurityTrustHtml(value);
-  }
+  // trustedHtml(value: string): any { 
+  //   return this.sanitizer.bypassSecurityTrustHtml(value);
+  // }
 
 }

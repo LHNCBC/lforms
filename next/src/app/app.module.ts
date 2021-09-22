@@ -55,7 +55,6 @@ import { LhcItemTimeComponent } from './lhc-item-time/lhc-item-time.component';
 import { LhcItemDatetimeComponent } from './lhc-item-datetime/lhc-item-datetime.component';
 import { LhcItemTextComponent } from './lhc-item-text/lhc-item-text.component';
 import { LhcItemQuestionTextComponent } from './lhc-item-question-text/lhc-item-question-text.component';
-import { LhcItemPopoverComponent } from './lhc-item-popover/lhc-item-popover.component';
 import { LhcItemQuestionComponent } from './lhc-item-question/lhc-item-question.component';
 import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.component';
 import { LhcChangeDetectionComponent } from './lhc-change-detection/lhc-change-detection.component';
@@ -64,6 +63,7 @@ import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertic
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
 import { SafeHtmlPipe } from './safe-html.pipe';
+import { LhcPopoverComponent } from './lhc-popover/lhc-popover.component';
 
 registerLocaleData(en);
 
@@ -88,7 +88,6 @@ registerLocaleData(en);
     LhcItemDatetimeComponent,
     LhcItemTextComponent,
     LhcItemQuestionTextComponent,
-    LhcItemPopoverComponent,
     LhcItemQuestionComponent,
     LhcItemDisplayComponent,
     LhcChangeDetectionComponent,
@@ -96,7 +95,8 @@ registerLocaleData(en);
     LhcGroupVerticalComponent,
     LhcGroupHorizontalComponent,
     LhcGroupMatrixComponent,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    LhcPopoverComponent
   ],
   imports: [
     BrowserModule,
