@@ -1,8 +1,15 @@
-var tp = require('./lforms_testpage.po.js');
-var testUtil = require('./util.js');
-var fhirSupport = require('../../../app/scripts/fhir/versions');
-var fhirVersions = Object.keys(fhirSupport);
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+import * as FHIRSupport from "../../../app/scripts/fhir/versions.js";
+
+let fhirVersions = Object.keys(FHIRSupport);
+let tp: TestPage; 
+let LForms: any = (global as any).LForms;
+tp = new TestPage();
 var ff = tp.USSGFHTVertical;
+
 
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
@@ -33,13 +40,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('External autocomplete answerValueSets', function() {
         it('should be able to search via ValueSet expansion', function () {
           var ethnicity = ff.ethnicity;
-          testUtil.sendKeys(ethnicity(), 'arg');
+          TestUtil.sendKeys(ethnicity(), 'arg');
           tp.Autocomp.helpers.waitForSearchResults();
           expect(tp.Autocomp.helpers.firstSearchRes.getText()).toBe('Argentinean');
 
           ff.disease.click();
           tp.Autocomp.helpers.waitForNoSearchResults();
-          testUtil.sendKeys(ff.disease, 'arm');
+          TestUtil.sendKeys(ff.disease, 'arm');
           tp.Autocomp.helpers.waitForSearchResults();
           tp.Autocomp.helpers.firstSearchRes.click();
           expect(ff.disease.getAttribute('value')).toBe('Arm pain');
