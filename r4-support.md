@@ -1,5 +1,7 @@
-# This briefly details the support for FHIR R4 Questionnaire and
-# QuestionnaireResponse.
+# Support for FHIR version R4
+This briefly details the support for FHIR R4 Questionnaire and
+QuestionnaireResponse.  Note that we have also support for FHIR STU3 for
+Questionnaire and QuestionnaireResponse, but that is not documented here.
 
 # Questionnaire
 See https://www.hl7.org/fhir/questionnaire.html for a list of the fields in
