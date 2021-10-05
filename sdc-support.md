@@ -17,7 +17,9 @@ fields.
 * rendering-style:  on item.text and prefix
 * rendering-xhtml:  on item.text
 * hidden
-* itemControl:  gtable, table, drop-down, autocomplete, radio-button, check-box, help
+* itemControl:  Support for types:  gtable, table, drop-down, autocomplete,
+  radio-button, check-box, help.  Note that type "list" is the default type of
+  display, so that is supported, and the extension is not needed for that case.
 * choiceOrientation
 * optionPrefix
 * required
