@@ -25,8 +25,8 @@ For "status", if it was not previously set at import, it will be set to "draft" 
 * text
 * type:  All types except reference, and with partial support for date,
   dateTime, and time.  (See "not yet supported" for details.)
-* enableWhen, supported, but has a couple of known bugs:
-   * Does not support > on strings or dates
+* enableWhen:  Supported, but has a couple of known bugs:
+   * Does not support > on strings or dates.
    * For multi-select lists, the "exists" continues to return true after all
      selected values are removed.
 * enableWhenBehavior
@@ -73,7 +73,7 @@ from LHC-Forms, the extensions will still be present.
 * item.type:  No support for type=reference.  Also, there are the following
   limitations on the support for types "date", "dateTime", and "time":
    * The date in "date" "dateTime" must be complete dates.  No timezone is shown
-   * or selectable for "dateTime".  When entering a
+     or selectable for "dateTime".  When entering a
      dateTime the local timezone is assumed.
    * The time in "time" and "dateTime" must have both hours and minutes, only.
      Seconds and milliseconds cannot be entered.
@@ -83,9 +83,9 @@ from LHC-Forms, the extensions will still be present.
      flexible about entry of dates and times.  Possibly we will need to write
      our own.
 * answerValueSet:  "contained" ValueSets without expansions are unsupported
-* answerOption.initialSelected - For now you need to use item.intial.value[x]
+* answerOption.initialSelected:  For now you need to use item.intial.value[x]
   instead, despite the contraint that says, "answerOption.empty() or
-  initial.empty()"
+  initial.empty()".
 
 ### Extensions
 Note that non-supported extensions are simply ignored, but are also retained on
@@ -120,30 +120,30 @@ rendering a form, or when
 QuestionnaireResponse are left for the application to set, the following list is
 not broken out into supported and unsupported sub-sections as for Questionnaire.
 
-* identifier - not used on import, and not set on export.
-* basedOn - Out of scope; this would be something for the application to set
-* partOf - Out of scope; this would be something for the application to set
-* questionnaire - LHC-Forms currently leaves it up the application to set this
+* identifier:  Not used on import, and not set on export.
+* basedOn:  Out of scope; this would be something for the application to set
+* partOf:  Out of scope; this would be something for the application to set
+* questionnaire:  LHC-Forms currently leaves it up the application to set this
   field, though in the future we plan to set it with value of Questionnaire.url.
-* status - LHC-Forms sets this to "completed", but the application should change
+* status:  LHC-Forms sets this to "completed", but the application should change
   this value it knows that it should be something else (e.g. "amended").
-* subject - The application can pass in the subject value as an option when
+* subject:  The application can pass in the subject value as an option when
   [exporting](https://lhncbc.github.io/lforms/#retrieving-fhir-data) the
   QuestionnaireResponse, or it can set it afterward.
-* encounter - Left for the application to set.  LHC-Forms would not know this
+* encounter:  Left for the application to set.  LHC-Forms would not know this
   except in certain cases.
-* authored - Set by LHC-Forms to the date and time at which the QuestionnaireResponse is
+* authored:  Set by LHC-Forms to the date and time at which the QuestionnaireResponse is
   exported.
-* author - Left for the application to set.  LHC-Forms would not know this
+* author:  Left for the application to set.  LHC-Forms would not know this
   except in certain cases.
-* source - Left for the application to set.  LHC-Forms would not know this
+* source:  Left for the application to set.  LHC-Forms would not know this
   except in certain cases.
-* item.linkId - supported
-* item.definition - not supported
-* item.text - LHC-Forms does not currently export this field, though we might
+* item.linkId:  Supported
+* item.definition:  Not supported
+* item.text:  LHC-Forms does not currently export this field, though we might
   change that in the future.  It is not necessary, since it is present in the
   Questionnaire, but it makes it easier to read a QuestionnaireResponse by
   itself.
-* item.answer.value[x] - all types are supported except valueReference.
-* item.item - supported
+* item.answer.value[x]:  All types are supported except valueReference.
+* item.item:  Supported
 
