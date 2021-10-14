@@ -33,13 +33,12 @@ let LForms: any = (global as any).LForms;
       TestUtil.sendKeys(dtEl, dateStr);
       otherEl.click();
       expect(dtEl.getAttribute("value")).toEqual(dateStr);
-      browser.sleep(10000)
       // expect(dtEl.getAttribute("class")).toContain('ng-valid'); 
     });
   
 
     // as of 09/16/2021,this test passed on firefox but not on linux chrome. Other tests in this file need to run with chrome to pass.
-    fit('should validate when required inputs are entered', function () {
+    it('should validate when required inputs are entered', function () {
 
       tp.loadFromTestData('test-date-validation.json');
 

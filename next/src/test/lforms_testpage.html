@@ -411,7 +411,7 @@
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
           testForm.lfData = lfData;
-
+          
         };
         reader.readAsText(event.target.files[0]); 
       }
@@ -421,28 +421,12 @@
 
     <!-- lforms FHIR lib file, loaded after LHC-Forms files are loaded -->
     <script>
-      // function loadFHIRLibs() {
-      //   let fhirLib4 = document.createElement("script");
-      //   fhirLib4.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/R4/lformsFHIR.min.js");
-      //   let fhirLib3 = document.createElement("script");
-      //   fhirLib3.setAttribute("src", "https://clinicaltables.nlm.nih.gov/lforms-versions/29.1.1/fhir/STU3/lformsFHIR.min.js");        
-      //   document.body.appendChild(fhirLib4);
-      //   document.body.appendChild(fhirLib3);
-      // }
-      function loadFHIRLibs() {
-        let fhirLib4 = document.createElement("script");
-        fhirLib4.setAttribute("src", "/test/lib/fhir/R4/lformsFHIR.min.js");
-        
-        let fhirLib3 = document.createElement("script");
-        fhirLib3.setAttribute("src", "/test/lib/fhir/STU3/lformsFHIR.min.js");        
-        document.body.appendChild(fhirLib4);
-        document.body.appendChild(fhirLib3);
-      }
 
-      window.onload = loadFHIRLibs;
-        
+      window.onload = function() {
+        LForms.Util.loadFHIRLibs("/test/lib/fhir/R4/lformsFHIR.min.js", "/test/lib/fhir/STU3/lformsFHIR.min.js")
+      };        
     </script>
-
+    
     <!-- ES2015 files of the LHC-Forms web component -->
     <script src="../runtime.js" type="module"></script>
     <script src="../polyfills.js" type="module"></script>

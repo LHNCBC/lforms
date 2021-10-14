@@ -27,8 +27,9 @@ const FormUtils = {
    *  Questionnaire).
    */
   addFormToPage: function(formDataDef, formContainer, options) {
-    var formContainer = typeof formContainer === 'string' ?
-      $('#'+formContainer) : $(formContainer);
+
+    // var formDataDef = CommonUtils.deepCopy(formDataDef);
+    var formContainer = typeof formContainer === 'string' ? document.getElementById(formContainer) : formContainer;
     if (typeof formDataDef === 'string') {
       if (formDataDef.indexOf('{') >= 0) // test for JSON
         formDataDef = JSON.parse(formDataDef);
@@ -48,43 +49,25 @@ const FormUtils = {
 
     if (!this.pageFormID_)
       this.pageFormID_ = 0;
-    var appName = 'LFormsApp' + ++this.pageFormID_;
-    var controller = 'LFormsAppController'+ this.pageFormID_;
     if (!LForms.addedFormDefs)
       LForms.addedFormDefs = [];
-    var formIndex = LForms.addedFormDefs.length;
     LForms.addedFormDefs.push(formDataDef);
     var prepop = options && options.prepopulate===true;
-    formContainer.html(
-      '<div ng-controller="'+controller+'">'+
-        '<lforms lf-data="myFormData"></lforms>'+
-      '</div>'
-    );
+
+    const eleLhcForm = document.createElement("wc-lhc-form");
+    formContainer.appendChild(eleLhcForm)
+
     var rtnPromise = new Promise(function(resolve, reject) {
-      angular.module(appName, ["lformsWidget"])
-        .controller(controller, ["$scope", function ($scope) {
-          var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
-          if (LForms.fhirContext) {
-            myFormData.loadFHIRResources(prepop).then(function() {
-              $scope.$apply(function() {
-                $scope.myFormData = myFormData;
-                resolve();
-              })
-            });
-          }
-          else {
-            $scope.myFormData = myFormData;
-            resolve();
-          }
-        }]);
+      eleLhcForm.lfData = formDataDef;
+      eleLhcForm.lfOptions = options;
+
+      setTimeout(function() {
+        if (LForms.fhirContext) {
+          eleLhcForm.lhcFormData.loadFHIRResources(prepop)
+          resolve();
+        }              
+      }, 150)
     });
-
-    // Bootstrap the element if needed
-    // Following http://stackoverflow.com/a/34501500/360782
-    var isInitialized = formContainer.injector && formContainer.injector();
-    if (!isInitialized)
-      angular.bootstrap(formContainer.children(':first'), [appName]);
-
     return rtnPromise;
   },
 
@@ -888,6 +871,38 @@ const FormUtils = {
   // findObjectInArray: function(targetObjects, key, matchingValue, starting_index, all) {
   //   return CommonUtils.findObjectInArray(targetObjects, key, matchingValue, starting_index, all) 
   // }
+
+
+  /**
+   * Dynamically load a js file from a source URL
+   * @param {*} url the URL of a js file
+   * @returns a Promise that will resolve after the js file is loaded
+   */
+  loadScript: function(url) {
+    return new Promise(function(resolve, reject) {
+      var script = document.createElement("script");
+      script.onreadystatechange = resolve;
+      script.onload = resolve;
+      script.onerror = reject;
+      script.src = url;
+      document.head.appendChild(script);
+    });
+  },
+
+
+  /**
+   * Load optional LForms FHIR js libs
+   * @param {*} urlR4 the URL of the R4 version of the LForms FHIR lib
+   * @param {*} urlStu3 the URL of the STU3 version of the LForms FHIR lib
+   */
+  loadFHIRLibs: function(urlR4, urlStu3) {
+    // R4: "/test/lib/fhir/R4/lformsFHIR.min.js" 
+    // STU3: "/test/lib/fhir/STU3/lformsFHIR.min.js"
+    return Promise.all([
+      this.loadScript(urlR4), 
+      this.loadScript(urlStu3)])
+  }
+
 };
 
 const LhcFormUtils = {...CommonUtils,  ...FormUtils};

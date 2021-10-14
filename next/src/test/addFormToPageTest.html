@@ -1,9 +1,8 @@
-<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>LForms Build Test Page with FHIR Context</title>
+    <title>Test for the compressed build of LForms using addFormToPage</title>
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -40,14 +39,14 @@
         display: none;
       }
     </style>
-  
+
   </head>
-  <!-- Theme class needs to be on "body" for the jQuery datepicker -->
+
   <body style="padding: 1em">
 
     <div id="lforms-form">
       <div class="panel panel-default">
-        <div class="panel-heading">LForms Build Test Page with FHIR Context</div>
+        <div class="panel-heading">Test for the compressed build of LForms using addFormToPage</div>
         <div class="panel-body">
           <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
           <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
@@ -59,7 +58,12 @@
         </div>
       </div>
 
+
       <br><br>
+      <div id="loadMsg" style="color: red"></div>
+      <div id="formContainer2"></div>
+      <div id="formContainer"></div>
+
       <wc-lhc-form id='test-form'></wc-lhc-form>
 
     </div>
@@ -80,6 +84,46 @@
         .then(function(){
           var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
             LForms.Util.setFHIRContext(fhirAPI);
+
+            // load two forms
+            // form def data is a string value of 'allInOne'
+            $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
+              window.allInOne = allInOne;
+              LForms.Util.addFormToPage('allInOne', 'formContainer');
+            
+            });
+            // $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
+            //   window.allInOne = allInOne;
+            //   LForms.Util.addFormToPage('allInOne', 'formContainer2');
+            
+            // });
+
+            $.getJSON('/test-data/form-data/allInOne.json', function z(rxTerms) {
+              LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+            });
+
+
+
+
+            // $.getJSON('/test-data/form-data/rxTerms.json', function z(allInOne) {
+            //   window.allInOne = allInOne;
+            //   LForms.Util.addFormToPage('allInOne', 'formContainer2');
+            // });
+
+            // $.getJSON('/test-data/form-data/rxTerms.json', function z(allInOne) {
+            //   window.allInOne = allInOne;
+            //   LForms.Util.addFormToPage('allInOne', 'formContainer');
+            
+            // });
+
+            // $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
+            //   LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+            // });
+
+            // $.getJSON('/test-data/form-data/rxTerms_copy.json', function z(rxTerms) {
+            //   LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+            // });
+
         })
       };        
     </script>
@@ -128,7 +172,7 @@
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
           testForm.lfData = lfData;
-          // wait for the load is loaded, then load FHIR resources
+          // wait for the form to be loaded, then load FHIR resources
           setTimeout(function() {
             if (LForms.fhirContext) {
               testForm.lhcFormData.loadFHIRResources(true)
@@ -142,4 +186,5 @@
     </script>
 
   </body>
+
 </html>

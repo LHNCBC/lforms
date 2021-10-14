@@ -9,21 +9,23 @@ let tp: TestPage;
 let LForms: any = (global as any).LForms;
 tp = new TestPage();
 var ff = tp.USSGFHTVertical;
-
+var EC = protractor.ExpectedConditions;
 
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion, function() {
-      describe('External prefetch answerValueSets', function() {
-        beforeAll(function() {
-          tp.openBuildTestFHIRPath();
-          tp.loadFromTestData('fhir-context-q.json', fhirVersion);
-        });
+      beforeAll(async () => {
+        await browser.waitForAngularEnabled(false); 
+        tp.openBuildTestFHIRPath();   
+        browser.sleep(500) // wait for the the fhir lib to be loaded   
+    });
 
+      describe('External prefetch answerValueSets', function() {
         it('should be retrieved when a terminology server is specified', function() {
-          let selfAdopted = element(by.id('/54126-8/54128-4/1/1'));
-          var EC = protractor.ExpectedConditions;
-          browser.wait(EC.presenceOf(selfAdopted), 200000);
+          tp.loadFromTestData('fhir-context-q.json', fhirVersion);
+          browser.wait(ExpectedConditions.visibilityOf(element(by.id('label-54127-6'))), 5000);
+          let selfAdopted = element(by.id('/54126-8/54128-4/1/1'));  
+          TestUtil.waitForElementPresent(selfAdopted);        
           selfAdopted.click();
           tp.Autocomp.helpers.thirdSearchRes.click();
           expect(selfAdopted.getAttribute('value')).toBe("Don't know");

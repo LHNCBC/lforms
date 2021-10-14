@@ -1,16 +1,18 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, HostListener, ChangeDetectionStrategy} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, ViewEncapsulation, HostListener, ChangeDetectionStrategy} from '@angular/core';
 import { Subject } from 'rxjs';
 import { throttleTime, debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 import LhcFormData from '../../lib/lforms/lhc-form-data';
+import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
 
 declare var LForms: any;
 declare var ResizeObserver;
 
 @Component({
   selector: 'lhc-form',
+  //encapsulation: ViewEncapsulation.ShadowDom,
   //changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './lhc-form.component.html',
   styleUrls: ['./lhc-form.component.css']
@@ -86,34 +88,42 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
     // console.log("in lhc-form's ngOnChange")
 
     // form data changes
-    if (changes.lfData) {
+    if (changes.lfData) {      
       // form data changes, clean up the previous data before loading the new form data
       this.lhcFormData = null;
       this.lhcDataService.setLhcFormData(null);
+      
       if (this.lfData) {
-        let that = this;
+        let self = this;
         // reset the data after this thread is done
         setTimeout(()=> {
-          that.lhcFormData = new LhcFormData(that.lfData)
+          // self.lhcFormData = new LhcFormData(CommonUtils.deepCopy(this.lfData))
+          self.lhcFormData = new LhcFormData(self.lfData)
           // and options change
           if (changes.lfOptions) {
-            if (that.lfOptions) {
-              that.lhcFormData.setTemplateOptions(that.lfOptions);  
+            if (self.lfOptions) {
+              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.lfOptions));  
+              self.lhcFormData.setTemplateOptions(self.lfOptions);  
             }
           }      
-          that.lhcDataService.setLhcFormData(that.lhcFormData);  
+          self.lhcDataService.setLhcFormData(self.lhcFormData);  
 
           // when a new form is loaded, run all FHIR Expressions including the initial expresions
           if (LForms.FHIR) {
-            if (this.lfData) { // sometimes set to null to clear the page
-              if (this.lfData._hasResponsiveExpr || this.lfData._hasInitialExpr) {
-                this.lfData._expressionProcessor.runCalculations(true).then(() => {
+            if (self.lhcFormData) { // sometimes set to null to clear the page
+              if (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr) {
+                self.lhcFormData._expressionProcessor.runCalculations(true).then(() => {
                   console.log('fhir path run with true')
                 });
               }
             }        
           }
         },1)
+      }
+      else {
+        // clean up the previous data 
+        this.lhcFormData = null;
+        this.lhcDataService.setLhcFormData(null);
       }
     }
     // only options changes

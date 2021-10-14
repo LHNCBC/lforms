@@ -194,7 +194,17 @@ export class TestPage {
     scoreField: element(by.id('/9269-2/1')),    
     searchResults: this.autoCompHelpers.searchResults,
     searchResult: this.autoCompHelpers.searchResult,
-    helpers: this.autoCompHelpers
+    helpers: this.autoCompHelpers,
+    shownItemCount: function() {
+      return browser.driver.executeScript(
+        'return jQuery("#searchResults li").length;'
+      );
+    },
+    listIsVisible: function() {
+      return browser.driver.executeScript(
+        'return jQuery("#searchResults")[0].style.visibility === "visible"'
+      );
+    }
   }
 
   FullFeaturedForm = {
@@ -449,7 +459,8 @@ export class TestPage {
     TestUtil.sendKeys(fileInput, testFile);
     // Re-hide the file input element
     browser.executeScript("document.getElementById('fileAnchor').className = 'hide'");
-    browser.wait(function () { // wait for the form to render
+    // wait for the form to render
+    browser.wait(function () { 
       return element(by.css('.lhc-form-title')).isPresent();
     }, this.WAIT_TIMEOUT_1);
   }

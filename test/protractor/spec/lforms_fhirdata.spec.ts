@@ -1191,7 +1191,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             tp.loadFromTestData('question-under-question.R4.json', fhirVersion);
 
             let childItem = element(by.id('q2/1/1'));
-
             getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
               let [error, fhirData] = callbackData;
 

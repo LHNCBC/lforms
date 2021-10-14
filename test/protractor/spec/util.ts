@@ -251,6 +251,10 @@ const TestUtil = {
     browser.sleep(300); // allow page to scroll or adjust
   },
 
+  waitForElementVisible: function(elem) {
+    browser.wait(function(){return ExpectedConditions.visibilityOf(elem)}, 3000);
+  },
+
   /**
    *  Waits for the given element to be present on the page.
    */
