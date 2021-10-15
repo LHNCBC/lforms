@@ -1,4 +1,5 @@
 import { TestPage } from "./lforms_testpage.po";
+import { RxTerms } from "./rxterms.po";
 import TestUtil from "./util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
@@ -8,6 +9,7 @@ describe('data control', function() {
   let tp: TestPage = new TestPage(); 
   let ff: any = tp.FullFeaturedForm;
   let LForms: any = (global as any).LForms;
+  let rxterms = new RxTerms();
 
   beforeAll(async () => {
     await browser.waitForAngularEnabled(false);
@@ -173,4 +175,52 @@ describe('data control', function() {
     })
   });
 
+
+  it('can control a item that also also controls another item', function() {
+    tp.LoadForm.openRxTerms();
+
+    // search a drug
+    rxterms.drugName.click();
+    TestUtil.sendKeys(rxterms.drugName, 'aspercreme');
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
+    rxterms.drugName.sendKeys(protractor.Key.ARROW_DOWN);
+    rxterms.drugName.sendKeys(protractor.Key.TAB);
+    expect(rxterms.drugName.getAttribute("value")).toBe("ASPERCREME (Topical)")
+    // strength is set
+    rxterms.strengthAndForm.click();
+    rxterms.strengthAndForm.sendKeys(protractor.Key.ARROW_DOWN);
+    rxterms.strengthAndForm.sendKeys(protractor.Key.TAB);
+    expect(rxterms.strengthAndForm.getAttribute("value")).toBe("10% Cream")
+    // cui is set
+    expect(rxterms.rxcui.getAttribute("value")).toBe("1101827")
+
+    // search another drug
+    rxterms.drugName.click();
+    rxterms.drugName.clear();
+    TestUtil.sendKeys(rxterms.drugName, 'ASTELIN');
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
+    rxterms.drugName.sendKeys(protractor.Key.ARROW_DOWN);
+    rxterms.drugName.sendKeys(protractor.Key.TAB);
+    expect(rxterms.drugName.getAttribute("value")).toBe("ASTELIN (Nasal)")
+    // strength is reset
+    rxterms.strengthAndForm.click();
+    rxterms.strengthAndForm.sendKeys(protractor.Key.ARROW_DOWN);
+    rxterms.strengthAndForm.sendKeys(protractor.Key.TAB);
+    expect(rxterms.strengthAndForm.getAttribute("value")).toBe("137 mcg/puff Metered dose spray")
+    // cui is reset
+    expect(rxterms.rxcui.getAttribute("value")).toBe("1797876")
+
+    // clean up the drug field
+    rxterms.drugName.click();
+    rxterms.drugName.clear();
+    rxterms.strengthAndForm.click()  // need to click this item and then click away to trigger a change in the test
+    rxterms.rxcui.click();
+    expect(rxterms.drugName.getAttribute("value")).toBe("")
+    rxterms.strengthAndForm.click()
+    // strength is unset
+    expect(rxterms.strengthAndForm.getAttribute("value")).toBe("")
+    // cui is unset
+    expect(rxterms.rxcui.getAttribute("value")).toBe("")
+
+  });
 });
