@@ -94,7 +94,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
       this.lhcDataService.setLhcFormData(null);
       
       if (this.lfData) {
-        let self = this;
+        const self = this;
         // reset the data after this thread is done
         setTimeout(()=> {
           // self.lhcFormData = new LhcFormData(CommonUtils.deepCopy(this.lfData))

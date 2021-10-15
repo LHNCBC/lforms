@@ -78,7 +78,7 @@ const TestUtil = {
    * @return a promise that resolves when str has been added to the field value
    */
   _sendKeys: function(field, str) {
-    let self = this;
+    const self = this;
     str = '' + str; // convert numbers to strings
     return field.getAttribute('value').then(function(oldVal) {
       var allButLastChar = oldVal+str.slice(0,-1);
