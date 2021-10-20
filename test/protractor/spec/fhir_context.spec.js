@@ -29,7 +29,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(relativeAdopted.getAttribute('value')).toBe("High");
         });
 
-        fit('should show an error if a ValueSet cannot be loaded', function() {
+        it('should show an error if a ValueSet cannot be loaded', function() {
           tp.openTestPage('/test/addFormToPageTestFHIRContext.html');
 
           browser.driver.executeAsyncScript(function () {
