@@ -29,7 +29,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(relativeAdopted.getAttribute('value')).toBe("High");
         });
 
-        it('should show an error if a ValueSet cannot be loaded', function() {
+        fit('should show an error if a ValueSet cannot be loaded', function() {
           tp.openTestPage('/test/addFormToPageTestFHIRContext.html');
 
           browser.driver.executeAsyncScript(function () {
@@ -40,7 +40,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           }).then(function () {
             // Confirm the error message shows up
-            expect($('#formContainer2').getText()).toContain("error"); // error messages
+            var elem = $('#formContainer2');
+            testUtil.waitForElementPresent(elem);
+            expect(elem.getText()).toContain("error"); // error messages
           });
         });
       });
