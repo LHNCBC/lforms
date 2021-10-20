@@ -40,9 +40,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           }).then(function () {
             // Confirm the error message shows up
-            var elem = $('#formContainer2');
-            testUtil.waitForElementPresent(elem);
-            expect(elem.getText()).toContain("error"); // error messages
+            browser.wait(function() {
+              var elem = $('#formContainer2');
+              testUtil.waitForElementPresent(elem);
+              return elem.getText().then((t)=>t.indexOf("error")); // error messages
+            });
           });
         });
       });
