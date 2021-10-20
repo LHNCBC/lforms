@@ -17,7 +17,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       beforeAll(async () => {
         await browser.waitForAngularEnabled(false); 
         tp.openBuildTestFHIRPath();   
-        browser.sleep(500) // wait for the the fhir lib to be loaded   
+        TestUtil.waitForFHIRLibsLoaded()
     });
 
       describe('External prefetch answerValueSets', function() {

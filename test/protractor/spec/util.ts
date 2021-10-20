@@ -403,6 +403,17 @@ const TestUtil = {
     })
   },
 
+
+  /**
+   * Wait for the externally linked FHIR libraries to be loaded. 
+   */
+  waitForFHIRLibsLoaded() {
+    browser.wait(function() {
+      return browser.driver.executeScript(
+        'return typeof(LForms.FHIR) === "object" && typeof(LForms.FHIR.R4) === "object" && typeof(LForms.FHIR.STU3) === "object"');
+    }, 5000);
+  }
+
 }
 
 export default TestUtil;
