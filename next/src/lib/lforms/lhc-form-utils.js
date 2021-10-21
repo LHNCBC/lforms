@@ -885,7 +885,7 @@ const FormUtils = {
       script.onload = resolve;
       script.onerror = reject;
       script.src = url;
-      document.head.appendChild(script);
+      document.body.appendChild(script);
     });
   },
 

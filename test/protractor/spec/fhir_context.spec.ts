@@ -18,7 +18,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         await browser.waitForAngularEnabled(false); 
         tp.openBuildTestFHIRPath();   
         TestUtil.waitForFHIRLibsLoaded()
-    });
+      });
 
       describe('External prefetch answerValueSets', function() {
         it('should be retrieved when a terminology server is specified', function() {
