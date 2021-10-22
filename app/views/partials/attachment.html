@@ -6,17 +6,17 @@
      placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
      id="{{'file-'+item._elementId}}" ng-focus="setActiveRow(item)"
      ng-blur="activeRowOnBlur(item)" >
-    <button class="lf-attachment-button toggle-attachment-fields" title="{{item._useURL ?
+    <button type="button" class="lf-attachment-button toggle-attachment-fields" title="{{item._useURL ?
      'Hide URL field' : 'Show URL field'}}"
      ng-click="item._useURL = !item._useURL">&#x21af;</button>
     <div ng-if="item._useURL">
       <label>URL for file:
-      <input type="string" ng-disabled="item._readOnly"
+      <input type="string" ng-disabled="item._readOnly" class="lf-attachment-url"
        ng-model="item._attachmentURL" placeholder="URL for retrieving file" ng-focus="setActiveRow(item)"
        ng-blur="activeRowOnBlur(item)" >
       <input type="string" ng-disabled="item._readOnly" ng-focus="setActiveRow(item)"
        ng-blur="activeRowOnBlur(item)" ng-model="item._attachmentName" placeholder="File name (optional)">
-      <button class="lf-float-button attach-button" ng-click="createAttachment(item)"
+      <button type="button" class="lf-float-button attach-button" ng-click="createAttachment(item)"
        >Attach URL{{item._fileInfo ? ' and file data': ''}}</button><br>
       Note:  The URL you enter will not be downloaded or
       verified, but simply copied into your response.  Please ensure

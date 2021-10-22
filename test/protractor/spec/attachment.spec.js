@@ -53,6 +53,14 @@ describe('Attachment support', ()=>{
     });
 
 
+    it('should not respond to presses of "enter" in unrelated fields', ()=>{
+      // This is a test for the fix for
+      // https://github.com/lhncbc/lforms/issues/71
+      $('#upload-desc\\/1\\/1').sendKeys(protractor.Key.ENTER);
+      browser.wait(EC.not(EC.presenceOf($('.lf-attachment-url'))), 5000);
+    });
+
+
     it('should not allow files over maxSize size', ()=>{
       // Create a temporary test file
       var testData = '';

@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.3.1] 2021-10-20
+### Fixed
+- If a form contained an attachment type question, hitting enter in another
+  field opened up the attachment options.
+
 ## [29.3.0] 2021-09-01
 ### Added
 - Support for the FHIR enableWhenExpression extension.
