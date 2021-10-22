@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, ViewEncapsulation, HostListener, ChangeDetectionStrategy} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
 import { Subject } from 'rxjs';
 import { throttleTime, debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
@@ -23,6 +23,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input() lfOptions: any;
   // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
   @Input() lhcFormData: any; 
+  // emit an event when the form's view and data are initially rendered
+  @Output() onFormReady: EventEmitter<any> = new EventEmitter<any>();
 
   //lhcFormData: any;
   viewModeClass = "";
@@ -86,7 +88,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes) {
     // console.log("in lhc-form's ngOnChange")
-
     // form data changes
     if (changes.lfData) {      
       // form data changes, clean up the previous data before loading the new form data
@@ -118,6 +119,9 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
               }
             }        
           }
+          // emit an event when the form's view and data are initially rendered
+          self.onFormReady.emit();
+          
         },1)
       }
       else {
