@@ -21,6 +21,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() lfData: any;
   @Input() lfOptions: any;
+  @Input() prepop: boolean=false;
   // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
   @Input() lhcFormData: any; 
   // emit an event when the form's view and data are initially rendered
@@ -101,27 +102,30 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
           // self.lhcFormData = new LhcFormData(CommonUtils.deepCopy(this.lfData))
           self.lhcFormData = new LhcFormData(self.lfData)
           // and options change
-          if (changes.lfOptions) {
-            if (self.lfOptions) {
-              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.lfOptions));  
-              self.lhcFormData.setTemplateOptions(self.lfOptions);  
-            }
+          if (changes.lfOptions && self.lfOptions) {
+            // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.lfOptions));  
+            self.lhcFormData.setTemplateOptions(self.lfOptions);  
           }      
           self.lhcDataService.setLhcFormData(self.lhcFormData);  
 
-          // when a new form is loaded, run all FHIR Expressions including the initial expresions
           if (LForms.FHIR) {
-            if (self.lhcFormData) { // sometimes set to null to clear the page
-              if (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr) {
-                self.lhcFormData._expressionProcessor.runCalculations(true).then(() => {
-                  console.log('fhir path run with true')
-                });
-              }
-            }        
+            self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
+              // when a new form is loaded, run all FHIR Expressions including the initial expresions
+              if (self.lhcFormData) { // sometimes set to null to clear the page
+                if (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr) {
+                  self.lhcFormData._expressionProcessor.runCalculations(true).then(() => {
+                    console.log('fhir path run with true')
+                  });
+                }
+              }        
+              // emit an event when the form's view and data are initially rendered
+              self.onFormReady.emit();
+            })            
           }
-          // emit an event when the form's view and data are initially rendered
-          self.onFormReady.emit();
-          
+          else {
+            // emit an event when the form's view and data are initially rendered
+            self.onFormReady.emit();
+          }
         },1)
       }
       else {

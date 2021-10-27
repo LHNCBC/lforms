@@ -125,12 +125,7 @@
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
           testForm.lfData = lfData;
-          // wait for the load is loaded, then load FHIR resources
-          setTimeout(function() {
-            if (LForms.fhirContext) {
-              testForm.lhcFormData.loadFHIRResources(true)
-            }              
-          }, 100)
+          testForm.prepop = true;
 
         };
         reader.readAsText(event.target.files[0]); 

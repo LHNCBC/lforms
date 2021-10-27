@@ -60,13 +60,15 @@ const FormUtils = {
     var rtnPromise = new Promise(function(resolve, reject) {
       eleLhcForm.lfData = formDataDef;
       eleLhcForm.lfOptions = options;
-      eleLhcForm.addEventListener('onFormReady', function(e){
-        console.log("AddFormToPage: onFormReady")
-        if (LForms.fhirContext) {
-          eleLhcForm.lhcFormData.loadFHIRResources(prepop)
-        }
-        resolve()
-      });      
+      eleLhcForm.prepop = true;
+      resolve();
+      // eleLhcForm.addEventListener('onFormReady', function(e){
+      //   console.log("AddFormToPage: onFormReady")
+      //   if (LForms.fhirContext) {
+      //     eleLhcForm.lhcFormData.loadFHIRResources(prepop)
+      //   }
+      //   resolve()
+      // });      
     });
     return rtnPromise;
   },

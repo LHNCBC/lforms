@@ -339,7 +339,8 @@ export default class LhcFormData {
    */
   loadFHIRResources(prepopulate) {
     if (!LForms.fhirContext) {
-      throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      //throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      console.log('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
     }
     var lfData = this;
 
