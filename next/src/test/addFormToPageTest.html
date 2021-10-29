@@ -89,18 +89,18 @@
             // form def data is a string value of 'allInOne'
             $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
               window.allInOne = allInOne;
-              LForms.Util.addFormToPage('allInOne', 'formContainer');
-            
+              LForms.Util.addFormToPage('allInOne', 'formContainer'); 
             });
+            
             // $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
             //   window.allInOne = allInOne;
             //   LForms.Util.addFormToPage('allInOne', 'formContainer2');
             
             // });
 
-            $.getJSON('/test-data/form-data/allInOne.json', function z(rxTerms) {
-              LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
-            });
+          //  $.getJSON('/test-data/form-data/allInOne.json', function z(rxTerms) {
+          //    LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+          //  });
 
 
 
@@ -113,12 +113,11 @@
             // $.getJSON('/test-data/form-data/rxTerms.json', function z(allInOne) {
             //   window.allInOne = allInOne;
             //   LForms.Util.addFormToPage('allInOne', 'formContainer');
-            
             // });
 
-            // $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
-            //   LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
-            // });
+            $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
+              LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+            });
 
             // $.getJSON('/test-data/form-data/rxTerms_copy.json', function z(rxTerms) {
             //   LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
@@ -172,12 +171,7 @@
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
           testForm.lfData = lfData;
-          // wait for the form to be loaded, then load FHIR resources
-          setTimeout(function() {
-            if (LForms.fhirContext) {
-              testForm.lhcFormData.loadFHIRResources(true)
-            }              
-          }, 100)
+          testForm.prepop = true;
 
         };
         reader.readAsText(event.target.files[0]); 

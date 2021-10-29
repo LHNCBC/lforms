@@ -239,7 +239,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         this.dataModel = itemValue;
         // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
         let that = this;
-        setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
+        setInterval(function(){that.dataModelChange.emit(that.dataModel); }, 5);
       }
     }
 

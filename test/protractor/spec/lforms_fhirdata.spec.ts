@@ -904,6 +904,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           dcSource.click();
           TestUtil.sendKeys(dcSource, "ALTABAX (Topical)")
+          var searchRes = tp.Autocomp.searchResults;    
+          browser.wait(function() {
+            return searchRes.isDisplayed();
+          }, tp.WAIT_TIMEOUT_2);
+
           dcSource.sendKeys(protractor.Key.ARROW_DOWN);
           dcSource.sendKeys(protractor.Key.TAB);
           dcSource.sendKeys(protractor.Key.TAB); // move to next field to avoid getting "" from the input's value

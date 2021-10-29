@@ -28,6 +28,7 @@ exports.config = {
     '../../test/protractor/spec/lforms_datacontrol.spec.ts',
     '../../test/protractor/spec/lforms_skiplogic.spec.ts',
     '../../test/protractor/spec/lforms_validation.spec.ts', // has one failed test on DT
+    '../../test/protractor/spec/lforms_validation_date.spec.ts',
     '../../test/protractor/spec/fhir_context.spec.ts'
     
   ],

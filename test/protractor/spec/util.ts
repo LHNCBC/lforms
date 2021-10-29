@@ -78,7 +78,7 @@ const TestUtil = {
    * @return a promise that resolves when str has been added to the field value
    */
   _sendKeys: function(field, str) {
-    let self = this;
+    const self = this;
     str = '' + str; // convert numbers to strings
     return field.getAttribute('value').then(function(oldVal) {
       var allButLastChar = oldVal+str.slice(0,-1);
@@ -402,6 +402,17 @@ const TestUtil = {
       callback(lfData);
     })
   },
+
+
+  /**
+   * Wait for the externally linked FHIR libraries to be loaded. 
+   */
+  waitForFHIRLibsLoaded() {
+    browser.wait(function() {
+      return browser.driver.executeScript(
+        'return typeof(LForms.FHIR) === "object" && typeof(LForms.FHIR.R4) === "object" && typeof(LForms.FHIR.STU3) === "object"');
+    }, 5000);
+  }
 
 }
 

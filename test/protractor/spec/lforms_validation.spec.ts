@@ -717,9 +717,9 @@ describe('Validations:', function() {
       ]);
     });
 
-    // as of 09/16/2021,this test passed on linux firefox but not on linux chrome. Other tests in this file need to run with chrome to pass.
+    // TODO: As of 09/16/2021,this test passed on linux firefox but not on linux chrome. Other tests in this file need to run with chrome to pass.
     // suspect the issue is related to the datef field/calendar widget not being in the views. but cannot confirm that yet.
-    // use the next test with a short form instead
+    // Use the next test with a short form instead
     // it('should validate when required inputs are entered', function () {
 
     //   tp.LoadForm.openFullFeaturedForm();

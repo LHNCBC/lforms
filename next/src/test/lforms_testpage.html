@@ -90,7 +90,6 @@
   </div>
 
     <script type="text/javascript">
-
       const testForms = [
         {text: 'USSG-FHT, (with mock-up items for skip logic demo)', name: 'FHTData'},
         {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', name: 'horizontalFHTData',
@@ -130,6 +129,11 @@
 
 
       testForm = document.getElementById('test-form');
+
+      testForm.addEventListener('onFormReady', e => {
+        console.log("onFormReady")
+        console.log(e); 
+      });
 
       /**
        * Load the form list to DOM
@@ -388,21 +392,7 @@
 
           // if the imported data is in FHIR Questionnaire format
           if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
-            // var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-            // var lfData2 = new LForms.LFormsData(questionnaire);
             lfData = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-            // The prepopulateFHIR variable below is a hack for the test code to signal
-            // prepopulation is desired.
-            if (LForms.fhirContext) {
-              // lfData2.loadFHIRResources(window.prepopulateFHIR).then(function() {
-              //   $scope.$apply(function() {
-              //     $scope.lfData2 = lfData2;
-              //   })
-              //   $scope.lfOption2 = {
-              //     allowHTMLInInstructions: true
-              //   }
-              // });
-            }
           }
           // in the internal LForms format
           else {
@@ -411,6 +401,9 @@
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
           testForm.lfData = lfData;
+          // The prepopulateFHIR variable below is a hack for the test code to signal
+          // prepopulation is desired.
+          testForm.prepop = window.prepopulateFHIR;
           
         };
         reader.readAsText(event.target.files[0]); 
@@ -423,7 +416,7 @@
     <script>
 
       window.onload = function() {
-        LForms.Util.loadFHIRLibs("/test/lib/fhir/R4/lformsFHIR.min.js", "/test/lib/fhir/STU3/lformsFHIR.min.js")
+        LForms.Util.loadFHIRLibs()
       };        
     </script>
     

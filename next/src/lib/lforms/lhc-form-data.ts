@@ -339,7 +339,8 @@ export default class LhcFormData {
    */
   loadFHIRResources(prepopulate) {
     if (!LForms.fhirContext) {
-      throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      //throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      console.log('Warning: FHIR resources might not be loaded, because loadFHIRResources() was called before LForms.Util.setFHIRContext()');
     }
     var lfData = this;
 
@@ -1565,27 +1566,27 @@ export default class LhcFormData {
    */
   checkValidity () {
     const errors = [];
-      const itemListLength = this.itemList.length;
+    const itemListLength = this.itemList.length;
 
-      for (let i = 0; i < itemListLength; i++) {
-        const item = this.itemList[i];
+    for (let i = 0; i < itemListLength; i++) {
+      const item = this.itemList[i];
 
-        if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
-          this._checkValidations(item);
+      if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+        this._checkValidations(item);
 
-          if (item._validationErrors !== undefined && item._validationErrors.length) {
-            const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
 
-            Array.prototype.push.apply(errors, errorDetails);
-          }
+          Array.prototype.push.apply(errors, errorDetails);
         }
       }
+    }
 
-      if (errors.length) {
-        return errors;
-      } else {
-        return null;
-      }
+    if (errors.length) {
+      return errors;
+    } else {
+      return null;
+    }
   }
 
 
@@ -2869,7 +2870,7 @@ export default class LhcFormData {
       return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
     }
     else {
-      var self = this;
+      const self = this;
       return fhirClient.request(this._buildURL(['ValueSet'],
           {url: item.answerValueSet, _total: 'accurate'})
       ).then(function(response) {
@@ -2945,7 +2946,7 @@ export default class LhcFormData {
           options.fhir = true;
         }
         else if (LForms.fhirContext) {
-          var self = this;
+          const self = this;
           options.fhir = {search: function(fieldVal, count) {
             if (LForms.fhirCapabilities.urlExpandBroken)
               return self._findValueSetIDAndSearch(item, fieldVal, count);
