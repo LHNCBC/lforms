@@ -1,22 +1,31 @@
-var tp = require('./lforms_testpage.po.js');
-var testUtil = require('./util.js');
-var fhirSupport = require('../../../app/scripts/fhir/versions');
-var fhirVersions = Object.keys(fhirSupport);
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+import * as FHIRSupport from "../../../app/scripts/fhir/versions.js";
+
+let fhirVersions = Object.keys(FHIRSupport);
+let tp: TestPage; 
+let LForms: any = (global as any).LForms;
+tp = new TestPage();
 var ff = tp.USSGFHTVertical;
+var EC = protractor.ExpectedConditions;
 
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion, function() {
-      describe('External prefetch answerValueSets', function() {
-        beforeAll(function() {
-          tp.openBuildTestFHIRPath();
-          tp.loadFromTestData('fhir-context-q.json', fhirVersion);
-        });
+      beforeAll(async () => {
+        await browser.waitForAngularEnabled(false); 
+        tp.openBuildTestFHIRPath();   
+        TestUtil.waitForFHIRLibsLoaded()
+      });
 
+      describe('External prefetch answerValueSets', function() {
         it('should be retrieved when a terminology server is specified', function() {
-          let selfAdopted = element(by.id('/54126-8/54128-4/1/1'));
-          var EC = protractor.ExpectedConditions;
-          browser.wait(EC.presenceOf(selfAdopted), 200000);
+          tp.loadFromTestData('fhir-context-q.json', fhirVersion);
+          browser.wait(ExpectedConditions.visibilityOf(element(by.id('label-54127-6'))), 5000);
+          let selfAdopted = element(by.id('/54126-8/54128-4/1/1'));  
+          TestUtil.waitForElementPresent(selfAdopted);        
           selfAdopted.click();
           tp.Autocomp.helpers.thirdSearchRes.click();
           expect(selfAdopted.getAttribute('value')).toBe("Don't know");
@@ -33,13 +42,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('External autocomplete answerValueSets', function() {
         it('should be able to search via ValueSet expansion', function () {
           var ethnicity = ff.ethnicity;
-          testUtil.sendKeys(ethnicity(), 'arg');
+          TestUtil.sendKeys(ethnicity(), 'arg');
           tp.Autocomp.helpers.waitForSearchResults();
           expect(tp.Autocomp.helpers.firstSearchRes.getText()).toBe('Argentinean');
 
           ff.disease.click();
           tp.Autocomp.helpers.waitForNoSearchResults();
-          testUtil.sendKeys(ff.disease, 'arm');
+          TestUtil.sendKeys(ff.disease, 'arm');
           tp.Autocomp.helpers.waitForSearchResults();
           tp.Autocomp.helpers.firstSearchRes.click();
           expect(ff.disease.getAttribute('value')).toBe('Arm pain');

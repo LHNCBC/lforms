@@ -156,7 +156,6 @@ export default class LhcFormData {
   copyrightNotice;
   type;
 
-  // TODO: should also take lfOptions
   /**
    * Constructor
    * @param data the lforms form definition data
@@ -279,7 +278,6 @@ export default class LhcFormData {
   }
 
 
-  //// TODO: FHIR
   /**
    *  Initializes form-level FHIR data.  This should be called before item
    *  properties are set up, because it sets properties like this.fhirVersion
@@ -305,7 +303,7 @@ export default class LhcFormData {
     this._fhir.SDC.processExtensions(lfData, 'obj_title');
   }
 
-//// TODO: FHIR
+
   /**
    *   Returns the object containing the FHIR support.  If this LFormsData
    *   does not have fhirVersion set or if support for that version is not
@@ -327,10 +325,9 @@ export default class LhcFormData {
     return rtn;
   }
 
-//// TODO: FHIR
-  /**
+ /**
    *  Loads FHIR resources necessary to show the form.  These are loaded
-   *  asynchronously.  When the asynchous requests have completed, if
+   *  asynchronously.  When the asynchronous requests have completed, if
    *  "prepoluate" is set to true, the form will be partially filled in with
    *  values from the resources as extensions indicate (e.g.
    *  observationLinkPeriod and initialExpression).
@@ -342,65 +339,46 @@ export default class LhcFormData {
    */
   loadFHIRResources(prepopulate) {
     if (!LForms.fhirContext) {
-      throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      //throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      console.log('Warning: FHIR resources might not be loaded, because loadFHIRResources() was called before LForms.Util.setFHIRContext()');
     }
     var lfData = this;
 
-    var pendingPromises = [];
-
-    // launchContext
-    var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
-      "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
-    for (var i=0, len=contextItems.length; i<len; ++i) {
-      let contextItemExt = contextItems[i].extension;
-      let name;
-
-      let typeList = [];
-      for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
-        var fieldExt = contextItemExt[j];
-        if (!name && fieldExt.url === 'name') {
-          name = fieldExt.valueId;
-          this._checkFHIRVarName(name); // might throw
-        }
-        else if (fieldExt.url === 'type')
-          typeList.push(fieldExt.valueCode)
-      }
-      if (name && typeList.length > 0) {
-        pendingPromises.push(new Promise(function(resolve, reject) {
-          // Enforce that this is truly asynchronous with setTimeout.
-          // Some implementations of getCurrent (e.g in testing) might be
-          // synchronous.
-          setTimeout(function() {
-            try {
-              LForms.fhirContext.getCurrent(typeList, function(resource) {
-                if (resource)
-                  lfData._fhirVariables[name] = resource;
-                resolve(true);
-              });
-            }
-            catch(e) {
-              reject(e);
-            }
-          }, 1);
-        }));
-      }
-    }
+    var sdc = this._fhir.SDC;
+    var pendingPromises = sdc.loadLaunchContext(this);
 
     // answerValueSet (for prefetched lists)
-    // For this import, we don't actually care which version of FHIR;
-    // the implementation is common.  If either support file is loaded use
-    // that (for both the terminology server case and the FHIR server case).
-    var sdc = this._getFHIRSupport().SDC;
     pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
 
     if (prepopulate)
-      pendingPromises.push(this._requestLinkedObs());
+      pendingPromises.push(sdc.requestLinkedObs(this));
 
     return Promise.all(pendingPromises).then(function() {
-      lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
-    });
+      lfData._notifyAsyncChangeListeners();
+    }, function fail(e) { throw e });
   }
 
+
+  /**
+   *  An internal function for safely constructing a URL based on a path
+   *  segments and query parameters.
+   * @param pathParts An array of path segments (not including the protocol).
+   *  These will be URL-encoded.
+   * @param queryParams (optional) A object of key/value pairs (string values)
+   *  for the query part of the URL.  Values be URL-encoded.
+   */
+  _buildURL(pathParts, queryParams) {
+    // Would Use URL and URLSearchParams, except for the need to support IE11
+    // It looks like if we update babel, we could have a polyfill, but I don't
+    // want to revise the build configuration at the moment.
+    let url = pathParts.map(part=>encodeURIComponent(part)).join('/');
+    if (queryParams) {
+      // Assuming a single value per key, for now.
+      url += '?' + Object.keys(queryParams).map(
+        k=>k+'='+encodeURIComponent(queryParams[k])).join('&');
+    }
+    return url;
+  }
 
 
   /**
@@ -1161,15 +1139,14 @@ export default class LhcFormData {
         }
       }
 
-      // TODO
-      if (item.extension) {
+      if (item.extension && this._fhir) {
         this._fhir.SDC.buildExtensionMap(item);
-        if (this._fhir) {
-          this._hasResponsiveExpr = this._hasResponsiveExpr ||
-            this._fhir.SDC.hasResponsiveExpression(item);
-          this._hasInitialExpr = this._hasInitialExpr ||
-            this._fhir.SDC.hasInitialExpression(item);
-        }
+        this._hasResponsiveExpr = this._hasResponsiveExpr ||
+          this._fhir.SDC.hasResponsiveExpression(item);
+        this._hasInitialExpr = this._hasInitialExpr ||
+          this._fhir.SDC.hasInitialExpression(item);
+        item._hasListExpr =
+          this._fhir.SDC.hasListExpression(item);
       }
 
       this._updateItemAttrs(item);
@@ -1594,12 +1571,14 @@ export default class LhcFormData {
     for (let i = 0; i < itemListLength; i++) {
       const item = this.itemList[i];
 
-      this._checkValidations(item);
+      if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+        this._checkValidations(item);
 
-      if (item._validationErrors !== undefined && item._validationErrors.length) {
-        const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
 
-        Array.prototype.push.apply(errors, errorDetails);
+          Array.prototype.push.apply(errors, errorDetails);
+        }
       }
     }
 
@@ -2835,6 +2814,23 @@ export default class LhcFormData {
   }
 
 
+  // /**
+  //  *  Uses the FHIR client to search the given ValueSet for the string
+  //  *  fieldVal.
+  //  * @param valueSetID the ID of the ValueSet to search (expand)
+  //  * @param fieldVal the value on which to filter the ValueSet
+  //  * @param count the maximum count to return
+  //  * @return a Promise that will resolve to the ValueSet expansion.
+  //  */
+  // _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
+  //   var fhirClient = LForms.fhirContext.getFHIRAPI();
+  //   return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
+  //     query: {_format: 'application/json', count: count,
+  //     filter: fieldVal}}).then(function(response) {
+  //       return response.data;
+  //     });
+  // }
+
   /**
    *  Uses the FHIR client to search the given ValueSet for the string
    *  fieldVal.
@@ -2844,12 +2840,10 @@ export default class LhcFormData {
    * @return a Promise that will resolve to the ValueSet expansion.
    */
   _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
-    var fhirClient = LForms.fhirContext.getFHIRAPI();
-    return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
-      query: {_format: 'application/json', count: count,
-      filter: fieldVal}}).then(function(response) {
-        return response.data;
-      });
+    var fhirClient = LForms.fhirContext;
+    return fhirClient.request(this._buildURL(['ValueSet',valueSetID,'$expand'],
+      {count: count, filter: fieldVal}
+    ));
   }
 
 
@@ -2861,40 +2855,40 @@ export default class LhcFormData {
    * @param count the maximum count to return
    * @return a Promise that will resolve to the ValueSet expansion.
    */
-    _findValueSetIDAndSearch(item, fieldVal, count) {
-      // Fetch the ValueSet
-      var failMsg = "Could not retrieve the ValueSet definition for "+
-            item.answerValueSet;
-      var fhirClient = LForms.fhirContext.getFHIRAPI();
-      // Cache the lookup of ValueSet IDs, which should not change.  (A page
-      // reload will clear the cache.)
-      if (!LForms._valueSetUrlToID)
-        LForms._valueSetUrlToID = {}
-      var valueSetID =  LForms._valueSetUrlToID[item.answerValueSet];
-      if (valueSetID) {
-        return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
-      }
-      else {
-        var self = this;
-        return fhirClient.search({type: 'ValueSet',
-          query: {_format: 'application/json', url: item.answerValueSet,
-                  _total: 'accurate'}})
-          .then(function(response) {
-            var data = response.data;
-            if (data.total === 1) {
-              var valueSetID = data.entry[0].resource.id;
-              LForms._valueSetUrlToID[item.answerValueSet] = valueSetID;
-              return self._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
-            }
-            else {
-              console.log(failMsg);
-              return Promise.reject(failMsg);
-            }
-          },
-          function(errorData) {
-            console.log(failMsg);
-            return Promise.reject(failMsg);
-          });
+  _findValueSetIDAndSearch(item, fieldVal, count) {
+    // Fetch the ValueSet
+    // Fetch the ValueSet
+    var failMsg = "Could not retrieve the ValueSet definition for "+
+          item.answerValueSet;
+    var fhirClient = LForms.fhirContext;
+    // Cache the lookup of ValueSet IDs, which should not change.  (A page
+    // reload will clear the cache.)
+    if (!LForms._valueSetUrlToID)
+      LForms._valueSetUrlToID = {}
+    var valueSetID =  LForms._valueSetUrlToID[item.answerValueSet];
+    if (valueSetID) {
+      return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+    }
+    else {
+      const self = this;
+      return fhirClient.request(this._buildURL(['ValueSet'],
+          {url: item.answerValueSet, _total: 'accurate'})
+      ).then(function(response) {
+        var data = response;
+        if (data.total === 1) {
+          var valueSetID = data.entry[0].resource.id;
+          LForms._valueSetUrlToID[item.answerValueSet] = valueSetID;
+          return self._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+        }
+        else {
+          console.log(failMsg);
+          return Promise.reject(failMsg);
+        }
+      },
+      function(errorData) {
+        console.log(failMsg);
+        return Promise.reject(failMsg);
+      });
     }
   }
 
@@ -2908,7 +2902,7 @@ export default class LhcFormData {
   _updateAutocompOptions(item, forceReset=false) {
     // for list only
     if (item.dataType === CONSTANTS.DATA_TYPE.CNE ||
-        item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+      item.dataType === CONSTANTS.DATA_TYPE.CWE) {
 
       if (!item._modifiedAnswers || forceReset) {
         this._setModifiedAnswers(item, forceReset);
@@ -2952,18 +2946,15 @@ export default class LhcFormData {
           options.fhir = true;
         }
         else if (LForms.fhirContext) {
-          var self = this;
+          const self = this;
           options.fhir = {search: function(fieldVal, count) {
             if (LForms.fhirCapabilities.urlExpandBroken)
               return self._findValueSetIDAndSearch(item, fieldVal, count);
             else {
-              var fhirClient = LForms.fhirContext.getFHIRAPI();
-              return fhirClient.search({type: 'ValueSet/$expand',
-                query: {_format: 'application/json', count: count,
-                        filter: fieldVal, url: item.answerValueSet}
-              }).then(function(successData) {
-                return successData.data;
-              }, function (errorData) {
+              var fhirClient =  LForms.fhirContext;
+              return fhirClient.request(self._buildURL(['ValueSet/$expand'],
+                {count: count, filter: fieldVal, url: item.answerValueSet}
+              )).catch((errorData) => {
                 LForms.fhirCapabilities.urlExpandBroken = true;
                 // HAPI does not support (maybe just because of a bug) $expand
                 // when both "url" and "filter" parameters are present.  In that
@@ -3018,11 +3009,11 @@ export default class LhcFormData {
         if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
           options.defaultValue = options.listItems[0];
       }
+      //item._autocompOptions = options; ??
       // check if the new option has changed
       if (JSON.stringify(options) !== JSON.stringify(item._autocompOptions)) {
         item._autocompOptions = options;
       }
-      
     } // end of list
   }
 

@@ -1,79 +1,57 @@
-var tp = require('./lforms_testpage.po.js');
-var testUtil = require('./util.js');
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
 
-function shortenValidationMsgShowTime() {
-  browser.executeScript(function () {
-    var lfForms = jQuery("body").find(".lf-form");
-    var lfForm = angular.element(lfForms[0]);
-    lfForm.scope().setValidationInitialShowTime(500);
-  });
-}
-
-function waitForDisplayed(errorMsg) {
-  browser.wait(function() {
-    return errorMsg.isDisplayed();
-  }, tp.WAIT_TIMEOUT_1);
-}
-
-function waitForNotDisplayed(errorMsg) {
-  browser.wait(function() {
-    // Avoid reporting an error if the element is not even present.
-    return errorMsg.isPresent().then(function(result) {
-      if (!result)
-        return true;
-      else
-        return errorMsg.isDisplayed().then(function(result){return !result});
-    });
-  }, tp.WAIT_TIMEOUT_1);
-}
-
-function waitForNotPresent(errorMsg) {
-  browser.wait(function() {
-    return errorMsg.isPresent().then(function(result){return !result});
-  }, tp.WAIT_TIMEOUT_1);
-}
+let tp = new TestPage();
+let LForms: any = (global as any).LForms;
 
 function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   // no initial validations
   expect(eleMessage.isPresent()).toBe(false);
   // no error messages on first visit
-  testUtil.sendKeys(eleInput, value1);
-  waitForNotDisplayed(eleMessage);
+  TestUtil.sendKeys(eleInput, value1);
+  TestUtil.waitForElementNotDisplayed(eleMessage);
   expect(eleMessage.isPresent()).toBe(true);
   expect(eleMessage.isDisplayed()).toBe(false);
   // show message when the focus is gone
   eleAway.click();
-  waitForDisplayed(eleMessage);
+  TestUtil.waitForElementDisplayed(eleMessage);
   //expect(eleMessage.isDisplayed()).toBe(true);
   // wait for 200 ms and the message should disappear after 200 ms
   //browser.sleep(200);
-  waitForNotDisplayed(eleMessage);
+  TestUtil.waitForElementNotDisplayed(eleMessage);
   expect(eleMessage.isDisplayed()).toBe(false);
   // get back focus again and message should be shown
   eleInput.click();
-  waitForDisplayed(eleMessage);
+  TestUtil.waitForElementDisplayed(eleMessage);
+
   expect(eleMessage.isDisplayed()).toBe(true);
   // no message on the 2nd time when the focus is lost
   eleAway.click();
-  waitForNotDisplayed(eleMessage);
+  TestUtil.waitForElementNotDisplayed(eleMessage);
   expect(eleMessage.isDisplayed()).toBe(false);
   // get back focus the 3rd time and message should be shown
   eleInput.click();
-  waitForDisplayed(eleMessage);
+  TestUtil.waitForElementDisplayed(eleMessage);
   expect(eleMessage.isDisplayed()).toBe(true);
   // valid value no messages
-  testUtil.eraseField(eleInput);
-  testUtil.sendKeys(eleInput, value2);
-  waitForNotPresent(eleMessage);
+  TestUtil.eraseField(eleInput);
+  TestUtil.sendKeys(eleInput, value2);
+  TestUtil.waitForElementNotPresent(eleMessage);
+  TestUtil.waitForElementNotPresent
   expect(eleMessage.isPresent()).toBe(false);
   // still no message when the focus is gone
   eleAway.click();
-  waitForNotPresent(eleMessage);
+  TestUtil.waitForElementNotPresent(eleMessage);
   expect(eleMessage.isPresent()).toBe(false);
 
 }
 
 describe('Validations:', function() {
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
 
   var bl = element(by.id("/BL/1")),
       int = element(by.id("/INT/1")),
@@ -139,17 +117,28 @@ describe('Validations:', function() {
 
 
 
-  var errorBL = element(by.cssContainingText("div.validation-error", '"BL" must be a boolean (true/false)')),
-      errorINT = element(by.cssContainingText("div.validation-error", '"INT" must be an integer number')),
-      errorREAL = element(by.cssContainingText("div.validation-error", '"REAL" must be a decimal number')),
-      errorTM = element(by.cssContainingText("div.validation-error", '"TM" must be a time value')),
-      errorYEAR = element(by.cssContainingText("div.validation-error", '"YEAR" must be a numeric value of year')),
-      errorMONTH = element(by.cssContainingText("div.validation-error", '"MONTH" must be a numeric value of month')),
-      errorDAY = element(by.cssContainingText("div.validation-error", '"DAY" must be a numeric value of day')),
-      errorURL = element(by.cssContainingText("div.validation-error", '"URL" must be a valid URL')),
-      errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" must be a valid email address')),
-      errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number')),
-      errorNR = element(by.cssContainingText("div.validation-error", '"NR" must be two numeric values separated by a ^. One value can be omitted, but not the ^'));
+  // var errorBL = element(by.cssContainingText("div.validation-error", '"BL" must be a boolean (true/false)')),
+  //     errorINT = element(by.cssContainingText("div.validation-error", '"INT" must be an integer number')),
+  //     errorREAL = element(by.cssContainingText("div.validation-error", '"REAL" must be a decimal number')),
+  //     errorTM = element(by.cssContainingText("div.validation-error", '"TM" must be a time value')),
+  //     errorYEAR = element(by.cssContainingText("div.validation-error", '"YEAR" must be a numeric value of year')),
+  //     errorMONTH = element(by.cssContainingText("div.validation-error", '"MONTH" must be a numeric value of month')),
+  //     errorDAY = element(by.cssContainingText("div.validation-error", '"DAY" must be a numeric value of day')),
+  //     errorURL = element(by.cssContainingText("div.validation-error", '"URL" must be a valid URL')),
+  //     errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" must be a valid email address')),
+  //     errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number')),
+  //     errorNR = element(by.cssContainingText("div.validation-error", '"NR" must be two numeric values separated by a ^. One value can be omitted, but not the ^'));
+  var errorBL = element(by.cssContainingText("div.validation-error", 'must be a boolean (true/false)')),
+      errorINT = element(by.cssContainingText("div.validation-error", 'must be an integer number')),
+      errorREAL = element(by.cssContainingText("div.validation-error", 'must be a decimal number')),
+      errorTM = element(by.cssContainingText("div.validation-error", 'must be a time value')),
+      errorYEAR = element(by.cssContainingText("div.validation-error", 'must be a numeric value of year')),
+      errorMONTH = element(by.cssContainingText("div.validation-error", 'must be a numeric value of month')),
+      errorDAY = element(by.cssContainingText("div.validation-error", 'must be a numeric value of day')),
+      errorURL = element(by.cssContainingText("div.validation-error", 'must be a valid URL')),
+      errorEMAIL = element(by.cssContainingText("div.validation-error", 'must be a valid email address')),
+      errorPHONE = element(by.cssContainingText("div.validation-error", 'must be a valid phone number')),
+      errorNR = element(by.cssContainingText("div.validation-error", 'must be two numeric values separated by a ^. One value can be omitted, but not the ^'));
 
   var errorMinExclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than ")),
       errorMinInclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than or equal to ")),
@@ -165,12 +154,12 @@ describe('Validations:', function() {
   describe('data type validations (table)', function () {
 
     beforeEach(function () {
-      tp.openValidationTest();
+      tp.LoadForm.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
       }, tp.WAIT_TIMEOUT_1);
 
-      shortenValidationMsgShowTime();
+      //shortenValidationMsgShowTime();
     });
 
     it('should validate INT type, for unsigned values', function () {
@@ -213,11 +202,11 @@ describe('Validations:', function() {
 
   describe('restrictions validations (table)', function () {
     beforeEach(function() {
-      tp.openValidationTest();
+      tp.LoadForm.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
       }, tp.WAIT_TIMEOUT_1);
-      shortenValidationMsgShowTime();
+      //shortenValidationMsgShowTime();
     });
 
     it('should validate minInclusive on INT', function () {
@@ -275,159 +264,162 @@ describe('Validations:', function() {
     it('should validate "required" on ST', function () {
 
       // no initial validations
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       st0.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
-      testUtil.sendKeys(st0, "abc");
-      testUtil.eraseField(st0);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.sendKeys(st0, "abc");
+      TestUtil.eraseField(st0);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       lblst3.click();
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st0.click();
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      testUtil.eraseField(st0);
-      testUtil.sendKeys(st0, "abcde");
-      waitForNotPresent(errorRequire);
+      TestUtil.eraseField(st0);
+      TestUtil.sendKeys(st0, "abcde");
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       lblst3.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
 
+    // NEXT: TODO: date field does not show required errors, because once a date is selected, it cannot be cleared (??!!)
+    // This test is supposed to fail at the moment.
     it('should validate "required" on DT', function () {
 
       // no initial validations
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       dt.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
-      testUtil.sendKeys(dt, "t");
-      testUtil.eraseField(dt);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.sendKeys(dt, "t");
+      TestUtil.eraseField(dt);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       lblst0.click();
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       dt.click();
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      testUtil.eraseField(dt);
-      testUtil.sendKeys(dt, "t");
-      waitForNotPresent(errorRequire);
+      TestUtil.eraseField(dt);
+      TestUtil.sendKeys(dt, "t");
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       lblst0.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
     });
 
     it('should validate "required" on CNE (single)', function () {
       // no initial validations
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       cne1.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
+
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
-      testUtil.eraseField(cne1);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.eraseField(cne1);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       // show message when the focus is gone
       lbldt.click();
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cne1.click();
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      testUtil.eraseField(cne1);
+      TestUtil.eraseField(cne1);
       cne1.click();
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       lbldt.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
 
     it('should validate "required" on CWE (single)', function () {
       // no initial validations
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       cwe1.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
-      testUtil.eraseField(cwe1);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.eraseField(cwe1);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       // show message when the focus is gone
       lblcne1.click(); // focuses other field
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
-      waitForNotDisplayed(errorRequire);
+      TestUtil.waitForElementNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cwe1.click();
-      waitForDisplayed(errorRequire);
+      TestUtil.waitForElementDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      testUtil.eraseField(cwe1);
+      TestUtil.eraseField(cwe1);
       cwe1.click();
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       lblcne1.click();
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // valid user input no message
-      testUtil.eraseField(cwe1);
-      testUtil.sendKeys(cwe1, "user input");
+      TestUtil.eraseField(cwe1);
+      TestUtil.sendKeys(cwe1, "user input");
       cwe1.sendKeys(protractor.Key.TAB);
-      waitForNotPresent(errorRequire);
+      TestUtil.waitForElementNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
     });
@@ -437,130 +429,130 @@ describe('Validations:', function() {
     it('should validate multiple restrictions on INT', function () {
 
       // no initial validations
-      waitForNotPresent(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // no error messages on first visit
-      testUtil.sendKeys(inta, "1");
-      waitForNotDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.sendKeys(inta, "1");
+      TestUtil.waitForElementNotDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(true);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
       lblcwe1.click();
-      waitForDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       //expect(errorMinInclusive.isDisplayed()).toBe(true);
       //expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
-      waitForNotDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementNotDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
       inta.click();
-      waitForDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
-      testUtil.eraseField(inta);
-      testUtil.sendKeys(inta, "10");
-      waitForNotPresent(errorMinInclusive);
-      waitForDisplayed(errorMaxExclusive);
+      TestUtil.eraseField(inta);
+      TestUtil.sendKeys(inta, "10");
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       lblcwe1.click();
-      waitForNotPresent(errorMinInclusive);
-      waitForNotDisplayed(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       inta.click();
-      waitForNotPresent(errorMinInclusive);
-      waitForDisplayed(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
-      testUtil.eraseField(inta);
-      testUtil.sendKeys(inta, "9");
-      waitForNotPresent(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.eraseField(inta);
+      TestUtil.sendKeys(inta, "9");
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
       lblcwe1.click();
-      waitForNotPresent(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
     });
 
     it('should validate multiple restrictions on REAL', function () {
       // no initial validations
-      waitForNotPresent(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // no error messages on first visit
-      testUtil.sendKeys(reala, "1.0");
-      waitForNotDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.sendKeys(reala, "1.0");
+      TestUtil.waitForElementNotDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(true);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
       lblinta.click();
-      waitForDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       //expect(errorMinInclusive.isDisplayed()).toBe(true);
       //expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
-      waitForNotDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementNotDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
       reala.click();
-      waitForDisplayed(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementDisplayed(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
-      testUtil.eraseField(reala);
-      testUtil.sendKeys(reala, "10.0");
-      waitForNotPresent(errorMinInclusive);
-      waitForDisplayed(errorMaxExclusive);
+      TestUtil.eraseField(reala);
+      TestUtil.sendKeys(reala, "10.0");
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       lblinta.click();
-      waitForNotPresent(errorMinInclusive);
-      waitForNotDisplayed(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       reala.click();
-      waitForNotPresent(errorMinInclusive);
-      waitForDisplayed(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
-      testUtil.eraseField(reala);
-      testUtil.sendKeys(reala, "9.999");
-      waitForNotPresent(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.eraseField(reala);
+      TestUtil.sendKeys(reala, "9.999");
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
       lblinta.click();
-      waitForNotPresent(errorMinInclusive);
-      waitForNotPresent(errorMaxExclusive);
+      TestUtil.waitForElementNotPresent(errorMinInclusive);
+      TestUtil.waitForElementNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
 
@@ -568,17 +560,17 @@ describe('Validations:', function() {
 
     it('should validate multiple restrictions on ST', function () {
       // no initial validations
-      waitForNotPresent(errorMaxLength);
-      waitForNotPresent(errorMinLength);
-      waitForNotPresent(errorPattern);
+      TestUtil.waitForElementNotPresent(errorMaxLength);
+      TestUtil.waitForElementNotPresent(errorMinLength);
+      TestUtil.waitForElementNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // no error messages on first visit
-      testUtil.sendKeys(sta, "123");
-      waitForNotPresent(errorMaxLength);
-      waitForNotDisplayed(errorMinLength);
-      waitForNotDisplayed(errorPattern);
+      TestUtil.sendKeys(sta, "123");
+      TestUtil.waitForElementNotPresent(errorMaxLength);
+      TestUtil.waitForElementNotDisplayed(errorMinLength);
+      TestUtil.waitForElementNotDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(true);
       expect(errorPattern.isPresent()).toBe(true);
@@ -586,67 +578,67 @@ describe('Validations:', function() {
       expect(errorPattern.isDisplayed()).toBe(false);
       // show message when the focus is gone
       lblreala.click();
-      waitForNotPresent(errorMaxLength);
-      waitForDisplayed(errorMinLength);
-      waitForDisplayed(errorPattern);
+      TestUtil.waitForElementNotPresent(errorMaxLength);
+      TestUtil.waitForElementDisplayed(errorMinLength);
+      TestUtil.waitForElementDisplayed(errorPattern);
       //expect(errorMaxLength.isPresent()).toBe(false);
       //expect(errorMinLength.isDisplayed()).toBe(true);
       //expect(errorPattern.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
-      waitForNotPresent(errorMaxLength);
-      waitForNotDisplayed(errorMinLength);
-      waitForNotDisplayed(errorPattern);
+      TestUtil.waitForElementNotPresent(errorMaxLength);
+      TestUtil.waitForElementNotDisplayed(errorMinLength);
+      TestUtil.waitForElementNotDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       sta.click();
-      waitForNotPresent(errorMaxLength);
-      waitForDisplayed(errorMinLength);
-      waitForDisplayed(errorPattern);
+      TestUtil.waitForElementNotPresent(errorMaxLength);
+      TestUtil.waitForElementDisplayed(errorMinLength);
+      TestUtil.waitForElementDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
       // try again, message shown since it is not the first visit
-      testUtil.eraseField(sta);
-      testUtil.sendKeys(sta, "abcde678901");
-      waitForDisplayed(errorMaxLength);
-      waitForNotPresent(errorMinLength);
-      waitForDisplayed(errorPattern);
+      TestUtil.eraseField(sta);
+      TestUtil.sendKeys(sta, "abcde678901");
+      TestUtil.waitForElementDisplayed(errorMaxLength);
+      TestUtil.waitForElementNotPresent(errorMinLength);
+      TestUtil.waitForElementDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(true);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       lblreala.click();
-      waitForNotDisplayed(errorMaxLength);
-      waitForNotPresent(errorMinLength);
-      waitForNotDisplayed(errorPattern);
+      TestUtil.waitForElementNotDisplayed(errorMaxLength);
+      TestUtil.waitForElementNotPresent(errorMinLength);
+      TestUtil.waitForElementNotDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       sta.click();
-      waitForDisplayed(errorMaxLength);
-      waitForNotPresent(errorMinLength);
-      waitForDisplayed(errorPattern);
+      TestUtil.waitForElementDisplayed(errorMaxLength);
+      TestUtil.waitForElementNotPresent(errorMinLength);
+      TestUtil.waitForElementDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(true);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // valid value no messages
-      testUtil.eraseField(sta);
-      testUtil.sendKeys(sta, "abcde");
-      waitForNotPresent(errorMaxLength);
-      waitForNotPresent(errorMinLength);
-      waitForNotPresent(errorPattern);
+      TestUtil.eraseField(sta);
+      TestUtil.sendKeys(sta, "abcde");
+      TestUtil.waitForElementNotPresent(errorMaxLength);
+      TestUtil.waitForElementNotPresent(errorMinLength);
+      TestUtil.waitForElementNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // still no message when the focus is gone
       lblreala.click();
-      waitForNotPresent(errorMaxLength);
-      waitForNotPresent(errorMinLength);
-      waitForNotPresent(errorPattern);
+      TestUtil.waitForElementNotPresent(errorMaxLength);
+      TestUtil.waitForElementNotPresent(errorMinLength);
+      TestUtil.waitForElementNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
@@ -662,17 +654,19 @@ describe('Validations:', function() {
     var weight1 = element(by.id("/54114-4/54117-7/29463-7/1/1/1"));
     var height2 = element(by.id("/54114-4/54117-7/8302-2/1/2/1"));
     var weight2 = element(by.id("/54114-4/54117-7/29463-7/1/2/1"));
-    var heightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Height" must be a decimal number'));
-    var weightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Weight" must be a decimal number'));
+    // var heightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Height" must be a decimal number'));
+    // var weightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Weight" must be a decimal number'));
+    var heightError = element(by.cssContainingText("div.validation-error", 'must be a decimal number'));
+    var weightError = element(by.cssContainingText("div.validation-error", 'must be a decimal number'));
     var clickAwayElem = element(by.id("/54114-4/54138-3/1/1"));
 
     it('should validate REAL type in horizontal table', function () {
-      tp.openUSSGFHTHorizontal();
+      tp.LoadForm.openUSSGFHTHorizontal();
       browser.wait(function () {
         return height1.isPresent();
       }, tp.WAIT_TIMEOUT_1);
 
-      shortenValidationMsgShowTime();
+      //shortenValidationMsgShowTime();
 
       testOneType(height1, clickAwayElem, heightError, "not a number", "123.45");
       testOneType(weight1, clickAwayElem, weightError, "not a number", "123.45");
@@ -690,11 +684,14 @@ describe('Validations:', function() {
 
 
   describe('form validation', function () {
-    beforeAll(function () {
-      tp.openFullFeaturedForm();
-    });
+    beforeAll(async () => {
+      await browser.waitForAngularEnabled(false);      
+    });  
 
     it('should not validate when required inputs are empty', function () {
+
+      tp.LoadForm.openFullFeaturedForm();
+
       // Required fields are empty
       const errors = browser.driver.executeScript('return LForms.Util.checkValidity()');
       expect(errors).toEqual([
@@ -707,7 +704,7 @@ describe('Validations:', function() {
       const skipLogicTrigger = element(by.id('/sl_source_to_test_required/1'));
       // Entering 1 will show a previously hidden section with required inputs to make sure they now
       // trigger the validation
-      testUtil.sendKeys(skipLogicTrigger, '1');
+      TestUtil.sendKeys(skipLogicTrigger, '1');
 
       const errorsAfterSkipLogic = browser.driver.executeScript('return LForms.Util.checkValidity()');
       expect(errorsAfterSkipLogic).toEqual([
@@ -720,20 +717,70 @@ describe('Validations:', function() {
       ]);
     });
 
-    it('should validate when required inputs are entered', function () {
+    // TODO: As of 09/16/2021,this test passed on linux firefox but not on linux chrome. Other tests in this file need to run with chrome to pass.
+    // suspect the issue is related to the datef field/calendar widget not being in the views. but cannot confirm that yet.
+    // Use the next test with a short form instead
+    // it('should validate when required inputs are entered', function () {
+
+    //   tp.LoadForm.openFullFeaturedForm();
+    //   const skipLogicTrigger = element(by.id('/sl_source_to_test_required/1'));
+    //   // Entering 1 will show a previously hidden section with required inputs to make sure they now
+    //   // trigger the validation
+    //   TestUtil.sendKeys(skipLogicTrigger, '1');
+
+    //   let otherEl = element(by.id("/required_tx/1"))
+
+    //   // Fill the required fields
+    //   const dtEl = element(by.id('/required_dt/1')).element(by.css("input"));
+    //   dtEl.clear()
+    //   // this test does not work with chrome v93.0.4577.82 and/or its webdriver. "/" is not appearing in the field
+    //   TestUtil.sendKeys(dtEl, '10/16/2020');  
+    //   otherEl.click();
+    //   const dtmEl = element(by.id('/required_dtm/1')).element(by.css("input"));
+    //   // this test does not work with chrome v93.0.4577.82 and/or its webdriver. "/" is not appearing in the field
+    //   TestUtil.sendKeys(dtmEl, '10/16/2020 16:00:00');
+    //   otherEl.click()
+    //   const txEl = element(by.id('/required_tx/1'));
+    //   TestUtil.sendKeys(txEl, 'test');
+    //   const stEl = element(by.id('/required_st/1'));
+    //   TestUtil.sendKeys(stEl, 'test');
+    //   const originalHiddenEl1 = element(by.id('/sl_target_to_test_required1/1'));
+    //   TestUtil.sendKeys(originalHiddenEl1, 'test');
+    //   const originalHiddenSubEl1 = element(by.id('/sl_target_header/sl_target_to_test_required/1/1'));
+    //   TestUtil.sendKeys(originalHiddenSubEl1, 'test');
+
+    //   const errors = browser.driver.executeScript('return LForms.Util.checkValidity()');
+    //   expect(errors).toEqual(null);
+    // });
+
+    it('should validate when required inputs are entered, with a short form', function () {
+
+      tp.openBaseTestPage();
+      tp.loadFromTestData('test-date-validation.json');
+
+      const skipLogicTrigger = element(by.id('/sl_source_to_test_required/1'));
+      // Entering 1 will show a previously hidden section with required inputs to make sure they now
+      // trigger the validation
+      TestUtil.sendKeys(skipLogicTrigger, '1');
+
+      let otherEl = element(by.id("/required_tx/1"))
+
       // Fill the required fields
-      const dtEl = element(by.id('/required_dt/1'));
-      testUtil.sendKeys(dtEl, '10/16/2020');
-      const dtmEl = element(by.id('/required_dtm/1'));
-      testUtil.sendKeys(dtmEl, '10/16/2020 16:00');
+      const dtEl = element(by.id('/required_dt/1')).element(by.css("input"));
+      dtEl.clear()
+      TestUtil.sendKeys(dtEl, '10/16/2020');  
+      otherEl.click();
+      const dtmEl = element(by.id('/required_dtm/1')).element(by.css("input"));
+      TestUtil.sendKeys(dtmEl, '10/16/2020 16:00:00');
+      otherEl.click()
       const txEl = element(by.id('/required_tx/1'));
-      testUtil.sendKeys(txEl, 'test');
+      TestUtil.sendKeys(txEl, 'test');
       const stEl = element(by.id('/required_st/1'));
-      testUtil.sendKeys(stEl, 'test');
+      TestUtil.sendKeys(stEl, 'test');
       const originalHiddenEl1 = element(by.id('/sl_target_to_test_required1/1'));
-      testUtil.sendKeys(originalHiddenEl1, 'test');
+      TestUtil.sendKeys(originalHiddenEl1, 'test');
       const originalHiddenSubEl1 = element(by.id('/sl_target_header/sl_target_to_test_required/1/1'));
-      testUtil.sendKeys(originalHiddenSubEl1, 'test');
+      TestUtil.sendKeys(originalHiddenSubEl1, 'test');
 
       const errors = browser.driver.executeScript('return LForms.Util.checkValidity()');
       expect(errors).toEqual(null);

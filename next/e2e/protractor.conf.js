@@ -15,7 +15,7 @@ exports.config = {
     '../../test/protractor/spec/argonaut.spec.ts',
     '../../test/protractor/spec/autocomp_list.spec.ts',
     '../../test/protractor/spec/buildTest.spec.ts',
-    '../../test/protractor/spec/fhirpath.spec.ts',
+    '../../test/protractor/spec/fhirpath.spec.ts', // has failed tests when adding two forms to a page
     '../../test/protractor/spec/lforms_datatype.spec.ts',
     '../../test/protractor/spec/lforms_fhirdata.spec.ts',
     '../../test/protractor/spec/lforms_formdata.spec.ts',
@@ -24,16 +24,17 @@ exports.config = {
     '../../test/protractor/spec/lforms_horizontal.spec.ts',
     '../../test/protractor/spec/lforms_load_user_data.spec.ts',
     '../../test/protractor/spec/lforms_matrix_layout.spec.ts',
-    '../../test/protractor/spec/lforms_copyright_coding_instruction.spec.ts'
-
-    // './src/**/*.e2e-spec.ts'
-    // './spec/**/*.e2e-spec.todo.failed.ts'
-    // './spec/**/*.e2e-spec.done.ts'
-    // './spec/**/*.e2e-spec.ts'
-
+    '../../test/protractor/spec/lforms_copyright_coding_instruction.spec.ts',
+    '../../test/protractor/spec/lforms_datacontrol.spec.ts',
+    '../../test/protractor/spec/lforms_skiplogic.spec.ts',
+    '../../test/protractor/spec/lforms_validation.spec.ts', // has one failed test on DT
+    '../../test/protractor/spec/lforms_validation_date.spec.ts',
+    '../../test/protractor/spec/fhir_context.spec.ts'
+    
   ],
   capabilities: {
     'browserName': 'chrome',
+    // 'browserName': 'firefox',
     // 'chromeOptions': {
     //     'args': [
     //         '--headless'

@@ -78,7 +78,7 @@ const TestUtil = {
    * @return a promise that resolves when str has been added to the field value
    */
   _sendKeys: function(field, str) {
-    let self = this;
+    const self = this;
     str = '' + str; // convert numbers to strings
     return field.getAttribute('value').then(function(oldVal) {
       var allButLastChar = oldVal+str.slice(0,-1);
@@ -251,6 +251,10 @@ const TestUtil = {
     browser.sleep(300); // allow page to scroll or adjust
   },
 
+  waitForElementVisible: function(elem) {
+    browser.wait(function(){return ExpectedConditions.visibilityOf(elem)}, 3000);
+  },
+
   /**
    *  Waits for the given element to be present on the page.
    */
@@ -274,6 +278,20 @@ const TestUtil = {
     browser.wait(function(){return elem.isDisplayed()}, 3000);
   },
 
+  /**
+   *  Waits for the given element to be not displayed on the page.
+   */
+  waitForElementNotDisplayed: function(elem) {
+    browser.wait(function() {
+      // Avoid reporting an error if the element is not even present.
+      return elem.isPresent().then(function(result) {
+        if (!result)
+          return true;
+        else
+          return elem.isDisplayed().then(function(result){return !result});
+      });
+    }, 3000);
+  },
 
   //TODO: LForms.Def is not avaible
   /**
@@ -384,6 +402,17 @@ const TestUtil = {
       callback(lfData);
     })
   },
+
+
+  /**
+   * Wait for the externally linked FHIR libraries to be loaded. 
+   */
+  waitForFHIRLibsLoaded() {
+    browser.wait(function() {
+      return browser.driver.executeScript(
+        'return typeof(LForms.FHIR) === "object" && typeof(LForms.FHIR.R4) === "object" && typeof(LForms.FHIR.STU3) === "object"');
+    }, 5000);
+  }
 
 }
 

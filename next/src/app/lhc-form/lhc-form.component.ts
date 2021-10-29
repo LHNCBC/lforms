@@ -1,16 +1,18 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, HostListener, ChangeDetectionStrategy} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
 import { Subject } from 'rxjs';
 import { throttleTime, debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 import LhcFormData from '../../lib/lforms/lhc-form-data';
+import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
 
 declare var LForms: any;
 declare var ResizeObserver;
 
 @Component({
   selector: 'lhc-form',
+  //encapsulation: ViewEncapsulation.ShadowDom,
   //changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './lhc-form.component.html',
   styleUrls: ['./lhc-form.component.css']
@@ -19,8 +21,11 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() lfData: any;
   @Input() lfOptions: any;
+  @Input() prepop: boolean=false;
   // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
   @Input() lhcFormData: any; 
+  // emit an event when the form's view and data are initially rendered
+  @Output() onFormReady: EventEmitter<any> = new EventEmitter<any>();
 
   //lhcFormData: any;
   viewModeClass = "";
@@ -84,36 +89,49 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes) {
     // console.log("in lhc-form's ngOnChange")
-
     // form data changes
-    if (changes.lfData) {
+    if (changes.lfData) {      
       // form data changes, clean up the previous data before loading the new form data
       this.lhcFormData = null;
       this.lhcDataService.setLhcFormData(null);
+      
       if (this.lfData) {
-        let that = this;
+        const self = this;        
         // reset the data after this thread is done
         setTimeout(()=> {
-          that.lhcFormData = new LhcFormData(that.lfData)
+          // self.lhcFormData = new LhcFormData(CommonUtils.deepCopy(this.lfData))
+          self.lhcFormData = new LhcFormData(self.lfData)
           // and options change
-          if (changes.lfOptions) {
-            if (that.lfOptions) {
-              that.lhcFormData.setTemplateOptions(that.lfOptions);  
-            }
+          if (changes.lfOptions && self.lfOptions) {
+            // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.lfOptions));  
+            self.lhcFormData.setTemplateOptions(self.lfOptions);  
           }      
-          that.lhcDataService.setLhcFormData(that.lhcFormData);  
+          self.lhcDataService.setLhcFormData(self.lhcFormData);  
 
-          // when a new form is loaded, run all FHIR Expressions including the initial expresions
           if (LForms.FHIR) {
-            if (this.lfData) { // sometimes set to null to clear the page
-              if (this.lfData._hasResponsiveExpr || this.lfData._hasInitialExpr) {
-                this.lfData._expressionProcessor.runCalculations(true).then(() => {
-                  console.log('fhir path run with true')
-                });
-              }
-            }        
+            self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
+              // when a new form is loaded, run all FHIR Expressions including the initial expresions
+              if (self.lhcFormData) { // sometimes set to null to clear the page
+                if (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr) {
+                  self.lhcFormData._expressionProcessor.runCalculations(true).then(() => {
+                    console.log('fhir path run with true')
+                  });
+                }
+              }        
+              // emit an event when the form's view and data are initially rendered
+              self.onFormReady.emit();
+            })            
+          }
+          else {
+            // emit an event when the form's view and data are initially rendered
+            self.onFormReady.emit();
           }
         },1)
+      }
+      else {
+        // clean up the previous data 
+        this.lhcFormData = null;
+        this.lhcDataService.setLhcFormData(null);
       }
     }
     // only options changes
