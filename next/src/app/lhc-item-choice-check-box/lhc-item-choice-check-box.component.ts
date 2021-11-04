@@ -10,7 +10,8 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
 
   @Input() item;
-
+  @Input() acOptions; // item._autocompOptions
+  
   // internal data models
   otherValue: string = null ;
   checkboxModels: boolean[] = [];

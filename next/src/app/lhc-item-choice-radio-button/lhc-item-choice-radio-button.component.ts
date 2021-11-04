@@ -10,7 +10,8 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
 
   @Input() item;
-
+  @Input() acOptions; // item._autocompOptions
+  
   // internal data models
   radioValue: any = null ;
   otherValue: string = null ;

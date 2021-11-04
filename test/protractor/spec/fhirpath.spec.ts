@@ -176,62 +176,58 @@ describe('answerExpression', function() {
       });
       browser.wait(()=>TestUtil.getAttribute(rxcuiField,'value').then((v)=>v != ''), 5000);
 
-      //NEXT: TODO: radio button and checkbox did not display saved values or default values. Create a seprate task for this.
-      // // Test with radio buttons
-      // q = JSON.parse(JSON.stringify(qOrig));
-      // qr = JSON.parse(JSON.stringify(qrOrig));
-      // q.item[0].extension.splice(1,1); // delete itemControl "gtable" extension
-      // // Replace the strength field drop down with radio buttons
-      // q.item[0].item[1].extension[0] = {
-      //   "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-      //   "valueCodeableConcept": {
-      //     "text": "Radio Button",
-      //     "coding": [
-      //       {
-      //         "code": "radio-button",
-      //         "display": "Radio Button",
-      //         "system": "http://hl7.org/fhir/questionnaire-item-control"
-      //       }
-      //     ]
-      //   }
-      // };
-      // TestUtil.showQQR(q, qr, 'formContainer');
-      // browser.sleep(20000)
-      // TestUtil.waitForElementPresent(medField)
-      // browser.wait(()=>TestUtil.getAttribute(medField,'value').then((v)=>v != ''), 5000);
-      // let strengthAnswer1 = element(by.id('strength/1/1213377'));
-      // expect(strengthAnswer1.getAttribute('checked')).toBe('true');
+      // Test with radio buttons
+      q = JSON.parse(JSON.stringify(qOrig));
+      qr = JSON.parse(JSON.stringify(qrOrig));
+      q.item[0].extension.splice(1,1); // delete itemControl "gtable" extension
+      // Replace the strength field drop down with radio buttons
+      q.item[0].item[1].extension[0] = {
+        "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+        "valueCodeableConcept": {
+          "text": "Radio Button",
+          "coding": [
+            {
+              "code": "radio-button",
+              "display": "Radio Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }
+          ]
+        }
+      };
+      TestUtil.showQQR(q, qr, 'formContainer');
+      TestUtil.waitForElementPresent(medField)
+      browser.wait(()=>TestUtil.getAttribute(medField,'value').then((v)=>v != ''), 5000);
+      let strengthAnswer1 = element(by.id('strength/1/1213377')).element(by.css('input'));
+      expect(strengthAnswer1.isSelected()).toBe(true);
+      browser.wait(()=>TestUtil.getAttribute(rxcuiField,'value').then((v)=>v != ''), 5000);
 
-      // browser.wait(()=>TestUtil.getAttribute(rxcuiField,'value').then((v)=>v != ''), 5000);
-
-      // // Test with checkboxes an multiple values
-      // q = JSON.parse(JSON.stringify(q)); // make a copy for the new test
-      // qr = JSON.parse(JSON.stringify(qr));
-      // q.item[0].item[1].repeats = true;
-      // q.item[0].item[1].extension[0] = {
-      //   "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-      //   "valueCodeableConcept": {
-      //     "text": "Check-box",
-      //     "coding": [
-      //       {
-      //         "code": "check-box",
-      //         "display": "Check-box",
-      //         "system": "http://hl7.org/fhir/questionnaire-item-control"
-      //       }
-      //     ]
-      //   }
-      // };
-      // qr.item[0].item[1].answer[1] = {valueString: 'other value'};
-      // TestUtil.showQQR(q, qr, 'formContainer');
-      // // browser.wait(EC.presenceOf(medField));
-      // TestUtil.waitForElementPresent(medField)
-      // browser.wait(()=>TestUtil.getAttribute(medField,'value').then((v)=>v != ''), 5000);
-      // expect(TestUtil.getAttribute(strengthAnswer1,'checked')).toBe('true');
-      // let strengthAnswerOther = element(by.id('strength\\/1\\/1_other'));
-      // let strengthOtherValue = element(by.id('strength\\/1\\/1_otherValue'));
-      // expect(TestUtil.getAttribute(strengthAnswerOther,'checked')).toBe('true');
-      // expect(TestUtil.getAttribute(strengthOtherValue,'value')).toBe('other value');
-      // browser.wait(()=>TestUtil.getAttribute(rxcuiField,'value').then((v)=>v != ''), 5000);
+      // Test with checkboxes an multiple values
+      q = JSON.parse(JSON.stringify(q)); // make a copy for the new test
+      qr = JSON.parse(JSON.stringify(qr));
+      q.item[0].item[1].repeats = true;
+      q.item[0].item[1].extension[0] = {
+        "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+        "valueCodeableConcept": {
+          "text": "Check-box",
+          "coding": [
+            {
+              "code": "check-box",
+              "display": "Check-box",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }
+          ]
+        }
+      };
+      qr.item[0].item[1].answer[1] = {valueString: 'other value'};
+      TestUtil.showQQR(q, qr, 'formContainer');
+      TestUtil.waitForElementPresent(medField)
+      browser.wait(()=>TestUtil.getAttribute(medField,'value').then((v)=>v != ''), 5000);
+      expect(strengthAnswer1.isSelected()).toBe(true);
+      let strengthAnswerOther = element(by.id('strength/1/1_other')).element(by.css('input'));
+      let strengthOtherValue = element(by.id('strength/1/1_otherValue'));
+      expect(strengthAnswerOther.isSelected()).toBe(true);
+      expect(TestUtil.getAttribute(strengthOtherValue,'value')).toBe('other value');
+      browser.wait(()=>TestUtil.getAttribute(rxcuiField,'value').then((v)=>v != ''), 5000);
     });
   });
 });
