@@ -86,20 +86,33 @@ LForms.Util = {
     var rtnPromise = new Promise(function(resolve, reject) {
       angular.module(appName, ["lformsWidget"])
         .controller(controller, ["$scope", function ($scope) {
-          var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
-          if (LForms.fhirContext) {
-            myFormData.loadFHIRResources(prepop).then(function() {
-              $scope.$apply(function() {
-                $scope.myFormData = myFormData;
-                resolve();
-              })
-            });
+          try {
+            var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
+            if (LForms.fhirContext) {
+              myFormData.loadFHIRResources(prepop).then(function() {
+                $scope.$apply(function() {
+                  $scope.myFormData = myFormData;
+                  resolve();
+                })
+              }, function failed(e) {
+                reject(e);
+              });
+            }
+            else {
+              $scope.myFormData = myFormData;
+              resolve();
+            }
           }
-          else {
-            $scope.myFormData = myFormData;
-            resolve();
+          catch(e) {
+            reject(e);
           }
         }]);
+    }).catch(function(e) {
+      var errMsg = (e instanceof Error) ? e.message : e.toString();
+      formContainer.html('<div id=lformsErrors style="color: red"><b>Unable to '+
+        'display the form, due to the following error:</b><p id=lformsErrorContent></p>');
+      $('#lformsErrorContent').text(errMsg);
+      throw e;
     });
 
     // Bootstrap the element if needed
@@ -1085,10 +1098,24 @@ LForms.Util = {
 
   /**
    * A wrapper function to deep copy an object so that FHIR lib does not use "angular" directly
-   * @param {*} object 
+   * @param {*} object
    */
   deepCopy: function(object) {
     return angular.copy(object);
+  },
+
+
+  /**
+   *  Shows a warning message, typically about some problem with the form
+   *  definition.
+   * @param msg the message to show
+   * @param item (optional) the item in the form to which the message applies.
+   */
+  showWarning: function(msg, item) {
+    if (item)
+      msg = 'The question "'+item.text+'" produced the following warning:  '+msg;
+    console.log(msg);
+    // TBD: add a warning visible on the page.
   }
 };
 

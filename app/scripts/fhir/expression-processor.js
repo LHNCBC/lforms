@@ -424,9 +424,25 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       var fieldChanged = false;
       var sdc = this._fhir.SDC;
       if (isCalcExp || expURL != sdc.fhirExtVariable) {
-        fieldChanged = (expURL == sdc.fhirExtAnswerExp) ?
-          this._setItemListFromFHIRPath(item, newVal) :
-          this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
+        if (expURL == sdc.fhirExtAnswerExp)
+          fieldChanged = this._setItemListFromFHIRPath(item, newVal);
+        else if (expURL == sdc.fhirExtEnableWhenExp) {
+          // The new value should be a boolean.  Coerce it to a boolean, and
+          // report a warning if it was not a boolean.
+          var actualNewVal = newVal[0];
+          newVal = !!actualNewVal;
+          if (newVal !== actualNewVal) {
+            LForms.Util.showWarning('An expression from enableWhenExpression '+
+              'did not resolve to a Boolean as required', item);
+          }
+          if (varName) { // if there is a variable name defined, a change in the value matters
+            var oldVal = !!item._enableWhenExpVal; // _enableWhenExpVal could be undefined
+            fieldChanged = oldVal != newVal;
+          }
+          item._enableWhenExpVal = newVal;
+        }
+        else // else initial or calculated expression
+          fieldChanged = this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
       }
       return fieldChanged;
     },

@@ -464,5 +464,16 @@ export class TestPage {
       return element(by.css('.lhc-form-title')).isPresent();
     }, this.WAIT_TIMEOUT_1);
   }
+
+
+  /**
+   *  Returns the QuestionnaireResponse (as an object) for the form on the page.
+   * @param options options for the getFormFHIRData call (the fourth
+   * parameter).
+   */
+   getQuestionnaireResponse(options) {
+    return browser.executeScript("return LForms.Util.getFormFHIRData("+
+     "'QuestionnaireResponse', getFHIRVersion(), null, arguments[0])", options);
+  }
 }
 
