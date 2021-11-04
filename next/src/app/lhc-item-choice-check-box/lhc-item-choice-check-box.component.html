@@ -1,17 +1,16 @@
 <nz-checkbox-wrapper style="width: 100%;"  (nzOnChange)="onCheckboxModelChange($event)" *ngIf="item">
-  <div nz-row>
-    <div *ngFor="let answer of item._modifiedAnswers; index as i" nz-col
-    [nzSpan]="item._choiceOrientation === 'vertical' ? '24' : '8'">
+  <div nz-row [ngClass]="{'vertical': item.displayControl?.answerLayout?.columns === '0'}">
+    <div *ngFor="let answer of item._modifiedAnswers; index as i">
       <label nz-checkbox [nzValue]="answer" [(ngModel)]="checkboxModels[i]"
       [nzDisabled]="item._readOnly"
       [id]="item._elementId + answer.code">{{answer._displayText}}</label>
     </div>
-    <div nz-col [nzSpan]="item._choiceOrientation === 'vertical' ? '24' : '8'" *ngIf="item.dataType=== 'CWE'">
+    <div *ngIf="item.dataType=== 'CWE'">
       <label nz-checkbox [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
       [nzDisabled]="item._readOnly"
       [(ngModel)]="otherCheckboxModel" [id]="item._elementId + '_other'">Other</label>
       <input type="text" [(ngModel)]="otherValue" class="lhc-answer-other-input" [id]="item._elementId + '_otherValue'" nz-input
-      *ngIf="otherCheckboxModel" (keyup)="onOtherValueChange($event)" 
+      *ngIf="otherCheckboxModel" (keyup)="onOtherValueChange($event)"
       (focus)="lhcDataService.setActiveRow(item)"/>
     </div>
   </div>

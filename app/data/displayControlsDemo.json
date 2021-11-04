@@ -15,7 +15,7 @@
     },
     {
       "questionCode": "q1a",
-      "question": "Answer RADIO_CHECKBOX layout --CNE, --2 columns",
+      "question": "Answer RADIO_CHECKBOX layout --CNE, --horizontal",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
@@ -26,7 +26,7 @@
       "displayControl": {
         "answerLayout": {
           "type": "RADIO_CHECKBOX",
-          "columns": "2"
+          "columns": "1"
         }
       },
       "answers": [
@@ -75,7 +75,7 @@
     },
     {
       "questionCode": "q1b",
-      "question": "Answer RADIO_CHECKBOX layout --CWE, --3 columns",
+      "question": "Answer RADIO_CHECKBOX layout --CWE, --vertical",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
@@ -86,7 +86,7 @@
       "displayControl": {
         "answerLayout": {
           "type": "RADIO_CHECKBOX",
-          "columns": "3"
+          "columns": "0"
         }
       },
       "answers": [
@@ -131,7 +131,7 @@
     },
     {
       "questionCode": "q1c",
-      "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
+      "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --horizontal",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
@@ -197,7 +197,7 @@
     },
     {
       "questionCode": "q1d",
-      "question": "Answer RADIO_CHECKBOX layout --CWE, Multiple, --flexible",
+      "question": "Answer RADIO_CHECKBOX layout --CWE, Multiple, --vertical",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
