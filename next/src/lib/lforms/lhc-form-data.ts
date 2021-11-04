@@ -2804,7 +2804,9 @@ export default class LhcFormData {
             // non-matching value objects are kept, (data control or others might use data on these objects)
             if (userValue && !found) {
               if (userValue.text) userValue._displayText = userValue.text;
-              listVals.push(userValue);
+              // need a new copy of the data to trigger a change in the data model in autocomplete component
+              // where if the dataModel is in the changes, its value will be preserved when recreating the autocomplete
+              listVals.push(CommonUtils.deepCopy(userValue)); 
             }
           }
         }

@@ -31,6 +31,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   acType: string = null;
   acInstance: any = null;
   prefetchTextToItem: {};
+  displayProp: string = '';
 
   viewInitialized = false;
 
@@ -64,7 +65,11 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     if (this.viewInitialized) {
       // reset autocompleter when 'options' changes
       if (changes.options) {
-        this.cleanupAutocomplete();
+        // need to keep the dataModel while cleaning up the previous autocomplete, when the value
+        // is the saved data in the item (loaded by data control or fhirpath expression)
+        let keepDataModel = changes.dataModel ? true : false;
+        this.cleanupAutocomplete(keepDataModel); 
+
         this.setupAutocomplete();
       }
       // item.value changed by data control or fhirpath express after the autocompleter is initialized
@@ -90,7 +95,8 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
         if (typeof dispVal === 'string') {
           this.acInstance.storeSelectedItem(dispVal, itemValue.code);
-          this.acInstance.setFieldVal(dispVal, false);
+          let fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
+          this.acInstance.setFieldVal(fieldVal, false);
         }
         else {// handle the case of an empty object as a model
           this.acInstance.setFieldVal('', false);
@@ -133,12 +139,14 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   /**
    * Clean up the autocompleter if there is one
    */
-  cleanupAutocomplete(): void {
+  cleanupAutocomplete(keepDataModel:boolean=false): void {
     if (this.acInstance) {
-      // // Clear the field value 
+      // reset the field value 
       this.acInstance.setFieldVal('', false);
-      // // clean up model data
-      this.dataModel = null;
+      // reset the data model
+      if (!keepDataModel) {
+        this.dataModel = null;
+      }      
       this.acInstance.destroy();
     }
   }
@@ -157,6 +165,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     this.acInstance = false;
     this.allowNotOnList = null;
     this.prefetchTextToItem = {};
+    this.displayProp = "";
 
     // if there are options for the autocompleter
     if (this.options && this.options.acOptions) {
@@ -166,21 +175,27 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         this.multipleSelections = true;
       }
       this.allowNotOnList = !acOptions.matchListValue;
+      this.displayProp = acOptions.display || "text";
 
-      // get a list of display text, code and create a answer text to answer item mapping.
-      // (autocomplete-lhc requires answer text to be unique)
-      if (acOptions.listItems && !acOptions.url) {
+      // search autocomplete
+      if (acOptions.hasOwnProperty('url') || (acOptions.fhir && acOptions.fhir.search)) {
+        this.acType = 'search'
+        this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);        
+      }
+      // prefectch autocomplete
+      else if (acOptions.listItems) {
+        this.acType = 'prefetch';
         let listItemsText = [], listItemsCode = [];
+        // get a list of display text, code and create a answer text to answer item mapping.
+        // (autocomplete-lhc requires answer text to be unique)
         acOptions.listItems.forEach(item => {
-          let displayText = acOptions.display;
-          listItemsText.push(item[displayText]);
+          listItemsText.push(item[this.displayProp]);
           listItemsCode.push(item.code);
-          this.prefetchTextToItem[item[displayText]] = item;
+          this.prefetchTextToItem[item[this.displayProp].trim()] = item;
         }, this);
 
         acOptions.codes = listItemsCode;
 
-        this.acType = 'prefetch';
         // acOptions has matchListValue, maxSelected, codes
         // Using this.options.elementId causes the autocompleter to be refreshed without an autocompleter created in a horizontal table. 
         // (where the rows lists are created as a new array, instead of keeping the same reference. Not confirmed, but I suspect this is the reason.)
@@ -189,34 +204,34 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         //   this.acInstance = new Def.Autocompleter.Prefetch(this.options.elementId, listItemsText, acOptions);
         this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
       }
-      else {
-        this.acType = 'search'
-        this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
-      }
 
-//      let defaultItem =  acOptions.defaultValue ? this.prefetchTextToItem[acOptions.defaultValue.text] : null;
       let defaultItem =  acOptions.defaultValue
       // set up initial values if there is value
       let savedValue = this.dataModel || defaultItem;
-      this.setItemValue(savedValue)
-
+      this.setItemInitValue(savedValue)
+      
       // add event handler
       Def.Autocompleter.Event.observeListSelections(this.options.elementId, this.onSelectionHandler.bind(this));
   
+      // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
+      let that = this;
+      // setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
+      setTimeout(function(){ that.dataModelChange.emit(that.dataModel); }, 1);
+      
     }
   }
 
   /**
-   * Set the item.value to the autocompleter when the autocompleter is being set up or 
+   * Set the initial item.value to the autocompleter when the autocompleter is being set up or 
    * the item.value is changed later
    * @param itemValue 
    */
-  setItemValue(itemValue) {
+  setItemInitValue(itemValue) {
     if (itemValue) {
       if (this.multipleSelections && Array.isArray(itemValue)) {
         for (var i=0, len=itemValue.length; i<len; ++i) {
           let dispVal = this.acType === "prefetch" && !itemValue[i]._notOnList ?
-            itemValue[i][this.options.acOptions.display] : itemValue[i].text;
+            itemValue[i][this.displayProp] : itemValue[i].text;
           this.acInstance.storeSelectedItem(dispVal, itemValue[i].code);
           this.acInstance.addToSelectedArea(dispVal);
         }
@@ -227,19 +242,21 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
       }
       else {
         let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
-        itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
+        itemValue.text : itemValue[this.displayProp] : itemValue.text;
         if (typeof dispVal === 'string') {
           this.acInstance.storeSelectedItem(dispVal, itemValue.code);
-          this.acInstance.setFieldVal(dispVal, false);
+          let fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
+          this.acInstance.setFieldVal(fieldVal, false);
         }
         else {// handle the case of an empty object as a model
           this.acInstance.setFieldVal('', false);
         }
 
         this.dataModel = itemValue;
-        // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
-        let that = this;
-        setInterval(function(){that.dataModelChange.emit(that.dataModel); }, 5);
+        // // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
+        // let that = this;
+        // // setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
+        // setTimeout(function(){ that.dataModelChange.emit(that.dataModel); }, 1);
       }
     }
 

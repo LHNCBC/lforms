@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, ViewEncapsulation} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-input',
   templateUrl: './lhc-input.component.html',
-  styleUrls: ['./lhc-input.component.css'],
-  encapsulation: ViewEncapsulation.Emulated
+  styleUrls: ['./lhc-input.component.css']
 })
 
 

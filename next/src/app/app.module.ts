@@ -17,6 +17,7 @@ import * as ucumPkg from '@lhncbc/ucum-lhc';
 import LhcFormUtils from '../lib/lforms/lhc-form-utils.js';
 import LhcFormData  from '../lib/lforms/lhc-form-data';
 import LhcHL7 from '../lib/lforms/lhc-hl7.js';
+import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -35,7 +36,6 @@ const icons: IconDefinition[] = [ CopyrightCircleFill, QuestionCircleFill, Copyr
 //import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 
 import { CommonUtilsService } from '../lib/common-utils.service';
-import { ValidateService } from '../lib/validate.service';
 import { LhcDataService } from '../lib/lhc-data.service';
 import { WindowService } from '../lib/window.service';
 
@@ -113,11 +113,9 @@ registerLocaleData(en);
     NzIconModule.forRoot(icons),
     NzSwitchModule
   ],
-  providers: [{ provide: NZ_I18N, useValue: en_US },
-    CommonUtilsService,
-    ValidateService,
-    LhcDataService,
-    WindowService],
+  providers: [
+    { provide: NZ_I18N, useValue: en_US }
+  ],
   bootstrap: [],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
@@ -136,6 +134,7 @@ export class AppModule {
       HL7: LhcHL7,
       ucumPkg: ucumPkg,
       Util: LhcFormUtils,
+      Def: Def,
       version: "29.0.0"
     }
 

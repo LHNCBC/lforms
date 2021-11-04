@@ -90,7 +90,7 @@ describe('data control', function() {
 
     // 'add' button works
     btnAdd1.click();
-    expect(btnAdd1.isPresent()).toBe(true);
+    TestUtil.waitForElementPresent(btnAdd1);
     TestUtil.waitForElementNotPresent(btnAdd2)
 
     expect(btnDel1.isDisplayed()).toBe(true);
@@ -176,7 +176,7 @@ describe('data control', function() {
   });
 
 
-  it('can control a item that also also controls another item', function() {
+  it('can control a item that also controls another item', function() {
     tp.LoadForm.openRxTerms();
 
     // search a drug

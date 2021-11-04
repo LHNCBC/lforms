@@ -208,6 +208,7 @@ describe('formdata: ', function() {
 
       // reset the form
       resetButton.click();
+      resetButton.click();  //Next: TODO: Why it now requires to click twice? But to modify a data inside the wc is not a typical use case. May drop it.
 
       //expect(ff.comment.getAttribute('value')).toBe("Some comments");
       // changed in reset function to be 'after reset', was 'Not Empty'

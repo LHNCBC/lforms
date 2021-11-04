@@ -52,7 +52,7 @@ describe('load saved user data', function() {
 
   it('skip logic should work with loaded user data', function() {
     expect(ff.src.getAttribute('value')).toBe('2');
-    expect(ff.t1.isPresent()).toBeFalsy();
+    TestUtil.waitForElementNotPresent(ff.t1);
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t2.getAttribute('value')).toBe('200');
     expect(ff.t4.isDisplayed()).toBe(true);
@@ -118,21 +118,21 @@ describe('load saved user data', function() {
     expect(ff.rpTarget2b.isDisplayed()).toBe(true);
     ff.rpSrc2.clear();
     TestUtil.sendKeys(ff.rpSrc2, '1');
-    expect(ff.rpTarget2a.isPresent()).toBe(false); 
-    expect(ff.rpTarget2b.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(ff.rpTarget2a);
+    TestUtil.waitForElementNotPresent(ff.rpTarget2b);
   });
 
   it('form should be actionable', function() {
 
     // add a repeating item
     TestUtil.clickAddRemoveButton(ff.rpq1_add_btn);
-    expect(ff.rpq1_add_btn.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(ff.rpq1_add_btn);
     expect(ff.rpq1_add_btn_3.isDisplayed()).toBe(true);
     expect(ff.rpq1_add_btn_3.getText()).toBe('+ Add another "A Repeating Item"');
     expect(ff.rpq1_3.getAttribute('value')).toBe('');
     // add a repeating section
     TestUtil.clickAddRemoveButton(ff.rpq4_add_btn_1);
-    expect(ff.rpq4_add_btn_1.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(ff.rpq4_add_btn_1);
     expect(ff.rpq4_add_btn_1b.isDisplayed()).toBe(true);
     expect(ff.rpq4_add_btn_1b.getText()).toBe('+ Add another "A repeating section in a repeating section"');
     expect(ff.rpq5_4.getAttribute('value')).toBe('');
@@ -176,7 +176,7 @@ describe('load saved user data', function() {
     expect(item31.getAttribute('value')).toBe('');
     expect(item311.isDisplayed()).toBe(true);
     expect(item311.getAttribute('value')).toBe('');
-    expect(item312.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(item312);
 
   });
 

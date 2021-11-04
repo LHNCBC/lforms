@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ScreenReaderLog } from './screen-reader-log';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 
 /**
  * A data service for the form data object that is used by various components
