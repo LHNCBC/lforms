@@ -10,12 +10,12 @@ Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The 
 1. Check out the 'next' branch (or the branch you are working on) from git repository
 1. `source bashrc.lform` (make sure node dir is availabel at ~/)    
 1. `npm ci`
-1. `bower install` (you may need to run `source bashrc.lform` again)
-1. `npm run build` (this is to build FHIR libs. `npm run test` will fail)
+1. `bower install` (You may need to run `source bashrc.lform` again.)
+1. `npm run build` (Optional, the 'next' lforms needs the fhir libs, which are already in git. This is to rebuild FHIR libs. `npm run test` does not work.)
 1. `cd next`
 1. `source bashrc.next`
 1. `npm ci`
-1. `npm run test:e2e:prepare` (this also copies some files (FHIR libs and others) to the right locations for tests.)
+1. `npm run test:e2e:prepare` (This also copies some files (FHIR libs and others) to the right locations for tests.)
 
 ## Build
 
