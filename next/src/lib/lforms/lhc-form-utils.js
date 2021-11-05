@@ -63,13 +63,26 @@ const FormUtils = {
     formContainer.appendChild(eleLhcForm)
 
     var rtnPromise = new Promise(function(resolve, reject) {
-      eleLhcForm.lfData = formDataDef;
-      eleLhcForm.lfOptions = options;
-      eleLhcForm.prepop = prepop;
-      eleLhcForm.addEventListener('onFormReady', function(e){
-        resolve()
-      });      
+      try {
+        eleLhcForm.lfData = formDataDef;
+        eleLhcForm.lfOptions = options;
+        eleLhcForm.prepop = prepop;
+        eleLhcForm.addEventListener('onFormReady', function(e){
+          resolve()
+        });        
+      }
+      catch(e) {
+        reject(e)
+      }
+    }).catch(function(e) {
+      var errMsg = (e instanceof Error) ? e.message : e.toString();
+      const divMessage = document.createElement("div");    
+      divMessage.innerHTML = '<div id=lformsErrors style="color: red"><b>Unable to '+
+      'display the form, due to the following error:</b><p id=lformsErrorContent>' + errMsg + '</p>';
+      formContainer.appendChild(divMessage)
+      throw e;
     });
+
     return rtnPromise;
   },
 

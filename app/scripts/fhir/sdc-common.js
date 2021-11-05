@@ -168,8 +168,8 @@ function addCommonSDCFns(ns) {
    */
   self.hasResponsiveExpression = function(itemOrLFData) {
     var ext = itemOrLFData._fhirExt;
-    return ext ?
-      !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
+    return ext ? !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp] ||
+       ext[self.fhirExtEnableWhenExp]) : false;
   };
 
 
@@ -214,9 +214,9 @@ function addCommonSDCFns(ns) {
     // Initialize a map for testing whether an extension is an Expression extension.
     // The keys are the URIs, and the values are see to true.
     if (!self.isExpressionExtension) {
-      self.isExpressionExtension = [self.fhirExtCalculatedExp, self.fhirExtInitialExp,
-        self.fhirExtAnswerExp, self.fhirExtVariable].reduce((x, k)=>{
-        x[k]=true; return x}, {});
+      self.isExpressionExtension = [self.fhirExtCalculatedExp,
+        self.fhirExtInitialExp, self.fhirExtAnswerExp, self.fhirExtVariable,
+        self.fhirExtEnableWhenExp].reduce((x, k)=>{x[k]=true; return x}, {});
     }
 
     if (itemOrLFData.extension) {

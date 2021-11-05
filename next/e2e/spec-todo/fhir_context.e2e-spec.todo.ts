@@ -9,6 +9,7 @@ let tp: TestPage;
 let LForms: any = (global as any).LForms;
 tp = new TestPage();
 var ff = tp.USSGFHTVertical;
+var EC = protractor.ExpectedConditions;
 
 //NEXT: TODO: requires to rewrite the /test/build_test_fhirpath.html and modift the tests below accordingly.
 
@@ -23,7 +24,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         it('should be retrieved when a terminology server is specified', function() {
           let selfAdopted = element(by.id('/54126-8/54128-4/1/1'));
-          var EC = protractor.ExpectedConditions;
           browser.wait(EC.presenceOf(selfAdopted), 200000);
           selfAdopted.click();
           tp.Autocomp.helpers.thirdSearchRes.click();
@@ -36,12 +36,34 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           tp.Autocomp.helpers.thirdSearchRes.click();
           expect(relativeAdopted.getAttribute('value')).toBe("High");
         });
+
+        it('should show an error if a ValueSet cannot be loaded', function() {
+          tp.openTestPage('/test/addFormToPageTestFHIRContext.html');
+
+          browser.driver.executeAsyncScript(function () {
+            var callback = arguments[arguments.length - 1];
+            $.getJSON('/data/R4/brokenValueSet.json', function(fhirData) {
+              LForms.Util.addFormToPage(fhirData, 'formContainer2', { fhirVersion: 'R4' });
+              callback();
+            });
+          }).then(function () {
+            // Confirm the error message shows up
+            browser.wait(function() {
+              var elem = $('#formContainer2');
+              testUtil.waitForElementPresent(elem);
+              return elem.getText().then((t)=>t.indexOf("error")); // error messages
+            });
+          });
+        });
       });
 
       describe('External autocomplete answerValueSets', function() {
         it('should be able to search via ValueSet expansion', function () {
+          tp.openBuildTestFHIRPath();
+          tp.loadFromTestData('fhir-context-q.json', fhirVersion);
           var ethnicity = ff.ethnicity;
-          TestUtil.sendKeys(ethnicity(), 'arg');
+          browser.wait(EC.presenceOf(ethnicity()), 200000);
+          testUtil.sendKeys(ethnicity(), 'arg');
           tp.Autocomp.helpers.waitForSearchResults();
           expect(tp.Autocomp.helpers.firstSearchRes.getText()).toBe('Argentinean');
 
