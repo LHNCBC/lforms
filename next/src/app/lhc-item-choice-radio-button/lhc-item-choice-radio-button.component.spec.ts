@@ -12,14 +12,14 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   let itemRadioCNE: any =  {
     "questionCode": "q1a",
-    "question": "Answer RADIO_CHECKBOX layout --CNE, --2 columns",
+    "question": "Answer RADIO_CHECKBOX layout --CNE, --1 column",
     "copyrightNotice": "a notice",
     "codingInstructions": "coding instructions",
     "dataType": "CNE",
     "displayControl": {
       "answerLayout": {
         "type": "RADIO_CHECKBOX",
-        "columns": "2"
+        "columns": "1"
       }
     },
     "_elementId": "radio-cne",
@@ -143,7 +143,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     ],
     "linkId": "/q1a"
   };
-    
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemChoiceRadioButtonComponent ],
@@ -173,7 +173,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
     itemRadioCNE.answers.forEach(answer => {
       const radio = element.querySelector('#' + itemRadioCNE._elementId + answer.code)
-      expect(radio.textContent).toContain(answer.text)  
+      expect(radio.textContent).toContain(answer.text)
     })
 
   })
@@ -187,12 +187,12 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
     itemRadioCWE.answers.forEach(answer => {
       const radio = element.querySelector('#' + itemRadioCWE._elementId + answer.code)
-      expect(radio.textContent).toContain(answer.text)  
+      expect(radio.textContent).toContain(answer.text)
     })
 
     const radio = element.querySelector('#' + itemRadioCWE._elementId + '_other')
-    expect(radio.textContent).toContain('Other')  
-    
+    expect(radio.textContent).toContain('Other')
+
   })
 
   it('should set item.value', () => {
@@ -250,9 +250,9 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
       expect(component.item.value).toEqual({
         "text": "some value",
         "_notOnList": true
-      })  
+      })
 //    })
-   
+
   })
 
   it('should set the radio button, when the item has an initial value', () => {
@@ -262,7 +262,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     }
     component.item = itemRadioCNE;
     component.ngOnChanges(null); // manually invoke ngOnChange, but why above tests do not need to??
-    
+
     fixture.detectChanges();
 
     expect(component.item.value).toEqual({
@@ -274,7 +274,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     let radio:HTMLInputElement = element.querySelector('#' + itemRadioCNE._elementId + itemRadioCNE.answers[0].code + ' input[type="radio"]')
     console.log(radio)
     console.log(radio.checked)
-    
+
     //TODO: radio.checked should be set to true as it is the case in non-test env
 //      expect(radio.checked).toBeTruthy();
 
@@ -308,7 +308,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     let radio:HTMLInputElement = element.querySelector('#' + itemRadioCWE._elementId + '_other' + ' input[type="radio"]')
     console.log(radio)
     console.log(radio.checked)
-    
+
     //TODO: radio.checked should be set to true as it is the case in non-test env
 //      expect(radio.checked).toBeTruthy();
 
@@ -319,8 +319,22 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
       "code": "c2",
       "text": "Answer Y",
       "_displayText": "Answer Y"
-    })  
+    })
   })
+
+  it('should have vertical class with column 1', () => {
+    component.item = itemRadioCNE;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('nz-radio-group');
+    expect(containerDiv.classList).toContain('vertical');
+  });
+
+  it('should not have vertical class with column 2', () => {
+    component.item = itemRadioCWE;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('nz-radio-group');
+    expect(containerDiv.classList).not.toContain('vertical');
+  });
 
 
 

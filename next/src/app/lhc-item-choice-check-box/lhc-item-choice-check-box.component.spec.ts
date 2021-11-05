@@ -12,14 +12,14 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   let itemCheckboxCNE:any =  {
     "questionCode": "q1a",
-    "question": "Answer RADIO_CHECKBOX layout --CNE, --2 columns",
+    "question": "Answer RADIO_CHECKBOX layout --CNE, --1 column",
     "copyrightNotice": "a notice",
     "codingInstructions": "coding instructions",
     "dataType": "CNE",
     "displayControl": {
       "answerLayout": {
         "type": "RADIO_CHECKBOX",
-        "columns": "2"
+        "columns": "1"
       }
     },
     "_elementId": "checkbox-cne",
@@ -174,7 +174,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
     itemCheckboxCNE.answers.forEach(answer => {
       const radio = element.querySelector('#' + itemCheckboxCNE._elementId + answer.code)
-      expect(radio.textContent).toContain(answer.text)  
+      expect(radio.textContent).toContain(answer.text)
     })
 
   })
@@ -188,12 +188,12 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
     itemCheckboxCWE.answers.forEach(answer => {
       const radio = element.querySelector('#' + itemCheckboxCWE._elementId + answer.code)
-      expect(radio.textContent).toContain(answer.text)  
+      expect(radio.textContent).toContain(answer.text)
     })
 
     const radio = element.querySelector('#' + itemCheckboxCWE._elementId + '_other')
-    expect(radio.textContent).toContain('Other')  
-    
+    expect(radio.textContent).toContain('Other')
+
   })
 
   it('should set item.value', () => {
@@ -266,8 +266,22 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
       }])
 
 //    })
-   
+
   })
+
+  it('should have vertical class with column 1', () => {
+    component.item = itemCheckboxCNE;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('div[nz-row]');
+    expect(containerDiv.classList).toContain('vertical');
+  });
+
+  it('should not have vertical class with column 2', () => {
+    component.item = itemCheckboxCWE;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('div[nz-row]');
+    expect(containerDiv.classList).not.toContain('vertical');
+  });
 
 //   it('should set the checkbox, when the item has an initial value', () => {
 //     itemCheckboxCNE.value = [{
@@ -276,7 +290,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 //     }]
 //     component.item = itemCheckboxCNE;
 //     component.ngOnChanges(null); // manually invoke ngOnChange, but why above tests do not need to??
-    
+
 //     fixture.detectChanges();
 
 //     expect(component.item.value).toEqual([{
@@ -288,7 +302,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 //     let checkbox:HTMLInputElement = element.querySelector('#' + itemCheckboxCNE._elementId + itemCheckboxCNE.answers[0].code + ' input[type="checkbox"]')
 //     console.log(checkbox)
 //     console.log(checkbox.checked)
-    
+
 //     //TODO: checkbox.checked should be set to true as it is the case in non-test env
 // //      expect(checkbox.checked).toBeTruthy();
 
@@ -327,7 +341,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 //     let checkbox:HTMLInputElement = element.querySelector('#' + itemCheckboxCWE._elementId + '_other' + ' input[type="checkbox"]')
 //     console.log(checkbox)
 //     console.log(checkbox.checked)
-    
+
 //     //TODO: checkbox.checked should be set to true as it is the case in non-test env
 // //      expect(checkbox.checked).toBeTruthy();
 
@@ -341,7 +355,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 //       "code": "c2",
 //       "text": "Answer Y",
 //       "_displayText": "Answer Y"
-//     }])  
+//     }])
 //   })
 
 });
