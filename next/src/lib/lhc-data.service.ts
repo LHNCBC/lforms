@@ -224,7 +224,8 @@ export class LhcDataService {
    * @returns {boolean}
    */
   targetShown(item) {
-    return this.lhcFormData ? this.lhcFormData.getSkipLogicClass(item) !== 'target-disabled' : null;
+    return this.lhcFormData ? item._enableWhenExpVal !== false && 
+      this.lhcFormData.getSkipLogicClass(item) !== 'target-disabled' : null;
   }
 
 

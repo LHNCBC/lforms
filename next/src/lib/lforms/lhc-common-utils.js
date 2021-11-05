@@ -305,6 +305,20 @@ const CommonUtils = {
   },
 
 
+  /**
+   *  Shows a warning message, typically about some problem with the form
+   *  definition.
+   * @param msg the message to show
+   * @param item (optional) the item in the form to which the message applies.
+   */
+   showWarning: function(msg, item) {
+    if (item)
+      msg = 'The question "'+item.text+'" produced the following warning:  '+msg;
+    console.log(msg);
+    // TBD: add a warning visible on the page.
+  },
+  
+
   // TODO: move to lhc-form-utils.js
   /**
    * Check if an item's value is empty, where the data has no meaningful use.
