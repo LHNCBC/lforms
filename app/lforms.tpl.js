@@ -10,17 +10,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "     placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "     id=\"{{'file-'+item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "     ng-blur=\"activeRowOnBlur(item)\" >\n" +
-    "    <button class=\"lf-attachment-button toggle-attachment-fields\" title=\"{{item._useURL ?\n" +
+    "    <button type=\"button\" class=\"lf-attachment-button toggle-attachment-fields\" title=\"{{item._useURL ?\n" +
     "     'Hide URL field' : 'Show URL field'}}\"\n" +
     "     ng-click=\"item._useURL = !item._useURL\">&#x21af;</button>\n" +
     "    <div ng-if=\"item._useURL\">\n" +
     "      <label>URL for file:\n" +
-    "      <input type=\"string\" ng-disabled=\"item._readOnly\"\n" +
+    "      <input type=\"string\" ng-disabled=\"item._readOnly\" class=\"lf-attachment-url\"\n" +
     "       ng-model=\"item._attachmentURL\" placeholder=\"URL for retrieving file\" ng-focus=\"setActiveRow(item)\"\n" +
     "       ng-blur=\"activeRowOnBlur(item)\" >\n" +
     "      <input type=\"string\" ng-disabled=\"item._readOnly\" ng-focus=\"setActiveRow(item)\"\n" +
     "       ng-blur=\"activeRowOnBlur(item)\" ng-model=\"item._attachmentName\" placeholder=\"File name (optional)\">\n" +
-    "      <button class=\"lf-float-button attach-button\" ng-click=\"createAttachment(item)\"\n" +
+    "      <button type=\"button\" class=\"lf-float-button attach-button\" ng-click=\"createAttachment(item)\"\n" +
     "       >Attach URL{{item._fileInfo ? ' and file data': ''}}</button><br>\n" +
     "      Note:  The URL you enter will not be downloaded or\n" +
     "      verified, but simply copied into your response.  Please ensure\n" +
@@ -453,7 +453,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "          <lf-attachment ng-switch-when=\"attachment\" item=\"item\"\n" +
-    "           create-attachment=\"createAttachment(item)\" id=\"item._elementId\"></lf-attachment>\n" +
+    "           create-attachment=\"createAttachment(item)\" id=\"attachment-{{item._elementId}}\"></lf-attachment>\n" +
     "          <input ng-switch-default name=\"{{item._text}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +

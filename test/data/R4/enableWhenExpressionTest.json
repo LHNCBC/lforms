@@ -1,0 +1,101 @@
+{
+  "status": "draft",
+  "title": "Test for enableWhenExpression",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 29.2.1"
+      }
+    ]
+  },
+  "extension": [{
+    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+    "valueExpression" : {
+      "name": "n1_exists",
+      "language": "text/fhirpath",
+      "expression": "%resource.item.where(linkId='n1').answer.value.exists()"
+    }
+  },
+  {
+    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+    "valueExpression" : {
+      "name": "n2_exists",
+      "language": "text/fhirpath",
+      "expression": "%resource.item.where(linkId='n2').answer.value.exists()"
+    }
+  },
+  {
+    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+    "valueExpression" : {
+      "name": "n3_exists",
+      "language": "text/fhirpath",
+      "expression": "%resource.item.where(linkId='n3').answer.value.exists()"
+    }
+  },
+  {
+    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+    "valueExpression" : {
+      "name": "n1_val",
+      "language": "text/fhirpath",
+      "expression": "iif(%n1_exists, %resource.item.where(linkId='n1').answer.value, 0)"
+    }
+  },
+  {
+    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+    "valueExpression" : {
+      "name": "n2_val",
+      "language": "text/fhirpath",
+      "expression": "iif(%n2_exists, %resource.item.where(linkId='n2').answer.value, 0)"
+    }
+  },
+  {
+    "url": "http://hl7.org/fhir/StructureDefinition/variable",
+    "valueExpression" : {
+      "name": "n3_val",
+      "language": "text/fhirpath",
+      "expression": "iif(%n3_exists, %resource.item.where(linkId='n3').answer.value, 0)"
+    }
+  }],
+  "item": [
+    {
+      "type": "display",
+      "linkId": "instructions",
+      "text": "Enter numbers totaling 5 or more to show a fourth question"
+    },
+    {
+      "type": "decimal",
+      "required": false,
+      "linkId": "n1",
+      "text": "First number"
+    },
+    {
+      "type": "decimal",
+      "required": false,
+      "linkId": "n2",
+      "text": "Second number"
+    },
+    {
+      "type": "decimal",
+      "required": false,
+      "linkId": "n3",
+      "text": "Third number"
+    },
+    {
+      "type": "string",
+      "required": false,
+      "linkId": "q4",
+      "text": "Fourth question, controlled by enableWhenExpression",
+      "extension": [{
+        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+        "valueExpression" : {
+          "language": "text/fhirpath",
+          "expression": "%n1_val + %n2_val + %n3_val >= 5"
+        }
+      }]
+    }
+  ]
+}

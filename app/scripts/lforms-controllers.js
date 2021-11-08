@@ -358,7 +358,8 @@ angular.module('lformsWidget')
          * @returns {boolean}
          */
         $scope.targetShown = function(item) {
-          return $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
+          return item._enableWhenExpVal !== false &&
+            $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
         };
 
 
@@ -497,7 +498,8 @@ angular.module('lformsWidget')
                 for (var i= 0, iLen=$scope.lfData.itemList.length; i<iLen; i++) {
                   var item = $scope.lfData.itemList[i];
                   if (item._formulaTargets || item._dataControlTargets || item._skipLogicTargets) {
-                    watchedSourceItems.push({value: item.value, unit: item.unit, id: item._elementId});
+                    watchedSourceItems.push({value: item.value, unit: item.unit,
+                      id: item._elementId, enableWhenExp: item._enableWhenExpVal});
                   }
                 }
               }
