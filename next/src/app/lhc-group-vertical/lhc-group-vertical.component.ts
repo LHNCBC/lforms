@@ -4,8 +4,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 @Component({
   selector: 'lhc-group-vertical',
   templateUrl: './lhc-group-vertical.component.html',
-  styleUrls: ['./lhc-group-vertical.component.css'],
-  // providers: [LhcDataService]
+  styleUrls: ['./lhc-group-vertical.component.css']
 })
 export class LhcGroupVerticalComponent implements OnInit {
 

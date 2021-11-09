@@ -8,9 +8,9 @@ Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The 
 
 ## Dev Env setup (Temporarily when the lforms and the this 'next' version co-exist in the same project)
 1. Check out the 'next' branch (or the branch you are working on) from git repository
-1. `source bashrc.lform` (make sure node dir is availabel at ~/)    
+1. `source bashrc.lforms` (make sure node dir is availabel at ~/)    
 1. `npm ci`
-1. `bower install` (You may need to run `source bashrc.lform` again.)
+1. `bower install` (You may need to run `source bashrc.lforms` again.)
 1. `npm run build` (Optional, the 'next' lforms needs the fhir libs, which are already in git. This is to rebuild FHIR libs. `npm run test` does not work.)
 1. `cd next`
 1. `source bashrc.next`

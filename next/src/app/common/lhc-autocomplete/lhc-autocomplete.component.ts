@@ -138,6 +138,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
   /**
    * Clean up the autocompleter if there is one
+   * @param keepDataModel whether to keep the data model on the autocompleter. default is false.
    */
   cleanupAutocomplete(keepDataModel:boolean=false): void {
     if (this.acInstance) {
@@ -251,21 +252,15 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         else {// handle the case of an empty object as a model
           this.acInstance.setFieldVal('', false);
         }
-
         this.dataModel = itemValue;
-        // // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
-        // let that = this;
-        // // setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
-        // setTimeout(function(){ that.dataModelChange.emit(that.dataModel); }, 1);
       }
     }
-
   }
   
 
   /**
-   *
-   * @param event item selection handler
+   * Event hanlder for when an answer item is selected
+   * @param event the event emitted from an autocompleter
    */
   onSelectionHandler(event) {
 
