@@ -144,7 +144,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     if (this.acInstance) {
       // reset the field value 
       this.acInstance.setFieldVal('', false);
-      // reset the data model
+      // reset the data model value
       if (!keepDataModel) {
         this.dataModel = null;
       }      
@@ -259,7 +259,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   
 
   /**
-   * Event hanlder for when an answer item is selected
+   * Event handler for when an answer item is selected
    * @param event the event emitted from an autocompleter
    */
   onSelectionHandler(event) {

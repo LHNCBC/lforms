@@ -13,7 +13,7 @@
     "copy": "npm run copy-es5-build && npm run copy-fhir-lib",
     "test:unit": "ng test --watch=false",
     "test:e2e": "ng e2e --port 4201 --webdriverUpdate=false",
-    "test:e2e:prepare": "npm run build:elements && npm run copy && npm run update-webdriver",
+    "test:e2e:prepare": "npm run copy-es5-build && npm run update-webdriver",
     "test": "npm run test:e2e:prepare && npm run test:unit && npm run test:e2e",
     "test-coverage": "ng test --no-watch --code-coverage",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')"

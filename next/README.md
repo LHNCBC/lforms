@@ -2,9 +2,6 @@
 
 This project generates a web component of the new LForms widget.
 
-## Development server
-
-Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Dev Env setup (Temporarily when the lforms and the this 'next' version co-exist in the same project)
 1. Check out the 'next' branch (or the branch you are working on) from git repository
@@ -15,19 +12,27 @@ Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The 
 1. `cd next`
 1. `source bashrc.next`
 1. `npm ci`
-1. `npm run test:e2e:prepare` (This also copies some files (FHIR libs and others) to the right locations for tests.)
+1. `npm run copy-fhir-libs` (This copies the FHIR libs from the current lforms to this project.)
+
+## Development server
+
+1. Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+1. Run `npm run start-public` if you need to access to the dev server from a different machine. For example, to run Narrator from a Windows PC.
 
 ## Build
 
-1. Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+1. Run `npm run build` to build the project. The build artifacts will be stored in the `/dist` directory. Use the `--prod` flag for a production build. It generates two versions of the js files: ES5 version and ES2015 vresion. The `/dist` directory is deleted and recreated during the process.
 
-2. Run `npm run build:elements` to build the project and generate an ES5 js file of the web component.
+1. Run `npm run build:elements` to build the project and generate production version of the js files, which are much smaller than non-production version. It also concatenate all ES5 js files of the web component into a single `lhc-forms.es5.js` file (along with a `styles.css` file) in the /elements directory, which are used in e2e tests and can be distributed.
 
 ## Running unit tests
 
 1. Run `npm run test:unit` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## Running end-to-end tests
+1. Run `npm run build:elements` to build the project and generate an ES5 js file of the web component.
+
 1. Run `npm run test:e2e:prepare` to build the project and copy some files for the tests.
 
-2. Run `npm run test:e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). The e2e tests is configured to use Chrome. If Chrome has been updated, run `npm run update-webdriver` to update the Chrome web driver.
+1. Run `npm run test:e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). The e2e tests is configured to use Chrome. If Chrome has been updated, run `npm run update-webdriver` to update the Chrome web driver.
