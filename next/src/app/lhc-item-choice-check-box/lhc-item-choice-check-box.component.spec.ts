@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box.component';
-
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemChoiceCheckBoxComponent', () => {
   let component: LhcItemChoiceCheckBoxComponent;
@@ -148,7 +148,8 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemChoiceCheckBoxComponent ],
-      imports: [FormsModule, NzCheckboxModule, NzGridModule]
+      imports: [FormsModule, NzCheckboxModule, NzGridModule],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

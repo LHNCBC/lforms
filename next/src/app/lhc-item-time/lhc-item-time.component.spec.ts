@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcItemTimeComponent } from './lhc-item-time.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemTimeComponent', () => {
   let component: LhcItemTimeComponent;
@@ -8,7 +8,8 @@ describe('LhcItemTimeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemTimeComponent ]
+      declarations: [ LhcItemTimeComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

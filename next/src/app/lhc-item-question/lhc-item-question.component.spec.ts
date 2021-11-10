@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcItemQuestionComponent } from './lhc-item-question.component';
 import { LhcItemQuestionTextComponent } from '../lhc-item-question-text/lhc-item-question-text.component';
+import { WindowService } from '../../lib/window.service';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemQuestionComponent', () => {
   let component: LhcItemQuestionComponent;
@@ -12,7 +13,8 @@ describe('LhcItemQuestionComponent', () => {
       declarations: [ 
         LhcItemQuestionComponent,
         LhcItemQuestionTextComponent 
-      ]
+      ],
+      providers: [LhcDataService, WindowService]
     })
     .compileComponents();
   });

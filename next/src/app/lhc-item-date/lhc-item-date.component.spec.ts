@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcItemDateComponent } from './lhc-item-date.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemDateComponent', () => {
   let component: LhcItemDateComponent;
@@ -8,9 +8,11 @@ describe('LhcItemDateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemDateComponent ]
+      declarations: [ LhcItemDateComponent ],
+      providers: [LhcDataService]
     })
-    .compileComponents();
+    .compileComponents()
+
   });
 
   beforeEach(() => {

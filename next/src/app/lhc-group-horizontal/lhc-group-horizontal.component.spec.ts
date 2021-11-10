@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcGroupHorizontalComponent', () => {
   let component: LhcGroupHorizontalComponent;
@@ -111,7 +111,8 @@ describe('LhcGroupHorizontalComponent', () => {
  
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcGroupHorizontalComponent ]
+      declarations: [ LhcGroupHorizontalComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });
