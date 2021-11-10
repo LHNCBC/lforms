@@ -20,6 +20,6 @@
   color: rgba(0,0,0,0.85);
 }
 
-.vertical {
+.lhc-vertical {
   flex-direction: column;
 }
