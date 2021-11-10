@@ -1,5 +1,5 @@
 <nz-checkbox-wrapper style="width: 100%;"  (nzOnChange)="onCheckboxModelChange($event)" *ngIf="item">
-  <div nz-row [ngClass]="{'lhc-vertical': item.displayControl?.answerLayout?.columns === '1'}">
+  <div nz-row [ngClass]="{'lhc-vertical': isVertical}">
     <div *ngFor="let answer of item._modifiedAnswers; index as i">
       <label nz-checkbox [nzValue]="answer" [(ngModel)]="checkboxModels[i]"
       [nzDisabled]="item._readOnly"

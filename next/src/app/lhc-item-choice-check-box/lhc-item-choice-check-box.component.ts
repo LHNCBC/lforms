@@ -10,6 +10,11 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 })
 export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
 
+  get isVertical() {
+    return this.item.displayControl?.answerLayout?.columns !== undefined
+      && this.item.displayControl.answerLayout.columns !== '0';
+  }
+
   @Input() item;
 
   // internal data models
@@ -59,7 +64,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   ngOnInit(): void {
   }
 
-  
+
   /**
    * Invokded when the properties change
    * @param changes changes.prop contains the old and the new value...

@@ -10,6 +10,11 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 })
 export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
 
+  get isVertical() {
+    return this.item.displayControl?.answerLayout?.columns !== undefined
+      && this.item.displayControl.answerLayout.columns !== '0';
+  }
+
   @Input() item;
 
   // internal data models
@@ -19,7 +24,7 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
   otherRadioModel: boolean = null;
 
   constructor(
-    private commonUtils: CommonUtilsService, 
+    private commonUtils: CommonUtilsService,
     public lhcDataService: LhcDataService) {}
 
 
@@ -56,7 +61,7 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
           let answer = this.item._modifiedAnswers[i];
           if (this.commonUtils.areTwoAnswersSame(this.item.value, answer, this.item)) {
             this.radioModels[i] = true;
-            break;    
+            break;
           }
         }
       }

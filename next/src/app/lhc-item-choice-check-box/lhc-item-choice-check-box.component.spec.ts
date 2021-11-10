@@ -79,14 +79,14 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   let itemCheckboxCWE:any =  {
     "questionCode": "q1a",
-    "question": "Answer RADIO_CHECKBOX layout --CNE, --2 columns",
+    "question": "Answer RADIO_CHECKBOX layout --CNE, --0 columns",
     "copyrightNotice": "a notice",
     "codingInstructions": "coding instructions",
     "dataType": "CWE",
     "displayControl": {
       "answerLayout": {
         "type": "RADIO_CHECKBOX",
-        "columns": "2"
+        "columns": "0"
       }
     },
     "_elementId": "checkbox-cwe",
@@ -269,18 +269,18 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   })
 
-  it('should have vertical class with column 1', () => {
+  it('should have lhc-vertical class with column 1', () => {
     component.item = itemCheckboxCNE;
     fixture.detectChanges();
     const containerDiv = element.querySelector('div[nz-row]');
-    expect(containerDiv.classList).toContain('vertical');
+    expect(containerDiv.classList).toContain('lhc-vertical');
   });
 
-  it('should not have vertical class with column 2', () => {
+  it('should not have lhc-vertical class with column 0', () => {
     component.item = itemCheckboxCWE;
     fixture.detectChanges();
     const containerDiv = element.querySelector('div[nz-row]');
-    expect(containerDiv.classList).not.toContain('vertical');
+    expect(containerDiv.classList).not.toContain('lhc-vertical');
   });
 
 //   it('should set the checkbox, when the item has an initial value', () => {
