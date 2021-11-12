@@ -14,7 +14,7 @@ This project generates a web component of the new LForms widget.
 1. `cd next`
 1. `source bashrc.next`
 1. `npm ci`
-1. `npm run copy-fhir-lib` (This copies the FHIR library from the current lforms to this project.)
+1. `npm run copy-fhir-lib` (This copies the FHIR libraries from the current lforms to this project.)
 
 ## Development server
 
