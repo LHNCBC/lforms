@@ -138,7 +138,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
   /**
    * Clean up the autocompleter if there is one
-   * @param keepDataModel whether to keep the data model on the autocompleter. default is false.
+   * @param keepDataModel whether to keep the data model value on the autocompleter. default is false.
    */
   cleanupAutocomplete(keepDataModel:boolean=false): void {
     if (this.acInstance) {
