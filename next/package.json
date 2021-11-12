@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:public": "ng serve --host 0.0.0.0 --disable-host-check",
+    "start:public": "node bin/start-public.js",
+    "start:public:dist": "node bin/start-public.js  --dist",
     "build:dev": "ng build",
     "build": "ng build --prod --output-hashing none && node concatenate.js",
     "lint": "ng lint",
