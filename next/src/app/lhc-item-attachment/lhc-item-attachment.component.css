@@ -1,0 +1,50 @@
+input[type=file] {
+  border: 1px solid gray;
+  display: inline;
+}
+
+.lf-attachment-button, .attach-button {
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  border-radius: 4px;
+  margin-left: 0.25em;
+  color: white;
+  border: none;
+  background-color: #066aa0;
+}
+
+.lf-attachment-url, .lf-attachment-name {
+  width: inherit !important;
+}
+
+progress {
+  vertical-align: text-bottom;
+}
+
+.download-link {
+  padding-left: 0.5em;
+}
+
+.lhc-button {
+  border: 0 none;
+  cursor: pointer;
+  overflow: visible;
+  padding: 0;
+  position: relative;
+  background-color: #066aa0; /*#458AC5;*/
+}
+
+.lf-rm-attachment-button {
+  font-size: 120%;
+  font-weight: bold;
+  padding: 0;
+  margin-right: 2px;
+  margin-left:2px;
+  vertical-align: middle;
+  background-color: transparent;
+  color: #066aa0;
+}
+
+.lf-rm-attachment-button:hover {
+  color: #0087fd;
+}
