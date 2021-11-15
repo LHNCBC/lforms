@@ -1,4 +1,4 @@
-//NEXT:  Repurposed. this is now for concatecated es5 js files in the /elements directory
+//NEXT:  Repurposed. this is now for concatecated es5 js files in the /dist-element directory
 import { config } from "../../../next/e2e/protractor.conf.js";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 

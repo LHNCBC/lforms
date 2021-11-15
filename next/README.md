@@ -24,7 +24,7 @@ This project generates a web component of the new LForms widget.
 
 ## Build
 
-1. Run `npm run build` to build the project and generate a production version of the js files, which are much smaller than the development version. It generates two versions of the js files: ES5 version and ES2015 vresion. The `/dist` directory is deleted and recreated during the process. It also concatenate all ES5 js files of the web component into a single `lhc-forms.es5.js` file (along with a `styles.css` file) in the `/elements` directory, which are used in e2e tests and can be distributed.
+1. Run `npm run build` to build the project and generate a production version of the js files, which are much smaller than the development version. It generates two versions of the js files: ES5 version and ES2015 vresion. The `/dist` directory is deleted and recreated during the process. It also concatenate all ES5 js files of the web component into a single `lhc-forms.es5.js` file (along with a `styles.css` file) in the `/dist/webcomponent` directory, which are used in e2e tests and can be distributed.
 
 1. Run `npm run build:dev` to build the project and generate a development version of the js files. The build artifacts will be stored in the `/dist` directory. The `/dist` directory is deleted and recreated during the process.
 
