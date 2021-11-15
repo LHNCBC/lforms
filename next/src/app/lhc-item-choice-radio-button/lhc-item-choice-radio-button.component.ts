@@ -8,7 +8,6 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   styleUrls: ['./lhc-item-choice-radio-button.component.css']
 })
 export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
-
   @Input() item;
   @Input() acOptions; // item._autocompOptions
   
@@ -19,7 +18,7 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
   otherRadioModel: boolean = null;
 
   constructor(
-    private commonUtils: CommonUtilsService, 
+    private commonUtils: CommonUtilsService,
     public lhcDataService: LhcDataService) {}
 
 
@@ -56,7 +55,7 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
           let answer = this.item._modifiedAnswers[i];
           if (this.commonUtils.areTwoAnswersSame(this.item.value, answer, this.item)) {
             this.radioModels[i] = true;
-            break;    
+            break;
           }
         }
       }
