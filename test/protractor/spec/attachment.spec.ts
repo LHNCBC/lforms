@@ -202,40 +202,40 @@ describe('Attachment support', ()=>{
   });
 
 
-  // it('should support an attachment in a saved QuestionnaireRepsonse', ()=>{
-  //   tp.openBaseTestPage();
-  //   tp.loadFromTestData('attachmentQ.json');
-  //   // Use the current page to get a QR
-  //   let testFile = tp.getTestDataPathName('attachmentQ.json');
-  //   TestUtil.sendKeys(element(by.id('file-upload/1')), testFile);
-  //   // Confirm the file is replaced by a link
-  //   browser.wait(ExpectedConditions.not(ExpectedConditions.presenceOf(element(by.id('file-upload/1')))), 5000);
-  //   expect(element(by.tagName('a')).getText()).toBe('attachmentQ.json');
-  //   // Get the QuestionnaireResponse
-  //   tp.getQuestionnaireResponse(null).then((qr)=>{
-  //     var q = require(testFile); // read the Questionnaire
-  //     browser.executeScript(
-  //      "var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(arguments[0], 'R4');"+
-  //      "return LForms.Util.mergeFHIRDataIntoLForms('QuestionnaireResponse', arguments[1], lfData, 'R4')",
-  //      q, qr).then((lfData)=>{
-  //       // Open another page where we can use addFormToPage
-  //       tp.openTestPage('/test/addFormToPageTest.html');
-  //       // Add the form as the first on the page
-  //       browser.executeScript("LForms.Util.addFormToPage(arguments[0], 'formContainer2')", lfData);
-  //       expect(element(by.tagName('a')).getText()).toBe('attachmentQ.json');
-  //       // Check the export into FHIR for the value
-  //       browser.executeScript(
-  //        "return LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', '#formContainer2')").then((qr2)=>{
-  //         //@ts-ignore
-  //         let answer = qr2.item[0].answer[0].valueAttachment;
-  //         expect(answer.title).toBe('attachmentQ.json');
-  //         expect(typeof answer.data).toBe('string');
-  //         expect(typeof answer.creation).toBe('string')
-  //         expect(answer.contentType).toBe('application/json');
-  //       });
-  //     });
-  //   });
-  // });
+  it('should support an attachment in a saved QuestionnaireRepsonse', ()=>{
+    tp.openBaseTestPage();
+    tp.loadFromTestData('attachmentQ.json');
+    // Use the current page to get a QR
+    let testFile = tp.getTestDataPathName('attachmentQ.json');
+    TestUtil.sendKeys(element(by.id('file-upload/1')), testFile);
+    // Confirm the file is replaced by a link
+    browser.wait(ExpectedConditions.not(ExpectedConditions.presenceOf(element(by.id('file-upload/1')))), 5000);
+    expect(element(by.tagName('a')).getText()).toBe('attachmentQ.json');
+    // Get the QuestionnaireResponse
+    tp.getQuestionnaireResponse(null).then((qr)=>{
+      var q = require(testFile); // read the Questionnaire
+      browser.executeScript(
+       "var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(arguments[0], 'R4');"+
+       "return LForms.Util.mergeFHIRDataIntoLForms('QuestionnaireResponse', arguments[1], lfData, 'R4')",
+       q, qr).then((lfData)=>{
+        // Open another page where we can use addFormToPage
+        tp.openTestPage('/test/addFormToPageTest.html');
+        // Add the form as the first on the page
+        browser.executeScript("LForms.Util.addFormToPage(arguments[0], 'formContainer2')", lfData);
+        expect(element(by.tagName('a')).getText()).toBe('attachmentQ.json');
+        // // Check the export into FHIR for the value
+        browser.executeScript(
+         "return LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', document.getElementById('formContainer2'))").then((qr2)=>{
+          //@ts-ignore
+          let answer = qr2.item[0].answer[0].valueAttachment;
+          expect(answer.title).toBe('attachmentQ.json');
+          expect(typeof answer.data).toBe('string');
+          expect(typeof answer.creation).toBe('string')
+          expect(answer.contentType).toBe('application/json');
+        });
+      });
+    });
+  });
 
 
   it('should allow extraction of the attachment item into an Observation', function() {
