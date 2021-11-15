@@ -12,5 +12,5 @@ const concat = require('concat');
   await fs.ensureDir('elements')
   await concat(files, 'elements/lhc-forms.es5.js');
   await fs.copyFile('./dist/lforms-next/styles.css', 'elements/styles.css');
-  //await fs.copy('./dist/lforms-next/assets/', 'elements/assets/' )
+  await fs.copy('./dist/lforms-next/assets/', 'elements/assets/' )
 })()
