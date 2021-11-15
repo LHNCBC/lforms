@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcGroupVerticalComponent } from './lhc-group-vertical.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcGroupVerticalComponent', () => {
   let component: LhcGroupVerticalComponent;
@@ -8,7 +8,8 @@ describe('LhcGroupVerticalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcGroupVerticalComponent ]
+      declarations: [ LhcGroupVerticalComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

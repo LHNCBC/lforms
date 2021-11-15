@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcInputComponent } from './lhc-input.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcInputComponent', () => {
   let component: LhcInputComponent;
@@ -8,7 +8,8 @@ describe('LhcInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcInputComponent ]
+      declarations: [ LhcInputComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

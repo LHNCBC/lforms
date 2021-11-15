@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
 import { Subject } from 'rxjs';
-import { throttleTime, debounceTime} from 'rxjs/operators';
+import { debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
@@ -15,7 +15,8 @@ declare var ResizeObserver;
   //encapsulation: ViewEncapsulation.ShadowDom,
   //changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './lhc-form.component.html',
-  styleUrls: ['./lhc-form.component.css']
+  styleUrls: ['./lhc-form.component.css'],
+  providers: [WindowService, LhcDataService] // These two services are not provided in root.
 })
 export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 

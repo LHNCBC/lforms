@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcItemSimpleTypeComponent } from './lhc-item-simple-type.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemSimpleTypeComponent', () => {
   let component: LhcItemSimpleTypeComponent;
@@ -8,7 +8,8 @@ describe('LhcItemSimpleTypeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemSimpleTypeComponent ]
+      declarations: [ LhcItemSimpleTypeComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

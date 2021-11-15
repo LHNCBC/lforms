@@ -6,7 +6,10 @@ describe('LhcDataService', () => {
   let service: LhcDataService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      declarations: [],
+      providers: [LhcDataService]
+    });
     service = TestBed.inject(LhcDataService);
   });
 
