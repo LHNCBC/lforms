@@ -825,22 +825,22 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should have functioning skiplogic when codes are not present', function() {
             let packungenField = element(by.id('1.5.4/1/1/1'));
-            expect(packungenField.isPresent()).toBe(false);
+            TestUtil.waitForElementNotPresent(packungenField);
             let raucherField = element(by.id('1.5.1/1/1/1'));
             raucherField.click();
-            expect(packungenField.isPresent()).toBe(true);
+            TestUtil.waitForElementPresent(packungenField);
             raucherField.click();
-            expect(packungenField.isPresent()).toBe(false);
+            TestUtil.waitForElementNotPresent(raucherField);
           });
 
           it('should have functioning skiplogic when the codes are present', function() {
             let progressField = element(by.id('4.3.3.1/1/1/1/1'));
             let zeitpunktField = element(by.id('4.3.3.2/1/1/1/1'));
-            expect(zeitpunktField.isPresent()).toBe(false);
+            TestUtil.waitForElementNotPresent(zeitpunktField);
             progressField.click();
-            expect(zeitpunktField.isPresent()).toBe(true);
+            TestUtil.waitForElementPresent(zeitpunktField);
             progressField.click();
-            expect(zeitpunktField.isPresent()).toBe(false);
+            TestUtil.waitForElementNotPresent(zeitpunktField);
           });
         });
       });

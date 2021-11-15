@@ -21,7 +21,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         tp.openBaseTestPage();
         tp.loadFromTestData('Argonaut-questionnaire-questionnaire-example-asq3.json', fhirVersion);
         let hiddenInstructionsField = element(by.id('label-G0.d/1/1'));
-        expect(hiddenInstructionsField.isPresent()).toBe(false);
+        TestUtil.waitForElementNotPresent(hiddenInstructionsField)
       });
 
       it('non-hidden field G1/G1.4 should be displayed', function() {

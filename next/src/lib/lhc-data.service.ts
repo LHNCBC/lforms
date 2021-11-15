@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ScreenReaderLog } from './screen-reader-log';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 
 /**
  * A data service for the form data object that is used by various components
@@ -224,7 +224,8 @@ export class LhcDataService {
    * @returns {boolean}
    */
   targetShown(item) {
-    return this.lhcFormData ? this.lhcFormData.getSkipLogicClass(item) !== 'target-disabled' : null;
+    return this.lhcFormData ? item._enableWhenExpVal !== false && 
+      this.lhcFormData.getSkipLogicClass(item) !== 'target-disabled' : null;
   }
 
 

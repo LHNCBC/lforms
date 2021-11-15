@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'lhc-item-quantity',
   templateUrl: './lhc-item-quantity.component.html',
-  styleUrls: ['./lhc-item-quantity.component.css'],
-  encapsulation: ViewEncapsulation.Emulated
+  styleUrls: ['./lhc-item-quantity.component.css']
 })
 export class LhcItemQuantityComponent implements OnInit {
 

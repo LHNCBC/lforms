@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcItemQuestionTextComponent } from './lhc-item-question-text.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemQuestionTextComponent', () => {
   let component: LhcItemQuestionTextComponent;
@@ -8,7 +8,8 @@ describe('LhcItemQuestionTextComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemQuestionTextComponent ]
+      declarations: [ LhcItemQuestionTextComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

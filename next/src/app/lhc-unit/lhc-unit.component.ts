@@ -1,11 +1,10 @@
-import { Component, OnInit, OnChanges, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-unit',
   templateUrl: './lhc-unit.component.html',
-  styleUrls: ['./lhc-unit.component.css'],
-  encapsulation: ViewEncapsulation.Emulated
+  styleUrls: ['./lhc-unit.component.css']
 })
 export class LhcUnitComponent implements OnInit, OnChanges {
 

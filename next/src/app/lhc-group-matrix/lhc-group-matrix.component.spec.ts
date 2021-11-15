@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcGroupMatrixComponent } from './lhc-group-matrix.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcGroupMatrixComponent', () => {
   let component: LhcGroupMatrixComponent;
@@ -8,7 +8,8 @@ describe('LhcGroupMatrixComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcGroupMatrixComponent ]
+      declarations: [ LhcGroupMatrixComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

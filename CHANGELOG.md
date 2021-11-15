@@ -2,6 +2,25 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [29.3.1] 2021-10-20
+### Fixed
+- If a form contained an attachment type question, hitting enter in another
+  field opened up the attachment options.
+
+## [29.3.0] 2021-09-01
+### Added
+- Support for the FHIR enableWhenExpression extension.
+
+## [29.2.3] 2021-08-26
+### Fixed
+- Fixed a typo in the error message introduced in 29.2.2.
+
+## [29.2.2] 2021-08-24
+### Changed
+- The LForms.Util.addFormToPage function will now display an error message in
+  the cases where it does not render the form.  The previous behavior was that
+  the form area was simply blank, so this is judged a "fix" over that.
+
 ## [29.2.1] 2021-08-23
 ### Changed
 - Updated the URI for the FHIR "initialExpression" extension, but the old URI is

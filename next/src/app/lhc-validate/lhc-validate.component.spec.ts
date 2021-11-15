@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcValidateComponent } from './lhc-validate.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcValidateComponent', () => {
   let component: LhcValidateComponent;
@@ -8,7 +8,8 @@ describe('LhcValidateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcValidateComponent ]
+      declarations: [ LhcValidateComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

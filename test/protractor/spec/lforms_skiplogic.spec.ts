@@ -21,6 +21,30 @@ describe('skip logic', function() {
     tp.LoadForm.openFullFeaturedForm();
   });
 
+  it('should support enableWhenExpression', function() {
+    tp.openBaseTestPage();
+    tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
+    var n1 = element(by.id('n1/1'));
+    var n2 = element(by.id('n2/1'));
+    var n3 = element(by.id('n3/1'));
+    var q4 = element(by.id('q4/1')); // present when n1+n2+n3 >= 5;
+    TestUtil.waitForElementPresent(n1),
+    TestUtil.waitForElementNotPresent(q4)
+    n1.click();
+    n1.sendKeys('5');
+    n2.click();
+    TestUtil.waitForElementPresent(n1)
+    n1.clear();
+    n1.click();
+    n1.sendKeys('1');
+    n2.click();
+    n2.sendKeys('2');
+    TestUtil.waitForElementNotPresent(q4)
+    n3.click();
+    n3.sendKeys('3');
+    n1.click();
+    TestUtil.waitForElementPresent(n1)
+  });
 
   it('target items should be hidden initially', function() {
     TestUtil.waitForElementNotPresent(ff.t1)

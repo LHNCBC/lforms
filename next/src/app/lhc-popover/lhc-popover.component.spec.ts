@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcPopoverComponent } from './lhc-popover.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcPopoverComponent', () => {
   let component: LhcPopoverComponent;
@@ -8,7 +8,8 @@ describe('LhcPopoverComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcPopoverComponent ]
+      declarations: [ LhcPopoverComponent ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });

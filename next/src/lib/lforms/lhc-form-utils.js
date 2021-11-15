@@ -54,21 +54,54 @@ const FormUtils = {
     LForms.addedFormDefs.push(formDataDef);
     var prepop = options && options.prepopulate===true;
 
-    const eleLhcForm = document.createElement("wc-lhc-form");    
+    // remove existing content in the container
+    while (formContainer.firstChild) {
+      formContainer.removeChild(formContainer.lastChild);
+    }
+    // add the lhc-form web component
+    const eleLhcForm = document.createElement("wc-lhc-form");
     formContainer.appendChild(eleLhcForm)
 
     var rtnPromise = new Promise(function(resolve, reject) {
-      eleLhcForm.lfData = formDataDef;
-      eleLhcForm.lfOptions = options;
-      eleLhcForm.prepop = prepop;
-      eleLhcForm.addEventListener('onFormReady', function(e){
-        resolve()
-      });      
+      try {
+        eleLhcForm.lfData = formDataDef;
+        eleLhcForm.lfOptions = options;
+        eleLhcForm.prepop = prepop;
+        eleLhcForm.addEventListener('onFormReady', function(e){
+          resolve()
+        });        
+      }
+      catch(e) {
+        reject(e)
+      }
+    }).catch(function(e) {
+      var errMsg = (e instanceof Error) ? e.message : e.toString();
+      const divMessage = document.createElement("div");    
+      divMessage.innerHTML = '<div id=lformsErrors style="color: red"><b>Unable to '+
+      'display the form, due to the following error:</b><p id=lformsErrorContent>' + errMsg + '</p>';
+      formContainer.appendChild(divMessage)
+      throw e;
     });
+
     return rtnPromise;
   },
 
 
+  /**
+   * Remove any forms from the container DOM element.
+   * @param formContainer The ID of a DOM element to contain the form, or the
+   *  element itself.  The contents of this element will be replaced by the form.
+   *  This element should be outside the scope of any existing AngularJS app on
+   *  the page.
+   */
+  removeFormsFromPage: function(formContainer) {
+    var formContainer = typeof formContainer === 'string' ? document.getElementById(formContainer) : formContainer;
+    while (formContainer.firstChild) {
+      formContainer.removeChild(formContainer.lastChild);
+    }
+  },
+
+  
   /**
    * Get user input data from the form, with or without form definition data.
    * @param element the containing HTML element that includes the LForm's rendered form.

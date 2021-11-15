@@ -4,6 +4,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button.component';
 import { EventEmitter } from 'events';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemChoiceRadioButtonComponent', () => {
   let component: LhcItemChoiceRadioButtonComponent;
@@ -147,7 +148,8 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemChoiceRadioButtonComponent ],
-      imports: [FormsModule, NzRadioModule, NzGridModule]
+      imports: [FormsModule, NzRadioModule, NzGridModule],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });
