@@ -9,12 +9,6 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   encapsulation: ViewEncapsulation.Emulated
 })
 export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
-
-  get isVertical() {
-    return this.item.displayControl?.answerLayout?.columns !== undefined
-      && this.item.displayControl.answerLayout.columns !== '0';
-  }
-
   @Input() item;
 
   // internal data models
