@@ -2,6 +2,7 @@
 
 # compiled output
 /dist/lforms-next
+/dist/webcomponent/assets/lib/
 /tmp
 /out-tsc
 # testing files

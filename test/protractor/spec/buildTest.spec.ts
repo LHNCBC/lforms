@@ -4,7 +4,7 @@ import TestUtil from "./util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 
 // Run 'npm run build:elements' before running this test
-// test/build_test.html uses a copy of the transpiled lhc-forms.es5.js in dist-element/lhc-forms.es5.js
+// test/build_test.html uses a copy of the transpiled lhc-forms.es5.js in dist/webcomponent/lhc-forms.es5.js
 
 describe('build test page', function() {
   let tp: TestPage; 
