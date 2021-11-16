@@ -91,11 +91,13 @@ export class LhcItemAttachmentComponent {
     }
     else {
       item.value = {title: item._attachmentName || item._fileInfo?.name};
-      item.value.text = item.value.title;
+
       const value = item.value;
       if (item._attachmentURL) {
         value.url = item._attachmentURL;
       }
+
+      item.value.text = item.value.title || item.value.url;
 
       if (item._fileInfo) { // attach the data too
         const fileInfo = item._fileInfo;

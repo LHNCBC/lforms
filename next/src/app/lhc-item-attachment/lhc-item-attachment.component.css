@@ -7,10 +7,12 @@ input[type=file] {
   padding-left: 0.25em;
   padding-right: 0.25em;
   border-radius: 4px;
-  margin-left: 0.25em;
+  margin-left: 0.5em;
+  min-width: 22px;
   color: white;
   border: none;
   background-color: #066aa0;
+  vertical-align: top;
 }
 
 .lf-attachment-url, .lf-attachment-name {
@@ -21,8 +23,8 @@ progress {
   vertical-align: text-bottom;
 }
 
-.download-link {
-  padding-left: 0.5em;
+.download-link, .lf-attachment-upload {
+  margin-left: 0.5em;
 }
 
 .lhc-button {
@@ -32,17 +34,6 @@ progress {
   padding: 0;
   position: relative;
   background-color: #066aa0; /*#458AC5;*/
-}
-
-.lf-rm-attachment-button {
-  font-size: 120%;
-  font-weight: bold;
-  padding: 0;
-  margin-right: 2px;
-  margin-left:2px;
-  vertical-align: middle;
-  background-color: transparent;
-  color: #066aa0;
 }
 
 .lf-rm-attachment-button:hover {

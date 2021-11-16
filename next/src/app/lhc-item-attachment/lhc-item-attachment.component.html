@@ -3,7 +3,7 @@
   <!--     aria-describedby="help-{{ item._elementId }}"-->
   <!--     aria-labelledby="{{labelledBy}}">-->
     <div *ngIf="!item.value">
-      <input [name]="item._text" type="file"
+      <input [name]="item._text" type="file" class="lf-attachment-upload"
              #fileInput
              (change)="onChange($event)"
              placeholder="{{item._toolTip}}" [disabled]="item._readOnly"
