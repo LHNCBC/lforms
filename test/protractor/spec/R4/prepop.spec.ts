@@ -1,15 +1,12 @@
 import { TestPage } from "../lforms_testpage.po";
 import TestUtil from "../util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
-import { protractor } from 'protractor/built/ptor';
 import { AddFormToPageTestPage } from "../addFormToPageTest.po"
-let tp: TestPage; 
 let LForms: any = (global as any).LForms;
-tp = new TestPage();
 
 let fhirVersion = 'R4'; // for questionnaire resources
 let mockFHIRContext = require('./fhir_context').mockFHIRContext;
-let EC = protractor.ExpectedConditions;
+let tp: TestPage = new TestPage();
 var po = new AddFormToPageTestPage();
 
 /**

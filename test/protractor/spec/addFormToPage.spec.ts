@@ -1,18 +1,33 @@
-var po = require('./addFormToPageTest.po');
-var tp = require('./lforms_testpage.po');
-var testUtil = require('./util');
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { AddFormToPageTestPage } from "./addFormToPageTest.po"
+let LForms: any = (global as any).LForms;
+let tp: TestPage = new TestPage();
+let po = new AddFormToPageTestPage();
+
 
 describe('addFormToPage test page', function() {
-  it('should have two forms on the page', function() {
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
+
+  it('should have two forms displayed on the page', function() {
     po.openPage();
-    element.all(by.tagName('lforms')).then(function (items) {
+    // three tags
+    element.all(by.tagName('wc-lhc-form')).then(function (items) {
+      expect(items.length).toBe(3);
+    });
+    // two forms
+    element.all(by.css('.lhc-form-title')).then(function (items) {
       expect(items.length).toBe(2);
     });
+
   });
 
   it('should have a drug name field in the RxTerms form', function() {
     expect(po.rxDrugNameField.isDisplayed()).toBeTruthy();
-    testUtil.sendKeys(po.rxDrugNameField, 'ar');
+    TestUtil.sendKeys(po.rxDrugNameField, 'ar');
     browser.wait(function() {
       return po.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_1);
@@ -23,19 +38,24 @@ describe('addFormToPage test page', function() {
     po.ffDrugNameField.click();
     expect(po.searchResults.isDisplayed()).toBeFalsy();
     expect(po.ffDrugNameField.isDisplayed()).toBeTruthy();
-    testUtil.sendKeys(po.ffDrugNameField, 'ar');
+    TestUtil.sendKeys(po.ffDrugNameField, 'ar');
     browser.wait(function() {
       return po.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_1);
   });
 
   it('DTM datetime picker should work', function () {
-    var minMax = [testUtil.getCurrentDTMString(-60000), testUtil.getCurrentDTMString(+60000)]; // -/+ a minute
+    var minMax:Array<any> = [TestUtil.getCurrentDTMString(-60000), TestUtil.getCurrentDTMString(+60000)]; // -/+ a minute
     po.openPage();
-    element(by.css('div.lf-dtm-picker-block > button.ui-datepicker-trigger')).click();
-    element(by.css('div.lf-dtm-picker-block ul.datetime-picker-dropdown li span button')).click();
-    expect(element(by.id('/type7/1')).getAttribute('value')).toBeGreaterThanOrEqual(minMax[0]);
-    expect(element(by.id('/type7/1')).getAttribute('value')).toBeLessThanOrEqual(minMax[1]);
+    let dtmInput = element(by.id('/type7/1')).element(by.css("input"));
+    let nowButton = element(by.css(".ant-picker-now-btn"));
+    let okButton = element(by.css(".ant-picker-ok")).element(by.css("button"))
+    dtmInput.click()
+    nowButton.click()
+    okButton.click()
+    expect(dtmInput.getAttribute("value")).toBeGreaterThanOrEqual(minMax[0]);
+    expect(dtmInput.getAttribute("value")).toBeLessThanOrEqual(minMax[1]);
+
   });
 
   describe('addFormToPage', function () {
@@ -48,7 +68,7 @@ describe('addFormToPage test page', function() {
       }, tp.WAIT_TIMEOUT_2);
       browser.driver.executeAsyncScript(
           "var callback = arguments[arguments.length - 1];" +
-          "$.getJSON('/data/FHTData.json', function(FHTData) {window.FHTData = FHTData; callback();})"
+          "$.getJSON('/test-data/form-data/FHTData.json', function(FHTData) {window.FHTData = FHTData; callback();})"
       ).then(function() {
         done()
       });
@@ -58,13 +78,18 @@ describe('addFormToPage test page', function() {
       // Put form USSG-FHP on the page using a FHIR object
       browser.driver.executeAsyncScript(function () {
         var callback = arguments[arguments.length - 1];
-        $.getJSON('/data/R4/ussg-fhp.json', function(fhirData) {
-          LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
-          callback();
+        fetch('/test-data/e2e/R4/ussg-fhp.json')
+        .then(function(response) { 
+          return response.json();
+        })
+        .then(function(fhirData) {
+          LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' }); 
+          callback(); 
         });
       }).then(function () {
         // Confirm it is there
-        expect($('#formContainer').getText()).toContain("US Surgeon General family health portrait");
+        TestUtil.waitForElementPresent(element(by.css(".lhc-form-title")));
+        expect(element(by.id('formContainer')).getText()).toContain("US Surgeon General family health portrait");
       });
     });
 
@@ -107,16 +132,9 @@ describe('addFormToPage test page', function() {
     });
 
     it('should be able to display a very nested form', function() {
-      // AngularJS only supports a certain level of nesting of directives
-      // calling directives, which limits the nesting level of forms.  We've
-      // increased that limit via  $rootScopeProvider.digestTtl(...) and the
-      // code below tests that at least one particular amount of nesting is handled.
       tp.loadFromTestData('very-nested-form.json'); // uses addFormToPage
-      // Wait for addFormToPage to be done.
-      browser.wait(function() {return browser.executeScript('return ' +
-        'window.addFormToPageDone')}, 2000);
       // Make sure the error message div is blank
-      expect($('#loadMsg').getText()).toBe('');
+      expect(element(by.id('loadMsg')).getText()).toBe('');
     });
   });
 });
