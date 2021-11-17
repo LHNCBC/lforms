@@ -1,9 +1,16 @@
-var fhirVersion = 'R4'; // for questionnaire resources
+import { TestPage } from "../lforms_testpage.po";
+import TestUtil from "../util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+import { AddFormToPageTestPage } from "../addFormToPageTest.po"
+let tp: TestPage; 
+let LForms: any = (global as any).LForms;
+tp = new TestPage();
 
-var po = require('../addFormToPageTest.po');
-var tp = require('../lforms_testpage.po.js');
-var mockFHIRContext = require('./fhir_context').mockFHIRContext;
-var EC = protractor.ExpectedConditions;
+let fhirVersion = 'R4'; // for questionnaire resources
+let mockFHIRContext = require('./fhir_context').mockFHIRContext;
+let EC = protractor.ExpectedConditions;
+var po = new AddFormToPageTestPage();
 
 /**
  *  Sets up a mock server FHIR context.  This will also set the page to do
@@ -11,7 +18,7 @@ var EC = protractor.ExpectedConditions;
  * @param fhirVersion the FHIR version number (as a string) for the mock server.
  * @param weightQuantity the quantity to return from a search for a weight.
  */
-function setServerFHIRContext(fhirVersion, weightQuantity) {
+function setServerFHIRContext(fhirVersion, weightQuantity=null) {
   browser.executeScript(function(fhirVersion, mockFHIRContext, weightQuantity) {
     try {
       var fhirContext = new Function("return "+mockFHIRContext)();
@@ -22,6 +29,7 @@ function setServerFHIRContext(fhirVersion, weightQuantity) {
       console.log(e);
     }
   }, fhirVersion, mockFHIRContext, weightQuantity);
+
   setFHIRPrepopulation(true);
 }
 
@@ -37,15 +45,23 @@ function setFHIRPrepopulation(enable) {
 
 
 describe('Form pre-population', function() {
+
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
+
+
   for (let serverFHIRNum of ['3.0', '4.0']) {
     it('should be able to use %questionnaire in expressions with server FHIR version '+serverFHIRNum, function() {
       tp.openBaseTestPage();
+      TestUtil.waitForFHIRLibsLoaded()
       setServerFHIRContext(serverFHIRNum);
       tp.loadFromTestData('phq9.json', 'R4');
-
+      
       // This test form does prepoluation of the first answer.
       // This is also a test of prepoluation of list questions.
       var firstQ = element(by.id('/44250-9/1'));
+      TestUtil.waitForElementPresent(firstQ);
       browser.wait(function() {return firstQ.getAttribute('value')}, 2000);
       expect(firstQ.getAttribute('value')).toBe('0. Not at all - 0');
       var sum = element(by.id('/44261-6/1'));
@@ -55,8 +71,10 @@ describe('Form pre-population', function() {
   }
 
   describe('with bower packages', function() {
+  
     beforeAll(function () {
       tp.openBaseTestPage();
+      TestUtil.waitForFHIRLibsLoaded()
     });
 
     it('should be possible to pull in data from a FHIR context', function() {
@@ -85,6 +103,7 @@ describe('Form pre-population', function() {
                function() {
         beforeAll(() => {
           tp.openBaseTestPage();
+          TestUtil.waitForFHIRLibsLoaded()
           setServerFHIRContext(serverFHIRNum);
         });
 
@@ -92,7 +111,7 @@ describe('Form pre-population', function() {
         it('should load values from observationLinkPeriod', function() {
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
-          browser.wait(EC.presenceOf(weightField), 2000);
+          TestUtil.waitForElementPresent(weightField);          
           browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
             return val == '95'
           })}, 1000);
@@ -104,7 +123,7 @@ describe('Form pre-population', function() {
         it('should populate observationLinkPeriod fields that are not top-level', function() {
           tp.loadFromTestData('ussg-fhp.json', 'R4');
           var weightField = element(by.id('/54126-8/29463-7/1/1'));
-          browser.wait(EC.presenceOf(weightField), 2000);
+          TestUtil.waitForElementPresent(weightField);
           browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
             return val == '95'
           })}, 1000);
@@ -117,7 +136,7 @@ describe('Form pre-population', function() {
           var resourcesPromise = browser.executeScript(
             'return LForms.Util.getFormFHIRData("QuestionnaireResponse", "'+
             releaseVersion + '", null, {"extract": true})');
-          resourcesPromise.then((resources) => {
+          resourcesPromise.then((resources:any) => {
             console.log(JSON.stringify(resources));
             console.log(typeof resources);
             expect(resources.length).toBe(2); // One QR and one observation
@@ -132,7 +151,7 @@ describe('Form pre-population', function() {
         it('should populate observationLinkPeriod fields when multiple codes are present', function () {
           tp.loadFromTestData('multipleCodes.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
-          browser.wait(EC.presenceOf(weightField), 2000);
+          TestUtil.waitForElementPresent(weightField);
           browser.wait(function () {return weightField.getAttribute('value').then(function (val) {
             return val == '96'
           })}, 1000);
@@ -145,7 +164,7 @@ describe('Form pre-population', function() {
           var resourcesPromise = browser.executeScript(
             'return LForms.Util.getFormFHIRData("QuestionnaireResponse", "'+
             releaseVersion + '", null, {"extract": true})');
-          resourcesPromise.then((resources) => {
+          resourcesPromise.then((resources:any) => {
             expect(resources.length).toBe(3); // One QR and two observations
             var obs = resources[1];
             expect(obs.code.coding.length).toEqual(2);
@@ -188,7 +207,6 @@ describe('Form pre-population', function() {
           setServerFHIRContext(serverFHIRNum);
           setFHIRPrepopulation(false);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
-          browser.sleep(20); // give asynchronous prepopulation a chance to happen
           var weightField = element(by.id('/29463-7/1'));
           expect(weightField.getAttribute('value')).toEqual('');
         });
@@ -199,11 +217,6 @@ describe('Form pre-population', function() {
           setServerFHIRContext(serverFHIRNum);
           setFHIRPrepopulation(true);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
-          // Check the promise from the addFormToPage (called by
-          // loadFromTestData).
-          browser.wait(function() {return browser.executeScript('return ' +
-            'window.addFormToPageDone')}, 2000);
-          browser.sleep(20); // give asynchronous prepopulation a chance to happen
           var weightField = element(by.id('/29463-7/1'));
           expect(weightField.getAttribute('value')).toEqual('95');
         });
@@ -214,6 +227,7 @@ describe('Form pre-population', function() {
   describe('with npm packages', function() {
     it('should load values from observationLinkPeriod', function() {
       tp.openBuildTestFHIRPath();
+      TestUtil.waitForFHIRLibsLoaded()
       setServerFHIRContext('4.0');
       tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
       var weightField = element(by.id('/29463-7/1'));

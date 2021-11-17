@@ -15,7 +15,7 @@ exports.config = {
     '../../test/protractor/spec/argonaut.spec.ts',
     '../../test/protractor/spec/autocomp_list.spec.ts',
     '../../test/protractor/spec/buildTest.spec.ts',
-    '../../test/protractor/spec/fhirpath.spec.ts', // last two tests on radio button and checkboxes with saved values failed
+    '../../test/protractor/spec/fhirpath.spec.ts', 
     '../../test/protractor/spec/lforms_datatype.spec.ts',
     '../../test/protractor/spec/lforms_fhirdata.spec.ts',
     '../../test/protractor/spec/lforms_formdata.spec.ts',
@@ -29,7 +29,9 @@ exports.config = {
     '../../test/protractor/spec/lforms_skiplogic.spec.ts',
     '../../test/protractor/spec/lforms_validation.spec.ts', // has one failed test on DT
     '../../test/protractor/spec/lforms_validation_date.spec.ts',
-    '../../test/protractor/spec/fhir_context.spec.ts'
+    '../../test/protractor/spec/fhir_context.spec.ts',
+    '../../test/protractor/spec/R4/prepop.spec.ts',
+    '../../test/protractor/spec/R4/variables.spec.ts'
     
   ],
   capabilities: {

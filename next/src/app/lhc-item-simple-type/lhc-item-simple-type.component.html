@@ -9,7 +9,7 @@
         class="units"
         type="text"
         id="{{unitElementId}}"
-        value="{{item.unit.name}}"
+        value="{{item.unit.name||item.unit.code}}"
         aria-labelledby="th_Units"
         readonly
         (blur)="lhcDataService.activeRowOnBlur(item)"

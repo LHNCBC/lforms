@@ -1,13 +1,18 @@
 // Tests for the FHIR "variable" extension.
-var fhirVersion = 'R4';
-
-var tp = require('../lforms_testpage.po.js');
-var testUtil = require('../util.js');
+let fhirVersion = 'R4';
+import TestUtil from "../util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { TestPage } from "../lforms_testpage.po";
+let tp = new TestPage();
+let LForms: any = (global as any).LForms;
 
 describe('FHIR variables', function() {
-  beforeAll(function () {
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
     tp.openBaseTestPage();
+    TestUtil.waitForFHIRLibsLoaded()
   });
+
   function elID(id) {return element(by.id(id));}
   function valueOf(field) {return field.getAttribute('value');}
 
@@ -34,9 +39,9 @@ describe('FHIR variables', function() {
     });
 
     it('should have expected values after typing', function() {
-      testUtil.sendKeys(fieldB1, '1');
+      TestUtil.sendKeys(fieldB1, '1');
       addFieldB.click();
-      testUtil.sendKeys(fieldB2, '2');
+      TestUtil.sendKeys(fieldB2, '2');
       expect(valueOf(fieldB1)).toBe('1');
       expect(valueOf(fieldB2)).toBe('2');
       expect(valueOf(fieldC)).toBe('8');
@@ -46,7 +51,7 @@ describe('FHIR variables', function() {
 
     it('should have working expressions for added groups', function() {
       addGroupA.click();
-      testUtil.sendKeys(fieldBg2f1, '3');
+      TestUtil.sendKeys(fieldBg2f1, '3');
       expect(valueOf(fieldC)).toBe('8');
       expect(valueOf(fieldCg2)).toBe('10');
     });
@@ -69,13 +74,13 @@ describe('FHIR variables', function() {
       let urlFetchField = elID('listViewFromURL/1');
       // Wait for the other field lists to update
       browser.wait(function() {
-        return testUtil.fieldListLength(urlFetchField).then((val)=> {
+        return TestUtil.fieldListLength(urlFetchField).then((val)=> {
           return val == 2;
         });
       });
-      expect(testUtil.fieldListLength(urlFetchField)).toBe(2);
+      expect(TestUtil.fieldListLength(urlFetchField)).toBe(2);
       let contextField = elID('listViewFromContext/1');
-      expect(testUtil.fieldListLength(contextField)).toBe(2);
+      expect(TestUtil.fieldListLength(contextField)).toBe(2);
 
       // After picking the language list, pick the second list, for which there
       // is no mock data, so only the first listView field should have a list.
@@ -87,11 +92,11 @@ describe('FHIR variables', function() {
       tp.Autocomp.helpers.autocompPickFirst(listSelField, 've'); // verification
       // Wait for the other field lists to update
       browser.wait(function() {
-        return testUtil.fieldListLength(urlFetchField).then((val)=> {
+        return TestUtil.fieldListLength(urlFetchField).then((val)=> {
           return val == 6;
         });
       });
-      expect(testUtil.fieldListLength(contextField)).toBe(0);
+      expect(TestUtil.fieldListLength(contextField)).toBe(0);
     });
   });
 
@@ -99,12 +104,13 @@ describe('FHIR variables', function() {
     it('should be useable by other expressions', function() {
       tp.loadFromTestData('named-expressions.json', 'R4');
       let fieldA = elID('idA/1');
-      testUtil.sendKeys(fieldA, '1');
+      TestUtil.sendKeys(fieldA, '1');      
       let fieldC = elID('idC/1');
       expect(fieldC.getAttribute('value')).toBe('6');
-      testUtil.clearField(fieldA);
+      TestUtil.clear(fieldA);
+      fieldC.click()
       expect(fieldC.getAttribute('value')).toBe('');
-      testUtil.sendKeys(fieldA, '2');
+      TestUtil.sendKeys(fieldA, '2');
       expect(fieldC.getAttribute('value')).toBe('7');
     });
   });
