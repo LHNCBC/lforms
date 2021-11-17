@@ -97,8 +97,6 @@ export class LhcItemAttachmentComponent {
         value.url = item._attachmentURL;
       }
 
-      item.value.text = item.value.title || item.value.url;
-
       if (item._fileInfo) { // attach the data too
         const fileInfo = item._fileInfo;
         value.contentType = fileInfo.type;

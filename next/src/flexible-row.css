@@ -1,7 +1,10 @@
 /* new flex box layout system based on screen size */
 /* padding on flex boxes */
-.lhc-de-label-button, .lhc-de-input-unit {
-  padding: 4px 0;
+.lhc-de-label-button {
+  padding: 4px 0 0 0;
+}
+.lhc-de-input-unit {
+  padding: 0 0 0 0;
 }
 /* .lhc-de-input {
   padding: 2px 0 2px 2px;
