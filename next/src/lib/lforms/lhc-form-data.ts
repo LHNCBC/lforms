@@ -2156,7 +2156,7 @@ export default class LhcFormData {
           }
           isEmpty = !notEmpty;
         }
-        // single selection answer list
+        // single selection answer list or attachment
         else if (typeof item.value === 'object') {
           // An attachment should have either either value.data or value.url,
           const v = item.value;
