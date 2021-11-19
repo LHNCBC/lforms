@@ -221,9 +221,10 @@ describe('Attachment support', ()=>{
         // Open another page where we can use addFormToPage
         tp.openTestPage('/test/addFormToPageTest.html');
         // Add the form as the first on the page
+        TestUtil.waitForElementPresent(element(by.id('formContainer2')));
         browser.executeScript("LForms.Util.addFormToPage(arguments[0], 'formContainer2')", lfData);
         expect(element(by.tagName('a')).getText()).toBe('attachmentQ.json');
-        // // Check the export into FHIR for the value
+        // Check the export into FHIR for the value
         browser.executeScript(
          "return LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', document.getElementById('formContainer2'))").then((qr2)=>{
           //@ts-ignore
