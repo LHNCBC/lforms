@@ -4,7 +4,7 @@
 /src
 # test files
 /e2e
-# assets for testging
+# assets for testing
 /dist/lforms-next/test
 /dist/lforms-next/test-data
 # bin scripts
