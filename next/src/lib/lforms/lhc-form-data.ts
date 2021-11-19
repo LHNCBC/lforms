@@ -2156,9 +2156,12 @@ export default class LhcFormData {
           }
           isEmpty = !notEmpty;
         }
-        // single selection answer list
+        // single selection answer list or attachment
         else if (typeof item.value === 'object') {
-          isEmpty = item.value.text === undefined || item.value.text === null || item.value.text ==="";
+          // An attachment should have either either value.data or value.url,
+          const v = item.value;
+          isEmpty = (v.data === undefined || v.data === null) && !v.url && // attachment
+            !v.text; // !v.text means !(undefined or null or "")
         }
         // simple type
         else if (item.value !== undefined && item.value !== null && item.value !=="") {
