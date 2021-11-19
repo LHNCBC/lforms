@@ -32,11 +32,10 @@ exports.config = {
     '../../test/protractor/spec/fhir_context.spec.ts',
     '../../test/protractor/spec/R4/prepop.spec.ts',
     '../../test/protractor/spec/R4/variables.spec.ts',
-    '../../test/protractor/spec/addFormToPage.spec.ts' 
-    
+    '../../test/protractor/spec/addFormToPage.spec.ts', 
+    '../../test/protractor/spec/lforms_one_unused_repeating_item.spec.ts'
 
     // ===Remaining tests===
-    // lforms_one_unused_repeating_item.spec.ts
     // lforms_display_controls.spec.ts  
     // lforms_tree.spec.ts
     // lforms_visual.spec.ts

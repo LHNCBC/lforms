@@ -23,18 +23,7 @@
 
   <!-- a button at the end of each repeating section -->
   <div *ngIf="item._lastRepeatingItem" class="{{lhcDataService.getSkipLogicClass(item)}}">
-    <button type="button"
-          class="lhc-float-button lhc-button" id="add-{{item._elementId}}"
-          (click)="lhcDataService.addOneRepeatingItem(item)"
-          (blur)="lhcDataService.hideUnusedItemWarning(item)"
-          nz-popover
-          [(nzPopoverVisible)]="item._showUnusedItemWarning"
-          [nzPopoverContent]="item._unusedItemWarning"
-          nzPopoverPlacement="topLeft"
-          [nzPopoverTrigger]="click"
-    >
-    + Add another "{{item._text}}"
-    </button>
+    <lhc-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ Add another "{{item._text}}"'></lhc-popover>
   </div>
   
 </ng-container>
