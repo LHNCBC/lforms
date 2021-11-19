@@ -1,5 +1,4 @@
 import { TestPage } from "./lforms_testpage.po";
-import { RxTerms } from "./rxterms.po";
 import TestUtil from "./util";
 import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 import { protractor } from 'protractor/built/ptor';

@@ -31,7 +31,8 @@ export class LhcWatcherComponent implements OnInit, OnChanges {
       // if (!changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcFormData()
       lfData.updateOnSourceItemChange(this.item)
-
+      this.lhcDataService.sendActionsToScreenReader();
+      
       // run FHIRPATH expression when there is a data change
       if (LForms.FHIR && lfData) {
         if (lfData._hasResponsiveExpr) {
