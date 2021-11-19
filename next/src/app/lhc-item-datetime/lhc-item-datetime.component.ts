@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
-import { LhcDataService} from '../../lib/lhc-data.service';
+import {LhcDataService} from '../../lib/lhc-data.service';
 import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
 
 @Component({
@@ -23,6 +23,8 @@ export class LhcItemDatetimeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // Set id attribute of the actual <input> element, so that it is associated with the
+    // label in corresponding question text component and the label will be announced.
     this.nzDatePickerComponent.picker.pickerInput.nativeElement.id = this.item._elementId;
   }
 
