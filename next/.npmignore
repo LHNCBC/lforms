@@ -1,7 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
+/dist/lforms-next
+/dist/webcomponent/assets/lib/
 /tmp
 /out-tsc
 # testing files
