@@ -13,11 +13,11 @@
   <div class="lhc-de-input-unit" (click)="lhcDataService.setActiveRow(item)"
   [ngStyle]="!options || !options.hideQuestionText ? eleStyle : null">
     <div class="lhc-de-input-unit-content">
-      
+
       <lhc-validate [item]="item" [value]="item.value"></lhc-validate>
 
       <ng-container [ngSwitch]="item.dataType">
-      
+
         <ng-container *ngSwitchCase="'INT'">
           <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
         </ng-container>
@@ -48,16 +48,19 @@
         <ng-container *ngSwitchCase="'TX'">
           <lhc-item-text [item]="item"></lhc-item-text>
         </ng-container>
-      
+        <ng-container *ngSwitchCase="'attachment'">
+          <lhc-item-attachment [item]="item"></lhc-item-attachment>
+        </ng-container>
+
         <ng-container *ngSwitchDefault>
           <lhc-input [item]="item"></lhc-input>
-        </ng-container>    
-      </ng-container>    
-    </div>  
+        </ng-container>
+      </ng-container>
+    </div>
   </div>
 </ng-container>
 
-  
+
 
 
 

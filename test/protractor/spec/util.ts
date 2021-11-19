@@ -1,6 +1,8 @@
 // Helper functions for the tests
 import { browser, element, by, ExpectedConditions } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
+import * as path from 'path';
+import * as fs from 'fs';
 let LForms: any = (global as any).LForms;
 
 const TestUtil = {
@@ -364,6 +366,22 @@ const TestUtil = {
     }, q, qr, elemID);
   },
 
+  /**
+   *  Creates a temporary file
+   * @param fileName the file name use.  It does not need to be unique, because
+   *  it will put inside a unique directory.
+   * @param content the content to write to the file
+   * @return the full pathname for the temporary file.
+   */
+  createTempFile: function(fileName, content) {
+    const tmp = require('tmp');
+    tmp.setGracefulCleanup();
+    var dirObj = tmp.dirSync({prefix: 'lformsTest2', unsafeCleanup: true});
+    var dirPath = dirObj.name;
+    var pathName = path.join(dirPath, fileName);
+    fs.writeFileSync(pathName, content);
+    return pathName;
+  },
 
   /**
    * NOT working quite right. keep for further debugging
