@@ -19,3 +19,7 @@
 .ant-radio-wrapper {
   color: rgba(0,0,0,0.85);
 }
+
+.lhc-vertical {
+  flex-direction: column;
+}

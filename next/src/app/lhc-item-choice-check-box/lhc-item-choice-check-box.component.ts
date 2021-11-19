@@ -1,17 +1,16 @@
-import { Component, Input, OnInit, OnChanges, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-choice-check-box',
   templateUrl: './lhc-item-choice-check-box.component.html',
-  styleUrls: ['./lhc-item-choice-check-box.component.css'],
-  encapsulation: ViewEncapsulation.Emulated
+  styleUrls: ['./lhc-item-choice-check-box.component.css']
 })
 export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
-
   @Input() item;
-
+  @Input() acOptions; // item._autocompOptions
+  
   // internal data models
   otherValue: string = null ;
   checkboxModels: boolean[] = [];
@@ -59,7 +58,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   ngOnInit(): void {
   }
 
-  
+
   /**
    * Invokded when the properties change
    * @param changes changes.prop contains the old and the new value...

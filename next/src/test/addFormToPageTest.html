@@ -83,46 +83,19 @@
         LForms.Util.loadFHIRLibs("/test/lib/fhir/R4/lformsFHIR.min.js", "/test/lib/fhir/STU3/lformsFHIR.min.js")
         .then(function(){
           var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
-            LForms.Util.setFHIRContext(fhirAPI);
+          LForms.Util.setFHIRContext(fhirAPI);
 
-            // load two forms
-            // form def data is a string value of 'allInOne'
-            $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
-              window.allInOne = allInOne;
-              LForms.Util.addFormToPage('allInOne', 'formContainer'); 
-            });
-            
-            // $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
-            //   window.allInOne = allInOne;
-            //   LForms.Util.addFormToPage('allInOne', 'formContainer2');
-            
-            // });
+          // form def data is a string value of 'allInOne'
+          $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
+            window.allInOne = allInOne;
+            LForms.Util.addFormToPage('allInOne', 'formContainer');
+          });
 
-          //  $.getJSON('/test-data/form-data/allInOne.json', function z(rxTerms) {
-          //    LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
-          //  });
-
-
-
-
-            // $.getJSON('/test-data/form-data/rxTerms.json', function z(allInOne) {
-            //   window.allInOne = allInOne;
-            //   LForms.Util.addFormToPage('allInOne', 'formContainer2');
-            // });
-
-            // $.getJSON('/test-data/form-data/rxTerms.json', function z(allInOne) {
-            //   window.allInOne = allInOne;
-            //   LForms.Util.addFormToPage('allInOne', 'formContainer');
-            // });
-
-            $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
-              LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
-            });
-
-            // $.getJSON('/test-data/form-data/rxTerms_copy.json', function z(rxTerms) {
-            //   LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
-            // });
-
+          // form def data is a JSON object
+          $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
+            LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+          });
+          
         })
       };        
     </script>

@@ -39,4 +39,15 @@ export class CommonUtilsService {
 
     return newValue;
   }
+
+
+  /**
+   * Check if a checkbox or radio button control should use vertical layout.
+   * Returns true if it should use vertical layout, false if horizontal.
+   * @param displayControl an object that controls the display of the selected template
+   */
+  getDisplayControlIsVertical(displayControl) {
+    return displayControl?.answerLayout?.columns !== undefined
+      && displayControl.answerLayout.columns !== '0';
+  }
 }

@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 //import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
   selector: 'lhc-item-question-text',
   templateUrl: './lhc-item-question-text.component.html',
-  styleUrls: ['./lhc-item-question-text.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./lhc-item-question-text.component.css']
 })
 export class LhcItemQuestionTextComponent implements OnInit {
 

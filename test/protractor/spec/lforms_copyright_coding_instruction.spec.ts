@@ -16,32 +16,29 @@ describe('popover buttons', function() {
   // copyright
   describe('Copyright popover message', function() {
 
-    var copyright = element(by.css('.ant-popover-inner-content'))
+    var copyrightForm = element(by.id('copyright-content-all-in-one')),
+    copyrightItem = element(by.id('copyright-content-/type0/1'));
 
     it('should show a copyright popover message on the form title', function () {
       tp.LoadForm.openFullFeaturedForm();
-      browser.wait(function() {
-        return element(by.id('/type0/1')).isPresent();
-      }, tp.WAIT_TIMEOUT_1);
+      TestUtil.waitForElementPresent(element(by.id('/type0/1')))
       element(by.id("copyright-button-all-in-one")).click();
-      expect(copyright.getText()).toBe("A Copyright notice of the form");
+      TestUtil.waitForElementPresent(copyrightForm);
+      expect(copyrightForm.getText()).toBe("A Copyright notice of the form");
     });
 
     it('should show a copyright popover message on an item', function () {
       element(by.id("/type0/1")).click();
-      TestUtil.waitForElementNotPresent(copyright)
+      TestUtil.waitForElementNotPresent(copyrightForm)
       element(by.id("copyright-button-/type0/1")).click();
-      browser.wait(function() {
-        return copyright.isPresent();
-      }, tp.WAIT_TIMEOUT_1);
-      expect(copyright.getText()).toBe("A Copyright notice of the item");
+      TestUtil.waitForElementPresent(copyrightItem)
+      expect(copyrightItem.getText()).toBe("A Copyright notice of the item");
     });
   });
 
   // coding instructions
   describe('coding instructions help message', function() {
 
-    var popover = element(by.css('.ant-popover-inner-content'));
     var popoverHTMLLink1 = element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
     var popoverHTMLLink2 = element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
     var popoverHTMLLink3 = element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
@@ -59,6 +56,11 @@ describe('popover buttons', function() {
     var helpButton2 = element(by.id("help-button-/type2/1")); // html formatted content, 'codingInstructionsFormat' is 'text'
     var helpButton3 = element(by.id("help-button-/type3/1")); // html formatted content, 'codingInstructionsFormat' is 'html'
 
+    var helpPopover0 = element(by.id('help-content-/type0/1'));
+    var helpPopover1 = element(by.id('help-content-/type1/1'));
+    var helpPopover2 = element(by.id('help-content-/type2/1'));
+    var helpPopover3 = element(by.id('help-content-/type3/1'));
+
     var field1 = element(by.id("/q_lg/1"));
 
     beforeAll(function() {
@@ -74,35 +76,35 @@ describe('popover buttons', function() {
       expect(helpButton3.isDisplayed()).toBe(true);
 
       helpButton0.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
-      expect(popover.getText()).toBe( "simple text instructions");
+      TestUtil.waitForElementDisplayed(helpPopover0);
+      expect(helpPopover0.isDisplayed()).toBe(true);
+      expect(helpPopover0.getText()).toBe( "simple text instructions");
 
       field1.click();
-      TestUtil.waitForElementNotPresent(popover);
+      TestUtil.waitForElementNotPresent(helpPopover0);
 
       helpButton1.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
+      TestUtil.waitForElementDisplayed(helpPopover1);
+      expect(helpPopover1.isDisplayed()).toBe(true);
       TestUtil.waitForElementNotPresent(popoverHTMLLink1)
-      expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
+      expect(helpPopover1.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
 
       field1.click();
-      TestUtil.waitForElementNotPresent(popover)
+      TestUtil.waitForElementNotPresent(helpPopover1)
       helpButton2.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
+      TestUtil.waitForElementDisplayed(helpPopover2);
+      expect(helpPopover2.isDisplayed()).toBe(true);
       TestUtil.waitForElementNotPresent(popoverHTMLLink2)
-      expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
+      expect(helpPopover2.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
 
       field1.click();
-      TestUtil.waitForElementNotPresent(popover);
+      TestUtil.waitForElementNotPresent(helpPopover2);
       helpButton3.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
+      TestUtil.waitForElementDisplayed(helpPopover3);
+      expect(helpPopover3.isDisplayed()).toBe(true);
 
       
-      popoverHTMLLink3 = popover.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
+      popoverHTMLLink3 = helpPopover3.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
       TestUtil.waitForElementDisplayed(popoverHTMLLink3); 
       expect(await popoverHTMLLink3.isDisplayed()).toBe(true); 
 
@@ -142,32 +144,32 @@ describe('popover buttons', function() {
       expect(helpButton3.isDisplayed()).toBe(true);
 
       helpButton0.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
-      expect(popover.getText()).toBe( "simple text instructions");
+      TestUtil.waitForElementDisplayed(helpPopover0);
+      expect(helpPopover0.isDisplayed()).toBe(true);
+      expect(helpPopover0.getText()).toBe( "simple text instructions");
 
       field1.click();
-      TestUtil.waitForElementNotPresent(popover);
+      TestUtil.waitForElementNotPresent(helpPopover0);
       helpButton1.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
+      TestUtil.waitForElementDisplayed(helpPopover1);
+      expect(helpPopover1.isDisplayed()).toBe(true);
       TestUtil.waitForElementNotPresent(inlineHTMLLink1);
-      expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
+      expect(helpPopover1.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
 
       field1.click();
-      TestUtil.waitForElementNotPresent(popover);
+      TestUtil.waitForElementNotPresent(helpPopover1);
       helpButton2.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
+      TestUtil.waitForElementDisplayed(helpPopover2);
+      expect(helpPopover2.isDisplayed()).toBe(true);
       TestUtil.waitForElementNotPresent(inlineHTMLLink2);
-      expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
+      expect(helpPopover2.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
 
       field1.click();
-      TestUtil.waitForElementNotPresent(popover);
+      TestUtil.waitForElementNotPresent(helpPopover2);
       helpButton3.click();
-      TestUtil.waitForElementDisplayed(popover);
-      expect(popover.isDisplayed()).toBe(true);
-      expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>");
+      TestUtil.waitForElementDisplayed(helpPopover3);
+      expect(helpPopover3.isDisplayed()).toBe(true);
+      expect(helpPopover3.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>");
 
       // inline
       browser.driver.executeAsyncScript(function () {

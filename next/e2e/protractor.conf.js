@@ -15,7 +15,7 @@ exports.config = {
     '../../test/protractor/spec/argonaut.spec.ts',
     '../../test/protractor/spec/autocomp_list.spec.ts',
     '../../test/protractor/spec/buildTest.spec.ts',
-    '../../test/protractor/spec/fhirpath.spec.ts', // has failed tests when adding two forms to a page
+    '../../test/protractor/spec/fhirpath.spec.ts', // last two tests on radio button and checkboxes with saved values failed
     '../../test/protractor/spec/lforms_datatype.spec.ts',
     '../../test/protractor/spec/lforms_fhirdata.spec.ts',
     '../../test/protractor/spec/lforms_formdata.spec.ts',

@@ -69,7 +69,7 @@ describe('formula', function() {
 
     expect(sklSource.isDisplayed()).toBe(true);
     expect(TestUtil.getAttribute(sklSource,'value')).toBe('');
-    expect(sklTarget.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(sklTarget);
     expect(noSklItem.isDisplayed()).toBe(true);
     expect(TestUtil.getAttribute(noSklItem,'value')).toBe('');
     expect(totalScore.isDisplayed()).toBe(true);
@@ -100,7 +100,7 @@ describe('formula', function() {
     sklSource.click();
     sklSource.sendKeys(protractor.Key.ARROW_DOWN);
     sklSource.sendKeys(protractor.Key.ENTER);
-    expect(sklTarget.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(sklTarget);
     expect(TestUtil.getAttribute(totalScore,'value')).toBe('10');
 
     // Show skip logic target, total score should change back to 30

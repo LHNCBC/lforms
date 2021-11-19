@@ -84,7 +84,7 @@ describe('Data Type', function() {
       name1.click();
       name1.sendKeys(protractor.Key.ENTER);
       // nothing should happen
-      expect(name2.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(name2)
     });
 
   });
@@ -124,7 +124,7 @@ describe('Data Type', function() {
 
       expect(TestUtil.getAttribute(field1,'type')).toBe("text");
       expect(TestUtil.getAttribute(field1,'value')).toBe("2.5");
-      expect(units1.isPresent()).toBe(false);
+      TestUtil.waitForElementNotPresent(units1)
 
       expect(TestUtil.getAttribute(field2,'placeholder')).toBe("Type a number");
       expect(TestUtil.getAttribute(field2,'value')).toBe("");

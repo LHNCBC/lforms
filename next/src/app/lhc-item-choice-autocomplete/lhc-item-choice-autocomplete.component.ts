@@ -1,11 +1,10 @@
-import { Component, OnInit, OnChanges, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-item-choice-autocomplete',
   templateUrl: './lhc-item-choice-autocomplete.component.html',
-  styleUrls: ['./lhc-item-choice-autocomplete.component.css'],
-  encapsulation: ViewEncapsulation.Emulated
+  styleUrls: ['./lhc-item-choice-autocomplete.component.css']
 })
 export class LhcItemChoiceAutocompleteComponent implements OnInit, OnChanges {
 

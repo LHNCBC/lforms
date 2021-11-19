@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LhcItemGroupComponent } from './lhc-item-group.component';
 import { LhcItemQuestionTextComponent } from '../lhc-item-question-text/lhc-item-question-text.component';
+import { LhcDataService} from '../../lib/lhc-data.service';
 
 describe('LhcItemGroupComponent', () => {
   let component: LhcItemGroupComponent;
@@ -12,7 +12,8 @@ describe('LhcItemGroupComponent', () => {
       declarations: [ 
         LhcItemGroupComponent,
         LhcItemQuestionTextComponent
-      ]
+      ],
+      providers: [LhcDataService]
     })
     .compileComponents();
   });
