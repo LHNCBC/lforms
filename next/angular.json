@@ -28,7 +28,12 @@
               "src/test-data/fhir-data",
               "src/test-data/e2e",
               "src/test",
-              "src/test/lib/"
+              "src/test/lib/",
+              {
+                "glob": "zone.min.js",
+                "input": "node_modules/zone.js/dist/",
+                "output": "assets/lib"
+              }
             ],
             "styles": [
               "src/styles.css",
@@ -115,7 +120,12 @@
               "src/test-data/e2e",
               "src/test",
               "src/test/fhir",
-              "src/test/elements"
+              "src/test/webcomponent",
+              {
+                "glob": "zone.min.js",
+                "input": "node_modules/zone.js/dist/",
+                "output": "assets/lib"
+              }
             ],
             "styles": [
               "src/styles.css",

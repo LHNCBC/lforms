@@ -30,7 +30,7 @@
 
   order: 1;
   flex-grow: 1;
-  
+
 }
 lhc-item-question-text,
 .lhc-de-label {
@@ -51,7 +51,7 @@ lhc-item-question-text,
   order: 2;
   flex-grow: 0;
   flex-shrink: 0;
-  
+
 }
 .lhc-de-input-unit-content {
   width: 100%;

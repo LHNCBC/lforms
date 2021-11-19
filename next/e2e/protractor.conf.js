@@ -9,7 +9,7 @@ const { SpecReporter, StacktraceOption } = require('jasmine-spec-reporter');
  */
 exports.config = {
   allScriptsTimeout: 11000,
-  
+
   specs: [
     // finished tests
     '../../test/protractor/spec/argonaut.spec.ts',
@@ -30,6 +30,7 @@ exports.config = {
     '../../test/protractor/spec/lforms_validation.spec.ts', // has one failed test on DT
     '../../test/protractor/spec/lforms_validation_date.spec.ts',
     '../../test/protractor/spec/fhir_context.spec.ts',
+    '../../test/protractor/spec/attachment.spec.ts',
     '../../test/protractor/spec/R4/prepop.spec.ts',
     '../../test/protractor/spec/R4/variables.spec.ts',
     '../../test/protractor/spec/addFormToPage.spec.ts', 
@@ -40,12 +41,11 @@ exports.config = {
     // ===Remaining tests===
     // lforms_display_controls.spec.ts  // wait for a merge from next
     // lforms_visual.spec.ts
-    // screen_reader_log.spec.ts
-    // attachment.spec.ts  // mihai has it done in a PR to be merged                         
     // lforms_keyboard_navi.spec.ts   // no navigation yet
     // lforms_directive_attr.spec.ts // no directive any more   
     // lforms_directive.spec.ts  // no diretive any more       
 
+   
 
   ],
   capabilities: {

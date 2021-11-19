@@ -186,20 +186,6 @@
   margin-bottom: 20px;
   vertical-align: top;
 }
-.lhc-form .stopped span {
-  font-size: 300%;
-  vertical-align: top;
-  color: red;
-}
-.lhc-form .stop-sign {
-  background-image: url("./assets/signal-stop.png");
-  background-repeat: no-repeat;
-  background-position: left center;
-  width: 48px;
-  height: 48px; /*100%; */
-}
-
-
 
 /* active row */
 .lhc-item-question.lhc-active-row {
