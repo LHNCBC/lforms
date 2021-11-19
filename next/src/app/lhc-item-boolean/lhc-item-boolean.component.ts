@@ -1,5 +1,7 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
+import {NzSwitchComponent} from "ng-zorro-antd/switch";
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'lhc-item-boolean',
@@ -9,7 +11,9 @@ import {LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
   @Input() item: any;
 
-  constructor(public lhcDataService: LhcDataService, private elRef:ElementRef) { }
+  @ViewChild('nzSwitchComponent') nzSwitchComponent: NzSwitchComponent;
+
+  constructor(public lhcDataService: LhcDataService, private elRef:ElementRef, private liveAnnouncer: LiveAnnouncer) { }
 
   ngOnInit(): void {
   }
@@ -23,6 +27,10 @@ export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
     // label in corresponding question text component and the label will be announced.
     const button = this.elRef.nativeElement.querySelector('button[nz-wave]');
     button && (button.id = this.item._elementId);
+    // Announce value when changed.
+    this.nzSwitchComponent.registerOnChange((value) => {
+      this.liveAnnouncer.announce(value);
+    });
   }
 
 }
