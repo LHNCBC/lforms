@@ -131,7 +131,7 @@
     },
     {
       "questionCode": "q1c",
-      "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
+      "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --vertical",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
@@ -197,7 +197,7 @@
     },
     {
       "questionCode": "q1d",
-      "question": "Answer RADIO_CHECKBOX layout --CWE, Multiple, --flexible",
+      "question": "Answer RADIO_CHECKBOX layout --CWE, Multiple, --horizontal",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",

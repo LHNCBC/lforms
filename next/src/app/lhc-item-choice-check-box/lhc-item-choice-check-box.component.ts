@@ -8,7 +8,6 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   styleUrls: ['./lhc-item-choice-check-box.component.css']
 })
 export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
-
   @Input() item;
   @Input() acOptions; // item._autocompOptions
   
@@ -59,7 +58,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   ngOnInit(): void {
   }
 
-  
+
   /**
    * Invokded when the properties change
    * @param changes changes.prop contains the old and the new value...
