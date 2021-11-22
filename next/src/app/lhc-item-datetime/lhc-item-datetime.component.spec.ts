@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LhcItemDatetimeComponent } from './lhc-item-datetime.component';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
+import {CommonUtilsService} from "../../lib/common-utils.service";
+import { registerLocaleData } from '@angular/common';
+import zh from '@angular/common/locales/zh';
+registerLocaleData(zh);
 
 describe('LhcItemDatetimeComponent', () => {
   let component: LhcItemDatetimeComponent;
@@ -9,7 +14,8 @@ describe('LhcItemDatetimeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemDatetimeComponent ],
-      providers: [LhcDataService]
+      imports: [NzDatePickerModule],
+      providers: [LhcDataService, CommonUtilsService]
     })
     .compileComponents();
   });
@@ -17,6 +23,10 @@ describe('LhcItemDatetimeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LhcItemDatetimeComponent);
     component = fixture.componentInstance;
+    component.item = {
+      _elementId: 1,
+      question: 'question'
+    };
     fixture.detectChanges();
   });
 

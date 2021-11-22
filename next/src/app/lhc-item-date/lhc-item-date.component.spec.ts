@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LhcItemDateComponent } from './lhc-item-date.component';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 
 describe('LhcItemDateComponent', () => {
   let component: LhcItemDateComponent;
@@ -9,6 +10,7 @@ describe('LhcItemDateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemDateComponent ],
+      imports: [NzDatePickerModule],
       providers: [LhcDataService]
     })
     .compileComponents()
@@ -18,6 +20,10 @@ describe('LhcItemDateComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LhcItemDateComponent);
     component = fixture.componentInstance;
+    component.item = {
+      _elementId: 1,
+      question: 'question'
+    };
     fixture.detectChanges();
   });
 
