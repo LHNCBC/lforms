@@ -9,8 +9,8 @@ const concat = require('concat');
     // './dist/lforms-next/vendor-es5.js',
     // './dist/lforms-next/styles-es5.js'
   ]
-  await fs.ensureDir('elements')
-  await concat(files, 'elements/lhc-forms.es5.js');
-  await fs.copyFile('./dist/lforms-next/styles.css', 'elements/styles.css');
-  //await fs.copy('./dist/lforms-next/assets/', 'elements/assets/' )
+  await fs.ensureDir('dist/webcomponent')
+  await concat(files, 'dist/webcomponent/lhc-forms.es5.js');
+  await fs.copyFile('./dist/lforms-next/styles.css', 'dist/webcomponent/styles.css');
+  await fs.copy('./dist/lforms-next/assets/', 'dist/webcomponent/assets/' )
 })()

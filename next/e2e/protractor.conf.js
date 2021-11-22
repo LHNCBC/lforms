@@ -9,7 +9,7 @@ const { SpecReporter, StacktraceOption } = require('jasmine-spec-reporter');
  */
 exports.config = {
   allScriptsTimeout: 11000,
-  
+
   specs: [
     // finished tests
     '../../test/protractor/spec/argonaut.spec.ts',
@@ -29,8 +29,9 @@ exports.config = {
     '../../test/protractor/spec/lforms_skiplogic.spec.ts',
     '../../test/protractor/spec/lforms_validation.spec.ts', // has one failed test on DT
     '../../test/protractor/spec/lforms_validation_date.spec.ts',
-    '../../test/protractor/spec/fhir_context.spec.ts'
-    
+    '../../test/protractor/spec/fhir_context.spec.ts',
+    '../../test/protractor/spec/attachment.spec.ts'
+
   ],
   capabilities: {
     'browserName': 'chrome',

@@ -64,6 +64,7 @@ import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-ho
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { LhcPopoverComponent } from './lhc-popover/lhc-popover.component';
+import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
 
 registerLocaleData(en);
 
@@ -96,7 +97,8 @@ registerLocaleData(en);
     LhcGroupHorizontalComponent,
     LhcGroupMatrixComponent,
     SafeHtmlPipe,
-    LhcPopoverComponent
+    LhcPopoverComponent,
+    LhcItemAttachmentComponent
   ],
   imports: [
     BrowserModule,
