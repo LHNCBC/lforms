@@ -1,5 +1,6 @@
 <ng-container *ngIf="item">
   <nz-switch #nzSwitchComponent
+    id="{{item._elementId}}"
     [(ngModel)]="item.value"
     [nzCheckedChildren]="checkedTemplate"
     [nzUnCheckedChildren]="unCheckedTemplate"

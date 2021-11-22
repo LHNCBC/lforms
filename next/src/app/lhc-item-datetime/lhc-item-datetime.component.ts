@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
+import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
   selector: 'lhc-item-datetime',
@@ -13,7 +14,7 @@ export class LhcItemDatetimeComponent implements OnInit, AfterViewInit {
 
   @ViewChild('nzDatePickerComponent') nzDatePickerComponent: NzDatePickerComponent;
 
-  constructor(public lhcDataService: LhcDataService) { }
+  constructor(public lhcDataService: LhcDataService, private commonUtilsService: CommonUtilsService) { }
 
   ngOnInit(): void {
   }
@@ -23,9 +24,9 @@ export class LhcItemDatetimeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Set id attribute of the actual <input> element, so that it is associated with the
-    // label in corresponding question text component and the label will be announced.
-    this.nzDatePickerComponent.picker.pickerInput.nativeElement.id = this.item._elementId;
+    // Set aria-label attribute of the actual <input> element.
+    this.nzDatePickerComponent.picker.pickerInput.nativeElement
+      .setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
   }
 
   onOk(result: Date | Date[] | null): void {

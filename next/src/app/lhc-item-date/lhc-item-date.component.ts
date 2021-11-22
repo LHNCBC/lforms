@@ -1,6 +1,7 @@
 import {Component, Input, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
+import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
   selector: 'lhc-item-date',
@@ -13,7 +14,8 @@ export class LhcItemDateComponent implements OnInit, AfterViewInit {
 
   @ViewChild('nzDatePickerComponent') nzDatePickerComponent: NzDatePickerComponent;
 
-  constructor(public lhcDataService: LhcDataService) { }
+  constructor(public lhcDataService: LhcDataService, private commonUtilsService: CommonUtilsService) {
+  }
 
   ngOnInit(): void {
   }
@@ -23,11 +25,11 @@ export class LhcItemDateComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Set id attribute of the actual <input> element, so that it is associated with the
-    // label in corresponding question text component and the label will be announced.
+    // Set aria-label attribute of the actual <input> element.
     // It should have just worked by passing [nzId] into <nz-date-picker>, but the library
     // (which we have no control of) creates another wrapper element with same id which
     // messes with the aria label association.
-    this.nzDatePickerComponent.picker.pickerInput.nativeElement.id = this.item._elementId;
+    this.nzDatePickerComponent.picker.pickerInput.nativeElement
+      .setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
   }
 }

@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@a
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {NzSwitchComponent} from "ng-zorro-antd/switch";
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
   selector: 'lhc-item-boolean',
@@ -13,7 +14,10 @@ export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
 
   @ViewChild('nzSwitchComponent') nzSwitchComponent: NzSwitchComponent;
 
-  constructor(public lhcDataService: LhcDataService, private elRef:ElementRef, private liveAnnouncer: LiveAnnouncer) { }
+  constructor(public lhcDataService: LhcDataService,
+              private elRef:ElementRef,
+              private liveAnnouncer: LiveAnnouncer,
+              private commonUtilsService: CommonUtilsService) { }
 
   ngOnInit(): void {
   }
@@ -23,10 +27,11 @@ export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Set id attribute of the actual <button> element, so that it is associated with the
-    // label in corresponding question text component and the label will be announced.
+    // Set aria-label attribute of the actual <button> element.
     const button = this.elRef.nativeElement.querySelector('button[nz-wave]');
-    button && (button.id = this.item._elementId);
+    if (button) {
+      button.setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
+    }
     // Announce value when changed.
     this.nzSwitchComponent.registerOnChange((value) => {
       this.liveAnnouncer.announce(value);
