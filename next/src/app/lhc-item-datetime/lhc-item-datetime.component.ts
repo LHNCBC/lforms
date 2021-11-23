@@ -25,7 +25,7 @@ export class LhcItemDatetimeComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     // Set aria-label attribute of the actual <input> element.
-    this.nzDatePickerComponent.picker.pickerInput.nativeElement
+    this.nzDatePickerComponent.pickerInput.nativeElement
       .setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
   }
 

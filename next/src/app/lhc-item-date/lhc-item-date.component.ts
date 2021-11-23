@@ -29,7 +29,7 @@ export class LhcItemDateComponent implements OnInit, AfterViewInit {
     // It should have just worked by passing [nzId] into <nz-date-picker>, but the library
     // (which we have no control of) creates another wrapper element with same id which
     // messes with the aria label association.
-    this.nzDatePickerComponent.picker.pickerInput.nativeElement
+    this.nzDatePickerComponent.pickerInput.nativeElement
       .setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
   }
 }
