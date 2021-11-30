@@ -32,10 +32,10 @@ export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
     if (button) {
       button.setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
     }
-    // Announce value when changed.
-    this.nzSwitchComponent.registerOnChange((value) => {
-      this.liveAnnouncer.announce(value);
-    });
+  }
+
+  onModelChange(value) {
+    this.liveAnnouncer.announce(value);
   }
 
 }

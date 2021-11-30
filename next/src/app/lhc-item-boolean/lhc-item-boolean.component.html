@@ -5,6 +5,7 @@
     [nzCheckedChildren]="checkedTemplate"
     [nzUnCheckedChildren]="unCheckedTemplate"
     (focus)="lhcDataService.setActiveRow(item)"
+    (ngModelChange)="onModelChange($event)"
   >
   </nz-switch>
 </ng-container>
