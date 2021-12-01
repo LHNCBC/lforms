@@ -926,12 +926,6 @@ const FormUtils = {
    * @param {*} urlStu3 the URL of the STU3 version of the LForms FHIR lib
    */
   loadFHIRLibs: function(urlR4, urlStu3) {
-    if (!urlR4) {
-      urlR4 = "/test/lib/fhir/R4/lformsFHIR.min.js" 
-    }
-    if (!urlStu3) {
-      urlStu3 = "/test/lib/fhir/STU3/lformsFHIR.min.js"
-    }
     return Promise.all([
       this.loadScript(urlR4), 
       this.loadScript(urlStu3)])

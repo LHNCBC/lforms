@@ -103,7 +103,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         setTimeout(()=> {
           let lfData = CommonUtils.deepCopy(self.lfData);
           // check if lfData is a FHIR Questionnaire
-          if (lfData.resourceType && lfData.resourceType === "Questionnaire") {
+          if (lfData.resourceType === "Questionnaire") {
             let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(lfData) || "R4";
             if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
               // convert it to a lforms form data

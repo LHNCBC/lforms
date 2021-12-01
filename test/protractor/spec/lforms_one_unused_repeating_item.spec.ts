@@ -23,6 +23,7 @@ describe('Unused repeating item/section control', function() {
       TestUtil.waitForElementDisplayed(namePopover1)
       expect(namePopover1.isDisplayed()).toBe(true);
     });
+
     it('should add a new one when there is no unused item', function () {
       TestUtil.sendKeys(ff.name, "a name");
       ff.btnName.click();
@@ -53,11 +54,13 @@ describe('Unused repeating item/section control', function() {
       // ff.btnName.click();
 
     });
+
     it('should not add a new one when there is an unused item and an used item', function () {
       ff.btnName2.click();
       TestUtil.waitForElementDisplayed(namePopover2)
       expect(namePopover2.isDisplayed()).toBe(true);
     });
+
     it('should not add a new one when a previous used item becomes unused', function () {
       TestUtil.sendKeys(ff.name2, "another name");
       TestUtil.clear(ff.name)
@@ -76,6 +79,7 @@ describe('Unused repeating item/section control', function() {
       TestUtil.waitForElementDisplayed(diseasesPopover1)
       expect(diseasesPopover1.isDisplayed()).toBe(true);
     });
+
     it('should add a new one when at least one item in the section is not empty', function () {
       ff.disease.click();
       ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
@@ -95,7 +99,6 @@ describe('Unused repeating item/section control', function() {
       TestUtil.clickAddRemoveButton(ff.btnDiseasesHist2);
       expect(diseasesPopover2.isDisplayed()).toBe(true);
     });
-
 
     it('should not add a new one when the previous non-empty items in the section become empty again', function () {
       TestUtil.clear(ff.disease);

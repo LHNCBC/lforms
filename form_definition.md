@@ -384,21 +384,6 @@ about the meaning of each key:
               where "value.RXCUIS" is `["724614", "637540", "848768"]` and "value.STRENGTHS_AND_FORMS" is
               `["325-2.25-0.19 mg Tab", "325-4.5-0.38 mg Tab", "325-4.84 mg Tab"]`.
 
-### Emitted (angular) Events:
-
-* **LF_EVENT_REPEATING_ITEM_ADDED** - emitted when a repeatable item or section is added to the form by clicking
-  the "add" button. An event attr object is associated with the event, with the following fields:
-    * event - the event name, 'LF_EVENT_REPEATING_ITEM_ADDED'
-    * formId - the code of the form
-    * itemId - the _elementId of the newly added item or section
-    * time - the time stamp when the event happens
-* **LF_EVENT_REPEATING_ITEM_DELETED** - emitted when a repeatable item or section is deleted from the form by clicking
- the "delete" button. The event attr object has the same set of the fields:
-    * event - the event name, 'LF_EVENT_REPEATING_ITEM_DELETED'
-    * formId - the code of the form
-    * itemId - the _elementId of the item or section that has just been deleted.
-    * time - the time stamp when the event happens
-
 
 ### Utility Functions:
 For a description of functions provided for retrieving user-entered data in

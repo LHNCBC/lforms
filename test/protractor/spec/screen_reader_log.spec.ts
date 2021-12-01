@@ -111,11 +111,6 @@ describe('508', function() {
       tp.LoadForm.openUSSGFHTHorizontal();
       expect(tp.heightLabel.isPresent()).toBeTruthy();
     });
-    // TODO: THere is no angular directive
-    // it('should be present on the questions in the directive test', function() {
-    //   // This is to test lforms.tpl.js.
-    //   tp.openDirectiveTest();
-    //   expect(tp.heightLabel.isPresent()).toBeTruthy();
-    // });
+    
   });
 });
