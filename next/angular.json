@@ -26,6 +26,7 @@
               "src/test-data",
               "src/test-data/form-data",
               "src/test-data/fhir-data",
+              "src/test-data/e2e",
               "src/test",
               "src/test/lib/",
               {
@@ -116,6 +117,7 @@
               "src/test-data",
               "src/test-data/form-data",
               "src/test-data/fhir-data",
+              "src/test-data/e2e",
               "src/test",
               "src/test/fhir",
               "src/test/webcomponent",

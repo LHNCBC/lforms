@@ -63,7 +63,7 @@ import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertic
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
 import { SafeHtmlPipe } from './safe-html.pipe';
-import { LhcPopoverComponent } from './lhc-popover/lhc-popover.component';
+import { LhcButtonPopoverComponent } from './lhc-button-popover/lhc-button-popover.component';
 import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
 
 registerLocaleData(en);
@@ -97,7 +97,7 @@ registerLocaleData(en);
     LhcGroupHorizontalComponent,
     LhcGroupMatrixComponent,
     SafeHtmlPipe,
-    LhcPopoverComponent,
+    LhcButtonPopoverComponent,
     LhcItemAttachmentComponent
   ],
   imports: [

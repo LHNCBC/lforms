@@ -319,7 +319,7 @@ export class LhcDataService {
     }
     if (!anyEmpty) {
       var newItem = append ? this.lhcFormData.appendRepeatingItems(item) : this.lhcFormData.addRepeatingItems(item);
-      //$scope.sendActionsToScreenReader();
+      this.sendActionsToScreenReader();
 
       // broadcast the event
       // $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
@@ -394,7 +394,7 @@ export class LhcDataService {
     // remove the items
     this.lhcFormData.removeRepeatingItems(item);
 
-    // $scope.sendActionsToScreenReader();
+    this.sendActionsToScreenReader();
 
     // broadcast the event
     // $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
@@ -602,13 +602,13 @@ export class LhcDataService {
    * so that screen readers can read.
    */
   sendActionsToScreenReader() {
-    
+    let self = this;
     if (this.lhcFormData && this.lhcFormData._actionLogs.length > 0) {
       this.lhcFormData._actionLogs.forEach(function(log) {
-        this.srLog.add(log);
+        self.srLog.add(log);
       });
       // clean up logs
-      this.lhcFormData._actionLogs = [];
+      self.lhcFormData._actionLogs = [];
     }
   };
 

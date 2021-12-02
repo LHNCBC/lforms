@@ -23,6 +23,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input() lfData: any;
   @Input() lfOptions: any;
   @Input() prepop: boolean=false;
+  @Input() fhirVersion: string;
   // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
   @Input() lhcFormData: any; 
   // emit an event when the form's view and data are initially rendered
@@ -100,8 +101,16 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         const self = this;        
         // reset the data after this thread is done
         setTimeout(()=> {
-          // self.lhcFormData = new LhcFormData(CommonUtils.deepCopy(this.lfData))
-          self.lhcFormData = new LhcFormData(self.lfData)
+          let lfData = CommonUtils.deepCopy(self.lfData);
+          // check if lfData is a FHIR Questionnaire
+          if (lfData.resourceType === "Questionnaire") {
+            let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(lfData) || "R4";
+            if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
+              // convert it to a lforms form data
+              lfData = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(lfData);
+            }
+          }
+          self.lhcFormData = new LhcFormData(lfData)
           // and options change
           if (changes.lfOptions && self.lfOptions) {
             // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.lfOptions));  

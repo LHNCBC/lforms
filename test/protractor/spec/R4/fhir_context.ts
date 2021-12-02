@@ -28,7 +28,7 @@ const fhirMock = {
       },
 
       request: function(relativeURL) {
-        let rtnData;
+        let rtnData, md;
         if (relativeURL.startsWith('ValueSet')) {
           if (md = relativeURL.match(/ValueSet\/([^/]+)\/\$expand/)) {
             let vsID = md[1];
@@ -66,7 +66,7 @@ const fhirMock = {
           let url = new URL(relativeURL, 'https://example.com');
           let params = url.searchParams;
 
-          var entry = {
+          var entry:any = {
             "resource": {
               "status": "final",
               "effectiveDateTime": "2016-06-29T19:14:57-04:00",
@@ -147,7 +147,7 @@ const fhirMock = {
 
           return {
             then: function(callback) {
-              var data = {
+              var data:any = {
                 "resourceType": "Bundle",
                 "type": "searchset",
               };

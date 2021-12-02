@@ -41,9 +41,8 @@ const FormUtils = {
     var resourceType = formDataDef.resourceType;
     var fhirVersion = options && options.fhirVersion;
 
-    if (resourceType === 'Questionnaire') {
-      formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
-    } else if (resourceType) {
+    // throw an error if it is a FHIR resource but not a Questionnaire
+    if (resourceType && resourceType !== 'Questionnaire') {
       throw new Error('Only Questionnaire FHIR content is supported in addFormToPage.')
     }
 
@@ -67,6 +66,7 @@ const FormUtils = {
         eleLhcForm.lfData = formDataDef;
         eleLhcForm.lfOptions = options;
         eleLhcForm.prepop = prepop;
+        eleLhcForm.fhirVersion = fhirVersion;
         eleLhcForm.addEventListener('onFormReady', function(e){
           resolve()
         });        
@@ -926,12 +926,6 @@ const FormUtils = {
    * @param {*} urlStu3 the URL of the STU3 version of the LForms FHIR lib
    */
   loadFHIRLibs: function(urlR4, urlStu3) {
-    if (!urlR4) {
-      urlR4 = "/test/lib/fhir/R4/lformsFHIR.min.js" 
-    }
-    if (!urlStu3) {
-      urlStu3 = "/test/lib/fhir/STU3/lformsFHIR.min.js"
-    }
     return Promise.all([
       this.loadScript(urlR4), 
       this.loadScript(urlStu3)])

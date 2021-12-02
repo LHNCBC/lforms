@@ -11,15 +11,18 @@
     */
    constructor(private logID?:string) {
     if (logID === undefined) {
-      // Create a new log element
-      let baseID = 'reader_log';
-      logID = baseID;
-      let counter = 1;
-      while (document.getElementById(logID))
-        logID = baseID + ++counter;
-      this.logElement = document.createElement('div')
-      this.logElement.setAttribute('id', logID);
-      document.body.appendChild(this.logElement);
+      logID = 'reader_log';
+      let logEle = document.getElementById(logID)
+      // reuse the existing log element 
+      if (logEle) {
+        this.logElement = logEle
+      }
+      // or create a new log element 
+      else {
+        this.logElement = document.createElement('div')
+        this.logElement.setAttribute('id', logID);
+        document.body.appendChild(this.logElement);
+      }
     }
     else {
       this.logElement = document.getElementById(logID);
