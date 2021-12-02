@@ -34,15 +34,15 @@
             attr.aria-describedby="label-{{ item._elementId }}"
        ></span>
       <ng-container *ngSwitchCase="'popover-escaped'">
-        <lhc-popover [item]="item" [popoverType]="'help-string'"></lhc-popover>
+        <lhc-button-popover [item]="item" [popoverType]="'help-string'"></lhc-button-popover>
        </ng-container>
       <ng-container *ngSwitchCase="'popover-html'">
-        <lhc-popover [item]="item" [popoverType]="'help-html'"></lhc-popover>
+        <lhc-button-popover [item]="item" [popoverType]="'help-html'"></lhc-button-popover>
       </ng-container>
     </span>
     <!-- copyright -->
     <ng-container *ngIf="item.copyrightNotice">
-      <lhc-popover [item]="item" [popoverType]="'copyright-string'"></lhc-popover>
+      <lhc-button-popover [item]="item" [popoverType]="'copyright-string'"></lhc-button-popover>
     </ng-container>
   </div>
 </ng-container>
