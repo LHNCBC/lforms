@@ -31,6 +31,10 @@ export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
     const button = this.elRef.nativeElement.querySelector('button[nz-wave]');
     if (button) {
       button.setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
+      button.addEventListener('focus', () => {
+        const currentValue = this.item.value || false;
+        this.liveAnnouncer.announce(currentValue.toString());
+      });
     }
   }
 
