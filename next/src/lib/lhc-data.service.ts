@@ -139,7 +139,7 @@ export class LhcDataService {
   getIndentationStyle() {
     return this.lhcFormData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
   }
-  
+
   /**
    * Check if there's only one repeating item in a group
    * (so that the 'remove' button won't show on this item)
@@ -224,7 +224,7 @@ export class LhcDataService {
    * @returns {boolean}
    */
   targetShown(item) {
-    return this.lhcFormData ? item._enableWhenExpVal !== false && 
+    return this.lhcFormData ? item._enableWhenExpVal !== false &&
       this.lhcFormData.getSkipLogicClass(item) !== 'target-disabled' : null;
   }
 
@@ -319,7 +319,7 @@ export class LhcDataService {
     }
     if (!anyEmpty) {
       var newItem = append ? this.lhcFormData.appendRepeatingItems(item) : this.lhcFormData.addRepeatingItems(item);
-      //$scope.sendActionsToScreenReader();
+      this.sendActionsToScreenReader();
 
       // broadcast the event
       // $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
@@ -394,7 +394,7 @@ export class LhcDataService {
     // remove the items
     this.lhcFormData.removeRepeatingItems(item);
 
-    // $scope.sendActionsToScreenReader();
+    this.sendActionsToScreenReader();
 
     // broadcast the event
     // $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
@@ -435,8 +435,8 @@ export class LhcDataService {
   /**
    * Track by item's element id for each cell in a table row
    * @param index *ngFor index, not used
-   * @param item *ngFor item, an item of the form 
-   * @returns 
+   * @param item *ngFor item, an item of the form
+   * @returns
    */
   trackByElementId(index, item) {
     // index is not used since item._elementId is unique
@@ -446,8 +446,8 @@ export class LhcDataService {
   /**
    * Track by each row's group header item's element id for each row in a horizontal table
    * @param index *ngFor index
-   * @param item *ngFor item, the group/section item of a form 
-   * @returns 
+   * @param item *ngFor item, the group/section item of a form
+   * @returns
    */
   trackByRowHeaderElementId(index, row) {
     return row.header._elementId;
@@ -457,7 +457,7 @@ export class LhcDataService {
    * Track by column's id, which is "col" + the item's element id in the first row
    * @param index *ngFor index, not used
    * @param item *ngFor item, an item in the headers array of the horizontal table structure
-   * @returns 
+   * @returns
    */
   trackByColumnHeaderId(index, col) {
     return col.id;
@@ -585,7 +585,7 @@ export class LhcDataService {
       item.value = { "text": otherValue, "_notOnList": true};
     }
   };
-  
+
 
   /**
    * Writes a single message to the reader_log element on the page
@@ -602,9 +602,9 @@ export class LhcDataService {
    * so that screen readers can read.
    */
   sendActionsToScreenReader() {
-    
+
     if (this.lhcFormData && this.lhcFormData._actionLogs.length > 0) {
-      this.lhcFormData._actionLogs.forEach(function(log) {
+      this.lhcFormData._actionLogs.forEach((log) => {
         this.srLog.add(log);
       });
       // clean up logs
