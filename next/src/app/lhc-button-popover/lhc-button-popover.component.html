@@ -1,4 +1,18 @@
 <ng-container [ngSwitch]="popoverType">
+  <button *ngSwitchCase="'repeating-item'" id="add-{{item._elementId}}" type="button" class="lhc-float-button lhc-button"  
+          nz-popover
+          [(nzPopoverVisible)]="item._showUnusedItemWarning"
+          [nzPopoverContent]="warningStrTemplate"
+          nzPopoverPlacement="topLeft"
+          [nzPopoverTrigger]="click"
+          nzPopoverOverlayClassName="warning-class{{ item._elementId.replaceAll('/','-') }}"
+          (click)="lhcDataService.addOneRepeatingItem(item)"
+          (blur)="lhcDataService.hideUnusedItemWarning(item)"
+          attr.aria-controls="add-button-{{item._elementId}}"
+          attr.aria-label="add button for {{item.question}}"
+          attr.aria-describedby="add-button-{{ item._elementId }}">              
+    {{ buttonLabel }}
+  </button>
   <button *ngSwitchCase="'help-string'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"  
           nz-popover
           [nzPopoverContent]="helpStrTemplate"
@@ -55,6 +69,16 @@
   </ng-container>
   
 </ng-container>
+
+<!-- unused item warning template -->
+<ng-template #warningStrTemplate>
+  <span attr.aria-labelledby="add-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="{{item._unusedItemWarning}}"
+        attr.aria-describedby="add-content-{{item._elementId}}"
+        id="add-content-{{item._elementId}}"
+  >{{item._unusedItemWarning}}</span>
+</ng-template>
 
 <!-- help popover template with trusted html -->
 <ng-template #helpHtmlTemplate>

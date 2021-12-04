@@ -11,7 +11,7 @@
         <span *ngIf="!lhcFormData._linkToDef">[{{ lhcFormData.code }}]</span>
       </span>
       <!-- copyright -->
-      <lhc-popover *ngIf="lhcFormData.copyrightNotice" [item]="lhcFormData" [popoverType]="'copyright-string'" [formLevel]="true"></lhc-popover>
+      <lhc-button-popover *ngIf="lhcFormData.copyrightNotice" [item]="lhcFormData" [popoverType]="'copyright-string'" [formLevel]="true"></lhc-button-popover>
       <button *ngIf="lhcFormData.templateOptions.showFormOptionPanelButton" type="button" class="lf-control-button btn-sm"
               (click)="hideShowFormOptionPanel()" aria-label="Form Option Panel">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>

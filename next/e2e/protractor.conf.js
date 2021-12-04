@@ -15,7 +15,7 @@ exports.config = {
     '../../test/protractor/spec/argonaut.spec.ts',
     '../../test/protractor/spec/autocomp_list.spec.ts',
     '../../test/protractor/spec/buildTest.spec.ts',
-    '../../test/protractor/spec/fhirpath.spec.ts', // last two tests on radio button and checkboxes with saved values failed
+    '../../test/protractor/spec/fhirpath.spec.ts', 
     '../../test/protractor/spec/lforms_datatype.spec.ts',
     '../../test/protractor/spec/lforms_fhirdata.spec.ts',
     '../../test/protractor/spec/lforms_formdata.spec.ts',
@@ -30,7 +30,22 @@ exports.config = {
     '../../test/protractor/spec/lforms_validation.spec.ts', // has one failed test on DT
     '../../test/protractor/spec/lforms_validation_date.spec.ts',
     '../../test/protractor/spec/fhir_context.spec.ts',
-    '../../test/protractor/spec/attachment.spec.ts'
+    '../../test/protractor/spec/attachment.spec.ts',
+    '../../test/protractor/spec/R4/prepop.spec.ts',
+    '../../test/protractor/spec/R4/variables.spec.ts',
+    '../../test/protractor/spec/addFormToPage.spec.ts', 
+    '../../test/protractor/spec/lforms_one_unused_repeating_item.spec.ts',
+    '../../test/protractor/spec/lforms_tree.spec.ts',
+    '../../test/protractor/spec/screen_reader_log.spec.ts'
+
+    // ===Remaining tests===
+    // lforms_display_controls.spec.ts  // wait for a merge from next
+    // lforms_visual.spec.ts
+    // lforms_keyboard_navi.spec.ts   // no navigation yet
+    // lforms_directive_attr.spec.ts // no directive any more   
+    // lforms_directive.spec.ts  // no diretive any more       
+
+   
 
   ],
   capabilities: {

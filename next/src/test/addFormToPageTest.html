@@ -61,10 +61,10 @@
 
       <br><br>
       <div id="loadMsg" style="color: red"></div>
+      <wc-lhc-form id='test-form'></wc-lhc-form>
       <div id="formContainer2"></div>
       <div id="formContainer"></div>
 
-      <wc-lhc-form id='test-form'></wc-lhc-form>
 
     </div>
 
@@ -135,19 +135,14 @@
         var fileAnchor = document.querySelector('#fileAnchor');
         var lfData;
         reader.onload = function() {
-          var importedData = JSON.parse(reader.result);
-          // if the imported data is in FHIR Questionnaire format
-          if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
-            lfData = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-          }
-          // in the internal LForms format
-          else {
-            lfData = importedData;
-          }
+          var lfData = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
-          testForm.lfData = lfData;
-          testForm.prepop = true;
+          testForm.lfData = lfData; // lforms data or FHIR Questionnaire
+          testForm.fhirVersion = getFHIRVersion()
+          // The prepopulateFHIR variable below is a hack for the test code to signal
+          // prepopulation is desired.
+          testForm.prepop = window.prepopulateFHIR;
 
         };
         reader.readAsText(event.target.files[0]); 

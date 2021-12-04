@@ -717,13 +717,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             element(by.id("merge-qr")).click();
 
             browser.wait(EC.presenceOf(element(by.id(ff.nameID))), 5000);
-            // NEXT: no needed
-            // browser.wait(function() {
-            //   return element(by.id(ff.nameID)).isDisplayed(); // .name is sometimes stale
-            // }, tp.WAIT_TIMEOUT_1);
+            TestUtil.waitForElementDisplayed(ff.name)
 
-            // browser.wait(EC.textToBePresentInElementValue(ff.name,
-            //   'name 1'), 2000);
             expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
             expect(TestUtil.getAttribute(ff.name3,'value')).toBe("name 3");

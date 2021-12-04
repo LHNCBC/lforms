@@ -1,11 +1,19 @@
-var tp = require('./lforms_testpage.po.js');
-var testUtil = require('./util');
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, element, by } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+
 describe('508', function() {
+  let tp: TestPage = new TestPage(); 
+
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
 
   describe('screen reader log', function() {
 
     beforeAll(function() {
-      tp.openUSSGFHTHorizontal();
+      tp.LoadForm.openUSSGFHTHorizontal();
       tp.resetReaderLog();
     });
 
@@ -14,14 +22,14 @@ describe('508', function() {
     });
 
     it('should contain an entry when skip logic shows a field', function() {
-      testUtil.sendKeys(tp.heightField, '10');
+      TestUtil.sendKeys(tp.heightField, '10');
       tp.expectReaderLogEntries(
         ['Showing Mock-up item: Shown when Height >= 10']);
     });
 
     it('should not add an extra entry if the field is already showing',
        function() {
-      testUtil.sendKeys(tp.heightField, '2');
+      TestUtil.sendKeys(tp.heightField, '2');
       tp.expectReaderLogEntries(
         ['Showing Mock-up item: Shown when Height >= 10']);
     });
@@ -40,7 +48,7 @@ describe('508', function() {
       tp.expectReaderLogEntries(
         ['Showing Mock-up item: Shown when Height >= 10',
          'Hiding Mock-up item: Shown when Height >= 10',
-         '"Height"requires a value']);
+         'Height requires a value']);
     });
 
     it('should add an entry when a section is added or removed', function () {
@@ -61,19 +69,19 @@ describe('508', function() {
       tp.resetReaderLog();
       tp.expectReaderLogEntries([]);
       // Add a row to the table by clicking the + button.
-      testUtil.safeClick(element(by.id('add-/54114-4/54117-7/1/1')));
+      TestUtil.safeClick(element(by.id('add-/54114-4/54117-7/1/1')));
       tp.expectReaderLogEntries(['Added row']);
       // Remove the row
       var minusButtonCSS =
         "button[title=\"Remove this row of \\\"This family member's history of disease\\\"\"]";
       var minusButton = element.all(by.css(minusButtonCSS)).first();
-      testUtil.safeClick(minusButton);
+      TestUtil.safeClick(minusButton);
       tp.expectReaderLogEntries(['Added row', 'Removed row']);
     });
 
     it('should add an entry when a question is added or removed', function () {
       // Switch to the first form, which has a repeating question
-      tp.openUSSGFHTVertical();
+      tp.LoadForm.openUSSGFHTVertical();
       var addNameButton = element(by.cssContainingText('button',
         'Add another "Name"'));
       browser.wait(function() {
@@ -83,7 +91,7 @@ describe('508', function() {
       tp.resetReaderLog();
       tp.expectReaderLogEntries([]);
       // Add a question
-      testUtil.sendKeys(tp.USSGFHTVertical.name, "a name");
+      TestUtil.sendKeys(tp.USSGFHTVertical.name, "a name");
       addNameButton.click();
       tp.expectReaderLogEntries(['Added question']);
       // Remove the question
@@ -96,17 +104,13 @@ describe('508', function() {
    * assist the screen reader.*/
   describe('field labels', function() {
     it('should be present on the questions in the vertical template', function() {
-      tp.openUSSGFHTVertical();
+      tp.LoadForm.openUSSGFHTVertical();
       expect(tp.heightLabel.isPresent()).toBeTruthy();
     });
     it('should be present on the questions in the horizontal template', function() {
-      tp.openUSSGFHTHorizontal();
+      tp.LoadForm.openUSSGFHTHorizontal();
       expect(tp.heightLabel.isPresent()).toBeTruthy();
     });
-    it('should be present on the questions in the directive test', function() {
-      // This is to test lforms.tpl.js.
-      tp.openDirectiveTest();
-      expect(tp.heightLabel.isPresent()).toBeTruthy();
-    });
+    
   });
 });

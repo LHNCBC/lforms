@@ -3,6 +3,8 @@ import TestUtil from "./util";
 import { browser, element, by } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
 
+let $: any = (global as any).jQuery;
+
 const autoCompBasePage = require("../../../next/node_modules/autocomplete-lhc/test/protractor/basePage").BasePage;
 const elementFactory = TestUtil.elementFactory;
 
@@ -28,8 +30,8 @@ export class TestPage {
    */
   makeReaderLogVisible() {
     browser.driver.executeScript(function() {
-      var r = element(by.css('#reader_log'));
-      r.css({height: "auto", width: "auto", top: "auto", left: "auto"});
+      var r = document.getElementById('reader_log');
+      $(r).css({height: "auto", width: "auto", top: "auto", left: "auto"});
     });
   };
 
@@ -171,9 +173,10 @@ export class TestPage {
   readerLog = element(by.css('#reader_log'))
   readerLogEntries = element.all(by.css('#reader_log p'))
   expectReaderLogEntries(expectedEntries) {
+    let self = this;
     browser.wait(function() {
-      return this.readerLogEntries.getText().then((textArray) => {
-        var rtn = this.arraysEqual(textArray, expectedEntries);
+      return self.readerLogEntries.getText().then((textArray) => {
+        var rtn = self.arraysEqual(textArray, expectedEntries);
         if (!rtn) {
           console.log("Screen reader log test:  expecting +"+
             JSON.stringify(expectedEntries)+ " but got " +
