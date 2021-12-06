@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import {Component, Input, OnInit, OnChanges, ElementRef} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
   selector: 'lhc-item-time',
@@ -11,7 +12,9 @@ export class LhcItemTimeComponent implements OnInit, OnChanges {
   @Input() item: any;
   time: Date | null = null;
 
-  constructor(public lhcDataService: LhcDataService) { }
+  constructor(public lhcDataService: LhcDataService,
+              private elRef:ElementRef,
+              private commonUtilsService: CommonUtilsService) { }
 
   ngOnInit(): void {
     console.log("*lhc-item-time, ngOnInit")
@@ -42,6 +45,14 @@ export class LhcItemTimeComponent implements OnInit, OnChanges {
       }
     }
 
+  }
+
+  ngAfterViewInit() {
+    // Set aria-label attribute of the actual <input> element.
+    const input = this.elRef.nativeElement.querySelector('input');
+    if (input) {
+      input.setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
+    }
   }
 
 }

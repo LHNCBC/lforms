@@ -1,5 +1,6 @@
 <ng-container *ngIf="item">
-  <nz-date-picker
+  <nz-date-picker #nzDatePickerComponent
+      id="{{item._elementId}}"
       class="lhc-datetime-picker"
       nzShowTime
       nzFormat="MM/dd/yyyy HH:mm:ss"
@@ -9,7 +10,6 @@
       (ngModelChange)="onChange($event)"
       (nzOnOk)="onOk($event)"
       (focus)="lhcDataService.setActiveRow(item)"
-      id="{{item._elementId}}"
       aria-required="{{ item._answerRequired }}"
     ></nz-date-picker>
 </ng-container>

@@ -1,15 +1,15 @@
 <ng-container *ngIf="item">
-  <nz-time-picker 
-    class="lhc-time-picker" 
+  <nz-time-picker
+    id="{{item._elementId}}"
+    class="lhc-time-picker"
     nzFormat="HH:mm:ss"
     nzPlaceHolder="HH:mm:ss"
     nzSize="small"
-    [(ngModel)]="time" 
+    [(ngModel)]="time"
     (focus)="lhcDataService.setActiveRow(item)"
-    id="{{item._elementId}}"
     aria-required="{{ item._answerRequired }}"
     (ngModelChange)="onChange($event)"
   >
   </nz-time-picker>
 </ng-container>
-    
+
