@@ -20,17 +20,18 @@ declare var ResizeObserver;
 })
 export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() lfData: any;
-  @Input() lfOptions: any;
-  @Input() prepop: boolean=false;
-  @Input() fhirVersion: string;
+  @Input() lfData: any;  // questionnaire
+  @Input() lfOptions: any;  //options
+  @Input() prepop: boolean=false;  //
+  @Input() fhirVersion: string;  //
   // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
-  @Input() lhcFormData: any; 
+  @Input() lhcFormData: any; // not to publish
   // emit an event when the form's view and data are initially rendered
   @Output() onFormReady: EventEmitter<any> = new EventEmitter<any>();
 
   //lhcFormData: any;
   viewModeClass = "";
+  viewMode = "";
   _inputFieldWidth = null
 
   private changeSize = new Subject();
@@ -51,12 +52,21 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         this.winService.setWindowWidth(eleWidth);
     });
 
-    winService.viewModeClass.subscribe(updatedClass => {      
-      this.viewModeClass = updatedClass;
+    winService.viewMode.subscribe(updatedMode => {      
+      this.viewModeClass = this.lhcDataService.getViewModeClass(updatedMode);
+      this.viewMode = updatedMode;
     });  
 
+  }
 
-   }
+  /**
+   * get CSS class of view mode for an item
+   * @param item an item in a form
+   * @returns 
+   */
+   getItemViewModeClass(item) {
+    return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
+  }
 
   ngOnInit(): void {
     // if (this.lfData) {
@@ -67,16 +77,11 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
     //console.log(this.host)
     this.observer = new ResizeObserver(entries => {
       //console.log(entries)
-
-      // entries.forEach(entry => {
-      //   console.log("width", entry.contentRect.width);
-      //   console.log("height", entry.contentRect.height);
-      // });
       
       this.zone.run(() => {
         let width = entries[0].contentRect.width;
         this.changeSize.next(width);
-        //console.log("in Resize observer:", width);
+        // console.log("in Resize observer:", width);
       });
       
     });

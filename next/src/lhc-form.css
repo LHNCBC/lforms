@@ -84,11 +84,15 @@
   resize: vertical; /* not allow user to change width */
 
 }
-.lhc-form input:focus,.lhc-form textarea:focus {
-  background-color: #FFF8C6
+.lhc-form input:focus,
+.lhc-form textarea:focus,
+.lhc-form .ant-picker-input>input:focus {
+  background-color: #FFF8C6;
 }
 
-.lhc-form input[readonly], .lhc-form textarea[readonly] {
+.lhc-form input[readonly], 
+.lhc-form textarea[readonly],
+.lhc-form .ant-picker-input>input[readonly] {
   background-color: #E8E8E8;
 }
 

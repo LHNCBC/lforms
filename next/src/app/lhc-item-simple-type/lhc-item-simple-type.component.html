@@ -6,6 +6,7 @@
   <div class="lhc-de-unit" *ngIf="hasSingleUnit">
     <div class="lf-field-units" >
       <input
+        [disabled]="item._readOnly"
         class="units"
         type="text"
         id="{{unitElementId}}"

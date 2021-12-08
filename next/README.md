@@ -22,7 +22,7 @@ This project generates a web component of the new LForms widget.
 1. Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. 
    The app will automatically reload if you change any of the source files.
 
-1. Run `npm run start:public` if you need to access to the dev server from a different machine. 
+1. Run `npm run start-public` if you need to access to the dev server from a different machine. 
    For example, to run Narrator from a Windows PC.
 
 ## Build

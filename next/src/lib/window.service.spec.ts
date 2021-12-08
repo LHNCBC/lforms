@@ -38,15 +38,15 @@ describe('WindowService', () => {
     
     service.setWindowWidth(100);
     expect(service.getWindowWidth()).toBe(100);
-    expect(service.getViewModeClass()).toBe('lhc-view-sm');
+    expect(service.getViewMode()).toBe('sm');
 
     service.setWindowWidth(500);
     expect(service.getWindowWidth()).toBe(500);
-    expect(service.getViewModeClass()).toBe('lhc-view-md');
+    expect(service.getViewMode()).toBe('md');
 
     service.setWindowWidth(900);
     expect(service.getWindowWidth()).toBe(900);
-    expect(service.getViewModeClass()).toBe('lhc-view-lg');
+    expect(service.getViewMode()).toBe('lg');
  
   })
 

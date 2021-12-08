@@ -300,6 +300,76 @@ export class LhcDataService {
     return eleClass;
   }
 
+  /**
+   * get the CSS class the form's view mode
+   * @param currentViewMode the current view mode set by element size
+   * @returns {string} the CSS class
+   */
+  getViewModeClass(currentViewMode) {
+    let viewModeClass;
+    let viewMode = this.lhcFormData?.templateOptions?.viewMode;
+
+    if (!viewMode || viewMode === "auto") {
+      viewMode = currentViewMode;
+    }
+    switch (viewMode) {
+      case "lg":
+        viewModeClass = "lhc-view-lg";
+        break;
+      case "md":
+        viewModeClass = "lhc-view-md";
+        break;
+      case "sm":
+        viewModeClass = "lhc-view-sm";
+        break;
+      default:
+        viewModeClass = "lhc-view-lg";
+    }
+    return viewModeClass;
+  }
+  
+
+  /**
+   * get the CSS class for an item's view mode
+   * @param item an item in the lforms form
+   * @param currentViewMode the current view mode set by element size
+   * @returns {string} the CSS class
+   */
+  getItemViewModeClass(item, currentViewMode) {
+    let viewMode;
+    let viewModeClass = "";
+    if (item) {
+      // if viewMode is specified on the item
+      if (item.displayControl && item.displayControl.viewMode) {
+        viewMode = item.displayControl.viewMode;
+      }
+      // otherwise use the default viewMode of the form
+      else {
+        viewMode = this.lhcFormData.templateOptions.viewMode;
+      }
+
+      // responsive to the screen/container's size
+      if (!viewMode || viewMode === "auto") {
+        viewMode = currentViewMode;
+      }
+
+      switch (viewMode) {
+        case "lg":
+          viewModeClass = "lhc-item-view-lg";
+          break;
+        case "md":
+          viewModeClass = "lhc-item-view-md";
+          break;
+        case "sm":
+          viewModeClass = "lhc-item-view-sm";
+          break;
+        default:
+          viewModeClass = "lhc-item-view-lg";
+      }
+    }
+    return viewModeClass;
+  }
+  
 
   /**
    * Add a repeating item or a repeating group

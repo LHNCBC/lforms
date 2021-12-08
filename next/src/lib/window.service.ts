@@ -11,12 +11,11 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 export class WindowService {
 
   private _windowWidth$: BehaviorSubject<number> = null;
-  private _viewModeClass$: BehaviorSubject<string> = null;
-  //public windowWidth: Observable<number> = this._windowWidth$.asObservable();
+  private _viewMode$: BehaviorSubject<string> = null; 
 
   constructor() { 
     this._windowWidth$ = new BehaviorSubject(window.innerWidth);
-    this._viewModeClass$ = new BehaviorSubject('lhc-view-lg');
+    this._viewMode$ = new BehaviorSubject('lg'); // lg, md, sm
     //console.log("in window.service constructor: " + this._windowWidth$.getValue());
   }
   
@@ -29,11 +28,11 @@ export class WindowService {
   }
   
   /**
-   * Get view mode CSS class as a string
-   * @returns the CSS class string for view mode
+   * Get view mode as a string
+   * @returns the view mode value
    */
-  getViewModeClass(): string {
-    return this._viewModeClass$.getValue();
+  getViewMode(): string {
+    return this._viewMode$.getValue();
   }
 
   /**
@@ -43,30 +42,21 @@ export class WindowService {
   setWindowWidth(width: number): void {
     this._windowWidth$.next(width)
 
-    let viewClass:string;
+    let viewMode:string;
     
     // small screen
-    if (width <= 400)  //480
-      viewClass = "lhc-view-sm";
-      // medium screen
-    else if (width <= 600)  //800
-      viewClass = "lhc-view-md";
+    if (width <= 400) {
+      viewMode = 'sm';
+    }      
+    // medium screen
+    else if (width <= 600) {
+      viewMode = 'md';
+    }
     // large screen
     else {
-      viewClass = "lhc-view-lg";
+      viewMode = 'lg';
     }
-    this._viewModeClass$.next(viewClass);
-  }
-
-  /**
-   * Get a CSS style for DOM element (the input field)
-   * @returns an object of CSS style
-   */
-  getEleStyle(): object {
-    let width = this._windowWidth$.getValue();
-    let viewClass = this._viewModeClass$.getValue();
-    console.log(viewClass)
-    return viewClass === "lhc-view-lg" ? {"width": width/2 + "px"} : null;
+    this._viewMode$.next(viewMode);
   }
 
   /**
@@ -81,8 +71,8 @@ export class WindowService {
    * Get view mode CSS class as an obserable
    * @returns a CSS class string as an observable
    */
-  get viewModeClass(): Observable<string> {
-    return this._viewModeClass$.asObservable();
+  get viewMode(): Observable<string> {
+    return this._viewMode$.asObservable();
   }
 
 }
