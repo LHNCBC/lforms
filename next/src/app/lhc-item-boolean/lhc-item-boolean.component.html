@@ -1,11 +1,12 @@
-<ng-container *ngIf="item">    
-  <nz-switch 
+<ng-container *ngIf="item">
+  <nz-switch #nzSwitchComponent
     [nzDisabled]="item._readOnly"
-    [(ngModel)]="item.value" 
-    [nzCheckedChildren]="checkedTemplate" 
+    id="{{item._elementId}}"
+    [(ngModel)]="item.value"
+    [nzCheckedChildren]="checkedTemplate"
     [nzUnCheckedChildren]="unCheckedTemplate"
     (focus)="lhcDataService.setActiveRow(item)"
-    id="{{item._elementId}}"
+    (ngModelChange)="onModelChange($event)"
   >
   </nz-switch>
 </ng-container>

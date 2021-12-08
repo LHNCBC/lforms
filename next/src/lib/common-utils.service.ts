@@ -50,4 +50,12 @@ export class CommonUtilsService {
     return displayControl?.answerLayout?.columns !== undefined
       && displayControl.answerLayout.columns !== '0';
   }
+
+
+  /**
+   * Get the aria-label for a control
+   */
+  getAriaLabel(item) {
+    return item.prefix ? `${item.prefix} ${item.question}` : item.question;
+  }
 }

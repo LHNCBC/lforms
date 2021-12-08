@@ -1,14 +1,14 @@
 <ng-container *ngIf="item">
-  <nz-date-picker 
+  <nz-date-picker #nzDatePickerComponent
     [nzDisabled]="item._readOnly"
-    class="lhc-date-picker" 
+    id="{{item._elementId}}"
+    class="lhc-date-picker"
     nzFormat="MM/dd/yyyy"
     nzPlaceHolder="MM/DD/YYYY"
     nzSize="small"
-    [(ngModel)]="item.value" 
+    [(ngModel)]="item.value"
     (ngModelChange)="onChange($event)"
-    (focus)="lhcDataService.setActiveRow(item)" 
-    id="{{item._elementId}}"
+    (focus)="lhcDataService.setActiveRow(item)"
     aria-required="{{ item._answerRequired }}"
   ></nz-date-picker>
   <!--(focus) is not triggered-->

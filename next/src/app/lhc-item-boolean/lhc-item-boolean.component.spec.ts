@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LhcItemBooleanComponent } from './lhc-item-boolean.component';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import {NzSwitchModule} from "ng-zorro-antd/switch";
 
 describe('LhcItemBooleanComponent', () => {
   let component: LhcItemBooleanComponent;
@@ -9,6 +10,7 @@ describe('LhcItemBooleanComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemBooleanComponent ],
+      imports: [NzSwitchModule],
       providers: [LhcDataService]
     })
     .compileComponents();
@@ -17,6 +19,10 @@ describe('LhcItemBooleanComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LhcItemBooleanComponent);
     component = fixture.componentInstance;
+    component.item = {
+      _elementId: 1,
+      question: 'question'
+    };
     fixture.detectChanges();
   });
 
