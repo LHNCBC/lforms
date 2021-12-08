@@ -72,34 +72,33 @@
     <script src="/assets/lib/zone.min.js"></script>
 
     <!-- ES2015 files of the LHC-Forms web component -->
-    <script src="../runtime.js" type="module"></script>
-    <script src="../polyfills.js" type="module"></script>
-    <script src="../scripts.js" defer></script>
-    <script src="../vendor.js" type="module"></script>
-    <script src="../main.js" type="module"></script>
- 
+    <script src="../runtime.js"></script>
+    <script src="../polyfills.js"></script>
+    <script src="../scripts.js" ></script>
+    <script src="../vendor.js"></script>
+    <script src="../main.js"></script>
+    
+    <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
+    <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
 
     <script>
 
       window.onload = function() {
-        LForms.Util.loadFHIRLibs("/test/lib/fhir/R4/lformsFHIR.min.js", "/test/lib/fhir/STU3/lformsFHIR.min.js")
-        .then(function(){
-          var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
-          LForms.Util.setFHIRContext(fhirAPI);
+        var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
+        LForms.Util.setFHIRContext(fhirAPI);
 
-          // form def data is a string value of 'allInOne'
-          $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
-            window.allInOne = allInOne;
-            LForms.Util.addFormToPage('allInOne', 'formContainer');
-          });
+        // form def data is a string value of 'allInOne'
+        $.getJSON('/test-data/form-data/allInOne.json', function z(allInOne) {
+          window.allInOne = allInOne;
+          LForms.Util.addFormToPage('allInOne', 'formContainer');
+        });
 
-          // form def data is a JSON object
-          $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
-            LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
-          });
-          
-        })
+        // form def data is a JSON object
+        $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
+          LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+        });
       };        
     </script>
 

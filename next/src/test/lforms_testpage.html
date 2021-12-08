@@ -410,21 +410,17 @@
 
     </script>
 
-    <!-- lforms FHIR lib file, loaded after LHC-Forms files are loaded -->
-    <script>
-
-      window.onload = function() {
-        LForms.Util.loadFHIRLibs("/test/lib/fhir/R4/lformsFHIR.min.js", "/test/lib/fhir/STU3/lformsFHIR.min.js")
-      };        
-    </script>
-    <!-- zone.js is not included in LHC-Forms web component -->
+<!-- zone.js is not included in LHC-Forms web component -->
     <script src="/assets/lib/zone.min.js"></script>
     <!-- ES2015 files of the LHC-Forms web component -->
-    <script src="../runtime.js" type="module"></script>
-    <script src="../polyfills.js" type="module"></script>
-    <script src="../scripts.js" defer></script>
-    <script src="../vendor.js" type="module"></script>
-    <script src="../main.js" type="module"></script>
+    <script src="../runtime.js"></script>
+    <script src="../polyfills.js"></script>
+    <script src="../scripts.js" ></script>
+    <script src="../vendor.js"></script>
+    <script src="../main.js"></script>
+    
+    <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
+    <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
 
   </body>
 </html>

@@ -126,7 +126,6 @@ registerLocaleData(en);
 })
 
 
-
 export class AppModule {
   constructor(private injector: Injector) {
 
@@ -138,18 +137,16 @@ export class AppModule {
       Def: Def,
       version: "29.0.0"
     }
-    
     lforms.Util.FHIRSupport = {
       'STU3': 'partial',
       'R4': 'WIP'
     };
-    
     window['LForms'] = lforms;
-    
-    
+        
     customElements.define('wc-lhc-item', createCustomElement(LhcItemComponent, { injector: this.injector }));
     customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));
   }
+  
   ngDoBootstrap() {}
 }
 
