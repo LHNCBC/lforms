@@ -74,14 +74,14 @@ lhc-unit {
 
 
 /* Medium view width */
-.lhc-view-md .lhc-de {
+.lhc-item-view-md .lhc-de {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: flex-start;
   align-content: flex-start;
 }
-.lhc-view-md .lhc-de-label-button {
+.lhc-item-view-md .lhc-de-label-button {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -91,16 +91,16 @@ lhc-unit {
   flex-grow: 1;
   width: 100%;
 }
-.lhc-view-md .lhc-de-label {
+.lhc-item-view-md .lhc-de-label {
   order: 1;
   flex-grow: 1;
 }
-.lhc-view-md .lhc-de-button {
+.lhc-item-view-md .lhc-de-button {
   order: 2;
   flex-grow: 0;
   flex-shrink: 0;
 }
-.lhc-view-md .lhc-de-input-unit {
+.lhc-item-view-md .lhc-de-input-unit {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -110,31 +110,31 @@ lhc-unit {
   flex-grow: 1;
   width: 100%;
 }
-.lhc-view-md lhc-item-quantity {
+.lhc-item-view-md lhc-item-quantity {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: flex-start;
 }
-.lhc-view-md lhc-input {
+.lhc-item-view-md lhc-input {
   order:1;
   flex-grow: 1;
 }
-.lhc-view-md lhc-unit {
+.lhc-item-view-md lhc-unit {
   order:2;
   flex-grow: 1;
 }
 /* end of medium view width */
 
 /* Small view width */
-.lhc-view-sm .lhc-de {
+.lhc-item-view-sm .lhc-de {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: flex-start;
   align-content: flex-start;
 }
-.lhc-view-sm .lhc-de-label-button {
+.lhc-item-view-sm .lhc-de-label-button {
    display: flex;
    flex-direction: row;
    flex-wrap: nowrap;
@@ -144,16 +144,16 @@ lhc-unit {
    flex-grow: 1;
    width: 100%;
 }
-.lhc-view-sm .lhc-de-label {
+.lhc-item-view-sm .lhc-de-label {
   order: 1;
   flex-grow: 1;
 }
-.lhc-view-sm .lhc-de-button {
+.lhc-item-view-sm .lhc-de-button {
   order: 2;
   flex-grow: 0;
   flex-shrink: 0;
 }
-.lhc-view-sm .lhc-de-input-unit {
+.lhc-item-view-sm .lhc-de-input-unit {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -164,19 +164,19 @@ lhc-unit {
   flex-grow: 1;
   width: 100%;
 }
-.lhc-view-sm lhc-item-quantity {
+.lhc-item-view-sm lhc-item-quantity {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: flex-start;
   align-content: flex-start;
 }
-.lhc-view-sm lhc-input {
+.lhc-item-view-sm lhc-input {
   order:1;
   flex-grow: 1;
   width: 100%;
 }
-.lhc-view-sm lhc-unit {
+.lhc-item-view-sm lhc-unit {
   order:2;
   flex-grow: 1;
   width: 100%;

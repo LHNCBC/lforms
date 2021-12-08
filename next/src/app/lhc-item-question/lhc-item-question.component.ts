@@ -25,8 +25,9 @@ export class LhcItemQuestionComponent implements OnInit {
     public lhcDataService: LhcDataService,
   ) {     
     winService.windowWidth.subscribe(updatedWidth => {
-      let viewClass = winService.getViewModeClass();
-      this.eleStyle = viewClass === "lhc-view-lg" ? {"width": updatedWidth/2 + "px"} : null;
+      let viewMode = winService.getViewMode();
+      let viewModeClass = lhcDataService.getItemViewModeClass(this.item, viewMode)
+      this.eleStyle = viewModeClass === "lhc-item-view-lg" ? {"width": updatedWidth/2 + "px"} : null;
     });  
 
   }
@@ -45,5 +46,6 @@ export class LhcItemQuestionComponent implements OnInit {
     return show;
   }
 
+  
 }
 

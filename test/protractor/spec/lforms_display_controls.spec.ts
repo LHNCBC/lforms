@@ -1,12 +1,21 @@
-var tp = require('./lforms_testpage.po.js');
-var testUtil = require('./util.js');
+import { TestPage } from "./lforms_testpage.po";
+import TestUtil from "./util";
+import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
+let LForms: any = (global as any).LForms;
 
 describe('display controls demo', function() {
-  it('should show values as selected radio buttons/checkboxes', function() {
-    tp.openDisplayControlsDemo();
+  let tp: TestPage = new TestPage(); 
 
-    var item1Answer2 = element(by.id('/q1a/1c2'))
-    var item1Answer3 = element(by.id('/q1a/1c3'))
+  beforeAll(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
+
+  it('should show values as selected radio buttons/checkboxes', function() {
+    tp.LoadForm.openDisplayControlsDemo();
+
+    var item1Answer2 = element(by.id('/q1a/1c2')).element(by.css('input'))
+    var item1Answer3 = element(by.id('/q1a/1c3')).element(by.css('input'))
     browser.wait(function () {
       return item1Answer2.isPresent();
     }, tp.WAIT_TIMEOUT_1);
@@ -14,15 +23,15 @@ describe('display controls demo', function() {
     expect(item1Answer2.isSelected()).not.toBe(true);
     expect(item1Answer3.isSelected()).toBe(true);
 
-    var item3Answer2 = element(by.id('/q1c/1c2'))
-    var item3Answer3 = element(by.id('/q1c/1c3'))
+    var item3Answer2 = element(by.id('/q1c/1c2')).element(by.css('input'))
+    var item3Answer3 = element(by.id('/q1c/1c3')).element(by.css('input'))
     expect(item3Answer2.isSelected()).toBe(true);
     expect(item3Answer3.isSelected()).toBe(true);
   });
 
 
   it('displays 4 different types of answer layouts', function () {
-    tp.openDisplayControlsDemo();
+    tp.LoadForm.openDisplayControlsDemo();
 
     var item1answer1 = element(by.id('/q1a/1c1')),
         item1answer3 = element(by.id('/q1a/1c3')),
@@ -40,144 +49,210 @@ describe('display controls demo', function() {
       return item1answer1.isPresent();
     }, tp.WAIT_TIMEOUT_1);
 
-    expect(item1answer1.isDisplayed()).toBe(true);
-    expect(item4answer1.isDisplayed()).toBe(true);
-
-    // check answers in 4 different column settings
-    expect(element.all(by.css("span.lf-answer.lf-2-col")).count()).toBe(9);
-    expect(element.all(by.css("span.lf-answer.lf-3-col")).count()).toBe(10);
-    expect(element.all(by.css("span.lf-answer.lf-1-col")).count()).toBe(9);
-    expect(element.all(by.css("span.lf-answer.lf-0-col")).count()).toBe(10);
+    
+    TestUtil.waitForElementDisplayed(item1answer1)
+    TestUtil.waitForElementDisplayed(item4answer1)
 
     // first answer list
-    item1answer1.evaluate("item.value").then(function (value) {
-      // default value
-      expect(value.code).toBe("c3");
-      expect(value.text).toBe("Extra long answer text 123456789 Answer Z");
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items.length).toBe(10);
+      expect(formData.items[1].value.code).toBe("c3");
+      expect(formData.items[1].value.text).toBe("Extra long answer text 123456789 Answer Z");
     });
 
-    item1answer1.click();
-    item1answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe('c1');
-      expect(value.text).toBe('Extra long answer text 123456789 Answer X');
+    item1answer1.element(by.css('input')).click();
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[1].value.code).toBe("c1");
+      expect(formData.items[1].value.text).toBe("Extra long answer text 123456789 Answer X");
     });
-    item1answer3.click();
-    item1answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe('c3');
-      expect(value.text).toBe('Extra long answer text 123456789 Answer Z');
+    item1answer3.element(by.css('input')).click();
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[1].value.code).toBe("c3");
+      expect(formData.items[1].value.text).toBe("Extra long answer text 123456789 Answer Z");
     });
 
     // second answer list
-    item2answer1.evaluate("item.value").then(function (value) {
-      expect(value).toBe(null);
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[2].value == null).toBeTruthy();
     });
 
-    item2answer1.click();
-    item2answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe('c1');
-      expect(value.text).toBe('Long answer text 123 Answer X');
+    item2answer1.element(by.css('input')).click();
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[2].value.code).toBe('c1');
+      expect(formData.items[2].value.text).toBe('Long answer text 123 Answer X');
     });
-    item2Other.click();
-    item2answer1.evaluate("item.value").then(function (value) {
-      expect(value.code == null).toBeTruthy(); // allow undefined (Chrome)
-      expect(value.text == null).toBeTruthy(); // allow undefined (Chrome)
+
+    item2Other.element(by.css('input')).click();
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[2].value.code == null).toBeTruthy(); // allow undefined (Chrome)
+      expect(formData.items[2].value.text == null).toBeTruthy(); // allow undefined (Chrome)
     });
-    testUtil.sendKeys(item2OtherValue, 'other values');
-    item2answer1.evaluate("item.value").then(function (value) {
-      // user typed data is now only stored in text, not in code
-      expect(value.code).toBe(undefined);
-      expect(value.text).toBe('other values');
+
+    TestUtil.sendKeys(item2OtherValue, 'other values');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[2].value.code).toBe(undefined);
+      expect(formData.items[2].value.text).toBe('other values');
     });
+
     item2OtherValue.clear();
-    testUtil.sendKeys(item2OtherValue, 'other values again');
-    item2answer1.evaluate("item.value").then(function (value) {
-      // user typed data is now only stored in text, not in code
-      expect(value.code).toBe(undefined);
-      expect(value.text).toBe('other values again');
+    TestUtil.sendKeys(item2OtherValue, 'other values again');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[2].value.code).toBe(undefined);
+      expect(formData.items[2].value.text).toBe('other values again');
     });
-
+    
     // third answer list
-    item3answer1.evaluate("item.value").then(function (value) {
-      expect(value).toEqual([{"code": "c2", "text": "Answer Y", "_displayText": "Answer Y"},
-        {"code": "c3", "text": "Answer Z", "_displayText": "Answer Z"}]); // default values
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[3].value).toEqual([{"code": "c2", "text": "Answer Y"},
+           {"code": "c3", "text": "Answer Z"}]); // default values
     });
 
     item3answer1.click(); // appends first answer
-    item3answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(3);
-      expect(value[2].code).toBe('c1');
-      expect(value[2].text).toBe('Answer X');
-    });
-    item3answer3.click(); // deselects third answer
-    item3answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c2');
-      expect(value[0].text).toBe('Answer Y');
-      expect(value[1].code).toBe('c1');
-      expect(value[1].text).toBe('Answer X');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[3].value).toEqual([{"code": "c1", "text": "Answer X"},
+           {"code": "c2", "text": "Answer Y"}, {"code": "c3", "text": "Answer Z"}]); 
     });
 
+    item3answer3.click(); // deselects third answer
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[3].value).toEqual([{"code": "c1", "text": "Answer X"},
+           {"code": "c2", "text": "Answer Y"}]); 
+    });
+    
+
     // fourth answer list
-    item4answer1.evaluate("item.value").then(function (value) {
-      expect(value).toBe(null);
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[4].value).toBe(undefined)
     });
 
     item4answer1.click();
-    item4answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(1);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer X');
-    });
-    item4Other.click();
-    item4answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer X');
-      expect(value[1].code == null).toBeTruthy(); // allow undefined (Chrome)
-      expect(value[1].text == null).toBeTruthy(); // allow undefined (Chrome)
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[4].value).toEqual([{"code": "c1", "text": "Answer X"}]); 
     });
 
-    testUtil.sendKeys(item4OtherValue, 'other values');
-    item4answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer X');
-      expect(value[1].code).toBe(undefined);
-      expect(value[1].text).toBe('other values');
+    item4Other.click();
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[4].value[0]).toEqual({"code": "c1", "text": "Answer X"})
+      expect(formData.items[4].value[1].code == null).toBeTruthy(); // allow undefined
+      expect(formData.items[4].value[1].text == null).toBeTruthy(); // allow undefined
+    });
+
+    TestUtil.sendKeys(item4OtherValue, 'other values');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[4].value.length).toBe(2);
+      expect(formData.items[4].value[0].code).toBe('c1');
+      expect(formData.items[4].value[0].text).toBe('Answer X');
+      expect(formData.items[4].value[1].code).toBe(undefined);
+      expect(formData.items[4].value[1].text).toBe('other values');
     });
 
     // change the other value alone will update the data model when the checkbox is checked.
     item4OtherValue.clear();
-    testUtil.sendKeys(item4OtherValue, 'other values again');
-    item4answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer X');
-      expect(value[1].code).toBe(undefined);
-      expect(value[1].text).toBe('other values again');
+    TestUtil.sendKeys(item4OtherValue, 'other values again');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[4].value.length).toBe(2);
+      expect(formData.items[4].value[0].code).toBe('c1');
+      expect(formData.items[4].value[0].text).toBe('Answer X');
+      expect(formData.items[4].value[1].code).toBe(undefined);
+      expect(formData.items[4].value[1].text).toBe('other values again');
     });
 
     // other model values are not changed
-    item1answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe('c3');
-      expect(value.text).toBe('Extra long answer text 123456789 Answer Z');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[1].value.code).toBe("c3");
+      expect(formData.items[1].value.text).toBe("Extra long answer text 123456789 Answer Z");
     });
-    item2answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe(undefined);
-      expect(value.text).toBe('other values again');
+    
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[2].value.code).toBe(undefined);
+      expect(formData.items[2].value.text).toBe('other values again');
     });
-    item3answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c2');
-      expect(value[0].text).toBe('Answer Y');
-      expect(value[1].code).toBe('c1');
-      expect(value[1].text).toBe('Answer X');
+
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[3].value).toEqual([{"code": "c1", "text": "Answer X"},
+           {"code": "c2", "text": "Answer Y"}]); 
     });
 
   });
 
   it('repeating items/sections works', function () {
-    tp.openDisplayControlsDemo();
+    tp.LoadForm.openDisplayControlsDemo();
 
     var btnAdd1 = element(by.id('add-/g1/1')),
         btnAdd2 = element(by.id('add-/g1/g1g2/1/1')),
@@ -202,33 +277,31 @@ describe('display controls demo', function() {
     expect(q11.isDisplayed()).toBe(true);
     expect(q21.isDisplayed()).toBe(true);
     expect(q31.isDisplayed()).toBe(true);
-    expect(q12.isPresent()).toBe(false);
-    expect(q22.isPresent()).toBe(false);
-    expect(q32.isPresent()).toBe(false);
+    TestUtil.waitForElementNotPresent(q12);
+    TestUtil.waitForElementNotPresent(q22);
+    TestUtil.waitForElementNotPresent(q32);
 
-    testUtil.clickAddRemoveButton(btnAdd1);
+    TestUtil.clickAddRemoveButton(btnAdd1);
     expect(q12.isDisplayed()).toBe(true);
-    testUtil.clickAddRemoveButton(btnDel1);
-    expect(q12.isPresent()).toBe(false);
+    TestUtil.clickAddRemoveButton(btnDel1);
+    TestUtil.waitForElementNotPresent(q12);
 
-    testUtil.clickAddRemoveButton(btnAdd2);
-    testUtil.waitForElementPresent(q22);
+    TestUtil.clickAddRemoveButton(btnAdd2);
+    TestUtil.waitForElementPresent(q22);
     expect(q22.isDisplayed()).toBe(true);
-    testUtil.clickAddRemoveButton(btnDel2);
-    testUtil.waitForElementNotPresent(q22);
-    expect(q22.isPresent()).toBe(false);
+    TestUtil.clickAddRemoveButton(btnDel2);
+    TestUtil.waitForElementNotPresent(q22);
+    TestUtil.waitForElementNotPresent(q22);
 
-
-    testUtil.clickAddRemoveButton(btnAdd3);
+    TestUtil.clickAddRemoveButton(btnAdd3);
     expect(q32.isDisplayed()).toBe(true);
-    testUtil.clickAddRemoveButton(btnDel3);
-    expect(browser.isElementPresent(q32)).toBe(false);
-    //expect(q32.isPresent()).toBe(false);
+    TestUtil.clickAddRemoveButton(btnDel3);
+    TestUtil.waitForElementNotPresent(q32);
 
   });
 
   it('section matrix works', function () {
-    tp.openDisplayControlsDemo();
+    tp.LoadForm.openDisplayControlsDemo();
 
     var item1answer1 = element(by.id('/g4/g1m1/1/1c1')),
         item1answer2 = element(by.id('/g4/g1m1/1/1c2')),
@@ -240,67 +313,94 @@ describe('display controls demo', function() {
     }, tp.WAIT_TIMEOUT_1);
 
     // first row in matrix
-    item1answer1.evaluate("subItem.value").then(function (value) {
-      expect(value).toBe(null);
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[8].items[0].value).toBe(undefined);
     });
+
     item1answer1.click();
-    item1answer1.evaluate("subItem.value").then(function (value) {
-      expect(value.length).toBe(1);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer 1');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[8].items[0].value[0].code).toBe('c1');
+      expect(formData.items[8].items[0].value[0].text).toBe('Answer 1');
     });
+
     item1answer2.click();
-    item1answer1.evaluate("subItem.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer 1');
-      expect(value[1].code).toBe('c2');
-      expect(value[1].text).toBe('Answer 2');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[8].items[0].value[0].code).toBe('c1');
+      expect(formData.items[8].items[0].value[0].text).toBe('Answer 1');
+      expect(formData.items[8].items[0].value[1].code).toBe('c2');
+      expect(formData.items[8].items[0].value[1].text).toBe('Answer 2');
     });
 
     // second row in matrix
-    item2answer1.evaluate("subItem.value").then(function (value) {
-      expect(value).toBe(null);
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[8].items[1].value).toBe(undefined);
     });
     item2answer1.click();
-    item2answer1.evaluate("subItem.value").then(function (value) {
-      expect(value.length).toBe(1);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer 1');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[8].items[1].value[0].code).toBe('c1');
+      expect(formData.items[8].items[1].value[0].text).toBe('Answer 1');
     });
+
     item2answer3.click();
-    item2answer3.evaluate("subItem.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer 1');
-      expect(value[1].code).toBe('c3');
-      expect(value[1].text).toBe('Answer 3');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[8].items[1].value[0].code).toBe('c1');
+      expect(formData.items[8].items[1].value[0].text).toBe('Answer 1');
+      expect(formData.items[8].items[1].value[1].code).toBe('c3');
+      expect(formData.items[8].items[1].value[1].text).toBe('Answer 3');
     });
+
     // first row is data model does not change
-    item1answer1.evaluate("subItem.value").then(function (value) {
-      expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer 1');
-      expect(value[1].code).toBe('c2');
-      expect(value[1].text).toBe('Answer 2');
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData();
+      callback(fData);
+    }).then(function (formData:any) {
+      expect(formData.items[8].items[0].value[0].code).toBe('c1');
+      expect(formData.items[8].items[0].value[0].text).toBe('Answer 1');
+      expect(formData.items[8].items[0].value[1].code).toBe('c2');
+      expect(formData.items[8].items[0].value[1].text).toBe('Answer 2');
     });
 
   });
 
   it('should show disabled inputs', function() {
-    tp.openFullFeaturedForm();
+    tp.LoadForm.openFullFeaturedForm();
 
     var item1 = element(by.id('/readonlyST/1'));
     var item2 = element(by.id('/readonlyCNE-s/1'));
     var item3 = element(by.id('/readonlyCWE-m/1'));
-    var item4c1 = element(by.id('/readonlyCNE-sb/1c1'));
-    var item4c2 = element(by.id('/readonlyCNE-sb/1c2'));
-    var item4c3 = element(by.id('/readonlyCNE-sb/1c3'));
-    var item4c4 = element(by.id('/readonlyCNE-sb/1c4'));
-    var item5c1 = element(by.id('/readonlyCWE-mb/1c1'));
-    var item5c2 = element(by.id('/readonlyCWE-mb/1c2'));
-    var item5c3 = element(by.id('/readonlyCWE-mb/1c3'));
-    var item5c4 = element(by.id('/readonlyCWE-mb/1c4'));
+    var item4c1 = element(by.id('/readonlyCNE-sb/1c1')).element(by.css("input"));
+    var item4c2 = element(by.id('/readonlyCNE-sb/1c2')).element(by.css("input"));
+    var item4c3 = element(by.id('/readonlyCNE-sb/1c3')).element(by.css("input"));
+    var item4c4 = element(by.id('/readonlyCNE-sb/1c4')).element(by.css("input"));
+    var item5c1 = element(by.id('/readonlyCWE-mb/1c1')).element(by.css("input"));
+    var item5c2 = element(by.id('/readonlyCWE-mb/1c2')).element(by.css("input"));
+    var item5c3 = element(by.id('/readonlyCWE-mb/1c3')).element(by.css("input"));
+    var item5c4 = element(by.id('/readonlyCWE-mb/1c4')).element(by.css("input"));
     browser.wait(function () {
       return item1.isPresent();
     }, tp.WAIT_TIMEOUT_1);
@@ -319,7 +419,7 @@ describe('display controls demo', function() {
   });
 
   it('should show changed font color', function() {
-    tp.openFullFeaturedForm();
+    tp.LoadForm.openFullFeaturedForm();
 
     var label1 = element(by.id('label-/q_lg/1'));
 

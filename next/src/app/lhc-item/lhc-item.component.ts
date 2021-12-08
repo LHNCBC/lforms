@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import { WindowService} from '../../lib/window.service';
 
 @Component({
   selector: 'lhc-item',
@@ -10,14 +11,28 @@ export class LhcItemComponent implements OnInit {
 
   @Input() item;
 
-  //@ViewChild("deInput") deInput: ElementRef<any>; 
+  viewMode = "";  
 
   constructor(
-    public lhcDataService: LhcDataService
-  ) {
+    private winService: WindowService,
+    public lhcDataService: LhcDataService,
+  ) {     
+    winService.windowWidth.subscribe(updatedWidth => {
+      this.viewMode = winService.getViewMode();
+    });  
+  }
+
+  /**
+   * get CSS class of view mode for an item
+   * @param item an item in a form
+   * @returns 
+   */
+  getItemViewModeClass(item) {
+    return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
   }
 
   ngOnInit(): void {
   }
 
+  
 }

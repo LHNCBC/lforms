@@ -1,5 +1,6 @@
 <ng-container *ngIf="item">
   <nz-time-picker 
+    [nzDisabled]="item._readOnly"
     class="lhc-time-picker" 
     nzFormat="HH:mm:ss"
     nzPlaceHolder="HH:mm:ss"

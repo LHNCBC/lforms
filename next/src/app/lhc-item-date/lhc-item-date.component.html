@@ -1,5 +1,6 @@
 <ng-container *ngIf="item">
   <nz-date-picker 
+    [nzDisabled]="item._readOnly"
     class="lhc-date-picker" 
     nzFormat="MM/dd/yyyy"
     nzPlaceHolder="MM/DD/YYYY"

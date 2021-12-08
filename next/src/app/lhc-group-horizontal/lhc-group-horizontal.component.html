@@ -11,7 +11,7 @@
       <colgroup>
         <col class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
         <col *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId"
-            [ngSstyle]="lhcDataService.getTableColumnStyle(col)">
+            [ngStyle]="lhcDataService.getTableColumnStyle(col)">
       </colgroup>
       <thead>
       <tr>

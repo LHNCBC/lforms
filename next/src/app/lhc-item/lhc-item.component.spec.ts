@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LhcItemComponent } from './lhc-item.component';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import { WindowService} from '../../lib/window.service';
 
 describe('LhcItemComponent', () => {
   let component: LhcItemComponent;
@@ -9,7 +10,7 @@ describe('LhcItemComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemComponent ],
-      providers: [LhcDataService]
+      providers: [LhcDataService, WindowService]
     })
     .compileComponents();
   });

@@ -36,16 +36,14 @@ exports.config = {
     '../../test/protractor/spec/addFormToPage.spec.ts', 
     '../../test/protractor/spec/lforms_one_unused_repeating_item.spec.ts',
     '../../test/protractor/spec/lforms_tree.spec.ts',
-    '../../test/protractor/spec/screen_reader_log.spec.ts'
+    '../../test/protractor/spec/screen_reader_log.spec.ts',
+     '../../test/protractor/spec/lforms_visual.spec.ts', // DT, DTM and TM input field's background-color is a little off
+    '../../test/protractor/spec/lforms_display_controls.spec.ts'
 
     // ===Remaining tests===
-    // lforms_display_controls.spec.ts  // wait for a merge from next
-    // lforms_visual.spec.ts
     // lforms_keyboard_navi.spec.ts   // no navigation yet
     // lforms_directive_attr.spec.ts // no directive any more   
     // lforms_directive.spec.ts  // no diretive any more       
-
-   
 
   ],
   capabilities: {
