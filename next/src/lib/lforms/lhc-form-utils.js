@@ -63,8 +63,8 @@ const FormUtils = {
 
     var rtnPromise = new Promise(function(resolve, reject) {
       try {
-        eleLhcForm.lfData = formDataDef;
-        eleLhcForm.lfOptions = options;
+        eleLhcForm.questionnaire = formDataDef;
+        eleLhcForm.options = options;
         eleLhcForm.prepop = prepop;
         eleLhcForm.fhirVersion = fhirVersion;
         eleLhcForm.addEventListener('onFormReady', function(e){

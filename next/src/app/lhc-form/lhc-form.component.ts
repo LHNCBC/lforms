@@ -20,10 +20,10 @@ declare var ResizeObserver;
 })
 export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() lfData: any;  // questionnaire
-  @Input() lfOptions: any;  //options
-  @Input() prepop: boolean=false;  //
-  @Input() fhirVersion: string;  //
+  @Input() questionnaire: any;
+  @Input() options: any;
+  @Input() prepop: boolean=false;  
+  @Input() fhirVersion: string; 
   // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
   @Input() lhcFormData: any; // not to publish
   // emit an event when the form's view and data are initially rendered
@@ -69,10 +69,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    // if (this.lfData) {
-    //   this.lhcFormData = new LhcFormData(this.lfData)
-    //   this.lhcDataService.setLhcFormData(this.lhcFormData);
-    // }
 
     //console.log(this.host)
     this.observer = new ResizeObserver(entries => {
@@ -97,29 +93,29 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes) {
     // console.log("in lhc-form's ngOnChange")
     // form data changes
-    if (changes.lfData) {      
+    if (changes.questionnaire) {      
       // form data changes, clean up the previous data before loading the new form data
       this.lhcFormData = null;
       this.lhcDataService.setLhcFormData(null);
       
-      if (this.lfData) {
+      if (this.questionnaire) {
         const self = this;        
         // reset the data after this thread is done
         setTimeout(()=> {
-          let lfData = CommonUtils.deepCopy(self.lfData);
-          // check if lfData is a FHIR Questionnaire
-          if (lfData.resourceType === "Questionnaire") {
-            let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(lfData) || "R4";
+          let q = CommonUtils.deepCopy(self.questionnaire);
+          // check if questionnaire is a FHIR Questionnaire
+          if (q.resourceType === "Questionnaire") {
+            let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
             if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
               // convert it to a lforms form data
-              lfData = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(lfData);
+              q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q);
             }
           }
-          self.lhcFormData = new LhcFormData(lfData)
+          self.lhcFormData = new LhcFormData(q)
           // and options change
-          if (changes.lfOptions && self.lfOptions) {
-            // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.lfOptions));  
-            self.lhcFormData.setTemplateOptions(self.lfOptions);  
+          if (changes.options && self.options) {
+            // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));  
+            self.lhcFormData.setTemplateOptions(self.options);  
           }      
           self.lhcDataService.setLhcFormData(self.lhcFormData);  
 
@@ -150,41 +146,15 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     // only options changes
-    else if (changes.lfOptions) {
+    else if (changes.options) {
       let lhcFD = this.lhcDataService.getLhcFormData();
       if (lhcFD) {
-        lhcFD.setTemplateOptions(this.lfOptions);
+        lhcFD.setTemplateOptions(this.options);
         console.log("in lhc-form's ngOnChange: set templateOptions, alone")
       }    
     }
     
-    // if (this.lfData) {
-    //   this.lhcFormData = new LhcFormData(this.lfData)
-
-    //   this.lhcDataService.setLhcFormData(this.lhcFormData);
-    //   //console.log(this.lhcFormData)
-    // }
   }
-
-  // // called too many times. being called continuously even nothing is touched on the form
-  // ngDoCheck() {
-  //   console.log("in lhc-form's ngDoCheck")
-  // }
-
-
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event) {
-  //   //console.log(this.lhcFormContainer)
-  //   if (this.lhcFormContainer) {
-  //     let width = this.lhcFormContainer.nativeElement.offsetWidth;
-  //     this.changeSize.next(width);
-  //     console.log("in lhc-form onReszie: " + width)
-  
-  //   }
-    
-  // }
-
- 
 
     
 }

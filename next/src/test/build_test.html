@@ -21,7 +21,7 @@
       async function displayForm(formUrl) {
         //let testForm = document.getElementById('test-form');
         let formJson = await loadJsonFromUrl(formUrl);   
-        testForm.lfData = formJson;
+        testForm.questionnaire = formJson;
       }
 
       displayForm("../test-data/form-data/allInOne.json");
