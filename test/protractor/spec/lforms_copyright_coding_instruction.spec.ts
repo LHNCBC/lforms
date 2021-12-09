@@ -111,7 +111,7 @@ describe('popover buttons', function() {
       // inline
       browser.driver.executeAsyncScript(function () {
         let testForm: any = document.getElementById('test-form');
-        testForm.lfOptions = {showCodingInstruction: true}
+        testForm.options = {showCodingInstruction: true}
         var callback = arguments[arguments.length - 1];        
         callback();
       }).then(async function () {
@@ -174,7 +174,7 @@ describe('popover buttons', function() {
       // inline
       browser.driver.executeAsyncScript(function () {
         let testForm: any = document.getElementById('test-form');
-        testForm.lfOptions = {showCodingInstruction: true}
+        testForm.options = {showCodingInstruction: true}
         var callback = arguments[arguments.length - 1];        
         callback();
       }).then(async function () {
@@ -197,7 +197,7 @@ describe('popover buttons', function() {
       tp.loadFromTestData('ussg-fhp.json', 'R4');
       browser.driver.executeAsyncScript(function () {
         let testForm: any = document.getElementById('test-form');
-        testForm.lfOptions = {allowHTMLInInstructions: true}
+        testForm.options = {allowHTMLInInstructions: true}
         var callback = arguments[arguments.length - 1];        
         callback();
       }).then(async function () {

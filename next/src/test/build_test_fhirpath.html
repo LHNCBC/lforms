@@ -64,25 +64,22 @@
 
     </div>
 
-    <!-- why jquery is not in es5 js file? -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
     <!-- zone.js is not included in LHC-Forms web component -->
     <script src="/assets/lib/zone.min.js"></script>
 
     <script src="/test/lib/webcomponent/lhc-forms.es5.js"></script>
     
+    <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
+    <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
 
     <script>
 
       window.onload = function() {
-        LForms.Util.loadFHIRLibs("/test/lib/fhir/R4/lformsFHIR.min.js", "/test/lib/fhir/STU3/lformsFHIR.min.js")
-        .then(function(){
-          var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
-            LForms.Util.setFHIRContext(fhirAPI);
-        })
-      };        
+        var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
+        LForms.Util.setFHIRContext(fhirAPI);
+      }
     </script>
 
     <!-- lforms test controller -->
@@ -115,12 +112,12 @@
       function loadFile(event) {
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
-        var lfData;
+        var questionnaire;
         reader.onload = function() {
-          var lfData = JSON.parse(reader.result);          
+          var questionnaire = JSON.parse(reader.result);          
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
-          testForm.lfData = lfData;
+          testForm.questionnaire = questionnaire;
           testForm.fhirVersion = getFHIRVersion()
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.

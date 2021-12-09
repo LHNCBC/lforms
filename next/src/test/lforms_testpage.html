@@ -171,12 +171,12 @@
       async function fetchAndDisplayForm(strForm) {
         let jsonForm = JSON.parse(strForm)
         let formData = await loadJsonFromUrl(jsonForm.url);   
-        testForm.lfData = formData;
+        testForm.questionnaire = formData;
         if (jsonForm.formOptions) {
           Object.assign(formData,jsonForm.formOptions)
         }
         if (jsonForm.tempOptions) {
-          testForm.lfOptions = jsonForm.tempOptions;
+          testForm.options = jsonForm.tempOptions;
         }
 
       }
@@ -215,21 +215,20 @@
         return LForms.FHIR[getFHIRVersion()];
       }
 
-      // lfOptions / templateOptions not implmented yet. 
+      // options  
       function toggleCodingInstructionFormat() {
-        if (testForm.lfData) {
-          let lfOptions = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
-          testForm.lfOptions = lfOptions;
+        if (testForm.questionnaire) {
+          let options = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
+          testForm.options = options;
         }
       }
 
-      // lfOptions / templateOptions not implmented yet. 
+      // options 
       // it does not make sense to hide unit ?!
       function toggleUnitsCol() {
-        if (testForm.lfData) {
-          testForm.lfData.templateOptions.hideUnits = testForm.lfData.templateOptions.hideUnits; // hideUnits not implemented yet
-        }
-        
+        if (testForm.questionnaire) {
+          testForm.questionnaire.templateOptions.hideUnits = testForm.questionnaire.templateOptions.hideUnits; // hideUnits not implemented yet
+        }        
       };
 
       /**
@@ -258,15 +257,11 @@
        * Get SDC 'Questionnaire' data from the form and display it in console
        */
       function showFHIRSDCQuestionnaire() {
-        if (testForm.lfData) {
+        if (testForm.questionnaire) {
           var fhir = getFHIR();
-          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.lfData);
+          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.questionnaire);
           var fhirString = JSON.stringify(sdc, null, 4);
           console.log(fhirString);
-          // var convertedLforms = fhir.SDC.convertQuestionnaireToLForms(sdc);
-          // convertedLforms.name = convertedLforms.name + ' (converted from FHIR Questionnaire) ';
-          // $scope.lfData2 = new LForms.LFormsData(convertedLforms);
-          // $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
         }
       }
 
@@ -274,8 +269,8 @@
        * Get 'Questionnaire' data from the form and display it in console
        */
       function showFHIRQuestionnaire() {
-        if (testForm.lfData) {
-          var sdc = getFHIR().SDC.convertLFormsToQuestionnaire(testForm.lfData, true);
+        if (testForm.questionnaire) {
+          var sdc = getFHIR().SDC.convertLFormsToQuestionnaire(testForm.questionnaire, true);
           var fhirString = JSON.stringify(sdc, null, 4);
           console.log(fhirString);
         }
@@ -329,9 +324,9 @@
       /**
        * Load a FHIR data file and a form data file, and merge them
        */
-      async function loadAndMergeFHIRDataFile (fhirFileName, lfDataFileName, resType) {
+      async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
 
-        let formUrl = 'test-data/form-data/' + lfDataFileName;
+        let formUrl = 'test-data/form-data/' + questionnaireFileName;
         let formJson = await loadJsonFromUrl(formUrl);   
 
         let fhirResUrl = 'test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
@@ -340,7 +335,7 @@
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                     resType, fhirJson, formJson,
                     getFHIRVersion());
-        testForm.lfData = mergedFormData;
+        testForm.questionnaire = mergedFormData;
         
       };
 
@@ -392,12 +387,12 @@
       function loadFile(event) {
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
-        var lfData;
+        var questionnaire;
         reader.onload = function() {
-          var lfData = JSON.parse(reader.result);
+          var questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
-          testForm.lfData = lfData;
+          testForm.questionnaire = questionnaire;
           testForm.fhirVersion = getFHIRVersion()
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.
@@ -410,21 +405,17 @@
 
     </script>
 
-    <!-- lforms FHIR lib file, loaded after LHC-Forms files are loaded -->
-    <script>
-
-      window.onload = function() {
-        LForms.Util.loadFHIRLibs("/test/lib/fhir/R4/lformsFHIR.min.js", "/test/lib/fhir/STU3/lformsFHIR.min.js")
-      };        
-    </script>
-    <!-- zone.js is not included in LHC-Forms web component -->
+<!-- zone.js is not included in LHC-Forms web component -->
     <script src="/assets/lib/zone.min.js"></script>
     <!-- ES2015 files of the LHC-Forms web component -->
-    <script src="../runtime.js" type="module"></script>
-    <script src="../polyfills.js" type="module"></script>
-    <script src="../scripts.js" defer></script>
-    <script src="../vendor.js" type="module"></script>
-    <script src="../main.js" type="module"></script>
+    <script src="../runtime.js"></script>
+    <script src="../polyfills.js"></script>
+    <script src="../scripts.js" ></script>
+    <script src="../vendor.js"></script>
+    <script src="../main.js"></script>
+    
+    <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
+    <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
 
   </body>
 </html>
