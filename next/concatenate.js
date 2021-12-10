@@ -14,9 +14,29 @@ const concat = require('concat');
     './dist/lforms-next/main-es2015.js',
   ]
 
+  const copiedFiles = [
+    'runtime-es5.js',
+    'runtime-es5.js.map',
+    'runtime-es2015.js',
+    'runtime-es2015.js.map',
+    'polyfills-es5.js',
+    'polyfills-es5.js.map',
+    'polyfills-es2015.js',
+    'polyfills-es2015.js.map',
+    'main-es5.js',
+    'main-es5.js.map',
+    'main-es2015.js',
+    'main-es2015.js.map',
+    'scripts.js',  
+    'styles.css',
+    'magnifying_glass.png',
+    'down_arrow_gray_10_10.png'
+  ]
   await fs.ensureDir('dist/webcomponent')
   await concat(es5Files, 'dist/webcomponent/lhc-forms.es5.js');
   await concat(es2015Files, 'dist/webcomponent/lhc-forms.es2015.js');
-  await fs.copyFile('./dist/lforms-next/styles.css', 'dist/webcomponent/styles.css');
+  copiedFiles.forEach(async (file) => {
+    await fs.copyFile('./dist/lforms-next/' + file, 'dist/webcomponent/' + file);
+  })
   await fs.copy('./dist/lforms-next/assets/', 'dist/webcomponent/assets/' )
 })()
