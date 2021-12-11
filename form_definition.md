@@ -13,15 +13,6 @@ about the meaning of each key:
       "name": string,
       "template": string
       "templateOptions": {
-        "showFormHeader": boolean,
-        "formHeaderItems": [{
-          "question": string,
-          "dataType": string,
-          "answers": [{
-            "text": string,
-            "code": string
-          }]
-        }],
       },
       "items": [{
         "questionCode": string,
@@ -87,24 +78,11 @@ about the meaning of each key:
 * **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form.
   'table' (default) is the only template supported. More supported templates would be added.
-* **templateOptions** - a hash of options for the template.  This can be
+* <a name="templateOptions"></a>**templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
-    * showColumnHeaders - a boolean that controls whether to show the header row
-      with the "Name", "Value", and "Unit" column labels.  The default is true.
-    * showQuestionCode - a boolean that controls whether to show question codes.
-      The default is false.
     * showCodingInstruction - a boolean that controls whether to show coding
       instructions inline or as popover messages (false: in popover; true: inline).
       The default is false;
-    * tabOnInputFieldsOnly - a boolean that controls whether to control TAB keys
-      to stop on the input fields only (neither buttons, nor units fields).
-      The default is false.
-    * hideFormControls - a boolean that controls whether to hide the controls section
-      on top of the form. The default is true.
-    * hideUnits - a boolean that controls whether to all the Units column to
-      be hidden from the data table. The default is false.
-    * showFormOptionPanel - a boolean that controls whether to show the option panel
-      that displays all the form options.
     * showFormOptionPanelButton - a boolean that controls whether to show the button
       next to the form title that hides/shows the form options panel.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
@@ -113,8 +91,6 @@ about the meaning of each key:
       content in the codingInstructions field. The default is false. If it is false,
       the **codingInstructionsFormat** field on item level is ignored, and no HTML
       formatted coding instructions will be displayed.
-    * useAnimation - a boolean that controls whether to use animation on the form.
-      The default is true.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
       question. For an answer list, it can be an answer label, text, code or
       their combination, using the syntax such as:  {"code": "B12"}, {"label: "A"}, 
@@ -139,40 +115,11 @@ about the meaning of each key:
       will be used to handle the list. If "type" is set to be "RADIO_CHECKBOX", then
       all the answers are displayed as either radio buttons or check boxes,
       and "columns" controls how many columns are used.
-      If value of "columns" is "0", there is no columns specified. The answers will fill
-      in available space one after another. If the value of "columns is "1" to "6",
-      the specified number of columns are used to group the answers.
+      If value of "columns" is "0", or there is no "columns". The answers will fill
+      in available space one after another. If the value of "columns is "1" (or any value other than "0")", the answers are displayed in one column.
       "columns" is valid only when "type" is set to be "RADIO_CHECKBOX".
       Here is an example:
-      `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "2"}}`
-    * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
-      show a row fields above the actual form like "Date Date", "Comment", etc.
-      The default is false.
-    * formHeaderItems - an array defining fields above the form (see
-      [showFormHeader](#showFormHeader)).  If you omit templateOptions, a default will be
-      provided which will have the fields "Date Done", "Time Done", "Where
-      Done", and "Comment". If you wish to specify your own definitions,
-      a complete array should be provided where each
-      element in the array should be a hash with the following keys:
-        * question - the field label
-        * dataType - the kind of field.  This can be DT for a date field with a
-          calender widget, ST for a normal input field, CNE for a list field in
-          which values are required to match the list, or CWE for a list field in
-          which values can be off the list.
-        * answers - For data types CNE or CWE, this is an array with the list
-          data.  Each element in the array is a hash with the following keys:
-          * text - the display string for the list item
-          * code - (optional) a code that identifies the list item
-        * displayControl - This controls display styles of the column or the field.
-          It is a hash with the keys of "colCSS" for columns styles and "css" for field
-          styles. The values are an array of hashes of valid CSS styles. Here is an example:
-          `{"colCSS": [{"name":"width","value":"30%"},{"name":"min-width","value":"4em"}]}`
-        * <a name="answerCardinality"></a>answerCardinality - For lists, this
-          allows you to control whether list is multi-select or not.  It is a hash
-          that takes two keys, "min" and "max".  If you "min" to "1", then the
-          user will be required to provide an answer.  If you set "max" to "*",
-          the list becomes multi-select.  (Other possibilities are not yet
-          supported.)
+      `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "1"}}`
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
@@ -239,6 +186,7 @@ about the meaning of each key:
           the structure).
         * INT - an integer
         * DT - a date (displayed with a calendar widget)
+        * DTM - a string with date and time 
         * TM - a string in the time format
         * ST - a normal free-text string
         * YEAR - a string in the format of one to four digits that represents a year
@@ -252,7 +200,7 @@ about the meaning of each key:
         * SECTION - a special type for sections, which contain sub items in the
                     <a href="#items">items</a> field
         * TITLE - a special type for separators that display some text.
-
+        * attachment - a control to upload and download attachment files.
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  If the data type is INT or REAL, units
       should only have one unit; otherwise the data type will be converted to
@@ -384,6 +332,15 @@ about the meaning of each key:
               where "value.RXCUIS" is `["724614", "637540", "848768"]` and "value.STRENGTHS_AND_FORMS" is
               `["325-2.25-0.19 mg Tab", "325-4.5-0.38 mg Tab", "325-4.84 mg Tab"]`.
 
+### Web Component Properties:
+* **questionnaire** - A FHIR Questionnaire (including FHIR SDC Questionnaire), or LHC-Forms internal form data in JSON format.
+* **options** - Optional. The options defined in [templateOptions](#templateOptions), in JSON format.
+* **prepop** - Optional. A flag indicating whether to run pre-populate operation for the FHIR Questionnaire. The default value is false.
+* **fhirVersion** - Optional. The specified FHIR version of the data provided in 'questionnaire'. If this is not provided, a FHIR version will be determined from the 'questionnaire'. The supported FHIR versions are 'R4' and 'STU3'.
+
+### Emitted Events:
+
+* **onFormReady** - emitted when the form is fully initialied, and FHIRPath expressions are run if any, data are pre-populated if any, and the form is ready for user interactions. No data is return in this event.
 
 ### Utility Functions:
 For a description of functions provided for retrieving user-entered data in
