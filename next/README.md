@@ -60,9 +60,9 @@ This project generates a web component of the new LForms widget.
   1. styles.css
   2. scripts.js  
   3.a lhc-forms.[es5|es2015].js, or
-  3.b its indidiviual files:
+  3.b the indidiviual files:
      bruntime-[es5|es2015].js
      polyfills-[es5|es2015].js
      main-[es5|es2015].js 
   ```
-* For none-Angular JavaScript project, including React, Vue projects, a copy of zone.min.js is required to be loaded before loading above js files.
+* For none-Angular JavaScript project, including React, Vue projects, a copy of zone.min.js is required to be loaded before loading above js files. A copy of zone.min.js is in `/dist/webcomponent/assets/bin/zone.min.js`.
