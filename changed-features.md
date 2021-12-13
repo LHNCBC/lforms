@@ -1,4 +1,7 @@
 ### Features not supported in version 30.0.0
+* **Web Component** The new LHC-Forms is Web Component widget created with angular. It is no longer using
+  angularjs.
+
 * **templateOptions** - The following options within templateOptions are not supported:
   * showColumnHeaders - a boolean that controls whether to show the header row
       with the "Name", "Value", and "Unit" column labels.  The default is true.

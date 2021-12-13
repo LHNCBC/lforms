@@ -115,8 +115,9 @@ about the meaning of each key:
       will be used to handle the list. If "type" is set to be "RADIO_CHECKBOX", then
       all the answers are displayed as either radio buttons or check boxes,
       and "columns" controls how many columns are used.
-      If value of "columns" is "0", or there is no "columns". The answers will fill
-      in available space one after another. If the value of "columns is "1" (or any value other than "0")", the answers are displayed in one column.
+      If value of "columns" is "0", or there are no "columns". The answers will fill
+      in available space one after another. If the value of "columns" is "1" 
+      (or any value other than "0"), the answers are displayed in one column.
       "columns" is valid only when "type" is set to be "RADIO_CHECKBOX".
       Here is an example:
       `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "1"}}`
@@ -333,14 +334,21 @@ about the meaning of each key:
               `["325-2.25-0.19 mg Tab", "325-4.5-0.38 mg Tab", "325-4.84 mg Tab"]`.
 
 ### Web Component Properties:
-* **questionnaire** - A FHIR Questionnaire (including FHIR SDC Questionnaire), or LHC-Forms internal form data in JSON format.
-* **options** - Optional. The options defined in [templateOptions](#templateOptions), in JSON format.
-* **prepop** - Optional. A flag indicating whether to run pre-populate operation for the FHIR Questionnaire. The default value is false.
-* **fhirVersion** - Optional. The specified FHIR version of the data provided in 'questionnaire'. If this is not provided, a FHIR version will be determined from the 'questionnaire'. The supported FHIR versions are 'R4' and 'STU3'.
+* **questionnaire** - A FHIR Questionnaire (including FHIR SDC Questionnaire),
+ or the above LHC-Forms internal format, in JSON.
+* **options** - Optional. The options defined in [templateOptions](#templateOptions), 
+ in JSON.
+* **prepop** - Optional. A flag indicating whether to run the pre-populate operation
+ for the FHIR Questionnaire. The default value is false.
+* **fhirVersion** - Optional. The specified FHIR version of the data provided in 
+ 'questionnaire'. If this is not provided, a FHIR version will be determined from 
+ the 'questionnaire'. The supported FHIR versions are 'R4' and 'STU3'.
 
 ### Emitted Events:
 
-* **onFormReady** - emitted when the form is fully initialied, and FHIRPath expressions are run if any, data are pre-populated if any, and the form is ready for user interactions. No data is return in this event.
+* **onFormReady** - emitted when the form is fully initialied, and FHIRPath expressions
+ are run if any, data are pre-populated if any, and the form is ready for user interactions. 
+ No data is return in this event.
 
 ### Utility Functions:
 For a description of functions provided for retrieving user-entered data in

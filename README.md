@@ -39,5 +39,9 @@ you don't accidentally add something that we are also working on.
 
 
 ## Note for version 30.0.0-beta.0
-* The new Web Component version of LHC-Forms widget is under the 'next' directory, as a sub project, with its own documents and build scripts. Please read the instructions there for the new Web Component project.
-* Documents updating and code refactoring to combine the Web Component (v30.0.0-beta.\*) project and the previous LHC-Forms (v29.\*) project is working in progress. We expect everything to be done when we officially release v30.0.0
+* The new Web Component version of LHC-Forms widget is under the 'next' directory, 
+ as a sub project, with its own documents and build scripts. Please read the 
+ instructions there for the new Web Component project.
+* Document updating and code refactoring to combine the Web Component 
+ (v30.0.0-beta.\*) project and the previous LHC-Forms (v29.\*) project is a work in progress. 
+We expect everything to be done when we officially release v30.0.0
