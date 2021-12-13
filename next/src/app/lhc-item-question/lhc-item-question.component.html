@@ -1,0 +1,66 @@
+
+
+<ng-container *ngIf="item">
+  <div class="lhc-de-label-button" *ngIf="!options || !options.hideQuestionText" (click)="lhcDataService.setActiveRow(item)">
+    <lhc-item-question-text [item]="item" ></lhc-item-question-text>
+    <div class="lhc-de-button">
+      <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" class="lhc-float-button lhc-button" type="button"
+              (click)="lhcDataService.removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
+              title='Remove this "{{ item._text }}"'>-</button>
+    </div>
+  </div>
+
+  <div class="lhc-de-input-unit" (click)="lhcDataService.setActiveRow(item)"
+  [ngStyle]="!options || !options.hideQuestionText ? eleStyle : null">
+    <div class="lhc-de-input-unit-content">
+
+      <lhc-validate [item]="item" [value]="item.value"></lhc-validate>
+
+      <ng-container [ngSwitch]="item.dataType">
+
+        <ng-container *ngSwitchCase="'INT'">
+          <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
+        </ng-container>
+        <ng-container *ngSwitchCase="'REAL'">
+          <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
+        </ng-container>
+        <ng-container *ngSwitchCase="'QTY'">
+          <lhc-item-quantity [item]="item"></lhc-item-quantity>
+        </ng-container>
+        <ng-container *ngSwitchCase="'CWE'">
+          <lhc-item-choice [item]="item"></lhc-item-choice>
+        </ng-container>
+        <ng-container *ngSwitchCase="'CNE'">
+          <lhc-item-choice [item]="item"></lhc-item-choice>
+        </ng-container>
+        <ng-container *ngSwitchCase="'DT'">
+          <lhc-item-date [item]="item"></lhc-item-date>
+        </ng-container>
+        <ng-container *ngSwitchCase="'DTM'">
+          <lhc-item-datetime [item]="item"></lhc-item-datetime>
+        </ng-container>
+        <ng-container *ngSwitchCase="'TM'">
+          <lhc-item-time [item]="item"></lhc-item-time>
+        </ng-container>
+        <ng-container *ngSwitchCase="'BL'">
+          <lhc-item-boolean [item]="item"></lhc-item-boolean>
+        </ng-container>
+        <ng-container *ngSwitchCase="'TX'">
+          <lhc-item-text [item]="item"></lhc-item-text>
+        </ng-container>
+        <ng-container *ngSwitchCase="'attachment'">
+          <lhc-item-attachment [item]="item"></lhc-item-attachment>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <lhc-input [item]="item"></lhc-input>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+
+
+
+
+

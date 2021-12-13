@@ -1,0 +1,17 @@
+.lhc-error-icon {
+  color: red;
+  font-weight: bold;
+}
+
+.lhc-error-msg {
+  color: red;
+}
+
+.lhc-error-msg, .lhc-error-item {
+  margin-left: 0.5em;
+}
+
+/* item.value that needs to detect changes but are hidden */
+.lhc-watched-value {
+  display: none;
+}

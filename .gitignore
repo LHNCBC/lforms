@@ -1,5 +1,5 @@
 node_modules
-dist
+/dist
 bower-dist/*.map
 bower_components
 /.*
@@ -7,3 +7,5 @@ bower_components
 !.gitignore
 !.bowerrc
 *css.map
+# IDE - VSCode
+.vscode/*

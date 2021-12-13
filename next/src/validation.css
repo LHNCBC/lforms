@@ -1,0 +1,62 @@
+/* borders for invalid fields */
+/* .lhc-form lhc-item.lhc-invalid input.ng-touched,
+.lhc-form lhc-item.lhc-invalid div.ng-touched {
+  border: 2px solid #FF0000;
+} */
+.lhc-form lhc-item.lhc-invalid.lhc-visited-before lhc-input input[type="number"],
+.lhc-form lhc-item.lhc-invalid.lhc-visited-before lhc-input input[type="text"],
+.lhc-form lhc-item.lhc-invalid.lhc-visited-before lhc-input textarea,
+.lhc-form lhc-item.lhc-invalid.lhc-show-validation lhc-input input[type="number"],
+.lhc-form lhc-item.lhc-invalid.lhc-show-validation lhc-input input[type="text"],
+.lhc-form lhc-item.lhc-invalid.lhc-show-validation lhc-input textarea {
+  border: 2px solid #FF0000;
+}
+
+.lhc-form .lhc-validation-popover {
+  display: none;
+}
+
+.lhc-form .lhc-invalid.lhc-visited-before:hover .lhc-validation-popover,
+.lhc-form .lhc-invalid.lhc-visited-before.lhc-active-row .lhc-validation-popover,
+/* .lhc-form .lhc-invalid.lhc-active-row .lhc-validation-popover, */
+.lhc-form .lhc-invalid.lhc-show-validation .lhc-validation-popover {
+  border-radius: 6px;
+  bottom: 35px;
+  background-color: #fcf8e3;
+  /* left: 5px; */
+  padding: 4px 6px;
+  position: absolute;
+  z-index: 98;
+  max-width: 600px;
+  width: auto;
+  display: block;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+  border: 1px solid #eea236;
+  font-size: 90%;
+}
+.lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-visited-before:hover .lhc-validation-popover,
+.lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-visited-before.lhc-active-row .lhc-validation-popover,
+.lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-show-validation .lhc-validation-popover {
+  bottom: 59px;
+}
+.lhc-form .lhc-invalid .lhc-validation-popover:before {
+  border: solid;
+  border-color: #fcf8e3 transparent;
+  border-width: 11px 11px 0 11px;
+  bottom: -10px;
+  content: "";
+  left: 10px;
+  position: absolute;
+  z-index: 99;
+}
+
+/* TODO: update with the new date, datetime and time components.
+/* Hiding the error message bubble for DTM - datetimepicker controls the input and it doesn't
+   run through our validation process.
+   See below (commented out) on a potential way to deliver the error message - there are still issues to work out.
+*/
+.lhc-form lhc-item.lhc-invalid.lhc-datatype-DTM .lhc-validation-popover {
+    display:none;
+}
+
+/* end of validation messages */

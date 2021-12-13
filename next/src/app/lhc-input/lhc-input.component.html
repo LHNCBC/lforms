@@ -1,0 +1,13 @@
+<ng-container *ngIf="item">
+  <input id="{{item._elementId}}"
+         [disabled]="item._readOnly"
+         [(ngModel)]="item.value"
+         placeholder="{{item._toolTip}}"
+         aria-describedby="help-{{ item._elementId }}"
+         aria-required="{{ item._answerRequired }}"
+         type="text"
+         (blur)="lhcDataService.activeRowOnBlur(item)"
+         (focus)="lhcDataService.setActiveRow(item)"
+         >
+</ng-container>
+

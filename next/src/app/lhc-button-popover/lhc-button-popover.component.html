@@ -1,0 +1,121 @@
+<ng-container [ngSwitch]="popoverType">
+  <button *ngSwitchCase="'repeating-item'" id="add-{{item._elementId}}" type="button" class="lhc-float-button lhc-button"  
+          nz-popover
+          [(nzPopoverVisible)]="item._showUnusedItemWarning"
+          [nzPopoverContent]="warningStrTemplate"
+          nzPopoverPlacement="topLeft"
+          [nzPopoverTrigger]="click"
+          nzPopoverOverlayClassName="warning-class{{ item._elementId.replaceAll('/','-') }}"
+          (click)="lhcDataService.addOneRepeatingItem(item)"
+          (blur)="lhcDataService.hideUnusedItemWarning(item)"
+          attr.aria-controls="add-button-{{item._elementId}}"
+          attr.aria-label="add button for {{item.question}}"
+          attr.aria-describedby="add-button-{{ item._elementId }}">              
+    {{ buttonLabel }}
+  </button>
+  <button *ngSwitchCase="'help-string'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"  
+          nz-popover
+          [nzPopoverContent]="helpStrTemplate"
+          nzPopoverTrigger="click" 
+          nzPopoverPlacement="right"  
+          nzPopoverTitle="Instruction"
+          nzPopoverOverlayClassName="help-class{{ item._elementId.replaceAll('/','-') }}"
+          (click)="onShowingPopver(item)"
+          attr.aria-controls="help-content-{{item._elementId}}"
+          attr.aria-label="Help button for {{item.question}}"
+          attr.aria-describedby="help-button-{{ item._elementId }}">              
+    <i nz-icon nzType="question-circle" nzTheme="fill"></i>
+  </button>
+  <button *ngSwitchCase="'help-html'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"  
+          nz-popover
+          [nzPopoverContent]="helpHtmlTemplate"
+          nzPopoverTrigger="click" 
+          nzPopoverPlacement="right"  
+          nzPopoverTitle="Instruction"
+          nzPopoverOverlayClassName="help-class{{ item._elementId.replaceAll('/','-') }}"
+          (click)="onShowingPopver(item)"
+          attr.aria-controls="help-content-{{item._elementId}}"
+          attr.aria-label="Help button for {{item.question}}"
+          attr.aria-describedby="help-button-{{ item._elementId }}">
+    <i nz-icon nzType="question-circle" nzTheme="fill"></i>
+  </button>
+  <ng-container *ngSwitchCase="'copyright-string'">
+    <button *ngIf="!formLevel" id="copyright-button-{{item._elementId}}" type="button" class="lhc-copyright-button" 
+            nz-popover            
+            [nzPopoverContent]="copyrightStrTemplate"
+            nzPopoverTrigger="click"
+            nzPopoverPlacement="right"
+            nzPopoverTitle="Copyright"
+            nzPopoverOverlayClassName="copyright-class{{ item._elementId.replaceAll('/','-') }}"
+            (click)="onShowingPopver(item)"
+            attr.aria-controls="copyright-content-{{item._elementId}}"
+            attr.aria-label="Copyright button for {{item.question}}" 
+            attr.aria-describedby="copyright-button-{{ item._elementId }}">
+      <i nz-icon nzType="copyright-circle" nzTheme="fill"></i>
+    </button>
+    <button *ngIf="formLevel" id="copyright-button-{{item.code}}" type="button" class="lhc-copyright-button" 
+            nz-popover            
+            [nzPopoverContent]="copyrightStrTemplate"
+            nzPopoverTrigger="click"
+            nzPopoverPlacement="right"
+            nzPopoverTitle="Copyright"
+            nzPopoverOverlayClassName="copyright-class{{ item.code.replaceAll('/','-') }}"        
+            (click)="onShowingPopver(item)"    
+            attr.aria-controls="copyright-content-{{item.code}}"
+            attr.aria-label="Copyright button for {{item.name || item.fhirQName}}" 
+            attr.aria-describedby="copyright-button-{{ item.code }}">
+      <i nz-icon nzType="copyright-circle" nzTheme="outline"></i>
+    </button>
+  </ng-container>
+  
+</ng-container>
+
+<!-- unused item warning template -->
+<ng-template #warningStrTemplate>
+  <span attr.aria-labelledby="add-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="{{item._unusedItemWarning}}"
+        attr.aria-describedby="add-content-{{item._elementId}}"
+        id="add-content-{{item._elementId}}"
+  >{{item._unusedItemWarning}}</span>
+</ng-template>
+
+<!-- help popover template with trusted html -->
+<ng-template #helpHtmlTemplate>
+  <span attr.aria-labelledby="help-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Instruction for {{item.question}}"
+        attr.aria-describedby="help-content-{{item._elementId}}"
+        id="help-content-{{item._elementId}}"
+        [innerHTML]="item.codingInstructions | safeHtml"
+  ></span>
+</ng-template>
+
+<!-- help popover template -->
+<ng-template #helpStrTemplate>
+  <span attr.aria-labelledby="help-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Instruction for {{item.question}}"
+        attr.aria-describedby="help-content-{{item._elementId}}"
+        id="help-content-{{item._elementId}}"
+  >{{item.codingInstructions}}</span>
+</ng-template>
+
+<!-- copyright popover template -->
+<ng-template #copyrightStrTemplate >
+  <span *ngIf="!formLevel" 
+        attr.aria-labelledby="copyright-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Copyright notice for {{item.question}}" 
+        attr.aria-describedby="copyright-content-{{item._elementId}}"
+        id="copyright-content-{{item._elementId}}"
+  >{{item.copyrightNotice}}</span>
+  <span *ngIf="formLevel"
+        id="copyright-content-{{item.code}}"
+        attr.aria-labelledby="copyright-button-{{item.code}}"
+        role="region"
+        attr.aria-label="Copyright notice for {{item.name || item.fhirQName}}" 
+        attr.aria-describedby="copyright-content-{{item.code}}"
+        id="copyright-content-{{item.code}}"
+  >{{item.copyrightNotice}}</span>  
+</ng-template>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>LForms Build Test Page with FHIR Context</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+      .btn {
+        display: inline-block;
+        margin: 1px;
+        font-weight: normal;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        border: 1px solid transparent;
+        padding: 2px 6px;
+        font-size: 12px;
+        border-radius: 4px;
+      }
+  
+      .btn-success {
+        color: #fff;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+      }
+  
+      .btn-primary {
+        color: #fff;
+        background-color: #337ab7;
+        border-color: #2e6da4;
+      }
+  
+      .hide {
+        display: none;
+      }
+    </style>
+  
+  </head>
+  <!-- Theme class needs to be on "body" for the jQuery datepicker -->
+  <body style="padding: 1em">
+
+    <div id="lforms-form">
+      <div class="panel panel-default">
+        <div class="panel-heading">LForms Build Test Page with FHIR Context</div>
+        <div class="panel-body">
+          <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
+          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+          <select id="fhirVersion">
+            <option value="R4">R4</option>
+            <option value="STU3">STU3</option>
+          </select>
+
+        </div>
+      </div>
+
+      <br><br>
+      <wc-lhc-form id='test-form'></wc-lhc-form>
+
+    </div>
+
+    <!-- zone.js is not included in LHC-Forms web component -->
+    <script src="/assets/lib/zone.min.js"></script>
+
+    <script src="/test/lib/webcomponent/lhc-forms.es5.js"></script>
+    
+    <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
+    <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
+
+    <script>
+
+      window.onload = function() {
+        var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
+        LForms.Util.setFHIRContext(fhirAPI);
+      }
+    </script>
+
+    <!-- lforms test controller -->
+    <script type="text/javascript">
+
+      testForm = document.getElementById('test-form');
+
+      /**
+       * Get FHIR version from the version list
+       */
+      function getFHIRVersion() {
+        let fhirVersion = document.getElementById("fhirVersion");
+
+        let version = fhirVersion.value;
+        if (!version)
+          throw 'Please select a FHIR version';
+        return version;
+      }
+
+      /**
+       * Get FHIR context from the global object LForms
+       */
+      function getFHIR() {
+        return LForms.FHIR[getFHIRVersion()];
+      }
+
+      /**
+       * Load a data file from local file system
+       */
+      function loadFile(event) {
+        var reader = new FileReader();
+        var fileAnchor = document.querySelector('#fileAnchor');
+        var questionnaire;
+        reader.onload = function() {
+          var questionnaire = JSON.parse(reader.result);          
+          // Reset the field with the filename we can load the same file again if needed.
+          fileAnchor.value = '';
+          testForm.questionnaire = questionnaire;
+          testForm.fhirVersion = getFHIRVersion()
+          // The prepopulateFHIR variable below is a hack for the test code to signal
+          // prepopulation is desired.
+          testForm.prepop = window.prepopulateFHIR;
+
+        };
+        reader.readAsText(event.target.files[0]); 
+      }
+
+    </script>
+
+  </body>
+</html>

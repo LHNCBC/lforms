@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Test for the compressed build of LForms in ES5</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <wc-lhc-form id='test-form'></wc-lhc-form>
+    
+    <!-- zone.js is not included in LHC-Forms web component -->
+    <script src="/assets/lib/zone.min.js"></script>
+    <script src="/test/lib/webcomponent/lhc-forms.es2015.js"></script>
+    
+    <script>
+      testForm = document.getElementById('test-form');
+
+      async function loadJsonFromUrl(url) {
+        return await fetch(url).then( 
+          response => response.json());
+      }
+
+      async function displayForm(formUrl) {
+        //let testForm = document.getElementById('test-form');
+        let formJson = await loadJsonFromUrl(formUrl);   
+        testForm.questionnaire = formJson;
+      }
+
+      displayForm("../test-data/form-data/allInOne.json");
+
+    </script>
+  </body>
+</html>

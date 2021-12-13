@@ -1,0 +1,13 @@
+<ng-container *ngIf="item">  
+  <div class="lhc-validation-popover" *ngIf="item._hasValidation">
+    <div *ngFor="let error of item._validationErrors; index as i" >
+      <div class="validation-error">
+        <i class="lhc-error-icon" nz-icon nzType="close"></i>
+        <span class="lhc-error-item">{{item.question}}</span>
+        <span class="lhc-error-msg">{{error}}</span>
+      </div>
+    </div>
+  </div>  
+  <!-- hidden item.value -->
+  <div class="lhc-watched-value">{{value}}</div>
+</ng-container>

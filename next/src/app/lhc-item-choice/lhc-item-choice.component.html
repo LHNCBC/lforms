@@ -1,0 +1,12 @@
+
+<ng-container *ngIf="item">
+  <ng-container [ngSwitch]="item.displayControl && item.displayControl.answerLayout && item.displayControl.answerLayout.type">
+    <ng-container *ngSwitchCase="'RADIO_CHECKBOX'">
+      <lhc-item-choice-radio-button *ngIf="!item._multipleAnswers" [item]="item" [acOptions]="item._autocompOptions"></lhc-item-choice-radio-button>
+      <lhc-item-choice-check-box *ngIf="item._multipleAnswers" [item]="item" [acOptions]="item._autocompOptions"></lhc-item-choice-check-box>
+    </ng-container>
+    <!-- <lhc-item-choice-autocomplete *ngSwitchDefault [item]="item"></lhc-item-choice-autocomplete> -->
+    <lhc-item-choice-autocomplete *ngSwitchDefault [item]="item" [acOptions]="item._autocompOptions"></lhc-item-choice-autocomplete>
+  </ng-container>
+</ng-container>
+

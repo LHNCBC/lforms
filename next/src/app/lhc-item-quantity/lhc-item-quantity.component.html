@@ -1,0 +1,4 @@
+<ng-container *ngIf="item && isQuantity">
+  <lhc-input [item]="item"></lhc-input>
+  <lhc-unit *ngIf="item.units" [item]="item"></lhc-unit>
+</ng-container>

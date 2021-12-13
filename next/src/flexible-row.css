@@ -1,0 +1,186 @@
+/* new flex box layout system based on screen size */
+/* padding on flex boxes */
+.lhc-de-label-button {
+  padding: 4px 0 0 0;
+}
+.lhc-de-input-unit {
+  padding: 0 0 0 0;
+}
+/* .lhc-de-input {
+  padding: 2px 0 2px 2px;
+}
+.lhc-de-unit {
+  padding: 2px 0 2px 2px;
+} */
+
+/* Large */
+.lhc-de {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.lhc-de-label-button {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 1;
+  flex-grow: 1;
+
+}
+lhc-item-question-text,
+.lhc-de-label {
+  order: 1;
+  flex-grow: 1;
+}
+.lhc-de-button {
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lhc-de-input-unit {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+}
+.lhc-de-input-unit-content {
+  width: 100%;
+}
+
+lhc-item-quantity {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+lhc-input {
+  order:1;
+  flex-grow: 1;
+}
+lhc-unit {
+  order:2;
+  flex-grow: 1;
+}
+
+
+/* Medium view width */
+.lhc-item-view-md .lhc-de {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.lhc-item-view-md .lhc-de-label-button {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 1;
+  flex-grow: 1;
+  width: 100%;
+}
+.lhc-item-view-md .lhc-de-label {
+  order: 1;
+  flex-grow: 1;
+}
+.lhc-item-view-md .lhc-de-button {
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lhc-item-view-md .lhc-de-input-unit {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 2;
+  flex-grow: 1;
+  width: 100%;
+}
+.lhc-item-view-md lhc-item-quantity {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.lhc-item-view-md lhc-input {
+  order:1;
+  flex-grow: 1;
+}
+.lhc-item-view-md lhc-unit {
+  order:2;
+  flex-grow: 1;
+}
+/* end of medium view width */
+
+/* Small view width */
+.lhc-item-view-sm .lhc-de {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.lhc-item-view-sm .lhc-de-label-button {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: nowrap;
+   align-items: flex-start;
+
+   order: 1;
+   flex-grow: 1;
+   width: 100%;
+}
+.lhc-item-view-sm .lhc-de-label {
+  order: 1;
+  flex-grow: 1;
+}
+.lhc-item-view-sm .lhc-de-button {
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lhc-item-view-sm .lhc-de-input-unit {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+
+  order: 2;
+  flex-grow: 1;
+  width: 100%;
+}
+.lhc-item-view-sm lhc-item-quantity {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.lhc-item-view-sm lhc-input {
+  order:1;
+  flex-grow: 1;
+  width: 100%;
+}
+.lhc-item-view-sm lhc-unit {
+  order:2;
+  flex-grow: 1;
+  width: 100%;
+}
+/* end of small view width */
+
+/* end of flex box layout */

@@ -1,0 +1,32 @@
+:host {
+  border: solid;
+  border-color: #ced5d9;
+  border-width: 1px 0 0 0;
+  margin: 0 4px 0 2px;
+} 
+.lhc-de-input-unit-content {
+  width: 100%;
+}
+
+.lhc-error-icon {
+  color: red;
+  font-weight: bold;
+}
+
+.lhc-error-msg {
+  color: red;
+}
+
+.lhc-error-msg, .lhc-error-item {
+  margin-left: 0.5em;
+}
+
+/* popover is attached to page under <body>
+div.ant-popover {
+  top: 10px;
+  background-color: #fcf8e3;
+} */
+
+.lhc-validate-class {
+  background-color: #fcf8e3;
+}

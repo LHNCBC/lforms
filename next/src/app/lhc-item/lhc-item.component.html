@@ -1,0 +1,31 @@
+<ng-container *ngIf="item && lhcDataService.targetShown(item)">
+    <ng-container  [ngSwitch]="item.dataType">
+      <!-- 'group' -->
+      <ng-container *ngSwitchCase="'SECTION'">
+        <lhc-item-group [item]="item" ></lhc-item-group>
+      </ng-container>
+      <!-- 'display' -->
+      <ng-container *ngSwitchCase="'TITLE'">
+        <lhc-item-display [item]="item"></lhc-item-display>
+      </ng-container>
+      <!-- 'question' -->
+      <ng-container *ngSwitchDefault>
+        <lhc-item-question [item]="item" class="lhc-de" [ngStyle]="lhcDataService.getItemStyle(item)"></lhc-item-question>
+        <!-- question item could have sub items -->
+        <div *ngIf="item.items" class="lhc-item-group-body">
+          <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">
+            <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView" 
+              [item]="item" 
+              class="lhc-item {{getItemViewModeClass(item)}} {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
+            </lhc-item>
+          </ng-container>
+        </div>
+        <!-- a button at the end of each repeating section -->
+        <div class="lf-table-item {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && lhcDataService.targetShown(item) && !item._isHiddenFromView">
+          <div class="{{lhcDataService.getSkipLogicClass(item)}}">
+            <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ Add another "{{item._text}}"'></lhc-button-popover>
+          </div>
+        </div>        
+      </ng-container>
+    </ng-container>
+  </ng-container>

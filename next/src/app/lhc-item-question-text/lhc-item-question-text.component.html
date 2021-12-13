@@ -1,0 +1,48 @@
+<ng-container *ngIf="item">
+  <!-- label -->
+  <div class="lhc-de-label" (focus)="lhcDataService.setActiveRow(item)">
+    <span *ngIf="item._questionRepeatable && !item._horizontalTableHeader" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
+    <span class="lf-question">
+      <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
+        <!-- prefix -->
+        <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
+        <!-- question text -->
+        <span class="question" [style]="item._obj_textCSS">{{item.question}}
+          <!-- required -->
+          <span *ngIf="item._answerRequired" class="lhc-required" title="Required">*</span>
+        </span>
+      </label>
+    </span>
+    <!-- question code -->
+    <span class="lf-item-code" *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode">
+      <a *ngIf="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
+      <span *ngIf="!item._linkToDef">[{{ item.questionCode }}]</span>
+    </span>
+    <!-- coding instructions / helps -->
+    <span [ngSwitch]="lhcDataService.getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
+      <span *ngSwitchCase="'inline-escaped'" 
+            id="help-{{ item._elementId }}"
+            class="lf-prompt" 
+            attr.aria-label="Help for question {{item.question}}"
+            attr.aria-describedby="label-{{ item._elementId }}"
+       >{{item.codingInstructions}}</span>
+      <span *ngSwitchCase="'inline-html'" 
+            id="help-{{ item._elementId }}"
+            class="lf-prompt" 
+            [innerHTML]="item.codingInstructions | safeHtml"
+            attr.aria-label="Help for question {{item.question}}"
+            attr.aria-describedby="label-{{ item._elementId }}"
+       ></span>
+      <ng-container *ngSwitchCase="'popover-escaped'">
+        <lhc-button-popover [item]="item" [popoverType]="'help-string'"></lhc-button-popover>
+       </ng-container>
+      <ng-container *ngSwitchCase="'popover-html'">
+        <lhc-button-popover [item]="item" [popoverType]="'help-html'"></lhc-button-popover>
+      </ng-container>
+    </span>
+    <!-- copyright -->
+    <ng-container *ngIf="item.copyrightNotice">
+      <lhc-button-popover [item]="item" [popoverType]="'copyright-string'"></lhc-button-popover>
+    </ng-container>
+  </div>
+</ng-container>

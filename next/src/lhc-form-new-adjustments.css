@@ -1,0 +1,103 @@
+/* to be merged */
+lhc-input,
+lhc-unit,
+lhc-item-text,
+lhc-date,
+lhc-item-choice-autocomplete {
+  padding: 2px 0 2px 2px;
+  display: block;
+}
+
+/* override some settings from autocomplete-lhc */
+lhc-item-choice .autocomp_selected {
+  border: 1px solid #ced5d9;
+  border-radius: 4px;
+  width: 100%;
+}
+lhc-item-choice .autocomp_selected ul {
+  margin: 0 0 0 0.25em;
+}
+
+lhc-item-date,
+lhc-item-datetime,
+lhc-item-time  {
+  display: block;
+  padding: 2px 0 2px 2px;
+}
+/* override antd date picker's styles */
+lhc-item-date .lhc-date-picker,
+lhc-item-datetime .lhc-datetime-picker,
+lhc-item-time .lhc-time-picker  {
+  border: 1px solid #ced5d9;
+  border-radius: 4px;
+  width: 100%;
+}
+lhc-item-date .ant-picker,
+lhc-item-datetime .ant-picker,
+lhc-item-time .ant-picker  {
+  padding: 3px 7px 2px 4px;
+}
+lhc-item-date .ant-picker-input>input,
+lhc-item-datetime .ant-picker-input>input {
+  font-size: 90%;
+  font-weight: 700;
+  padding-top: 2px;
+}
+lhc-item-time .ant-picker-input>input[type="text"] {
+  border: none;
+  padding-left: 0;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  height: auto;
+  font-size: 90%;
+  font-weight: 700;
+}
+/* html5 tooltip style */
+lhc-item-date .ant-picker-input>input::placeholder,
+lhc-item-datetime .ant-picker-input>input::placeholder,
+lhc-item-time .ant-picker-input>input::placeholder {
+  font-weight: 500;
+  color: #999999;
+  opacity: 1;
+}
+/* Repeat for IE 11, which won't read this definition if it is combined above
+   with -moz-placeholder */
+lhc-item-date .ant-picker-input>input:-ms-input-placeholder,
+lhc-item-datetime .ant-picker-input>input:-ms-input-placeholder,
+lhc-item-time .ant-picker-input>input:-ms-input-placeholder {
+  font-weight: 500;
+  color: #999999;
+  opacity: 1;
+}
+/* for Edge */
+lhc-item-date .ant-picker-input>input::-ms-input-placeholder,
+lhc-item-datetime .ant-picker-input>input::-ms-input-placeholder,
+lhc-item-time .ant-picker-input>input::-ms-input-placeholder {
+  font-weight: 500;
+  color: #999999;
+  opacity: 1;
+}
+
+
+/* place holder */
+.lhc-form input::placeholder,
+.lhc-form textarea::placeholder {
+  font-weight: 500;
+  color: #999999;
+  opacity: 1;
+}
+/* Repeat for IE 11, which won't read this definition if it is combined above
+   with -moz-placeholder */
+.lhc-form input:-ms-input-placeholder,
+.lhc-form textarea:-ms-input-placeholder {
+  font-weight: 500;
+  color: #999999;
+  opacity: 1;
+}
+/* edge */
+.lhc-form input::-ms-input-placeholder,
+.lhc-form textarea::-ms-input-placeholder {
+  font-weight: 500;
+  color: #999999;
+  opacity: 1;
+}

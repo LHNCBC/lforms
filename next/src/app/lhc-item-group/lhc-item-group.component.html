@@ -1,0 +1,11 @@
+<div *ngIf="item" [ngSwitch]="item.displayControl.questionLayout">
+  <div *ngSwitchCase="'horizontal'">
+    <lhc-group-horizontal [item]="item"></lhc-group-horizontal>
+  </div>
+  <div *ngSwitchCase="'matrix'">
+    <lhc-group-matrix [item]="item"></lhc-group-matrix>
+  </div>
+  <div *ngSwitchCase="'vertical'">
+    <lhc-group-vertical [item]="item"></lhc-group-vertical>
+  </div>
+</div>

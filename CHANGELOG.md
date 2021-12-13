@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [30.0.0-beta.0] 2021-12-10
+### Changed
+- Included the initial release of the Web Component version of the LHC-Forms 
+  widget in the "next" directory. This will be reorganized out of the "next" 
+  directory prior to the non-beta release.
+  
 ## [29.3.1] 2021-10-20
 ### Fixed
 - If a form contained an attachment type question, hitting enter in another
