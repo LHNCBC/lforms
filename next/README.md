@@ -4,13 +4,12 @@ This project generates a web component of the new LForms widget.
 
 
 ## Dev Env setup (Temporarily when the lforms and the this 'next' version co-exist in the same project)
-* In the currnet lforms project:
+* Build FHIR libs in the current lforms project:
 1. Check out the 'next' branch (or the branch you are working on) from git repository
 1. `source bashrc.lforms` (make sure node dir is availabel at ~/)    
 1. `npm ci`
 1. `bower install` (You may need to run `source bashrc.lforms` again.)
-1. `npm run build` (Optional, the 'next' lforms needs the fhir libs,
-   which are already in git. This is to rebuild FHIR libs. `npm run test` does not work.)
+1. `npm run build` (The FHIR libs are located in `dist/latest/fhir/lformsFHIRAll.min.js`)
 * In the 'next' lforms project:
 1. `cd next`
 1. `source bashrc.next`
@@ -30,16 +29,20 @@ This project generates a web component of the new LForms widget.
 1. Run `npm run build` to build the project and generate a production version of the js files, 
    which are much smaller than the development version. It generates two versions of the js files: 
    ES5 version and ES2015 vresion. The `/dist` directory is deleted and recreated during the process. 
-   It also concatenates all ES5 js files of the web component into a single `lhc-forms.es5.js` file and all ES2015 files into `lhc-forms.es2015.js`
-   (along with a `styles.css` file) in the `/dist/webcomponent` directory, 
-   which are used in e2e tests and can be distributed to use in other projects. A copy of the individual built files and their source map files are also included in `/dist/webcomponent`. `zone.min.js` is not included in the built file, and a copy is put in `/dist/webcomponent/assets/bin`.
+   It also concatenates all ES5 js files of the web component into a single `lhc-forms.es5.js` file 
+   and all ES2015 files into `lhc-forms.es2015.js` (along with a `styles.css` file) in the 
+   `/dist/webcomponent` directory, which are used in e2e tests and can be distributed to use 
+   in other projects. A copy of the individual built files and their source map files are also 
+   included in `/dist/webcomponent`. `zone.min.js` is not included in the built file, 
+   and a copy is put in `/dist/webcomponent/assets/bin`.
 
 1. Run `npm run build:dev` to build the project and generate a development version of the js files. 
    The build artifacts will be stored in the `/dist` directory. The `/dist` directory is deleted and 
    recreated during the process.
 
 ## Running tests
-1. Run `npm run test` to run unit tests and e2e tests.
+1. Run `npm run test` to run unit tests and e2e tests, which also copies the FHIR lib files 
+   and built files in places for testing.
 
 ## Running unit tests
 
@@ -64,8 +67,10 @@ This project generates a web component of the new LForms widget.
      bruntime-[es5|es2015].js
      polyfills-[es5|es2015].js
      main-[es5|es2015].js 
+  4. ../dist/latest/fhir/lformsFHIRAll.min.js'
   ```
-* For non-Angular JavaScript project, including React, Vue projects, a copy of zone.min.js is required to be loaded before loading above js files. A copy of zone.min.js is in `/dist/webcomponent/assets/bin/zone.min.js`.
+* For non-Angular JavaScript project, including React, Vue projects, a copy of zone.min.js is required to 
+  be loaded before loading above js files. A copy of zone.min.js is in `/dist/webcomponent/assets/bin/zone.min.js`.
   * Load the following files from `/dist/webcomponent`
   ```
   1. styles.css
@@ -76,5 +81,6 @@ This project generates a web component of the new LForms widget.
      bruntime-[es5|es2015].js
      polyfills-[es5|es2015].js
      main-[es5|es2015].js 
+  5. ../dist/latest/fhir/lformsFHIRAll.min.js'
   ```
 
