@@ -69,7 +69,7 @@ This project generates a web component of the new LForms widget.
      main-[es5|es2015].js 
   4. ../dist/latest/fhir/lformsFHIRAll.min.js'
   ```
-* For non-Angular JavaScript project, including React, Vue projects, a copy of zone.min.js is required to 
+* For non-Angular JavaScript projects, including React, Vue projects, a copy of zone.min.js is required to 
   be loaded before loading above js files. A copy of zone.min.js is in `/dist/webcomponent/assets/bin/zone.min.js`.
   * Load the following files from `/dist/webcomponent`
   ```

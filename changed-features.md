@@ -1,6 +1,40 @@
-### Features not supported in version 30.0.0
-* **Web Component** The new LHC-Forms is Web Component widget created with angular. It is no longer using
-  angularjs.
+## New features in version 30.0.0
+* **Web Component** The new LHC-Forms is a Web Component widget created with angular. 
+  It is no longer developed with angularjs.
+  #### **Web Component Properties:**
+  * **questionnaire** - A JSON object of a FHIR Questionnaire (including FHIR SDC Questionnaire),
+ or the above LHC-Forms internal format.
+  * **options** - Optional, a JSON object. The options defined in [templateOptions](#templateOptions).
+  * **prepop** - Optional, a boolean value. A flag indicating whether to run the pre-populate operation
+ for the FHIR Questionnaire. The default value is false.
+  * **fhirVersion** - Optional, a string value. The specified FHIR version of the data provided in 
+ 'questionnaire'. If this is not provided, a FHIR version will be determined from 
+ the 'questionnaire'. The supported FHIR versions are 'R4' and 'STU3'.
+
+  #### **Emitted Events:**
+
+  * **onFormReady** - emitted when the form is fully initialied, and FHIRPath expressions
+ are run if any, data are pre-populated if any, and the form is ready for user interactions. 
+ No data is returned in this event.
+
+  #### **How to use properties and events:**
+  * In HTML: 
+```
+        <wc-lhc-form id='test-form'></wc-lhc-form>
+```
+  * JavaScript Code: 
+```
+        lhcFormWidget = document.getElementById('test-form'); 
+        lhcFormWidget.questionnaire = aQuesionnaire;
+        ...
+        lhcFormWidget.addEventListener('onFormReady', e => {
+          // do something
+          ...
+        });
+```
+
+## Features not supported in version 30.0.0
+* **AngularJS Directive** The new LHC-Forms does not includes an AngujarJS directive.
 
 * **templateOptions** - The following options within templateOptions are not supported:
   * showColumnHeaders - a boolean that controls whether to show the header row
@@ -46,3 +80,18 @@
           user will be required to provide an answer.  If you set "max" to "*",
           the list becomes multi-select.  (Other possibilities are not yet
           supported.)
+
+* **Emitted (AngularJS) Events**
+
+  * **LF_EVENT_REPEATING_ITEM_ADDED** - emitted when a repeatable item or section is added to the form by clicking
+  the "add" button. An event attr object is associated with the event, with the following fields:
+    * event - the event name, 'LF_EVENT_REPEATING_ITEM_ADDED'
+    * formId - the code of the form
+    * itemId - the _elementId of the newly added item or section
+    * time - the time stamp when the event happens
+  * **LF_EVENT_REPEATING_ITEM_DELETED** - emitted when a repeatable item or section is deleted from the form by clicking
+ the "delete" button. The event attr object has the same set of the fields:
+    * event - the event name, 'LF_EVENT_REPEATING_ITEM_DELETED'
+    * formId - the code of the form
+    * itemId - the _elementId of the item or section that has just been deleted.
+    * time - the time stamp when the event happens

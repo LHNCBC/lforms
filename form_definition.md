@@ -334,13 +334,12 @@ about the meaning of each key:
               `["325-2.25-0.19 mg Tab", "325-4.5-0.38 mg Tab", "325-4.84 mg Tab"]`.
 
 ### Web Component Properties:
-* **questionnaire** - A FHIR Questionnaire (including FHIR SDC Questionnaire),
- or the above LHC-Forms internal format, in JSON.
-* **options** - Optional. The options defined in [templateOptions](#templateOptions), 
- in JSON.
-* **prepop** - Optional. A flag indicating whether to run the pre-populate operation
+* **questionnaire** - A JSON object of a FHIR Questionnaire (including FHIR SDC Questionnaire),
+ or the above LHC-Forms internal format.
+* **options** - Optional, a JSON object. The options defined in [templateOptions](#templateOptions).
+* **prepop** - Optional, a boolean value. A flag indicating whether to run the pre-populate operation
  for the FHIR Questionnaire. The default value is false.
-* **fhirVersion** - Optional. The specified FHIR version of the data provided in 
+* **fhirVersion** - Optional, a string value. The specified FHIR version of the data provided in 
  'questionnaire'. If this is not provided, a FHIR version will be determined from 
  the 'questionnaire'. The supported FHIR versions are 'R4' and 'STU3'.
 
@@ -348,7 +347,24 @@ about the meaning of each key:
 
 * **onFormReady** - emitted when the form is fully initialied, and FHIRPath expressions
  are run if any, data are pre-populated if any, and the form is ready for user interactions. 
- No data is return in this event.
+ No data is returned in this event.
+
+### How to use properties and events:
+* In HTML: 
+```
+      <wc-lhc-form id='test-form'></wc-lhc-form>
+```
+* JavaScript Code: 
+```
+      lhcFormWidget = document.getElementById('test-form'); 
+      lhcFormWidget.questionnaire = aQuesionnaire;
+      ...
+      lhcFormWidget.addEventListener('onFormReady', e => {
+        // do something
+        ...
+      });
+```
+
 
 ### Utility Functions:
 For a description of functions provided for retrieving user-entered data in
