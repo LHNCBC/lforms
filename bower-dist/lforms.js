@@ -133,10 +133,14 @@ var globalNS = function () {
 
 if (typeof globalNS['Promise'] !== 'function') {
   globalNS['Promise'] = _index__WEBPACK_IMPORTED_MODULE_0__["default"];
-} else if (!globalNS.Promise.prototype['finally']) {
-  globalNS.Promise.prototype['finally'] = _finally__WEBPACK_IMPORTED_MODULE_1__["default"];
-} else if (!globalNS.Promise.allSettled) {
-  globalNS.Promise.allSettled = _allSettled__WEBPACK_IMPORTED_MODULE_2__["default"];
+} else {
+  if (!globalNS.Promise.prototype['finally']) {
+    globalNS.Promise.prototype['finally'] = _finally__WEBPACK_IMPORTED_MODULE_1__["default"];
+  }
+
+  if (!globalNS.Promise.allSettled) {
+    globalNS.Promise.allSettled = _allSettled__WEBPACK_IMPORTED_MODULE_2__["default"];
+  }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
@@ -144,7 +148,7 @@ if (typeof globalNS['Promise'] !== 'function') {
 /* 2 */
 /***/ (function(module, exports) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 var g; // This works in non-strict mode
 
@@ -173,13 +177,15 @@ module.exports = g;
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(setImmediate) {/* harmony import */ var _finally__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
 /* harmony import */ var _allSettled__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 
  // Store setTimeout reference so promise-polyfill will be unaffected by
 // other code modifying setTimeout (like sinon.useFakeTimers())
 
-var setTimeoutFunc = setTimeout;
+var setTimeoutFunc = setTimeout; // @ts-ignore
+
+var setImmediateFunc = typeof setImmediate !== 'undefined' ? setImmediate : null;
 
 function isArray(x) {
   return Boolean(x && typeof x.length !== 'undefined');
@@ -421,9 +427,9 @@ Promise.race = function (arr) {
 
 
 Promise._immediateFn = // @ts-ignore
-typeof setImmediate === 'function' && function (fn) {
+typeof setImmediateFunc === 'function' && function (fn) {
   // @ts-ignore
-  setImmediate(fn);
+  setImmediateFunc(fn);
 } || function (fn) {
   setTimeoutFunc(fn, 0);
 };
@@ -954,7 +960,7 @@ function finallyConstructor(callback) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 function allSettled(arr) {
   var P = this;
@@ -1017,10 +1023,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Response", function() { return Response; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DOMException", function() { return DOMException; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetch", function() { return fetch; });
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+var global = typeof globalThis !== 'undefined' && globalThis || typeof self !== 'undefined' && self || typeof global !== 'undefined' && global;
 var support = {
-  searchParams: 'URLSearchParams' in self,
-  iterable: 'Symbol' in self && 'iterator' in Symbol,
-  blob: 'FileReader' in self && 'Blob' in self && function () {
+  searchParams: 'URLSearchParams' in global,
+  iterable: 'Symbol' in global && 'iterator' in Symbol,
+  blob: 'FileReader' in global && 'Blob' in global && function () {
     try {
       new Blob();
       return true;
@@ -1028,8 +1037,8 @@ var support = {
       return false;
     }
   }(),
-  formData: 'FormData' in self,
-  arrayBuffer: 'ArrayBuffer' in self
+  formData: 'FormData' in global,
+  arrayBuffer: 'ArrayBuffer' in global
 };
 
 function isDataView(obj) {
@@ -1049,8 +1058,8 @@ function normalizeName(name) {
     name = String(name);
   }
 
-  if (/[^a-z0-9\-#$%&'*+.^_`|~]/i.test(name)) {
-    throw new TypeError('Invalid character in header field name');
+  if (/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(name) || name === '') {
+    throw new TypeError('Invalid character in header field name: "' + name + '"');
   }
 
   return name.toLowerCase();
@@ -1222,6 +1231,17 @@ function Body() {
   this.bodyUsed = false;
 
   this._initBody = function (body) {
+    /*
+      fetch-mock wraps the Response object in an ES6 Proxy to
+      provide useful test harness features such as flush. However, on
+      ES5 browsers without fetch or Proxy support pollyfills must be used;
+      the proxy-pollyfill is unable to proxy an attribute unless it exists
+      on the object before the Proxy is created. This change ensures
+      Response.bodyUsed exists on the instance, while maintaining the
+      semantic of setting Request.bodyUsed in the constructor before
+      _initBody is called.
+    */
+    this.bodyUsed = this.bodyUsed;
     this._bodyInit = body;
 
     if (!body) {
@@ -1276,7 +1296,17 @@ function Body() {
 
     this.arrayBuffer = function () {
       if (this._bodyArrayBuffer) {
-        return consumed(this) || Promise.resolve(this._bodyArrayBuffer);
+        var isConsumed = consumed(this);
+
+        if (isConsumed) {
+          return isConsumed;
+        }
+
+        if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
+          return Promise.resolve(this._bodyArrayBuffer.buffer.slice(this._bodyArrayBuffer.byteOffset, this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength));
+        } else {
+          return Promise.resolve(this._bodyArrayBuffer);
+        }
       } else {
         return this.blob().then(readBlobAsArrayBuffer);
       }
@@ -1323,6 +1353,10 @@ function normalizeMethod(method) {
 }
 
 function Request(input, options) {
+  if (!(this instanceof Request)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
+  }
+
   options = options || {};
   var body = options.body;
 
@@ -1366,6 +1400,22 @@ function Request(input, options) {
   }
 
   this._initBody(body);
+
+  if (this.method === 'GET' || this.method === 'HEAD') {
+    if (options.cache === 'no-store' || options.cache === 'no-cache') {
+      // Search for a '_' parameter in the query string
+      var reParamSearch = /([?&])_=[^&]*/;
+
+      if (reParamSearch.test(this.url)) {
+        // If it already exists then set the value with the current time
+        this.url = this.url.replace(reParamSearch, '$1_=' + new Date().getTime());
+      } else {
+        // Otherwise add a new '_' parameter to the end with the current time
+        var reQueryString = /\?/;
+        this.url += (reQueryString.test(this.url) ? '&' : '?') + '_=' + new Date().getTime();
+      }
+    }
+  }
 }
 
 Request.prototype.clone = function () {
@@ -1391,8 +1441,13 @@ function parseHeaders(rawHeaders) {
   var headers = new Headers(); // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
   // https://tools.ietf.org/html/rfc7230#section-3.2
 
-  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ');
-  preProcessedHeaders.split(/\r?\n/).forEach(function (line) {
+  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' '); // Avoiding split via regex to work around a common IE11 bug with the core-js 3.6.0 regex polyfill
+  // https://github.com/github/fetch/issues/748
+  // https://github.com/zloirock/core-js/issues/751
+
+  preProcessedHeaders.split('\r').map(function (header) {
+    return header.indexOf('\n') === 0 ? header.substr(1, header.length) : header;
+  }).forEach(function (line) {
     var parts = line.split(':');
     var key = parts.shift().trim();
 
@@ -1406,6 +1461,10 @@ function parseHeaders(rawHeaders) {
 
 Body.call(Request.prototype);
 function Response(bodyInit, options) {
+  if (!(this instanceof Response)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
+  }
+
   if (!options) {
     options = {};
   }
@@ -1413,7 +1472,7 @@ function Response(bodyInit, options) {
   this.type = 'default';
   this.status = options.status === undefined ? 200 : options.status;
   this.ok = this.status >= 200 && this.status < 300;
-  this.statusText = 'statusText' in options ? options.statusText : 'OK';
+  this.statusText = options.statusText === undefined ? '' : '' + options.statusText;
   this.headers = new Headers(options.headers);
   this.url = options.url || '';
 
@@ -1454,7 +1513,7 @@ Response.redirect = function (url, status) {
   });
 };
 
-var DOMException = self.DOMException;
+var DOMException = global.DOMException;
 
 try {
   new DOMException();
@@ -1492,22 +1551,38 @@ function fetch(input, init) {
       };
       options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL');
       var body = 'response' in xhr ? xhr.response : xhr.responseText;
-      resolve(new Response(body, options));
+      setTimeout(function () {
+        resolve(new Response(body, options));
+      }, 0);
     };
 
     xhr.onerror = function () {
-      reject(new TypeError('Network request failed'));
+      setTimeout(function () {
+        reject(new TypeError('Network request failed'));
+      }, 0);
     };
 
     xhr.ontimeout = function () {
-      reject(new TypeError('Network request failed'));
+      setTimeout(function () {
+        reject(new TypeError('Network request failed'));
+      }, 0);
     };
 
     xhr.onabort = function () {
-      reject(new DOMException('Aborted', 'AbortError'));
+      setTimeout(function () {
+        reject(new DOMException('Aborted', 'AbortError'));
+      }, 0);
     };
 
-    xhr.open(request.method, request.url, true);
+    function fixUrl(url) {
+      try {
+        return url === '' && global.location.href ? global.location.href : url;
+      } catch (e) {
+        return url;
+      }
+    }
+
+    xhr.open(request.method, fixUrl(request.url), true);
 
     if (request.credentials === 'include') {
       xhr.withCredentials = true;
@@ -1515,13 +1590,23 @@ function fetch(input, init) {
       xhr.withCredentials = false;
     }
 
-    if ('responseType' in xhr && support.blob) {
-      xhr.responseType = 'blob';
+    if ('responseType' in xhr) {
+      if (support.blob) {
+        xhr.responseType = 'blob';
+      } else if (support.arrayBuffer && request.headers.get('Content-Type') && request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1) {
+        xhr.responseType = 'arraybuffer';
+      }
     }
 
-    request.headers.forEach(function (value, name) {
-      xhr.setRequestHeader(name, value);
-    });
+    if (init && _typeof(init.headers) === 'object' && !(init.headers instanceof Headers)) {
+      Object.getOwnPropertyNames(init.headers).forEach(function (name) {
+        xhr.setRequestHeader(name, normalizeValue(init.headers[name]));
+      });
+    } else {
+      request.headers.forEach(function (value, name) {
+        xhr.setRequestHeader(name, value);
+      });
+    }
 
     if (request.signal) {
       request.signal.addEventListener('abort', abortXhr);
@@ -1539,11 +1624,11 @@ function fetch(input, init) {
 }
 fetch.polyfill = true;
 
-if (!self.fetch) {
-  self.fetch = fetch;
-  self.Headers = Headers;
-  self.Request = Request;
-  self.Response = Response;
+if (!global.fetch) {
+  global.fetch = fetch;
+  global.Headers = Headers;
+  global.Request = Request;
+  global.Response = Response;
 }
 
 /***/ }),
@@ -1667,7 +1752,7 @@ module.exports = Def;
 /* 14 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"30.0.0-beta.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"30.0.0-beta.1\"}");
 
 /***/ }),
 /* 15 */
@@ -1704,7 +1789,7 @@ angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($a
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 var LForms = __webpack_require__(12);
 
@@ -1785,10 +1870,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
     if (width <= 400) //480
       $scope._viewMode = "sm"; // medium screen
     else if (width <= 600) //800
-        $scope._viewMode = "md"; // large screen
-      else {
-          $scope._viewMode = "lg";
-        }
+      $scope._viewMode = "md"; // large screen
+    else {
+      $scope._viewMode = "lg";
+    }
     $scope._inputFieldWidth = {
       'width': width / 2
     };
@@ -1858,8 +1943,8 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
         viewMode = item.displayControl.viewMode;
       } // otherwise use the default viewMode of the form
       else {
-          viewMode = $scope.lfData.templateOptions.viewMode;
-        } // responsive to the screen/container's size
+        viewMode = $scope.lfData.templateOptions.viewMode;
+      } // responsive to the screen/container's size
 
 
       if (!viewMode || viewMode === "auto") {
@@ -1936,8 +2021,8 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
       }, $scope.validationInitialShowTime);
     } // the following visits (and leaving the field), not to show validation messages
     else {
-        item._showValidation = false;
-      }
+      item._showValidation = false;
+    }
   };
   /**
    * Get the css class for the active row
@@ -2227,34 +2312,34 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
         }
       } // adding a new repeating item/section
       else if (oldValues.length < newValues.length) {
-          //// find out which one is added, solution 1
-          //for (var m= 0, mLen=newValues.length; m<mLen; m++) {
-          //  var newVal = newValues[m];
-          //  var isNew = true;
-          //  for (var n= 0, nLen=oldValues.length; n<nLen; n++) {
-          //    var oldVal = oldValues[n];
-          //    if (newVal.id === oldVal.id) {
-          //      isNew = false;
-          //      break;
-          //    }
-          //  }
-          //  if (isNew) {
-          //    lastUpdated.push(newVal.id)
-          //  }
-          //}
-          // find out which one is added, solution 2
-          // it is always the last one in current design
-          lastUpdated.push(newValues[newValues.length - 1].id);
-        } // removing a repeating item/section
-        else if (oldValues.length > newValues.length) {// rules run at the remove event, TBD
-          } // data changes only
-          else {
-              for (var i = 0, iLen = newValues.length; i < iLen; i++) {
-                if (!angular.equals(newValues[i], oldValues[i])) {
-                  lastUpdated.push(newValues[i].id);
-                }
-              }
-            } // do something
+        //// find out which one is added, solution 1
+        //for (var m= 0, mLen=newValues.length; m<mLen; m++) {
+        //  var newVal = newValues[m];
+        //  var isNew = true;
+        //  for (var n= 0, nLen=oldValues.length; n<nLen; n++) {
+        //    var oldVal = oldValues[n];
+        //    if (newVal.id === oldVal.id) {
+        //      isNew = false;
+        //      break;
+        //    }
+        //  }
+        //  if (isNew) {
+        //    lastUpdated.push(newVal.id)
+        //  }
+        //}
+        // find out which one is added, solution 2
+        // it is always the last one in current design
+        lastUpdated.push(newValues[newValues.length - 1].id);
+      } // removing a repeating item/section
+      else if (oldValues.length > newValues.length) {// rules run at the remove event, TBD
+      } // data changes only
+      else {
+        for (var i = 0, iLen = newValues.length; i < iLen; i++) {
+          if (!angular.equals(newValues[i], oldValues[i])) {
+            lastUpdated.push(newValues[i].id);
+          }
+        }
+      } // do something
 
 
       for (var j = 0, jLen = lastUpdated.length; j < jLen; j++) {
@@ -2485,8 +2570,8 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
           var anchorItem = headerItem;
         } // horizontal table, find the '-' button
         else if (btnDel) {
-            var anchorItem = btnDel;
-          }
+          var anchorItem = btnDel;
+        }
 
         if (anchorItem) {
           var anchorPosition = anchorItem.getBoundingClientRect(); // scroll down to show about 2 rows of the newly added section
@@ -2566,12 +2651,12 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
       }
     } // otherwise move the focus to the add button of the previous item
     else {
-        var prevItem = widgetData.getPrevRepeatingItem(item);
+      var prevItem = widgetData.getPrevRepeatingItem(item);
 
-        if (prevItem) {
-          btnId = 'add-' + prevItem._elementId;
-        }
-      } // remove the items
+      if (prevItem) {
+        btnId = 'add-' + prevItem._elementId;
+      }
+    } // remove the items
 
 
     $scope.lfData.removeRepeatingItems(item);
@@ -2706,14 +2791,14 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
         item.value.splice(index, 1);
       } // if answer is not currently selected
       else {
-          // add the answer to the selected list
-          item.value.push(answer);
-        }
+        // add the answer to the selected list
+        item.value.push(answer);
+      }
     } // the value is not accessed before
     else {
-        // add the answer to the selected list
-        item.value = [answer];
-      }
+      // add the answer to the selected list
+      item.value = [answer];
+    }
   };
   /**
    * Updates the value for an item with the user typed data.
@@ -2752,28 +2837,28 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
         }
       } // the list is empty
       else {
-          // add the other value to the list
-          item.value = [other];
-        }
+        // add the other value to the list
+        item.value = [other];
+      }
     } // remove other value
     else {
-        if (item.value && angular.isArray(item.value)) {
-          var index,
-              found = false;
+      if (item.value && angular.isArray(item.value)) {
+        var index,
+            found = false;
 
-          for (var i = 0, iLen = item.value.length; i < iLen; i++) {
-            if (item.value[i]._notOnList) {
-              found = true;
-              index = i;
-              break;
-            }
-          }
-
-          if (found) {
-            item.value.splice(index, 1);
+        for (var i = 0, iLen = item.value.length; i < iLen; i++) {
+          if (item.value[i]._notOnList) {
+            found = true;
+            index = i;
+            break;
           }
         }
+
+        if (found) {
+          item.value.splice(index, 1);
+        }
       }
+    }
   };
   /**
    *
@@ -2912,7 +2997,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 /* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 (function () {
   'use strict';
@@ -3047,8 +3132,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                 throw new Error('ng-Model value must be a Date object or a string - currently it is a ' + _typeof(date));
               } // convert saved user data into date
               else if (typeof date === "string") {
-                  date = LForms.Util.stringToDate(date, true);
-                }
+                date = LForms.Util.stringToDate(date, true);
+              }
 
               element.datepicker("setDate", date);
             };
@@ -3380,7 +3465,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 /**
  * LForms Utility tools
@@ -3808,8 +3893,8 @@ LForms.Util = {
               fhirVersion = '3.0';
             } // use FHIR 4.0 for SDC version >= 2.1
             else if (parseFloat(fhirVersion) >= 2.1) {
-                fhirVersion = '4.0';
-              }
+              fhirVersion = '4.0';
+            }
           }
         }
       }
@@ -4265,17 +4350,17 @@ LForms.Util = {
       }
     } // if there is a codeList
     else {
-        if (formOrItem.codeList && formOrItem.codeList.length > 0) {
-          if (isItem) {
-            // questionCode is required, so this shouldn't happen??
-            formOrItem.questionCode = formOrItem.codeList[0].code;
-            formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
-          } else {
-            formOrItem.code = formOrItem.codeList[0].code;
-            formOrItem.codeSystem = formOrItem.codeList[0].system;
-          }
+      if (formOrItem.codeList && formOrItem.codeList.length > 0) {
+        if (isItem) {
+          // questionCode is required, so this shouldn't happen??
+          formOrItem.questionCode = formOrItem.codeList[0].code;
+          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
+        } else {
+          formOrItem.code = formOrItem.codeList[0].code;
+          formOrItem.codeSystem = formOrItem.codeList[0].system;
         }
       }
+    }
 
     return formOrItem;
   },
@@ -5159,45 +5244,45 @@ LForms.HL7 = function () {
               this._precessOBX4AtOneLevel(item._obx4, item.items);
             } // skip if it is an empty section, not to set prevItem
             else {
-                continue;
-              }
+              continue;
+            }
           } // if it does not repeat
           // Note: not to skip even if all questions within is has no values,
           // because the SN still increases in this case.
           else {
-              repeatingIndex = 1;
-              sectionSN += 1;
-              item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN : sectionSN;
+            repeatingIndex = 1;
+            sectionSN += 1;
+            item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN : sectionSN;
 
-              this._precessOBX4AtOneLevel(item._obx4, item.items);
-            }
+            this._precessOBX4AtOneLevel(item._obx4, item.items);
+          }
         } // if it's a question
         else {
-            // if it repeats
-            var max = item.questionCardinality.max;
+          // if it repeats
+          var max = item.questionCardinality.max;
 
-            if (max && (max === "*" || parseInt(max) > 1)) {
-              // if it has value
-              if (!LForms.Util.isItemValueEmpty(item.value)) {
-                // get the repeating instance letter
-                if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
-                  repeatingIndex = 1;
-                } else {
-                  repeatingIndex += 1;
-                }
-
-                var repeatingLetter = LForms.Util.getNextLetter(repeatingIndex);
-                item._obx4 = parentOBX4 ? parentOBX4 + "." + repeatingLetter : repeatingLetter;
-              } // skip if it has no values, not to set prevItem
-              else {
-                  continue;
-                }
-            } // if it does not repeat
-            else {
-                item._obx4 = parentOBX4 ? parentOBX4 : "";
+          if (max && (max === "*" || parseInt(max) > 1)) {
+            // if it has value
+            if (!LForms.Util.isItemValueEmpty(item.value)) {
+              // get the repeating instance letter
+              if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
                 repeatingIndex = 1;
+              } else {
+                repeatingIndex += 1;
               }
+
+              var repeatingLetter = LForms.Util.getNextLetter(repeatingIndex);
+              item._obx4 = parentOBX4 ? parentOBX4 + "." + repeatingLetter : repeatingLetter;
+            } // skip if it has no values, not to set prevItem
+            else {
+              continue;
+            }
+          } // if it does not repeat
+          else {
+            item._obx4 = parentOBX4 ? parentOBX4 : "";
+            repeatingIndex = 1;
           }
+        }
 
         prevItem = item;
       }
@@ -5273,48 +5358,48 @@ LForms.HL7 = function () {
           }
         } // a question, only when it has value
         else if (!LForms.Util.isItemValueEmpty(item.value)) {
-            var isArrayVal = Array.isArray(item.value);
-            var vals = isArrayVal ? item.value : [item.value];
-            var itemObxArray = [];
-            itemObxArray[0] = "OBX";
-            itemObxArray[1] = formInfo.obxIndex++;
-            itemObxArray[2] = this.getHL7V2DataType(item.dataType);
-            itemObxArray[3] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + questionCS; // unit
+          var isArrayVal = Array.isArray(item.value);
+          var vals = isArrayVal ? item.value : [item.value];
+          var itemObxArray = [];
+          itemObxArray[0] = "OBX";
+          itemObxArray[1] = formInfo.obxIndex++;
+          itemObxArray[2] = this.getHL7V2DataType(item.dataType);
+          itemObxArray[3] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + questionCS; // unit
 
-            if (item.unit) {
-              var unitName = "";
+          if (item.unit) {
+            var unitName = "";
 
-              if (item.unit.name !== undefined) {
-                unitName = item.unit.name;
-              }
-
-              itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
+            if (item.unit.name !== undefined) {
+              unitName = item.unit.name;
             }
 
-            for (var i = 0, len = vals.length; i < len; ++i) {
-              var val = vals[i]; // OBX4 - sub id
+            itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
+          }
 
-              itemObxArray[4] = item._obx4;
+          for (var i = 0, len = vals.length; i < len; ++i) {
+            var val = vals[i]; // OBX4 - sub id
 
-              if (isArrayVal) {
-                if (item._obx4 !== '') itemObxArray[4] += ".";
-                itemObxArray[4] += LForms.Util.getNextLetter(i + 1);
-              } // OBX5 (answer value)
+            itemObxArray[4] = item._obx4;
 
-
-              if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-                itemObxArray[5] = this._generateOBX5(val, item.dataType);
-              } else if (item.dataType === 'DT' || item.dataType === 'DTM') {
-                var dv = typeof val === 'string' ? LForms.Util.stringToDate(val) : val;
-                itemObxArray[5] = LForms.Util.formatDate(dv, item.dataType === 'DT' ? this._DT_FMT : this._DTM_FMT);
-              } else {
-                itemObxArray[5] = val.toString();
-              } // ignore ending empty fields
+            if (isArrayVal) {
+              if (item._obx4 !== '') itemObxArray[4] += ".";
+              itemObxArray[4] += LForms.Util.getNextLetter(i + 1);
+            } // OBX5 (answer value)
 
 
-              hl7Seg += itemObxArray.join(this.delimiters.field) + this.delimiters.field + this.delimiters.segment;
-            }
-          } // if value is not empty
+            if (item.dataType === 'CNE' || item.dataType === 'CWE') {
+              itemObxArray[5] = this._generateOBX5(val, item.dataType);
+            } else if (item.dataType === 'DT' || item.dataType === 'DTM') {
+              var dv = typeof val === 'string' ? LForms.Util.stringToDate(val) : val;
+              itemObxArray[5] = LForms.Util.formatDate(dv, item.dataType === 'DT' ? this._DT_FMT : this._DTM_FMT);
+            } else {
+              itemObxArray[5] = val.toString();
+            } // ignore ending empty fields
+
+
+            hl7Seg += itemObxArray.join(this.delimiters.field) + this.delimiters.field + this.delimiters.segment;
+          }
+        } // if value is not empty
 
       }
 
@@ -5342,8 +5427,8 @@ LForms.HL7 = function () {
             }
           } // questions
           else {
-              empty = LForms.Util.isItemValueEmpty(item.value);
-            }
+            empty = LForms.Util.isItemValueEmpty(item.value);
+          }
         } // end of for loop
 
       } // set the flag
@@ -5677,7 +5762,7 @@ LForms.Validations = {
 /* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 /**
  * LForms class for form definition data
@@ -6423,25 +6508,25 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         var isDisabled = true;
       } // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
       else {
-          if (item.skipLogic) {
-            var takeAction = this._checkSkipLogic(item);
+        if (item.skipLogic) {
+          var takeAction = this._checkSkipLogic(item);
 
-            if (!item.skipLogic.action || item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_ENABLE) {
-              var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+          if (!item.skipLogic.action || item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_ENABLE) {
+            var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
 
-              this._setSkipLogicStatusValue(item, newStatus);
-            } else if (item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_DISABLE) {
-              var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED;
+            this._setSkipLogicStatusValue(item, newStatus);
+          } else if (item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_DISABLE) {
+            var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED;
 
-              this._setSkipLogicStatusValue(item, newStatus);
-            }
-          } // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
-          else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
-              this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED);
-            }
+            this._setSkipLogicStatusValue(item, newStatus);
+          }
+        } // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
+        else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+          this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED);
+        }
 
-          var isDisabled = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
-        } // process the sub items
+        var isDisabled = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+      } // process the sub items
 
 
       if (item.items && item.items.length > 0) {
@@ -6656,8 +6741,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             // there is a default value, and
             // there is no embedded data
             else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-                this._lfItemValueFromDefaultAnswer(item);
-              }
+              this._lfItemValueFromDefaultAnswer(item);
+            }
 
             this._updateUnitAutocompOptions(item);
           }
@@ -6777,8 +6862,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         // there is a default value, and
         // there is no embedded data
         else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-            this._lfItemValueFromDefaultAnswer(item);
-          } // normalize unit value if there is one, needed by calculationMethod
+          this._lfItemValueFromDefaultAnswer(item);
+        } // normalize unit value if there is one, needed by calculationMethod
 
 
         if (item.unit && !item.unit.text) {
@@ -7231,28 +7316,28 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
         } // otherwise include form definition data
         else {
-            // process extensions
-            if (item.extension) {
-              itemData.extension = item.extension;
-            } // Process other fields
+          // process extensions
+          if (item.extension) {
+            itemData.extension = item.extension;
+          } // Process other fields
 
 
-            for (var field in item) {
-              // special handling for user input values
-              if (field === "value") {
-                itemData[field] = this._getOriginalValue(item[field], item.dataType);
-              } else if (field === "unit") {
-                itemData[field] = this._getOriginalValue(item[field]);
-              } // ignore the internal lforms data and angular data
-              else if (!field.match(/^[_\$]/) && field !== 'extension') {
-                  itemData[field] = item[field];
-                }
-
-              if (keepId) {
-                itemData["_id"] = item["_id"];
-              }
+          for (var field in item) {
+            // special handling for user input values
+            if (field === "value") {
+              itemData[field] = this._getOriginalValue(item[field], item.dataType);
+            } else if (field === "unit") {
+              itemData[field] = this._getOriginalValue(item[field]);
+            } // ignore the internal lforms data and angular data
+            else if (!field.match(/^[_\$]/) && field !== 'extension') {
+              itemData[field] = item[field];
             }
-          } // process the sub items
+
+            if (keepId) {
+              itemData["_id"] = item["_id"];
+            }
+          }
+        } // process the sub items
 
 
         if (item.items && item.items.length > 0) {
@@ -7325,8 +7410,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           retValue = answers;
         } // an object
         else if (angular.isObject(value)) {
-            retValue = this._filterInternalData(value, typeCWE);
-          }
+          retValue = this._filterInternalData(value, typeCWE);
+        }
       }
 
       return retValue;
@@ -7380,8 +7465,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
         } // it is for units when there is no dataType
         else {
-            retValue = this._getObjectValue(value);
-          }
+          retValue = this._getObjectValue(value);
+        }
       }
 
       return retValue;
@@ -7569,28 +7654,28 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
           } // if it's the following rows, update the tableRows and tableEndIndex
           else if (tableHeaderLinkIdAndParentIdPath === itemLinkIdAndParentIdPath) {
-              item._horizontalTableHeader = false;
-              itemsInRow = item.items;
+            item._horizontalTableHeader = false;
+            itemsInRow = item.items;
 
-              for (var j = 0, jLen = itemsInRow.length; j < jLen; j++) {
-                // indicate the item is in a horizontal table
-                itemsInRow[j]._inHorizontalTable = true;
-              } // update rows index
-
-
-              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableRows.push({
-                header: item,
-                cells: itemsInRow
-              }); // update headers index (hidden)
+            for (var j = 0, jLen = itemsInRow.length; j < jLen; j++) {
+              // indicate the item is in a horizontal table
+              itemsInRow[j]._inHorizontalTable = true;
+            } // update rows index
 
 
-              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableHeaders.push(item); // update last item index in the table
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableRows.push({
+              header: item,
+              cells: itemsInRow
+            }); // update headers index (hidden)
 
 
-              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableEndIndex = i + itemsInRow.length; // set the last table/row in horizontal group/table flag
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableHeaders.push(item); // update last item index in the table
 
-              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
-            }
+
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableEndIndex = i + itemsInRow.length; // set the last table/row in horizontal group/table flag
+
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+          }
         }
       }
     },
@@ -7748,14 +7833,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           isEmpty = !notEmpty;
         } // single selection answer list
         else if (angular.isObject(item.value)) {
-            // An attachment should have either either value.data or value.url,
-            var v = item.value;
-            isEmpty = (v.data == undefined || v.data == null) && !v.url && // attachment
-            !v.text; // !v.text means !(undefined or null or "")
-          } // simple type
-          else if (item.value !== undefined && item.value !== null && item.value !== "") {
-              isEmpty = false;
-            } // check sub items
+          // An attachment should have either either value.data or value.url,
+          var v = item.value;
+          isEmpty = (v.data == undefined || v.data == null) && !v.url && // attachment
+          !v.text; // !v.text means !(undefined or null or "")
+        } // simple type
+        else if (item.value !== undefined && item.value !== null && item.value !== "") {
+          isEmpty = false;
+        } // check sub items
 
 
         if (isEmpty && item.items) {
@@ -7970,9 +8055,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           parameterValues = this._getScores(item, formula);
         } // run non-score rules
         else {
-            // find the sources and target
-            parameterValues = this._getValuesInStandardUnit(item, formula);
-          } // calculate the formula result
+          // find the sources and target
+          parameterValues = this._getValuesInStandardUnit(item, formula);
+        } // calculate the formula result
 
 
         result = this.Formulas.calculations_[formula.name](parameterValues);
@@ -8055,9 +8140,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             listLength = list.length;
           } // abort if any returned array has a different length
           else if (listLength !== list.length) {
-              abort = true;
-              break;
-            }
+            abort = true;
+            break;
+          }
         }
 
         if (!abort) {
@@ -8196,20 +8281,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                 dataSource = dataSource[index];
               } // stop if the index found is not an integer
               else {
-                  break;
-                }
+                break;
+              }
             } // if it points to an attribute
             else {
-                dataSource = dataSource[query];
-              }
+              dataSource = dataSource[query];
+            }
           } // stop if the query is empty
           else {
-              break;
-            }
-        } // stop if data is not found in the middle
-        else {
             break;
           }
+        } // stop if data is not found in the middle
+        else {
+          break;
+        }
       } // data is valid AND all the parts of the query path are checked
 
 
@@ -8340,10 +8425,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               item._hasOneAnswerLabel = true;
             } // check if one of the values is numeric
             else {
-                if (!item._hasOneNumericAnswer && !isNaN(answerData.text)) {
-                  item._hasOneNumericAnswer = true;
-                }
+              if (!item._hasOneNumericAnswer && !isNaN(answerData.text)) {
+                item._hasOneNumericAnswer = true;
               }
+            }
 
             if (answerData.score !== undefined && answerData.score !== null) // score is an int
               displayText = displayText + " - " + answerData.score; // always uses _displayText in autocomplete-lhc for display
@@ -8355,8 +8440,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         }
       } // data type has been changed (by Data Control)
       else if (forceReset) {
-          delete item._modifiedAnswers;
-        }
+        delete item._modifiedAnswers;
+      }
     },
 
     /**
@@ -8410,20 +8495,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               listVals = modifiedValue;
             } // for item has a answer list
             else {
-                for (var j = 0, jLen = item._modifiedAnswers.length; !found && j < jLen; ++j) {
-                  if (this._areTwoAnswersSame(userValue, item._modifiedAnswers[j], item)) {
-                    listVals.push(item._modifiedAnswers[j]);
-                    found = true;
-                  }
-                } // a saved value or a default value is not on the list (default answer must be one of the answer items).
-                // non-matching value objects are kept, (data control or others might use data on these objects)
-
-
-                if (userValue && !found) {
-                  if (userValue.text) userValue._displayText = userValue.text;
-                  listVals.push(userValue);
+              for (var j = 0, jLen = item._modifiedAnswers.length; !found && j < jLen; ++j) {
+                if (this._areTwoAnswersSame(userValue, item._modifiedAnswers[j], item)) {
+                  listVals.push(item._modifiedAnswers[j]);
+                  found = true;
                 }
+              } // a saved value or a default value is not on the list (default answer must be one of the answer items).
+              // non-matching value objects are kept, (data control or others might use data on these objects)
+
+
+              if (userValue && !found) {
+                if (userValue.text) userValue._displayText = userValue.text;
+                listVals.push(userValue);
               }
+            }
           }
 
           item.value = item._multipleAnswers ? listVals : listVals[0];
@@ -8785,23 +8870,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         } // end of one key
         // two keys
         else if (fields.length == 2) {
-            // check the lower end
-            if (range.hasOwnProperty("minInclusive")) {
-              inRange = range["minInclusive"] <= numValue;
-            } else if (range.hasOwnProperty("minExclusive")) {
-              inRange = range["minExclusive"] < numValue;
-            } // check the upper end
+          // check the lower end
+          if (range.hasOwnProperty("minInclusive")) {
+            inRange = range["minInclusive"] <= numValue;
+          } else if (range.hasOwnProperty("minExclusive")) {
+            inRange = range["minExclusive"] < numValue;
+          } // check the upper end
 
 
-            if (inRange) {
-              if (range.hasOwnProperty("maxInclusive")) {
-                inRange = range["maxInclusive"] >= numValue;
-              } else if (range.hasOwnProperty("maxExclusive")) {
-                inRange = range["maxExclusive"] > numValue;
-              }
-            } // end if lower end valid
+          if (inRange) {
+            if (range.hasOwnProperty("maxInclusive")) {
+              inRange = range["maxInclusive"] >= numValue;
+            } else if (range.hasOwnProperty("maxExclusive")) {
+              inRange = range["maxExclusive"] > numValue;
+            }
+          } // end if lower end valid
 
-          } // end of two keys
+        } // end of two keys
 
       } // end of valid range and numValue
 
@@ -8823,28 +8908,28 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         ret = false;
       } // not object
       else if (_typeof(obj1) !== "object") {
-          if (obj1 !== obj2) {
-            ret = false;
-          }
-        } // object
-        else {
-            var keys1 = Object.keys(obj1);
-            var keys2 = Object.keys(obj2);
+        if (obj1 !== obj2) {
+          ret = false;
+        }
+      } // object
+      else {
+        var keys1 = Object.keys(obj1);
+        var keys2 = Object.keys(obj2);
 
-            if (keys1.length !== keys2.length) {
+        if (keys1.length !== keys2.length) {
+          ret = false;
+        } else {
+          // comparison from obj1 to obj2
+          for (var i = 0, iLen = keys1.length; i < iLen; i++) {
+            if (obj1[keys1[i]] !== obj2[keys1[i]]) {
               ret = false;
-            } else {
-              // comparison from obj1 to obj2
-              for (var i = 0, iLen = keys1.length; i < iLen; i++) {
-                if (obj1[keys1[i]] !== obj2[keys1[i]]) {
-                  ret = false;
-                  break;
-                }
-              } // comparison from obj2 to obj1
-              // is not necessary once the lengths have benn checked.
-
+              break;
             }
-          }
+          } // comparison from obj2 to obj1
+          // is not necessary once the lengths have benn checked.
+
+        }
+      }
 
       return ret;
     },
@@ -9022,11 +9107,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               }
             } // the skip logic rule has a range
             else {
-                // if within the range
-                if (this._inRange(trigger, numCurrentValue)) {
-                  action = true;
-                }
+              // if within the range
+              if (this._inRange(trigger, numCurrentValue)) {
+                action = true;
               }
+            }
 
             break;
           // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
@@ -9051,8 +9136,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       } // no answer and 'notEqual' has a value
       else if (trigger.hasOwnProperty('notEqual') && trigger.notEqual !== undefined && trigger.notEqual !== null && trigger.notEqual !== "") {
-          action = true;
-        }
+        action = true;
+      }
 
       return action;
     },
@@ -9087,9 +9172,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             break;
           } // ANY: check all conditions until one is met, or none is met.
           else if (hasAny && conditionMet) {
-              takeAction = true;
-              break;
-            }
+            takeAction = true;
+            break;
+          }
         } // end of conditions loop
 
       } // end of skipLogic
@@ -9203,34 +9288,34 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             posY += 1; // have added a row
           } // in horizontal tables and it is a table header
           else if (items[i]._horizontalTableHeader) {
-              var tableKey = [items[i].linkId + items[i]._parentItem._idPath];
-              var tableInfo = lfData._horizontalTableInfo[tableKey]; // it is the first table header
+            var tableKey = [items[i].linkId + items[i]._parentItem._idPath];
+            var tableInfo = lfData._horizontalTableInfo[tableKey]; // it is the first table header
 
-              if (tableInfo && tableInfo.tableStartIndex === i) {
-                for (var j = 0, jLen = tableInfo.tableRows.length; j < jLen; j++) {
-                  var tableRowMap = [];
-                  var tableRow = tableInfo.tableRows[j];
-                  posX = 0; // new row, set x to 0
+            if (tableInfo && tableInfo.tableStartIndex === i) {
+              for (var j = 0, jLen = tableInfo.tableRows.length; j < jLen; j++) {
+                var tableRowMap = [];
+                var tableRow = tableInfo.tableRows[j];
+                posX = 0; // new row, set x to 0
 
-                  for (var k = 0, kLen = tableRow.cells.length; k < kLen; k++) {
-                    var cellItem = tableRow.cells[k];
-                    tableRowMap.push(cellItem._elementId);
-                    this._reverseNavigationMap[cellItem._elementId] = {
-                      x: posX,
-                      y: posY
-                    };
-                    posX += 1; // have added a field in the row
-                  }
+                for (var k = 0, kLen = tableRow.cells.length; k < kLen; k++) {
+                  var cellItem = tableRow.cells[k];
+                  tableRowMap.push(cellItem._elementId);
+                  this._reverseNavigationMap[cellItem._elementId] = {
+                    x: posX,
+                    y: posY
+                  };
+                  posX += 1; // have added a field in the row
+                }
 
-                  this._navigationMap.push(tableRowMap);
+                this._navigationMap.push(tableRowMap);
 
-                  posY += 1; // have added a row
-                } // move i to the item right after the horizontal table
+                posY += 1; // have added a row
+              } // move i to the item right after the horizontal table
 
 
-                i = tableInfo.tableEndIndex;
-              }
-            } // non header items in horizontal tables are handled above
+              i = tableInfo.tableEndIndex;
+            }
+          } // non header items in horizontal tables are handled above
 
         }
       },
@@ -9268,11 +9353,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                   };
                 } // on the leftmost already, move to the end of upper row if there's an upper row
                 else if (curPos.y > 0) {
-                    nextPos = {
-                      x: this._navigationMap[curPos.y - 1].length - 1,
-                      y: curPos.y - 1
-                    };
-                  } // else, it is already the field on the left top corner. do nothing
+                  nextPos = {
+                    x: this._navigationMap[curPos.y - 1].length - 1,
+                    y: curPos.y - 1
+                  };
+                } // else, it is already the field on the left top corner. do nothing
 
 
                 break;
@@ -9289,11 +9374,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                   };
                 } // on the rightmost already, move to the beginning of lower row if there's a lower row
                 else if (curPos.y < this._navigationMap.length - 1) {
-                    nextPos = {
-                      x: 0,
-                      y: curPos.y + 1
-                    };
-                  } // else it is already the field on the right bottom corner. do nothing
+                  nextPos = {
+                    x: 0,
+                    y: curPos.y + 1
+                  };
+                } // else it is already the field on the right bottom corner. do nothing
 
 
                 break;
@@ -10841,7 +10926,8 @@ module.exports = function (options) {
 
     function isDetached(element) {
       function isInDocument(element) {
-        return element === element.ownerDocument.body || element.ownerDocument.body.contains(element);
+        var isInShadowRoot = element.getRootNode && element.getRootNode().contains(element);
+        return element === element.ownerDocument.body || element.ownerDocument.body.contains(element) || isInShadowRoot;
       }
 
       if (!isInDocument(element)) {
@@ -11065,11 +11151,23 @@ module.exports = function (options) {
       rootContainer.appendChild(containerContainer);
 
       function onExpandScroll() {
-        getState(element).onExpand && getState(element).onExpand();
+        var state = getState(element);
+
+        if (state && state.onExpand) {
+          state.onExpand();
+        } else {
+          debug("Aborting expand scroll handler: element has been uninstalled");
+        }
       }
 
       function onShrinkScroll() {
-        getState(element).onShrink && getState(element).onShrink();
+        var state = getState(element);
+
+        if (state && state.onShrink) {
+          state.onShrink();
+        } else {
+          debug("Aborting shrink scroll handler: element has been uninstalled");
+        }
       }
 
       addEvent(expand, "scroll", onExpandScroll);
