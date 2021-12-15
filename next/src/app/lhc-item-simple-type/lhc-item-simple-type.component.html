@@ -1,21 +1,16 @@
 <ng-container *ngIf="item && isSimpleType">
-  <div class="lhc-de-input">
-    <lhc-input [item]="item"></lhc-input>
-  </div>
+  <lhc-input [item]="item"></lhc-input>
   <!-- single unit -->
   <div class="lhc-de-unit" *ngIf="hasSingleUnit">
-    <div class="lf-field-units" >
-      <input
-        [disabled]="item._readOnly"
-        class="units"
-        type="text"
-        id="{{unitElementId}}"
-        value="{{item.unit.name||item.unit.code}}"
-        aria-labelledby="th_Units"
-        readonly
-        (blur)="lhcDataService.activeRowOnBlur(item)"
-        (focus)="lhcDataService.setActiveRow(item)"
-      >
-    </div>  
+    <input
+      [disabled]="item._readOnly"
+      type="text"
+      id="{{unitElementId}}"
+      value="{{item.unit.name||item.unit.code}}"
+      aria-labelledby="th_Units"
+      readonly
+      (blur)="lhcDataService.activeRowOnBlur(item)"
+      (focus)="lhcDataService.setActiveRow(item)"
+    >
   </div>
 </ng-container>

@@ -2,6 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.0.0-beta.1] 2021-12-15
+### Fixed
+- Fixed a style issue on items with a single unit.
 
 ## [30.0.0-beta.0] 2021-12-10
 ### Changed

@@ -135,7 +135,7 @@ export class AppModule {
       ucumPkg: ucumPkg,
       Util: LhcFormUtils,
       Def: Def,
-      version: "30.0.0-beta.0"
+      version: "30.0.0-beta.1"
     }
     lforms.Util.FHIRSupport = {
       'STU3': 'partial',
