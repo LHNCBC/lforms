@@ -204,6 +204,18 @@
   font-weight: 400;
 }
 
+/* restore autocomplete default styles */
+/* Also, unit fields sometimes have answer lists and sometimes not, so set the
+ * padding there two for consistent field widths. */
+ .lhc-form input.ansList,  
+ .lhc-form input.search_field {
+  /* padding-right: 14px; */
+}
+/* reset autocomplete default styles */
+.lhc-form input.ansList:focus,
+.lhc-form input.search_field:focus {
+  padding-right: 0
+}
 
 /* visible skip logic target items have different styles */
 .lhc-form-body .lhc-form-table-row.target-show td {
