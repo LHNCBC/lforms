@@ -209,12 +209,12 @@
  * padding there two for consistent field widths. */
  .lhc-form input.ansList,  
  .lhc-form input.search_field {
-  /* padding-right: 14px; */
+  padding-right: 14px;
 }
-/* reset autocomplete default styles */
-.lhc-form input.ansList:focus,
-.lhc-form input.search_field:focus {
-  padding-right: 0
+/* reset autocomplete default styles for unit field*/
+.lhc-form lhc-unit input.ansList,
+.lhc-form lhc-unit input.ansList:focus {
+  padding-right: 2px;
 }
 
 /* visible skip logic target items have different styles */
