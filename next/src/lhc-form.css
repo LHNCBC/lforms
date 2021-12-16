@@ -117,6 +117,7 @@
   padding: 1px;
   padding-left: 0.5em;
   padding-right: 0.5em;
+  margin-bottom: 2px;
 }
 .lhc-form .lhc-help-button,
 .lhc-form .lf-control-button,
@@ -169,6 +170,7 @@
   font-weight: bold;
   color: white;
   padding: 4px 8px;
+  margin-right: 4px;
 }
 .lhc-form .lhc-de-label span.lhc-item-question{
   padding: 0 2px 0 2px;
@@ -205,11 +207,15 @@
 /* restore autocomplete default styles */
 /* Also, unit fields sometimes have answer lists and sometimes not, so set the
  * padding there two for consistent field widths. */
-.lhc-form input.ansList,  .lhc-form input.search_field, .lhc-form input.units {
+ .lhc-form input.ansList,  
+ .lhc-form input.search_field {
   padding-right: 14px;
 }
-
-
+/* reset autocomplete default styles for unit field*/
+.lhc-form lhc-unit input.ansList,
+.lhc-form lhc-unit input.ansList:focus {
+  padding-right: 2px;
+}
 
 /* visible skip logic target items have different styles */
 .lhc-form-body .lhc-form-table-row.target-show td {

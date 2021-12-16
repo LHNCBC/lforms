@@ -149,9 +149,9 @@ var LOINC_URI = 'http://loinc.org';
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -161,7 +161,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -1321,7 +1321,7 @@ module.exports = {
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -1431,8 +1431,8 @@ var parse = function parse(path) {
     var errMsgs = [];
 
     for (var i = 0, len = errors.length; i < len; ++i) {
-      var _err = errors[i];
-      var msg = "line: " + _err[2] + "; column: " + _err[3] + "; message: " + _err[4];
+      var err = errors[i];
+      var msg = "line: " + err[2] + "; column: " + err[3] + "; message: " + err[4];
       errMsgs.push(msg);
     }
 
@@ -1892,7 +1892,7 @@ exports.LL1Analyzer = LL1Analyzer;
 /* 8 */
 /***/ (function(module, exports) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -3488,14 +3488,14 @@ IntervalSet.prototype.addInterval = function (v) {
         return;
       } // contiguous range -> adjust
       else if (v.stop === i.start) {
-          this.intervals[k].start = v.start;
-          return;
-        } // overlapping range -> adjust and reduce
-        else if (v.start <= i.stop) {
-            this.intervals[k] = new Interval(Math.min(i.start, v.start), Math.max(i.stop, v.stop));
-            this.reduce(k);
-            return;
-          }
+        this.intervals[k].start = v.start;
+        return;
+      } // overlapping range -> adjust and reduce
+      else if (v.start <= i.stop) {
+        this.intervals[k] = new Interval(Math.min(i.start, v.start), Math.max(i.stop, v.stop));
+        this.reduce(k);
+        return;
+      }
     } // greater than any existing
 
 
@@ -3578,21 +3578,21 @@ IntervalSet.prototype.removeRange = function (v) {
         return;
       } // check for including range, split it
       else if (v.start > i.start && v.stop < i.stop) {
-          this.intervals[k] = new Interval(i.start, v.start);
-          var x = new Interval(v.stop, i.stop);
-          this.intervals.splice(k, 0, x);
-          return;
-        } // check for included range, remove it
-        else if (v.start <= i.start && v.stop >= i.stop) {
-            this.intervals.splice(k, 1);
-            k = k - 1; // need another pass
-          } // check for lower boundary
-          else if (v.start < i.stop) {
-              this.intervals[k] = new Interval(i.start, v.start);
-            } // check for upper boundary
-            else if (v.stop < i.stop) {
-                this.intervals[k] = new Interval(v.stop, i.stop);
-              }
+        this.intervals[k] = new Interval(i.start, v.start);
+        var x = new Interval(v.stop, i.stop);
+        this.intervals.splice(k, 0, x);
+        return;
+      } // check for included range, remove it
+      else if (v.start <= i.start && v.stop >= i.stop) {
+        this.intervals.splice(k, 1);
+        k = k - 1; // need another pass
+      } // check for lower boundary
+      else if (v.start < i.stop) {
+        this.intervals[k] = new Interval(i.start, v.start);
+      } // check for upper boundary
+      else if (v.stop < i.stop) {
+        this.intervals[k] = new Interval(v.stop, i.stop);
+      }
 
       k += 1;
     }
@@ -3608,23 +3608,23 @@ IntervalSet.prototype.removeOne = function (v) {
         return;
       } // check for single value range
       else if (v === i.start && v === i.stop - 1) {
-          this.intervals.splice(k, 1);
-          return;
-        } // check for lower boundary
-        else if (v === i.start) {
-            this.intervals[k] = new Interval(i.start + 1, i.stop);
-            return;
-          } // check for upper boundary
-          else if (v === i.stop - 1) {
-              this.intervals[k] = new Interval(i.start, i.stop - 1);
-              return;
-            } // split existing range
-            else if (v < i.stop - 1) {
-                var x = new Interval(i.start, v);
-                i.start = v + 1;
-                this.intervals.splice(k, 0, x);
-                return;
-              }
+        this.intervals.splice(k, 1);
+        return;
+      } // check for lower boundary
+      else if (v === i.start) {
+        this.intervals[k] = new Interval(i.start + 1, i.stop);
+        return;
+      } // check for upper boundary
+      else if (v === i.stop - 1) {
+        this.intervals[k] = new Interval(i.start, i.stop - 1);
+        return;
+      } // split existing range
+      else if (v < i.stop - 1) {
+        var x = new Interval(i.start, v);
+        i.start = v + 1;
+        this.intervals.splice(k, 0, x);
+        return;
+      }
     }
   }
 };
@@ -11754,14 +11754,14 @@ if (!String.prototype.codePointAt) {
       first >= 0xD800 && first <= 0xDBFF && // high surrogate
       size > index + 1 // there is a next code unit
       ) {
-          second = string.charCodeAt(index + 1);
+        second = string.charCodeAt(index + 1);
 
-          if (second >= 0xDC00 && second <= 0xDFFF) {
-            // low surrogate
-            // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
-            return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
-          }
+        if (second >= 0xDC00 && second <= 0xDFFF) {
+          // low surrogate
+          // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+          return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
         }
+      }
 
       return first;
     };
@@ -12090,8 +12090,8 @@ if (!String.fromCodePoint) {
         codePoint > 0x10FFFF || // not a valid Unicode code point
         floor(codePoint) != codePoint // not an integer
         ) {
-            throw RangeError('Invalid code point: ' + codePoint);
-          }
+          throw RangeError('Invalid code point: ' + codePoint);
+        }
 
         if (codePoint <= 0xFFFF) {
           // BMP code point
@@ -17429,7 +17429,7 @@ exports.FHIRPathListener = FHIRPathListener;
 /* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 // This file holds utility functions used in implementing the public functions.
 var util = {};
@@ -17552,27 +17552,27 @@ module.exports = util;
 /* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } Object.defineProperty(subClass, "prototype", { value: Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }), writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
 
 function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
@@ -17605,7 +17605,7 @@ var FP_Type = /*#__PURE__*/function () {
 
   _createClass(FP_Type, [{
     key: "equals",
-
+    value:
     /**
      *  Tests whether this object is equal to another.  Returns either true,
      *  false, or undefined (where in the FHIRPath specification empty would be
@@ -17613,9 +17613,9 @@ var FP_Type = /*#__PURE__*/function () {
      *  same to the shared precision, but that they had differnent levels of
      *  precision.
      */
-    value: function equals()
-    /* otherObj */
-    {
+    function
+      /* otherObj */
+    equals() {
       return false;
     }
     /**
@@ -17626,9 +17626,9 @@ var FP_Type = /*#__PURE__*/function () {
 
   }, {
     key: "equivalentTo",
-    value: function equivalentTo()
-    /* otherObj */
-    {
+    value: function
+      /* otherObj */
+    equivalentTo() {
       return false;
     }
   }, {
@@ -17648,9 +17648,9 @@ var FP_Type = /*#__PURE__*/function () {
 
   }, {
     key: "compare",
-    value: function compare()
-    /* otherObj */
-    {
+    value: function
+      /* otherObj */
+    compare() {
       throw 'Not implemented';
     }
   }]);
@@ -19388,8 +19388,8 @@ function decimalPlaces(x) {
   var fraction = match[2],
       exponent = match[3];
   return Math.max(0, // lower limit.
-  (fraction === '0' ? 0 : (fraction || '').length) - ( // fraction length
-  exponent || 0)); // exponent
+  (fraction === '0' ? 0 : (fraction || '').length // fraction length
+  ) - (exponent || 0)); // exponent
 }
 /**
  *  Rounds a number to the specified number of decimal places.
@@ -19782,7 +19782,7 @@ module.exports = {
 /* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
@@ -20108,7 +20108,7 @@ module.exports = engine;
 /* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
@@ -20135,7 +20135,7 @@ engine.traceFn = function (x, label) {
 var intRegex = /^[+-]?\d+$/;
 
 engine.toInteger = function (coll) {
-  if (coll.length != 1) {
+  if (coll.length !== 1) {
     return [];
   }
 
@@ -20157,10 +20157,8 @@ engine.toInteger = function (coll) {
     }
   }
 
-  if (typeof v === "string") {
-    if (intRegex.test(v)) {
-      return parseInt(v);
-    }
+  if (typeof v === "string" && intRegex.test(v)) {
+    return parseInt(v);
   }
 
   return [];
@@ -20214,7 +20212,7 @@ engine.toQuantity = function (coll, toUnit) {
 var numRegex = /^[+-]?\d+(\.\d+)?$/;
 
 engine.toDecimal = function (coll) {
-  if (coll.length != 1) {
+  if (coll.length !== 1) {
     return [];
   }
 
@@ -20232,19 +20230,15 @@ engine.toDecimal = function (coll) {
     return v;
   }
 
-  if (typeof v === "string") {
-    if (numRegex.test(v)) {
-      return parseFloat(v);
-    } else {
-      throw new Error("Could not convert to decimal: " + v);
-    }
+  if (typeof v === "string" && numRegex.test(v)) {
+    return parseFloat(v);
   }
 
   return [];
 };
 
 engine.toString = function (coll) {
-  if (coll.length != 1) {
+  if (coll.length !== 1) {
     return [];
   }
 
@@ -20469,7 +20463,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -20635,7 +20629,7 @@ module.exports = engine;
 /* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 // Originally copied from node-deep-equal
 // (https://github.com/substack/node-deep-equal), with modifications.
@@ -21234,7 +21228,7 @@ module.exports = engine;
 /* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 var util = __webpack_require__(52);
 
@@ -21926,14 +21920,14 @@ var dr = {
       }
     } // obx level
     else {
-        var parentObx = this._findObxById(parentRefId, diagnosticReport.contained);
+      var parentObx = this._findObxById(parentRefId, diagnosticReport.contained);
 
-        if (parentObx && parentObx.related) {
-          for (var i = 0, iLen = parentObx.related.length; i < iLen; i++) {
-            obxIdList.push(parentObx.related[i].target.reference);
-          }
+      if (parentObx && parentObx.related) {
+        for (var i = 0, iLen = parentObx.related.length; i < iLen; i++) {
+          obxIdList.push(parentObx.related[i].target.reference);
         }
-      } // go through each observation instance
+      }
+    } // go through each observation instance
 
 
     for (var i = 0, iLen = obxIdList.length; i < iLen; i++) {
@@ -22250,7 +22244,7 @@ __webpack_require__.r(__webpack_exports__);
 // suppress warning about "require"
 
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 
 
@@ -22478,7 +22472,7 @@ var self = {
 __webpack_require__.r(__webpack_exports__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 /**
  * A package to handle FHIR Questionnaire and SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
@@ -22698,9 +22692,9 @@ var self = {
       this._handleExternallyDefined(targetItem, item);
     } // option, for answer list
     else if (item.answers && !item.answerValueSet) {
-        // Make sure the answers did not come from answerExpression.
-        if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp]) targetItem.answerOption = this._handleAnswers(item, noExtensions);
-      } else if (item.answerValueSet) targetItem.answerValueSet = item.answerValueSet;
+      // Make sure the answers did not come from answerExpression.
+      if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp]) targetItem.answerOption = this._handleAnswers(item, noExtensions);
+    } else if (item.answerValueSet) targetItem.answerValueSet = item.answerValueSet;
   },
 
   /**
@@ -22805,10 +22799,10 @@ var self = {
           targetItem.initial.push(answer);
         } // user typed answer that is not on the answer list.
         else if (typeof defaultAnswers[i] === 'string') {
-            targetItem.initial.push({
-              "valueString": defaultAnswers[i]
-            });
-          }
+          targetItem.initial.push({
+            "valueString": defaultAnswers[i]
+          });
+        }
       } // for Quantity,
       // [{
       //   // from Element: extension
@@ -22819,28 +22813,28 @@ var self = {
       //   "code" : "<code>" // Coded form of the unit
       // }]
       else if (dataType === 'QTY') {
-          // for now, handling only simple quantities without the comparators.
-          answer = {};
-          answer[valueKey] = this._makeQuantity(defaultAnswers[i], item.units);
-          targetItem.initial.push(answer);
-        } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
-            answer = {};
-            answer[valueKey] = defaultAnswers[i];
-            targetItem.initial.push(answer);
-          } else if (dataType === "DT" || dataType === "DTM") {
-            // transform to FHIR date/datetime format.
-            var dateValue = LForms.Util.stringToDate(defaultAnswers[i]);
+        // for now, handling only simple quantities without the comparators.
+        answer = {};
+        answer[valueKey] = this._makeQuantity(defaultAnswers[i], item.units);
+        targetItem.initial.push(answer);
+      } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+      else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        answer = {};
+        answer[valueKey] = defaultAnswers[i];
+        targetItem.initial.push(answer);
+      } else if (dataType === "DT" || dataType === "DTM") {
+        // transform to FHIR date/datetime format.
+        var dateValue = LForms.Util.stringToDate(defaultAnswers[i]);
 
-            if (dateValue) {
-              dateValue = dataType === "DTM" ? LForms.Util.dateToDTMString(dateValue) : LForms.Util.dateToDTStringISO(dateValue);
-              targetItem.initial.push(_defineProperty({}, valueKey, dateValue));
-            } else {
-              // LForms.Util.stringToDate returns null on invalid string
-              // TODO: should save the errors or emitting events.
-              console.error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
-            }
-          } // no support for reference
+        if (dateValue) {
+          dateValue = dataType === "DTM" ? LForms.Util.dateToDTMString(dateValue) : LForms.Util.dateToDTStringISO(dateValue);
+          targetItem.initial.push(_defineProperty({}, valueKey, dateValue));
+        } else {
+          // LForms.Util.stringToDate returns null on invalid string
+          // TODO: should save the errors or emitting events.
+          console.error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+        }
+      } // no support for reference
 
     }
   },
@@ -22946,7 +22940,7 @@ var self = {
 __webpack_require__.r(__webpack_exports__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -23245,30 +23239,30 @@ function addCommonSDCExportFns(ns) {
       }
     } // not unlimited repeats
     else {
-        var intQCardMax = parseInt(qCardMax),
-            intACardMax = parseInt(aCardMax); // has a maxOcurrs value
+      var intQCardMax = parseInt(qCardMax),
+          intACardMax = parseInt(aCardMax); // has a maxOcurrs value
 
-        if (intQCardMax > 1 || intACardMax > 1) {
-          if (item.dataType !== "TITLE") {
-            targetItem.repeats = true; // get the maxOccurs value
+      if (intQCardMax > 1 || intACardMax > 1) {
+        if (item.dataType !== "TITLE") {
+          targetItem.repeats = true; // get the maxOccurs value
 
-            if (!isNaN(intQCardMax) && !isNaN(intACardMax)) {
-              maxOccurs = Math.max(intQCardMax, intACardMax);
-            } else if (!isNaN(intQCardMax)) {
-              maxOccurs = intQCardMax;
-            } else if (!isNaN(intACardMax)) {
-              maxOccurs = intACardMax;
-            }
+          if (!isNaN(intQCardMax) && !isNaN(intACardMax)) {
+            maxOccurs = Math.max(intQCardMax, intACardMax);
+          } else if (!isNaN(intQCardMax)) {
+            maxOccurs = intQCardMax;
+          } else if (!isNaN(intACardMax)) {
+            maxOccurs = intACardMax;
+          }
 
-            if (maxOccurs > 1) {
-              targetItem.extension.push({
-                "url": self.fhirExtUrlCardinalityMax,
-                "valueInteger": maxOccurs
-              });
-            }
+          if (maxOccurs > 1) {
+            targetItem.extension.push({
+              "url": self.fhirExtUrlCardinalityMax,
+              "valueInteger": maxOccurs
+            });
           }
         }
       }
+    }
   };
   /**
    * Process an item's externally defined answer list
@@ -23376,39 +23370,39 @@ function addCommonSDCExportFns(ns) {
         } // prefetch list
         // combo-box
         else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
-            itemControlType = "drop-down";
-            itemControlDisplay = "Drop down";
-          } // radio or checkbox
-          else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
-              if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-                itemControlType = "check-box";
-                itemControlDisplay = "Check-box";
-              } else {
-                itemControlType = "radio-button";
-                itemControlDisplay = "Radio Button";
-              } // answer choice orientation
+          itemControlType = "drop-down";
+          itemControlDisplay = "Drop down";
+        } // radio or checkbox
+        else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
+          if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+            itemControlType = "check-box";
+            itemControlDisplay = "Check-box";
+          } else {
+            itemControlType = "radio-button";
+            itemControlDisplay = "Radio Button";
+          } // answer choice orientation
 
 
-              if (item.displayControl.answerLayout.columns === "0") {
-                answerChoiceOrientation = "horizontal";
-              } else if (item.displayControl.answerLayout.columns === "1") {
-                answerChoiceOrientation = "vertical";
-              }
-            }
+          if (item.displayControl.answerLayout.columns === "0") {
+            answerChoiceOrientation = "horizontal";
+          } else if (item.displayControl.answerLayout.columns === "1") {
+            answerChoiceOrientation = "vertical";
+          }
+        }
       } // for section item
       else if (item.displayControl.questionLayout && dataType === "SECTION") {
-          if (item.displayControl.questionLayout === "horizontal") {
-            itemControlType = "gtable"; // Not in STU3, but the binding is extensible, so we can use it
+        if (item.displayControl.questionLayout === "horizontal") {
+          itemControlType = "gtable"; // Not in STU3, but the binding is extensible, so we can use it
 
-            itemControlDisplay = "Group Table";
-          } else if (item.displayControl.questionLayout === "matrix") {
-            itemControlType = "table";
-            itemControlDisplay = "Vertical Answer Table";
-          } // else {
-          //   itemControlType = "List";
-          // }
+          itemControlDisplay = "Group Table";
+        } else if (item.displayControl.questionLayout === "matrix") {
+          itemControlType = "table";
+          itemControlDisplay = "Vertical Answer Table";
+        } // else {
+        //   itemControlType = "List";
+        // }
 
-        }
+      }
 
       if (itemControlType) {
         targetItem.extension.push({
@@ -23666,30 +23660,30 @@ function addCommonSDCExportFns(ns) {
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
       else if (sourceDataType === 'CWE' || sourceDataType === 'CNE') {
-          var answerCoding = self._copyTriggerCoding(triggerValue, null, true);
+        var answerCoding = self._copyTriggerCoding(triggerValue, null, true);
 
-          if (!answerCoding) {
-            throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
-          }
-
-          rule = {
-            answerCoding: answerCoding
-          };
-        } else if (sourceDataType && self._skipLogicValueDataTypes[sourceDataType]) {
-          var answer = triggerValue;
-
-          if (sourceValueKey === 'answerQuantity') {
-            answer = self._makeQuantity(answer, sourceItem.units);
-          }
-
-          if (answer === 0 || answer === false || answer) {
-            rule = _defineProperty({}, sourceValueKey, answer);
-          } else {
-            throw new Error('Invalid value for trigger ' + key + ': ' + triggerValue);
-          }
-        } else {
-          throw new Error('Unsupported data type for skip logic export: ' + sourceDataType);
+        if (!answerCoding) {
+          throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
         }
+
+        rule = {
+          answerCoding: answerCoding
+        };
+      } else if (sourceDataType && self._skipLogicValueDataTypes[sourceDataType]) {
+        var answer = triggerValue;
+
+        if (sourceValueKey === 'answerQuantity') {
+          answer = self._makeQuantity(answer, sourceItem.units);
+        }
+
+        if (answer === 0 || answer === false || answer) {
+          rule = _defineProperty({}, sourceValueKey, answer);
+        } else {
+          throw new Error('Invalid value for trigger ' + key + ': ' + triggerValue);
+        }
+      } else {
+        throw new Error('Unsupported data type for skip logic export: ' + sourceDataType);
+      }
 
       rule.question = sourceItem.linkId;
       rule.operator = operator;
@@ -23841,22 +23835,22 @@ function addCommonSDCExportFns(ns) {
           }
         } // for Quantity
         else if (dataType === "QTY") {
-            // For now, handling only simple quantities without the comparators.
-            // [{
-            //   // from Element: extension
-            //   "value" : <decimal>, // Numerical value (with implicit precision)
-            //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-            //   "unit" : "<string>", // Unit representation
-            //   "system" : "<uri>", // Code System that defines coded unit form
-            //   "code" : "<code>" // Coded form of the unit
-            // }]
-            answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
-          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment
-          else if (this._lformsTypesToFHIRFields[dataType]) {
-              var valueKey = this._getValueKeyByDataType("value", item);
+          // For now, handling only simple quantities without the comparators.
+          // [{
+          //   // from Element: extension
+          //   "value" : <decimal>, // Numerical value (with implicit precision)
+          //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+          //   "unit" : "<string>", // Unit representation
+          //   "system" : "<uri>", // Code System that defines coded unit form
+          //   "code" : "<code>" // Coded form of the unit
+          // }]
+          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
+        } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment
+        else if (this._lformsTypesToFHIRFields[dataType]) {
+          var valueKey = this._getValueKeyByDataType("value", item);
 
-              answer = _defineProperty({}, valueKey, itemValue);
-            }
+          answer = _defineProperty({}, valueKey, itemValue);
+        }
 
         if (answer !== null) {
           answers.push(answer);
@@ -24553,7 +24547,7 @@ function addSDCImportFns(ns) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _obs_prepop_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(94);
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -25037,7 +25031,7 @@ function requestLinkedObs(lfData) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 var LForms = __webpack_require__(87);
 /**
@@ -25344,8 +25338,8 @@ function addCommonSDCImportFns(ns) {
       } // For date types, convert them to date objects, but only for values.
       // If we're setting defaultAnswer, leave them as strings.
       else if (!setDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string') answer = new Date(fhirVal);else if (!setDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string') answer = LForms.Util.stringToDTDateISO(fhirVal);else {
-          answer = fhirVal;
-        }
+        answer = fhirVal;
+      }
 
       if (answer !== undefined) answers.push(answer);
     }
@@ -25434,9 +25428,9 @@ function addCommonSDCImportFns(ns) {
       lfItem.questionCodeSystem = code.system;
     } // use linkId as questionCode, which should not be exported as code
     else {
-        lfItem.questionCode = qItem.linkId;
-        lfItem.questionCodeSystem = "LinkId";
-      }
+      lfItem.questionCode = qItem.linkId;
+      lfItem.questionCodeSystem = "LinkId";
+    }
 
     lfItem.linkId = qItem.linkId;
   };
@@ -25476,29 +25470,29 @@ function addCommonSDCImportFns(ns) {
       }
     } // not CNE/CWE, question repeats
     else {
-        // repeats
-        if (repeats) {
-          questionCardinality = max ? {
-            max: max.valueInteger.toString()
-          } : {
-            max: "*"
-          };
-        } else {
-          questionCardinality = {
-            max: "1"
-          };
-        } // required
+      // repeats
+      if (repeats) {
+        questionCardinality = max ? {
+          max: max.valueInteger.toString()
+        } : {
+          max: "*"
+        };
+      } else {
+        questionCardinality = {
+          max: "1"
+        };
+      } // required
 
 
-        if (required) {
-          questionCardinality.min = min ? min.valueInteger.toString() : "1";
-          answerCardinality = {
-            min: "1"
-          };
-        } else {
-          questionCardinality.min = "1";
-        }
+      if (required) {
+        questionCardinality.min = min ? min.valueInteger.toString() : "1";
+        answerCardinality = {
+          min: "1"
+        };
+      } else {
+        questionCardinality.min = "1";
       }
+    }
 
     if (questionCardinality) lfItem.questionCardinality = questionCardinality;
     if (answerCardinality) lfItem.answerCardinality = answerCardinality;
@@ -25757,8 +25751,8 @@ function addCommonSDCImportFns(ns) {
             }
           } // reset the total number of questions when it is the answers that repeats
           else if (ns._answerRepeats(defItem)) {
-              qrItemInfo.total = 1;
-            }
+            qrItemInfo.total = 1;
+          }
         } // find the matching LForms item
 
 
@@ -26024,11 +26018,11 @@ function addCommonSDCImportFns(ns) {
       };
     } // If code is missing look for identifier.
     else if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.identifier) && questionnaireItemOrResource.identifier.length) {
-        code = {
-          code: questionnaireItemOrResource.identifier[0].value,
-          system: self._toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-        };
-      }
+      code = {
+        code: questionnaireItemOrResource.identifier[0].value,
+        system: self._toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
+      };
+    }
 
     return code;
   };
@@ -26233,8 +26227,8 @@ function addCommonSDCImportFns(ns) {
       };
     } // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {
-        retValue = qrItemValue.valueString;
-      }
+      retValue = qrItemValue.valueString;
+    }
 
     return retValue;
   };
@@ -26270,13 +26264,13 @@ function addCommonSDCImportFns(ns) {
         };
       } // no xhtml extension, default to 'text'
       else {
-          ret = {
-            codingInstructionsFormat: "text",
-            codingInstructions: qItem.text,
-            codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+        ret = {
+          codingInstructionsFormat: "text",
+          codingInstructions: qItem.text,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
 
-          };
-        }
+        };
+      }
     }
 
     return ret;
@@ -26508,7 +26502,7 @@ function processExtension(lfNode, fieldName, extNode) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExpressionProcessor", function() { return ExpressionProcessor; });
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 // Processes FHIR Expression Extensions
 // There are three types of expressions: FHIRPath, x-fhir-query (to a FHIR
@@ -26580,38 +26574,38 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
       if (this._currentRunPromise) // then we will just return that promise
         this._pendingRun = true; // so we know to run them when we can
       else {
-          this._pendingRun = false; // clear this because we are running them now
+        this._pendingRun = false; // clear this because we are running them now
 
-          this._runStart = new Date(); // Create an export of Questionnaire for the %questionnaire variable in
-          // FHIRPath.  We only need to do this once per form.
+        this._runStart = new Date(); // Create an export of Questionnaire for the %questionnaire variable in
+        // FHIRPath.  We only need to do this once per form.
 
-          var lfData = this._lfData;
+        var lfData = this._lfData;
 
-          if (!lfData._fhirVariables.questionnaire) {
-            lfData._fhirVariables.questionnaire = this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
-          }
-
-          this._regenerateQuestionnaireResp();
-
-          self = this;
-          this._currentRunPromise = this._asyncRunCalculations(includeInitialExpr, false).then(function () {
-            // At this point, every promise for the pending queries has been
-            // resolved, and we are done.
-            console.log("Ran expressions in " + (new Date() - self._runStart) + " ms");
-            if (!self._firstExpressionRunComplete) // if this is the first run
-              self._firstExpressionRunComplete = true;
-            self._currentRunPromise = undefined;
-            if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
-          }, function (failureReason) {
-            console.log("Run of expressions failed; reason follows");
-            console.log(failureReason);
-            self._currentRunPromise = undefined;
-            self._pendingRun = false;
-            self._pendingQueries = []; // reset
-
-            throw failureReason;
-          });
+        if (!lfData._fhirVariables.questionnaire) {
+          lfData._fhirVariables.questionnaire = this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
         }
+
+        this._regenerateQuestionnaireResp();
+
+        self = this;
+        this._currentRunPromise = this._asyncRunCalculations(includeInitialExpr, false).then(function () {
+          // At this point, every promise for the pending queries has been
+          // resolved, and we are done.
+          console.log("Ran expressions in " + (new Date() - self._runStart) + " ms");
+          if (!self._firstExpressionRunComplete) // if this is the first run
+            self._firstExpressionRunComplete = true;
+          self._currentRunPromise = undefined;
+          if (self._pendingRun) return self.runCalculations(false); // will set self._currentRunPromise again
+        }, function (failureReason) {
+          console.log("Run of expressions failed; reason follows");
+          console.log(failureReason);
+          self._currentRunPromise = undefined;
+          self._pendingRun = false;
+          self._pendingQueries = []; // reset
+
+          throw failureReason;
+        });
+      }
       return this._currentRunPromise;
     },
 
@@ -27213,7 +27207,7 @@ var deepEqual = __webpack_require__(99); // faster than JSON.stringify
 "use strict";
  // do not edit .js files directly - edit src/index.jst
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 module.exports = function equal(a, b) {
   if (a === b) return true;
