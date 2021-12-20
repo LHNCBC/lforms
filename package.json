@@ -35,7 +35,6 @@
     "webpack:fhir": "webpack --env fhirOnly=true",
     "build:fhir": "npm run build:clean && npm run build:mkdist && npm run build:version && npm run webpack:fhir && npm run build:zip"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "~11.2.14",
     "@angular/common": "~11.2.14",

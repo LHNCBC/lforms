@@ -25,9 +25,9 @@ changes and test them:
 
 * Install Node.js (version 14 is what we are currently using, but it should work with later versions)
 * Clone the lforms repository and cd to its directory
-* `source bashrc.lforms` (make sure node dir is availabel at ~/)    
+* `source bashrc.lforms` (make sure node dir is available at ~/)    
 * `npm ci`
-* `source bashrc.lforms` # to add node_modules/.bin to your path)
+* `source bashrc.lforms` # to add node_modules/.bin to your path
 * `npm run build` # build both FHIR libs and LHC-Forms web component
 * `npm run start` # starts the app we use for testing
 * `npm run test` # runs the unit tests and e2e tests
@@ -48,13 +48,13 @@ you don't accidentally add something that we are also working on.
 
 * Run `npm run build` to build the project and generate a production version of the js files, 
    which are much smaller than the development version. It generates two versions of the js files: 
-   ES5 version and ES2015 vresion. The `/dist` directory is deleted and recreated during the process. 
+   ES5 version and ES2015 version. The `/dist` directory is deleted and recreated during the process. 
    It also concatenates all ES5 js files of the web component into a single `lhc-forms.es5.js` file 
    and all ES2015 files into `lhc-forms.es2015.js` (along with a `styles.css` file) in the 
    `/dist/webcomponent` directory, which are used in e2e tests and can be distributed to use 
    in other projects. A copy of the individual built files and their source map files are also 
    included in `/dist/webcomponent`. `zone.min.js` is not included in the built file, 
-   and a copy is put in `/dist/webcomponent/assets/bin`.
+   and a copy is put in `/dist/webcomponent/assets/lib` in case your project does not already include it.
    It also generates FHIR libraries that support both R4 and STU3 versions. The files are located in `/dist/latest/fhir`.
 
 ## Running tests
@@ -81,7 +81,7 @@ you don't accidentally add something that we are also working on.
   2. scripts.js  
   3.a. lhc-forms.[es5|es2015].js, or
   3.b. Indidiviual files:
-     bruntime-[es5|es2015].js
+     runtime-[es5|es2015].js
      polyfills-[es5|es2015].js
      main-[es5|es2015].js 
   ```
@@ -101,7 +101,7 @@ you don't accidentally add something that we are also working on.
   3. zone.min.js
   4.a. lhc-forms.[es5|es2015].js, or
   4.b. Indidiviual files:
-     bruntime-[es5|es2015].js
+     runtime-[es5|es2015].js
      polyfills-[es5|es2015].js
      main-[es5|es2015].js 
   ```
