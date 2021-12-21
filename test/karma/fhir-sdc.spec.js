@@ -670,7 +670,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert FHTData to Questionnaire', function (done) {
 
             $.get('/base/app/data/FHTData.json', function(FHTData) {
-              var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
+              var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, LForms.Util.deepCopy(FHTData));
               assert.equal(fhirQ.item[0].item[2].item.length, 1);
               assert.equal(fhirQ.item[0].item[2].item[0].text,
                   "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
@@ -692,7 +692,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert defaultAnswers',function () {
             var fixtures = window['defaultAnswers'];
             for (var i = 0; i < fixtures.length; i++) {
-              var fixture = angular.copy(fixtures[i]);
+              var fixture = LForms.Util.deepCopy(fixtures[i]);
               // STU3 does not support multiple default answers.
               if (!Array.isArray(fixture.defaultAnswer) || fhirVersion === 'R4') {
                 var qItem = {};
@@ -1031,7 +1031,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert FHTData to lforms', function (done) {
             $.get('/base/app/data/FHTData.json', function (FHTData) {
-              var fhtClone = angular.copy(FHTData);
+              var fhtClone = LForms.Util.deepCopy(FHTData);
               //createLinkId(fhtClone.items);
               var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, fhtClone);
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -1109,7 +1109,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               $.get('/base/app/data/displayControlsDemo.json', function(displayControlsDemo) {
                 // Display control
-                fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(displayControlsDemo)));
+                fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(displayControlsDemo)));
                 convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
                 // TODO -
                 // unsupported fields: viewMode, css, colCSS, listColHeaders, answerLayout.columns
@@ -1126,7 +1126,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           describe('Units', function () {
             var lforms = null;
             beforeEach(function(){
-              lforms = angular.copy(window['units_example']);
+              lforms = LForms.Util.deepCopy(window['units_example']);
             });
 
             it('should convert units to unitOption extension', function () {
@@ -1314,7 +1314,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert restrictions', function (done) {
             $.get('/base/app/data/validationTestForm.json', function(validationTestForm) {
-              var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(validationTestForm));
+              var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, LForms.Util.deepCopy(validationTestForm));
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
               assert.equal(convertedLfData.items.length, 34);
@@ -1329,8 +1329,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert only valid restrictions', function () {
-            var lforms = angular.copy(window['restrictions_lforms']);
-            var expected_fhirQ = angular.copy(window['restrictions_fhirQ'])
+            var lforms = LForms.Util.deepCopy(window['restrictions_lforms']);
+            var expected_fhirQ = LForms.Util.deepCopy(window['restrictions_fhirQ'])
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lforms);
             assert.deepEqual(fhirQ.item[0].extension, expected_fhirQ.item[0].extension);
             assert.deepEqual(fhirQ.item[1].extension, expected_fhirQ.item[1].extension);
@@ -1341,7 +1341,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             $.get('/base/app/data/validationTestForm.json', function(validationTestForm) {
               var optionsRes = validationTestForm.items[23].externallyDefined;
               // Display control
-              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(validationTestForm)));
+              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(validationTestForm)));
               var convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
 
               assert.equal(convertedLfData.items.length, 34);
@@ -1358,7 +1358,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert to SDC Questionnaire with extensions', function(done) {
             $.get('/base/app/data/FHTData.json', function(FHTData) {
-              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
+              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)));
 
               assert.equal(fhirQ.meta.profile[0], fhir.SDC.QProfile);
               assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
@@ -1368,7 +1368,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert to standard Questionnaire without any extensions', function(done) {
             $.get('/base/app/data/FHTData.json', function(FHTData) {
-              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)), true);
+              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)), true);
 
               assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
               assert.equal(fhirQ.item[0].item[1].extension, undefined);
@@ -1516,7 +1516,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           describe('with extensions', function() {
             it('should convert to SDC Questionnaire with extensions', function(done) {
               $.get('/base/app/data/FHTData.json', function(FHTData) {
-                var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
+                var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
                 assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
                 done();
               });
@@ -1524,7 +1524,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             it('should set the lformsVersion tag', function (done){
               $.get('/base/app/data/FHTData.json', function(FHTData) {
-                var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
+                var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
                 var version = fhirQR.meta.tag[0].code;
                 assert.equal(typeof version, 'string');
                 assert.match(version, /^lformsVersion: /);
@@ -1537,7 +1537,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             $.get('/base/app/data/FHTData.json', function(FHTData) {
               var fhirQR = LForms.Util.getFormFHIRData(
-                  'QuestionnaireResponse', fhirVersion, angular.copy(FHTData),
+                  'QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData),
                   {noExtensions: true});
               assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
               assert.equal(fhirQR.toString().match(/extension/), undefined);

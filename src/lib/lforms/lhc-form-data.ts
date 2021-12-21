@@ -9,7 +9,7 @@
 import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
-import * as version from "./version.json";
+import * as version from "../../version.json";
 
 import Validation from "./lhc-form-validation.js"
 
@@ -193,7 +193,6 @@ export default class LhcFormData {
     // when the skip logic rule says the form is done
     this._formDone = false;
 
-    // TODO: FHIR
     if (LForms.FHIR) {
       this._initializeFormFHIRData(data);
     }
@@ -1003,7 +1002,7 @@ export default class LhcFormData {
           // if the value is not null or undefined
           if (array2[i][fields[j]] !== null || array2[i][fields[j]] !==undefined) {
             // update the value on the field in array 1.
-            // no duplicated angular.copy here on the value if array2 contains copies of the objects already
+            // no duplicated LForms.Util.deepCopy here on the value if array2 contains copies of the objects already
             array1[i][fields[j]] = array2[i][fields[j]];
           }
         }
@@ -1020,7 +1019,6 @@ export default class LhcFormData {
   setTemplateOptions(newOptions, existingOptions=null) {
     if (newOptions) {
       if (!existingOptions)
-        //existingOptions = angular.copy(this.templateOptions);
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
         
 
@@ -1275,7 +1273,7 @@ export default class LhcFormData {
       }
 
       // keep a copy of the repeatable items, only for the first of the same repeating items
-      // before the parentItem is added to avoid circular reference that make the angular.copy really slow
+      // before the parentItem is added to avoid circular reference that make the LForms.Util.deepCopy really slow
       // Note: this must be processed after its sub items are processed.
       if (item._questionRepeatable && item._id === 1) {
         // remove _parentItem if there is one
@@ -1443,7 +1441,7 @@ export default class LhcFormData {
       }
 
       // keep a copy of the repeatable items, only for the first of the same repeating items
-      // before the parentItem is added to avoid circular reference that make the angular.copy really slow
+      // before the parentItem is added to avoid circular reference that make the LForms.Util.deepCopy really slow
       if (item._questionRepeatable && item._id === 1 && !this._repeatableItems[item.linkId]) {
         delete item._parentItem;
         var itemRepeatable = CommonUtils.deepCopy(item);

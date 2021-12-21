@@ -18,6 +18,7 @@ import LhcFormUtils from '../lib/lforms/lhc-form-utils.js';
 import LhcFormData  from '../lib/lforms/lhc-form-data';
 import LhcHL7 from '../lib/lforms/lhc-hl7.js';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
+import Validation from '../lib/lforms/lhc-form-validation.js';
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -32,8 +33,6 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline } from '@ant-design/icons-angular/icons';
 import { IconDefinition } from '@ant-design/icons-angular';
 const icons: IconDefinition[] = [ CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline ];
-
-//import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 
 import { CommonUtilsService } from '../lib/common-utils.service';
 import { LhcDataService } from '../lib/lhc-data.service';
@@ -67,6 +66,7 @@ import { LhcButtonPopoverComponent } from './lhc-button-popover/lhc-button-popov
 import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
 
 import version from '../version.json';
+import * as FHIRSupport from '../fhir/versions.js';
 
 registerLocaleData(en);
 
@@ -137,12 +137,11 @@ export class AppModule {
       ucumPkg: ucumPkg,
       Util: LhcFormUtils,
       Def: Def,
-      version: version.lformsVersion
+      Validations: Validation,
+      lformsVersion: version.lformsVersion
     }
-    lforms.Util.FHIRSupport = {
-      'STU3': 'partial',
-      'R4': 'WIP'
-    };
+    lforms.Util.FHIRSupport = FHIRSupport;
+    
     window['LForms'] = lforms;
         
     customElements.define('wc-lhc-item', createCustomElement(LhcItemComponent, { injector: this.injector }));
