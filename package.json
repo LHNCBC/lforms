@@ -30,10 +30,10 @@
     "test-coverage": "ng test --no-watch --code-coverage",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')",
     "build:clean": "rm -rf dist",
-    "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
+    "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:version": "node -e 'require(\"fs\").writeFileSync(\"src/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",
-    "build:prepare-zip": "dirname=$npm_package_name-$npm_package_version; cp -rf dist/webcomponent/* dist/$dirname/;",
+    "build:prepare-zip": "dirname=$npm_package_name-$npm_package_version; cp -rf dist/webcomponent dist/$dirname/;",
     "webpack": "webpack",
     "webpack:fhir": "webpack --env fhirOnly=true",
     "build:fhir": "npm run build:clean && npm run build:mkdist && npm run build:version && npm run webpack:fhir"
