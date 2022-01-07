@@ -1,14 +1,28 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
-/dist
-/src/fhir/R4/lformsFHIR.js
-/src/fhir/STU3/lformsFHIR.js
+# source files
+/src
+# test files
+/e2e
+# assets for testing
+/dist/webcomponent/test
+/dist/webcomponent/test-data
+# bin scripts
+/bin
+# other dev/build configuration files
+/angular.json
+/bashrc.next
+/concatenate.js
+/karma.conf.js
+/tsconfig.app.json
+/tsconfig.json
+/tsconfig.spec.json
+/tslint.json
+/.browserslistrc
+
+# temp files
 /tmp
 /out-tsc
-/.tmp
-# testing files
-/src/test/lib
 # Only exists if Bazel was run
 /bazel-out
 
@@ -27,6 +41,7 @@ speed-measure-plugin*.json
 *.launch
 .settings/
 *.sublime-workspace
+.editorconfig
 
 # IDE - VSCode
 .vscode/*

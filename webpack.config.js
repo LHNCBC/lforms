@@ -14,6 +14,12 @@ function commonConfig() {
         // Disabling the cache adds 4-5s to 31s build.  Having the cache on
         // resulted in several lost hours debugging a very confusing problem.
         new TerserPlugin({
+          extractComments: false,
+          terserOptions: {
+            format: {
+              comments: false,
+            },
+          },
           cache: false,
           parallel: true,
           sourceMap: true // Must be set to true if using source-maps in production
@@ -45,13 +51,12 @@ function commonConfig() {
 
 function makeConfigs(env) {
   // Limit build per env
-  let buildBowerDist = !env || env.mainOnly;
   let buildSTU3 = !env || !env.r4Only;
   let buildFHIR = !env || !env.mainOnly;
 
   const MomentLocalesPlugin = require('moment-locales-webpack-plugin'); // Excludes momentjs locales.
   let configs = [];
-  let fhirVersions = Object.keys(require('./app/scripts/fhir/versions'));
+  let fhirVersions = Object.keys(require('./src/fhir/versions'));
   let versionedDist = 'lforms-'+require('./package.json').version;
   let rootDirPath = require('path').resolve(__dirname);
   let versionedDistPath = rootDirPath+'/dist/'+versionedDist;
@@ -66,11 +71,11 @@ function makeConfigs(env) {
   if (buildFHIR) {
     for (let version of fhirVersions) {
       if (version !== 'STU3' || buildSTU3) {
-        let entryFile = './app/scripts/fhir/'+version+'/fhirRequire.js';
+        let entryFile = './src/fhir/'+version+'/fhirRequire.js';
         allFHIREntryFiles.push(entryFile);
         let nonMinConfig = commonConfig();
         nonMinConfig.entry = entryFile;
-        nonMinConfig.output.path = rootDirPath+'/app/scripts/fhir/'+version;
+        nonMinConfig.output.path = rootDirPath+'/src/fhir/'+version;
         nonMinConfig.output.filename = 'lformsFHIR.js';
         nonMinConfig.mode = 'none';
         nonMinConfig.externals = fhirExternals;
@@ -98,85 +103,6 @@ function makeConfigs(env) {
     allFHIRConfig.devtool = 'source-map';
     allFHIRConfig.externals = fhirExternals;
     configs.push(allFHIRConfig);
-  }
-
-  if (buildBowerDist) {
-    // LForms and dependencies
-    // The Bower package needs a single, transpiled lforms.js file that does
-    // not include other bower packages (angular, etc.)
-    let bowerConfig = commonConfig();
-    let polyfills = [ // in addition to app/scripts/lib/polyfill.js]
-     'promise-polyfill/src/polyfill', // used by whatwg-fetch, and by our own code
-     'whatwg-fetch'];
-    bowerConfig.entry = [...polyfills, './app/scripts/bower-index.js'];
-    bowerConfig.output.path = require('path').resolve(__dirname, './bower-dist');
-    bowerConfig.output.filename = 'lforms.js';
-    bowerConfig.output.library = 'LForms'; // global variable for the library
-    bowerConfig.devtool = 'source-map';
-    bowerConfig.mode = 'none';
-    bowerConfig.externals = {
-      'autocomplete-lhc': 'Def', // excludes autocomplete-lhc from build
-      'moment': 'moment'
-    };
-    configs.push(bowerConfig);
-
-    // The browser-ready dist package needs all of the dependencies in a single file
-    // (except for the versioned FHIR files).
-    let lformsConfig = commonConfig();
-    lformsConfig.entry = [...polyfills, './app/scripts/index.js'];
-    lformsConfig.output.path = versionedDistPath;
-    lformsConfig.output.filename = 'lforms.min.js';
-    lformsConfig.output.library = 'LForms';
-    lformsConfig.devtool = 'source-map';
-    lformsConfig.mode = 'production';
-    //lformsConfig.mode = 'none';
-    // For angular-ui-bootstrap, we need to pick up and process the CSS imports
-    const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-    lformsConfig.plugins = [
-      new MiniCssExtractPlugin({
-        filename: "styles/lforms.css"
-      }),
-      new MomentLocalesPlugin()
-    ];
-    lformsConfig.module.rules.push({
-      test: /\.css$/,
-    //  include: /node_modules/,
-      use: [
-        {
-          // This loader creates one CSS file per JS file that contains CSS.
-          // Or so the documentation says.  It seems to just create one file.
-          loader: MiniCssExtractPlugin.loader,
-          options: {
-            outputPath: 'styles',
-          }
-        },
-        //'style-loader', // for devlopment only
-        'css-loader' // resolves paths for CSS files in require/import
-      ]
-    });
-    lformsConfig.module.rules.push({
-      test: /glyphicons.*\.(eot|svg|ttf|woff2?)$/,
-      use: [{
-        loader: 'file-loader',
-        options: {
-          name: '[name]_[hash].[ext]',
-          outputPath: 'styles/fonts',
-          publicPath: 'fonts'
-        }
-      }]
-    });
-    lformsConfig.module.rules.push({
-      test: /\.(png|svg|jpg|gif)$/,
-      use: [{
-        loader: 'file-loader',
-        options: {
-          name: '[name]_[hash].[ext]',
-          outputPath: 'styles/images',
-          publicPath: 'images'
-        }
-      }]
-    });
-    configs.push(lformsConfig);
   }
 
   return configs;

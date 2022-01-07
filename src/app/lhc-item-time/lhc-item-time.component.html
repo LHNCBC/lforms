@@ -1,0 +1,16 @@
+<ng-container *ngIf="item">
+  <nz-time-picker 
+    [nzDisabled]="item._readOnly"
+    id="{{item._elementId}}"
+    class="lhc-time-picker"
+    nzFormat="HH:mm:ss"
+    nzPlaceHolder="HH:mm:ss"
+    nzSize="small"
+    [(ngModel)]="time"
+    (focus)="lhcDataService.setActiveRow(item)"
+    attr.aria-required="{{ item._answerRequired }}"
+    (ngModelChange)="onChange($event)"
+  >
+  </nz-time-picker>
+</ng-container>
+

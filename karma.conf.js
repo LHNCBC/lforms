@@ -1,96 +1,36 @@
-// Karma configuration
-// Generated on Tue Dec 06 2016 16:36:46 GMT-0500 (EST)
+// Karma configuration file, see link for more information
+// https://karma-runner.github.io/1.0/config/configuration-file.html
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
-
-    // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
-
-    // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
-    proxies: {
-      '/test/': '/base/test/'
-    },
-
-
-    // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'chai'],
-
-
-    // list of files / patterns to load in the browser
+    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-chrome-launcher'),
+      require('karma-jasmine-html-reporter'),
+      require('karma-coverage'),
+      require('@angular-devkit/build-angular/plugins/karma')
+    ],
     files: [
-      {pattern: 'test/data/**/*.json', included: false, served: true},
-      {pattern: 'app/data/**/*.json', included: false, served: true},
-      'bower_components/jquery/dist/jquery.js',
-      'bower_components/angular/angular.js',
-      'bower_components/angular-mocks/angular-mocks.js',
-      'bower_components/autocomplete-lhc/source/autoCompBase.js',
-      'bower_components/element-resize-detector/dist/element-resize-detector.js',
-      'bower_components/moment/moment.js',
-      'bower_components/ucum-lhc/browser-dist/ucum-lhc.js',
-      'bower-dist/lforms.js',
-      'app/scripts/fhir/*/lformsFHIR.js',
-      'test/karma/*.js',
-      'test/data/*.js',
-      'test/data/R4/*.js',
-      'test/data/STU3/*.js'
+      { pattern: './node_modules/jquery/dist/jquery.min.js', watched: false },
+      { pattern: './node_modules/zone.js/dist/zone.min.js', watched: false }
     ],
-
-    // list of files to exclude
-    exclude: [
-      'app/scripts/index.js'
-    ],
-
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-    },
-
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['mocha'],
-
-    mochaReporter: {
-      output: 'minimal'
-    },
-
     client: {
-      captureConsole: true
+      clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
-
-
-    // web server port
+    coverageIstanbulReporter: {
+      dir: require('path').join(__dirname, './coverage/lforms'),
+      reports: ['html', 'lcovonly', 'text-summary'],
+      fixWebpackSourcePaths: true
+    },
+    reporters: ['progress', 'kjhtml'],
     port: 9876,
-
-
-    // enable / disable colors in the output (reporters and logs)
     colors: true,
-
-
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
-
-
-    // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
-
-
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['ChromeHeadless'],
-
-
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true,
-
-    // Concurrency level
-    // how many browser should be started simultaneous
-    concurrency: Infinity
-  })
+    singleRun: false,
+    restartOnFileChange: true
+  });
 };
