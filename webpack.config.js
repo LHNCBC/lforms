@@ -14,6 +14,12 @@ function commonConfig() {
         // Disabling the cache adds 4-5s to 31s build.  Having the cache on
         // resulted in several lost hours debugging a very confusing problem.
         new TerserPlugin({
+          extractComments: false,
+          terserOptions: {
+            format: {
+              comments: false,
+            },
+          },
           cache: false,
           parallel: true,
           sourceMap: true // Must be set to true if using source-maps in production

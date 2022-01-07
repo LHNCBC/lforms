@@ -5,8 +5,8 @@
 # test files
 /e2e
 # assets for testing
-/dist/lforms/test
-/dist/lforms/test-data
+/dist/webcomponent/test
+/dist/webcomponent/test-data
 # bin scripts
 /bin
 # other dev/build configuration files
