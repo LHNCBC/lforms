@@ -54,7 +54,6 @@ function makeConfigs(env) {
   let buildSTU3 = !env || !env.r4Only;
   let buildFHIR = !env || !env.mainOnly;
 
-  const MomentLocalesPlugin = require('moment-locales-webpack-plugin'); // Excludes momentjs locales.
   let configs = [];
   let fhirVersions = Object.keys(require('./src/fhir/versions'));
   let versionedDist = 'lforms-'+require('./package.json').version;
