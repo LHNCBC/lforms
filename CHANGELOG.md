@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [30.0.0-beta.3] 2022-01-10
+### Changed
+- Removed locale files from moment.js
+
+## [30.0.0-beta.2] 2022-01-07
+### Changed
+- Code refactoring on the initial release.
+
 ## [30.0.0-beta.1] 2021-12-15
 ### Fixed
 - Fixed a style issue on items with a single unit.
