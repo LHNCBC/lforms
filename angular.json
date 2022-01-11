@@ -11,7 +11,7 @@
       "prefix": "",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "ngx-build-plus:browser",
           "options": {
             "preserveSymlinks": true,
             "outputPath": "dist/webcomponent",
@@ -55,7 +55,9 @@
               "node_modules/ng-zorro-antd/switch/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
-            "scripts": ["./node_modules/jquery/dist/jquery.min.js"]
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -88,7 +90,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "ngx-build-plus:dev-server",
           "options": {
             "browserTarget": "lforms:build"
           },
@@ -105,7 +107,7 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "ngx-build-plus:karma",
           "options": {
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
@@ -147,7 +149,9 @@
               "node_modules/ng-zorro-antd/switch/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
-            "scripts": ["./node_modules/jquery/dist/jquery.min.js"]
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js"
+            ]
           }
         },
         "lint": {
