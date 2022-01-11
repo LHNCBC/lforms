@@ -1,5 +1,3 @@
-var LForms = require('../lforms-index');
-
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export

@@ -3,7 +3,6 @@
 "use strict";
 
 import {LOINC_URI} from './fhir-common';
-var LForms = require('../lforms-index');
 
 var _versionTagStr = 'lformsVersion: ';
 
