@@ -3,6 +3,12 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [30.0.0-beta.3] 2022-01-13
+### Changed
+- Added a lformsLoader.js to the zip file, which will dynamically load all 
+  required js files for the widget if it is included in the html page.
+- Added cypress for e2e tests.
+
 ## [30.0.0-beta.2] 2022-01-10
 ### Changed
 - Removed locale files from moment.js

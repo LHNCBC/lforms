@@ -1,11 +1,12 @@
 (function() {
+  var lformsLoaderName = "lformsLoader.js", baseUrl;
+
   /**
    * Find the script tag that load this fiel
    * @returns the value in the 'src' attribute
    */
   function findLformsLoader() {
     var srcValue = ""
-    var lformsLoaderName = "lformsLoader.js";
     var scripts = document.getElementsByTagName("script");
     for (var i=scripts.length-1; i>=0; i--) {
       var srcValue = scripts[i].attributes.src.value;
@@ -25,6 +26,7 @@
     var options = null;
     if (urlWithParameters) {
       var parts = urlWithParameters.split("?");
+      // parameters
       if (parts[1]) {
         options = {};
         var opt = parts[1].split("&");
@@ -33,6 +35,8 @@
           options[pair[0]] = pair[1] || "_NO_VALUE_";
         }
       }
+      // url
+      baseUrl = parts[0].substring(0, parts[0].length - lformsLoaderName.length)
     }
     return options;
   }
@@ -54,21 +58,21 @@
    */
   function loadLFormsAndFhir() {
     var es5Files = [
-      "./webcomponent/runtime-es5.js",
-      "./webcomponent/polyfills-es5.js",
-      ".//webcomponent/scripts.js", 
-      "./webcomponent/main-es5.js"
+      "webcomponent/runtime-es5.js",
+      "webcomponent/polyfills-es5.js",
+      "webcomponent/scripts.js", 
+      "webcomponent/main-es5.js"
     ];
     var es2015Files = [
-      "./webcomponent/runtime-es2015.js",
-      "./webcomponent/polyfills-es2015.js",
-      "./webcomponent/scripts.js", 
-      "./webcomponent/main-es2015.js"
+      "webcomponent/runtime-es2015.js",
+      "webcomponent/polyfills-es2015.js",
+      "webcomponent/scripts.js", 
+      "webcomponent/main-es2015.js"
     ];
-    var fhirR4File = "./fhir/R4/lformsFHIR.min.js";
-    var fhirStu3File =  "./fhir/R4/lformsFHIR.min.js";
-    var fhirAllFile =  "./fhir/lformsFHIRAll.min.js";
-    var zonejsFile =  "./webcomponent/assets/lib/zone.min.js"; 
+    var fhirR4File = "fhir/R4/lformsFHIR.min.js";
+    var fhirStu3File = "fhir/STU3/lformsFHIR.min.js";
+    var fhirAllFile = "fhir/lformsFHIRAll.min.js";
+    var zonejsFile = "webcomponent/assets/lib/zone.min.js"; 
     var srcValue = findLformsLoader();
     var options;
   
@@ -96,13 +100,13 @@
       }
     }
   
-    // console.log(filesToLoad) 
+
     filesToLoad.forEach(function(file) {
-      loadScript(file)
+      console.log(baseUrl+file)
+      loadScript(baseUrl + file)
     })
         
   }
-
   // load the files
   loadLFormsAndFhir()
   
