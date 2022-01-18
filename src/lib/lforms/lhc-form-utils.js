@@ -282,13 +282,12 @@ const FormUtils = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData.hasSavedData = true;
           break;
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
+      formData.hasSavedData = true; // will be used to determine whether to update or save
     }
     return formData;
   },

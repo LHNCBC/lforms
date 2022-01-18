@@ -1,9 +1,9 @@
 {
-  "integrationFolder": "test/cypress",
-  "supportFile": "cypress/support/index.ts",
-  "videosFolder": "cypress/videos",
-  "screenshotsFolder": "cypress/screenshots",
-  "pluginsFile": "cypress/plugins/index.ts",
-  "fixturesFolder": "cypress/fixtures",
+  "integrationFolder": "test/cypress/integration",
+  "supportFile": "test/cypress/support/index.ts",
+  "videosFolder": "test/cypress/videos",
+  "screenshotsFolder": "test/cypress/screenshots",
+  "pluginsFile": "test/cypress/plugins/index.ts",
+  "fixturesFolder": "test/cypress/fixtures",
   "baseUrl": "http://localhost:4202"
 }

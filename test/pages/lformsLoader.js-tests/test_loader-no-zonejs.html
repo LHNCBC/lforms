@@ -49,7 +49,10 @@
 
     </div>
 
-    <script src="/dist/latest/lformsLoader.js?zone.js&fhir"></script>
+    <!-- zone.js is not included in LHC-Forms web component -->
+    <script src="/dist/latest/webcomponent/assets/lib/zone.min.js"></script>
+
+    <script src="/dist/latest/lformsLoader.js?zone.js=false"></script>
 
     <!-- lforms test controller -->
     <script type="text/javascript">

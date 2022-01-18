@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <title>LForms JS Loader Test Page</title>
+    <base href="/">
+    <link rel="stylesheet" href="/dist/latest/webcomponent/styles.css">
+    <style>
+      .btn {
+        display: inline-block;
+        margin: 1px;
+        font-weight: normal;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        border: 1px solid transparent;
+        padding: 2px 6px;
+        font-size: 12px;
+        border-radius: 4px;
+      }
+      .btn-success {
+        color: #fff;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+      }  
+      .hide {
+        display: none;
+      }
+    </style>
+
+  </head>
+  <body style="padding: 1em">
+
+    <div id="lforms-form">
+      <div class="panel panel-default">
+        <div class="panel-heading">LForms Build Test Page with FHIR Context</div>
+        <div class="panel-body">
+          <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
+          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+          <select id="fhirVersion">
+            <option value="R4">R4</option>
+            <option value="STU3">STU3</option>
+          </select>
+
+        </div>
+      </div>
+
+      <br><br>
+      <wc-lhc-form id='test-form'></wc-lhc-form>
+
+    </div>
+
+    
+    <script src="/dist/latest/lformsLoader.js?fhir=R4"></script>
+
+
+    <!-- lforms test controller -->
+    <script type="text/javascript">
+      testForm = document.getElementById('test-form');
+
+      /**
+       * Get FHIR version from the version list
+       */
+      function getFHIRVersion() {
+        let fhirVersion = document.getElementById("fhirVersion");
+
+        let version = fhirVersion.value;
+        if (!version)
+          throw 'Please select a FHIR version';
+        return version;
+      }
+
+      /**
+       * Get FHIR context from the global object LForms
+       */
+      function getFHIR() {
+        return LForms.FHIR[getFHIRVersion()];
+      }
+
+      /**
+       * Load a data file from local file system
+       */
+      function loadFile(event) {
+        var reader = new FileReader();
+        var fileAnchor = document.querySelector('#fileAnchor');
+        var questionnaire;
+        reader.onload = function() {
+          var questionnaire = JSON.parse(reader.result);          
+          // Reset the field with the filename we can load the same file again if needed.
+          fileAnchor.value = '';
+          testForm.questionnaire = questionnaire;
+          testForm.fhirVersion = getFHIRVersion()
+        };
+        reader.readAsText(event.target.files[0]); 
+      }
+
+    </script>
+
+  </body>
+</html>

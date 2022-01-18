@@ -118,8 +118,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             self.lhcFormData.setTemplateOptions(self.options);  
           }      
           self.lhcDataService.setLhcFormData(self.lhcFormData);  
-
-          if (LForms.FHIR) {
+          // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
+          if (LForms.FHIR && self.lhcFormData.fhirVersion) {
             self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
               // when a new form is loaded, run all FHIR Expressions including the initial expresions
               if (self.lhcFormData) { // sometimes set to null to clear the page

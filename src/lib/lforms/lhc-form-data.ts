@@ -193,7 +193,8 @@ export default class LhcFormData {
     // when the skip logic rule says the form is done
     this._formDone = false;
 
-    if (LForms.FHIR) {
+    // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
+    if (LForms.FHIR && data.fhirVersion) {
       this._initializeFormFHIRData(data);
     }
 
@@ -285,7 +286,7 @@ export default class LhcFormData {
    */
   _initializeFormFHIRData(data) {
     var lfData = this;
-    this.fhirVersion = data.fhirVersion || 'R4'; // Default to R4
+    this.fhirVersion = data.fhirVersion;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
     this._expressionProcessor = new this._fhir.SDC.ExpressionProcessor(this);
     this._fhirVariables = {};
@@ -1523,6 +1524,10 @@ export default class LhcFormData {
     }
     if (hasSavedData) {
       defData.hasSavedData = true;
+    }
+    // keep the fhirVersion if it was converted from a Questionnaire
+    if (this.fhirVersion) {
+      defData.fhirVersion = this.fhirVersion;
     }
 
     // reset obr fields
