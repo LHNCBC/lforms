@@ -16,15 +16,15 @@
  * Usage Examples:
  * (1) Load es5 version LHC-Forms js files, and zone.min.js and FHIR libs (R4 and STU3).
  *     This is the defualt behavior.
- *     <script src="<path/to/lformsLoader.js">
+ *     <script src="[path/to/]lformsLoader.js">
  * (2) Load the es5 version of the LHC-Forms js files, and FHIR libs (R4 and STU3). (No zone.min.js)
- *     <script src="<path/to/lformsLoader.js?zone.js=false">
+ *     <script src="[path/to/]lformsLoader.js?zone.js=false">
  * (3) Load the es2015 version of the LHC-Forms js files, and FHIR libs (R4 only). (No zone.min.js)
- *     <script src="<path/to/lformsLoader.js?es=2015&zone.js=false&fhir=R4">
+ *     <script src="[path/to/]lformsLoader.js?es=2015&zone.js=false&fhir=R4">
  * (4) Load the es2015 version of the LHC-Forms js files, and zone.min.js and FHIR libs (STU3 only). 
- *     <script src="<path/to/lformsLoader.js?es=2015&fhir=R4">
+ *     <script src="[path/to/]lformsLoader.js?es=2015&fhir=R4">
  * (5) Load the es5 version of the LHC-Forms js files. (No zone.min.js and No FHIR libs)
- *     <script src="<path/to/lformsLoader.js?es=5&zone.js=false&fhir=false">
+ *     <script src="[path/to/]lformsLoader.js?es=5&zone.js=false&fhir=false">
  * 
  */
 (function() {

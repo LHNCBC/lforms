@@ -1,0 +1,20 @@
+.btn {
+  display: inline-block;
+  margin: 1px;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  border: 1px solid transparent;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+.btn-success {
+  color: #fff;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}  
+.hide {
+  display: none;
+}
