@@ -81,6 +81,7 @@ you don't accidentally add something that we are also working on.
   are relative to those verioned directories.
   1. `webcomponent/styles.css`
   2. `latest/lformsLoader.js`
+
 lformsLoader.js has a number of options, which can be specified as query
 parameters in the URL you use to load it, though the defaults should work for
 most cases:
@@ -97,7 +98,8 @@ most cases:
   3. `webcomponent/scripts.js`
   6. `webcomponent/main-[es5|es2015].js`
   7. *One* of the FHIR support library files:
-    * `fhir/lformsFHIRAll.min.js`
-    * `fhir/R4/lformsFHIR.min.js`
-    * `fhir/STU3/lformsFHIR.min.js`
+     * `fhir/lformsFHIRAll.min.js`
+     * `fhir/R4/lformsFHIR.min.js`
+     * `fhir/STU3/lformsFHIR.min.js`
+
 There is an example of app using these files at https://lhcforms.nlm.nih.gov/lforms-fhir-app/.
