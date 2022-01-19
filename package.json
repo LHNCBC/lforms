@@ -38,11 +38,12 @@
     "webpack": "webpack",
     "webpack:fhir": "webpack --config ./webpack.fhir.config.js --env fhirOnly=true",
     "build:fhir": "npm run build:clean && npm run build:mkdist && npm run build:version && npm run webpack:fhir",
+    "cyPort": "4202",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "ci:cy-run": "start-server-and-test ci:start-server http://localhost:4202 cy:run",
-    "ci:cy-open": "start-server-and-test ci:start-server http://localhost:4202 cy:open",
-    "ci:start-server": "http-server -a localhost -p 4202"
+    "ci:cy-run": "start-server-and-test ci:start-server http://localhost:$npm_package_scripts_cyPort cy:run",    
+    "ci:cy-open": "start-server-and-test ci:start-server http://localhost:$npm_package_scripts_cyPort cy:open",
+    "ci:start-server": "http-server -a localhost -p $npm_package_scripts_cyPort"
   },
   "dependencies": {
     "@angular/animations": "~11.2.14",
