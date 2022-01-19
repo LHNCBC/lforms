@@ -4,6 +4,5 @@
   "videosFolder": "test/cypress/videos",
   "screenshotsFolder": "test/cypress/screenshots",
   "pluginsFile": "test/cypress/plugins/index.ts",
-  "fixturesFolder": "test/cypress/fixtures",
-  "baseUrl": "http://localhost:4202"
+  "fixturesFolder": "test/cypress/fixtures"
 }
