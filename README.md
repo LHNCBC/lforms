@@ -78,9 +78,9 @@ There are several files to load, but the simplest way is to use our loader
 script.  If you are building this or installing via npm, these files will be
 under `dist/latest`.  If you are using the pre-built versions from
 https://clinicaltables.nlm.nih.gov/lforms-versions, then the file paths below
-are relative to those verioned directories.
+are relative to those versioned directories.
 1. `webcomponent/styles.css`
-2. `latest/lformsLoader.js`
+2. `lformsLoader.js`
 
 lformsLoader.js has a number of options, which can be specified as query
 parameters in the URL you use to load it, though the defaults should work for
@@ -102,4 +102,4 @@ directory, the files to include are:
    * `fhir/R4/lformsFHIR.min.js`
    * `fhir/STU3/lformsFHIR.min.js`
 
-There is an example of app using these files at https://lhcforms.nlm.nih.gov/lforms-fhir-app/.
+There is an example of an app using these files at https://lhcforms.nlm.nih.gov/lforms-fhir-app/.
