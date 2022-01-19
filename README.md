@@ -74,32 +74,32 @@ you don't accidentally add something that we are also working on.
    to update the Chrome web driver.
 
 ## Using the LHC-Forms Web Component 
-* There are several files to load, but the simplest way is to use our loader
-  script.  If you are building this or installing via npm, these files will be
-  under `dist/latest`.  If you are using the pre-built versions from
-  https://clinicaltables.nlm.nih.gov/lforms-versions, then the file paths below
-  are relative to those verioned directories.
-  1. `webcomponent/styles.css`
-  2. `latest/lformsLoader.js`
+There are several files to load, but the simplest way is to use our loader
+script.  If you are building this or installing via npm, these files will be
+under `dist/latest`.  If you are using the pre-built versions from
+https://clinicaltables.nlm.nih.gov/lforms-versions, then the file paths below
+are relative to those verioned directories.
+1. `webcomponent/styles.css`
+2. `latest/lformsLoader.js`
 
 lformsLoader.js has a number of options, which can be specified as query
 parameters in the URL you use to load it, though the defaults should work for
 most cases:
-  1. `lformsLoader.js?zone.js=false` -- Do not load zone.min.js, which might already be loaded if you have an Angular app on the page, and which can only be loaded once.
-  2. `lformsLoader.js?es=2015` -- Loads the the ES 2015 versions of the code instead of ES 5. ES 2015 files are somewhat smaller.
-  3. `lformsLoader.js?fhir=R4` -- Only load R4 FHIR support as opposed to all supported versions (currently STU3 and R4).  This can also be set to "STU3", or "false" if you don't need FHIR support.
-* If you don't want to use the loader script, and would rather include files
-  directory, the files to include are: 
-  1. `webcomponent/styles.css`
-  2. `webcomponent/assets/lib/zone.min.js` (unless you already have zone.min.js on
-    the page)
-  4. `webcomponent/runtime-[es5|es2015].js`
-  5. `webcomponent/polyfills-[es5|es2015].js`
-  3. `webcomponent/scripts.js`
-  6. `webcomponent/main-[es5|es2015].js`
-  7. *One* of the FHIR support library files:
-     * `fhir/lformsFHIRAll.min.js`
-     * `fhir/R4/lformsFHIR.min.js`
-     * `fhir/STU3/lformsFHIR.min.js`
+1. `lformsLoader.js?zone.js=false` -- Do not load zone.min.js, which might already be loaded if you have an Angular app on the page, and which can only be loaded once.
+2. `lformsLoader.js?es=2015` -- Loads the the ES 2015 versions of the code instead of ES 5. ES 2015 files are somewhat smaller.
+3. `lformsLoader.js?fhir=R4` -- Only load R4 FHIR support as opposed to all supported versions (currently STU3 and R4).  This can also be set to "STU3", or "false" if you don't need FHIR support.
+
+If you don't want to use the loader script, and would rather include files
+directory, the files to include are: 
+1. `webcomponent/styles.css`
+2. `webcomponent/assets/lib/zone.min.js` (unless you already have zone.min.js on the page)
+4. `webcomponent/runtime-[es5|es2015].js`
+5. `webcomponent/polyfills-[es5|es2015].js`
+3. `webcomponent/scripts.js`
+6. `webcomponent/main-[es5|es2015].js`
+7. *One* of the FHIR support library files:
+   * `fhir/lformsFHIRAll.min.js`
+   * `fhir/R4/lformsFHIR.min.js`
+   * `fhir/STU3/lformsFHIR.min.js`
 
 There is an example of app using these files at https://lhcforms.nlm.nih.gov/lforms-fhir-app/.
