@@ -3,6 +3,11 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [30.0.0-beta.4] 2022-01-25
+### Added
+- Added an onError event, that returns an error when FHIR resources 
+  fail to load, or when there is an exception during the initialization.
+  
 ## [30.0.0-beta.3] 2022-01-13
 ### Changed
 - Added a lformsLoader.js to the zip file, which will dynamically load all 

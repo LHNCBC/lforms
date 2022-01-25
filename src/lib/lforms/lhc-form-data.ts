@@ -339,8 +339,7 @@ export default class LhcFormData {
    */
   loadFHIRResources(prepopulate) {
     if (!LForms.fhirContext) {
-      //throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
-      console.log('Warning: FHIR resources might not be loaded, because loadFHIRResources() was called before LForms.Util.setFHIRContext()');
+      throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
     }
     var lfData = this;
 
@@ -355,7 +354,10 @@ export default class LhcFormData {
 
     return Promise.all(pendingPromises).then(function() {
       lfData._notifyAsyncChangeListeners();
-    }, function fail(e) { throw e });
+    })
+    .catch(function fail(e) { 
+      throw e 
+    });
   }
 
 
