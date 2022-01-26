@@ -80,17 +80,8 @@ under `dist/latest`.  If you are using the pre-built versions from
 https://clinicaltables.nlm.nih.gov/lforms-versions, then the file paths below
 are relative to those versioned directories.
 1. `webcomponent/styles.css`
-2. `lformsLoader.js`
 
-lformsLoader.js has a number of options, which can be specified as query
-parameters in the URL you use to load it, though the defaults should work for
-most cases:
-1. `lformsLoader.js?zone.js=false` -- Do not load zone.min.js, which might already be loaded if you have an Angular app on the page, and which can only be loaded once.
-2. `lformsLoader.js?es=2015` -- Loads the the ES 2015 versions of the code instead of ES 5. ES 2015 files are somewhat smaller.
-3. `lformsLoader.js?fhir=R4` -- Only load R4 FHIR support as opposed to all supported versions (currently STU3 and R4).  This can also be set to "STU3", or "false" if you don't need FHIR support.
-
-If you don't want to use the loader script, and would rather include files
-directory, the files to include are: 
+You need to include the following files in your project: 
 1. `webcomponent/styles.css`
 2. `webcomponent/assets/lib/zone.min.js` (unless you already have zone.min.js on the page)
 4. `webcomponent/runtime-[es5|es2015].js`

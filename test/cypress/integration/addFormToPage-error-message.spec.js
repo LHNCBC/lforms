@@ -1,5 +1,4 @@
-// Testing different use cases of lformLoader.js
-// The project root directroy is the root for http-server
+// The project root directroy is the root for the cypress server
 describe('addFormToPage Error Message Test', () => {
   it('show an error when a valueset cannot be loaded because of a wrong valueset url', () => {
     // load a lforms form data
