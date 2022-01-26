@@ -2,27 +2,7 @@
  *  Goes to lforms_testpage.html
  */
 export function visitTestPage() {
-  cy.visit('dist/webcomponent/test/lforms_testpage.html');
-  // Fix script tags - necessary until we get rid of protractor
-  cy.get('script').each((tag) => {
-  console.log(tag[0]);
-    let src = tag.attr('src');
-  console.log(src);
-    if (src && !src.startsWith('http')) {
-      src='dist/webcomponent/test/'+src;
-      tag.attr('src', src);
-    }
-    /*
-    console.log(tag[0]);
-    tag.invoke('attr', 'src').then((src) => {
-      if (!src.startsWith('http')) {
-    console.log('found ' +src);
-        src='dist/webcomponent/test/'+src;
-        tag.invoke('attr', 'src', src);
-      }
-    });
-    */
-  });
+  cy.visit('test/pages/addFormToPageTest.html');
 }
 
 
@@ -43,7 +23,7 @@ export function loadFromTestData(filepath, fhirVersion=null) {
   // Re-hide the file input element
   fileInput.invoke('attr', 'class', 'hide');
   // wait for the form to render
-  cy.get('.lhc-form-title', {timeout: 10000}).should('be.visisble');
+  cy.get('.lhc-form-title', {timeout: 10000}).should('be.visible');
 }
 
 
