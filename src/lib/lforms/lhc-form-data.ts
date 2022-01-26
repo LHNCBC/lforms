@@ -355,7 +355,10 @@ export default class LhcFormData {
 
     return Promise.all(pendingPromises).then(function() {
       lfData._notifyAsyncChangeListeners();
-    }, function fail(e) { throw e });
+    })
+    .catch(function fail(e) { 
+      throw e 
+    });
   }
 
 

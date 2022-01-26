@@ -1100,13 +1100,21 @@ function addCommonSDCImportFns(ns) {
             pendingPromises.push(fetch(expURL).then(function(response) {
               return response.json();
             }).then(function(parsedJSON) {
-              answers = self.answersFromVS(parsedJSON);
-              if (answers) {
-                LForms._valueSetAnswerCache[expURL] = answers;
-                item.answers = answers;
-                lfData._updateAutocompOptions(item, true);
+              if (parsedJSON.resourceType==="OperationOutcome" ) {
+                var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal")
+                if (errorOrFatal) {
+                  throw new Error(errorOrFatal.diagnostics)
+                }
               }
-            }, function fail() {
+              else {
+                answers = self.answersFromVS(parsedJSON);
+                if (answers) {
+                  LForms._valueSetAnswerCache[expURL] = answers;
+                  item.answers = answers;
+                  lfData._updateAutocompOptions(item, true);
+                }  
+              }
+            }).catch(function(error) {              
               throw new Error("Unable to load ValueSet from "+expURL);
             }));
           }
@@ -1122,7 +1130,7 @@ function addCommonSDCImportFns(ns) {
                 item.answers = answers;
                 lfData._updateAutocompOptions(item, true);
               }
-            }, function fail() {
+            }).catch(function(error) {
               throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
             }));
           }

@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "30.0.0-beta.3",
+  "version": "30.0.0-beta.4",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -20,7 +20,6 @@
     "lint": "ng lint",
     "copy-built-files": "shx cp -rf dist/latest/webcomponent src/test/lib/",
     "copy-fhir-lib": "shx cp -rf dist/latest/fhir src/test/lib/",
-    "copy-lforms-loader": "shx cp -rf src/lformsLoader.js dist/latest",
     "copy": "npm run copy-built-files && npm run copy-fhir-lib",
     "test:fhir-unit": "karma start test/karma.conf.js",
     "test:ng-unit": "ng test --watch=false",
@@ -32,7 +31,7 @@
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')",
     "build:clean": "rm -rf dist",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
-    "build:prepare-zip": "node prepare-zip.js && npm run copy-lforms-loader",
+    "build:prepare-zip": "node prepare-zip.js",
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:version": "node -e 'require(\"fs\").writeFileSync(\"src/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",
     "webpack": "webpack",
@@ -89,7 +88,7 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
-    "mocha": "^9.1.3",
+    "mocha": "^9.2.0",
     "ngx-build-plus": "^11.0.0",
     "protractor": "~7.0.0",
     "shx": "^0.3.3",

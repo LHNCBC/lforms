@@ -28,6 +28,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input() lhcFormData: any; // not to publish
   // emit an event when the form's view and data are initially rendered
   @Output() onFormReady: EventEmitter<any> = new EventEmitter<any>();
+  // emit an event when there are errors during the initialization and rendering.
+  @Output() onError: EventEmitter<any> = new EventEmitter<any>();
 
   //lhcFormData: any;
   viewModeClass = "";
@@ -102,41 +104,52 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         const self = this;        
         // reset the data after this thread is done
         setTimeout(()=> {
-          let q = CommonUtils.deepCopy(self.questionnaire);
-          // check if questionnaire is a FHIR Questionnaire
-          if (q.resourceType === "Questionnaire") {
-            let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
-            if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
-              // convert it to a lforms form data
-              q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q);
+          try {
+            let q = CommonUtils.deepCopy(self.questionnaire);
+            // check if questionnaire is a FHIR Questionnaire
+            if (q.resourceType === "Questionnaire") {
+              let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
+              if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
+                // convert it to a lforms form data
+                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q);
+              }
             }
-          }
-          self.lhcFormData = new LhcFormData(q)
-          // and options change
-          if (changes.options && self.options) {
-            // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));  
-            self.lhcFormData.setTemplateOptions(self.options);  
-          }      
-          self.lhcDataService.setLhcFormData(self.lhcFormData);  
-          // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
-          if (LForms.FHIR && self.lhcFormData.fhirVersion) {
-            self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
-              // when a new form is loaded, run all FHIR Expressions including the initial expresions
-              if (self.lhcFormData) { // sometimes set to null to clear the page
-                if (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr) {
-                  self.lhcFormData._expressionProcessor.runCalculations(true).then(() => {
-                    console.log('fhir path run with true')
-                  });
-                }
-              }        
+            self.lhcFormData = new LhcFormData(q)
+            // and options change
+            if (changes.options && self.options) {
+              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));  
+              self.lhcFormData.setTemplateOptions(self.options);  
+            }      
+            self.lhcDataService.setLhcFormData(self.lhcFormData);  
+            // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
+            if (LForms.FHIR && self.lhcFormData.fhirVersion) {
+              self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
+                // when a new form is loaded, run all FHIR Expressions including the initial expresions
+                if (self.lhcFormData) { // sometimes set to null to clear the page
+                  if (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr) {
+                    self.lhcFormData._expressionProcessor.runCalculations(true).then(() => {
+                      // console.log('fhir path run with true')
+                    });
+                  }
+                }        
+                // emit an event when the form's view and data are initially rendered
+                self.onFormReady.emit();
+              })
+              .catch(error => {
+                let e = typeof error === "string" ? error : error.message
+                self.onError.emit(e)
+              });
+            }
+            else {
               // emit an event when the form's view and data are initially rendered
               self.onFormReady.emit();
-            })            
+            }
+  
           }
-          else {
-            // emit an event when the form's view and data are initially rendered
-            self.onFormReady.emit();
-          }
+          catch (error) {
+            let e = typeof error === "string" ? error : error.message
+            self.onError.emit(e)
+          };
         },1)
       }
       else {
@@ -150,7 +163,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
       let lhcFD = this.lhcDataService.getLhcFormData();
       if (lhcFD) {
         lhcFD.setTemplateOptions(this.options);
-        console.log("in lhc-form's ngOnChange: set templateOptions, alone")
       }    
     }
     
