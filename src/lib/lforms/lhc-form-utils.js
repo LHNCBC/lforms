@@ -77,10 +77,8 @@ const FormUtils = {
       catch(e) {
         reject(e)
       }
-    }).catch(function(e) {
-      throw e; 
-    });
-
+    })
+    
     return rtnPromise;
   },
 
