@@ -350,7 +350,7 @@ about the meaning of each key:
  No data is returned in this event.
 * **onError** - emitted when the ValueSets are not retrieved during the form initialization. 
 The form is still initialized and might be rendered, with possible missing data. 
-The first error is return in this event.
+The first error is returned in this event.
 
 ### How to use properties and events:
 * In HTML: 

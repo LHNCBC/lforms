@@ -44,14 +44,12 @@
 
 Cypress.Commands.add(
   'uploadFile', 
-  {  prevSubject: 'element'
-  },
+  { prevSubject: 'element' },
   (subject, filePathName) => {
-    console.log(subject)
-    console.log(filePathName)
-  // Temporarily unhide the file input element.                                                                 
-  cy.get(subject).invoke('attr', 'class', '');                                                                        
-  cy.get(subject).selectFile(filePathName);                                                                               
-  // Re-hide the file input element                                                                             
-  cy.get(subject).invoke('attr', 'class', 'hide');                                                                    
-})
+    // Temporarily unhide the file input element.                                                                 
+    cy.get(subject).invoke('attr', 'class', '');                                                                        
+    cy.get(subject).selectFile(filePathName);                                                                               
+    // Re-hide the file input element                                                                             
+    cy.get(subject).invoke('attr', 'class', 'hide');                                                                    
+  }
+)
