@@ -1,4 +1,4 @@
-// The project root directroy is the root for the cypress server
+// The project root directory is the root for the cypress server
 describe('addFormToPage Error Message Test', () => {
   it('show an error when a valueset cannot be loaded because of a wrong valueset url', () => {
     // load a lforms form data
