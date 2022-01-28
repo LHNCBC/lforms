@@ -1,6 +1,4 @@
 import { TestPage } from "../support/lforms_testpage.po";
-let LForms: any = (global as any).LForms;
-let window: any = global as any;
 
 describe('Unused repeating item/section control', function() {
   let tp: TestPage = new TestPage(); 

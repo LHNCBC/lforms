@@ -136,7 +136,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                 self.onFormReady.emit();
               })
               .catch(error => {
-                let e = typeof error === "string" ? error : error.message
+                const e = typeof error === "string" ? error : error.message
                 self.onError.emit(e)
               });
             }
@@ -147,7 +147,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   
           }
           catch (error) {
-            let e = typeof error === "string" ? error : error.message
+            const e = typeof error === "string" ? error : error.message
             self.onError.emit(e)
           };
         },1)
