@@ -42,6 +42,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+// unhide the file input element, upload a file and hide the file input element
 Cypress.Commands.add(
   'uploadFile', 
   { prevSubject: 'element' },
@@ -52,4 +53,30 @@ Cypress.Commands.add(
     // Re-hide the file input element                                                                             
     cy.get(subject).invoke('attr', 'class', 'hide');                                                                    
   }
-)
+);
+
+// escape '/' in the element id string and get the element
+Cypress.Commands.add(
+  'byId', 
+  { prevSubject: 'optional' },
+  (subject, idSelector) => {
+    // escape the / in the id
+    if (subject) {
+      return cy.wrap(subject).get(idSelector.replace(/\//g,"\\/"));
+    }
+    else {
+      return cy.get(idSelector.replace(/\//g,"\\/"));
+    }
+  }
+);
+
+// typing tab key is not support in cypress
+// this solution is not reliable https://github.com/cypress-io/cypress/issues/299
+Cypress.Commands.add('typeTab', (shiftKey, ctrlKey) => {
+  cy.focused().trigger('keydown', {
+      keyCode: 9,
+      which: 9,
+      shiftKey: shiftKey,
+      ctrlKey: ctrlKey
+  });
+});

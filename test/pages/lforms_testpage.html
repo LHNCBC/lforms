@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width">
+  <title>LForms Test Page</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- compiled css file for the web comoponet of LHC-Forms -->
+  <link rel="stylesheet" href="/dist/latest/webcomponent/styles.css">
+  <style>
+    .btn {
+      display: inline-block;
+      margin: 1px;
+      font-weight: normal;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      border: 1px solid transparent;
+      padding: 2px 6px;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+
+    .btn-success {
+      color: #fff;
+      background-color: #5cb85c;
+      border-color: #4cae4c;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background-color: #337ab7;
+      border-color: #2e6da4;
+    }
+
+    .hide {
+      display: none;
+    }
+  </style>
+</head>
+  
+<body style="padding: 1em">
+
+  <div id="lforms-form">
+    <div class="panel panel-default">
+      <h3 class="panel-heading">LForms Test Page</h3>
+      <div class="panel-body">
+        <p>Select a form from the list and click the button to display the form:</p>
+          <select id="form-list" class="form-control">
+            <option value="">--- Please Select ---</option>            
+          </select>
+        <br><br>
+        <button id="load-form-data" class="btn btn-success" onclick="loadFormFromList()">Load Form</button>
+        <select id="fhirVersion">
+          <option value="R4">R4</option>
+          <option value="STU3">STU3</option>
+        </select>
+        <button id="change-option" class="btn btn-primary" onclick="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
+        <button id="toggle-units-col" class="btn btn-primary" onclick="toggleUnitsCol()">Hide/Show Units Column</button>
+        <button id="reset-form-with-same-data" class="btn btn-primary" onclick="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)[&#10004;]</button>
+        <button id="get-hl7" class="btn btn-primary" onclick="showHL7Segments()">Show HL7 OBR/OBX Segments[&#10004;]</button>
+        <button id="get-fhir" class="btn btn-primary" onclick="showDiagnosticReport()">Show FHIR DiagnosticReport Content[&#10004;]</button>
+        <button id="get-fhir-bundle1" class="btn btn-primary" onclick="showDiagnosticReportBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle[&#10004;]</button>
+        <button id="get-fhir-bundle2" class="btn btn-primary" onclick="showDiagnosticReportBundle2()">Show FHIR DiagnosticReport in "collection" Bundle[&#10004;]</button>
+        <button id="get-sdc-questionnaire" class="btn btn-primary" onclick="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire[&#10004;]</button>
+        <button id="get-questionnaire" class="btn btn-primary" onclick="showFHIRQuestionnaire()">Show FHIR Questionnaire[&#10004;]</button>
+        <button id="get-sdc-response" class="btn btn-primary" onclick="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response[&#10004;]</button>
+        <button id="change-columns" class="btn btn-primary" onclick="changeObxObr()">Change OBR/OBX Options</button>
+        <button id="merge-dr" class="btn btn-primary" onclick="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)[&#10004;]</button>
+        <button id="merge-bundle-dr" class="btn btn-primary" onclick="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)[&#10004;]</button>
+        <button id="merge-dr-default-values" class="btn btn-primary" onclick="testMergeDR2LFormsWithDefaultValues()">Merge DiagnosticReport (contained) to LForms (Default Values)[&#10004;]</button>
+        <button id="merge-qr" class="btn btn-primary" onclick="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)[&#10004;]</button>
+        <button id="merge-qr-cwe" class="btn btn-primary" onclick="testMergeQR2LForms_CWE()">Merge QuestionnaireResponse to LForms (Full-Featured, w/ CWE user data)[&#10004;]</button>
+        <button id="test" class="btn btn-primary" onclick="testSearchOnFHIRServer()">Search on FHIR Server</button>
+
+        <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
+        <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+
+      </div>
+    </div>
+
+    <br><br>
+    <wc-lhc-form id='test-form'></wc-lhc-form>
+
+  </div>
+
+    <script type="text/javascript">
+      const testForms = [
+        {text: 'USSG-FHT, (with mock-up items for skip logic demo)', name: 'FHTData'},
+        {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', name: 'horizontalFHTData',
+            tempOptions: {
+              allowMultipleEmptyRepeatingItems: true
+            }},
+        {text: 'Glasgow Coma Score (with score rules)', name: 'glasgow'},
+        {text: 'Full-Featured Demo', name: 'allInOne', 
+            tempOptions: {
+              allowHTMLInInstructions: true,
+              allowMultipleEmptyRepeatingItems: true,
+              hideFormControls: false,
+              showFormHeader: true
+            }},
+        {text: 'Form Builder created test form', name: 'formBuilder'},
+        {text: 'Minimum Data Set - version 3.0', name: 'MDS3'},
+        {text: 'Form With User Data', name: 'formWithUserData'},
+        {text: 'Form With User Data, hasSavedData=true', name: 'formWithUserData', 
+            formOptions: {
+              hasSavedData: true
+            }},
+        {text: 'RxTerms Demo', name: 'rxTerms'},
+        {text: 'displayControls (answerLayout and questionLayout)', name: 'displayControlsDemo',
+            tempOptions: {
+              allowMultipleEmptyRepeatingItems: true
+            }},
+        {text: 'Matrix Layout, single selection', name: 'matrixLayout2'},
+        {text: 'Matrix Layout, multiple selections', name: 'matrixLayout'},
+        {text: "Validation Test", name: "validationTestForm"},
+        {text: "A form that has a question contains a question or a section", name: "questionInQuestion",
+            tempOptions: {
+              allowMultipleEmptyRepeatingItems: true
+            }},
+        {text: "HL7 Genetic Test Panel for Simple Variants", name: "genetic"},
+        {text: "HL7 Genetic Test Panel for Simple Variants (table version)", name: "genetic2"},
+        {text: "Fields with default answers", name: "defaultAnswerForm"},
+        {text: "PROMIS item bank - social isolation - version 2.0", name: "promis"},
+        {text: "Master HL7 genetic variant reporting panel (2017-06-06)", name: "newGenetic"},
+        {text: "A Form with two TOTALSCORE fields", name: "twoTotalScore"},
+        {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", name: "vitalSign"},
+        {text: "Items with QTY data type", name: "QTYDemo"}
+      ];
+
+
+      testForm = document.getElementById('test-form');
+
+      testForm.addEventListener('onFormReady', e => {
+        console.log("onFormReady")
+        console.log(e); 
+      });
+
+      testForm.addEventListener('onError', e => {
+        console.log("onError")
+        console.log(e); 
+      });
+
+
+      /**
+       * Load the form list to DOM
+       */ 
+      function loadFormList() {
+        let formList = document.getElementById("form-list");
+        testForms.forEach(form => {          
+          let option = document.createElement("option");
+          option.text = form.text;
+          option.value = JSON.stringify({
+            url: "/src/test-data/form-data/" + form.name + ".json", 
+            tempOptions: form.tempOptions,
+            formOptions: form.formOptions})          
+          formList.add(option);
+        })
+      }
+
+      /**
+       * Get JSON data from a form URL
+       */
+      async function loadJsonFromUrl(url) {
+        return await fetch(url).then( 
+          response => response.json());
+      }
+
+      /**
+       * Load and display a form
+       */
+      async function fetchAndDisplayForm(strForm) {
+        let jsonForm = JSON.parse(strForm)
+        let formData = await loadJsonFromUrl(jsonForm.url);   
+        testForm.questionnaire = formData;
+        if (jsonForm.formOptions) {
+          Object.assign(formData,jsonForm.formOptions)
+        }
+        if (jsonForm.tempOptions) {
+          testForm.options = jsonForm.tempOptions;
+        }
+
+      }
+
+      /**
+       * Load form from dropdown form list 
+       */
+      function loadFormFromList() {
+        let formList = document.getElementById("form-list");
+        let fhirVersion = this.getFHIRVersion();
+
+        if (formList.value) {
+          fetchAndDisplayForm(formList.value);
+        }
+      };
+      
+      // load the form list into DOM 
+      loadFormList();
+
+      /**
+       * Get FHIR version from the version list
+       */
+      function getFHIRVersion() {
+        let fhirVersion = document.getElementById("fhirVersion");
+
+        let version = fhirVersion.value;
+        if (!version)
+          throw 'Please select a FHIR version';
+        return version;
+      }
+
+      /**
+       * Get FHIR context from the globale object LForms
+       */
+      function getFHIR() {
+        return LForms.FHIR[getFHIRVersion()];
+      }
+
+      // options  
+      function toggleCodingInstructionFormat() {
+        if (testForm.questionnaire) {
+          let options = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
+          testForm.options = options;
+        }
+      }
+
+      // options 
+      // it does not make sense to hide unit ?!
+      function toggleUnitsCol() {
+        if (testForm.questionnaire) {
+          testForm.questionnaire.templateOptions.hideUnits = testForm.questionnaire.templateOptions.hideUnits; // hideUnits not implemented yet
+        }        
+      };
+
+      /**
+       * Change an item's value in form data (and the form should re-render accordingly)
+       */
+      function getFormDefDataAndResetForm() {
+        if (testForm.lhcFormData) {
+          // change a value
+          testForm.lhcFormData.items[0].items[0].value= 'after reset';
+        }          
+      };
+
+      /**
+       * Get 'DiagnosticReport' data from the form and display it in console
+       */
+      function showDiagnosticReport () {
+        if (testForm.lhcFormData) {
+          var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+            getFHIRVersion());
+          var fhirString = JSON.stringify(dr, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      /**
+       * Get SDC 'Questionnaire' data from the form and display it in console
+       */
+      function showFHIRSDCQuestionnaire() {
+        if (testForm.questionnaire) {
+          var fhir = getFHIR();
+          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.questionnaire);
+          var fhirString = JSON.stringify(sdc, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      /**
+       * Get 'Questionnaire' data from the form and display it in console
+       */
+      function showFHIRQuestionnaire() {
+        if (testForm.questionnaire) {
+          var sdc = getFHIR().SDC.convertLFormsToQuestionnaire(testForm.questionnaire, true);
+          var fhirString = JSON.stringify(sdc, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      /**
+       * Get HL7 v2 data from the form and display it in console
+       */
+      function showHL7Segments() {
+        if (testForm.lhcFormData) {
+          var hl7Seg = LForms.HL7.toHL7Segments(testForm.lhcFormData);
+          console.log(hl7Seg.replace(/\r/g,'\r\n'));
+        }
+      }
+      
+      /**
+       * Get 'DiagnosticReport' as a "transaction" bundle from the form and display it in console
+       */
+      function showDiagnosticReportBundle1() {
+        if (testForm.lhcFormData) {
+          var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+            getFHIRVersion(), null, {bundleType: "transaction"});
+          var fhirString = JSON.stringify(dr, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      /**
+       * Get 'DiagnosticReport' as a "collection" bundle from the form and display it in console
+       */
+      function showDiagnosticReportBundle2() {
+        if (testForm.lhcFormData) {
+          var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+            getFHIRVersion(), null, {bundleType: "collection"});
+          var fhirString = JSON.stringify(dr, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      /**
+       * Get 'QuestionnaireResponse' data from the form and display it in console
+       */      
+      function showFHIRSDCResponse() {
+        if (testForm.lhcFormData) {
+          var sdc = getFHIR().SDC.convertLFormsToQuestionnaireResponse(testForm.lhcFormData);
+          var fhirString = JSON.stringify(sdc, null, 4);
+          console.log(fhirString);
+        }
+      }
+
+      /**
+       * Load a FHIR data file and a form data file, and merge them
+       */
+      async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
+
+        let formUrl = '/src/test-data/form-data/' + questionnaireFileName;
+        let formJson = await loadJsonFromUrl(formUrl);   
+
+        let fhirResUrl = '/src/test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
+        let fhirJson = await loadJsonFromUrl(fhirResUrl);
+
+        let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                    resType, fhirJson, formJson,
+                    getFHIRVersion());
+        testForm.questionnaire = mergedFormData;
+        
+      };
+
+
+      function testMergeDR2LForms() {
+        loadAndMergeFHIRDataFile('contained-dr.json', 'FHTData.json', 'DiagnosticReport');
+      }
+
+      function testMergeBundleDR2LForms() {
+        loadAndMergeFHIRDataFile('searchset-bundle-dr.json', 'FHTData.json', 'DiagnosticReport');
+      }
+
+      function testMergeDR2LFormsWithDefaultValues() {
+        loadAndMergeFHIRDataFile('with-defaultvalues-contained-dr.json', 'defaultAnswerForm.json', 'DiagnosticReport');
+      }
+
+      function testMergeQR2LForms() {
+        loadAndMergeFHIRDataFile('fhir-sdc-response-ussgfht.json', 'FHTData.json', 'QuestionnaireResponse');
+      }
+          
+      function testMergeQR2LForms_CWE() {
+        loadAndMergeFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', 'allInOne.json', 'QuestionnaireResponse')
+      }
+
+      function testSearchOnFHIRServer() {
+        var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
+        
+        fetch(dataURL, {
+          method: 'GET'
+        })
+        .then(response=> {
+          if (response.ok) {
+            console.log('Succeeded');
+            console.log(response);
+            var fhirString = JSON.stringify(response.data, null, 4);
+            console.log(fhirString);
+          }
+          else {
+            console.log('Failed');
+            console.log(response);
+          }
+        });
+
+      }
+
+      /**
+       * Load a data file from local file system
+       */
+      function loadFile(event) {
+        var reader = new FileReader();
+        var fileAnchor = document.querySelector('#fileAnchor');
+        var questionnaire;
+        reader.onload = function() {
+          var questionnaire = JSON.parse(reader.result);
+          // Reset the field with the filename we can load the same file again if needed.
+          fileAnchor.value = '';
+          testForm.questionnaire = questionnaire;
+          testForm.fhirVersion = getFHIRVersion()
+          // The prepopulateFHIR variable below is a hack for the test code to signal
+          // prepopulation is desired.
+          testForm.prepop = window.prepopulateFHIR;
+          
+        };
+        reader.readAsText(event.target.files[0]); 
+      }
+
+
+    </script>
+
+    <!-- ES2015 files of the LHC-Forms web component -->
+    <script src="/dist/latest/webcomponent/assets/lib/zone.min.js"></script>
+    <script src="/dist/latest/webcomponent/runtime-es5.js"></script>
+    <script src="/dist/latest/webcomponent/polyfills-es5.js"></script>
+    <script src="/dist/latest/webcomponent/scripts.js"></script>
+    <script src="/dist/latest/webcomponent/main-es5.js"></script>
+    <script src="/dist/latest/fhir/lformsFHIRAll.min.js"></script>
+    
+  </body>
+</html>
