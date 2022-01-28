@@ -1,5 +1,3 @@
-import TestUtil from "./test-utils";
-
 // TODO $ not defined in BasePage
 //const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
 //const elementFactory = TestUtil.elementFactory;
