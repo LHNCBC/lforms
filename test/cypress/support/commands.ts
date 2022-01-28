@@ -44,20 +44,20 @@
 
 // unhide the file input element, upload a file and hide the file input element
 Cypress.Commands.add(
-  'uploadFile', 
+  'uploadFile',
   { prevSubject: 'element' },
   (subject, filePathName) => {
-    // Temporarily unhide the file input element.                                                                 
-    cy.get(subject).invoke('attr', 'class', '');                                                                        
-    cy.get(subject).selectFile(filePathName);                                                                               
-    // Re-hide the file input element                                                                             
-    cy.get(subject).invoke('attr', 'class', 'hide');                                                                    
+    // Temporarily unhide the file input element.
+    cy.get(subject).invoke('attr', 'class', '');
+    cy.get(subject).selectFile(filePathName);
+    // Re-hide the file input element
+    cy.get(subject).invoke('attr', 'class', 'hide');
   }
 );
 
 // escape '/' in the element id string and get the element
 Cypress.Commands.add(
-  'byId', 
+  'byId',
   { prevSubject: 'optional' },
   (subject, idSelector) => {
     // escape the / in the id
