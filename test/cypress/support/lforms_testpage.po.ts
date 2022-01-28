@@ -41,7 +41,7 @@ export class TestPage {
   constructor() {
     let that = this;
     for (let f of Object.keys(this.formToIndex)) {
-
+      
       this.LoadForm['open'+f] = (function(index) {
         return function() {
           that.openBaseTestPage();
@@ -110,7 +110,7 @@ export class TestPage {
   };
 
 
-
+  
   WAIT_TIMEOUT_1 = 20000
   WAIT_TIMEOUT_2 = 40000
 
@@ -128,8 +128,8 @@ export class TestPage {
     listFieldID: '/54126-8/54132-6/1/1', // "Were you born a twin?"
     listField: '#/54126-8/54132-6/1/1',
     raceField: '#/54126-8/54134-2/1/1',
-    eyeField: '#/9267-6/1',
-    scoreField: '#/9269-2/1',
+    eyeField: '#/9267-6/1',    
+    scoreField: '#/9269-2/1',    
     // searchResults: this.autoCompHelpers.searchResults,  //TODO, probably not working with cypress
     // searchResult: this.autoCompHelpers.searchResult, //TODO, probably not working with cypress
     // helpers: this.autoCompHelpers,
@@ -180,8 +180,8 @@ export class TestPage {
     searchResults: '#searchResults',
 
     cneTriggerSrc1: '#/54139-1-cnesrc-1/1',
-    dobIfLivingYes: '#/54139-1-cnesrc-1/54124-3/1/1 input',
-    dobIfLivingYesB: '#/54139-1-cnesrc-1/54124-3b/1/1 input',
+    dobIfLivingYes: '#/54139-1-cnesrc-1/54124-3/1/1 input', 
+    dobIfLivingYesB: '#/54139-1-cnesrc-1/54124-3b/1/1 input', 
     ageIfLivingAnswered: '#/54139-1-cnesrc-1/54141-7/1/1',
     deathCauseIfLivingNo: '#/54139-1-cnesrc-1/54112-8/1/1',
     ageDeathIfLivingNotAnswered: '#/54139-1-cnesrc-1/54113-6/1/1',
@@ -203,7 +203,7 @@ export class TestPage {
     q1: '#/q1/1',
     q2: '#/q2/1',
     q3: '#/q3/1',
-    q4: '#/q4/1 input',
+    q4: '#/q4/1 input', 
     q5: '#/q5/1',
     q6: '#/q6/1',
     q7: '#/q7/1',
@@ -264,7 +264,7 @@ export class TestPage {
     unit2_unit: '#unit_/unit2/1'
   }
 
-
+  
   /**
    * Display a form on the test page
    * @param formIndex the form's index in the forms list
@@ -363,7 +363,7 @@ export class TestPage {
    * @param options options for the getFormFHIRData call (the fourth
    * parameter).
    */
-   getQuestionnaireResponse(options) {
+  getQuestionnaireResponse(options) {
     let fhirVersion = cy.get("#fhirVersion").its('value');
     return cy.window().invoke("LForms.Util.getFormFHIRData", 'QuestionnaireResponse', fhirVersion, null, options);
   }
@@ -385,13 +385,13 @@ export class TestPage {
       [(100 + date.getHours()).toString().substr(1),
       (100 + date.getMinutes()).toString().substr(1), "00"].join(':');
   }
-
+  
   /**
    *  Makes the screen reader log visible so that getText() will be
    *  able to read it.
    */
   makeReaderLogVisible() {
-    cy.get("#reader_log").invoke("css", {height: "auto", width: "auto", top: "auto", left: "auto"})
+    cy.get("#reader_log").invoke("css", {height: "auto", width: "auto", top: "auto", left: "auto"});
   }
 
   /**
@@ -401,7 +401,7 @@ export class TestPage {
     cy.get("#reader_log").invoke("html", "")
     this.makeReaderLogVisible();
   }
-
+  
 
 }
 
