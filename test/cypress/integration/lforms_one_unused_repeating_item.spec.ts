@@ -1,5 +1,4 @@
 import { TestPage } from "../support/lforms_testpage.po";
-import TestUtil from "../support/test-utils";
 let LForms: any = (global as any).LForms;
 let window: any = global as any;
 

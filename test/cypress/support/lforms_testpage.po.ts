@@ -1,7 +1,4 @@
-import { verify } from "crypto";
-import config from "../../../cypress.json";
 import TestUtil from "./test-utils";
-
 
 // TODO $ not defined in BasePage
 //const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
@@ -125,23 +122,9 @@ export class TestPage {
   readerLog = '#reader_log';
   readerLogEntries = '#reader_log p';
 
-  // TODO rewrite in cypress
-  // expectReaderLogEntries(expectedEntries) {
-  //   let self = this;
-  //   browser.wait(function() {
-  //     return self.readerLogEntries.getText().then((textArray) => {
-  //       var rtn = self.arraysEqual(textArray, expectedEntries);
-  //       if (!rtn) {
-  //         console.log("Screen reader log test:  expecting +"+
-  //           JSON.stringify(expectedEntries)+ " but got " +
-  //           JSON.stringify(textArray) +", retrying until timeout");
-  //         // Sleep a bit and try again.
-  //         rtn = browser.sleep(100).then(()=>false);
-  //       }
-  //       return rtn;
-  //     });
-  //   }, 5000);
-  // }
+  expectReaderLogEntries(expectedEntries) {
+    cy.get(this.readerLogEntries).should("eql", expectedEntries) // not 'equal'
+  }
 
   Autocomp = {
     listFieldID: '/54126-8/54132-6/1/1', // "Were you born a twin?"
@@ -352,19 +335,19 @@ export class TestPage {
    * @param fhirVersion (optional) the version of FHIR to use.
    */
   // TODO rewrite in cypress when data path changes
-  // getTestDataPathName(filepath, fhirVersion=null) {
-  //   let pathParts = [__dirname, '../../../src/test-data/e2e']
-  //   if (fhirVersion) {
-  //     this.setFHIRVersion(fhirVersion);
-  //     pathParts.push(fhirVersion);
-  //   }
-  //   pathParts.push(filepath);
-  //   return require('path').join(...pathParts);
-  // }
+  getTestDataPathName(filepath, fhirVersion=null) {
+    let pathParts = [__dirname, '../../src/test-data/e2e']
+    if (fhirVersion) {
+      this.setFHIRVersion(fhirVersion);
+      pathParts.push(fhirVersion);
+    }
+    pathParts.push(filepath);
+    return require('path').join(...pathParts);
+  }
 
 
   /**
-   *  Returns a JSON form definition  file from the test/data
+   *  Returns a JSON form definition file from the test/data
    *  directory.
    * @param filepath the path to the form definition file, relative to
    *  test/data/fhirVersion (or just test/data if fhirVersion is not
@@ -372,26 +355,54 @@ export class TestPage {
    * @param fhirVersion (optional) the version of FHIR to use.
    */
   // TODO rewrite in cypress when data path changes
-  // getTestData(filepath, fhirVersion=null) {
-  //   let testFile = this.getTestDataPathName(filepath, fhirVersion);
-  //   return require('fs').readFileSync(testFile, 'utf8');
-  // }
-
-
-
+  getTestData(filepath, fhirVersion=null) {
+    let testFile = this.getTestDataPathName(filepath, fhirVersion);
+    return require('fs').readFileSync(testFile, 'utf8');
+  }
 
   /**
    *  Returns the QuestionnaireResponse (as an object) for the form on the page.
    * @param options options for the getFormFHIRData call (the fourth
    * parameter).
    */
-  // TODO rewrite 
-  //  getQuestionnaireResponse(options) {
-  //   return browser.executeScript("return LForms.Util.getFormFHIRData("+
-  //    "'QuestionnaireResponse', getFHIRVersion(), null, arguments[0])", options);
-  // }
+   getQuestionnaireResponse(options) {
+    let fhirVersion = cy.get("#fhirVersion").its('value');
+    return cy.window().invoke("LForms.Util.getFormFHIRData", 'QuestionnaireResponse', fhirVersion, null, options);
+  }
 
+ /**
+   * Get the datetime string in DTM picker's default format for the current time with the given offset.
+   * @param offsetMS the offset from the current time, in milliseconds, optional.
+   *        Use a negative offset for past time, positive for future, zero or unspecified for "current"
+   * @return the datetime string in the DTM datetime picker's default format (MM/DD/YYYY HH:MM).
+   */
+  getCurrentDTMString(offsetMS) {
+    offsetMS = offsetMS || 0;
+    var date = new Date(new Date().getTime() + offsetMS);
+    return [
+      (101 + date.getMonth()).toString().substr(1),
+      (100 + date.getDate()).toString().substr(1),
+      (10000 + date.getFullYear()).toString().substr(1)].join('/')
+      + ' ' +
+      [(100 + date.getHours()).toString().substr(1),
+      (100 + date.getMinutes()).toString().substr(1), "00"].join(':');
+  }
+  
+  /**
+   *  Makes the screen reader log visible so that getText() will be
+   *  able to read it.
+   */
+  makeReaderLogVisible() {
+    cy.get("#reader_log").invoke("css", {height: "auto", width: "auto", top: "auto", left: "auto"})
+  }
 
+  /**
+   * Reset reader log
+   */
+  resetReaderLog() {
+    cy.get("#reader_log").invoke("html", "")
+    this.makeReaderLogVisible();
+  }
   
 
 }
