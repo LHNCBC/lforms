@@ -363,7 +363,7 @@ export class TestPage {
    * @param options options for the getFormFHIRData call (the fourth
    * parameter).
    */
-   getQuestionnaireResponse(options) {
+  getQuestionnaireResponse(options) {
     let fhirVersion = cy.get("#fhirVersion").its('value');
     return cy.window().invoke("LForms.Util.getFormFHIRData", 'QuestionnaireResponse', fhirVersion, null, options);
   }

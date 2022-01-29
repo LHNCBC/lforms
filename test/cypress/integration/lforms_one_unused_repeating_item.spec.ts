@@ -1,7 +1,7 @@
 import { TestPage } from "../support/lforms_testpage.po.js";
 
 describe('Unused repeating item/section control', function() {
-  let tp: TestPage = new TestPage();
+  let tp: any = new TestPage();
   let ff: any = tp.USSGFHTVertical;
 
   describe('on repeating items', function() {
