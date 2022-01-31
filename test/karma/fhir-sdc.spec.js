@@ -1037,8 +1037,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
               convertedLfData = new LForms.LFormsData(convertedLfData);
               var reConvertedFhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, convertedLfData);
+              // reConvertedFhirQ has an "extension": [], when it is converted form a questionnaire.
+              assert.equal(reConvertedFhirQ.extension.length, 0)
+              delete reConvertedFhirQ.extension;
               assert.deepEqual(reConvertedFhirQ, fhirQ);
-
               assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
               assert.equal(convertedLfData.code, '54127-6N');
               assert.equal(convertedLfData.codeSystem, 'LOINC');
@@ -1353,7 +1355,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
 
 
-        // export -xl
+        // export
         describe('LForms data to Questionnaire conversion', function() {
 
           it('should convert to SDC Questionnaire with extensions', function(done) {

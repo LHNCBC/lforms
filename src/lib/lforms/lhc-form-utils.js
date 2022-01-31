@@ -70,19 +70,15 @@ const FormUtils = {
         eleLhcForm.addEventListener('onFormReady', function(e){
           resolve()
         });        
+        eleLhcForm.addEventListener('onError', function(e){
+          reject(e.detail)
+        });        
       }
       catch(e) {
         reject(e)
       }
-    }).catch(function(e) {
-      var errMsg = (e instanceof Error) ? e.message : e.toString();
-      const divMessage = document.createElement("div");    
-      divMessage.innerHTML = '<div id=lformsErrors style="color: red"><b>Unable to '+
-      'display the form, due to the following error:</b><p id=lformsErrorContent>' + errMsg + '</p>';
-      formContainer.appendChild(divMessage)
-      throw e;
-    });
-
+    })
+    
     return rtnPromise;
   },
 
@@ -282,13 +278,12 @@ const FormUtils = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData.hasSavedData = true;
           break;
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
+      formData.hasSavedData = true; // will be used to determine whether to update or save
     }
     return formData;
   },

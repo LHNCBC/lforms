@@ -11,8 +11,6 @@
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
 
-var LForms = require('../lforms-index');
-
 var dr = {
 
   // a prefix for references to Observation resources

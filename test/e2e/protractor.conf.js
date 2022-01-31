@@ -34,7 +34,7 @@ exports.config = {
     './spec/R4/prepop.spec.ts',
     './spec/R4/variables.spec.ts',
     './spec/addFormToPage.spec.ts', 
-    './spec/lforms_one_unused_repeating_item.spec.ts',
+//    './spec/lforms_one_unused_repeating_item.spec.ts',
     './spec/lforms_tree.spec.ts',
     './spec/screen_reader_log.spec.ts',
     './spec/lforms_visual.spec.ts', // DT, DTM and TM input field's background-color is a little off

@@ -3,6 +3,12 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [30.0.0-beta.3] 2022-01-25
+### Added
+- Added an onError event, that returns an error when FHIR resources 
+  fail to load, or when there is an exception during the initialization.
+- Added cypress for e2e tests.
+
 ## [30.0.0-beta.2] 2022-01-10
 ### Changed
 - Removed locale files from moment.js

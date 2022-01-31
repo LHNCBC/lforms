@@ -12,6 +12,11 @@
 # Only exists if Bazel was run
 /bazel-out
 
+# cypress output
+/test/cypress/downloads
+/test/cypress/screenshots
+/test/cypress/videos
+
 # dependencies
 /node_modules
 

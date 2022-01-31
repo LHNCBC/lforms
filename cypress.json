@@ -1,0 +1,8 @@
+{
+  "integrationFolder": "test/cypress/integration",
+  "supportFile": "test/cypress/support/index.ts",
+  "videosFolder": "test/cypress/videos",
+  "screenshotsFolder": "test/cypress/screenshots",
+  "pluginsFile": "test/cypress/plugins/index.ts",
+  "fixturesFolder": "test/cypress/fixtures"
+}

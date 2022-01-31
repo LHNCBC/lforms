@@ -7,11 +7,10 @@
   <title>LForms Test Page</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!-- compiled css file for the web comoponet of LHC-Forms -->
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="/dist/latest/webcomponent/styles.css">
   <style>
     .btn {
       display: inline-block;
@@ -134,7 +133,7 @@
       ];
 
 
-      testForm = document.getElementById('test-form');
+      const testForm = document.getElementById('test-form');
 
       testForm.addEventListener('onFormReady', e => {
         console.log("onFormReady")
@@ -156,7 +155,7 @@
           let option = document.createElement("option");
           option.text = form.text;
           option.value = JSON.stringify({
-            url: "/test-data/form-data/" + form.name + ".json", 
+            url: "/src/test-data/form-data/" + form.name + ".json", 
             tempOptions: form.tempOptions,
             formOptions: form.formOptions})          
           formList.add(option);
@@ -332,10 +331,10 @@
        */
       async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
 
-        let formUrl = 'test-data/form-data/' + questionnaireFileName;
+        let formUrl = '/src/test-data/form-data/' + questionnaireFileName;
         let formJson = await loadJsonFromUrl(formUrl);   
 
-        let fhirResUrl = 'test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
+        let fhirResUrl = '/src/test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
 
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
@@ -411,17 +410,13 @@
 
     </script>
 
-<!-- zone.js is not included in LHC-Forms web component -->
-    <script src="/assets/lib/zone.min.js"></script>
     <!-- ES2015 files of the LHC-Forms web component -->
-    <script src="../runtime.js"></script>
-    <script src="../polyfills.js"></script>
-    <script src="../scripts.js" ></script>
-    <script src="../vendor.js"></script>
-    <script src="../main.js"></script>
+    <script src="/dist/latest/webcomponent/assets/lib/zone.min.js"></script>
+    <script src="/dist/latest/webcomponent/runtime-es5.js"></script>
+    <script src="/dist/latest/webcomponent/polyfills-es5.js"></script>
+    <script src="/dist/latest/webcomponent/scripts.js"></script>
+    <script src="/dist/latest/webcomponent/main-es5.js"></script>
+    <script src="/dist/latest/fhir/lformsFHIRAll.min.js"></script>
     
-    <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
-    <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
-
   </body>
 </html>
