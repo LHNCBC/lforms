@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "30.0.0-beta.4",
+  "version": "30.0.0-beta.3",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -76,7 +76,6 @@
     "codelyzer": "^6.0.0",
     "concat": "^1.0.3",
     "cypress": "^9.3.1",
-    "cypress-file-upload": "^5.0.8",
     "fs-extra": "^9.0.0",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",

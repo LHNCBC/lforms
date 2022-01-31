@@ -41,3 +41,58 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+// unhide the file input element, upload a file and hide the file input element
+Cypress.Commands.add(
+  'uploadFile',
+  { prevSubject: 'element' },
+  (subject, filePathName) => {
+    // Temporarily unhide the file input element.
+    cy.get(subject).invoke('attr', 'class', '');
+    cy.get(subject).selectFile(filePathName);
+    // Re-hide the file input element
+    cy.get(subject).invoke('attr', 'class', 'hide');
+  }
+);
+
+// Get one or more DOM elements by element's id where '/' is escaped
+// and "#" is added.
+Cypress.Commands.add(
+  'byId',
+  { prevSubject: 'optional' },
+  (subject, idSelector) => {
+    // escape the / in the id
+    if (subject) {
+      return cy.wrap(subject).get("#" + idSelector.replace(/\//g,"\\/"));
+    }
+    else {
+      return cy.get("#" + idSelector.replace(/\//g,"\\/"));
+    }
+  }
+);
+
+// Get one or more DOM elements by CSS selector where '/' is escaped.
+Cypress.Commands.add(
+  'byCss',
+  { prevSubject: 'optional' },
+  (subject, idSelector) => {
+    // escape the / in the id
+    if (subject) {
+      return cy.wrap(subject).get(idSelector.replace(/\//g,"\\/"));
+    }
+    else {
+      return cy.get(idSelector.replace(/\//g,"\\/"));
+    }
+  }
+);
+
+// typing tab key is not support in cypress
+// this solution is not reliable https://github.com/cypress-io/cypress/issues/299
+Cypress.Commands.add('typeTab', (shiftKey, ctrlKey) => {
+  cy.focused().trigger('keydown', {
+      keyCode: 9,
+      which: 9,
+      shiftKey: shiftKey,
+      ctrlKey: ctrlKey
+  });
+});
