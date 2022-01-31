@@ -38,7 +38,7 @@ export function loadFromTestData(filepath, fhirVersion=null) {
 function getTestDataPathName(filepath, fhirVersion=null) {
   let pathParts = [__dirname, '../../../test/data']
   if (fhirVersion) {
-    setFHIRVersion(fhirVersion);
+//    setFHIRVersion(fhirVersion);
     pathParts.push(fhirVersion);
   }
   pathParts.push(filepath);
