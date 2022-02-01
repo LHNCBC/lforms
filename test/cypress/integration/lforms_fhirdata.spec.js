@@ -5,8 +5,8 @@ import * as util from "./util";
 //import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 //import { protractor } from 'protractor/built/ptor';
 import * as FHIRSupport from "../../../src/fhir/versions.js";
-import {facadeExpect as expect, protractor, by, element} from "./protractorFacade.js";
-import {TestUtil} from "./testUtilFacade.js";
+import {facadeExpect as expect, protractor, by, element} from "../support/protractorFacade.js";
+import {TestUtil} from "../support/testUtilFacade.js";
 import {TestPage} from '../support/lforms_testpage.po.js';
 
 delete FHIRSupport.default; // not sure why that is added now
@@ -436,7 +436,6 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               });
             });
           });
-});});/*
 
           it('should get a SDC Questionnaire data from a form', function() {
 
@@ -446,7 +445,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
-              var assertFHTQuestionnaire = require('./'+fhirVersion+'/assert-sdc-questionnaire').assertFHTQuestionnaire;
+              var assertFHTQuestionnaire = require('../support/'+fhirVersion+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
               assertFHTQuestionnaire(fhirData);
             });
           });
@@ -465,38 +464,36 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             ff.gender.click();
             // pick the 1st item
             ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.gender.sendKeys(protractor.Key.TAB);
+            ff.gender.sendKeys(protractor.Key.ENTER);
             // CWE, multiple answers
             ff.race.click();
             // pick the first 2 items
             ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.race.sendKeys(protractor.Key.TAB);
-            ff.race.click();
-            ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.race.sendKeys(protractor.Key.TAB);
+            ff.race.sendKeys(protractor.Key.ENTER);
+            ff.race.sendKeys(protractor.Key.ENTER);
             // REAL
             TestUtil.sendKeys(ff.height, "70");
             TestUtil.sendKeys(ff.weight, "170");
             // repeating sub panel
             ff.disease.click();
             ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.disease.sendKeys(protractor.Key.TAB);
+            ff.disease.sendKeys(protractor.Key.ENTER);
             ff.ageAtDiag.click();
             ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.ageAtDiag.sendKeys(protractor.Key.TAB);
+            ff.ageAtDiag.sendKeys(protractor.Key.ENTER);
 
             TestUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
             ff.disease2.click();
             ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
             ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.disease2.sendKeys(protractor.Key.TAB);
+            ff.disease2.sendKeys(protractor.Key.ENTER);
             ff.ageAtDiag2.click();
             ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
+            ff.ageAtDiag2.sendKeys(protractor.Key.ENTER);
 
 
             getFHIRResource("QuestionnaireResponse", fhirVersion).
@@ -599,6 +596,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
             });
           });
+});});/*
 
           it('should get a DiagnosticReport data from a form without questions in header', function() {
 

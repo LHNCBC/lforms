@@ -52,7 +52,8 @@ export function facadeExpect(actualValue) {
           cypressExpect(actualValue).to.not.be.null;
         else
           cypressExpect(actualValue).to.be.null;
-      }
+      },
+      toBeFalsy: ()=>cypressExpect(!actualValue).to.be.true
     }
   }
   const rtn = assertions();
