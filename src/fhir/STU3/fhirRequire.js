@@ -13,7 +13,6 @@ import dr from '../diagnostic-report.js';
 // dr object.
 console.log(dr);
 const drCopy = Object.assign({}, dr);
-console.log(drCopy);
 fhir.DiagnosticReport = drCopy;
 import commonExport from './export.js';
 fhir.DiagnosticReport._commonExport = commonExport;

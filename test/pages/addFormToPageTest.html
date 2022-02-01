@@ -98,7 +98,7 @@
         var fileAnchor = document.querySelector('#fileAnchor');
         var questionnaire;
         reader.onload = function() {
-          var questionnaire = JSON.parse(reader.result);          
+          var questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
 
@@ -110,6 +110,10 @@
               console.log("Form Added with an error")
               document.getElementById("loadMsg").innerHTML = e;
             })
+            $('#formContainer wc-lhc-form')[0].addEventListener('onFormReady', ()=>{
+              // Cause the event to bubble, since this element was just created.
+              $('#formContainer')[0].dispatchEvent(new Event('onFormReady'));
+            });
           }
           catch(e) {
             console.log("Form Added with an error")
@@ -117,7 +121,7 @@
           }
 
         };
-        reader.readAsText(event.target.files[0]); 
+        reader.readAsText(event.target.files[0]);
       }
     </script>
   </body>

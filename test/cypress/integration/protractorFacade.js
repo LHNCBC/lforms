@@ -31,7 +31,7 @@ export function facadeExpect(actualValue) {
       }
     };
     function toEqual(expectedValue) {
-      if (actualValue?.should) {
+      if (actualValue?.should) { // a promise from a cypress command
         if (isNot)
           actualValue.should('not.deep.equal', expectedValue);
         else
@@ -68,13 +68,11 @@ export const by = {
 }
 
 export function element(locator) {
-  let elem; // a reference to the Cypress element
-
   /**
-   *  Gets and caches the element referred to by locator.
+   *  Gets the element referred to by locator.
    */
   function getElem() {
-    return elem ||= cy.get(locator);
+    return cy.get(locator);
   }
 
   function type(textStr) {

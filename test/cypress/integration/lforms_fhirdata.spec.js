@@ -263,7 +263,6 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               });
             });
           });
-});});/*
 
           it('should get a DiagnosticReport (Bundle) data from a form', function() {
 
@@ -271,7 +270,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
 
             // #1 all fields are empty
             getFHIRResource("DiagnosticReport", fhirVersion,
-                {bundleType: "collection"}).then(function(callbackData:any) {
+                {bundleType: "collection"}).then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("Bundle");
@@ -290,38 +289,36 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               ff.gender.click();
               // pick the 1st item
               ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.gender.sendKeys(protractor.Key.TAB);
+              ff.gender.sendKeys(protractor.Key.ENTER);
               // CWE, multiple answers
               ff.race.click();
               // pick the first 2 items
               ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.race.sendKeys(protractor.Key.TAB);
-              ff.race.click();
-              ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.race.sendKeys(protractor.Key.TAB);
+              ff.race.sendKeys(protractor.Key.ENTER);
+              ff.race.sendKeys(protractor.Key.ENTER);
               // REAL
               TestUtil.sendKeys(ff.height, "70");
               TestUtil.sendKeys(ff.weight, "170");
               // repeating sub panel
               ff.disease.click();
               ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.disease.sendKeys(protractor.Key.TAB);
+              ff.disease.sendKeys(protractor.Key.ENTER);
               ff.ageAtDiag.click();
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.ageAtDiag.sendKeys(protractor.Key.TAB);
+              ff.ageAtDiag.sendKeys(protractor.Key.ENTER);
 
               TestUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.disease2.sendKeys(protractor.Key.TAB);
+              ff.disease2.sendKeys(protractor.Key.ENTER);
               ff.ageAtDiag2.click();
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
+              ff.ageAtDiag2.sendKeys(protractor.Key.ENTER);
 
               // // remove the default values on the 2 items
               // expect(ff.related.getAttribute('value')).toEqual('No');
@@ -333,7 +330,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               // expect(ff.mockedHeight.getAttribute('value')).toEqual('');
 
               getFHIRResource("DiagnosticReport", fhirVersion,
-                  {bundleType: "collection"}).then(function(callbackData:any) {
+                  {bundleType: "collection"}).then(function(callbackData) {
                 let [error, fhirData] = callbackData;
                 expect(error).toBeNull();
                 expect(fhirData.resourceType).toBe("Bundle");
@@ -439,12 +436,13 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               });
             });
           });
+});});/*
 
           it('should get a SDC Questionnaire data from a form', function() {
 
             tp.LoadForm.openUSSGFHTVertical();
             getFHIRResource("Questionnaire", fhirVersion,
-                ).then(function(callbackData:any) {
+                ).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -502,7 +500,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
 
 
             getFHIRResource("QuestionnaireResponse", fhirVersion).
-                then(function(callbackData:any) {
+                then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
@@ -614,7 +612,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             drugNameField.sendKeys(protractor.Key.TAB);
 
             getFHIRResource("DiagnosticReport", fhirVersion,
-                ).then(function(callbackData:any) {
+                ).then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.result.length).toBe(1);
@@ -786,7 +784,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               var callback = arguments[arguments.length - 1];
               var fData = LForms.Util.getUserData(null, false, true);
               callback(fData);
-            }).then(function (formData:any) {
+            }).then(function (formData) {
 
               expect(formData.itemsData.length).toBe(7);
               expect(formData.itemsData[0].value).toBe(true);
@@ -864,7 +862,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
 
         it('should put the patient ID into the QuestionnaireResponse', function() {
           getFHIRResource("QuestionnaireResponse", fhirVersion, {subject: patientRes}).
-              then(function(callbackData:any) {
+              then(function(callbackData) {
             let [error, fhirData] = callbackData;
             expect(error).toBeNull();
             expect(fhirData.resourceType).toBe("QuestionnaireResponse");
@@ -875,7 +873,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
 
         it('should put the patient ID into the DiagnosticReport', function() {
           getFHIRResource("DiagnosticReport", fhirVersion, {subject: patientRes}).
-              then(function(callbackData:any) {
+              then(function(callbackData) {
             let [error, fhirData] = callbackData;
             expect(error).toBeNull();
             expect(fhirData.resourceType).toBe("DiagnosticReport");
@@ -975,7 +973,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               var callback = arguments[arguments.length - 1];
               var fData = LForms.Util.getUserData(null, false, true);
               callback(fData);
-            }).then(function (formData:any) {
+            }).then(function (formData) {
 
               expect(formData.itemsData.length).toBe(11);
               expect(formData.itemsData[0].value).toBe(true);
@@ -1031,7 +1029,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               var callback = arguments[arguments.length - 1];
               var fData = LForms.Util.getUserData(null, false, true);
               callback(fData);
-            }).then(function (formData:any) {
+            }).then(function (formData) {
 
               expect(formData.itemsData.length).toBe(9);
               expect(formData.itemsData[0].value).toBe(true);
@@ -1052,7 +1050,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
         it('should keep the initial[x] values when converted back to Questionnaire', function() {
           if (fhirVersion === "R4") {
             getFHIRResource("Questionnaire", fhirVersion).
-            then(function(callbackData:any) {
+            then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               // boolean
@@ -1155,7 +1153,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
 
           if (fhirVersion === "STU3") {
             getFHIRResource("Questionnaire", fhirVersion).
-            then(function(callbackData:any) {
+            then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               // boolean
@@ -1195,7 +1193,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             tp.loadFromTestData('question-under-question.R4.json', fhirVersion);
 
             let childItem = element(by.id('q2/1/1'));
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -1204,7 +1202,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             });
 
             TestUtil.sendKeys(childItem, '123');
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -1221,7 +1219,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
 
             let childItem = element(by.id('q2/1/1/1'));
 
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -1230,7 +1228,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             });
 
             TestUtil.sendKeys(childItem, '123');
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();

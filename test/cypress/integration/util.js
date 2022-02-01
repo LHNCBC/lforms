@@ -16,6 +16,12 @@ export function visitTestPage() {
  */
 export function loadFromTestData(filepath, fhirVersion=null) {
   let testFile = getTestDataPathName(filepath, fhirVersion);
+
+  // Listen for the onFormReadyEvent
+  let formReady = false;
+  //cy.get('#formContainer').then((fc)=>invoke('addEventListener', 'onFormReady', ()=>formReady=true);
+  cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onFormReady', ()=>formReady=true));
+
   // Temporarily unhide the file input element.
   let fileInput = cy.get('#fileAnchor');
   fileInput.invoke('attr', 'class', '');
@@ -23,7 +29,17 @@ export function loadFromTestData(filepath, fhirVersion=null) {
   // Re-hide the file input element
   fileInput.invoke('attr', 'class', 'hide');
   // wait for the form to render
-  cy.get('.lhc-form-title', {timeout: 10000}).should('be.visible');
+  cy.get('.lhc-form-title', {timeout: 10000}).should('be.visible').then(()=>{
+    return new Cypress.Promise((resolve) => {
+      function checkFormReady() {
+        if (formReady)
+          resolve();
+        else
+          setTimeout(checkFormReady, 50);
+      }
+      setTimeout(checkFormReady, 50);
+    });
+  });
 }
 
 
