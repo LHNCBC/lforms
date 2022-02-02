@@ -68,12 +68,22 @@ export const by = {
   css: (cssLocator) => cssLocator.replaceAll('/', '\\/')
 }
 
+
+/**
+ *  Mimics protractor's element function.
+ * @param locator usually a CSS string that can be passed to cy.get(), but it
+ *  can also be the result of a cy.get().
+ */
 export function element(locator) {
+  let cyElem;
+  if (locator['should']) // a cypress "Chainer"
+    cyElem = locator;
+
   /**
    *  Gets the element referred to by locator.
    */
   function getElem() {
-    return cy.get(locator);
+    return cyElem || cy.get(locator);
   }
 
   function type(textStr) {
@@ -85,12 +95,19 @@ export function element(locator) {
     getAttribute: function (attrName) {
       return getElem().invoke('attr', attrName);
     },
+    getText: ()=>getElem().invoke('text'),
     type: type,
     sendKeys: type,
     element: function(subLocator) {
       getElem().get(subLocator);
     },
-    click: ()=>getElem().click()
+    click: ()=>getElem().click(),
+  }
+}
+
+element.all = function (allLocator) {
+  return {
+    get: (index) => element(cy.get(allLocator).eq(index))
   }
 }
 

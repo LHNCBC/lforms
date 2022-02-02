@@ -1,6 +1,6 @@
 // Tests FHIR output and import of FHIR resources.
 //import { TestPage } from "./lforms_testpage.po";
-//import { RxTerms } from "./rxterms.po";
+import { RxTerms } from "../support/rxterms.po";
 import * as util from "./util";
 //import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 //import { protractor } from 'protractor/built/ptor';
@@ -11,9 +11,8 @@ import {TestPage} from '../support/lforms_testpage.po.js';
 
 delete FHIRSupport.default; // not sure why that is added now
 let fhirVersions = Object.keys(FHIRSupport);
-//let EC = ExpectedConditions;
 
-//let rxterms = new RxTerms();
+let rxterms = new RxTerms();
 let tp = new TestPage();
 let ff = {}; // element from tp.USSGFHTVertical;
 for (let k of Object.keys(tp.USSGFHTVertical)) {
@@ -48,7 +47,7 @@ function getFHIRResource(resourceType, fhirVersion, options=null) {
 //for (var i=0, len=fhirVersions.length; i<len; ++i) {
 for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
   (function (fhirVersion) {
-    describe.only(fhirVersion, function() {
+    describe(fhirVersion, function() {
       describe('rendering-style extension', function() {
         it('should work on Questionnaire.title, item.prefix, and item.text', function() {
           cy.visit('test/pages/addFormToPageTest.html');
@@ -596,7 +595,6 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
             });
           });
-});});/*
 
           it('should get a DiagnosticReport data from a form without questions in header', function() {
 
@@ -605,9 +603,9 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             var drugNameField = rxterms.drugName;
             drugNameField.click();
             TestUtil.sendKeys(drugNameField, 'aspercreme');
-            browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
+            cy.get('#searchResults').should('be.visible');
             drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
-            drugNameField.sendKeys(protractor.Key.TAB);
+            drugNameField.sendKeys(protractor.Key.ENTER);
 
             getFHIRResource("DiagnosticReport", fhirVersion,
                 ).then(function(callbackData) {
@@ -638,8 +636,9 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             element(by.id("merge-dr")).click();
             //browser.waitForAngular();
 
-            browser.wait(EC.visibilityOf(ff.name), 2000);
-
+            ff.name.getCyElem().should('have.value', 'name 1');
+            ff.name.getCyElem().invoke('val').then((v)=>console.log('value is ' +v));
+            ff.name.getCyElem().invoke('val').should('equal', 'name 1');
             expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
             expect(TestUtil.getAttribute(ff.gender,'value')).toBe("Male");
@@ -658,20 +657,14 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             expect(TestUtil.getAttribute(ff.ageAtDiag2,'value')).toBe("Infancy");
           });
 
-          it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
+          it.only('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
             tp.openBaseTestPage();
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-bundle-dr")).click();
 
-            // sometimes ff.name is "not attached to the page document"
-            var name = element(by.id('/54126-8/54125-0/1/1'));
-            browser.wait(function() {
-              return name.isPresent();
-            }, tp.WAIT_TIMEOUT_1);
-
-            expect(TestUtil.getAttribute(name,'value')).toBe("12");
+            expect(TestUtil.getAttribute(ff.name,'value')).toBe("12");
             expect(TestUtil.getAttribute(ff.gender,'value')).toBe("Male");
             expect(TestUtil.getAttribute(ff.dob,'value')).toBe("01/10/2018");
 
@@ -683,6 +676,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             expect(TestUtil.getAttribute(ff.ageAtDiag,'value')).toBe("Newborn");
           });
 
+});});/*
 
           it('should merge all DiagnosticReport (contained) data back into the form without setting default values', function() {
 

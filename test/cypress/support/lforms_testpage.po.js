@@ -1,5 +1,5 @@
 // TODO $ not defined in BasePage
-//const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
+const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
 //const elementFactory = TestUtil.elementFactory;
 
 export class TestPage {
