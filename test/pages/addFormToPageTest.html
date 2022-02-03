@@ -108,15 +108,21 @@
             })
             .catch(function(e) {
               console.log("Form Added with an error")
+              console.error(e);
               document.getElementById("loadMsg").innerHTML = e;
             })
             $('#formContainer wc-lhc-form')[0].addEventListener('onFormReady', ()=>{
               // Cause the event to bubble, since this element was just created.
               $('#formContainer')[0].dispatchEvent(new Event('onFormReady'));
             });
+            $('#formContainer wc-lhc-form')[0].addEventListener('onError', (e)=>{
+              // Cause the event to bubble, since this element was just created.
+              $('#formContainer')[0].dispatchEvent(new Event('onError', e));
+            });
           }
           catch(e) {
             console.log("Form Added with an error")
+            console.error(e);
             document.getElementById("loadMsg").innerHTML = e;
           }
 

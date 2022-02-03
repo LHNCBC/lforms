@@ -1,5 +1,5 @@
 // TODO $ not defined in BasePage
-const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
+//const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
 //const elementFactory = TestUtil.elementFactory;
 
 export class TestPage {
@@ -130,7 +130,7 @@ export class TestPage {
     raceField: '#/54126-8/54134-2/1/1',
     eyeField: '#/9267-6/1',
     scoreField: '#/9269-2/1',
-    // searchResults: this.autoCompHelpers.searchResults,  //TODO, probably not working with cypress
+    searchResults: '#searchResults'
     // searchResult: this.autoCompHelpers.searchResult, //TODO, probably not working with cypress
     // helpers: this.autoCompHelpers,
     // TODO rewrite in cypress

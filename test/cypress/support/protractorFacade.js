@@ -1,16 +1,15 @@
-/*
-export browser = {
+import {TestUtil} from "../support/testUtilFacade.js";
+
+export const browser = {
   driver: {
     executeAsyncScript: function(script, ...args) {
-      cy.window().then(win=>{
-        function
-        win.eval('('+script+').apply(null,'+JSON.stringify(args)+')');:w
-
+      return cy.window().then(win=>{
+        return script(...args)
       });
     }
   }
 };
-*/
+
 
 // Additional expect functions
 const cypressExpect = expect;
@@ -64,26 +63,24 @@ facadeExpect.prototype = cypressExpect;
 
 
 export const by = {
-  id: (id) => '#'+id.replaceAll('/', '\\/'),
-  css: (cssLocator) => cssLocator.replaceAll('/', '\\/')
+  //id: (id) => '#'+id.replaceAll('/', '\\/'),
+  //css: (cssLocator) => cssLocator.replaceAll('/', '\\/')
+  id: (id) => '#'+CSS.escape(id),
+  css: (cssLocator) => CSS.escape(cssLocator)
 }
 
 
 /**
  *  Mimics protractor's element function.
- * @param locator usually a CSS string that can be passed to cy.get(), but it
- *  can also be the result of a cy.get().
+ * @param locator a CSS string that can be passed to cy.get()
  */
 export function element(locator) {
-  let cyElem;
-  if (locator['should']) // a cypress "Chainer"
-    cyElem = locator;
-
   /**
    *  Gets the element referred to by locator.
    */
   function getElem() {
-    return cyElem || cy.get(locator);
+    // element.all below passes in a cypress element instead of a CSS locator.
+    return locator.should ? locator : cy.get(locator);
   }
 
   function type(textStr) {
@@ -98,15 +95,19 @@ export function element(locator) {
     getText: ()=>getElem().invoke('text'),
     type: type,
     sendKeys: type,
-    element: function(subLocator) {
-      getElem().get(subLocator);
-    },
-    click: ()=>getElem().click(),
+    element: (subLocator)=>element(locator + ' ' + subLocator),
+    isSelected: ()=>getElem().invoke('val'),
+    click: ()=>getElem().click()
   }
 }
 
 element.all = function (allLocator) {
   return {
+    /**
+     *  Returns an "element" for the DOM element at the given index of the
+     *  results of allLocator.  Because of the way cypress works, this must be
+     *  used in the same statement or it might be invalid.
+     */
     get: (index) => element(cy.get(allLocator).eq(index))
   }
 }

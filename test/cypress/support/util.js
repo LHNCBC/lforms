@@ -19,8 +19,10 @@ export function loadFromTestData(filepath, fhirVersion=null) {
 
   // Listen for the onFormReadyEvent
   let formReady = false;
-  //cy.get('#formContainer').then((fc)=>invoke('addEventListener', 'onFormReady', ()=>formReady=true);
   cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onFormReady', ()=>formReady=true));
+  cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onError', ()=>formReady=true));
+//  cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onFormReady', ()=>{console.log("Got onFormReady"); formReady=true}));
+//  cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onError', ()=>{console.log("Got onError"); formReady=true}));
 
   // Temporarily unhide the file input element.
   let fileInput = cy.get('#fileAnchor');
@@ -29,7 +31,10 @@ export function loadFromTestData(filepath, fhirVersion=null) {
   // Re-hide the file input element
   fileInput.invoke('attr', 'class', 'hide');
   // wait for the form to render
-  cy.get('.lhc-form-title', {timeout: 10000}).should('be.visible').then(()=>{
+  const loadTimeout = 10000;
+  cy.get('.lhc-form-title', {timeout: loadTimeout}).should('be.visible').then(
+    {timeout: loadTimeout}, ()=>{
+
     return new Cypress.Promise((resolve) => {
       function checkFormReady() {
         if (formReady)

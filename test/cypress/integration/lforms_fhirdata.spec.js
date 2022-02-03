@@ -1,11 +1,11 @@
 // Tests FHIR output and import of FHIR resources.
 //import { TestPage } from "./lforms_testpage.po";
 import { RxTerms } from "../support/rxterms.po";
-import * as util from "./util";
+import * as util from "../support/util";
 //import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
 //import { protractor } from 'protractor/built/ptor';
 import * as FHIRSupport from "../../../src/fhir/versions.js";
-import {facadeExpect as expect, protractor, by, element} from "../support/protractorFacade.js";
+import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 import {TestUtil} from "../support/testUtilFacade.js";
 import {TestPage} from '../support/lforms_testpage.po.js';
 
@@ -44,8 +44,8 @@ function getFHIRResource(resourceType, fhirVersion, options=null) {
   });
 }
 
-//for (var i=0, len=fhirVersions.length; i<len; ++i) {
-for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
+for (var i=0, len=fhirVersions.length; i<len; ++i) {
+//for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion, function() {
       describe('rendering-style extension', function() {
@@ -603,7 +603,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             var drugNameField = rxterms.drugName;
             drugNameField.click();
             TestUtil.sendKeys(drugNameField, 'aspercreme');
-            cy.get('#searchResults').should('be.visible');
+            cy.get(tp.Autocomp.searchResults).should('be.visible');
             drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
             drugNameField.sendKeys(protractor.Key.ENTER);
 
@@ -657,7 +657,7 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             expect(TestUtil.getAttribute(ff.ageAtDiag2,'value')).toBe("Infancy");
           });
 
-          it.only('should merge all DiagnosticReport (Bundle) data back into the form', function() {
+          it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
             tp.openBaseTestPage();
             tp.setFHIRVersion(fhirVersion);
@@ -676,7 +676,6 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             expect(TestUtil.getAttribute(ff.ageAtDiag,'value')).toBe("Newborn");
           });
 
-});});/*
 
           it('should merge all DiagnosticReport (contained) data back into the form without setting default values', function() {
 
@@ -691,9 +690,8 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
                 decField = element(by.id('/decField/1')),
                 strField = element(by.id('/strField/1')),
                 dateField = element(by.id('/dateField/1')).element(by.css('input')),
+                dateField = element(by.css('#/dateField/1 input')),
                 listField = element(by.id('/ansCodeDefault/1'));
-
-            browser.wait(EC.presenceOf(intField), 2000);
 
             expect(TestUtil.getAttribute(intField,'value')).toBe('24'); // it is a value in dr
             expect(TestUtil.getAttribute(decField,'value')).toBe('');
@@ -709,11 +707,9 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-qr")).click();
+            // Make it wait for a value to appear
+            ff.name.getCyElem().should('have.value', 'name 1');
 
-            browser.wait(EC.presenceOf(element(by.id(ff.nameID))), 5000);
-            TestUtil.waitForElementDisplayed(ff.name)
-
-            expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
             expect(TestUtil.getAttribute(ff.name3,'value')).toBe("name 3");
             expect(TestUtil.getAttribute(ff.name4,'value')).toBe("name 4");
@@ -745,25 +741,23 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
 
             element(by.id("merge-qr-cwe")).click();
 
-            var bl1 = element(by.id('/type1/1')), bl2 = element(by.id('/type1b/1'));
+            var bl1 = element(by.css('#/type1/1 button')), bl2 = element(by.css('#/type1b/1 button'));
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
             // CNE field with a default value
             var cne = element(by.id('/type9/1'));
             // ST field with a default value
             var st = element(by.id('/type4/1'));
-            browser.wait(function() {
-              return cwe.isPresent();
-            }, tp.WAIT_TIMEOUT_1);
 
             // the default value should not be set
             expect(TestUtil.getAttribute(cne,'value')).toBe('');
             expect(TestUtil.getAttribute(st,'value')).toBe('');
 
             //expect(TestUtil.getAttribute(bl1, 'ng-reflect-model')).toBe("true"); // this didn't work. it returns null.
-            expect(bl1.getAttribute('ng-reflect-model')).toBe("true");
-
-            expect(bl2.isSelected()).toBe(false);
+bl1.getCyElem().then((el)=>console.log(el.get(0)));
+            //expect(bl1.getAttribute('ng-reflect-model')).toBe("true"); // not working with dist files
+            bl1.getCyElem().should('have.class', 'ant-switch-checked');
+            bl2.getCyElem().should('not.have.class', 'ant-switch-checked');
 
             expect(TestUtil.getAttribute(cwe,'value')).toBe("user typed value");
 
@@ -772,10 +766,8 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             expect(cweRepeatsValues.get(1).getText()).toBe('×Answer 2');
             expect(cweRepeatsValues.get(2).getText()).toBe('×user value1');
             expect(cweRepeatsValues.get(3).getText()).toBe('×user value2');
-            browser.driver.executeAsyncScript(function () {
-              var callback = arguments[arguments.length - 1];
-              var fData = LForms.Util.getUserData(null, false, true);
-              callback(fData);
+            cy.window().then((win)=> {
+              return win.LForms.Util.getUserData(null, false, true);
             }).then(function (formData) {
 
               expect(formData.itemsData.length).toBe(7);
@@ -798,10 +790,11 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
         });
 
         describe('Converted Questionnaire', function () {
+
           beforeEach(function() {
-            tp.openBaseTestPage();
+            cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            tp.loadFromTestData('4712701.json', fhirVersion);
+            util.loadFromTestData('4712701.json', fhirVersion);
           });
 
           it('should be able to show a converted questionnaire', function() {
@@ -819,7 +812,8 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
             raucherField.click();
             TestUtil.waitForElementPresent(packungenField);
             raucherField.click();
-            TestUtil.waitForElementNotPresent(raucherField);
+            TestUtil.waitForElementNotPresent(packungenField);
+            //TestUtil.waitForElementNotPresent(raucherField); // was this in protractor, which looks incorrect
           });
 
           it('should have functioning skiplogic when the codes are present', function() {
@@ -835,10 +829,10 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
       });
 
       describe('Subject option with a Patient resource', function() {
-       beforeAll(function() {
-          tp.openBaseTestPage();
+       before(function() {
+          cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);
-          tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
+          util.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
           var height = element(by.id('/8302-2/1'));
           TestUtil.sendKeys(height, '70');
         });
@@ -875,11 +869,11 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
         });
       });
 
-      describe('data control in Questionnaire', function() {
-        beforeAll(function () {
-          tp.openBaseTestPage();
+      describe.only('data control in Questionnaire', function() {
+        before(function () {
+          cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);
-          tp.loadFromTestData('questionnaire-data-control.json', fhirVersion);
+          util.loadFromTestData('questionnaire-data-control.json', fhirVersion);
         });
 
         it('should have data control working correctly', function () {
@@ -887,28 +881,22 @@ for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
               dcTarget1 = element(by.id('/controlledItem_LIST/1')),
               dcTarget2 = element(by.id('/controlledItem_TEXT/1'));
 
-          browser.wait(function () {
-            return dcSource.isDisplayed();
-          }, tp.WAIT_TIMEOUT_1);
-
           dcSource.click();
           TestUtil.sendKeys(dcSource, "ALTABAX (Topical)")
-          var searchRes = tp.Autocomp.searchResults;
-          browser.wait(function() {
-            return searchRes.isDisplayed();
-          }, tp.WAIT_TIMEOUT_2);
+          cy.get(tp.Autocomp.searchResults).should('be.visible');
 
           dcSource.sendKeys(protractor.Key.ARROW_DOWN);
-          dcSource.sendKeys(protractor.Key.TAB);
-          dcSource.sendKeys(protractor.Key.TAB); // move to next field to avoid getting "" from the input's value
+          dcSource.sendKeys(protractor.Key.ENTER);
+
           TestUtil.waitForValue(dcTarget1, '1% Ointment')
           expect(TestUtil.getAttribute(dcTarget1,'value')).toBe('1% Ointment');
           expect(TestUtil.getAttribute(dcTarget2,'value')).toBe('1% Ointment');
         });
       });
 
+/*
       describe('initial[x] in Questionnaire', function() {
-        beforeAll(function() {
+        before(function() {
           tp.openBaseTestPage();
           tp.setFHIRVersion(fhirVersion);
           tp.loadFromTestData('questionnaire-initialx.json', fhirVersion);

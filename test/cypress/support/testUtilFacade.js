@@ -31,7 +31,33 @@ export const TestUtil = {
     else
       rtn = elem.getCyElem().invoke('attr', attrName);
     return rtn;
-  }
+  },
 
+
+  /**
+   *  Waits for an element to not be present on the page.
+   * @param elem an "element" from the protractor facade.
+   */
+  waitForElementNotPresent: function(elem) {
+    elem.getCyElem().should('not.exist');
+  },
+
+
+  /**
+   *  Waits for an element to be present on the page.
+   * @param elem an "element" from the protractor facade.
+   */
+  waitForElementPresent: function(elem) {
+    elem.getCyElem().should('exist');
+  },
+
+  /**
+   *  Waits for an element to have the given value.
+   * @param elem an "element" from the protractor facade.
+   * @param val the value to wait for
+   */
+  waitForValue: function(elem, val) {
+    elem.getCyElem().should('have.value', val);
+  }
 
 };
