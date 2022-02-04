@@ -3,9 +3,13 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [30.0.0-beta.4] 2022-02-04
+### Fixed
+- calculatedExpression no longer forces fields to be read-only.
+
 ## [30.0.0-beta.3] 2022-01-25
 ### Added
-- Added an onError event, that returns an error when FHIR resources 
+- Added an onError event, that returns an error when FHIR resources
   fail to load, or when there is an exception during the initialization.
 - Added cypress for e2e tests.
 
@@ -20,10 +24,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [30.0.0-beta.0] 2021-12-10
 ### Changed
-- Included the initial release of the Web Component version of the LHC-Forms 
-  widget in the "next" directory. This will be reorganized out of the "next" 
+- Included the initial release of the Web Component version of the LHC-Forms
+  widget in the "next" directory. This will be reorganized out of the "next"
   directory prior to the non-beta release.
-  
+
 ## [29.3.1] 2021-10-20
 ### Fixed
 - If a form contained an attachment type question, hitting enter in another
