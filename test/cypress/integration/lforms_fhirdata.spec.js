@@ -1,9 +1,6 @@
 // Tests FHIR output and import of FHIR resources.
-//import { TestPage } from "./lforms_testpage.po";
 import { RxTerms } from "../support/rxterms.po";
 import * as util from "../support/util";
-//import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
-//import { protractor } from 'protractor/built/ptor';
 import * as FHIRSupport from "../../../src/fhir/versions.js";
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 import {TestUtil} from "../support/testUtilFacade.js";
@@ -45,7 +42,6 @@ function getFHIRResource(resourceType, fhirVersion, options=null) {
 }
 
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
-//for (var i=0, len=fhirVersions.length - 1; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion, function() {
       describe('rendering-style extension', function() {
@@ -636,9 +632,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             element(by.id("merge-dr")).click();
             //browser.waitForAngular();
 
-            ff.name.getCyElem().should('have.value', 'name 1');
-            ff.name.getCyElem().invoke('val').then((v)=>console.log('value is ' +v));
-            ff.name.getCyElem().invoke('val').should('equal', 'name 1');
             expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
             expect(TestUtil.getAttribute(ff.gender,'value')).toBe("Male");
@@ -753,9 +746,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(TestUtil.getAttribute(cne,'value')).toBe('');
             expect(TestUtil.getAttribute(st,'value')).toBe('');
 
-            //expect(TestUtil.getAttribute(bl1, 'ng-reflect-model')).toBe("true"); // this didn't work. it returns null.
-bl1.getCyElem().then((el)=>console.log(el.get(0)));
-            //expect(bl1.getAttribute('ng-reflect-model')).toBe("true"); // not working with dist files
             bl1.getCyElem().should('have.class', 'ant-switch-checked');
             bl2.getCyElem().should('not.have.class', 'ant-switch-checked');
 
