@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 24.0.0"
+      }
+    ]
+  },
+  "status": "draft",
+  "resourceType": "Questionnaire",
+  "item": [
+    {
+      "type": "string",
+      "required": false,
+      "text": "Parent Question",
+      "linkId": "q1",
+      "item": [
+        {
+          "type": "group",
+          "required": false,
+          "text": "Sub Group",
+          "linkId": "g1",
+          "item": [
+            {
+              "type": "string",
+              "required": false,
+              "text": "Child Question in a group that is under a question",
+              "linkId": "q2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

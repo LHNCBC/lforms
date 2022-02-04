@@ -894,16 +894,15 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
         });
       });
 
-/*
       describe('initial[x] in Questionnaire', function() {
         before(function() {
-          tp.openBaseTestPage();
+          cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);
-          tp.loadFromTestData('questionnaire-initialx.json', fhirVersion);
+          util.loadFromTestData('questionnaire-initialx.json', fhirVersion);
         });
 
         it('should display initial[x] values correctly', function() {
-          var typeBoolean = element(by.id('/type-boolean/1')),
+          var typeBoolean = element(by.id('/type-boolean/1 button')),
               typeInteger = element(by.id('/type-integer/1')),
               typeDecimal = element(by.id('/type-decimal/1')),
               typeString = element(by.id('/type-string/1')),
@@ -915,13 +914,10 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
               typeChoiceMulti = element(by.id('/type-choice-m/1')),
               typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
 
-          browser.wait(function() {
-            return typeBoolean.isDisplayed();
-          }, tp.WAIT_TIMEOUT_1);
+          // NEXT: new boolean implementation
+          typeBoolean.getCyElem().should('have.class', 'ant-switch-checked');
 
           if (fhirVersion === "R4") {
-            // NEXT: new boolean implementation
-            expect(typeBoolean.getAttribute('ng-reflect-model')).toBe("true");
 
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
 
@@ -949,10 +945,8 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
             expect(repeatsElements.get(4).getText()).toBe('×User typed answer a');
             expect(repeatsElements.get(5).getText()).toBe('×User typed answer b');
 
-            browser.driver.executeAsyncScript(function () {
-              var callback = arguments[arguments.length - 1];
-              var fData = LForms.Util.getUserData(null, false, true);
-              callback(fData);
+            cy.window().then((win)=> {
+              return win.LForms.Util.getUserData(null, false, true);
             }).then(function (formData) {
 
               expect(formData.itemsData.length).toBe(11);
@@ -985,9 +979,6 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
 
           }
           if (fhirVersion === "STU3") {
-            // NEXT: new boolean implementation
-            expect(typeBoolean.getAttribute('ng-reflect-model')).toBe("true");
-
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
 
             expect(TestUtil.getAttribute(typeDecimal,'value')).toBe('123.45');
@@ -1005,10 +996,8 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
 
             expect(TestUtil.getAttribute(typeOpenChoice,'value')).toBe("User typed answer");
 
-            browser.driver.executeAsyncScript(function () {
-              var callback = arguments[arguments.length - 1];
-              var fData = LForms.Util.getUserData(null, false, true);
-              callback(fData);
+            cy.window().then((win)=> {
+              return win.LForms.Util.getUserData(null, false, true);
             }).then(function (formData) {
 
               expect(formData.itemsData.length).toBe(9);
@@ -1168,9 +1157,9 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
 
         if (fhirVersion === 'R4') {
           it('should get answers from a question that is under a question that has no answer values', function() {
-            tp.openBaseTestPage();
+            cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            tp.loadFromTestData('question-under-question.R4.json', fhirVersion);
+            util.loadFromTestData('question-under-question.R4.json', fhirVersion);
 
             let childItem = element(by.id('q2/1/1'));
             getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
@@ -1193,9 +1182,9 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
           });
 
           it('should get answers from a question in a group that is under a question that has no answer values', function() {
-            tp.openBaseTestPage();
+            cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            tp.loadFromTestData('group-under-question.R4.json', fhirVersion);
+            util.loadFromTestData('group-under-question.R4.json', fhirVersion);
 
             let childItem = element(by.id('q2/1/1/1'));
 
@@ -1218,7 +1207,6 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
           });
         }
       });
-*/
     });
   })(fhirVersions[i]);
 }
