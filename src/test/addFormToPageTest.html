@@ -22,19 +22,19 @@
         font-size: 12px;
         border-radius: 4px;
       }
-
+  
       .btn-success {
         color: #fff;
         background-color: #5cb85c;
         border-color: #4cae4c;
       }
-
+  
       .btn-primary {
         color: #fff;
         background-color: #337ab7;
         border-color: #2e6da4;
       }
-
+  
       .hide {
         display: none;
       }
@@ -77,7 +77,7 @@
     <script src="../scripts.js" ></script>
     <script src="../vendor.js"></script>
     <script src="../main.js"></script>
-
+    
     <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
     <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
 
@@ -97,9 +97,9 @@
 
         // form def data is a JSON object
         $.getJSON('/test-data/form-data/rxTerms.json', function z(rxTerms) {
-          //LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+          LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
         });
-      };
+      };        
     </script>
 
     <!-- lforms test controller -->
@@ -135,23 +135,16 @@
         var questionnaire;
         reader.onload = function() {
           var questionnaire = JSON.parse(reader.result);
-          fileAnchor.value = '';
-          LForms.util.addFormToPage(questionnaire, getFHIRVersion());
-          $('#formContainer2 wc-lhc-form').addEventListener('onFormReady', ()=>{
-            // Cause the event to bubble, since this element was just created.
-            $('#formContainer2').dispatchEvent(new Event('onFormReady'));
-          });
-          /*
           // Reset the field with the filename we can load the same file again if needed.
+          fileAnchor.value = '';
           testForm.questionnaire = questionnaire; // lforms data or FHIR Questionnaire
           testForm.fhirVersion = getFHIRVersion()
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.
           testForm.prepop = window.prepopulateFHIR;
-          */
 
         };
-        reader.readAsText(event.target.files[0]);
+        reader.readAsText(event.target.files[0]); 
       }
 
     </script>

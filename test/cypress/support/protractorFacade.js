@@ -63,10 +63,8 @@ facadeExpect.prototype = cypressExpect;
 
 
 export const by = {
-  //id: (id) => '#'+id.replaceAll('/', '\\/'),
-  //css: (cssLocator) => cssLocator.replaceAll('/', '\\/')
-  id: (id) => '#'+CSS.escape(id),
-  css: (cssLocator) => CSS.escape(cssLocator)
+  id: (id) => '#'+id.replaceAll(/([\.\/])/g, '\\$1'),
+  css: (cssLocator) => cssLocator.replaceAll('/', '\\/')
 }
 
 

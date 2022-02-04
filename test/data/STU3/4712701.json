@@ -1,0 +1,441 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "4712701",
+  "meta": {
+    "versionId": "1",
+    "lastUpdated": "2018-08-10T12:24:40.363+00:00"
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\nTBD\n</div>"
+  },
+  "url": "http://uni-koeln.de/fhir/Questionnaire/nNGM",
+  "title": "nNGM",
+  "status": "draft",
+  "date": "2018-08-10",
+  "subjectType": [
+    "Patient"
+  ],
+  "item": [
+    {
+      "linkId": "0",
+      "text": "Teilnahme Integrierte Versorgung(I.V.)",
+      "type": "group",
+      "required": false,
+      "item": [
+        {
+          "linkId": "0.1",
+          "text": "Teilnahme",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "linkId": "0.2",
+          "text": "Nr.: NGMV",
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "linkId": "1",
+      "text": "Patientenetikett",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "1.1",
+          "text": "Patientenstammdaten können aus QuestionnaireResponse.subject übernommen werden, müssen hier nicht nochmal separat erhoben werden, die Patient-Ressource muss dann jedoch stets zusammen mit der Questionnaire-Response übermittelt werden",
+          "type": "display"
+        },
+        {
+          "linkId": "1.2",
+          "text": "Gewicht in kg",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "linkId": "1.3",
+          "text": "Größe in cm",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "linkId": "1.4",
+          "text": "Fallart zum Zeitpunkt dieser Anforderung",
+          "type": "choice",
+          "required": false,
+          "options": {
+            "fhir_comments": [
+              " das ValueSet müsste ggf. eingeschränkt werden, um nur ambulant/stationär zuzulassen"
+            ],
+            "reference": "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode"
+          }
+        },
+        {
+          "linkId": "1.5",
+          "text": "Raucherstatus",
+          "type": "group",
+          "required": false,
+          "item": [
+            {
+              "linkId": "1.5.1",
+              "text": "Raucher",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "linkId": "1.5.2",
+              "text": "Ex-Raucher",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "linkId": "1.5.3",
+              "text": "Nie-Raucher",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "linkId": "1.5.4",
+              "text": "Packungen pro Jahr",
+              "type": "integer",
+              "enableWhen": [
+                {
+                  "question": "1.5.1",
+                  "answerBoolean": true
+                }
+              ],
+              "required": false
+            },
+            {
+              "linkId": "1.5.5",
+              "text": "Nichtraucher seit (in Jahren)",
+              "type": "integer",
+              "enableWhen": [
+                {
+                  "question": "1.5.2",
+                  "answerBoolean": true
+                }
+              ],
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "4",
+      "text": "Gesundheitszustand",
+      "type": "group",
+      "required": false,
+      "item": [
+        {
+          "linkId": "4.1",
+          "code": [
+            {
+              "system": "http://uni-koeln-de/CodeSystem/TBD",
+              "code": "TBD1"
+            }
+          ],
+          "text": "ECOG Performance Status",
+          "type": "choice",
+          "required": true,
+          "options": {
+            "reference": "http://uni-koeln.de/fhir/ValueSet/ecog"
+          }
+        },
+        {
+          "linkId": "4.2",
+          "code": [
+            {
+              "system": "http://uni-koeln-de/CodeSystem/TBD",
+              "code": "TBD2"
+            }
+          ],
+          "text": "Histologie (bitte unbedingt pathologischen Befund beifügen)",
+          "type": "open-choice",
+          "required": true,
+          "options": {
+            "reference": "http://uni-koeln.de/fhir/ValueSet/icd-o-3-m-lunge"
+          }
+        },
+        {
+          "linkId": "4.3",
+          "code": [
+            {
+              "system": "http://uni-koeln-de/CodeSystem/TBD",
+              "code": "TBD3"
+            }
+          ],
+          "text": "Angaben zum Tumorstadium",
+          "type": "group",
+          "required": false,
+          "item": [
+            {
+              "linkId": "4.3.1",
+              "text": "Erstdiagnose (ED)",
+              "type": "group",
+              "required": false,
+              "item": [
+                {
+                  "linkId": "4.3.1.1",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD4"
+                    }
+                  ],
+                  "text": "ED am",
+                  "type": "date",
+                  "required": true
+                },
+                {
+                  "linkId": "4.3.1.2",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD5"
+                    }
+                  ],
+                  "text": "ED histopathologisch gesichert",
+                  "type": "boolean",
+                  "required": true
+                },
+                {
+                  "linkId": "4.3.1.3",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD6"
+                    }
+                  ],
+                  "text": "TNM-Status bei ED",
+                  "type": "group",
+                  "required": false,
+                  "item": [
+                    {
+                      "linkId": "4.3.1.3.1",
+                      "code": [
+                        {
+                          "system": "http://uni-koeln-de/CodeSystem/TBD",
+                          "code": "TBD7"
+                        }
+                      ],
+                      "text": "T",
+                      "type": "choice",
+                      "required": true,
+                      "options": {
+                        "reference": "http://uni-koeln.de/fhir/ValueSet/tnm-t-lunge"
+                      }
+                    },
+                    {
+                      "linkId": "4.3.1.3.2",
+                      "code": [
+                        {
+                          "system": "http://uni-koeln-de/CodeSystem/TBD",
+                          "code": "TBD8"
+                        }
+                      ],
+                      "text": "N",
+                      "type": "choice",
+                      "required": true,
+                      "options": {
+                        "reference": "http://uni-koeln.de/fhir/ValueSet/tnm-n-lunge"
+                      }
+                    },
+                    {
+                      "linkId": "4.3.1.3.3",
+                      "code": [
+                        {
+                          "system": "http://uni-koeln-de/CodeSystem/TBD",
+                          "code": "TBD9"
+                        }
+                      ],
+                      "text": "M",
+                      "type": "choice",
+                      "required": true,
+                      "options": {
+                        "reference": "http://uni-koeln.de/fhir/ValueSet/tnm-m-lunge"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "linkId": "4.3.1.4",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD10"
+                    }
+                  ],
+                  "text": "UICC bei ED",
+                  "type": "choice",
+                  "required": true,
+                  "options": {
+                    "reference": "http://uni-koeln.de/fhir/ValueSet/uicc-lunge"
+                  }
+                }
+              ]
+            },
+            {
+              "linkId": "4.3.2",
+              "code": [
+                {
+                  "system": "http://uni-koeln-de/CodeSystem/TBD",
+                  "code": "TBD11"
+                }
+              ],
+              "text": "Aktuelles Tumorstadium (sofern abweichend von der ED)",
+              "type": "group",
+              "required": false,
+              "item": [
+                {
+                  "linkId": "4.3.2.1",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD12"
+                    }
+                  ],
+                  "text": "Aktuelles Tumorstadium seit",
+                  "type": "date",
+                  "required": false
+                },
+                {
+                  "linkId": "4.3.2.2",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD13"
+                    }
+                  ],
+                  "text": "Aktueller TNM-Status",
+                  "type": "group",
+                  "required": false,
+                  "item": [
+                    {
+                      "linkId": "4.3.2.2.1",
+                      "code": [
+                        {
+                          "system": "http://uni-koeln-de/CodeSystem/TBD",
+                          "code": "TBD14"
+                        }
+                      ],
+                      "text": "T",
+                      "type": "choice",
+                      "required": false,
+                      "options": {
+                        "reference": "http://uni-koeln.de/fhir/ValueSet/tnm-t-lunge"
+                      }
+                    },
+                    {
+                      "linkId": "4.3.2.2.2",
+                      "code": [
+                        {
+                          "system": "http://uni-koeln-de/CodeSystem/TBD",
+                          "code": "TBD15"
+                        }
+                      ],
+                      "text": "N",
+                      "type": "choice",
+                      "required": false,
+                      "options": {
+                        "reference": "http://uni-koeln.de/fhir/ValueSet/tnm-n-lunge"
+                      }
+                    },
+                    {
+                      "linkId": "4.3.2.2.3",
+                      "code": [
+                        {
+                          "system": "http://uni-koeln-de/CodeSystem/TBD",
+                          "code": "TBD16"
+                        }
+                      ],
+                      "text": "M",
+                      "type": "choice",
+                      "required": false,
+                      "options": {
+                        "reference": "http://uni-koeln.de/fhir/ValueSet/tnm-m-lunge"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "linkId": "4.3.2.3",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD17"
+                    }
+                  ],
+                  "text": "UICC aktuell",
+                  "type": "choice",
+                  "required": false,
+                  "options": {
+                    "reference": "http://uni-koeln.de/fhir/ValueSet/uicc-lunge"
+                  }
+                },
+                {
+                  "linkId": "4.3.2.4",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD18"
+                    }
+                  ],
+                  "text": "Kurativ-operabel",
+                  "type": "boolean",
+                  "required": false
+                }
+              ]
+            },
+            {
+              "linkId": "4.3.3",
+              "code": [
+                {
+                  "system": "http://uni-koeln-de/CodeSystem/TBD",
+                  "code": "TBD19"
+                }
+              ],
+              "text": "Rezidiv/Progress",
+              "type": "group",
+              "required": false,
+              "item": [
+                {
+                  "linkId": "4.3.3.1",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD20"
+                    }
+                  ],
+                  "text": "Rezidiv/Progress aufgetreten",
+                  "type": "boolean",
+                  "required": true
+                },
+                {
+                  "linkId": "4.3.3.2",
+                  "code": [
+                    {
+                      "system": "http://uni-koeln-de/CodeSystem/TBD",
+                      "code": "TBD21"
+                    }
+                  ],
+                  "text": "Zeitpunkt",
+                  "type": "date",
+                  "enableWhen": [
+                    {
+                      "question": "4.3.3.1",
+                      "answerBoolean": true
+                    }
+                  ],
+                  "required": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

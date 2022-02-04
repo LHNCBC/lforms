@@ -62,12 +62,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4
           it('should work on question text in horizontal tables', function() {
             util.loadFromTestData('tables.json', fhirVersion);
-            var idCSS = '#col\\/g2\\/g1m1\\/1\\/1';
+            var idCSS = '#col/g2/g1m1/1/1';
             expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
             expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
           });
           it('should work on question text in a matrix layout', function () {
-            var idCSS = '#label-\\/g4\\/g1m2\\/1\\/1';
+            var idCSS = '#label-/g4/g1m2/1/1';
             expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
             expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
           });
@@ -869,7 +869,7 @@ bl1.getCyElem().then((el)=>console.log(el.get(0)));
         });
       });
 
-      describe.only('data control in Questionnaire', function() {
+      describe('data control in Questionnaire', function() {
         before(function () {
           cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);

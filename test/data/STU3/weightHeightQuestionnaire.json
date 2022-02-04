@@ -1,0 +1,208 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "date": "2018-09-12T18:03:40-04:00",
+  "version": "2.56",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0"
+    ]
+  },
+  "title": "Weight & Height tracking panel",
+  "name": "Weight & Height tracking panel",
+  "identifier": [
+    {
+      "system": "http://loinc.org",
+      "value": "55418-8"
+    }
+  ],
+  "code": [
+    {
+      "system": "http://loinc.org",
+      "code": "55418-8",
+      "display": "Weight & Height tracking panel"
+    }
+  ],
+  "subjectType": [
+    "Patient",
+    "Person"
+  ],
+  "item": [
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "kg"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "/29463-7",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Weight"
+        }
+      ],
+      "text": "Weight",
+      "type": "decimal"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "/8352-7",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "8352-7",
+          "display": "Clothing worn during measure"
+        }
+      ],
+      "text": "Clothing worn during measure",
+      "type": "choice",
+      "option": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA11871-3",
+            "display": "Underwear or less"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA11872-1",
+            "display": "Street clothes, no shoes"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA11873-9",
+            "display": "Street clothes & shoes"
+          }
+        }
+      ]
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "[in_i]"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "/8302-2",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body height"
+        }
+      ],
+      "text": "Body height",
+      "type": "decimal"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "kg/m2"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "description": "BMI calculation",
+            "language" : "text/fhirpath",
+            "expression": "((%resource.item.where(linkId='/29463-7').answer.valueDecimal/%resource.item.where(linkId='/8302-2').answer.valueDecimal/%resource.item.where(linkId='/8302-2').answer.valueDecimal/0.0254/0.0254*10) div 1)/10"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "/39156-5",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "39156-5",
+          "display": "BMI"
+        }
+      ],
+      "text": "BMI",
+      "type": "decimal"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "/8361-8",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "8361-8",
+          "display": "Bdy position with respect to gravity"
+        }
+      ],
+      "text": "Bdy position with respect to gravity",
+      "type": "choice",
+      "option": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA11868-9",
+            "display": "Sitting"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA11869-7",
+            "display": "Lying"
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA11870-5",
+            "display": "Standing"
+          }
+        }
+      ]
+    }
+  ]
+}
