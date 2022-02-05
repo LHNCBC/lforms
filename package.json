@@ -14,7 +14,7 @@
     "start": "ng serve",
     "start-public": "node bin/start-public.js",
     "start-dist-public": "node bin/start-public.js  --dist",
-    "build:lforms-dev": "ng build",
+    "build:lforms-dev": "ng build --extra-webpack-config webpack.lforms.extra.config.js",
     "build:lforms": "ng build --prod --extra-webpack-config webpack.lforms.extra.config.js && node concatenate.js",
     "build": "npm run build:fhir && npm run build:lforms && npm run build:prepare-zip && npm run build:zip",
     "lint": "ng lint",

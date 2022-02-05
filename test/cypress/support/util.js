@@ -21,8 +21,6 @@ export function loadFromTestData(filepath, fhirVersion=null) {
   let formReady = false;
   cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onFormReady', ()=>formReady=true));
   cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onError', ()=>formReady=true));
-//  cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onFormReady', ()=>{console.log("Got onFormReady"); formReady=true}));
-//  cy.get('#formContainer').then((fc)=>fc[0].addEventListener('onError', ()=>{console.log("Got onError"); formReady=true}));
 
   // Temporarily unhide the file input element.
   let fileInput = cy.get('#fileAnchor');
