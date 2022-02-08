@@ -1,4 +1,4 @@
-import {TestUtil} from "../support/testUtilFacade.js";
+// A facade for implementing Protractor calls with Cypress.
 
 export const browser = {
   driver: {

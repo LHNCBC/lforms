@@ -48,7 +48,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         it('should work on Questionnaire.title, item.prefix, and item.text', function() {
           cy.visit('test/pages/addFormToPageTest.html');
           util.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
-          //expect(TestUtil.getAttribute(element(by.id('label-44249-1')),'style')).toBe('color: green; background-color: white;');
           expect(element(by.id('label-44249-1')).getAttribute('style')).toBe('background-color: white; color: green;');
           var idCSS = '#label-g1\\.q2/1/1';
           expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
@@ -682,7 +681,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var intField = element(by.id('/intField/1')),
                 decField = element(by.id('/decField/1')),
                 strField = element(by.id('/strField/1')),
-                dateField = element(by.id('/dateField/1')).element(by.css('input')),
                 dateField = element(by.css('#/dateField/1 input')),
                 listField = element(by.id('/ansCodeDefault/1'));
 

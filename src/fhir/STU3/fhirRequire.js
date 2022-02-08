@@ -11,7 +11,6 @@ fhir.fhirpathModel = require('fhirpath/fhir-context/stu3');
 import dr from '../diagnostic-report.js';
 // Because we are assigning ./export.js to dr below, we need our own copy of the
 // dr object.
-console.log(dr);
 const drCopy = Object.assign({}, dr);
 fhir.DiagnosticReport = drCopy;
 import commonExport from './export.js';
