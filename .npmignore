@@ -1,17 +1,20 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # source files
-/src
+/src/*
 # test files
 /e2e
+/test
+
 # assets for testing
-/dist/webcomponent/test
-/dist/webcomponent/test-data
+/dist/webcomponent
+
+/dist/*.zip
 # bin scripts
 /bin
 # other dev/build configuration files
 /angular.json
-/bashrc.next
+/bashrc.*
 /concatenate.js
 /karma.conf.js
 /tsconfig.app.json
@@ -19,8 +22,12 @@
 /tsconfig.spec.json
 /tslint.json
 /.browserslistrc
+/*.js
+/*.json
+/.gitattributes
 
 # temp files
+/.tmp
 /tmp
 /out-tsc
 # Only exists if Bazel was run
@@ -42,6 +49,7 @@ speed-measure-plugin*.json
 .settings/
 *.sublime-workspace
 .editorconfig
+tags
 
 # IDE - VSCode
 .vscode/*
