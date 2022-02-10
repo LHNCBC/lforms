@@ -12,6 +12,7 @@ export class LhcButtonPopoverComponent implements OnInit {
   @Input() popoverType: string;
   @Input() formLevel: boolean = false;
   @Input() buttonLabel: string = null;
+  @Input() append: boolean = false;
   constructor(private lhcDataService: LhcDataService) { }
 
   ngOnInit(): void {    
