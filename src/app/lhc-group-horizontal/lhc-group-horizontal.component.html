@@ -10,7 +10,7 @@
     <table class="lhc-form-horizontal-table">
       <colgroup>
         <col class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
-        <<ng-container *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId">
+        <ng-container *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId">
           <col *ngIf="!col.item._isHiddenFromView" [ngStyle]="lhcDataService.getTableColumnStyle(col)">
         </ng-container>
       </colgroup>
@@ -34,10 +34,9 @@
                   title='Remove this row of "{{ row.header.question }}"'>-</button>
         </td>
 
-
-        <ng-container *ngFor="let cell of row.cells; trackBy: lhcDataService.trackByElementId"
-            class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
-          <td *ngIf="!cell._isHiddenFromView">
+        <ng-container *ngFor="let cell of row.cells; trackBy: lhcDataService.trackByElementId">
+          <td *ngIf="!cell._isHiddenFromView" 
+              class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
             <div class="lf-form-item-data tooltipContainer">
               <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
             </div>  
