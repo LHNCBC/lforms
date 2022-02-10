@@ -3,6 +3,14 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [30.0.0-beta.5] 2022-02-09
+### Fixed
+- Fixed a a bug that repeating rows in horizontal table (gtable) are not added
+  at the end of the table.
+### Added
+- Added the support of the questionnaire-hidden extension on the horizontal tables
+  (gtable) and the matrix (table).
+  
 ## [30.0.0-beta.4] 2022-02-04
 ### Fixed
 - calculatedExpression no longer forces fields to be read-only.
