@@ -12,6 +12,7 @@
   "status": "draft",
   "resourceType": "Questionnaire",
   "title": "A questionnaire for testing questionnaire-hidden extension",
+  "description": "This questionnaire is essentially the same as questionnaire-hidden-extension.json but does not use the questionnaire-hidden extension, so that the behavior with and without that extension can be compared.",
   "item": [
     {
       "text": "displayed question in vertical list",
