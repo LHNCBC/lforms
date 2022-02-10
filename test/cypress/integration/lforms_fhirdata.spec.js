@@ -1,18 +1,24 @@
 // Tests FHIR output and import of FHIR resources.
-import { TestPage } from "./lforms_testpage.po";
-import { RxTerms } from "./rxterms.po";
-import TestUtil from "./util";
-import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
-import { protractor } from 'protractor/built/ptor';
+import { RxTerms } from "../support/rxterms.po";
+import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
+import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
+import {TestUtil} from "../support/testUtilFacade.js";
+import {TestPage} from '../support/lforms_testpage.po.js';
 
+delete FHIRSupport.default; // not sure why that is added now
 let fhirVersions = Object.keys(FHIRSupport);
-let EC = ExpectedConditions;
 
-let tp: TestPage = new TestPage();
 let rxterms = new RxTerms();
-let ff: any = tp.USSGFHTVertical;
-let LForms: any = (global as any).LForms;
+let tp = new TestPage();
+let ff = {}; // element from tp.USSGFHTVertical;
+for (let k of Object.keys(tp.USSGFHTVertical)) {
+  if (k === "nameID")
+    ff[k] = tp.USSGFHTVertical[k];
+  else
+    ff[k] = element(by.css(tp.USSGFHTVertical[k]));
+}
+
 
 /**
  *  Returns a promise that will resolve to an array of two elements, the first
@@ -25,18 +31,14 @@ let LForms: any = (global as any).LForms;
  * @param options The optional options parameter to pass to getFormFHIRData.
  */
 function getFHIRResource(resourceType, fhirVersion, options=null) {
-  return browser.driver.executeAsyncScript(function() {
-    var callback = arguments[arguments.length-1];
-    var resourceType = arguments[0];
-    var fhirVersion = arguments[1];
-    var options = arguments.length > 3 ? arguments[2] : null;
+  return cy.window().then(win => {
     try {
-      var fData = LForms.Util.getFormFHIRData(resourceType, fhirVersion,
+      const resData = win.LForms.Util.getFormFHIRData(resourceType, fhirVersion,
         null, options);
+      return [null, resData];
     }
-    catch (e) {callback([[e.message].concat(e.stack).join("\n")])}
-    callback([null, fData]);
-  }, resourceType, fhirVersion, options)
+    catch (e) {return ([[e.message].concat(e.stack).join("\n")])}
+  });
 }
 
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
@@ -44,24 +46,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     describe(fhirVersion, function() {
       describe('rendering-style extension', function() {
         it('should work on Questionnaire.title, item.prefix, and item.text', function() {
-          tp.openBaseTestPage();
-          tp.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
-          //expect(TestUtil.getAttribute(element(by.id('label-44249-1')),'style')).toBe('color: green; background-color: white;');
+          cy.visit('test/pages/addFormToPageTest.html');
+          util.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
           expect(element(by.id('label-44249-1')).getAttribute('style')).toBe('background-color: white; color: green;');
-          var idCSS = '#label-g1\\.q2\\/1\\/1';
+          var idCSS = '#label-g1\\.q2/1/1';
           expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
 
         if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4
           it('should work on question text in horizontal tables', function() {
-            tp.loadFromTestData('tables.json', fhirVersion);
-            var idCSS = '#col\\/g2\\/g1m1\\/1\\/1';
+            util.loadFromTestData('tables.json', fhirVersion);
+            var idCSS = '#col/g2/g1m1/1/1';
             expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
             expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
           });
           it('should work on question text in a matrix layout', function () {
-            var idCSS = '#label-\\/g4\\/g1m2\\/1\\/1';
+            var idCSS = '#label-/g4/g1m2/1/1';
             expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
             expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
           });
@@ -71,13 +72,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('FHIR Data: ', function () {
         describe('get FHIR data from LForms forms', function() {
           it('should generate correct Observations for type integer', function() {
-            tp.LoadForm.openFullFeaturedForm();
+            util.loadFromTestData('allInOne.json', 'lforms');
             let integerWithUnit = element(by.id('/q_lg/1'));
             TestUtil.sendKeys(integerWithUnit, 3);
             let integerNoUnit = element(by.id('/type2/1'));
             TestUtil.sendKeys(integerNoUnit, 4);
-            
-            getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("DiagnosticReport");
@@ -99,13 +99,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should get a DiagnosticReport (contained) data from a form', function() {
-            ff = tp.USSGFHTVertical;
-            tp.LoadForm.openUSSGFHTVertical();
+            util.loadFromTestData('FHTData.json', 'lforms');
             // #1 all fields are empty
-            getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("DiagnosticReport");
+
               expect(fhirData.result.length).toBe(0);
               expect(fhirData.contained).toEqual([]);
 
@@ -120,42 +120,39 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.gender.click();
               // pick the 1st item
               ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.gender.sendKeys(protractor.Key.TAB);
+              ff.gender.sendKeys(protractor.Key.ENTER);
               // CWE, multiple answers
               ff.race.click();
               // pick the first 2 items
               ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.race.sendKeys(protractor.Key.TAB);
-              ff.race.click();
-              ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.race.sendKeys(protractor.Key.TAB);
+              ff.race.sendKeys(protractor.Key.ENTER);
+              ff.race.sendKeys(protractor.Key.ENTER);
               // REAL
               TestUtil.sendKeys(ff.height, "70");
               TestUtil.sendKeys(ff.weight, "170");
               // repeating sub panel
               ff.disease.click();
               ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.disease.sendKeys(protractor.Key.TAB);
+              ff.disease.sendKeys(protractor.Key.ENTER);
               ff.ageAtDiag.click();
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.ageAtDiag.sendKeys(protractor.Key.TAB);
+              ff.ageAtDiag.sendKeys(protractor.Key.ENTER);
 
               TestUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.disease2.sendKeys(protractor.Key.TAB);
+              ff.disease2.sendKeys(protractor.Key.ENTER);
               ff.ageAtDiag2.click();
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
+              ff.ageAtDiag2.sendKeys(protractor.Key.ENTER);
 
-              getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData:any) {
+              getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
                 let [error, fhirData] = callbackData;
-
                 expect(error).toBeNull();
                 expect(fhirData.resourceType).toBe("DiagnosticReport");
                 expect(fhirData.result.length).toBe(1);
@@ -267,7 +264,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             // #1 all fields are empty
             getFHIRResource("DiagnosticReport", fhirVersion,
-                {bundleType: "collection"}).then(function(callbackData:any) {
+                {bundleType: "collection"}).then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("Bundle");
@@ -286,38 +283,36 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.gender.click();
               // pick the 1st item
               ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.gender.sendKeys(protractor.Key.TAB);
+              ff.gender.sendKeys(protractor.Key.ENTER);
               // CWE, multiple answers
               ff.race.click();
               // pick the first 2 items
               ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.race.sendKeys(protractor.Key.TAB);
-              ff.race.click();
-              ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.race.sendKeys(protractor.Key.TAB);
+              ff.race.sendKeys(protractor.Key.ENTER);
+              ff.race.sendKeys(protractor.Key.ENTER);
               // REAL
               TestUtil.sendKeys(ff.height, "70");
               TestUtil.sendKeys(ff.weight, "170");
               // repeating sub panel
               ff.disease.click();
               ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.disease.sendKeys(protractor.Key.TAB);
+              ff.disease.sendKeys(protractor.Key.ENTER);
               ff.ageAtDiag.click();
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.ageAtDiag.sendKeys(protractor.Key.TAB);
+              ff.ageAtDiag.sendKeys(protractor.Key.ENTER);
 
               TestUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.disease2.sendKeys(protractor.Key.TAB);
+              ff.disease2.sendKeys(protractor.Key.ENTER);
               ff.ageAtDiag2.click();
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
-              ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
+              ff.ageAtDiag2.sendKeys(protractor.Key.ENTER);
 
               // // remove the default values on the 2 items
               // expect(ff.related.getAttribute('value')).toEqual('No');
@@ -329,7 +324,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               // expect(ff.mockedHeight.getAttribute('value')).toEqual('');
 
               getFHIRResource("DiagnosticReport", fhirVersion,
-                  {bundleType: "collection"}).then(function(callbackData:any) {
+                  {bundleType: "collection"}).then(function(callbackData) {
                 let [error, fhirData] = callbackData;
                 expect(error).toBeNull();
                 expect(fhirData.resourceType).toBe("Bundle");
@@ -440,11 +435,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             tp.LoadForm.openUSSGFHTVertical();
             getFHIRResource("Questionnaire", fhirVersion,
-                ).then(function(callbackData:any) {
+                ).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
-              var assertFHTQuestionnaire = require('./'+fhirVersion+'/assert-sdc-questionnaire').assertFHTQuestionnaire;
+              var assertFHTQuestionnaire = require('../support/'+fhirVersion+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
               assertFHTQuestionnaire(fhirData);
             });
           });
@@ -463,42 +458,40 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             ff.gender.click();
             // pick the 1st item
             ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.gender.sendKeys(protractor.Key.TAB);
+            ff.gender.sendKeys(protractor.Key.ENTER);
             // CWE, multiple answers
             ff.race.click();
             // pick the first 2 items
             ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.race.sendKeys(protractor.Key.TAB);
-            ff.race.click();
-            ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.race.sendKeys(protractor.Key.TAB);
+            ff.race.sendKeys(protractor.Key.ENTER);
+            ff.race.sendKeys(protractor.Key.ENTER);
             // REAL
             TestUtil.sendKeys(ff.height, "70");
             TestUtil.sendKeys(ff.weight, "170");
             // repeating sub panel
             ff.disease.click();
             ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.disease.sendKeys(protractor.Key.TAB);
+            ff.disease.sendKeys(protractor.Key.ENTER);
             ff.ageAtDiag.click();
             ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.ageAtDiag.sendKeys(protractor.Key.TAB);
+            ff.ageAtDiag.sendKeys(protractor.Key.ENTER);
 
             TestUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
             ff.disease2.click();
             ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
             ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.disease2.sendKeys(protractor.Key.TAB);
+            ff.disease2.sendKeys(protractor.Key.ENTER);
             ff.ageAtDiag2.click();
             ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
-            ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
+            ff.ageAtDiag2.sendKeys(protractor.Key.ENTER);
 
 
             getFHIRResource("QuestionnaireResponse", fhirVersion).
-                then(function(callbackData:any) {
+                then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
@@ -605,12 +598,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var drugNameField = rxterms.drugName;
             drugNameField.click();
             TestUtil.sendKeys(drugNameField, 'aspercreme');
-            browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
+            cy.get(tp.Autocomp.searchResults).should('be.visible');
             drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
-            drugNameField.sendKeys(protractor.Key.TAB);
+            drugNameField.sendKeys(protractor.Key.ENTER);
 
             getFHIRResource("DiagnosticReport", fhirVersion,
-                ).then(function(callbackData:any) {
+                ).then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.result.length).toBe(1);
@@ -638,8 +631,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             element(by.id("merge-dr")).click();
             //browser.waitForAngular();
 
-            browser.wait(EC.visibilityOf(ff.name), 2000);
-
             expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
             expect(TestUtil.getAttribute(ff.gender,'value')).toBe("Male");
@@ -665,13 +656,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             element(by.id("merge-bundle-dr")).click();
 
-            // sometimes ff.name is "not attached to the page document"
-            var name = element(by.id('/54126-8/54125-0/1/1'));
-            browser.wait(function() {
-              return name.isPresent();
-            }, tp.WAIT_TIMEOUT_1);
-
-            expect(TestUtil.getAttribute(name,'value')).toBe("12");
+            expect(TestUtil.getAttribute(ff.name,'value')).toBe("12");
             expect(TestUtil.getAttribute(ff.gender,'value')).toBe("Male");
             expect(TestUtil.getAttribute(ff.dob,'value')).toBe("01/10/2018");
 
@@ -696,10 +681,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var intField = element(by.id('/intField/1')),
                 decField = element(by.id('/decField/1')),
                 strField = element(by.id('/strField/1')),
-                dateField = element(by.id('/dateField/1')).element(by.css('input')),
+                dateField = element(by.css('#/dateField/1 input')),
                 listField = element(by.id('/ansCodeDefault/1'));
-
-            browser.wait(EC.presenceOf(intField), 2000);
 
             expect(TestUtil.getAttribute(intField,'value')).toBe('24'); // it is a value in dr
             expect(TestUtil.getAttribute(decField,'value')).toBe('');
@@ -715,11 +698,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-qr")).click();
+            // Make it wait for a value to appear
+            ff.name.getCyElem().should('have.value', 'name 1');
 
-            browser.wait(EC.presenceOf(element(by.id(ff.nameID))), 5000);
-            TestUtil.waitForElementDisplayed(ff.name)
-
-            expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
             expect(TestUtil.getAttribute(ff.name3,'value')).toBe("name 3");
             expect(TestUtil.getAttribute(ff.name4,'value')).toBe("name 4");
@@ -751,25 +732,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             element(by.id("merge-qr-cwe")).click();
 
-            var bl1 = element(by.id('/type1/1')), bl2 = element(by.id('/type1b/1'));
+            var bl1 = element(by.css('#/type1/1 button')), bl2 = element(by.css('#/type1b/1 button'));
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
             // CNE field with a default value
             var cne = element(by.id('/type9/1'));
             // ST field with a default value
             var st = element(by.id('/type4/1'));
-            browser.wait(function() {
-              return cwe.isPresent();
-            }, tp.WAIT_TIMEOUT_1);
 
             // the default value should not be set
             expect(TestUtil.getAttribute(cne,'value')).toBe('');
             expect(TestUtil.getAttribute(st,'value')).toBe('');
 
-            //expect(TestUtil.getAttribute(bl1, 'ng-reflect-model')).toBe("true"); // this didn't work. it returns null.
-            expect(bl1.getAttribute('ng-reflect-model')).toBe("true");
-
-            expect(bl2.isSelected()).toBe(false);
+            bl1.getCyElem().should('have.class', 'ant-switch-checked');
+            bl2.getCyElem().should('not.have.class', 'ant-switch-checked');
 
             expect(TestUtil.getAttribute(cwe,'value')).toBe("user typed value");
 
@@ -778,12 +754,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(cweRepeatsValues.get(1).getText()).toBe('×Answer 2');
             expect(cweRepeatsValues.get(2).getText()).toBe('×user value1');
             expect(cweRepeatsValues.get(3).getText()).toBe('×user value2');
-            browser.driver.executeAsyncScript(function () {
-              var callback = arguments[arguments.length - 1];
-              var fData = LForms.Util.getUserData(null, false, true);
-              callback(fData);
-            }).then(function (formData:any) {
-    
+            cy.window().then((win)=> {
+              return win.LForms.Util.getUserData(null, false, true);
+            }).then(function (formData) {
+
               expect(formData.itemsData.length).toBe(7);
               expect(formData.itemsData[0].value).toBe(true);
               expect(formData.itemsData[1].value).toBe(false);
@@ -804,10 +778,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         describe('Converted Questionnaire', function () {
+
           beforeEach(function() {
-            tp.openBaseTestPage();
+            cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            tp.loadFromTestData('4712701.json', fhirVersion);
+            util.loadFromTestData('4712701.json', fhirVersion);
           });
 
           it('should be able to show a converted questionnaire', function() {
@@ -825,7 +800,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             raucherField.click();
             TestUtil.waitForElementPresent(packungenField);
             raucherField.click();
-            TestUtil.waitForElementNotPresent(raucherField);
+            TestUtil.waitForElementNotPresent(packungenField);
+            //TestUtil.waitForElementNotPresent(raucherField); // was this in protractor, which looks incorrect
           });
 
           it('should have functioning skiplogic when the codes are present', function() {
@@ -841,10 +817,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       });
 
       describe('Subject option with a Patient resource', function() {
-       beforeAll(function() {
-          tp.openBaseTestPage();
+       before(function() {
+          cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);
-          tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
+          util.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
           var height = element(by.id('/8302-2/1'));
           TestUtil.sendKeys(height, '70');
         });
@@ -860,7 +836,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         it('should put the patient ID into the QuestionnaireResponse', function() {
           getFHIRResource("QuestionnaireResponse", fhirVersion, {subject: patientRes}).
-              then(function(callbackData:any) {
+              then(function(callbackData) {
             let [error, fhirData] = callbackData;
             expect(error).toBeNull();
             expect(fhirData.resourceType).toBe("QuestionnaireResponse");
@@ -871,7 +847,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         it('should put the patient ID into the DiagnosticReport', function() {
           getFHIRResource("DiagnosticReport", fhirVersion, {subject: patientRes}).
-              then(function(callbackData:any) {
+              then(function(callbackData) {
             let [error, fhirData] = callbackData;
             expect(error).toBeNull();
             expect(fhirData.resourceType).toBe("DiagnosticReport");
@@ -882,10 +858,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       });
 
       describe('data control in Questionnaire', function() {
-        beforeAll(function () {
-          tp.openBaseTestPage();
+        before(function () {
+          cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);
-          tp.loadFromTestData('questionnaire-data-control.json', fhirVersion);
+          util.loadFromTestData('questionnaire-data-control.json', fhirVersion);
         });
 
         it('should have data control working correctly', function () {
@@ -893,20 +869,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               dcTarget1 = element(by.id('/controlledItem_LIST/1')),
               dcTarget2 = element(by.id('/controlledItem_TEXT/1'));
 
-          browser.wait(function () {
-            return dcSource.isDisplayed();
-          }, tp.WAIT_TIMEOUT_1);
-
           dcSource.click();
           TestUtil.sendKeys(dcSource, "ALTABAX (Topical)")
-          var searchRes = tp.Autocomp.searchResults;    
-          browser.wait(function() {
-            return searchRes.isDisplayed();
-          }, tp.WAIT_TIMEOUT_2);
+          cy.get(tp.Autocomp.searchResults).should('be.visible');
 
           dcSource.sendKeys(protractor.Key.ARROW_DOWN);
-          dcSource.sendKeys(protractor.Key.TAB);
-          dcSource.sendKeys(protractor.Key.TAB); // move to next field to avoid getting "" from the input's value
+          dcSource.sendKeys(protractor.Key.ENTER);
+
           TestUtil.waitForValue(dcTarget1, '1% Ointment')
           expect(TestUtil.getAttribute(dcTarget1,'value')).toBe('1% Ointment');
           expect(TestUtil.getAttribute(dcTarget2,'value')).toBe('1% Ointment');
@@ -914,14 +883,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       });
 
       describe('initial[x] in Questionnaire', function() {
-        beforeAll(function() {
-          tp.openBaseTestPage();
+        before(function() {
+          cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);
-          tp.loadFromTestData('questionnaire-initialx.json', fhirVersion);
+          util.loadFromTestData('questionnaire-initialx.json', fhirVersion);
         });
 
         it('should display initial[x] values correctly', function() {
-          var typeBoolean = element(by.id('/type-boolean/1')),
+          var typeBoolean = element(by.id('/type-boolean/1 button')),
               typeInteger = element(by.id('/type-integer/1')),
               typeDecimal = element(by.id('/type-decimal/1')),
               typeString = element(by.id('/type-string/1')),
@@ -933,13 +902,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               typeChoiceMulti = element(by.id('/type-choice-m/1')),
               typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
 
-          browser.wait(function() {
-            return typeBoolean.isDisplayed();
-          }, tp.WAIT_TIMEOUT_1);
+          // NEXT: new boolean implementation
+          typeBoolean.getCyElem().should('have.class', 'ant-switch-checked');
 
           if (fhirVersion === "R4") {
-            // NEXT: new boolean implementation
-            expect(typeBoolean.getAttribute('ng-reflect-model')).toBe("true");
 
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
 
@@ -949,7 +915,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             expect(TestUtil.getAttribute(typeDate,'value')).toBe("09/03/2019");
 
-            // initial[x] valueDateTime 
+            // initial[x] valueDateTime
             expect(TestUtil.getAttribute(typeDateTime,'value')).toBe("02/07/2015 13:28:17");
 
             expect(TestUtil.getAttribute(typeTime,'value')).toBe("13:28:17");
@@ -967,12 +933,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(repeatsElements.get(4).getText()).toBe('×User typed answer a');
             expect(repeatsElements.get(5).getText()).toBe('×User typed answer b');
 
-            browser.driver.executeAsyncScript(function () {
-              var callback = arguments[arguments.length - 1];
-              var fData = LForms.Util.getUserData(null, false, true);
-              callback(fData);
-            }).then(function (formData:any) {
-    
+            cy.window().then((win)=> {
+              return win.LForms.Util.getUserData(null, false, true);
+            }).then(function (formData) {
+
               expect(formData.itemsData.length).toBe(11);
               expect(formData.itemsData[0].value).toBe(true);
               expect(formData.itemsData[1].value).toBe(123);
@@ -1003,9 +967,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           }
           if (fhirVersion === "STU3") {
-            // NEXT: new boolean implementation            
-            expect(typeBoolean.getAttribute('ng-reflect-model')).toBe("true");
-
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
 
             expect(TestUtil.getAttribute(typeDecimal,'value')).toBe('123.45');
@@ -1014,7 +975,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             expect(TestUtil.getAttribute(typeDate,'value')).toBe("09/03/2019");
 
-            // initial[x] valueDateTime            
+            // initial[x] valueDateTime
             expect(TestUtil.getAttribute(typeDateTime, 'value')).toBe("02/07/2015 13:28:17");
 
             expect(TestUtil.getAttribute(typeTime,'value')).toBe("13:28:17");
@@ -1023,12 +984,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             expect(TestUtil.getAttribute(typeOpenChoice,'value')).toBe("User typed answer");
 
-            browser.driver.executeAsyncScript(function () {
-              var callback = arguments[arguments.length - 1];
-              var fData = LForms.Util.getUserData(null, false, true);
-              callback(fData);
-            }).then(function (formData:any) {
-    
+            cy.window().then((win)=> {
+              return win.LForms.Util.getUserData(null, false, true);
+            }).then(function (formData) {
+
               expect(formData.itemsData.length).toBe(9);
               expect(formData.itemsData[0].value).toBe(true);
               expect(formData.itemsData[1].value).toBe(123);
@@ -1048,7 +1007,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         it('should keep the initial[x] values when converted back to Questionnaire', function() {
           if (fhirVersion === "R4") {
             getFHIRResource("Questionnaire", fhirVersion).
-            then(function(callbackData:any) {
+            then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               // boolean
@@ -1151,7 +1110,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           if (fhirVersion === "STU3") {
             getFHIRResource("Questionnaire", fhirVersion).
-            then(function(callbackData:any) {
+            then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               // boolean
@@ -1186,12 +1145,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         if (fhirVersion === 'R4') {
           it('should get answers from a question that is under a question that has no answer values', function() {
-            tp.openBaseTestPage();
+            cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            tp.loadFromTestData('question-under-question.R4.json', fhirVersion);
+            util.loadFromTestData('question-under-question.R4.json', fhirVersion);
 
             let childItem = element(by.id('q2/1/1'));
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -1200,7 +1159,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
 
             TestUtil.sendKeys(childItem, '123');
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -1211,13 +1170,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should get answers from a question in a group that is under a question that has no answer values', function() {
-            tp.openBaseTestPage();
+            cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            tp.loadFromTestData('group-under-question.R4.json', fhirVersion);
+            util.loadFromTestData('group-under-question.R4.json', fhirVersion);
 
             let childItem = element(by.id('q2/1/1/1'));
 
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -1226,7 +1185,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
 
             TestUtil.sendKeys(childItem, '123');
-            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData:any) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
@@ -1237,6 +1196,5 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         }
       });
     });
-
   })(fhirVersions[i]);
 }

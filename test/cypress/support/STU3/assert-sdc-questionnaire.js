@@ -1,4 +1,4 @@
-import {facadeExpect as expect, protractor, by, element} from "./protractorFacade.js";
+import {facadeExpect as expect, protractor, by, element} from "../protractorFacade.js";
 
 function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.resourceType).toBe("Questionnaire");

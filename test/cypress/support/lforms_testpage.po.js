@@ -130,7 +130,7 @@ export class TestPage {
     raceField: '#/54126-8/54134-2/1/1',
     eyeField: '#/9267-6/1',
     scoreField: '#/9269-2/1',
-    // searchResults: this.autoCompHelpers.searchResults,  //TODO, probably not working with cypress
+    searchResults: '#searchResults'
     // searchResult: this.autoCompHelpers.searchResult, //TODO, probably not working with cypress
     // helpers: this.autoCompHelpers,
     // TODO rewrite in cypress
@@ -276,6 +276,13 @@ export class TestPage {
     if (button) {
       button.click();
     }
+    // Wait for at least the title to appear.  This will not mean that
+    // loadFHIRResources() has finished, but I don't think the forms here need
+    // that.
+    // For a more complete solution, see util.js loadFromTestData, the
+    // application of which here would require some modification to the test
+    // page.
+    cy.get('.lhc-form-title', {timeout: 5000}).should('be.visible');
   }
 
   /**
