@@ -10,7 +10,7 @@
  *  any prepopulation has been performed.
  */
 export function requestLinkedObs(lfData) {
-  if (LForms.fhirContext && lfData._fhir) {
+  if (LForms.fhirContext?.client && lfData._fhir) {
     // We will need to know what version of FHIR the server is using.  Make
     // sure that is available before continuing.
     if (!LForms._serverFHIRReleaseID) {
@@ -34,7 +34,7 @@ export function requestLinkedObs(lfData) {
         const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
         if (obsExt) { // an array of at least 1 if present
           var duration = obsExt[0].valueDuration; // optional
-          var fhirClient = LForms.fhirContext;
+          var fhirClient = LForms.fhirContext.client;
 
           // Get a comma separated list of codes
           const codeQuery = item.codeList.map((code) => {

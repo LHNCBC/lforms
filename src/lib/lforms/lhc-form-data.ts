@@ -485,92 +485,6 @@ export default class LhcFormData {
     }
   }
 
-//// TODO: FHIR
-//// This function has been moved to script/fhir.
-  /**
-   *  Starts the (likely asynchronous) requests to retrieve linked Observation
-   *  resources for pre-population.  When the resources have been retrieved,
-   *  prepoluation will be performed.
-   * @return a promise resolving after the resources have been retrieved and
-   *  any prepopulation has been performed.
-   */
-  _requestLinkedObs() {
-    if (LForms.fhirContext && this._fhir) {
-      // We will need to know what version of FHIR the server is using.  Make
-      // sure that is available before continuing.
-      var lfData = this;
-      if (!LForms._serverFHIRReleaseID) {
-        // Go fetch the server's FHIR version first before continuing
-        return new Promise(function(resolve, reject) {
-          LhcFormUtils.getServerFHIRReleaseID(function(relID) {
-            if (!relID)
-              reject("Unable to obtain the server's FHIR version");
-            else
-              resolve(lfData._requestLinkedObs());
-          });
-        });
-      }
-      else {
-        var pendingPromises = [];
-        LhcFormUtils.validateFHIRVersion(LForms._serverFHIRReleaseID);
-        var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
-        let obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
-        for (var i=0, len=this.itemList.length; i<len; ++i) {
-          let item = this.itemList[i];
-          const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
-          if (obsExt) { // an array of at least 1 if present
-            var duration = obsExt[0].valueDuration; // optional
-            var itemCodeSystem = item.questionCodeSystem;
-            if (itemCodeSystem === 'LOINC')
-              itemCodeSystem = serverFHIR.LOINC_URI;
-            var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
-            var queryParams:any = {type: 'Observation', query: {
-              code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
-              _count: 5}};  // only need one, but we need to filter out focus=true below
-            // Temporarily disabling the addition of the focus search
-            // parameter, because of support issues.  Instead, for now, we
-            // will check the focus parameter when the Observation is
-            // returned.  Later, we might query the server to find out whether
-            // :missing is supported.
-            //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-            //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
-            if (duration && duration.value && duration.code) {
-              // Convert value to milliseconds
-              var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
-              if (result.status === 'succeeded') {
-                let now:any = new Date();
-                var date = new Date(now - result.toVal);
-                queryParams.query._lastUpdated = 'gt'+date.toISOString();
-              }
-            }
-            // I'm not sure why, but fhirjs.search.then() returns an already
-            // resolved promise.  Wrap it in a Promise object.
-            pendingPromises.push(new Promise(function(resolve, reject) {
-              fhirjs.search(queryParams).then(function(successData) {
-                var bundle = successData.data;
-                if (bundle.entry) {
-                  var foundObs;
-                  for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
-                    var obs = bundle.entry[j].resource;
-                    if (!obs.focus) { // in case we couldn't use focus:missing above
-                      serverFHIR.SDC.importObsValue(item, obs);
-                      if (item.value)
-                        foundObs = true;
-                      if (item.unit)
-                        lfData._setUnitDisplay(item.unit);
-                    }
-                  }
-                }
-                resolve(item.questionCode); // code is not needed, but useful for debugging
-              })
-            }));
-          }
-        }
-        return Promise.all(pendingPromises);
-      }
-    }
-  }
-
 
   /**
    * Reset internal structural data when repeatable items/groups are added or removed.
@@ -2850,7 +2764,7 @@ export default class LhcFormData {
    * @return a Promise that will resolve to the ValueSet expansion.
    */
   _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
-    var fhirClient = LForms.fhirContext;
+    var fhirClient = LForms.fhirContext.client;
     return fhirClient.request(this._buildURL(['ValueSet',valueSetID,'$expand'],
       {count: count, filter: fieldVal}
     ));
@@ -2870,7 +2784,7 @@ export default class LhcFormData {
     // Fetch the ValueSet
     var failMsg = "Could not retrieve the ValueSet definition for "+
           item.answerValueSet;
-    var fhirClient = LForms.fhirContext;
+    var fhirClient = LForms.fhirContext.client;
     // Cache the lookup of ValueSet IDs, which should not change.  (A page
     // reload will clear the cache.)
     if (!LForms._valueSetUrlToID)
@@ -2955,13 +2869,13 @@ export default class LhcFormData {
           options.url = expURL;
           options.fhir = true;
         }
-        else if (LForms.fhirContext) {
+        else if (LForms.fhirContext?.client) {
           const self = this;
           options.fhir = {search: function(fieldVal, count) {
             if (LForms.fhirCapabilities.urlExpandBroken)
               return self._findValueSetIDAndSearch(item, fieldVal, count);
             else {
-              var fhirClient =  LForms.fhirContext;
+              var fhirClient =  LForms.fhirContext.client;
               return fhirClient.request(self._buildURL(['ValueSet/$expand'],
                 {count: count, filter: fieldVal, url: item.answerValueSet}
               )).catch((errorData) => {
