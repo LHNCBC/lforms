@@ -264,7 +264,7 @@ function addCommonSDCFns(ns) {
      *  launchContext extension.
      * @param resource the resource that was obtained as the value of the variable.
      */
-    function validateType(name, typeList, resource) {
+    function addIfValid(name, typeList, resource) {
       let resType = resource.resourceType;
       // Validate the "type"
       let permittedTypes = contextsFromServer[name];
@@ -299,7 +299,7 @@ function addCommonSDCFns(ns) {
       if (name && typeList.length) {
         pendingPromises.push(new Promise(function(resolve, reject) {
           let fromMap = LForms.fhirContext.vars?.[name];
-          let contextResource = fromMap || LForms.fhirContext.client?.[name];
+          let contextResource = LForms.fhirContext.client?.[name];
           if (!fromMap && !contextResource.id) {
             console.warn('A launch context resource of name '+name+
               ' was requested by the form, but none was available');
@@ -310,13 +310,13 @@ function addCommonSDCFns(ns) {
           }
           else {
             if (fromMap) {
-              validateType(name, typeList, fromMap);
+              addIfValid(name, typeList, fromMap);
               resolve();
             }
             else {
               contextResource.read().then(function(resource) {
                 if (resource) {
-                  validateType(name, typeList, resource);
+                  addIfValid(name, typeList, resource);
                 }
                 resolve();
               },
