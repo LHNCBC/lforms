@@ -249,12 +249,39 @@ function addCommonSDCFns(ns) {
     // launchContext
     var contextItems = LForms.Util.findObjectInArray(lfData.extension, 'url',
       self.fhirExtLaunchContext, 0, true);
-    // Per https://jira.hl7.org/browse/FHIR-29664 (approved; not yet applied- // 2020-11-19).
-    const validContexts = {patient: {Patient: 1}, encounter: {Encounter: 1},
-      user: {Patient: 1, Practitioner: 1, PractitionerRole: 1, RelatedPerson: 1},
-      study: {Study: 1}};
-    const supportedContextNames = {Patient: 1, User: 1, Encounter: 1};
+    // Define a list of known, supported context variables, which we can get from the FHIR server,
+    // and they resources they are allowed to take.
+    const contextsFromServer = {patient: {Patient: 1}, encounter: {Encounter: 1},
+      user: {Patient: 1, Practitioner: 1, PractitionerRole: 1, RelatedPerson: 1}};
     const pendingPromises = [];
+
+    /**
+     *  Checks to make sure that the type of the resource is what it should be
+     *  per FHIR's requirements, and if it is okay, assigns the resource to
+     *  the Questionnaires' variables map.
+     * @param name the name of the variable
+     * @param typeList the list of types for the name as specified in the
+     *  launchContext extension.
+     * @param resource the resource that was obtained as the value of the variable.
+     */
+    function addIfValid(name, typeList, resource) {
+      let resType = resource.resourceType;
+      // Validate the "type"
+      let permittedTypes = contextsFromServer[name];
+      if (permittedTypes && !permittedTypes[resType]) {
+        console.warn("a launch context resource of type "+restype+
+          " was found for name "+name+", but the supported types for name "+
+          name + " are: "+ Object.keys(permittedTypes).join(", "));
+      }
+      else if (typeList.indexOf(resType) == -1) {
+        console.warn("Could not retrieve a resource of the requested" +
+          " types for launch context name " +name);
+      }
+      else {
+        lfData._fhirVariables[name] = resource;
+      }
+    }
+
     for (var i=0, len=contextItems.length; i<len; ++i) {
       let contextItemExt = contextItems[i].extension;
       let name=null, typeList=[];
@@ -262,21 +289,8 @@ function addCommonSDCFns(ns) {
       for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
         var fieldExt = contextItemExt[j];
         if (!name && fieldExt.url === 'name') {
-          let nameCode = fieldExt.valueId
-          if (validContexts[nameCode]) {
-            name = nameCode;
-            // It is no longer necessary to check that the name is a valid
-            // FHIR variable, because per
-            // https://jira.hl7.org/browse/FHIR-29664, the values are now
-            // constrained to a known list.  I am leaving the line below
-            // comented out for reference in case that changes again.
-            // lfData._checkFHIRVarName(name); // might throw
-          }
-          else {
-            console.warn("A launch context of name "+nameCode+
-             " was requested by the form, but the supported types are: "+
-             Object.keys(validContexts).join(", "));
-          }
+          name = fieldExt.valueId
+          lfData._checkFHIRVarName(name); // might throw if the name is not valid as a variable name
         }
         else if (fieldExt.url === 'type') { // there can be more than one
           typeList.push(fieldExt.valueCode);
@@ -284,8 +298,9 @@ function addCommonSDCFns(ns) {
       }
       if (name && typeList.length) {
         pendingPromises.push(new Promise(function(resolve, reject) {
-          let contextResource = LForms.fhirContext[name];
-          if (!contextResource.id) {
+          let fromMap = LForms.fhirContext.vars?.[name];
+          let contextResource = LForms.fhirContext.client?.[name];
+          if (!fromMap && !contextResource.id) {
             console.warn('A launch context resource of name '+name+
               ' was requested by the form, but none was available');
             // The loading of this resource should not be critical for the
@@ -294,34 +309,24 @@ function addCommonSDCFns(ns) {
             resolve();
           }
           else {
-            contextResource.read().then(function(resource) {
-              if (resource) {
-                let resType = resource.resourceType;
-                if (typeList.indexOf(resType) == -1) {
-                  console.warn("Could not retrieve a resource of the requested" +
-                    " types for launch context name " +name);
-                }
-                else {
-                  // Validate the "type"
-                  let validTypes = validContexts[name];
-                  if (!validTypes[resType]) {
-                    console.warn("A launch context resource of type "+resType+
-                     " was requested by the form, but the supported types for name "+
-                     name + " are: "+ Object.keys(validTypes).join(", "));
-                  }
-                  else {
-                    lfData._fhirVariables[name] = resource;
-                  }
-                }
-              }
+            if (fromMap) {
+              addIfValid(name, typeList, fromMap);
               resolve();
-            },
-            function fail(reason) {
-              console.warn('A launch context of name '+name+' was requested, '+
-                'but could not be read.');
-              console.error(reason);
-              resolve(); // per above, we are not rejecting the promise
-            });
+            }
+            else {
+              contextResource.read().then(function(resource) {
+                if (resource) {
+                  addIfValid(name, typeList, resource);
+                }
+                resolve();
+              },
+              function fail(reason) {
+                console.warn('A launch context of name '+name+' was requested, '+
+                  'but could not be read.');
+                console.error(reason);
+                resolve(); // per above, we are not rejecting the promise
+              });
+            }
           }
         }));
       }

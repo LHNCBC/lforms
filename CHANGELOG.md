@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.0.0-beta.6] 2022-02-15
+### Added
+- Support for arbitrary launchContext names and resource types.  A second
+  parameter has been added to LForms.Util.setFHIRContext which is a map between
+  launchContext variable names and FHIR resource instances (as objects).  This
+  allows an application that is familiar with a partictular Questionnaire
+  to pass in the needed resources.
 
 ## [30.0.0-beta.5] 2022-02-09
 ### Fixed
@@ -10,7 +17,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added the support of the questionnaire-hidden extension on the horizontal tables
   (gtable) and the matrix (table).
-  
+
 ## [30.0.0-beta.4] 2022-02-04
 ### Fixed
 - calculatedExpression no longer forces fields to be read-only.

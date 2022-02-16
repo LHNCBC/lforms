@@ -69,16 +69,16 @@ const FormUtils = {
         eleLhcForm.fhirVersion = fhirVersion;
         eleLhcForm.addEventListener('onFormReady', function(e){
           resolve()
-        });        
+        });
         eleLhcForm.addEventListener('onError', function(e){
           reject(e.detail)
-        });        
+        });
       }
       catch(e) {
         reject(e)
       }
     })
-    
+
     return rtnPromise;
   },
 
@@ -97,7 +97,7 @@ const FormUtils = {
     }
   },
 
-  
+
   /**
    * Get user input data from the form, with or without form definition data.
    * @param element the containing HTML element that includes the LForm's rendered form.
@@ -320,14 +320,22 @@ const FormUtils = {
    *  Priort to calling this, the LHC-Forms FHIR support files should be loaded.
    * @param fhirContext an optional object for accessing a FHIR context and
    *  a FHIR API.  It should be an instance of 'client-js', a.k.a. npm package fhirclient,
-   *  version 2.  (See http://docs.smarthealthit.org/client-js).
+   *  version 2.  (See http://docs.smarthealthit.org/client-js).  This is
+   *  essentially the connection to the FHIR server, plus a notion of which
+   *  patient, user, and encounter are current or in scope.
+   * @param fhirContextVars a map of additional variable names to Resources
+   *  which should be available for use in processing launchContext exensions in
+   *  a Questionnaire.
+   *  (See https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-launchContext.html.)
+   *  Values in this map will take priority over values obtainable from
+   *  fhirContext when processing launchContext extensions.
    */
-  setFHIRContext: function(fhirContext) {
+  setFHIRContext: function(fhirContext, fhirContextVars) {
     if (!LForms.FHIR) {
       throw new Error('LHC-Forms FHIR support files have not been loaded.' +
         'See http://lhncbc.github.io/lforms/#fhirScripts');
     }
-    LForms.fhirContext = fhirContext;
+    LForms.fhirContext = {client: fhirContext, vars: fhirContextVars};
     LForms.fhirCapabilities = {}; // our own flags about what the server can do
     delete LForms._serverFHIRReleaseID; // in case the version changed
   },
@@ -369,10 +377,12 @@ const FormUtils = {
   getServerFHIRReleaseID: function(callback) {
     if (!LForms.fhirContext)
       throw new Error('setFHIRContext needs to be called before getFHIRReleaseID');
+    if (!LForms.fhirContext.client)
+      throw new Error('setFHIRContext was called, but no server connection was provided');
     if (!LForms._serverFHIRReleaseID) {
       // Retrieve the fhir version
       try {
-        var fhirAPI = LForms.fhirContext;
+        var fhirAPI = LForms.fhirContext.client
         //fhirAPI.request('metadata?_elements=fhirVersion').then(function(res) // causes an error on lforms-smart-fhir (TBD)
         fhirAPI.getFhirVersion().then(function(fhirVersion) {
           LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
@@ -548,21 +558,21 @@ const FormUtils = {
       var bodyElement = document.getElementsByTagName("body");
       if (bodyElement && bodyElement.length > 0) {
         element = bodyElement[0];
-        lhcFormElements = element.getElementsByTagName("wc-lhc-form");        
+        lhcFormElements = element.getElementsByTagName("wc-lhc-form");
       }
       else {
-        lhcFormElements = document.getElementsByTagName("wc-lhc-form");        
+        lhcFormElements = document.getElementsByTagName("wc-lhc-form");
       }
     }
     else {
-      lhcFormElements = element.getElementsByTagName("wc-lhc-form");        
+      lhcFormElements = element.getElementsByTagName("wc-lhc-form");
     }
-    
+
     for (let formElement of lhcFormElements) {
       formObj = formElement.lhcFormData;
       break;
     }
-  
+
     return formObj;
   },
 
@@ -849,8 +859,8 @@ const FormUtils = {
 
   // /**
   //  * Used in lformsFHIR.min.js as LForms.Util.deepCopy
-  //  * @param {*} sourceObj 
-  //  * @returns 
+  //  * @param {*} sourceObj
+  //  * @returns
   //  */
 
   // deepCopy: function(sourceObj) {
@@ -868,9 +878,9 @@ const FormUtils = {
 
   // /**
   //  * Used in lformsFHIR.min.js as LForms.Util.stringToDate
-  //  * @param {*} strDate 
-  //  * @param {*} looseParsing 
-  //  * @returns 
+  //  * @param {*} strDate
+  //  * @param {*} looseParsing
+  //  * @returns
   //  */
   // stringToDate: function(strDate, looseParsing) {
   //   return CommonUtils.stringToDate(strDate, looseParsing)
@@ -878,8 +888,8 @@ const FormUtils = {
 
   // /**
   //  * sed in lformsFHIR.min.js as LForms.Util.dateToDTMString
-  //  * @param {*} objDate 
-  //  * @returns 
+  //  * @param {*} objDate
+  //  * @returns
   //  */
   // dateToDTMString: function(objDate) {
   //   return CommonUtils.dateToDTMString(objDate)
@@ -887,14 +897,14 @@ const FormUtils = {
 
   // /**
   //  * Used in lformsFHIR.min.js as LForms.Util.findObjectInArray
-  //  * @param {*} targetObjects 
-  //  * @param {*} key 
-  //  * @param {*} matchingValue 
-  //  * @param {*} starting_index 
-  //  * @param {*} all 
+  //  * @param {*} targetObjects
+  //  * @param {*} key
+  //  * @param {*} matchingValue
+  //  * @param {*} starting_index
+  //  * @param {*} all
   //  */
   // findObjectInArray: function(targetObjects, key, matchingValue, starting_index, all) {
-  //   return CommonUtils.findObjectInArray(targetObjects, key, matchingValue, starting_index, all) 
+  //   return CommonUtils.findObjectInArray(targetObjects, key, matchingValue, starting_index, all)
   // }
 
 
@@ -922,7 +932,7 @@ const FormUtils = {
    */
   loadFHIRLibs: function(urlR4, urlStu3) {
     return Promise.all([
-      this.loadScript(urlR4), 
+      this.loadScript(urlR4),
       this.loadScript(urlStu3)])
   }
 
