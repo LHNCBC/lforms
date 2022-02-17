@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.0.0-beta.7] 2022-02-17
+### Added
+- Support for the newer launchContext "name" data type, valueCoding.  For
+  backward compatibility, valueId is still supported.
+  (https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-launchContext.html)
+
 ## [30.0.0-beta.6] 2022-02-15
 ### Added
 - Support for arbitrary launchContext names and resource types.  A second

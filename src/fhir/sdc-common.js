@@ -289,7 +289,13 @@ function addCommonSDCFns(ns) {
       for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
         var fieldExt = contextItemExt[j];
         if (!name && fieldExt.url === 'name') {
-          name = fieldExt.valueId
+          if (fieldExt.valueId) { // Handle a change in the specification
+            console.log("Warning:  The type of the launchContext 'name' field should be 'Coding', not 'id'.");
+            name = fieldExt.valueId;
+          }
+          else
+            name = fieldExt.valueCoding?.code;
+
           lfData._checkFHIRVarName(name); // might throw if the name is not valid as a variable name
         }
         else if (fieldExt.url === 'type') { // there can be more than one
