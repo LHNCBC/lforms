@@ -10,12 +10,16 @@ describe('launchContext', () => {
       win.LForms.Util.setFHIRContext(null, {myCustomVar: {
         resourceType: 'Basic',
         identifier: 'testCase1'
+      },
+      varNameFromValueId: {
+        resourceType: 'Basic',
+        identifier: 'testCase2'
       }});
     });
 
-    util.loadFromTestData('off-list-launchContext.json', 'R4');
-    // Check that the BMI field is not disabled
+    util.loadFromTestData('launchContext.json', 'R4');
     cy.get('#q1\\/1').should('have.value', 'testCase1');
+    cy.get('#q2\\/1').should('have.value', 'testCase2');
   });
 });
 
