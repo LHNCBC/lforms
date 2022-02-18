@@ -69,7 +69,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         // by FHIRPath expressions or data controls.
 
         let keepDataModel = changes.isFormReady?.currentValue;  //this.isFormReady might be a different value;
-
+        keepDataModel = keepDataModel && !changes.value?.currentValue;
         this.cleanupAutocomplete(keepDataModel); 
 
         this.setupAutocomplete();
