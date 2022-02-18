@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
+import equal from "fast-deep-equal";
 
 @Component({
   selector: 'lhc-autocomplete',
@@ -17,6 +18,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   @Input() options: any;
   // two-way data binding for dataModel
   @Input() dataModel: any;
+  @Input() isFormReady: boolean;
   @Output() dataModelChange: EventEmitter<any>  = new EventEmitter<any>();
 
   // emit the 'focus' and 'blur' events on the input fields
@@ -58,24 +60,24 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
    */
   ngOnChanges(changes) {
 
-    // console.log("lhc-autocomplete, ngOnChange")
-    // console.log(changes)
-    // console.log(this.dataModel)
-
     if (this.viewInitialized) {
       // reset autocompleter when 'options' changes
       if (changes.options) {
-        // need to keep the dataModel while cleaning up the previous autocomplete, when the value
-        // is the saved data in the item (loaded by data control or fhirpath expression)
-        let keepDataModel = changes.dataModel ? true : false;
+        // need to keep the dataModel while cleaning up the previous autocomplete, when the form is initially rendered
+        // with FHIR resoruce data loaded, asynchronously. At this moment the saved the user data are already in the data model
+        // and the autocomplete is already set up, with potentially an empty list if the answer list is loaded (asynchronously)
+        // by FHIRPath expressions or data controls.
+
+        let keepDataModel = changes.isFormReady?.currentValue;  //this.isFormReady might be a different value;
+
         this.cleanupAutocomplete(keepDataModel); 
 
         this.setupAutocomplete();
       }
       // item.value changed by data control or fhirpath express after the autocompleter is initialized
-      // Need to find way to distingish the two different changes: 1) emitted by ac itself, which does not need to run updateDisplayedValue, 
-      // 2) from outside ac
-      // 
+      // Need to find way to distingish the two different changes: 
+      // 1) emitted by ac itself, which does not need to run updateDisplayedValue, 
+      // 2) from outside of ac
       else if (changes.dataModel) {
         this.updateDisplayedValue(this.dataModel) 
       }

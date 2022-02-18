@@ -25,7 +25,7 @@ export class LhcDataService {
     this.lhcFormData = data;
   }
 
-
+  
   /**
    * The following functions are exposed to components and their templates through a service
    */
@@ -680,6 +680,16 @@ export class LhcDataService {
       this.lhcFormData._actionLogs = [];
     }
   };
+
+
+  /**
+   * Check if the form is rendered with all FHIR resources loaded
+   * @returns {boolean}
+   */
+  isFormReady(): boolean {
+    return !!this.lhcFormData._formReady;
+  };
+
 }
 
 

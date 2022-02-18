@@ -125,15 +125,26 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             if (LForms.FHIR && self.lhcFormData.fhirVersion) {
               self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
                 // when a new form is loaded, run all FHIR Expressions including the initial expresions
-                if (self.lhcFormData) { // sometimes set to null to clear the page
-                  if (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr) {
-                    self.lhcFormData._expressionProcessor.runCalculations(true).then(() => {
+                // self.lhcFormData sometimes is set to null to clear the page
+                if (self.lhcFormData && (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr)) {
+                  self.lhcFormData._expressionProcessor.runCalculations(true)
+                    .then(() => {
                       // console.log('fhir path run with true')
+                      // emit an event when the data is initially loaded
+                      // and the form's view is initially rendered
+                      self.lhcFormData._formReady = true;
+                      self.onFormReady.emit();
+                    })
+                    .catch(error => {
+                      const e = typeof error === "string" ? error : error.message
+                      self.onError.emit(e)      
                     });
-                  }
                 }        
-                // emit an event when the form's view and data are initially rendered
-                self.onFormReady.emit();
+                else {
+                  // emit an event when the form's view is initially rendered
+                  self.lhcFormData._formReady = true;
+                  self.onFormReady.emit();
+                }
               })
               .catch(error => {
                 const e = typeof error === "string" ? error : error.message
@@ -142,6 +153,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             }
             else {
               // emit an event when the form's view and data are initially rendered
+              self.lhcFormData._formReady = true;
               self.onFormReady.emit();
             }
   

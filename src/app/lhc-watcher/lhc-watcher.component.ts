@@ -41,7 +41,6 @@ export class LhcWatcherComponent implements OnInit, OnChanges {
           }); // pick up asynchronous model changes
         }
       }
-
     }
 
     // fhir expression (converting to fhir q/qr and run functions on them)
