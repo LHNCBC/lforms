@@ -5,7 +5,7 @@
       "extension": [
         {
           "url": "name",
-          "valueId": "patient"
+          "valueCoding": {"code": "patient", "system": "http://hl7.org/fhir/uv/sdc/CodeSystem/launchContext"}
         },
         {
           "url": "type",

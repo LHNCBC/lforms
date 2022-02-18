@@ -1,0 +1,90 @@
+{
+  "status": "draft",
+  "name": "off-list-launchContext test",
+  "title": "off-list-launchContext test",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 29.2.1"
+      }
+    ]
+  },
+  "extension": [{
+    "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext",
+    "extension" : [{
+      "url" : "name",
+      "valueCoding" : {"code": "myCustomVar"}
+    },
+    {
+      "url" : "type",
+      "valueCode" : "Basic"
+    },
+    {
+      "url" : "descripton",
+      "valueString" : "For testing a custom variable"
+    }]
+  }, {
+    "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext",
+    "extension" : [{
+      "url" : "name",
+      "valueId" : "varNameFromValueId"
+    },
+    {
+      "url" : "type",
+      "valueCode" : "Basic"
+    },
+    {
+      "url" : "descripton",
+      "valueString" : "For testing continued support of valueId for name for backward-compatibility"
+    }]
+  }],
+  "item": [
+    {
+      "type": "string",
+      "code": [
+        {
+          "code": "q1",
+          "display": "q1"
+        }
+      ],
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+        "valueExpression": {
+          "description" : "Pulls in the indentifier from the Basic resource made available by the launchContext",
+          "language" : "text/fhirpath",
+          "expression": "%myCustomVar.identifier"
+        }
+      }],
+      "required": false,
+      "linkId": "q1",
+      "text": "Prepopulated value",
+      "readOnly": true
+    },
+    {
+      "type": "string",
+      "code": [
+        {
+          "code": "q2",
+          "display": "q2"
+        }
+      ],
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+        "valueExpression": {
+          "description" : "Pulls in the indentifier from the Basic resource made available by the launchContext",
+          "language" : "text/fhirpath",
+          "expression": "%varNameFromValueId.identifier"
+        }
+      }],
+      "required": false,
+      "linkId": "q2",
+      "text": "Prepopulated value",
+      "readOnly": true
+    }
+
+  ]
+}
