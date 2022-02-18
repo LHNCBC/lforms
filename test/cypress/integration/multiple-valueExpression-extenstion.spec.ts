@@ -33,13 +33,13 @@ describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
 
   });
 
-  // TODO: new bug 
-  // it('should reset the strength field and the cui field when the problem field is cleared', () => {
-  //   cy.byId(problemId).clear();
-  //   cy.byId(problemId).should('have.value','');
-  //   cy.byId(strengthId).should('have.value','');
-  //   cy.byId(cuiId).should('have.value','');
-  // });
+  it('should reset the strength field and the cui field when the problem field is cleared', () => {
+    cy.byId(problemId).clear();
+    cy.byId(problemId).type('{enter}');
+    cy.byId(problemId).should('have.value','');
+    cy.byId(strengthId).should('have.value','');
+    cy.byId(cuiId).should('have.value','');
+  });
 
   it('should set the strength field and the cui field when a new problem is entered', () => {
     cy.byId(problemId).click().type('AB');

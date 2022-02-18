@@ -275,9 +275,13 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                       item._currentFhirQueryURLs = {};
                     let oldQueryURL = item._currentFhirQueryURLs[varName];
                     // If queryURL is not a new value, we don't need to do anything
-                    if (queryURL != oldQueryURL) {
+                    if (queryURL !== oldQueryURL) {
                       item._currentFhirQueryURLs[varName] = queryURL;
-                      if (!undefinedExprVal) {
+                      if (undefinedExprVal) {
+                        newVal = undefined;
+                        updateValue = true;
+                      }
+                      else {
                         // Look for a cached result
                         if (this._queryCache.hasOwnProperty(queryURL)) {
                           newVal = this._queryCache[queryURL];
