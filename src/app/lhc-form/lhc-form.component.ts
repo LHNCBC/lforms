@@ -66,7 +66,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
    * @param item an item in a form
    * @returns 
    */
-   getItemViewModeClass(item) {
+  getItemViewModeClass(item) {
     return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
   }
 
@@ -92,6 +92,24 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
     this.observer.unobserve(this.host.nativeElement);    
   }
 
+
+  /**
+   * Set a flag and emit an event when the form is ready
+   */
+  formReady() {
+    // set a flag on the form data 
+    // (lhc-autocomplete component depends on this flag to work correctly
+    // with fhirpath expression triggered changes)
+    this.lhcFormData._formReady = true;
+    // emit an event when the data is initially loaded (if there are data to be loaded)
+    // and the form's view is initially rendered                      
+    this.onFormReady.emit();
+  }
+
+  /**
+   * Handle the changes when a new form data is loaded
+   * @param changes the object that contains the changes
+   */
   ngOnChanges(changes) {
     // console.log("in lhc-form's ngOnChange")
     // form data changes
@@ -129,11 +147,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                 if (self.lhcFormData && (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr)) {
                   self.lhcFormData._expressionProcessor.runCalculations(true)
                     .then(() => {
-                      // console.log('fhir path run with true')
-                      // emit an event when the data is initially loaded
-                      // and the form's view is initially rendered
-                      self.lhcFormData._formReady = true;
-                      self.onFormReady.emit();
+                      self.formReady();
                     })
                     .catch(error => {
                       const e = typeof error === "string" ? error : error.message
@@ -141,9 +155,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                     });
                 }        
                 else {
-                  // emit an event when the form's view is initially rendered
-                  self.lhcFormData._formReady = true;
-                  self.onFormReady.emit();
+                  self.formReady();
                 }
               })
               .catch(error => {
@@ -152,9 +164,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
               });
             }
             else {
-              // emit an event when the form's view and data are initially rendered
-              self.lhcFormData._formReady = true;
-              self.onFormReady.emit();
+              self.formReady();
             }
   
           }
