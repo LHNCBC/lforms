@@ -21,8 +21,8 @@ export class AddFormToPageTestPage {
    */
   openPage() {
     cy.visit('/test/pages/addFormToPageTest.html');
-    TestUtil.waitForFHIRLibsLoaded()
-  };
+    TestUtil.waitForFHIRLibsLoaded();
+  }
 
 }
 

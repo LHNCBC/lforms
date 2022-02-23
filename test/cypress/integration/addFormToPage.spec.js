@@ -1,10 +1,8 @@
-import {TestPage} from '../support/lforms_testpage.po.js';
-import { AddFormToPageTestPage } from "../support/addFormToPageTest.po"
+import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import {TestUtil} from "../support/testUtilFacade.js";
 import * as util from "../support/util";
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
-let tp = new TestPage();
-let po = new AddFormToPageTestPage();
+const po = new AddFormToPageTestPage();
 //const cypressExpect = expect;
 //expect = facadeExpect;
 
