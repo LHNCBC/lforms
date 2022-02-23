@@ -1,5 +1,5 @@
 /**
- *  Goes to lforms_testpage.html
+ *  Goes to addFormToPageTest.html
  */
 export function visitTestPage() {
   cy.visit('test/pages/addFormToPageTest.html');
@@ -8,7 +8,8 @@ export function visitTestPage() {
 
 /**
  *  Loads a form from a JSON form definition file from the test/data
- *  directory, and displays the form.  Designed for lforms_testpage.html.
+ *  directory, and displays the form.  Designed for forms added by the
+ *  LForms.Util.addFormToPage function.
  * @param filepath the path to the form definition file, relative to
  *  test/data/fhirVersion (or just test/data if fhirVersion is not
  *  provided.)
@@ -47,7 +48,7 @@ export function loadFromTestData(filepath, fhirVersion=null) {
 
 
 /**
- *  Returns the full path to a  JSON form definition file in the test/data
+ *  Returns the full path to a JSON form definition file in the test/data
  *  directory.
  * @param filepath the path to the form definition file, relative to
  *  test/data/fhirVersion (or just test/data if fhirVersion is not
@@ -66,7 +67,8 @@ function getTestDataPathName(filepath, fhirVersion=null) {
 
 
 /**
- *  Selects a FHIR version.  Designed for lforms_testpage.html.
+ *  Selects a FHIR version.  Designed for lforms_testpage.html and
+ *  addFormToPageTest.html.
  * @param version the FHIR version to use.
  */
 function setFHIRVersion(version) {

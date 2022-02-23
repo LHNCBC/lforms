@@ -25,7 +25,7 @@ export class LhcDataService {
     this.lhcFormData = data;
   }
 
-  
+
   /**
    * The following functions are exposed to components and their templates through a service
    */
@@ -327,7 +327,7 @@ export class LhcDataService {
     }
     return viewModeClass;
   }
-  
+
 
   /**
    * get the CSS class for an item's view mode
@@ -369,7 +369,7 @@ export class LhcDataService {
     }
     return viewModeClass;
   }
-  
+
 
   /**
    * Add a repeating item or a repeating group
