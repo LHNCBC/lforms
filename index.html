@@ -191,7 +191,7 @@ clinicaltables.nlm.nih.gov.  The URLs for the JavaScript and the CSS are:
     <p>The zone.min.js file should be left out if you already have that in your
     page (e.g. if the page contains an Angular app), and the scripts.js file
     just contains jQuery, so if you already have jQuery 3 on the page, that can
-    left out as well.</p>
+    be left out as well.</p>
   </dd>
   <dt>JavaScript for FHIR Support (recommended)</dt>
   <dd>Additionally, you will probably want <b>ONE</b> of the following files for FHIR
@@ -216,7 +216,7 @@ clinicaltables servers, though you may continue to link to clinicaltables if you
 <p>If you decide to use the npm package, note that for now the JavaScript files
 do not work when the package is required or imported, so you will still need to
 load the above files from the package directory via script tags.  We are hoping to find a solution that
-will be allow them the imported in the future.</p>
+will allow them to be imported in the future.</p>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
@@ -282,7 +282,7 @@ logic</li>
 <pre><code>LForms.Util.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
-<p>To get a compact structure with just the user-entered data an minimal form
+<p>To get a compact structure with just the user-entered data and minimal form
 definition data, you can call <code>LForms.Util.getUserData(formElement, true, true,
 true)</code>.  The parameters are:</p>
 <ol>
@@ -324,8 +324,7 @@ hidden by skip logic will be removed.</li>
   in and that the values have the correct format, by using the following function:
   </p>
 
-  <pre><code>LForms.Util.checkValidity(formElement)
-  </code></pre>
+  <pre><code>LForms.Util.checkValidity(formElement)</code></pre>
 
   <p>An array of errors will be returned if the form is invalid.  If the form is
   valid this function returns null.
@@ -343,7 +342,7 @@ hidden by skip logic will be removed.</li>
   <h2><a id="fhirSupport"></a>Support for FHIR Questionnaire Resources</h2>
   <p>LHC-Forms can import and export <a href="https://www.hl7.org/fhir/">FHIR</a>
    Questionnaire and QuestionnaireResponse
-   resources.  For the current extent of that support, see the documention for
+   resources.  For the current extent of that support, see the documentation for
    <a href="https://github.com/lhncbc/lforms/blob/master/r4-support.md">version
    R4 support"</a> and <a
    href="https://github.com/lhncbc/lforms/blob/master/sdc-support.md">SDC
@@ -360,7 +359,7 @@ hidden by skip logic will be removed.</li>
     <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
     Exporting FHIR Resources
   </h3>
-  <p>The form definiton and user-entered data can be
+  <p>The form definition and user-entered data can be
     retrieved as <a href="https://www.hl7.org/fhir/">FHIR</a> resources, using
     the following utility method:</p>
   <pre>
@@ -383,7 +382,7 @@ hidden by skip logic will be removed.</li>
           that the DiagnosticReport and associated Observation resources be placed
           together in a bundle of that type.  When this is not present, a bundle
           will not be used.</li>
-        <li>extract - a flag used for resourceType=QuestionnaireReponse to
+        <li>extract - a flag used for resourceType=QuestionnaireResponse to
           indicate that data should be extracted (using the observationExtract
           extension).  In this case the returned resource will be an array
           consisting of the QuestionnaireResponse and any extracted Observations.
@@ -414,9 +413,9 @@ hidden by skip logic will be removed.</li>
       >LForms</a> repository.</li>
     <li>fhirVersion - the version of FHIR in which the Questionnaire is
      written (currently takes either "STU3" or "R4").  This maybe be omitted if
-     the Questionnaire resource (in fhirData) conains a <a href=
+     the Questionnaire resource (in fhirData) contains a <a href=
      "http://build.fhir.org/versioning.html#mp-version">meta.profile</a>
-     attibute specifying the FHIR version.  If both are provided, this takes
+     attribute specifying the FHIR version.  If both are provided, this takes
      precedence.</li>
   </ol>
 
@@ -449,8 +448,8 @@ hidden by skip logic will be removed.</li>
    provided here will take priority over values from fhirContext.</p>
 
   <p>If rendering using <a
-  href="#usage">LForms.Util.addFormtoPage()</a>, the external FHIR
-  resources will be loded when that is called, and if you have passed in the
+  href="#usage">LForms.Util.addFormToPage()</a>, the external FHIR
+  resources will be loded when that is called, and if you have passed in
   prepopulate=true as an option, prepopulation will also be performed when the
   resources are loaded.  The addFormToPage function returns a promise that will resolve
   after all external FHIR resources have been loaded (at which point the form
@@ -482,9 +481,9 @@ hidden by skip logic will be removed.</li>
      obtained by <a href="#convert-fhir-data">converting a FHIR Questionnaire.</a></li>
     <li>fhirVersion - the version of FHIR in which the resource is
      written (currently takes either "STU3" or "R4").  This maybe be omitted if
-     the resource (in fhirData) conains a <a href=
+     the resource (in fhirData) contains a <a href=
      "http://build.fhir.org/versioning.html#mp-version">meta.profile</a>
-     attibute specifying the FHIR version.  If both are provided, this takes
+     attribute specifying the FHIR version.  If both are provided, this takes
      precedence.</li>
   </ol>
 
@@ -511,7 +510,7 @@ or see the
 
 <hr>
 
-    <span class="credits left">Project maintained by <a href="https://github.com/lhncbc">lhncbc</a></span>
+    <span class="credits left">Project maintained by <a href="https://github.com/lhncbc">LHNCBC</a></span>
     <span class="credits right">Hosted on GitHub Pages &mdash; Based on theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
       </section>
 
