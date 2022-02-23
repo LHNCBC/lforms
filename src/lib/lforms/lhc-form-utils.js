@@ -101,6 +101,7 @@ const FormUtils = {
   /**
    * Get user input data from the form, with or without form definition data.
    * @param element the containing HTML element that includes the LForm's rendered form.
+   *        It could either be a DOM element or a CSS selector.
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
@@ -116,7 +117,7 @@ const FormUtils = {
    * Get the complete form definition data, including the user input data from the form.
    * The returned data could be fed into a LForms widget directly to render the form.
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
-   *        It could either be the DOM element or its id.
+   *        It could either be a DOM element or a CSS selector.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @returns {{}} Form definition data
@@ -131,7 +132,7 @@ const FormUtils = {
    * Get HL7 v2 OBR and OBX segment data from the form.
    * Empty or hidden questions are not included.
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
-   *        It could either be the DOM element or its id
+   *        It could either be the DOM element or a CSS selector.
    * @returns {*} a string that contains HL7 v2 OBR and OBX segments
    */
   getFormHL7Data: function(element) {
@@ -166,6 +167,7 @@ const FormUtils = {
   /**
    * Get a list of errors preventing the form from being valid.
    * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
+   *        It could either be a DOM element or a CSS selector.
    * @return {Array<string>} list of errors or null if form is valid
    */
   checkValidity: function (element) {
@@ -258,9 +260,9 @@ const FormUtils = {
 
 
   /**
-   * Merge a FHIR resource into an LForms form object
-   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport" and
-   * "QuestionnaireResponse" (SDC profile)
+   * Merge a FHIR resource into an LForms form object. 
+   * It currently supports "DiagnosticReport" (or "DiagnosticReport" in a "Bundle")
+   * and "QuestionnaireResponse" (SDC profile)
    * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained" Observation
    * resources,or a Bundle with DiagnosticReport and Observation resources
    * @param formData an LForms form definition or LFormsData object.
@@ -271,19 +273,37 @@ const FormUtils = {
    *  If both are provided, this takes precedence.
    * @returns {{}} an updated LForms form definition, with answer data
    */
-  mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
+  mergeFHIRDataIntoLForms: function(fhirData, formData, fhirVersion) {
+    // For backward compatibility, ignore the resourceType.
+    // It used to support a resourceType as the first parameter, the rest of the
+    // parameters are the same. 
+    if (typeof fhirData === "string") {
+      fhirData = formData;
+      formData = fhirVersion;
+      fhirVersion = arguments[3];
+    }
+
     if (fhirData) {
       fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirData);
       var fhir = LForms.FHIR[fhirVersion];
-      switch (resourceType) {
+      switch (fhirData.resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData.hasSavedData = true; // will be used to determine whether to update or save
+          break;
+        case "Bundle": 
+          // Bundle should contain DiagnosticReport
+          if (fhirData.type === "searchset" && 
+              fhirData.entry.find(ele => ele.resource.resourceType === "DiagnosticReport")) {
+            formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+            formData.hasSavedData = true; // will be used to determine whether to update or save    
+          }
           break;
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
-      formData.hasSavedData = true; // will be used to determine whether to update or save
     }
     return formData;
   },
@@ -545,15 +565,19 @@ const FormUtils = {
 
 
   /**
-   * Find the form object in the scope based the form dom element
-   * @param element element the containing HTML element that includes the LForm's rendered form.
+   * Find the first wc-lhc-form web component within a DOM element, or in the HTML body,
+   * and return the form data object from the wc-lhc-form web component.
+   * @param element optional, a DOM element or a CSS selector of the DOM element that contains 
+   * a custome element 'wc-lhc-form'. If it is not provided, the function searches in the HTML body.
+   * for the first 'wc-lhc-form'.
    * @returns {*}
    * @private
    */
   _getFormObjectInScope: function(element) {
-    // find the scope that has the LForms data
-    var formObj;
-    var lhcFormElements;
+    var formObj, lhcFormElements;
+    if (typeof element === "string") {
+      element = document.querySelector(element)
+    }
     if (!element) {
       var bodyElement = document.getElementsByTagName("body");
       if (bodyElement && bodyElement.length > 0) {
@@ -849,7 +873,8 @@ const FormUtils = {
    * @param {*} formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
    *  LFormsData object, or an LForms form definition (parsed).  If not
-   *  provided, the first form found in the page will be used.   */
+   *  provided, the first form found in the page will be used.   
+   */
   getAnswersResourceStatus : function(formDataSource) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string')
       formDataSource = this._getFormObjectInScope(formDataSource);

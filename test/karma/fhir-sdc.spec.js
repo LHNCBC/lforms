@@ -1616,7 +1616,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             $.get(lfDefFile, function(lfFormDef) { // load the questionnaire json
               $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                    'QuestionnaireResponse', fhirQnRespData, lfFormDef, fhirVersion);
+                  'QuestionnaireResponse', fhirQnRespData, lfFormDef, fhirVersion);
                 assert.equal(mergedFormData.items[0].value, 333.0);
                 assert.equal(mergedFormData.items[0].dataType, 'QTY');
                 itDone();
@@ -1632,7 +1632,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             $.get(lfDefFile, function(lfFormDef) { // load the questionnaire json
               $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                  'QuestionnaireResponse', fhirQnRespData, lfFormDef, fhirVersion);
+                  fhirQnRespData, lfFormDef, fhirVersion);
                 assert.equal(mergedFormData.items[3].value, "item.answer.item main item value");
                 assert.equal(mergedFormData.items[3].items[1].value, 20);
                 assert.equal(mergedFormData.items[4].value, "item.answer.item main item value2");

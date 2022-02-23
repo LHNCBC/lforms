@@ -337,8 +337,7 @@
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
 
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                    resType, fhirJson, formJson,
-                    getFHIRVersion());
+                    fhirJson, formJson, getFHIRVersion());
         testForm.questionnaire = mergedFormData;
         
       };
