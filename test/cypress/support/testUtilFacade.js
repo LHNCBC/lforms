@@ -88,10 +88,6 @@ export const TestUtil = {
       + ' ' +
       [(100 + date.getHours()).toString().substr(1),
       (100 + date.getMinutes()).toString().substr(1), "00"].join(':');
-  },
-
-
-
-
+  }
 
 };

@@ -53,8 +53,7 @@ export function facadeExpect(actualValue) {
           cypressExpect(actualValue).to.be.null;
       },
       toBeFalsy: ()=>cypressExpect(!actualValue).to.be.true,
-     // toBeGreaterThanOrEqual: (v)=>cypressExpect(actualValue).to.be.at.least(v),
-      toBeGreaterThanOrEqual: (v)=>{console.log('A2'); console.log(v); console.log('b2');cypressExpect(actualValue).to.be.gte(v)},
+      toBeGreaterThanOrEqual: (v)=>cypressExpect(actualValue).to.be.gte(v),
       toBeLessThanOrEqual: (v)=>cypressExpect(actualValue).to.be.at.most(v),
       toContain: (v)=>actualValue.should('contain', v)
     }

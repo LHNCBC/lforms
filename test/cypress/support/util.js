@@ -50,7 +50,7 @@ export function loadFromTestData(filepath, fhirVersion=null) {
 
 
 /**
- *  Calls LForms.Util.addFormToPAge
+ *  Calls LForms.Util.addFormToPage
  * @param filePath the path to the form definition relative to test/data.
  * @param container the ID of the element into which the form should be placed.
  */
