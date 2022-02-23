@@ -94,7 +94,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
 
   /**
-   * Set a flag and emit an event when the form is ready
+   * Set a flag and emit an event that the form is ready
    */
   formReady() {
     // set a flag on the form data 
