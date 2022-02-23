@@ -8,7 +8,10 @@ export function visitTestPage() {
 
 /**
  *  Loads a form from a JSON form definition file from the test/data
- *  directory, and displays the form.  Designed for lforms_testpage.html.
+ *  directory, and displays the form.  Designed for lforms_testpage.html, but
+ *  will work with other pages that have the same "Load" button.
+ *  For a general solution using LForms.Util.addFormToPage, see addFormToPage in
+ *  this file.
  * @param filepath the path to the form definition file, relative to
  *  test/data/fhirVersion (or just test/data if fhirVersion is not
  *  provided.)
@@ -44,6 +47,22 @@ export function loadFromTestData(filepath, fhirVersion=null) {
     });
   });
 }
+
+
+/**
+ *  Calls LForms.Util.addFormToPAge
+ * @param filePath the path to the form definition relative to test/data.
+ * @param container the ID of the element into which the form should be placed.
+ */
+export function addFormToPage(filePath, container) {
+  cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
+    cy.window().then((win) => {
+      win.document.getElementById(container).innerHTML = null;
+      win.LForms.Util.addFormToPage(formDef, container);
+      cy.get('#'+container).find('.lhc-form-title').should('be.visible');
+    });
+  });
+};
 
 
 /**
