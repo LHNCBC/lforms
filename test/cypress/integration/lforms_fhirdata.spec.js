@@ -47,7 +47,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('rendering-style extension', function() {
         it('should work on Questionnaire.title, item.prefix, and item.text', function() {
           cy.visit('test/pages/addFormToPageTest.html');
-          util.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
+          util.addFormToPage('argonaut-phq9-ish.json', null, {fhirVersion});
           expect(element(by.id('label-44249-1')).getAttribute('style')).toBe('background-color: white; color: green;');
           var idCSS = '#label-g1\\.q2/1/1';
           expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
@@ -56,7 +56,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4
           it('should work on question text in horizontal tables', function() {
-            util.loadFromTestData('tables.json', fhirVersion);
+            util.addFormToPage('tables.json', null, {fhirVersion});
             var idCSS = '#col/g2/g1m1/1/1';
             expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
             expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
@@ -72,7 +72,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('FHIR Data: ', function () {
         describe('get FHIR data from LForms forms', function() {
           it('should generate correct Observations for type integer', function() {
-            util.loadFromTestData('allInOne.json', 'lforms');
+            util.addFormToPage('allInOne.json');
             let integerWithUnit = element(by.id('/q_lg/1'));
             TestUtil.sendKeys(integerWithUnit, 3);
             let integerNoUnit = element(by.id('/type2/1'));
@@ -99,7 +99,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should get a DiagnosticReport (contained) data from a form', function() {
-            util.loadFromTestData('FHTData.json', 'lforms');
+            util.addFormToPage('FHTData.json');
             // #1 all fields are empty
             getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
               let [error, fhirData] = callbackData;
@@ -781,8 +781,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           beforeEach(function() {
             cy.visit('test/pages/addFormToPageTest.html');
-            tp.setFHIRVersion(fhirVersion);
-            util.loadFromTestData('4712701.json', fhirVersion);
+            util.addFormToPage('4712701.json', null, {fhirVersion});
           });
 
           it('should be able to show a converted questionnaire', function() {
@@ -819,8 +818,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('Subject option with a Patient resource', function() {
        before(function() {
           cy.visit('test/pages/addFormToPageTest.html');
-          tp.setFHIRVersion(fhirVersion);
-          util.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
+          util.addFormToPage('weightHeightQuestionnaire.json', null, {fhirVersion});
           var height = element(by.id('/8302-2/1'));
           TestUtil.sendKeys(height, '70');
         });
@@ -861,7 +859,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         before(function () {
           cy.visit('test/pages/addFormToPageTest.html');
           tp.setFHIRVersion(fhirVersion);
-          util.loadFromTestData('questionnaire-data-control.json', fhirVersion);
+          util.addFormToPage('questionnaire-data-control.json', null, {fhirVersion});
         });
 
         it('should have data control working correctly', function () {
@@ -885,8 +883,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('initial[x] in Questionnaire', function() {
         before(function() {
           cy.visit('test/pages/addFormToPageTest.html');
-          tp.setFHIRVersion(fhirVersion);
-          util.loadFromTestData('questionnaire-initialx.json', fhirVersion);
+          util.addFormToPage('questionnaire-initialx.json', null, {fhirVersion});
         });
 
         it('should display initial[x] values correctly', function() {
@@ -1147,7 +1144,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should get answers from a question that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            util.loadFromTestData('question-under-question.R4.json', fhirVersion);
+            util.addFormToPage('question-under-question.R4.json', null, {fhirVersion});
 
             let childItem = element(by.id('q2/1/1'));
             getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
@@ -1172,7 +1169,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should get answers from a question in a group that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
             tp.setFHIRVersion(fhirVersion);
-            util.loadFromTestData('group-under-question.R4.json', fhirVersion);
+            util.addFormToPage('group-under-question.R4.json', null, {fhirVersion});
 
             let childItem = element(by.id('q2/1/1/1'));
 

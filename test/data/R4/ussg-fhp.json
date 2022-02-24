@@ -1,0 +1,2591 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "date": "2018-11-05T16:54:56-05:00",
+  "version": "2.56",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ]
+  },
+  "title": "US Surgeon General family health portrait",
+  "name": "US Surgeon General family health portrait",
+  "identifier": [
+    {
+      "system": "http://loinc.org",
+      "value": "54127-6"
+    }
+  ],
+  "code": [
+    {
+      "system": "http://loinc.org",
+      "code": "54127-6",
+      "display": "US Surgeon General family health portrait"
+    }
+  ],
+  "subjectType": [
+    "Patient",
+    "Person"
+  ],
+  "extension": [{
+    "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext",
+    "extension" : [{
+      "url" : "name",
+      "valueCoding": {"code": "patient", "system": "http://hl7.org/fhir/uv/sdc/CodeSystem/launchContext"}
+    },
+    {
+      "url" : "type",
+      "valueCode" : "Patient"
+    },
+    {
+      "url" : "descripton",
+      "valueString" : "For filling in patient information as the subject for the form"
+    }]
+  }],
+  "item": [
+    {
+      "required": false,
+      "linkId": "/54126-8",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "54126-8",
+          "display": "My health history"
+        }
+      ],
+      "text": "My health history",
+      "type": "group",
+      "item": [
+        {
+          "required": false,
+          "linkId": "/54126-8/54125-0",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54125-0",
+              "display": "Name"
+            }
+          ],
+          "text": "Name",
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+              "valueExpression": {
+                "description": "Name from patient resource",
+                "language" : "text/fhirpath",
+                "expression": "%patient.name[0].select(given.first() + ' ' +  family)"
+              }
+            }
+          ],
+          "item": [
+            {
+              "text": "A plain text instruction on Name",
+              "type": "display",
+              "linkId": "/54126-8/54125-0-help",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "text": "Help-Button",
+                    "coding": [
+                      {
+                        "code": "help",
+                        "display": "Help-Button",
+                        "system": "http://hl7.org/fhir/questionnaire-item-control"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "_text": {
+                "extension": [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>"
+                }]
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/54131-8",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54131-8",
+              "display": "Gender"
+            }
+          ],
+          "text": "Gender",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA2-8",
+                "display": "Male"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA3-6",
+                "display": "Female"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA46-8",
+                "display": "Other"
+              }
+            }
+          ],
+          "item": [
+            {
+              "text": "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>",
+              "type": "display",
+              "linkId": "/54126-8/54131-8-help",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "text": "Help-Button",
+                    "coding": [
+                      {
+                        "code": "help",
+                        "display": "Help-Button",
+                        "system": "http://hl7.org/fhir/questionnaire-item-control"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
+              "valueExpression": {
+                "description": "Birth date from patient resource",
+                "language" : "text/fhirpath",
+                "expression": "%patient.birthDate"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/21112-8",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "21112-8",
+              "display": "Birth Date"
+            }
+          ],
+          "text": "Birth Date",
+          "type": "date"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/54132-6",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54132-6",
+              "display": "Twin"
+            }
+          ],
+          "text": "Twin",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10427-5",
+                "display": "Yes - Identical (Same)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10428-3",
+                "display": "Yes - Fraternal (Different)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/54128-4",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54128-4",
+              "display": "Adopted"
+            }
+          ],
+          "text": "Adopted",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA33-6",
+                "display": "Yes"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/54135-9",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54135-9",
+              "display": "Parents related"
+            }
+          ],
+          "text": "Parents related",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA33-6",
+                "display": "Yes"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "[in_i]"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod",
+              "valueDuration": {
+                "value": "1",
+                "unit": "year",
+                "system": "http://unitsofmeasure.org",
+                "code": "a"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/8302-2",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "8302-2",
+              "display": "Body height"
+            }
+          ],
+          "text": "Body height",
+          "type": "decimal"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "kg"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod",
+              "valueDuration": {
+                "value": "1",
+                "unit": "year",
+                "system": "http://unitsofmeasure.org",
+                "code": "a"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+              "valueBoolean": true
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/29463-7",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "29463-7",
+              "display": "Weight"
+            }
+          ],
+          "text": "Weight",
+          "type": "decimal"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+              "valueBoolean": true
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/54134-2",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54134-2",
+              "display": "Race"
+            }
+          ],
+          "text": "Race",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10608-0",
+                "display": "American Indian or Alaska Native"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA6156-9",
+                "display": "Asian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10614-8",
+                "display": "-- Asian Indian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10615-5",
+                "display": "-- Chinese"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10616-3",
+                "display": "-- Filipino"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10617-1",
+                "display": "-- Japanese"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10618-9",
+                "display": "-- Korean"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10620-5",
+                "display": "-- Vietnamese"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10619-7",
+                "display": "-- Other Asian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10610-6",
+                "display": "Black or African American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10611-4",
+                "display": "Native Hawaiian or Other Pacific Islander"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10623-9",
+                "display": "-- Native Hawaiian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10622-1",
+                "display": "-- Guamanian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10621-3",
+                "display": "-- Chamorro"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10625-4",
+                "display": "-- Samoan"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10624-7",
+                "display": "-- Other Pacific Islander"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA4457-3",
+                "display": "White"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10613-0",
+                "display": "Other/Unknown/Refuse To Answer"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+              "valueBoolean": true
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54126-8/54133-4",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54133-4",
+              "display": "Ethnicity"
+            }
+          ],
+          "text": "Ethnicity",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA6214-6",
+                "display": "Hispanic or Latino"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10599-1",
+                "display": "-- Central American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10600-7",
+                "display": "-- Cuban"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10601-5",
+                "display": "-- Dominican(Republic)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10602-3",
+                "display": "-- Mexican"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10605-6",
+                "display": "-- Puerto Rican"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10606-4",
+                "display": "-- South American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10604-9",
+                "display": "-- Other Latin American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10603-1",
+                "display": "-- Other Hispanic/Latino/Spanish"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10597-5",
+                "display": "Non-Hispanic or Latino"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10598-3",
+                "display": "Ashkenazi Jewish"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10607-2",
+                "display": "Unknown/No answer"
+              }
+            }
+          ]
+        },
+        {
+          "required": false,
+          "repeats": true,
+          "linkId": "/54126-8/54137-5",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54137-5",
+              "display": "Diseases history panel"
+            }
+          ],
+          "text": "Diseases history panel",
+          "type": "group",
+          "item": [
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "autocomplete",
+                        "display": "Auto-complete"
+                      }
+                    ],
+                    "text": "Auto-complete"
+                  }
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+                  "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+                }
+              ],
+              "required": false,
+              "linkId": "/54126-8/54137-5/54140-9",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54140-9",
+                  "display": "History of diseases"
+                }
+              ],
+              "text": "History of diseases",
+              "type": "choice",
+              "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions"
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "required": false,
+              "linkId": "/54126-8/54137-5/54130-0",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54130-0",
+                  "display": "Age range at onset of disease"
+                }
+              ],
+              "text": "Age range at onset of disease",
+              "type": "choice",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10402-8",
+                    "display": "Pre-Birth"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10403-6",
+                    "display": "Newborn"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10394-7",
+                    "display": "Infancy"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10395-4",
+                    "display": "Childhood"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10404-4",
+                    "display": "Adolescence"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10396-2",
+                    "display": "20-29"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10397-0",
+                    "display": "30-39"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10398-8",
+                    "display": "40-49"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10399-6",
+                    "display": "50-59"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10400-2",
+                    "display": "OVER 60"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA4489-6",
+                    "display": "Unknown"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "required": false,
+      "repeats": true,
+      "linkId": "/54114-4",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "54114-4",
+          "display": "Family member health history"
+        }
+      ],
+      "text": "Family member health history",
+      "type": "group",
+      "item": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
+              "valueCodeableConcept": {
+                "text": "The relationship of a family member to the patient.",
+                "coding": [
+                  {
+                    "display": "The relationship of a family member to the patient."
+                  }
+                ]
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54136-7",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54136-7",
+              "display": "Relationship to patient"
+            }
+          ],
+          "text": "Relationship to patient",
+          "type": "choice",
+          "answerOption": [
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "DAU"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10405-1",
+                "display": "Daughter"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "GRNDDAU"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10406-9",
+                "display": "Granddaughter"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "GRNDSON"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10407-7",
+                "display": "Grandson"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "HBRO"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10408-5",
+                "display": "Half-brother"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "HSIS"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10409-3",
+                "display": "Half-sister"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "MAUNT"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10410-1",
+                "display": "Maternal Aunt"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "MCOUSN"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10411-9",
+                "display": "Maternal Cousin"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "MGRFTH"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10412-7",
+                "display": "Maternal Grandfather"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "MGRMTH"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10413-5",
+                "display": "Maternal Grandmother"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "MUNCLE"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10414-3",
+                "display": "Maternal Uncle"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "NBRO"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10415-0",
+                "display": "Brother"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "NFTH"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10416-8",
+                "display": "Father"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "NMTH"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10417-6",
+                "display": "Mother"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "NSIS"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10418-4",
+                "display": "Sister"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "NEPHEW"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10419-2",
+                "display": "Nephew"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "NIECE"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10420-0",
+                "display": "Niece"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "PAUNT"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10421-8",
+                "display": "Paternal Aunt"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "PCOUSN"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10422-6",
+                "display": "Paternal Cousin"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "PGRFTH"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10423-4",
+                "display": "Paternal Grandfather"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "PGRMTH"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10424-2",
+                "display": "Paternal Grandmother"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "PUNCLE"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10425-9",
+                "display": "Paternal Uncle"
+              }
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "SON"
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10426-7",
+                "display": "Son"
+              }
+            }
+          ]
+        },
+        {
+          "required": false,
+          "linkId": "/54114-4/54138-3",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54138-3",
+              "display": "Name"
+            }
+          ],
+          "text": "Name",
+          "type": "string"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+              "valueExpression": {
+                "description": "Gender from patient resource",
+                "language" : "text/fhirpath",
+                "expression": "%patient.gender"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54123-5",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54123-5",
+              "display": "Gender"
+            }
+          ],
+          "text": "Gender",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA2-8",
+                "display": "Male"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA3-6",
+                "display": "Female"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA46-8",
+                "display": "Other"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54139-1",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54139-1",
+              "display": "Living?"
+            }
+          ],
+          "text": "Living?",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA33-6",
+                "display": "Yes"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA4489-6",
+                "display": "Unknown"
+              }
+            }
+          ],
+          "item": [
+            {
+              "required": false,
+              "linkId": "/54114-4/54139-1/54124-3",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54124-3",
+                  "display": "Date of Birth"
+                }
+              ],
+              "text": "Date of Birth",
+              "type": "date",
+              "enableWhen": [
+                {
+                  "question": "/54114-4/54139-1",
+                  "operator": "=",
+                  "answerCoding": {
+                    "code": "LA33-6"
+                  }
+                }
+              ]
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+                  "valueCoding": {
+                    "system": "http://unitsofmeasure.org",
+                    "code": "a",
+                    "display": "year"
+                  }
+                }
+              ],
+              "required": false,
+              "linkId": "/54114-4/54139-1/54141-7",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54141-7",
+                  "display": "Current Age"
+                }
+              ],
+              "text": "Current Age",
+              "type": "decimal",
+              "enableWhen": [
+                {
+                  "question": "/54114-4/54139-1",
+                  "operator": "=",
+                  "answerCoding": {
+                    "code": "LA33-6"
+                  }
+                }
+              ]
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "required": false,
+              "linkId": "/54114-4/54139-1/54112-8",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54112-8",
+                  "display": "Cause of Death"
+                }
+              ],
+              "text": "Cause of Death",
+              "type": "choice",
+              "enableWhen": [
+                {
+                  "question": "/54114-4/54139-1",
+                  "operator": "=",
+                  "answerCoding": {
+                    "code": "LA32-8"
+                  }
+                }
+              ],
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10533-0",
+                    "display": "Blood Clots"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10572-8",
+                    "display": "-- Blood Clot in Leg"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10573-6",
+                    "display": "-- Blood Clot in Lungs"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10524-9",
+                    "display": "Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10549-6",
+                    "display": "-- Bone Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10536-3",
+                    "display": "-- Breast Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10537-1",
+                    "display": "-- Colon Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10548-8",
+                    "display": "-- Esophageal Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10547-0",
+                    "display": "-- Gastric Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10541-3",
+                    "display": "-- Kidney Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10545-4",
+                    "display": "-- Leukemia"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10542-1",
+                    "display": "-- Lung Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10546-2",
+                    "display": "-- Muscle Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10539-7",
+                    "display": "-- Ovarian Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10538-9",
+                    "display": "-- Prostate Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10543-9",
+                    "display": "-- Skin Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10540-5",
+                    "display": "-- Thyroid Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10544-7",
+                    "display": "-- Uterine Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10550-4",
+                    "display": "-- Other Cancer"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10529-8",
+                    "display": "Diabetes"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10551-2",
+                    "display": "-- Diabetes Type 1"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10552-0",
+                    "display": "-- Diabetes Type 2"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10553-8",
+                    "display": "-- Gestational Diabetes"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10532-2",
+                    "display": "Gastrointestinal Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10554-6",
+                    "display": "-- Crohn's Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10555-3",
+                    "display": "-- Irritable Bowel Syndrome"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10556-1",
+                    "display": "-- Ulceritive Colitis"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10557-9",
+                    "display": "-- Colon Polyps"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10523-1",
+                    "display": "Heart Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10558-7",
+                    "display": "-- Heart Attack"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10526-4",
+                    "display": "High Cholesterol/Hyperlipidemia"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA7444-8",
+                    "display": "Hypertension"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10528-0",
+                    "display": "Kidney Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10565-2",
+                    "display": "-- Cystic Kidney Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10566-0",
+                    "display": "-- Kidney Disease Present From Birth"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10567-8",
+                    "display": "-- Nephrosis"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10568-6",
+                    "display": "-- Nephritis"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10569-4",
+                    "display": "-- Nephrotic Syndrome"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10570-2",
+                    "display": "-- Diabetic Kidney Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10571-0",
+                    "display": "-- Other/Unknown"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10531-4",
+                    "display": "Lung Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10559-5",
+                    "display": "-- COPD"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10560-3",
+                    "display": "-- Chronic Bronchitis"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10561-1",
+                    "display": "-- Emphysema"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10562-9",
+                    "display": "-- Chronic Lower Respiratory Disease"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10563-7",
+                    "display": "-- Influenza/Pneumonia"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10564-5",
+                    "display": "-- Asthma"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10590-0",
+                    "display": "Neurological Disorders"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10527-2",
+                    "display": "Osteoporosis"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10535-5",
+                    "display": "Psychological Disorders"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10574-4",
+                    "display": "-- Anxiety"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10575-1",
+                    "display": "-- Bipolar/Manic Depressive Disorder"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10576-9",
+                    "display": "-- Depression"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10577-7",
+                    "display": "-- Attention Deficit Hyper Activity"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10578-5",
+                    "display": "-- Autism"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10579-3",
+                    "display": "-- Personality Disorder"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10580-1",
+                    "display": "-- Eating Disorder"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10581-9",
+                    "display": "-- Obsessive Compulsive Disorder"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10582-7",
+                    "display": "-- Panic Disorder"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10583-5",
+                    "display": "-- Post Traumatic Stress Disorder"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10584-3",
+                    "display": "-- Schizophrenia"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10585-0",
+                    "display": "-- Social Phobia"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10586-8",
+                    "display": "-- Dementia"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10591-8",
+                    "display": "Septicemia"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10522-3",
+                    "display": "Stroke/Brain Attack"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10530-6",
+                    "display": "Sudden Infant Death Syndrome"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10595-9",
+                    "display": "Cause of Death"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10587-6",
+                    "display": "-- Suicide"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10588-4",
+                    "display": "-- Accidental Death"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10589-2",
+                    "display": "-- Other/Unexpected"
+                  }
+                }
+              ]
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "required": false,
+              "linkId": "/54114-4/54139-1/54113-6",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54113-6",
+                  "display": "Age at Death"
+                }
+              ],
+              "text": "Age at Death",
+              "type": "choice",
+              "enableWhen": [
+                {
+                  "question": "/54114-4/54139-1",
+                  "operator": "=",
+                  "answerCoding": {
+                    "code": "LA32-8"
+                  }
+                }
+              ],
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10402-8",
+                    "display": "Pre-Birth"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10403-6",
+                    "display": "Newborn"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10394-7",
+                    "display": "Infancy"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10395-4",
+                    "display": "Childhood"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10404-4",
+                    "display": "Adolescence"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10396-2",
+                    "display": "20-29"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10397-0",
+                    "display": "30-39"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10398-8",
+                    "display": "40-49"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10399-6",
+                    "display": "50-59"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10400-2",
+                    "display": "OVER 60"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA4489-6",
+                    "display": "Unknown"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54121-9",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54121-9",
+              "display": "Twin"
+            }
+          ],
+          "text": "Twin",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10427-5",
+                "display": "Yes - Identical (Same)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10428-3",
+                "display": "Yes - Fraternal (Different)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54122-7",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54122-7",
+              "display": "Adopted"
+            }
+          ],
+          "text": "Adopted",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA33-6",
+                "display": "Yes"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+              "valueBoolean": true
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54119-3",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54119-3",
+              "display": "Race"
+            }
+          ],
+          "text": "Race",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10608-0",
+                "display": "American Indian or Alaska Native"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA6156-9",
+                "display": "Asian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10614-8",
+                "display": "-- Asian Indian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10615-5",
+                "display": "-- Chinese"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10616-3",
+                "display": "-- Filipino"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10617-1",
+                "display": "-- Japanese"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10618-9",
+                "display": "-- Korean"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10620-5",
+                "display": "-- Vietnamese"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10619-7",
+                "display": "-- Other Asian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10610-6",
+                "display": "Black or African American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10611-4",
+                "display": "Native Hawaiian or Other Pacific Islander"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10623-9",
+                "display": "-- Native Hawaiian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10622-1",
+                "display": "-- Guamanian"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10621-3",
+                "display": "-- Chamorro"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10625-4",
+                "display": "-- Samoan"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10624-7",
+                "display": "-- Other Pacific Islander"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA4457-3",
+                "display": "White"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10613-0",
+                "display": "Other/Unknown/Refuse To Answer"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+              "valueBoolean": true
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54120-1",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54120-1",
+              "display": "Ethnicity"
+            }
+          ],
+          "text": "Ethnicity",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA6214-6",
+                "display": "Hispanic or Latino"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10599-1",
+                "display": "-- Central American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10600-7",
+                "display": "-- Cuban"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10601-5",
+                "display": "-- Dominican(Republic)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10602-3",
+                "display": "-- Mexican"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10605-6",
+                "display": "-- Puerto Rican"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10606-4",
+                "display": "-- South American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10604-9",
+                "display": "-- Other Latin American"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10603-1",
+                "display": "-- Other Hispanic/Latino/Spanish"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10597-5",
+                "display": "Non-Hispanic or Latino"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10598-3",
+                "display": "Ashkenazi Jewish"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10607-2",
+                "display": "Unknown/No answer"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/54114-4/54118-5",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54118-5",
+              "display": "Parents related"
+            }
+          ],
+          "text": "Parents related",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA33-6",
+                "display": "Yes"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        },
+        {
+          "required": false,
+          "repeats": true,
+          "linkId": "/54114-4/54117-7",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "54117-7",
+              "display": "Diseases history panel"
+            }
+          ],
+          "text": "Diseases history panel",
+          "type": "group",
+          "item": [
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "autocomplete",
+                        "display": "Auto-complete"
+                      }
+                    ],
+                    "text": "Auto-complete"
+                  }
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+                  "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+                }
+              ],
+              "required": false,
+              "linkId": "/54114-4/54117-7/54116-9",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54116-9",
+                  "display": "History of diseases"
+                }
+              ],
+              "text": "History of diseases",
+              "type": "choice"
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "required": false,
+              "linkId": "/54114-4/54117-7/54115-1",
+              "code": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "54115-1",
+                  "display": "Age range at onset of disease"
+                }
+              ],
+              "text": "Age range at onset of disease",
+              "type": "choice",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10402-8",
+                    "display": "Pre-Birth"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10403-6",
+                    "display": "Newborn"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10394-7",
+                    "display": "Infancy"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10395-4",
+                    "display": "Childhood"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10404-4",
+                    "display": "Adolescence"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10396-2",
+                    "display": "20-29"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10397-0",
+                    "display": "30-39"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10398-8",
+                    "display": "40-49"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10399-6",
+                    "display": "50-59"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA10400-2",
+                    "display": "OVER 60"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "system": "http://loinc.org",
+                    "code": "LA4489-6",
+                    "display": "Unknown"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

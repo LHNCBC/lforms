@@ -52,7 +52,10 @@ export function facadeExpect(actualValue) {
         else
           cypressExpect(actualValue).to.be.null;
       },
-      toBeFalsy: ()=>cypressExpect(!actualValue).to.be.true
+      toBeFalsy: ()=>cypressExpect(!actualValue).to.be.true,
+      toBeGreaterThanOrEqual: (v)=>cypressExpect(actualValue).to.be.gte(v),
+      toBeLessThanOrEqual: (v)=>cypressExpect(actualValue).to.be.at.most(v),
+      toContain: (v)=>actualValue.should('contain', v)
     }
   }
   const rtn = assertions();
@@ -64,7 +67,8 @@ facadeExpect.prototype = cypressExpect;
 
 export const by = {
   id: (id) => '#'+id.replaceAll(/([\.\/])/g, '\\$1'),
-  css: (cssLocator) => cssLocator.replaceAll('/', '\\/')
+  css: (cssLocator) => cssLocator.replaceAll('/', '\\/'),
+  tagName: (tagName)=>tagName
 }
 
 
@@ -88,14 +92,15 @@ export function element(locator) {
   return {
     getCyElem: getElem,
     getAttribute: function (attrName) {
-      return getElem().invoke('attr', attrName);
+      return attrName=='value' ? getElem().invoke('val') :getElem().invoke('attr', attrName);
     },
     getText: ()=>getElem().invoke('text'),
     type: type,
     sendKeys: type,
     element: (subLocator)=>element(locator + ' ' + subLocator),
     isSelected: ()=>getElem().invoke('val'),
-    click: ()=>getElem().click()
+    click: ()=>getElem().click(),
+    should: (assertion)=>getElem().should(assertion)
   }
 }
 
@@ -106,7 +111,8 @@ element.all = function (allLocator) {
      *  results of allLocator.  Because of the way cypress works, this must be
      *  used in the same statement or it might be invalid.
      */
-    get: (index) => element(cy.get(allLocator).eq(index))
+    get: (index) => element(cy.get(allLocator).eq(index)),
+    then: (fn) => cy.get(allLocator).then((items)=>fn(items))
   }
 }
 
