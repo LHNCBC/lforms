@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.0.0-beta.8] 2022-02-17
+### Fixed
+- Fixed a bug that saved user data in a form are lost when answer lists are updated
+  by FHIRPath expression.
+
 ## [30.0.0-beta.7] 2022-02-17
 ### Added
 - Support for the newer launchContext "name" data type, valueCoding.  For

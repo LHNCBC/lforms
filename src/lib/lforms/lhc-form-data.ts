@@ -18,7 +18,7 @@ import Validation from "./lhc-form-validation.js"
 declare var LForms: any;
 
 import {Units, Formulas} from "./lhc-form-units.js";
-
+import equal from "fast-deep-equal";
 
 export default class LhcFormData {
 
@@ -96,17 +96,6 @@ export default class LhcFormData {
     // meaning the layout is responsive to the screen/container's size
     // each item can override this setting for the item by setting its own value in displayControl.viewMode
     viewMode: "auto",
-    // controls if the form's header section needs to be displayed
-    showFormHeader: false,
-    // items in form header section
-    formHeaderItems: [
-      {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},
-      {"question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": ""},
-      {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]},
-      {"question":"Comment", "questionCode":"comment","dataType":"TX","answers":""}
-    ],
-    // controls whether the column headers need to be displayed
-    showColumnHeaders: true,
     // controls the default answer layout for CWE/CNE typed items if answerLayout is not specified on the item's displayControl.
     // not changeable on a rendered form.
     defaultAnswerLayout: {
@@ -139,6 +128,7 @@ export default class LhcFormData {
   _displayLevel = 0;
   _linkToDef = null;
   _formDone;
+  _formReady;
   _horizontalTableInfo = {};
   itemList;
   itemHash;
@@ -891,15 +881,6 @@ export default class LhcFormData {
 
     this.setTemplateOptions(currentOptions, defaultOptions);
 
-    // process values in templateOptions.formHeaderItems,
-    if (this.templateOptions.formHeaderItems) {
-      for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
-        var item = this.templateOptions.formHeaderItems[i];
-        if (item.value && (item.dataType === CONSTANTS.DATA_TYPE.DT || item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
-            item.value = CommonUtils.stringToDate(item.value);
-        }
-      }
-    }
   }
 
 
@@ -951,25 +932,6 @@ export default class LhcFormData {
         this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
       }
 
-      // if there is a formHeaderItems array, set up autocomplete options
-      if (this.templateOptions.formHeaderItems) {
-        for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
-          var item = this.templateOptions.formHeaderItems[i];
-          if (item.dataType === CONSTANTS.DATA_TYPE.CWE ||
-              item.dataType === CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-            this._resetItemValueWithModifiedAnswers(item);
-          }
-          // if this is not a saved form with user data, and
-          // there is a default value, and
-          // there is no embedded data
-          else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-            this._lfItemValueFromDefaultAnswer(item);
-          }
-          this._updateUnitAutocompOptions(item);
-        }
-
-      }
     }
   }
 
@@ -1446,9 +1408,6 @@ export default class LhcFormData {
       defData.fhirVersion = this.fhirVersion;
     }
 
-    // reset obr fields
-    defData.templateOptions.formHeaderItems = CommonUtils.deepCopy(formData.templateData);
-
     return defData;
   }
 
@@ -1467,13 +1426,6 @@ export default class LhcFormData {
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
         keepId);
-    // template options could be optional. Include them, only if they are present
-    if(this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems ) {
-      // check the value on each item and its subtree
-      this._checkSubTreeValues(this.templateOptions.formHeaderItems);
-      ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue,
-          noDisabledItem, keepId);
-    }
     // return a deep copy of the data
     return CommonUtils.deepCopy(ret);
   }
@@ -2307,7 +2259,10 @@ export default class LhcFormData {
    */
   _processItemFormula(item) {
     if (item.calculationMethod && item.calculationMethod.name) {
-      item.value = this.getFormulaResult(item);
+      let newValue = this.getFormulaResult(item);
+      if (!equal(newValue, item.value)) {
+        item.value = newValue;
+      }      
     }
   }
 
@@ -2425,20 +2380,20 @@ export default class LhcFormData {
           // get the source item object
           var sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
           if (sourceItem && sourceItem._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+            let newData;
             // check how to create the new data on target
             if (constructionType === CONSTANTS.DATA_CONTROL.CONSTRUCTION_ARRAY ) {
-              let newData = this._constructArrayByDataFormat(dataFormat, sourceItem);
-              // set the data
-              item[onAttribute] = CommonUtils.deepCopy(newData);
+              newData = this._constructArrayByDataFormat(dataFormat, sourceItem);
             }
             else if (constructionType === CONSTANTS.DATA_CONTROL.CONSTRUCTION_OBJECT ) {
-              let newData = this._constructObjectByDataFormat(dataFormat, sourceItem);
-              // set the data
-              item[onAttribute] = CommonUtils.deepCopy(newData);
+              newData = this._constructObjectByDataFormat(dataFormat, sourceItem);
             }
             else if (constructionType === CONSTANTS.DATA_CONTROL.CONSTRUCTION_SIMPLE) {
               // direct access to the data in source item
-              let newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
+              newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
+            }
+            // set the data if it is different than the existing value
+            if (!equal(item[onAttribute], newData)) {
               item[onAttribute] = CommonUtils.deepCopy(newData);
             }
           }
@@ -2598,8 +2553,9 @@ export default class LhcFormData {
         else if (listItems.length === 1) {
           options.defaultValue = listItems[0];
         }
-
-        item._unitAutocompOptions = options;
+        if(!equal(item._unitAutocompOptions, options)) {
+          item._unitAutocompOptions = options;
+        }
       }
     }
   }
@@ -2732,7 +2688,10 @@ export default class LhcFormData {
             }
           }
         }
-        item.value = item._multipleAnswers ? listVals : listVals[0];
+        let newValue = item._multipleAnswers ? listVals : listVals[0];
+        if (!equal(item.value, newValue)) {
+          item.value = newValue;
+        }        
       }
     }
   }
@@ -2933,9 +2892,8 @@ export default class LhcFormData {
         if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
           options.defaultValue = options.listItems[0];
       }
-      //item._autocompOptions = options; ??
       // check if the new option has changed
-      if (JSON.stringify(options) !== JSON.stringify(item._autocompOptions)) {
+      if (!equal(options, item._autocompOptions)) {
         item._autocompOptions = options;
       }
     } // end of list

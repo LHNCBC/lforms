@@ -22,9 +22,6 @@ export class LhcItemTimeComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    console.log("*lhc-item-time, ngOnChange")
-    console.log(this.item)
-
     if (this.item.value) {
       let tempDate:any = new Date('1970-01-01 ' + this.item.value)
       if (!isNaN(tempDate)) {
