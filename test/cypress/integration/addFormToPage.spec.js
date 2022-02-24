@@ -1,140 +1,128 @@
-import { TestPage } from "./lforms_testpage.po";
-import TestUtil from "./util";
-import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
-import { AddFormToPageTestPage } from "./addFormToPageTest.po"
-let LForms: any = (global as any).LForms;
-let tp: TestPage = new TestPage();
-let po = new AddFormToPageTestPage();
+// This file is primarily for testing LForms.Util.addFormToPage, but has a few
+// other tests that use the same test page, which perhaps should be moved.
 
+import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
+import {TestUtil} from "../support/testUtilFacade.js";
+import * as util from "../support/util";
+import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
+const po = new AddFormToPageTestPage();
+//const cypressExpect = expect;
+//expect = facadeExpect;
 
-describe('addFormToPage test page', function() {
-  beforeAll(async () => {
-    await browser.waitForAngularEnabled(false);
+describe('Tests of addFormToPage test page', function() {
+  before(() => {
+    po.openPage();
+    util.addFormToPage('allInOne.json');
+    util.addFormToPage('rxTerms.json', 'formContainer2');
   });
 
   it('should have two forms displayed on the page', function() {
-    po.openPage();
     // three tags
     element.all(by.tagName('wc-lhc-form')).then(function (items) {
-      expect(items.length).toBe(3);
+      expect(items.length).toBe(2);
     });
     // two forms
     element.all(by.css('.lhc-form-title')).then(function (items) {
       expect(items.length).toBe(2);
     });
-
   });
 
+
   it('should have a drug name field in the RxTerms form', function() {
-    expect(po.rxDrugNameField.isDisplayed()).toBeTruthy();
+    po.rxDrugNameField.should('be.visible');
+    po.searchResults.should('not.be.visible');
     TestUtil.sendKeys(po.rxDrugNameField, 'ar');
-    browser.wait(function() {
-      return po.searchResults.isDisplayed();
-    }, tp.WAIT_TIMEOUT_1);
+    po.searchResults.should('be.visible');
+    po.rxDrugNameField.getCyElem().clear();
   });
 
 
   it('should have a drug name field in the "full featured" form', function() {
     po.ffDrugNameField.click();
-    expect(po.searchResults.isDisplayed()).toBeFalsy();
-    expect(po.ffDrugNameField.isDisplayed()).toBeTruthy();
+    po.searchResults.should('not.be.visible');
+    po.ffDrugNameField.should('be.visible');
     TestUtil.sendKeys(po.ffDrugNameField, 'ar');
-    browser.wait(function() {
-      return po.searchResults.isDisplayed();
-    }, tp.WAIT_TIMEOUT_1);
+    po.searchResults.should('be.visible');
+    po.ffDrugNameField.getCyElem().clear();
   });
 
   it('DTM datetime picker should work', function () {
-    var minMax:Array<any> = [TestUtil.getCurrentDTMString(-60000), TestUtil.getCurrentDTMString(+60000)]; // -/+ a minute
-    po.openPage();
+    var minMax = [TestUtil.getCurrentDTMString(-60000), TestUtil.getCurrentDTMString(+60000)]; // -/+ a minute
     let dtmInput = element(by.id('/type7/1')).element(by.css("input"));
     let nowButton = element(by.css(".ant-picker-now-btn"));
     let okButton = element(by.css(".ant-picker-ok")).element(by.css("button"))
-    dtmInput.click()
+    dtmInput.click();
     nowButton.click()
     okButton.click()
-    expect(dtmInput.getAttribute("value")).toBeGreaterThanOrEqual(minMax[0]);
-    expect(dtmInput.getAttribute("value")).toBeLessThanOrEqual(minMax[1]);
-
+    dtmInput.getCyElem().invoke('val').then((value)=>{
+      expect(value >= minMax[0]);
+      expect(value <= minMax[1]);
+      console.log('A'); console.log(value); console.log('b');
+    });
   });
 
+  it('should be able to display a very nested form', function() {
+    util.addFormToPage('very-nested-form.json');
+    cy.get('#formContainer').should('contain', 'NestedQ');
+    // Make sure the error message div is blank
+    expect(element(by.id('loadMsg')).getText()).toBe('');
+  });
+
+
   describe('addFormToPage', function () {
-    beforeEach(function(done) {
+    beforeEach(()=> {
       po.openPage();
       // Pre-condition -- Form USSG-FHT should not be in formContainer
-      browser.wait(function() {
-        return browser.driver.executeScript(
-          'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
-      }, tp.WAIT_TIMEOUT_2);
-      browser.driver.executeAsyncScript(
-          "var callback = arguments[arguments.length - 1];" +
-          "$.getJSON('/test-data/form-data/FHTData.json', function(FHTData) {window.FHTData = FHTData; callback();})"
-      ).then(function() {
-        done()
+      cy.get("#formContainer").invoke('html').should(
+        html=>expect(html.indexOf("USSG-FHT")).toBe(-1));
+      const lformsFHTFile = 'test/data/lforms/FHTData.json';
+      cy.readFile(lformsFHTFile).then((formDef) => {
+        cy.window().then(win=>{
+          win.FHTData = formDef;
+        });
       });
     });
 
     it('should be able to be called with FHIR Questionnaire', function () {
-      // Put form USSG-FHP on the page using a FHIR object
-      browser.driver.executeAsyncScript(function () {
-        var callback = arguments[arguments.length - 1];
-        fetch('/test-data/e2e/R4/ussg-fhp.json')
-        .then(function(response) { 
-          return response.json();
-        })
-        .then(function(fhirData) {
-          LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' }); 
-          callback(); 
+      // Put form USSG-FHT on the page using a FHIR object
+      const fhirFHTFile = 'test/data/R4/ussg-fhp.json';
+      cy.readFile(fhirFHTFile).then((fhirData) => {
+        cy.window().then(win=>{
+          win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
         });
-      }).then(function () {
-        // Confirm it is there
-        TestUtil.waitForElementPresent(element(by.css(".lhc-form-title")));
-        expect(element(by.id('formContainer')).getText()).toContain("US Surgeon General family health portrait");
       });
+      cy.get('.lhc-form-title').should('exist');
+      cy.get('#formContainer').should('contain', "US Surgeon General family health portrait");
     });
 
     it('should be able to called a second time with a new form for the same form '+
-       'container', function() {
+       'container, using a variable name', function() {
       // Now put form USSG-FHT on the page, using the variable name method
       // (FHTData).
-      browser.driver.executeScript(
-          "LForms.Util.addFormToPage('FHTData', 'formContainer');"
-          );
+      cy.window().then(win=>
+        win.LForms.Util.addFormToPage('FHTData', 'formContainer')
+      );
       // Confirm it is there
-      browser.wait(function() {
-        return browser.driver.executeScript(
-          'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
-      }, tp.WAIT_TIMEOUT_2);
+      cy.get('#formContainer').should('contain', "USSG-FHT");
     });
 
     it('should be able to take a form object',  function() {
       // Now put form USSG-FHT on the page, using the form object method
-      browser.driver.executeScript(
-          "LForms.Util.addFormToPage(FHTData, 'formContainer');"
+      cy.window().then(win=>
+        win.LForms.Util.addFormToPage(win.FHTData, 'formContainer')
       );
       // Confirm it is there
-      browser.wait(function() {
-        return browser.driver.executeScript(
-          'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
-      }, tp.WAIT_TIMEOUT_2);
+      cy.get('#formContainer').should('contain', "USSG-FHT");
     });
 
     it('should be able to take a JSON form definition',  function() {
       // Now put form USSG-FHT on the page, using the form JSON string method
-      browser.driver.executeScript(
-          "LForms.Util.addFormToPage(JSON.stringify(FHTData), 'formContainer')"
+      cy.window().then(win=>
+        win.LForms.Util.addFormToPage(JSON.stringify(win.FHTData), 'formContainer')
       );
       // Confirm it is there
-      browser.wait(function() {
-        return browser.driver.executeScript(
-          'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
-      }, tp.WAIT_TIMEOUT_2);
+      cy.get('#formContainer').should('contain', "USSG-FHT");
     });
 
-    it('should be able to display a very nested form', function() {
-      tp.loadFromTestData('very-nested-form.json'); // uses addFormToPage
-      // Make sure the error message div is blank
-      expect(element(by.id('loadMsg')).getText()).toBe('');
-    });
   });
 });
