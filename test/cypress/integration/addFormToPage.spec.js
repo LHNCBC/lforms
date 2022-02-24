@@ -6,8 +6,6 @@ import {TestUtil} from "../support/testUtilFacade.js";
 import * as util from "../support/util";
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 const po = new AddFormToPageTestPage();
-//const cypressExpect = expect;
-//expect = facadeExpect;
 
 describe('Tests of addFormToPage test page', function() {
   before(() => {
