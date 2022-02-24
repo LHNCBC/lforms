@@ -1,3 +1,6 @@
+// This file is primarily for testing LForms.Util.addFormToPage, but has a few
+// other tests that use the same test page, which perhaps should be moved.
+
 import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import {TestUtil} from "../support/testUtilFacade.js";
 import * as util from "../support/util";
@@ -6,12 +9,11 @@ const po = new AddFormToPageTestPage();
 //const cypressExpect = expect;
 //expect = facadeExpect;
 
-describe('addFormToPage test page', function() {
+describe('Tests of addFormToPage test page', function() {
   before(() => {
     po.openPage();
-    util.addFormToPage('lforms/allInOne.json', 'formContainer');
-
-    util.addFormToPage('lforms/rxTerms.json', 'formContainer2');
+    util.addFormToPage('allInOne.json');
+    util.addFormToPage('rxTerms.json', 'formContainer2');
   });
 
   it('should have two forms displayed on the page', function() {
@@ -60,7 +62,7 @@ describe('addFormToPage test page', function() {
   });
 
   it('should be able to display a very nested form', function() {
-    util.addFormToPage('lforms/very-nested-form.json', 'formContainer'); // uses addFormToPage
+    util.addFormToPage('very-nested-form.json');
     cy.get('#formContainer').should('contain', 'NestedQ');
     // Make sure the error message div is blank
     expect(element(by.id('loadMsg')).getText()).toBe('');
@@ -94,7 +96,7 @@ describe('addFormToPage test page', function() {
     });
 
     it('should be able to called a second time with a new form for the same form '+
-       'container', function() {
+       'container, using a variable name', function() {
       // Now put form USSG-FHT on the page, using the variable name method
       // (FHTData).
       cy.window().then(win=>

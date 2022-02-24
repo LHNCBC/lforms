@@ -17,7 +17,7 @@ export function visitTestPage() {
  *  provided.)
  * @param fhirVersion (optional) the version of FHIR to use.
  */
-export function loadFromTestData(filepath, fhirVersion=null) {
+/*export function loadFromTestData(filepath, fhirVersion=null) {
   let testFile = getTestDataPathName(filepath, fhirVersion);
 
   // Listen for the onFormReadyEvent
@@ -47,18 +47,26 @@ export function loadFromTestData(filepath, fhirVersion=null) {
     });
   });
 }
-
+*/
 
 /**
  *  Calls LForms.Util.addFormToPage
- * @param filePath the path to the form definition relative to test/data.
+ * @param filePath the path to the form definition relative to
+ * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified.
  * @param container the ID of the element into which the form should be placed.
+ *  Default: 'formContainer'
+ * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
+ *  & prepoulate)
  */
-export function addFormToPage(filePath, container) {
+export function addFormToPage(filePath, container, options) {
+  if (!container)
+    container = 'formContainer';
+  filePath = options?.fhirVersion ? options.fhirVersion +'/'+filePath :
+     'lforms/'+filePath;
   cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
     cy.window().then((win) => {
       win.document.getElementById(container).innerHTML = null;
-      win.LForms.Util.addFormToPage(formDef, container);
+      win.LForms.Util.addFormToPage(formDef, container, options);
       cy.get('#'+container).find('.lhc-form-title').should('be.visible');
     });
   });

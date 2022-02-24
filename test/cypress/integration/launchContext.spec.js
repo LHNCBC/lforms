@@ -17,7 +17,7 @@ describe('launchContext', () => {
       }});
     });
 
-    util.loadFromTestData('launchContext.json', 'R4');
+    util.addFormToPage('launchContext.json', null, {fhirVersion: 'R4'});
     cy.get('#q1\\/1').should('have.value', 'testCase1');
     cy.get('#q2\\/1').should('have.value', 'testCase2');
   });
