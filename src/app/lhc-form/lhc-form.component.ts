@@ -22,8 +22,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() questionnaire: any;
   @Input() options: any;
-  @Input() prepop: boolean=false;  
-  @Input() fhirVersion: string; 
+  @Input() prepop: boolean=false;
+  @Input() fhirVersion: string;
   // contain the object of LhcFormData, could be used outside of the form component, formElement.lhcFormData
   @Input() lhcFormData: any; // not to publish
   // emit an event when the form's view and data are initially rendered
@@ -39,10 +39,10 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   private changeSize = new Subject();
   private observer: any;
 
-  constructor(private winService: WindowService, 
+  constructor(private winService: WindowService,
     public lhcDataService: LhcDataService,
-    private host: ElementRef, 
-    private zone: NgZone) { 
+    private host: ElementRef,
+    private zone: NgZone) {
 
     this.changeSize
       .asObservable()
@@ -54,17 +54,17 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         this.winService.setWindowWidth(eleWidth);
     });
 
-    winService.viewMode.subscribe(updatedMode => {      
+    winService.viewMode.subscribe(updatedMode => {
       this.viewModeClass = this.lhcDataService.getViewModeClass(updatedMode);
       this.viewMode = updatedMode;
-    });  
+    });
 
   }
 
   /**
    * get CSS class of view mode for an item
    * @param item an item in a form
-   * @returns 
+   * @returns
    */
   getItemViewModeClass(item) {
     return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
@@ -75,13 +75,13 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
     //console.log(this.host)
     this.observer = new ResizeObserver(entries => {
       //console.log(entries)
-      
+
       this.zone.run(() => {
         let width = entries[0].contentRect.width;
         this.changeSize.next(width);
         // console.log("in Resize observer:", width);
       });
-      
+
     });
 
     this.observer.observe(this.host.nativeElement);
@@ -89,7 +89,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.observer.unobserve(this.host.nativeElement);    
+    this.observer.unobserve(this.host.nativeElement);
   }
 
 
@@ -97,12 +97,12 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
    * Set a flag and emit an event that the form is ready
    */
   formReady() {
-    // set a flag on the form data 
+    // set a flag on the form data
     // (lhc-autocomplete component depends on this flag to work correctly
     // with fhirpath expression triggered changes)
     this.lhcFormData._formReady = true;
     // emit an event when the data is initially loaded (if there are data to be loaded)
-    // and the form's view is initially rendered                      
+    // and the form's view is initially rendered
     this.onFormReady.emit();
   }
 
@@ -113,13 +113,13 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes) {
     // console.log("in lhc-form's ngOnChange")
     // form data changes
-    if (changes.questionnaire) {      
+    if (changes.questionnaire) {
       // form data changes, clean up the previous data before loading the new form data
       this.lhcFormData = null;
       this.lhcDataService.setLhcFormData(null);
-      
+
       if (this.questionnaire) {
-        const self = this;        
+        const self = this;
         // reset the data after this thread is done
         setTimeout(()=> {
           try {
@@ -135,14 +135,14 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             self.lhcFormData = new LhcFormData(q)
             // and options change
             if (changes.options && self.options) {
-              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));  
-              self.lhcFormData.setTemplateOptions(self.options);  
-            }      
-            self.lhcDataService.setLhcFormData(self.lhcFormData);  
+              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));
+              self.lhcFormData.setTemplateOptions(self.options);
+            }
+            self.lhcDataService.setLhcFormData(self.lhcFormData);
             // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
             if (LForms.FHIR && self.lhcFormData.fhirVersion) {
               self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
-                // when a new form is loaded, run all FHIR Expressions including the initial expresions
+                // when a new form is loaded, run all FHIR Expressions including the initial expressions
                 // self.lhcFormData sometimes is set to null to clear the page
                 if (self.lhcFormData && (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr)) {
                   self.lhcFormData._expressionProcessor.runCalculations(true)
@@ -151,9 +151,9 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                     })
                     .catch(error => {
                       const e = typeof error === "string" ? error : error.message
-                      self.onError.emit(e)      
+                      self.onError.emit(e)
                     });
-                }        
+                }
                 else {
                   self.formReady();
                 }
@@ -166,7 +166,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             else {
               self.formReady();
             }
-  
+
           }
           catch (error) {
             const e = typeof error === "string" ? error : error.message
@@ -175,7 +175,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         },1)
       }
       else {
-        // clean up the previous data 
+        // clean up the previous data
         this.lhcFormData = null;
         this.lhcDataService.setLhcFormData(null);
       }
@@ -185,10 +185,10 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
       let lhcFD = this.lhcDataService.getLhcFormData();
       if (lhcFD) {
         lhcFD.setTemplateOptions(this.options);
-      }    
+      }
     }
-    
+
   }
 
-    
+
 }

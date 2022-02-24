@@ -27,7 +27,7 @@ describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
     cy.byId(strengthId).click().type('{downarrow}{enter}').should('have.value','10 mg Tab');
     cy.byId(cuiId).should('have.value','213377');    
 
-    // pick a different streng
+    // pick a different strength
     cy.byId(strengthId).click().type('{downarrow}{downarrow}{enter}').should('have.value','20 mg Tab');
     cy.byId(cuiId).should('have.value','213379');    
 
