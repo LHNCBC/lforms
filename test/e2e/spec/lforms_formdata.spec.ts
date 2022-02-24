@@ -186,7 +186,6 @@ describe('formdata: ', function() {
         expect(formData.code).toBe("54127-6N");
         expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
         expect(formData.template).toBe("table");
-        expect(formData.templateOptions.showFormHeader).toBe(true);
         expect(formData.templateOptions.showQuestionCode).toBe(false);
         expect(formData.items[0].question).toBe("Your health information");
         expect(formData.items[0].questionCode).toBe("54126-8");
@@ -227,7 +226,6 @@ describe('formdata: ', function() {
         expect(formData.code).toBe("54127-6N");
         expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
         expect(formData.template).toBe("table");
-        expect(formData.templateOptions.showFormHeader).toBe(true);
         expect(formData.templateOptions.showQuestionCode).toBe(false);
         expect(formData.items[0].question).toBe("Your health information");
         expect(formData.items[0].questionCode).toBe("54126-8");

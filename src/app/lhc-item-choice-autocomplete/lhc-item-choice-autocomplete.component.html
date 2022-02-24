@@ -2,5 +2,6 @@
   <lhc-autocomplete [options]="options" [(dataModel)]="item.value"
     (onBlurFn)="lhcDataService.activeRowOnBlur(item)"
     (onFocusFn)="lhcDataService.setActiveRow(item)"
+    [isFormReady]="lhcDataService.isFormReady()"
   ></lhc-autocomplete>
 </div>

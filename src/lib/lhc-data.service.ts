@@ -327,7 +327,7 @@ export class LhcDataService {
     }
     return viewModeClass;
   }
-  
+
 
   /**
    * get the CSS class for an item's view mode
@@ -369,7 +369,7 @@ export class LhcDataService {
     }
     return viewModeClass;
   }
-  
+
 
   /**
    * Add a repeating item or a repeating group
@@ -680,6 +680,16 @@ export class LhcDataService {
       this.lhcFormData._actionLogs = [];
     }
   };
+
+
+  /**
+   * Check if the form is rendered with all FHIR resources loaded
+   * @returns {boolean}
+   */
+  isFormReady(): boolean {
+    return !!this.lhcFormData._formReady;
+  };
+
 }
 
 
