@@ -42,8 +42,6 @@ exports.config = {
 
     // ===Remaining tests===
     // lforms_keyboard_navi.spec.ts   // no navigation yet
-    // lforms_directive_attr.spec.ts // no directive any more   
-    // lforms_directive.spec.ts  // no diretive any more       
 
   ],
   capabilities: {

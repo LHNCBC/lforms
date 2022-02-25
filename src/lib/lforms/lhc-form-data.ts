@@ -61,30 +61,15 @@ export default class LhcFormData {
 
   // default template options
   _defaultTemplateOptions = {
-    // whether question code is displayed next to the question
-    showQuestionCode: false,
     // whether to show coding instruction inline. (false: in popover; true: inline)
     showCodingInstruction: false,
-    // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-    tabOnInputFieldsOnly: false,
-    // whether to hide the controls section on top of the form
-    hideFormControls: true,
-    // whether to show the option panel that controls all the template options
-    showFormOptionPanel: false, // should be false by default
-    // whether to show the button that decides if 'showFormOptionPanel' is true or false, so that form's option panel will be displayed or hidden
-    showFormOptionPanelButton: false, // should be false by default
     // whether to show the button for each item (questions and sections) that shows a option panel for display controls
     // Not to use. Unfinished.
     showItemOptionPanelButton: false,  // should be false by default
-    // whether to hide the unit column/field
-    hideUnits: false,
     // whether to allow more than one unused repeating item/section
     allowMultipleEmptyRepeatingItems: false,
     // whether to allow HTML content in the codingInstructions field.
     allowHTMLInInstructions: false,
-    // whether to use animation on the form
-    // not changeable on a rendered form.
-    useAnimation: true,
     displayControl: {
       // controls the question layout of the form. default value for questionLayout is "vertical".
       // available value could be "horizontal" when all the items in the form are on the same level,
@@ -452,28 +437,8 @@ export default class LhcFormData {
     // run the form controls
     this._checkFormControls();
 
-    // adjust template options
-    this._adjustTemplateOptions();
   }
 
-  /**
-   * Adjust hideUnits value depending on whether units are included in the form.
-   * It is to be called only in the initialization of the form data object.
-   * @private
-   */
-  _adjustTemplateOptions() {
-    // if none of the items has 'units', reset the 'hideUnits' to be true
-    var noUnits = true;
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      if (Array.isArray(this.itemList[i].units) && this.itemList[i].units.length > 0 ) {
-        noUnits = false;
-        break;
-      }
-    }
-    if (noUnits) {
-      this.templateOptions.hideUnits = true;
-    }
-  }
 
 
   /**

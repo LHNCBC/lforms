@@ -83,8 +83,6 @@ about the meaning of each key:
     * showCodingInstruction - a boolean that controls whether to show coding
       instructions inline or as popover messages (false: in popover; true: inline).
       The default is false;
-    * showFormOptionPanelButton - a boolean that controls whether to show the button
-      next to the form title that hides/shows the form options panel.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTMLInInstructions - a boolean that controls whether to allow HTML

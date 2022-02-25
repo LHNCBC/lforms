@@ -33,41 +33,6 @@ var dr = {
 
 
   /**
-   * Get the additional data in a form's formHeaderItems
-   * Note: For DiagnosticReport only the effectiveDateTime is needed
-   * @param formData an LFormsData object
-   * @returns {{}} the extra data captured in the "OBR" fields of an LForms form
-   * @private
-   */
-  _getExtensionData : function(formData) {
-    var extension = {};
-    if (formData.templateOptions.formHeaderItems &&
-        formData.templateOptions.formHeaderItems.length>0) {
-      for(var i=0, iLen= formData.templateOptions.formHeaderItems.length; i<iLen; i++) {
-        var obrItem = formData.templateOptions.formHeaderItems[i];
-        if (obrItem.questionCode === 'date_done' && obrItem.value) {
-          extension["lforms_dateDone"] = obrItem.value;
-        }
-
-        if (obrItem.questionCode === 'where_done' && obrItem.value) {
-          extension["lforms_whereDone"] = {
-            display: obrItem.value.text
-          }
-        }
-        if (obrItem.questionCode === 'time_done' && obrItem.value) {
-          extension["lforms_timeDone"] = obrItem.value;
-        }
-        if (obrItem.questionCode === 'comment' && obrItem.value) {
-          extension["lforms_comments"] = obrItem.value;
-        }
-
-      }
-    }
-    return extension;
-  },
-
-
-  /**
    * A recursive function that generates the DiagnosticReport content by
    * going through the LForms form data structure
    * @param item an LForms item
@@ -280,11 +245,6 @@ var dr = {
       if (subject)
         dr.subject = LForms.Util.createLocalFHIRReference(subject);
 
-      // obr data
-      var extension = this._getExtensionData(formAndUserData);
-      if (extension["lforms_dateDone"]) {
-        dr["effectiveDateTime"] = extension["lforms_dateDone"];
-      }
       // issued
       dr["issued"] = this._getFormattedDate(new Date());
     }
@@ -690,13 +650,6 @@ var dr = {
 
     this._processObxAndItem(reportStructure, formData, dr);
 
-    // date
-    if (dr.effectiveDateTime && formData.templateOptions.formHeaderItems) {
-      var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
-      if (whenDone) {
-        formData.templateOptions.formHeaderItems[0].value = whenDone;
-      }
-    }
     return formData;
   }
 
