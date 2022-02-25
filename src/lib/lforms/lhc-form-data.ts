@@ -61,11 +61,10 @@ export default class LhcFormData {
 
   // default template options
   _defaultTemplateOptions = {
+    // whether question code is displayed next to the question
+    showQuestionCode: false,
     // whether to show coding instruction inline. (false: in popover; true: inline)
     showCodingInstruction: false,
-    // whether to show the button for each item (questions and sections) that shows a option panel for display controls
-    // Not to use. Unfinished.
-    showItemOptionPanelButton: false,  // should be false by default
     // whether to allow more than one unused repeating item/section
     allowMultipleEmptyRepeatingItems: false,
     // whether to allow HTML content in the codingInstructions field.

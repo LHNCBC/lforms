@@ -21,7 +21,6 @@ describe('initialExpression and hasSavedData=true/false tests', () => {
     cy.readFile('test/data/R4/questionnaire-initialExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
         let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
-        //let qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
         qr.item[0].answer[0].valueInteger = '';
         qr.item[1].answer[0].valueString = '';
         let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
@@ -39,7 +38,6 @@ describe('initialExpression and hasSavedData=true/false tests', () => {
     cy.readFile('test/data/R4/questionnaire-initialExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
         let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
-        //let qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
         qr.item[0].answer[0].valueInteger = '456';
         qr.item[1].answer[0].valueString = 'def456';
         let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
@@ -57,7 +55,6 @@ describe('initialExpression and hasSavedData=true/false tests', () => {
     cy.readFile('test/data/R4/questionnaire-initialExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
         let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
-        //let qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
         qr.item[0].answer[0].valueInteger = '456';
         qr.item[1].answer[0].valueString = 'def456';
         let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");

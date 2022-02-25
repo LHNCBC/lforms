@@ -7,14 +7,12 @@ describe('LForms.Util.getFormData parameters', () => {
   it('should work when element is not provided', function() {
     tp.LoadForm.openFullFeaturedForm();
     cy.window().then((win)=> {
-      return win.LForms.Util.getUserData();
-    }).then(function (formData) {
+      let formData = win.LForms.Util.getUserData();
       expect(formData.itemsData.length).to.equal(63);
     })
 
     cy.window().then((win)=> {
-      return win.LForms.Util.getUserData(null, false, true);
-    }).then(function (formData) {
+      let formData = win.LForms.Util.getUserData(null, false, true);
       expect(formData.itemsData.length).to.equal(5);
     })
 
@@ -24,15 +22,13 @@ describe('LForms.Util.getFormData parameters', () => {
     tp.LoadForm.openFullFeaturedForm();
     cy.window().then((win)=> {
       let formContainer = document.getElementById("lforms-form");
-      return win.LForms.Util.getUserData(formContainer);
-    }).then(function (formData) {      
+      let formData = win.LForms.Util.getUserData(formContainer);
       expect(formData.itemsData.length).to.equal(63);
     })
 
     cy.window().then((win)=> {
       let formContainer = document.getElementById("lforms-form");
-      return win.LForms.Util.getUserData(formContainer, false, true);
-    }).then(function (formData) {
+      let formData = win.LForms.Util.getUserData(formContainer, false, true);
       expect(formData.itemsData.length).to.equal(5);
     })
   });
@@ -41,14 +37,12 @@ describe('LForms.Util.getFormData parameters', () => {
   it('should work when element is a CSS selector', function() {
     tp.LoadForm.openFullFeaturedForm();
     cy.window().then((win)=> {
-      return win.LForms.Util.getUserData("#lforms-form");
-    }).then(function (formData) {      
+      let formData = win.LForms.Util.getUserData("#lforms-form");
       expect(formData.itemsData.length).to.equal(63);
     })
 
     cy.window().then((win)=> {
-      return win.LForms.Util.getUserData("#lforms-form", false, true);
-    }).then(function (formData) {
+      let formData = win.LForms.Util.getUserData("#lforms-form", false, true);
       expect(formData.itemsData.length).to.equal(5);
     })
   });

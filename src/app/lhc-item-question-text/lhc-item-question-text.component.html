@@ -13,6 +13,11 @@
         </span>
       </label>
     </span>
+    <!-- question code -->
+    <span class="lf-item-code" *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode">
+      <a *ngIf="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
+      <span *ngIf="!item._linkToDef">[{{ item.questionCode }}]</span>
+    </span>
     <!-- coding instructions / helps -->
     <span [ngSwitch]="lhcDataService.getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
       <span *ngSwitchCase="'inline-escaped'" 

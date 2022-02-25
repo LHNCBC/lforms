@@ -16,7 +16,9 @@ const FormUtils = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
-   * @param {Object} [options] A hash of options
+   * @param {Object} [options] A hash of options. see avaialble options under templateOptions in 
+   * form_definition.md. 'preppopulate' and 'fhirVersion' are not options in the templateOptions,
+   * but are included in the 'options' parameter.
    * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
    *  the form was an imported FHIR Questionnaire).
    * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
@@ -260,12 +262,14 @@ const FormUtils = {
 
 
   /**
-   * Merge a FHIR resource into an LForms form object. 
-   * It currently supports "DiagnosticReport" (or "DiagnosticReport" in a "Bundle")
-   * and "QuestionnaireResponse" (SDC profile)
-   * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained" Observation
-   * resources,or a Bundle with DiagnosticReport and Observation resources
-   * @param formData an LForms form definition or LFormsData object.
+   * Merges a FHIR resource (typically QuestionnaireResponse) into an LForms form object 
+   * (which was likely the result of converting a FHIR Questionnaire). In addition to 
+   * QuestionnaireResponse, we also support either DiagnosticReport (DSTU2) or a Bundle 
+   * containing a DiagnosticReport, but only if the DiagnosticReport was generated from LForms.
+   * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained" 
+   * Observation resources,or a Bundle with DiagnosticReport and Observation resources.
+   * @param formData an LForms form definition or LFormsData object. This can be obtained from 
+   * a FHIR Questionnaire by using LForms.Util.convertFHIRQuestionnaireToLForms.
    * @param fhirVersion - the version of FHIR in which the fhirData is
    *  written.  This maybe be omitted if the Questionnaire resource (in
    *  fhirData) contains a meta.profile attibute specifying the FHIR version.
@@ -274,7 +278,7 @@ const FormUtils = {
    * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeFHIRDataIntoLForms: function(fhirData, formData, fhirVersion) {
-    // For backward compatibility, ignore the resourceType.
+    // For backward compatibility, ignore the old resourceType parameter.
     // It used to support a resourceType as the first parameter, the rest of the
     // parameters are the same. 
     if (typeof fhirData === "string") {
@@ -568,7 +572,7 @@ const FormUtils = {
    * Find the first wc-lhc-form web component within a DOM element, or in the HTML body,
    * and return the form data object from the wc-lhc-form web component.
    * @param element optional, a DOM element or a CSS selector of the DOM element that contains 
-   * a custome element 'wc-lhc-form'. If it is not provided, the function searches in the HTML body.
+   * a custom element 'wc-lhc-form'. If it is not provided, the function searches in the HTML body.
    * for the first 'wc-lhc-form'.
    * @returns {*}
    * @private
