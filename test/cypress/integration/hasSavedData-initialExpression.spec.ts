@@ -1,14 +1,14 @@
+import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
+import * as util from "../support/util";
 // The project root directory is the root for the cypress server
 describe('initialExpression and hasSavedData=true/false tests', () => {
   const intFieldId = '/type-integer/1',
         strFieldId = '/type-string/1';
+  const po = new AddFormToPageTestPage();      
   let qr;
   it('should have initial values', () => {
-    cy.visit('/test/pages/lforms_testpage.html');
-    cy.get("#loadBtn").contains("Load From File");
-    cy.get('#fileAnchor').uploadFile('test/data/R4/questionnaire-initialExpression.json');
-    cy.get('.lhc-form-title').contains('Questionnaire for testing initialExpression');
-
+    po.openPage();
+    util.addFormToPage('questionnaire-initialExpression.json', 'formContainer', {fhirVersion: "R4"});
     cy.byId(intFieldId).should('have.value','123');
     cy.byId(strFieldId).should('have.value','abc123');
     cy.window().then((win) => {
@@ -17,7 +17,7 @@ describe('initialExpression and hasSavedData=true/false tests', () => {
   });
 
   it('should have the user saved data, instead of the initial values even if the user saved data are empty strings in QuestionnaireResponse', () => {
-    cy.visit('/test/pages/lforms_testpage.html');
+    po.openPage();
     cy.readFile('test/data/R4/questionnaire-initialExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
         let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
@@ -34,7 +34,7 @@ describe('initialExpression and hasSavedData=true/false tests', () => {
   });
 
   it('should have the user saved data, instead of the initial values if there are saved user data in QuestionnaireResponse', () => {
-    cy.visit('/test/pages/lforms_testpage.html');
+    po.openPage();
     cy.readFile('test/data/R4/questionnaire-initialExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
         let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
@@ -51,7 +51,7 @@ describe('initialExpression and hasSavedData=true/false tests', () => {
   });
 
   it('should have the initial data, instead of the user saved data, if hasSavedData is set to false', () => {
-    cy.visit('/test/pages/lforms_testpage.html');
+    po.openPage();
     cy.readFile('test/data/R4/questionnaire-initialExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
         let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
