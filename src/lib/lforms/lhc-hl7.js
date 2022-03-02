@@ -220,20 +220,6 @@ const LhcHL7 = {
     formObrArray[1] = "1";
     formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
-    if (formData.templateOptions.formHeaderItems &&
-        formData.templateOptions.formHeaderItems.length > 0) {
-      for (var i= 0, iLen=formData.templateOptions.formHeaderItems.length; i< iLen; i++) {
-        if (formData.templateOptions.formHeaderItems[i].questionCode === "date_done" &&
-            formData.templateOptions.formHeaderItems[i].value) {
-          formObrArray[7] = CommonUtils.formatDate(formData.templateOptions.formHeaderItems[i].value, this._DTM_FMT);
-        }
-        else if (formData.templateOptions.formHeaderItems[i].questionCode === "where_done" &&
-            formData.templateOptions.formHeaderItems[i].value) {
-          formObrArray[13] = formData.templateOptions.formHeaderItems[i].value.text;
-        }
-      }
-    }
-
     // ignore ending empty fields
     var foundValue = false;
     for(var i=this.obrFieldNum-1; i>=0; i--) {

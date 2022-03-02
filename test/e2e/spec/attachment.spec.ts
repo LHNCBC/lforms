@@ -216,7 +216,7 @@ describe('Attachment support', ()=>{
       var q = require(testFile); // read the Questionnaire
       browser.executeScript(
        "var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(arguments[0], 'R4');"+
-       "return LForms.Util.mergeFHIRDataIntoLForms('QuestionnaireResponse', arguments[1], lfData, 'R4')",
+       "return LForms.Util.mergeFHIRDataIntoLForms(arguments[1], lfData, 'R4')",
        q, qr).then((lfData)=>{
         // Open another page where we can use addFormToPage
         tp.openTestPage('/test/addFormToPageTest.html');

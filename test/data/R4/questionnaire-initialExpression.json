@@ -1,0 +1,54 @@
+{
+  "title": "Questionnaire for testing initialExpression",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ]
+  },
+  "item": [
+    {
+      "type": "integer",
+      "code": [
+        {
+          "code": "type-integer",
+          "display": "integer"
+        }
+      ],
+      "linkId": "/type-integer",
+      "text": "integer",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "description": "initial integer value",
+            "language" : "text/fhirpath",
+            "expression": "123"
+          }
+        }
+      ]
+    },
+    {
+      "type": "string",
+      "code": [
+        {
+          "code": "type-string",
+          "display": "string"
+        }
+      ],
+      "linkId": "/type-string",
+      "text": "string",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "description": "initial string value",
+            "language" : "text/fhirpath",
+            "expression": "'abc123'"
+          }
+        }
+      ]
+    }
+  ]
+}

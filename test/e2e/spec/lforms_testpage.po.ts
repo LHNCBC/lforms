@@ -167,7 +167,6 @@ export class TestPage {
   WAIT_TIMEOUT_1 = 20000
   WAIT_TIMEOUT_2 = 40000
   checkboxesFinder = element.all(by.css('div.lf-form-control > label > input[type="checkbox"]'))
-  headerEl = element(by.css('div[ng-if="!lfData.templateOptions.hideFormControls"]'))
   heightField = element(by.id(this.heightFieldID))
   heightLabel = element(by.css('label[for="' + this.heightFieldID + '"]'))
   readerLog = element(by.css('#reader_log'))

@@ -145,7 +145,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                 // when a new form is loaded, run all FHIR Expressions including the initial expressions
                 // self.lhcFormData sometimes is set to null to clear the page
                 if (self.lhcFormData && (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr)) {
-                  self.lhcFormData._expressionProcessor.runCalculations(true)
+                  self.lhcFormData._expressionProcessor.runCalculations(!self.lhcFormData.hasSavedData)
                     .then(() => {
                       self.formReady();
                     })

@@ -731,8 +731,6 @@
     }
   ],
   "templateOptions": {
-    "showFormHeader": false,
-    "hideFormControls": true,
     "viewMode": "md"
   },
   "lformsVersion": "24.0.0"

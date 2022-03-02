@@ -60,7 +60,6 @@
           <option value="STU3">STU3</option>
         </select>
         <button id="change-option" class="btn btn-primary" onclick="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
-        <button id="toggle-units-col" class="btn btn-primary" onclick="toggleUnitsCol()">Hide/Show Units Column</button>
         <button id="reset-form-with-same-data" class="btn btn-primary" onclick="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)[&#10004;]</button>
         <button id="get-hl7" class="btn btn-primary" onclick="showHL7Segments()">Show HL7 OBR/OBX Segments[&#10004;]</button>
         <button id="get-fhir" class="btn btn-primary" onclick="showDiagnosticReport()">Show FHIR DiagnosticReport Content[&#10004;]</button>
@@ -85,7 +84,7 @@
 
     <br><br>
     <wc-lhc-form id='test-form'></wc-lhc-form>
-
+    <div id="formContainer"></div>
   </div>
 
     <script type="text/javascript">
@@ -99,8 +98,7 @@
         {text: 'Full-Featured Demo', name: 'allInOne',
             tempOptions: {
               allowHTMLInInstructions: true,
-              allowMultipleEmptyRepeatingItems: true,
-              hideFormControls: false
+              allowMultipleEmptyRepeatingItems: true
             }},
         {text: 'Form Builder created test form', name: 'formBuilder'},
         {text: 'Minimum Data Set - version 3.0', name: 'MDS3'},
@@ -227,14 +225,6 @@
         }
       }
 
-      // options
-      // it does not make sense to hide unit ?!
-      function toggleUnitsCol() {
-        if (testForm.questionnaire) {
-          testForm.questionnaire.templateOptions.hideUnits = testForm.questionnaire.templateOptions.hideUnits; // hideUnits not implemented yet
-        }
-      };
-
       /**
        * Change an item's value in form data (and the form should re-render accordingly)
        */
@@ -337,8 +327,7 @@
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
 
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                    resType, fhirJson, formJson,
-                    getFHIRVersion());
+                    fhirJson, formJson, getFHIRVersion());
         testForm.questionnaire = mergedFormData;
 
       };
