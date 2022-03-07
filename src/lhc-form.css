@@ -313,10 +313,24 @@
 }
 /* title row */
 .lhc-form .lhc-item.lhc-datatype-TITLE  {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.lhc-form .lhc-item.lhc-datatype-TITLE .lhc-item-display {
   background-color: #e6f1ff; /*rgb(67,115,156);*/
-  border-top: 2px solid white; /* leave space between headers */
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin: 0 4px 0 2px;
+  border-width: 0;
+  border-top: 2px solid white;
+  padding: 4px 2px 4px 2px;
 }
 
+/* first row in the form */
+.lhc-form-body > .lhc-item.lhc-first-item lhc-item-question{
+  border-top: none;
+
+}
 /* prefix */
 .lhc-form .prefix {
   padding-right: 0.25em; /* space between the prefix and the question */

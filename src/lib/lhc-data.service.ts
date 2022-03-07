@@ -252,9 +252,9 @@ export class LhcDataService {
   getSiblingStatus(item) {
     var status = "";
     if (item._lastSibling)
-      status += 'lf-last-item';
+      status += 'lhc-last-item';
     if (item._firstSibling)
-      status += ' lf-first-item'
+      status += ' lhc-first-item'
     return status;
   }
 
