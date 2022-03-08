@@ -7,7 +7,7 @@ import {CommonUtilsService} from "../../lib/common-utils.service";
   templateUrl: './lhc-item-time.component.html',
   styleUrls: ['./lhc-item-time.component.css']
 })
-export class LhcItemTimeComponent implements OnInit, OnChanges {
+export class LhcItemTimeComponent implements OnChanges {
 
   @Input() item: any;
   time: Date | null = null;
@@ -16,11 +16,7 @@ export class LhcItemTimeComponent implements OnInit, OnChanges {
               private elRef:ElementRef,
               private commonUtilsService: CommonUtilsService) { }
 
-  ngOnInit(): void {
-    // console.log("*lhc-item-time, ngOnInit")
-    // console.log(this.item)
-  }
-
+  
   ngOnChanges(): void {
     if (this.item.value) {
       let tempDate:any = new Date('1970-01-01 ' + this.item.value)
@@ -30,20 +26,20 @@ export class LhcItemTimeComponent implements OnInit, OnChanges {
     }
   }
 
-
+  /**
+   * model change event handler
+   * @param result the new date/time
+   */
   onChange(result: Date): void {
-
-    console.log('Selected Time: ', result);
-    console.log(this.time)
     if (this.time) {
       let strTime = this.time.toTimeString();
       if (strTime) {
         this.item.value = strTime.slice(0,8); // "hh:mm:ss"
       }
     }
-
   }
 
+  
   ngAfterViewInit() {
     // Set aria-label attribute of the actual <input> element.
     const input = this.elRef.nativeElement.querySelector('input');

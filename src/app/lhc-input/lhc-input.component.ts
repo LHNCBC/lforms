@@ -7,20 +7,13 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   styleUrls: ['./lhc-input.component.css']
 })
 
-
-export class LhcInputComponent implements OnInit {
+export class LhcInputComponent {
 
   // Handles the input fields for simple data types, such as integer, decimal,
   // string, and etc.
   @Input() item;
 
   constructor(public lhcDataService: LhcDataService) { }
-
-  /**
-   * Initialize the component
-   */
-  ngOnInit(): void {
-  }
 
 }
 

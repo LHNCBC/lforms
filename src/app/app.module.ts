@@ -34,10 +34,6 @@ import { CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline } from 
 import { IconDefinition } from '@ant-design/icons-angular';
 const icons: IconDefinition[] = [ CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline ];
 
-import { CommonUtilsService } from '../lib/common-utils.service';
-import { LhcDataService } from '../lib/lhc-data.service';
-import { WindowService } from '../lib/window.service';
-
 import { LhcItemChoiceAutocompleteComponent } from './lhc-item-choice-autocomplete/lhc-item-choice-autocomplete.component';
 import { LhcItemComponent } from './lhc-item/lhc-item.component';
 import { LhcUnitComponent } from './lhc-unit/lhc-unit.component';
@@ -144,8 +140,9 @@ export class AppModule {
     
     window['LForms'] = lforms;
         
-    customElements.define('wc-lhc-item', createCustomElement(LhcItemComponent, { injector: this.injector }));
+    // define the web component
     customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));
+
   }
   
   ngDoBootstrap() {}

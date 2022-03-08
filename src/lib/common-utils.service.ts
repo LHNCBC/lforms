@@ -7,8 +7,6 @@ import CommonUtils from './lforms/lhc-common-utils.js';
 })
 export class CommonUtilsService {
 
-  constructor() { }
-
   /**
    * Check if two answers can be treated as same
    * @param answer an answer item that could have part of the attributes set

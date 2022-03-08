@@ -6,8 +6,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-item-choice-autocomplete.component.html',
   styleUrls: ['./lhc-item-choice-autocomplete.component.css']
 })
-export class LhcItemChoiceAutocompleteComponent implements OnInit, OnChanges {
-
+export class LhcItemChoiceAutocompleteComponent implements OnChanges {
 
   // Handle the answer list of the "choice"/"opn-choice" typed item using the
   // lhc-autocomplete component
@@ -20,22 +19,10 @@ export class LhcItemChoiceAutocompleteComponent implements OnInit, OnChanges {
   /**
    * Component class constructor
    */
-  constructor(public lhcDataService: LhcDataService) {
+  constructor(public lhcDataService: LhcDataService) {}
 
-  }
-
-
-  /**
-   * Initialize the component
-   */
-  ngOnInit(): void {
-  }
 
   ngOnChanges(changes): void {
-    // console.log("in lhc-item-choice-autocomplete: on change")
-    // console.log(changes);
-    // console.log(this.item.question);
-
     if (changes.acOptions) {
       if (this.item) {
         this.options = {
@@ -46,7 +33,6 @@ export class LhcItemChoiceAutocompleteComponent implements OnInit, OnChanges {
         }
       }  
     }
-
   }
 
 }

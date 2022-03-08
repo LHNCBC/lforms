@@ -9,7 +9,7 @@ import {CommonUtilsService} from "../../lib/common-utils.service";
   templateUrl: './lhc-item-boolean.component.html',
   styleUrls: ['./lhc-item-boolean.component.css']
 })
-export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
+export class LhcItemBooleanComponent implements AfterViewInit {
   @Input() item: any;
 
   @ViewChild('nzSwitchComponent') nzSwitchComponent: NzSwitchComponent;
@@ -19,12 +19,6 @@ export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
               private liveAnnouncer: LiveAnnouncer,
               private commonUtilsService: CommonUtilsService) { }
 
-  ngOnInit(): void {
-  }
-
-  ngOnDestroy() : void {
-    //console.log('lhc-item-boolean, ngOnDestroy')
-  }
 
   ngAfterViewInit() {
     // Set aria-label attribute of the actual <button> element.
@@ -38,6 +32,11 @@ export class LhcItemBooleanComponent implements OnInit, AfterViewInit {
     }
   }
 
+
+  /**
+   * onModelChange handler
+   * @param value the new value in model
+   */
   onModelChange(value) {
     this.liveAnnouncer.announce(value);
   }

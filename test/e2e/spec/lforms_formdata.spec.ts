@@ -31,19 +31,10 @@ describe('formdata: ', function() {
         var fData = LForms.Util.getUserData();
         callback(fData);
       }).then(function(formData:any) {
-        // console.log(JSON.stringify(formData, null, 2));
         expect(formData.itemsData.length).toBe(2);
         expect(formData.itemsData[0].items.length).toBe(13);
         expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
         expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
-        // NEXT: comments, whereDone, whenDone are removed.
-        // // #2 above fields have values, except dob is still empty
-        // TestUtil.sendKeys(ff.comment, "Some comments");
-        // ff.whereDone.click()
-        // // pick the 2nd item, Hospital
-        // ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
-        // ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
-        // ff.whereDone.sendKeys(protractor.Key.TAB);
 
         TestUtil.sendKeys(ff.name, "Not Empty");
 
@@ -123,22 +114,7 @@ describe('formdata: ', function() {
       });
     });
 
-    // NEXT: no more directives
-    // it('should be able to get data when LForms directive is used', function() {
-    //   tp.openDirectiveTest();
-
-    //   browser.waitForAngular();
-    //   browser.driver.executeAsyncScript(function() {
-    //     var callback = arguments[arguments.length - 1];
-    //     var fData = LForms.Util.getUserData();
-    //     callback(fData);
-    //   }).then(function(formData:any) {
-    //     // console.log(formData);
-    //     expect(formData.itemsData.length).toBe(2);
-    //     expect(formData.itemsData[0].items.length).toBe(13);
-    //   });
-    // });
-
+    
     it('should assign a boolean value for type BL fields', function (done) {
       tp.LoadForm.openFullFeaturedForm();
       function checkBoolFieldVal(val, done=null) {

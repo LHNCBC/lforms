@@ -220,8 +220,6 @@
 /* visible skip logic target items have different styles */
 .lhc-form-body .lhc-form-table-row.target-show td {
   color: #015DAD;
-  /* todo */
-  /*tooltip: "triggered by other questions."*/
 }
 
 
@@ -311,6 +309,7 @@
 .lhc-form .lhc-form-table-row.lhc-item-group .lhc-de-label-button  {
   padding: 4px 0 4px 0;
 }
+
 /* title row */
 .lhc-form .lhc-item.lhc-datatype-TITLE  {
   padding-top: 4px;
@@ -325,6 +324,20 @@
   border-top: 2px solid white;
   padding: 4px 2px 4px 2px;
 }
+
+.lhc-form .lhc-item-group-title {
+  background: #e6f1ff;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 4px 0 2px;
+  border-width: 0;
+  border-top: 2px solid white;
+  padding: 4px 2px 4px 2px;
+}
+
 
 /* first row in the form */
 .lhc-form-body > .lhc-item.lhc-first-item lhc-item-question{

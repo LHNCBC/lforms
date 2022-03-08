@@ -10,17 +10,8 @@ import { Component, OnInit, OnChanges, Input, ViewEncapsulation} from '@angular/
   styleUrls: ['./lhc-change-detection.component.css']
   //encapsulation: ViewEncapsulation.ShadowDom
 })
-export class LhcChangeDetectionComponent implements OnInit, OnChanges {
+export class LhcChangeDetectionComponent{
 
   @Input() lhcFormData: any;
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-  ngOnChanges(changes): void {
-    // console.log("in lhc-change-detection ngOnChanges")
-    // console.log(changes)
-  }
 }
