@@ -131,15 +131,6 @@ export class LhcDataService {
   }
 
 
-
-  /**
-   * Get the indentation style of the form
-   * @returns {string}
-   */
-  getIndentationStyle() {
-    return this.lhcFormData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
-  }
-
   /**
    * Check if there's only one repeating item in a group
    * (so that the 'remove' button won't show on this item)
@@ -327,7 +318,7 @@ export class LhcDataService {
     }
     return viewModeClass;
   }
-  
+
 
   /**
    * get the CSS class for an item's view mode
@@ -369,7 +360,7 @@ export class LhcDataService {
     }
     return viewModeClass;
   }
-  
+
 
   /**
    * Add a repeating item or a repeating group

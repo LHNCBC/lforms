@@ -118,9 +118,6 @@ export default class LhcFormData {
                           // "1", "2", "3", "4", "5", "6" -- listed in columns
       }
     },
-    // controls whether to use tree lines for indentations
-    useTreeLineStyle: true, // true -- use tree lines
-                            // false -- use bars
     // form's table column headers' display names for question text, values and units
     // for now they should not be accessible to users
     columnHeaders: [
@@ -356,8 +353,8 @@ export default class LhcFormData {
     return Promise.all(pendingPromises).then(function() {
       lfData._notifyAsyncChangeListeners();
     })
-    .catch(function fail(e) { 
-      throw e 
+    .catch(function fail(e) {
+      throw e
     });
   }
 
@@ -1024,7 +1021,7 @@ export default class LhcFormData {
     if (newOptions) {
       if (!existingOptions)
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
-        
+
 
       // get the fields that contains array
       var columnHeaders = newOptions.columnHeaders;
@@ -1313,7 +1310,7 @@ export default class LhcFormData {
   //     }
   //     // set a reference to its parent item
   //     item._parentItem = parentItem;
-      
+
   //   }
 
   // }
@@ -2145,13 +2142,13 @@ export default class LhcFormData {
   _isRepeatingItemEmpty(item) {
 
     var isEmpty = true;
-    // 
+    //
     if (item.dataType !== CONSTANTS.DATA_TYPE.SECTION) {
       if (item.value === undefined || item.value === null || item.value ==="") {
         return isEmpty;
       }
       // it's a question item, and it is not hidden
-      if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {    
+      if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         // multiple selection answer list (array is also an object)
         if (Array.isArray(item.value) && item.value.length > 0) {
           var notEmpty = false;
@@ -2183,7 +2180,7 @@ export default class LhcFormData {
         if (!isEmpty) break;
       }
     }
-    
+
     return isEmpty;
   }
 
@@ -2644,7 +2641,7 @@ export default class LhcFormData {
         var listItem = CommonUtils.deepCopy(answers[i]);
         this._setUnitDisplay(listItem);
         if (answers[i].default) {
-          defaultUnit = listItem;          
+          defaultUnit = listItem;
         }
         // Include only if name or code is specified.
         if(listItem._displayUnit) {
@@ -2815,7 +2812,7 @@ export default class LhcFormData {
               if (userValue.text) userValue._displayText = userValue.text;
               // need a new copy of the data to trigger a change in the data model in autocompleter component
               // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
-              listVals.push(CommonUtils.deepCopy(userValue)); 
+              listVals.push(CommonUtils.deepCopy(userValue));
             }
           }
         }
@@ -3303,7 +3300,7 @@ export default class LhcFormData {
         // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
         // the only key is "value", for now
         case CONSTANTS.DATA_TYPE.ST:
-        case CONSTANTS.DATA_TYPE.TX:  
+        case CONSTANTS.DATA_TYPE.TX:
         // boolean: {"value": true}, {"value": false}
         // the only key is "value"
         case CONSTANTS.DATA_TYPE.BL:
