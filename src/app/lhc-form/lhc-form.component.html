@@ -15,7 +15,7 @@
       <button *ngIf="lhcFormData.templateOptions.showFormOptionPanelButton" type="button" class="lf-control-button btn-sm"
               (click)="hideShowFormOptionPanel()" aria-label="Form Option Panel">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-      </button>    
+      </button>
     </div>
 
     <!--form body-->
@@ -34,9 +34,9 @@
           <!-- check each top level item's questionLayout -->
           <ng-container *ngIf="lhcFormData.items">
             <ng-container *ngFor ="let item of lhcFormData.items; trackBy: lhcDataService.trackByElementId">
-              <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)" 
-                [item]="item" 
-                class="lhc-item {{getItemViewModeClass(item)}} {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
+              <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)"
+                [item]="item"
+                class="lhc-item {{getItemViewModeClass(item)}} {{lhcDataService.getTreeLineClass(item)}} {{lhcDataService.getIndentationClass(item)}} {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
               </lhc-item>
               <!--header item-->
             </ng-container>

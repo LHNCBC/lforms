@@ -125,7 +125,8 @@ export default class LhcFormData {
       {"name" : "Value"},
       {"name" : "Units"}
     ],
-    hideTreeLine: false
+    hideTreeLine: false,
+    hideIndentation: false
   };
 
   // other instance level variables that were not previously listed
@@ -3429,6 +3430,21 @@ export default class LhcFormData {
     return ret;
   }
 
+  /**
+   * Get CSS classes for the tree line
+   * @returns {string}
+   */
+  getTreeLineClass() {
+    return this.templateOptions.hideTreeLine ? '' : 'lf-tree-line';
+  }
+
+  /**
+   * Get CSS classes for the indentation
+   * @returns {string}
+   */
+  getIndentationClass() {
+    return this.templateOptions.hideIndentation ? '' : 'lf-indentation';
+  }
 
 
 };

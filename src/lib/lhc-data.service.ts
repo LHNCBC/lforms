@@ -250,14 +250,21 @@ export class LhcDataService {
   }
 
   /**
-   * Get CSS classes for the sibling status (whether it is the first or the last sibling)
+   * Get CSS classes for the tree line
+   * @returns {string}
+   */
+  getTreeLineClass(item) {
+    return this.lhcFormData.getTreeLineClass();
+  }
+
+  /**
+   * Get CSS classes for the indentation
    * @param item a form item
    * @returns {string}
    */
-  getTreeLineStatus(item) {
-    return item.hideTreeLine ? '' : 'tree-line';
+  getIndentationClass(item) {
+    return this.lhcFormData.getIndentationClass();
   }
-
 
 
   /**
