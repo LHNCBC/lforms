@@ -5,7 +5,6 @@ import {facadeExpect as expect, protractor, by, element, browser} from "../suppo
 describe('Data Type', function() {
   let tp;
   let ff;
-  let LForms;
 
   before(async () => {
     tp = new TestPage();
@@ -155,7 +154,7 @@ describe('Data Type', function() {
       cy.window().then(win=>{
         var fData = win.LForms.Util.getUserData();
         expect(fData.itemsData[3].unit).toEqual({name: "grams", system: "http://unitsofmeasure.org"});
-      })
+      });
 
       field1.click(); // Close auto complete pull down.
       cy.get(ac.searchResults).should('not.be.visible');

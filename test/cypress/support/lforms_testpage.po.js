@@ -271,7 +271,7 @@ export class TestPage {
    */
   openFormByIndex(formIndex) {
     let formFinished=false;
-    function formFinishedListener() {formFinished = true};
+    function formFinishedListener() {formFinished = true}
     cy.get('#test-form').then((el)=> {
       el[0].addEventListener('onFormReady', formFinishedListener);
       el[0].addEventListener('onError', formFinishedListener);
