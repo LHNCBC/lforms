@@ -55,7 +55,6 @@ describe('Tests of addFormToPage test page', function() {
     dtmInput.getCyElem().invoke('val').then((value)=>{
       expect(value >= minMax[0]);
       expect(value <= minMax[1]);
-      console.log('A'); console.log(value); console.log('b');
     });
   });
 

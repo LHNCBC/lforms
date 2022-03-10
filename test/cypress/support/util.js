@@ -25,10 +25,12 @@ export function addFormToPage(filePath, container, options) {
   cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
     cy.window().then((win) => {
       win.document.getElementById(container).innerHTML = null;
-      win.LForms.Util.addFormToPage(formDef, container, options);
-      cy.get('#'+container).find('.lhc-form-title').should('be.visible');
+      return new Cypress.Promise((resolve) => {
+        win.LForms.Util.addFormToPage(formDef, container, options).then(()=>resolve(), ()=>resolve());
+      });
     });
   });
+  cy.get('#'+container).find('.lhc-form-title').should('be.visible');
 };
 
 

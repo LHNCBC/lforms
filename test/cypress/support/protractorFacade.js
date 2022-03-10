@@ -1,17 +1,7 @@
 // A facade for implementing Protractor calls with Cypress.
 
-export const browser = {
-  driver: {
-    executeAsyncScript: function(script, ...args) {
-      return cy.window().then(win=>{
-        return script(...args)
-      });
-    }
-  }
-};
 
-
-// Additional expect functions
+// expect functions
 const cypressExpect = expect;
 export function facadeExpect(actualValue) {
   function assertions(isNot=false) {
@@ -55,7 +45,8 @@ export function facadeExpect(actualValue) {
       toBeFalsy: ()=>cypressExpect(!actualValue).to.be.true,
       toBeGreaterThanOrEqual: (v)=>cypressExpect(actualValue).to.be.gte(v),
       toBeLessThanOrEqual: (v)=>cypressExpect(actualValue).to.be.at.most(v),
-      toContain: (v)=>actualValue.should('contain', v)
+      toContain: (v)=>actualValue.should('contain', v),
+      toMatch: (v)=>actualValue.should('match', v)
     }
   }
   const rtn = assertions();
@@ -100,6 +91,8 @@ export function element(locator) {
     element: (subLocator)=>element(locator + ' ' + subLocator),
     isSelected: ()=>getElem().invoke('val'),
     click: ()=>getElem().click(),
+    clear: ()=>getElem().clear(),
+    all: (allLocator)=>getElem().find(allLocator),
     should: (assertion)=>getElem().should(assertion)
   }
 }
@@ -119,6 +112,7 @@ element.all = function (allLocator) {
 export const protractor = {
   Key: {
     ARROW_DOWN: '{downarrow}',
+    DOWN: '{downarrow}',
     ENTER: '{enter}'
   }
 }

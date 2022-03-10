@@ -266,23 +266,43 @@ export class TestPage {
 
 
   /**
-   * Display a form on the test page
+   * Display a form on the test page, and asserts that the form is ready
    * @param formIndex the form's index in the forms list
    */
   openFormByIndex(formIndex) {
+    let formFinished=false;
+    function formFinishedListener() {formFinished = true}
+    cy.get('#test-form').then((el)=> {
+      el[0].addEventListener('onFormReady', formFinishedListener);
+      el[0].addEventListener('onError', formFinishedListener);
+    });
+
     // make a selection on the 'select' dropdown list
     cy.get("#form-list").select(formIndex);
     var button = cy.get('#load-form-data');
     if (button) {
       button.click();
     }
-    // Wait for at least the title to appear.  This will not mean that
-    // loadFHIRResources() has finished, but I don't think the forms here need
-    // that.
-    // For a more complete solution, see util.js loadFromTestData, the
-    // application of which here would require some modification to the test
-    // page.
-    cy.get('.lhc-form-title', {timeout: 5000}).should('be.visible');
+
+    // Wait for the form to appear and be "ready" (or error out)
+    cy.get('.lhc-form-title', {timeout: 4000}).should('be.visible').then(
+      {timeout: 4000}, ()=>{
+
+      return new Cypress.Promise((resolve) => {
+        function checkFormFinished() {
+          if (formFinished) {
+            resolve();
+            cy.get('#test-form').then((el)=> {
+              el[0].removeEventListener('onFormReady', formFinishedListener);
+              el[0].removeEventListener('onError', formFinishedListener);
+            });
+          }
+          else
+            setTimeout(checkFormFinished, 50);
+        }
+        setTimeout(checkFormFinished, 50);
+      });
+    });
   }
 
   /**
