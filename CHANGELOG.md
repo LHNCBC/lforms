@@ -2,9 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.0.0-beta.10] 2020-03-08
+## [30.0.0] 2020-03-08
 ### Fixed
-- Fixed a minior style issue
+- Fixed a minor style issue
 ### Changed
 - Code refactoring and clean up.
 - Made most commands in package.json work on Windows.
