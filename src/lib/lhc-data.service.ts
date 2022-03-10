@@ -249,6 +249,16 @@ export class LhcDataService {
     return status;
   }
 
+  /**
+   * Get CSS classes for the sibling status (whether it is the first or the last sibling)
+   * @param item a form item
+   * @returns {string}
+   */
+  getTreeLineStatus(item) {
+    return item.hideTreeLine ? '' : 'tree-line';
+  }
+
+
 
   /**
    * Get the CSS class on each item row

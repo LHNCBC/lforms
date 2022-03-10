@@ -124,7 +124,8 @@ export default class LhcFormData {
       {"name" : "Name"},
       {"name" : "Value"},
       {"name" : "Units"}
-    ]
+    ],
+    hideTreeLine: false
   };
 
   // other instance level variables that were not previously listed

@@ -4,7 +4,7 @@
   position: relative;
 }
 /* the horizontal bar of a tree line */
-.lhc-item::before {
+.lhc-item.tree-line::before {
   content: "";
   position: absolute;
   left: 12px;
@@ -15,7 +15,7 @@
   height: 0;
 }
 /* the vertical bar of a tree line */
-.lhc-item::after {
+.lhc-item.tree-line::after {
   content: "";
   position: absolute;
   left: 12px;
@@ -26,7 +26,7 @@
   top: 0;
 }
 /* shorter vertical bar of a tree line for the last item of a level */
-.lhc-item.lf-last-item::after {
+.lhc-item.tree-line.lf-last-item::after {
   height: 14px;
 }
 /*no tree lines for form level horizontal and matrix layouts */
