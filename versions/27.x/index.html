@@ -83,8 +83,8 @@
         <p>Documentation by version:</p>
         <ul>
           <li><a href="../../index.html">Current (>=30.x)</a></li>
-          <li><a href="../27.x/index.html">27-29</a></li>
-          <li>17-26 (this version)</a></li>
+          <li>27-29 (this version)</li>
+          <li><a href="../17.x/index.html">17-26</a></li>
           <li><a href="../13.x/index.html">13-16</a></li>
           <li><a href="../11.x/index.html">11-12</a></li>
           <li><a href="../7.x/index.html">7-10</a></li>
@@ -473,7 +473,7 @@ user to save the form so it can be redisplayed later for completion or editing.<
           without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
           The default is false.</li>
         <li>extract - a flag used for resourceType=QuestionnaireReponse to
-          indicate that data should be extracted (using the observationLinkPeriod
+          indicate that data should be extracted (using the observationExtract
           extension).  In this case the returned resource will be an array
           consisting of the QuestionnaireResponse and any extracted Observations.
         <li>subject: A local FHIR resource that is the subject of the output
@@ -514,22 +514,17 @@ user to save the form so it can be redisplayed later for completion or editing.<
   <h4><a name="fhirQueries"></a>FHIR Queries</h4>
   <p>If the Questionnaire referenced external FHIR resources, those will still
    need to be loaded.  Before that can happen, you will need to tell LForms about
-   the connection to the FHIR server, via
-   <pre><code>LForms.Util.setFHIRContext(fhirContext)</code></pre>.
-   The "fhirContext" parameter should
-   be an object implementing the following functions:</p>
-  <ul>
-    <li>getCurrent(typeList, callback):  "typeList" is a list of desired
-      FHIR resource types for which there is conceptually a "current" on in
-      the FHIR context (e.g., Patient, or Practitioner).  Only one resource
-      from the requested list will be returned, and the result will be null if
-      none of the requested resource types are available.  Because retrieving
-      the resource will generally be an asynchronous operation, the resource
-      will be returned via the first argument to the provided "callback"
-      function.</li>
-    <li>getFHIRAPI():  Should return an instance of fhir.js for interacting with
-      the FHIR server.</li>
-  </ul>
+   the connection to the FHIR server, via:</p>
+   <pre><code>LForms.Util.setFHIRContext(fhirContext)</code></pre>
+  <p>
+   The "fhirContext" parameter should be an instance of 'client-js', a.k.a. the
+   npm package <a
+   href="https://www.npmjs.com/package/fhirclient">fhirclient</a>, version 2.
+   (See <a
+   href="http://docs.smarthealthit.org/client-js">http://docs.smarthealthit.org/client-js</a>
+   for documentation.).  A non-npm version, ready to use in a browser, can be found
+   at https://cdn.jsdelivr.net/npm/fhirclient@2/build/fhir-client.min.js.
+  </p>
 
   <p>If rendering using <a
   href="#usageNonAngularJS">LForms.Util.addFormtoPage()</a>, the external FHIR
@@ -608,8 +603,8 @@ user to save the form so it can be redisplayed later for completion or editing.<
 
 <p>Form definitions are stored in a JSON structure.  To get a rough idea of what
 these are you can take a look at one of the
-<a href="https://github.com/lhncbc/lforms/blob/26.4.0/app/data/">samples</a>, or for a detailed description see the
-<a href="https://github.com/lhncbc/lforms/blob/26.4.0/form_definition.md">form definition documentation</a>.</p>
+<a href="https://github.com/lhncbc/lforms/blob/29.3.1/app/data/">samples</a>, or for a detailed description see the
+<a href="https://github.com/lhncbc/lforms/blob/29.3.1/form_definition.md">form definition documentation</a>.</p>
 
 <h2>
 <a id="licensing-and-copyright-notice" class="anchor" href="#licensing-and-copyright-notice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Licensing and Copyright Notice</h2>
