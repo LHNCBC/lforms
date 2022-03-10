@@ -1,15 +1,12 @@
-import { TestPage } from "./lforms_testpage.po";
-import TestUtil from "./util";
-import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
-import { protractor } from 'protractor/built/ptor';
+import {TestPage} from '../support/lforms_testpage.po.js';
+import {TestUtil} from "../support/testUtilFacade.js";
+import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 
 describe('Data Type', function() {
-  let tp: TestPage; 
-  let ff: any;
-  let LForms: any = (global as any).LForms;
+  let tp;
+  let ff;
 
-  beforeAll(async () => {
-    await browser.waitForAngularEnabled(false);
+  before(async () => {
     tp = new TestPage();
     ff = tp.USSGFHTVertical;
   });
@@ -18,13 +15,11 @@ describe('Data Type', function() {
     tp.LoadForm.openFullFeaturedForm();
     let titleRow = element(by.css(".lhc-item.lhc-datatype-TITLE"));
     let typeTitle = titleRow.element(by.css("label[for='/titleHeader/1']"));
-
-    expect(typeTitle.isDisplayed()).toBe(true);
+    typeTitle.should('be.visible');
   });
 
-  
   it('DTM datetime picker should work', function () {
-    var minMax:Array<any> = [TestUtil.getCurrentDTMString(-60000), TestUtil.getCurrentDTMString(+60000)]; // -/+ a minute
+    var minMax = [TestUtil.getCurrentDTMString(-60000), TestUtil.getCurrentDTMString(+60000)]; // -/+ a minute
     tp.LoadForm.openFullFeaturedForm();
     let dtmInput = element(by.id('/type7/1')).element(by.css("input"));
     let nowButton = element(by.css(".ant-picker-now-btn"));
@@ -32,8 +27,10 @@ describe('Data Type', function() {
     dtmInput.click()
     nowButton.click()
     okButton.click()
-    expect(dtmInput.getAttribute("value")).toBeGreaterThanOrEqual(minMax[0]);
-    expect(dtmInput.getAttribute("value")).toBeLessThanOrEqual(minMax[1]);
+    dtmInput.getCyElem().invoke('val').then((value)=>{
+      expect(value >= minMax[0]);
+      expect(value <= minMax[1]);
+    });
   });
 
   it('DT data type should work', function () {
@@ -47,30 +44,31 @@ describe('Data Type', function() {
     otherEl.click();
     expect(dtEl.getAttribute("value")).toBe('')
     //expect(dtEl.getCssValue('border-color')).toEqual('rgb(255, 0, 0)'); // Red border
-    
+
 
     dateStr = '02/03/2019';
     dtEl.clear();
     TestUtil.sendKeys(dtEl, dateStr);
     otherEl.click();
     expect(dtEl.getAttribute("value")).toEqual(dateStr);
-    // expect(dtEl.getAttribute("class")).toContain('ng-valid'); 
+    // expect(dtEl.getAttribute("class")).toContain('ng-valid');
   });
 
   it('DTM data type should work', function () {
     tp.LoadForm.openFullFeaturedForm();
     let dtmEl = element(by.id('/type7/1')).element(by.css("input"));
+    let otherEl = element(by.id('/type5/1')); // Use for creating blur event
     dtmEl.clear();
     TestUtil.sendKeys(dtmEl, '02/03/201923:59');
-    dtmEl.sendKeys(protractor.Key.TAB);
+    otherEl.click();
     expect(dtmEl.getAttribute("value")).toBe('11/11/2019 06:11:11') // previous value
-    
+
 
     dtmEl.clear();
     TestUtil.sendKeys(dtmEl, '02/03/2019 23:59:00'); // current implementation requires seconds, to be improved
-    dtmEl.sendKeys(protractor.Key.TAB);
+    otherEl.click();
     expect(dtmEl.getAttribute("value")).toBe('02/03/2019 23:59:00')
-    
+
   });
 
   describe('Button Type', function() {
@@ -92,7 +90,7 @@ describe('Data Type', function() {
   describe("Items with units", function() {
 
     describe("with a REAL or INT data type", function () {
-      beforeAll(() => {tp.LoadForm.openVitalSign()});
+      before(() => {tp.LoadForm.openVitalSign()});
 
       it("should have data type set", function() {
         var field1 = element(by.id('/3140-1/1')),
@@ -132,53 +130,42 @@ describe('Data Type', function() {
 
       var ac = tp.Autocomp;
       expect(TestUtil.getAttribute(units4,"value")).toBe("lbs");
-      browser.driver.executeAsyncScript(function () {
-        var callback = arguments[arguments.length - 1];
-        var fData = LForms.Util.getUserData();
-        callback(fData);
-      }).then(function (formData:any) {
-        expect(formData.itemsData[3].unit).toEqual({code: "lbs", default: true});
-      })
-      
+      cy.window().then(win=>{
+        var fData = win.LForms.Util.getUserData();
+        expect(fData.itemsData[3].unit).toEqual({code: "lbs", default: true});
+      });
 
       units4.click();
       units4.sendKeys(protractor.Key.DOWN);
       units4.sendKeys(protractor.Key.ENTER);
       expect(TestUtil.getAttribute(units4,"value")).toBe('kilo grams');
-      browser.driver.executeAsyncScript(function () {
-        var callback = arguments[arguments.length - 1];
-        var fData = LForms.Util.getUserData();
-        callback(fData);
-      }).then(function (formData:any) {
-        expect(formData.itemsData[3].unit).toEqual({name: "kilo grams", code: "kgs"});
-      })
+      cy.window().then(win=>{
+        var fData = win.LForms.Util.getUserData();
+        expect(fData.itemsData[3].unit).toEqual({name: "kilo grams", code: "kgs"});
+      });
       units4.click();
       // Four units in the list, but one of them is invalid.
-      expect(element(by.id('completionOptions')).all(by.css('span ul li')).count()).toBe(3);
+      element(by.id('completionOptions')).all(by.css('ul li')).should('have.length', 3);
       units4.sendKeys(protractor.Key.DOWN);
       units4.sendKeys(protractor.Key.DOWN);
       units4.sendKeys(protractor.Key.DOWN);
       units4.sendKeys(protractor.Key.ENTER);
       expect(TestUtil.getAttribute(units4,"value")).toBe('grams');
-      browser.driver.executeAsyncScript(function () {
-        var callback = arguments[arguments.length - 1];
-        var fData = LForms.Util.getUserData();
-        callback(fData);
-      }).then(function (formData:any) {
-        expect(formData.itemsData[3].unit).toEqual({name: "grams", system: "http://unitsofmeasure.org"});
-      })
+      cy.window().then(win=>{
+        var fData = win.LForms.Util.getUserData();
+        expect(fData.itemsData[3].unit).toEqual({name: "grams", system: "http://unitsofmeasure.org"});
+      });
 
       field1.click(); // Close auto complete pull down.
-      expect(ac.searchResults.isDisplayed()).toBe(false);
+      cy.get(ac.searchResults).should('not.be.visible');
       expect(TestUtil.getAttribute(units5,"value")).toBe("");
       units5.click();
-      expect(ac.searchResults.isDisplayed()).toBe(true);
-
+      cy.get(ac.searchResults).should('be.visible');
     });
   });
 
   describe('required indicator and aria-required', function () {
-    beforeAll(function () {
+    before(function () {
       tp.LoadForm.openFullFeaturedForm();
     });
 
