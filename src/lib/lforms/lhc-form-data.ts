@@ -126,7 +126,8 @@ export default class LhcFormData {
       {"name" : "Units"}
     ],
     hideTreeLine: false,
-    hideIndentation: false
+    hideIndentation: false,
+    hideRepetitionNumber: false
   };
 
   // other instance level variables that were not previously listed

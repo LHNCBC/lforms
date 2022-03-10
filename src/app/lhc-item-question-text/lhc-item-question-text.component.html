@@ -1,7 +1,7 @@
 <ng-container *ngIf="item">
   <!-- label -->
   <div class="lhc-de-label" (focus)="lhcDataService.setActiveRow(item)">
-    <span *ngIf="item._questionRepeatable && !item._horizontalTableHeader" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
+    <span *ngIf="item._questionRepeatable && !item._horizontalTableHeader && !lhcDataService.getLhcFormData().templateOptions.hideRepetitionNumber" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
     <span class="lf-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
         <!-- prefix -->
@@ -20,15 +20,15 @@
     </span>
     <!-- coding instructions / helps -->
     <span [ngSwitch]="lhcDataService.getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
-      <span *ngSwitchCase="'inline-escaped'" 
+      <span *ngSwitchCase="'inline-escaped'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt" 
+            class="lf-prompt"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
        >{{item.codingInstructions}}</span>
-      <span *ngSwitchCase="'inline-html'" 
+      <span *ngSwitchCase="'inline-html'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt" 
+            class="lf-prompt"
             [innerHTML]="item.codingInstructions | safeHtml"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
