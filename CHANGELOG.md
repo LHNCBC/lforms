@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.0.0] 2020-03-08
+### Fixed
+- Fixed a minor style issue
+### Changed
+- Code refactoring and clean up.
+- Made most commands in package.json work on Windows.
+
 ## [30.0.0-beta.9] 2022-02-24
 ### Fixed
 - Fixed a bug that the user saved data was overwritten by the values from initialExpression.

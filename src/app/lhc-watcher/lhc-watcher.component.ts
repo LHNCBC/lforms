@@ -10,15 +10,12 @@ declare var LForms: any;
   templateUrl: './lhc-watcher.component.html',
   styleUrls: ['./lhc-watcher.component.css']
 })
-export class LhcWatcherComponent implements OnInit, OnChanges {
+export class LhcWatcherComponent implements OnChanges {
 
   @Input() value: any;
   @Input() item: any;
 
   constructor(private lhcDataService: LhcDataService) { }
-
-  ngOnInit(): void {
-  }
 
 
   // the event is trigger when data changes on 
@@ -37,18 +34,13 @@ export class LhcWatcherComponent implements OnInit, OnChanges {
       if (LForms.FHIR && lfData) {
         if (lfData._hasResponsiveExpr) {
           lfData._expressionProcessor.runCalculations(false).then(()=>{
-            console.log('fhir path run with false')
-          }); // pick up asynchronous model changes
+          });
         }
       }
     }
 
-    // fhir expression (converting to fhir q/qr and run functions on them)
-    // other functions that were handled in $watch in angularjs version of lforms.
-
     //TODO: since lhc-validate is also detecting changes on the item.value, it might be efficient 
     // to run some functions that need to be executed only when an item's value changes.
-
 
   }
 

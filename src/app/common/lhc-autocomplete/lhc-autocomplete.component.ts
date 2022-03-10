@@ -7,9 +7,9 @@ import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autoc
   styleUrls: ['./lhc-autocomplete.component.css'],
   encapsulation: ViewEncapsulation.Emulated
 })
-export class LhcAutocompleteComponent implements OnInit, OnChanges {
+export class LhcAutocompleteComponent implements OnChanges {
 
-  // options
+  // autocomplete-lhc options:
   //   .elementId
   //   .readOnly
   //   .toolTip
@@ -33,24 +33,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
   acInstance: any = null;
   prefetchTextToItem: {};
   displayProp: string = '';
-
   viewInitialized = false;
-
-  /**
-   * Component class constructor
-   */
-  constructor() {
-
-  }
-
-
-  /**
-   * Initialize the component
-   */
-  ngOnInit(): void {
-    //console.log("lhc-autocomplete, ngOnInit")
-  }
-
 
   /**
    * Invokded when the properties change
@@ -58,7 +41,6 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
    * @param changes changes.prop contains the old and the new value
    */
   ngOnChanges(changes) {
-
     if (this.viewInitialized) {
       // reset autocompleter when 'options' changes
       if (changes.options) {
@@ -66,11 +48,9 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         // with the FHIR resoruce data loaded, asynchronously. At this moment the saved the user data are already in the data model
         // and the autocomplete is already set up, with potentially an empty list if the answer list is loaded (asynchronously)
         // by FHIRPath expressions or data controls.
-
         let keepDataModel = changes.isFormReady?.currentValue;  //this.isFormReady might be a different value;
         keepDataModel = keepDataModel && !changes.value?.currentValue;
         this.cleanupAutocomplete(keepDataModel);
-
         this.setupAutocomplete();
       }
       // item.value changed by data control or fhirpath express after the autocompleter is initialized
@@ -81,8 +61,8 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
         this.updateDisplayedValue(this.dataModel)
       }
     }
-
   }
+
 
   /**
    * Update the display value of the autocomplte when the item.value is changed
@@ -106,13 +86,13 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     }
   }
 
+
   /**
    * Initialize the autocomplete-lhc
    * Cannot be done in ngOnInit because the DOM elements that autocomplete-lhc depends on are
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
-    // console.log("lhc-autocomplete, ngAfterViewInit")
     this.setupAutocomplete();
     this.viewInitialized = true;
   }
@@ -122,20 +102,25 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
    * Clean up the autocompleter instance
    */
   ngOnDestroy() {
-    // console.log("lhc-autocomplete, ngOnDestroy")
-    // if there's an autocomp
     this.cleanupAutocomplete();
-
   }
 
 
+  /**
+   * Input field blur event handler
+   */
   onInputBlur() {
     this.onBlurFn.emit();
   }
 
+
+  /**
+   * Input field focus event handler
+   */
   onInputFocus() {
     this.onFocusFn.emit();
   }
+
 
   /**
    * Clean up the autocompleter if there is one
@@ -153,14 +138,12 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     }
   }
 
+
   /**
    * Set up the autocompleter
    */
-  setupAutocomplete(): void {
-    // if there's an autocomp already
-    // console.log("lhc-autocomplete, setupAutocomplete")
-
-    // reset ac status
+  setupAutocomplete(): void {  
+    // reset status
     this.selectedItems = [];
     this.multipleSelections = false;
     this.acType = null;
@@ -171,7 +154,6 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
     // if there are options for the autocompleter
     if (this.options && this.options.acOptions) {
-
       let acOptions = this.options.acOptions;
       if (acOptions.maxSelect && (acOptions.maxSelect === "*" || parseInt(acOptions.maxSelect) > 1)) {
         this.multipleSelections = true;
@@ -223,6 +205,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     }
   }
 
+
   /**
    * Set the initial item.value to the autocompleter when the autocompleter is being set up or
    * the item.value is changed later
@@ -264,7 +247,6 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
    * @param event the event emitted from an autocompleter
    */
   onSelectionHandler(event) {
-
     if (this.acType === 'prefetch') {
       let selectedTexts = this.acInstance.getSelectedItems()
       this.setItemValueForPrefetchAC(selectedTexts);
@@ -272,7 +254,6 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
     else if (this.acType === 'search') {
       this.setItemValueForSearchAC(event);
     }
-
     this.dataModelChange.emit(this.dataModel);
   }
 
@@ -320,7 +301,7 @@ export class LhcAutocompleteComponent implements OnInit, OnChanges {
 
   /**
    * Get the selected answer object from a 'search' autocompleter
-   * @param itemText answers' text
+   * @param itemText answer's text
    * @param onList whether the answer's text matches the answers texts on the list
    */
   getSearchItemModelData(itemText, onList) {

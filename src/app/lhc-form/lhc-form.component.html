@@ -18,15 +18,15 @@
     <!--form body-->
     <div class="lhc-form-body">
       <!--check form level questionLayout for matrix and horizontal layouts-->
-      <div *ngIf="lhcFormData.templateOptions.displayControl" [ngSwitch]="lhcFormData.templateOptions.displayControl.questionLayout">
-        <div *ngSwitchCase="'horizontal'">
+      <ng-container *ngIf="lhcFormData.templateOptions.displayControl" [ngSwitch]="lhcFormData.templateOptions.displayControl.questionLayout">
+        <ng-container *ngSwitchCase="'horizontal'">
           <lhc-group-horizontal [item]="lhcFormData" [formLevel]='true'></lhc-group-horizontal>
-        </div>
-        <div *ngSwitchCase="'matrix'">
+        </ng-container>
+        <ng-container *ngSwitchCase="'matrix'">
           <lhc-group-matrix [item]="lhcFormData" [formLevel]='true'></lhc-group-matrix>
-        </div>
+        </ng-container>
         <!-- vertical -->
-        <div *ngSwitchDefault>
+        <ng-container *ngSwitchDefault>
           <!-- data row, for each item -->
           <!-- check each top level item's questionLayout -->
           <ng-container *ngIf="lhcFormData.items">
@@ -38,7 +38,7 @@
               <!--header item-->
             </ng-container>
           </ng-container>
-        </div>
-      </div>
+        </ng-container>
+      </ng-container>
     </div>
 </form>

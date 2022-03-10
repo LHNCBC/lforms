@@ -60,7 +60,7 @@ describe('Attachment support', ()=>{
       // This is a test for the fix for
       // https://github.com/lhncbc/lforms/issues/71
       element(by.id('upload-desc/1/1')).sendKeys(protractor.Key.ENTER);
-      browser.wait(ExpectedConditions.not(ExpectedConditions.presenceOf(element(by.css('.lf-attachment-url')))), 5000);
+      browser.wait(ExpectedConditions.not(ExpectedConditions.presenceOf(element(by.css('.lhc-attachment-url')))), 5000);
     });
 
 
@@ -171,7 +171,7 @@ describe('Attachment support', ()=>{
 
     it('should allow a second attachment, with both a URL and file data', ()=>{
       element(by.id('add-upload/1')).click(); // "add another"
-      browser.wait(ExpectedConditions.presenceOf(element(by.css('.lf-attachment-button'))), 5000);
+      browser.wait(ExpectedConditions.presenceOf(element(by.css('.lhc-attachment-button'))), 5000);
       element(by.css('.toggle-attachment-fields')).click(); // button
       let newFields = element.all(by.css('input[type=text]'));
       // One already existing element below

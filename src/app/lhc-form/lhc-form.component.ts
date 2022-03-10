@@ -12,8 +12,6 @@ declare var ResizeObserver;
 
 @Component({
   selector: 'lhc-form',
-  //encapsulation: ViewEncapsulation.ShadowDom,
-  //changeDetection:ChangeDetectionStrategy.OnPush,
   templateUrl: './lhc-form.component.html',
   styleUrls: ['./lhc-form.component.css'],
   providers: [WindowService, LhcDataService] // These two services are not provided in root.
@@ -38,7 +36,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   private changeSize = new Subject();
   private observer: any;
-
+  
   constructor(private winService: WindowService,
     public lhcDataService: LhcDataService,
     private host: ElementRef,
@@ -50,7 +48,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         debounceTime(100)
       )
       .subscribe((eleWidth:number) => {
-        //console.log('after debounce:', eleWidth)
         this.winService.setWindowWidth(eleWidth);
     });
 
@@ -69,25 +66,25 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   getItemViewModeClass(item) {
     return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
   }
+  
 
+  /**
+   * Set up the observer on window size
+   */
   ngOnInit(): void {
-
-    //console.log(this.host)
     this.observer = new ResizeObserver(entries => {
-      //console.log(entries)
-
       this.zone.run(() => {
         let width = entries[0].contentRect.width;
         this.changeSize.next(width);
-        // console.log("in Resize observer:", width);
       });
-
     });
-
     this.observer.observe(this.host.nativeElement);
-
   }
 
+
+  /**
+   * Remove the observer for window size
+   */
   ngOnDestroy() {
     this.observer.unobserve(this.host.nativeElement);
   }
@@ -106,12 +103,12 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
     this.onFormReady.emit();
   }
 
+
   /**
    * Handle the changes when a new form data is loaded
    * @param changes the object that contains the changes
    */
   ngOnChanges(changes) {
-    // console.log("in lhc-form's ngOnChange")
     // form data changes
     if (changes.questionnaire) {
       // form data changes, clean up the previous data before loading the new form data
@@ -187,8 +184,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         lhcFD.setTemplateOptions(this.options);
       }
     }
-
   }
-
 
 }

@@ -6,11 +6,9 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-item-text.component.html',
   styleUrls: ['./lhc-item-text.component.css']
 })
-export class LhcItemTextComponent implements OnInit {
+export class LhcItemTextComponent {
   @Input() item: any;
+  
   constructor(public lhcDataService: LhcDataService) { }
-
-  ngOnInit(): void {
-  }
 
 }

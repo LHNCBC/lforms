@@ -69,6 +69,7 @@ export class LhcItemAttachmentComponent {
     }
   }
 
+  
   /**
    * Creates an attachment for an item based on the data entered by the
    * user.
@@ -80,6 +81,7 @@ export class LhcItemAttachmentComponent {
     delete item._fileInfo;
     delete item._useURL;
   }
+
 
   /**
    * Creates an attachment for an item based on the data entered by the
@@ -127,6 +129,7 @@ export class LhcItemAttachmentComponent {
       }
     }
   }
+
 
   /**
    * Downloads the item's Attachment.

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { LhcItemChoiceComponent } from './lhc-item-choice.component';
 
-// to be completed
 describe('LhcItemChoiceComponent', () => {
   let component: LhcItemChoiceComponent;
   let fixture: ComponentFixture<LhcItemChoiceComponent>;

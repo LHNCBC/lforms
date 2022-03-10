@@ -128,31 +128,4 @@ describe('LhcGroupHorizontalComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // ** horizontal table is not readered without going through lhcFormData initialization **
-  // it('should render a horizontal table', () => {
-  //   console.log(horizontalItem)
-  //   component.item = horizontalItem;
-  //   fixture.detectChanges();
-  //   const horizontal = element.querySelector('.lhc-layout-horizontal')
-  //   expect(horizontal).toBeTruthy();
-  //   const title = element.querySelector('.lhc-layout-horizontal .lhc-form-horizontal-table-title')
-  //   expect(title.textContent).toBe("A horizontal table")
-
-  //   const headers = element.querySelectorAll('.lhc-layout-horizontal th.lhc-form-horizontal-table-header')
-  //   expect(headers.length).toBe(4);
-  //   expect(headers[0].textContent).toBe("A ST")
-  //   expect(headers[1].textContent).toBe("radio button")
-  //   expect(headers[2].textContent).toBe("A CNE")
-  //   expect(headers[3].textContent).toBe("Required DT field  *")
-    
-  //   let rows = element.querySelectorAll('.lhc-layout-horizontal tr.lhc-data-row')
-  //   expect(rows.length).toBe(1);
-
-  //   const btnAdd:HTMLElement = element.querySelector('#add-/horizontalTable/1')
-  //   btnAdd.click()
-  //   rows = element.querySelectorAll('.lhc-layout-horizontal tr.lhc-data-row')
-  //   expect(rows.length).toBe(2);
-
-  // })
-
 });

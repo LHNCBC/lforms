@@ -5,13 +5,8 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './lhc-item-display.component.html',
   styleUrls: ['./lhc-item-display.component.css']
 })
-export class LhcItemDisplayComponent implements OnInit {
+export class LhcItemDisplayComponent{
 
   @Input() item;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

@@ -480,8 +480,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         fhirPathVal = compiledExpr(contextNode, fVars);
       }
       catch (e) {
-        // Sometimes an expression will rely on data that hasn't been filled in
-        // yet.
+        // Sometimes an expression will rely on data that hasn't been filled in yet.
         console.log(e);
       }
       return fhirPathVal;

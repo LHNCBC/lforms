@@ -7,7 +7,7 @@ import { WindowService} from '../../lib/window.service';
   templateUrl: './lhc-group-vertical.component.html',
   styleUrls: ['./lhc-group-vertical.component.css']
 })
-export class LhcGroupVerticalComponent implements OnInit {
+export class LhcGroupVerticalComponent {
 
   @Input() item: any;
 
@@ -27,13 +27,8 @@ export class LhcGroupVerticalComponent implements OnInit {
    * @param item an item in a form
    * @returns 
    */
-   getItemViewModeClass(item) {
+  getItemViewModeClass(item) {
     return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
-  }
-
-  ngOnInit(): void {
-    // console.log("lhc-group-vertical")
-    // console.log(this.item)
   }
 
 }
