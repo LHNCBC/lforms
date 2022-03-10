@@ -16,7 +16,7 @@ describe('Data Type', function() {
     tp.LoadForm.openFullFeaturedForm();
     let titleRow = element(by.css(".lhc-item.lhc-datatype-TITLE"));
     let typeTitle = titleRow.element(by.css("label[for='/titleHeader/1']"));
-    typeTitle.should('exist');
+    typeTitle.should('be.visible');
   });
 
   it('DTM datetime picker should work', function () {
@@ -158,14 +158,14 @@ describe('Data Type', function() {
       })
 
       field1.click(); // Close auto complete pull down.
-      cy.get(ac.searchResults).should('not.exist');
+      cy.get(ac.searchResults).should('not.be.visible');
       expect(TestUtil.getAttribute(units5,"value")).toBe("");
       units5.click();
-      cy.get(ac.searchResults).should('exist');
+      cy.get(ac.searchResults).should('be.visible');
     });
   });
 
-  describe.only('required indicator and aria-required', function () {
+  describe('required indicator and aria-required', function () {
     before(function () {
       tp.LoadForm.openFullFeaturedForm();
     });
@@ -178,7 +178,6 @@ describe('Data Type', function() {
 
       it(`should be present for ${type} field`, function () {
         expect(label.getText()).toMatch(/\*$/);  // Ends with required marker
-cy.get(`#\\/required_${type}\\/1`).invoke('attr', 'aria-required').then(v=>console.log("%%% v is "+v));
         expect(requiredElement.getAttribute('aria-required')).toBe("true");
       });
     });
