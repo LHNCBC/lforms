@@ -3,6 +3,10 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [30.0.0-beta.4] 2022-03-11
+### Added
+- Added options to hide tree line styles, indentation or repetition numbers.
+
 ## [30.0.0-beta.3] 2022-01-25
 ### Added
 - Added an onError event, that returns an error when FHIR resources 
