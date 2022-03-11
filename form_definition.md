@@ -121,6 +121,10 @@ about the meaning of each key:
       "columns" is valid only when "type" is set to be "RADIO_CHECKBOX".
       Here is an example:
       `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "1"}}`
+    * hideTreeLine - a boolean that controls whether to hide tree line styles. The default is false.
+    * hideIndentation - a boolean that controls whether to hide indentation. The default is false.
+    * hideRepetitionNumber - a boolean that controls whether to hide repetition numbers next to the
+      item's text. The default is false.
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own

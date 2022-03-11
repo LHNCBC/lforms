@@ -125,8 +125,11 @@ export default class LhcFormData {
       {"name" : "Value"},
       {"name" : "Units"}
     ],
+    // whether to hide tree line styles
     hideTreeLine: false,
+    // whether to hide indentation before each item
     hideIndentation: false,
+    // whether to hide repetition numbers next to the item's text
     hideRepetitionNumber: false
   };
 
