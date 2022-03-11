@@ -1,7 +1,7 @@
 <ng-container *ngIf="item">
   <!-- label -->
   <div class="lhc-de-label" (focus)="lhcDataService.setActiveRow(item)">
-    <span *ngIf="item._questionRepeatable && !item._horizontalTableHeader && !lhcDataService.getLhcFormData().templateOptions.hideRepetitionNumber" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
+    <span *ngIf="item._questionRepeatable && !item._horizontalTableHeader && !lhcDataService.isHideRepetitionNumber()" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
     <span class="lf-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
         <!-- prefix -->

@@ -253,17 +253,24 @@ export class LhcDataService {
    * Get CSS classes for the tree line
    * @returns {string}
    */
-  getTreeLineClass(item) {
-    return this.lhcFormData.getTreeLineClass();
+  getTreeLineClass() {
+    return this.getLhcFormData().templateOptions.hideTreeLine ? '' : 'lf-tree-line';
   }
 
   /**
    * Get CSS classes for the indentation
-   * @param item a form item
    * @returns {string}
    */
-  getIndentationClass(item) {
-    return this.lhcFormData.getIndentationClass();
+  getIndentationClass() {
+    return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lf-indentation';
+  }
+
+  /**
+   * Whether to hide repetition number before question text
+   * @returns {boolean}
+   */
+  isHideRepetitionNumber() {
+    return this.getLhcFormData().templateOptions.hideRepetitionNumber;
   }
 
 
