@@ -7,7 +7,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-item-choice-radio-button.component.html',
   styleUrls: ['./lhc-item-choice-radio-button.component.css']
 })
-export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
+export class LhcItemChoiceRadioButtonComponent implements OnChanges {
   @Input() item;
   @Input() acOptions; // item._autocompOptions
   
@@ -19,17 +19,9 @@ export class LhcItemChoiceRadioButtonComponent implements OnInit, OnChanges {
 
   constructor(
     private commonUtils: CommonUtilsService,
-    public lhcDataService: LhcDataService) {}
+    public lhcDataService: LhcDataService
+  ) {}
 
-
-  /**
-   * Initialize the component
-   */
-  ngOnInit(): void {
-  }
-
-  ngOnDestroy() : void {
-  }
 
   /**
    * Set initial status

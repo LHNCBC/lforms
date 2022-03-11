@@ -17,10 +17,20 @@ export class LhcDataService {
     this.srLog = new ScreenReaderLog();
    }
 
+
+  /**
+   * Get the lhcFormData object
+   * @returns the lhcFormData object
+   */
   getLhcFormData(): any {
     return this.lhcFormData;
   }
 
+
+  /**
+   * Set the lhcFormData object
+   * @returns the lhcFormData object
+   */
   setLhcFormData(data:any): void {
     this.lhcFormData = data;
   }
@@ -51,7 +61,7 @@ export class LhcDataService {
    * Set up a timer to make validation messages disappear in 2 seconds when the input field loses focus
    * @param item the item which onBlur event happens on its input field
    */
-   activeRowOnBlur(item) {
+  activeRowOnBlur(item) {
 
     // the first visit to the field (and leaving the field), show validation messages for a certain time
     if (!item._visitedBefore) {
@@ -78,6 +88,7 @@ export class LhcDataService {
     }
   }
 
+
   /**
    * Get the css class for the active row
    * @param item an item
@@ -87,6 +98,7 @@ export class LhcDataService {
     return this.lhcFormData.getActiveRowClass(item);
   }
 
+
   /**
    * Get an item's skip logic status
    * @param item an item
@@ -95,6 +107,7 @@ export class LhcDataService {
   getSkipLogicClass(item) {
     return this.lhcFormData.getSkipLogicClass(item);
   }
+
 
   /**
    * Get the CSS styles on a table column
@@ -132,6 +145,15 @@ export class LhcDataService {
 
 
   /**
+   * Get the indentation style of the form
+   * @returns {string}
+   */
+  getIndentationStyle() {
+    return this.lhcFormData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
+  }
+
+
+  /**
    * Check if there's only one repeating item in a group
    * (so that the 'remove' button won't show on this item)
    * @param item an item in the lforms form items array
@@ -158,7 +180,6 @@ export class LhcDataService {
   }
 
 
-
   /**
    * Check the display type of the coding instructions
    * @param item an item in the lforms form items array
@@ -179,15 +200,6 @@ export class LhcDataService {
     return ret;
   }
 
-
-  // /**
-  //  * Get coding instructions with assumed safe HTML content
-  //  * @param item an item in the lforms form items array
-  //  * @returns {string}
-  //  */
-  // getTrustedCodingInstructions(item) {
-  //   return item.codingInstructions ? $sce.trustAsHtml(item.codingInstructions) : ''
-  // };
 
   /**
    * Check if the form is finished
@@ -220,7 +232,6 @@ export class LhcDataService {
   }
 
 
-
   /**
    * Get the sequence number for the current repeating item
    * @param item an item in the lforms form items array
@@ -235,6 +246,7 @@ export class LhcDataService {
     return ret;
   }
 
+
   /**
    * Get CSS classes for the sibling status (whether it is the first or the last sibling)
    * @param item a form item
@@ -243,9 +255,9 @@ export class LhcDataService {
   getSiblingStatus(item) {
     var status = "";
     if (item._lastSibling)
-      status += 'lf-last-item';
+      status += 'lhc-last-item';
     if (item._firstSibling)
-      status += ' lf-first-item'
+      status += ' lhc-first-item'
     return status;
   }
 
@@ -314,6 +326,7 @@ export class LhcDataService {
 
     return eleClass;
   }
+
 
   /**
    * get the CSS class the form's view mode
@@ -405,47 +418,6 @@ export class LhcDataService {
     if (!anyEmpty) {
       var newItem = append ? this.lhcFormData.appendRepeatingItems(item) : this.lhcFormData.addRepeatingItems(item);
       this.sendActionsToScreenReader();
-
-      // broadcast the event
-      // $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
-      //     {
-      //       "event": LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
-      //       "formId": $scope.lfData.code,
-      //       "itemId": newItem._elementId,
-      //       "time": new Date()
-      //     });
-
-      // setTimeout(function() {
-      //   var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-      //   var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
-      //   var btnDel = document.getElementById("del-" + newItem._elementId);
-      //   // vertical table, find the header item
-      //   if (headerItem) {
-      //     var anchorItem = headerItem;
-      //   }
-      //   // horizontal table, find the '-' button
-      //   else if (btnDel) {
-      //     var anchorItem = btnDel;
-      //   }
-
-      //   if (anchorItem) {
-      //     var anchorPosition = anchorItem.getBoundingClientRect();
-      //     // scroll down to show about 2 rows of the newly added section
-      //     // if the new header item is close enough to the bottom so that the first 2 questions are not visible
-      //     // if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
-      //     //   smoothScroll(anchorItem, {
-      //     //     duration: 500,
-      //     //     easing: 'easeInQuad',
-      //     //     offset: viewportHeight - 105
-      //     //   });
-      //     // }
-      //     // move the focus to the '-' button of the newly added item/section
-      //     // a table from the '-' button moves the focus to the next input field
-      //     if (btnDel)
-      //       btnDel.focus();
-      //   }
-      // }, 1);
     }
   }
 
@@ -481,15 +453,6 @@ export class LhcDataService {
 
     this.sendActionsToScreenReader();
 
-    // broadcast the event
-    // $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
-    //     {
-    //       "event": LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
-    //       "formId": $scope.lfData.code,
-    //       "itemId": item._elementId,
-    //       "time": new Date()
-    //     });
-
     // set the focus
     setTimeout(function() {
       var btn = document.getElementById(btnId);
@@ -507,6 +470,7 @@ export class LhcDataService {
       item._showUnusedItemWarning = false;
     }
   }
+
 
   /**
    * Return the horizontal table structure of the form
@@ -528,6 +492,7 @@ export class LhcDataService {
     return item._elementId;
   }
 
+
   /**
    * Track by each row's group header item's element id for each row in a horizontal table
    * @param index *ngFor index
@@ -537,6 +502,7 @@ export class LhcDataService {
   trackByRowHeaderElementId(index, row) {
     return row.header._elementId;
   }
+
 
   /**
    * Track by column's id, which is "col" + the item's element id in the first row
@@ -695,6 +661,16 @@ export class LhcDataService {
       this.lhcFormData._actionLogs = [];
     }
   };
+
+
+  /**
+   * Check if the form is rendered with all FHIR resources loaded
+   * @returns {boolean}
+   */
+  isFormReady(): boolean {
+    return !!this.lhcFormData._formReady;
+  };
+
 }
 
 

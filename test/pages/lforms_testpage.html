@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!-- compiled css file for the web comoponet of LHC-Forms -->
-  <link rel="stylesheet" href="/dist/latest/webcomponent/styles.css">
+  <link rel="stylesheet" href="/dist/lforms/webcomponent/styles.css">
   <style>
     .btn {
       display: inline-block;
@@ -42,7 +42,7 @@
     }
   </style>
 </head>
-  
+
 <body style="padding: 1em">
 
   <div id="lforms-form">
@@ -51,7 +51,7 @@
       <div class="panel-body">
         <p>Select a form from the list and click the button to display the form:</p>
           <select id="form-list" class="form-control">
-            <option value="">--- Please Select ---</option>            
+            <option value="">--- Please Select ---</option>
           </select>
         <br><br>
         <button id="load-form-data" class="btn btn-success" onclick="loadFormFromList()">Load Form</button>
@@ -60,7 +60,6 @@
           <option value="STU3">STU3</option>
         </select>
         <button id="change-option" class="btn btn-primary" onclick="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
-        <button id="toggle-units-col" class="btn btn-primary" onclick="toggleUnitsCol()">Hide/Show Units Column</button>
         <button id="reset-form-with-same-data" class="btn btn-primary" onclick="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)[&#10004;]</button>
         <button id="get-hl7" class="btn btn-primary" onclick="showHL7Segments()">Show HL7 OBR/OBX Segments[&#10004;]</button>
         <button id="get-fhir" class="btn btn-primary" onclick="showDiagnosticReport()">Show FHIR DiagnosticReport Content[&#10004;]</button>
@@ -85,7 +84,7 @@
 
     <br><br>
     <wc-lhc-form id='test-form'></wc-lhc-form>
-
+    <div id="formContainer"></div>
   </div>
 
     <script type="text/javascript">
@@ -96,17 +95,15 @@
               allowMultipleEmptyRepeatingItems: true
             }},
         {text: 'Glasgow Coma Score (with score rules)', name: 'glasgow'},
-        {text: 'Full-Featured Demo', name: 'allInOne', 
+        {text: 'Full-Featured Demo', name: 'allInOne',
             tempOptions: {
               allowHTMLInInstructions: true,
-              allowMultipleEmptyRepeatingItems: true,
-              hideFormControls: false,
-              showFormHeader: true
+              allowMultipleEmptyRepeatingItems: true
             }},
         {text: 'Form Builder created test form', name: 'formBuilder'},
         {text: 'Minimum Data Set - version 3.0', name: 'MDS3'},
         {text: 'Form With User Data', name: 'formWithUserData'},
-        {text: 'Form With User Data, hasSavedData=true', name: 'formWithUserData', 
+        {text: 'Form With User Data, hasSavedData=true', name: 'formWithUserData',
             formOptions: {
               hasSavedData: true
             }},
@@ -137,27 +134,27 @@
 
       testForm.addEventListener('onFormReady', e => {
         console.log("onFormReady")
-        console.log(e); 
+        console.log(e);
       });
 
       testForm.addEventListener('onError', e => {
         console.log("onError")
-        console.log(e); 
+        console.log(e);
       });
 
 
       /**
        * Load the form list to DOM
-       */ 
+       */
       function loadFormList() {
         let formList = document.getElementById("form-list");
-        testForms.forEach(form => {          
+        testForms.forEach(form => {
           let option = document.createElement("option");
           option.text = form.text;
           option.value = JSON.stringify({
-            url: "/src/test-data/form-data/" + form.name + ".json", 
+            url: "/src/test-data/form-data/" + form.name + ".json",
             tempOptions: form.tempOptions,
-            formOptions: form.formOptions})          
+            formOptions: form.formOptions})
           formList.add(option);
         })
       }
@@ -166,7 +163,7 @@
        * Get JSON data from a form URL
        */
       async function loadJsonFromUrl(url) {
-        return await fetch(url).then( 
+        return await fetch(url).then(
           response => response.json());
       }
 
@@ -175,7 +172,7 @@
        */
       async function fetchAndDisplayForm(strForm) {
         let jsonForm = JSON.parse(strForm)
-        let formData = await loadJsonFromUrl(jsonForm.url);   
+        let formData = await loadJsonFromUrl(jsonForm.url);
         testForm.questionnaire = formData;
         if (jsonForm.formOptions) {
           Object.assign(formData,jsonForm.formOptions)
@@ -187,7 +184,7 @@
       }
 
       /**
-       * Load form from dropdown form list 
+       * Load form from dropdown form list
        */
       function loadFormFromList() {
         let formList = document.getElementById("form-list");
@@ -197,8 +194,8 @@
           fetchAndDisplayForm(formList.value);
         }
       };
-      
-      // load the form list into DOM 
+
+      // load the form list into DOM
       loadFormList();
 
       /**
@@ -220,21 +217,13 @@
         return LForms.FHIR[getFHIRVersion()];
       }
 
-      // options  
+      // options
       function toggleCodingInstructionFormat() {
         if (testForm.questionnaire) {
           let options = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
           testForm.options = options;
         }
       }
-
-      // options 
-      // it does not make sense to hide unit ?!
-      function toggleUnitsCol() {
-        if (testForm.questionnaire) {
-          testForm.questionnaire.templateOptions.hideUnits = testForm.questionnaire.templateOptions.hideUnits; // hideUnits not implemented yet
-        }        
-      };
 
       /**
        * Change an item's value in form data (and the form should re-render accordingly)
@@ -243,7 +232,7 @@
         if (testForm.lhcFormData) {
           // change a value
           testForm.lhcFormData.items[0].items[0].value= 'after reset';
-        }          
+        }
       };
 
       /**
@@ -290,7 +279,7 @@
           console.log(hl7Seg.replace(/\r/g,'\r\n'));
         }
       }
-      
+
       /**
        * Get 'DiagnosticReport' as a "transaction" bundle from the form and display it in console
        */
@@ -317,7 +306,7 @@
 
       /**
        * Get 'QuestionnaireResponse' data from the form and display it in console
-       */      
+       */
       function showFHIRSDCResponse() {
         if (testForm.lhcFormData) {
           var sdc = getFHIR().SDC.convertLFormsToQuestionnaireResponse(testForm.lhcFormData);
@@ -332,16 +321,15 @@
       async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
 
         let formUrl = '/src/test-data/form-data/' + questionnaireFileName;
-        let formJson = await loadJsonFromUrl(formUrl);   
+        let formJson = await loadJsonFromUrl(formUrl);
 
         let fhirResUrl = '/src/test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
 
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                    resType, fhirJson, formJson,
-                    getFHIRVersion());
+                    fhirJson, formJson, getFHIRVersion());
         testForm.questionnaire = mergedFormData;
-        
+
       };
 
 
@@ -360,14 +348,14 @@
       function testMergeQR2LForms() {
         loadAndMergeFHIRDataFile('fhir-sdc-response-ussgfht.json', 'FHTData.json', 'QuestionnaireResponse');
       }
-          
+
       function testMergeQR2LForms_CWE() {
         loadAndMergeFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', 'allInOne.json', 'QuestionnaireResponse')
       }
 
       function testSearchOnFHIRServer() {
         var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
-        
+
         fetch(dataURL, {
           method: 'GET'
         })
@@ -402,21 +390,21 @@
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.
           testForm.prepop = window.prepopulateFHIR;
-          
+
         };
-        reader.readAsText(event.target.files[0]); 
+        reader.readAsText(event.target.files[0]);
       }
 
 
     </script>
 
     <!-- ES2015 files of the LHC-Forms web component -->
-    <script src="/dist/latest/webcomponent/assets/lib/zone.min.js"></script>
-    <script src="/dist/latest/webcomponent/runtime-es5.js"></script>
-    <script src="/dist/latest/webcomponent/polyfills-es5.js"></script>
-    <script src="/dist/latest/webcomponent/scripts.js"></script>
-    <script src="/dist/latest/webcomponent/main-es5.js"></script>
-    <script src="/dist/latest/fhir/lformsFHIRAll.min.js"></script>
-    
+    <script src="/dist/lforms/webcomponent/assets/lib/zone.min.js"></script>
+    <script src="/dist/lforms/webcomponent/runtime-es5.js"></script>
+    <script src="/dist/lforms/webcomponent/polyfills-es5.js"></script>
+    <script src="/dist/lforms/webcomponent/scripts.js"></script>
+    <script src="/dist/lforms/webcomponent/main-es5.js"></script>
+    <script src="/dist/lforms/fhir/lformsFHIRAll.min.js"></script>
+
   </body>
 </html>

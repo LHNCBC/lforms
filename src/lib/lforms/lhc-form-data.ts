@@ -18,7 +18,7 @@ import Validation from "./lhc-form-validation.js"
 declare var LForms: any;
 
 import {Units, Formulas} from "./lhc-form-units.js";
-
+import equal from "fast-deep-equal";
 
 export default class LhcFormData {
 
@@ -65,26 +65,10 @@ export default class LhcFormData {
     showQuestionCode: false,
     // whether to show coding instruction inline. (false: in popover; true: inline)
     showCodingInstruction: false,
-    // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-    tabOnInputFieldsOnly: false,
-    // whether to hide the controls section on top of the form
-    hideFormControls: true,
-    // whether to show the option panel that controls all the template options
-    showFormOptionPanel: false, // should be false by default
-    // whether to show the button that decides if 'showFormOptionPanel' is true or false, so that form's option panel will be displayed or hidden
-    showFormOptionPanelButton: false, // should be false by default
-    // whether to show the button for each item (questions and sections) that shows a option panel for display controls
-    // Not to use. Unfinished.
-    showItemOptionPanelButton: false,  // should be false by default
-    // whether to hide the unit column/field
-    hideUnits: false,
     // whether to allow more than one unused repeating item/section
     allowMultipleEmptyRepeatingItems: false,
     // whether to allow HTML content in the codingInstructions field.
     allowHTMLInInstructions: false,
-    // whether to use animation on the form
-    // not changeable on a rendered form.
-    useAnimation: true,
     displayControl: {
       // controls the question layout of the form. default value for questionLayout is "vertical".
       // available value could be "horizontal" when all the items in the form are on the same level,
@@ -96,17 +80,6 @@ export default class LhcFormData {
     // meaning the layout is responsive to the screen/container's size
     // each item can override this setting for the item by setting its own value in displayControl.viewMode
     viewMode: "auto",
-    // controls if the form's header section needs to be displayed
-    showFormHeader: false,
-    // items in form header section
-    formHeaderItems: [
-      {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},
-      {"question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": ""},
-      {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]},
-      {"question":"Comment", "questionCode":"comment","dataType":"TX","answers":""}
-    ],
-    // controls whether the column headers need to be displayed
-    showColumnHeaders: true,
     // controls the default answer layout for CWE/CNE typed items if answerLayout is not specified on the item's displayControl.
     // not changeable on a rendered form.
     defaultAnswerLayout: {
@@ -142,6 +115,7 @@ export default class LhcFormData {
   _displayLevel = 0;
   _linkToDef = null;
   _formDone;
+  _formReady;
   _horizontalTableInfo = {};
   itemList;
   itemHash;
@@ -465,114 +439,8 @@ export default class LhcFormData {
     // run the form controls
     this._checkFormControls();
 
-    // adjust template options
-    this._adjustTemplateOptions();
   }
 
-  /**
-   * Adjust hideUnits value depending on whether units are included in the form.
-   * It is to be called only in the initialization of the form data object.
-   * @private
-   */
-  _adjustTemplateOptions() {
-    // if none of the items has 'units', reset the 'hideUnits' to be true
-    var noUnits = true;
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      if (Array.isArray(this.itemList[i].units) && this.itemList[i].units.length > 0 ) {
-        noUnits = false;
-        break;
-      }
-    }
-    if (noUnits) {
-      this.templateOptions.hideUnits = true;
-    }
-  }
-
-//// TODO: FHIR
-//// This function has been moved to script/fhir.
-  /**
-   *  Starts the (likely asynchronous) requests to retrieve linked Observation
-   *  resources for pre-population.  When the resources have been retrieved,
-   *  prepoluation will be performed.
-   * @return a promise resolving after the resources have been retrieved and
-   *  any prepopulation has been performed.
-   */
-  _requestLinkedObs() {
-    if (LForms.fhirContext && this._fhir) {
-      // We will need to know what version of FHIR the server is using.  Make
-      // sure that is available before continuing.
-      var lfData = this;
-      if (!LForms._serverFHIRReleaseID) {
-        // Go fetch the server's FHIR version first before continuing
-        return new Promise(function(resolve, reject) {
-          LhcFormUtils.getServerFHIRReleaseID(function(relID) {
-            if (!relID)
-              reject("Unable to obtain the server's FHIR version");
-            else
-              resolve(lfData._requestLinkedObs());
-          });
-        });
-      }
-      else {
-        var pendingPromises = [];
-        LhcFormUtils.validateFHIRVersion(LForms._serverFHIRReleaseID);
-        var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
-        let obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
-        for (var i=0, len=this.itemList.length; i<len; ++i) {
-          let item = this.itemList[i];
-          const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
-          if (obsExt) { // an array of at least 1 if present
-            var duration = obsExt[0].valueDuration; // optional
-            var itemCodeSystem = item.questionCodeSystem;
-            if (itemCodeSystem === 'LOINC')
-              itemCodeSystem = serverFHIR.LOINC_URI;
-            var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
-            var queryParams:any = {type: 'Observation', query: {
-              code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
-              _count: 5}};  // only need one, but we need to filter out focus=true below
-            // Temporarily disabling the addition of the focus search
-            // parameter, because of support issues.  Instead, for now, we
-            // will check the focus parameter when the Observation is
-            // returned.  Later, we might query the server to find out whether
-            // :missing is supported.
-            //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-            //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
-            if (duration && duration.value && duration.code) {
-              // Convert value to milliseconds
-              var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
-              if (result.status === 'succeeded') {
-                let now:any = new Date();
-                var date = new Date(now - result.toVal);
-                queryParams.query._lastUpdated = 'gt'+date.toISOString();
-              }
-            }
-            // I'm not sure why, but fhirjs.search.then() returns an already
-            // resolved promise.  Wrap it in a Promise object.
-            pendingPromises.push(new Promise(function(resolve, reject) {
-              fhirjs.search(queryParams).then(function(successData) {
-                var bundle = successData.data;
-                if (bundle.entry) {
-                  var foundObs;
-                  for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
-                    var obs = bundle.entry[j].resource;
-                    if (!obs.focus) { // in case we couldn't use focus:missing above
-                      serverFHIR.SDC.importObsValue(item, obs);
-                      if (item.value)
-                        foundObs = true;
-                      if (item.unit)
-                        lfData._setUnitDisplay(item.unit);
-                    }
-                  }
-                }
-                resolve(item.questionCode); // code is not needed, but useful for debugging
-              })
-            }));
-          }
-        }
-        return Promise.all(pendingPromises);
-      }
-    }
-  }
 
 
   /**
@@ -980,15 +848,6 @@ export default class LhcFormData {
 
     this.setTemplateOptions(currentOptions, defaultOptions);
 
-    // process values in templateOptions.formHeaderItems,
-    if (this.templateOptions.formHeaderItems) {
-      for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
-        var item = this.templateOptions.formHeaderItems[i];
-        if (item.value && (item.dataType === CONSTANTS.DATA_TYPE.DT || item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
-            item.value = CommonUtils.stringToDate(item.value);
-        }
-      }
-    }
   }
 
 
@@ -1040,25 +899,6 @@ export default class LhcFormData {
         this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
       }
 
-      // if there is a formHeaderItems array, set up autocomplete options
-      if (this.templateOptions.formHeaderItems) {
-        for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
-          var item = this.templateOptions.formHeaderItems[i];
-          if (item.dataType === CONSTANTS.DATA_TYPE.CWE ||
-              item.dataType === CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-            this._resetItemValueWithModifiedAnswers(item);
-          }
-          // if this is not a saved form with user data, and
-          // there is a default value, and
-          // there is no embedded data
-          else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-            this._lfItemValueFromDefaultAnswer(item);
-          }
-          this._updateUnitAutocompOptions(item);
-        }
-
-      }
     }
   }
 
@@ -1400,8 +1240,7 @@ export default class LhcFormData {
 
     // set up readonly flag
     item._readOnly = (item.editable && item.editable === "0") ||
-      !!(item.calculationMethod ||
-          (item._fhirExt && item._fhirExt[this._fhir.SDC.fhirExtCalculatedExp]));
+      !!item.calculationMethod;
 
     if (this._fhir) {
       this._fhir.SDC.processExtensions(item, 'obj_text');
@@ -1536,9 +1375,6 @@ export default class LhcFormData {
       defData.fhirVersion = this.fhirVersion;
     }
 
-    // reset obr fields
-    defData.templateOptions.formHeaderItems = CommonUtils.deepCopy(formData.templateData);
-
     return defData;
   }
 
@@ -1557,13 +1393,6 @@ export default class LhcFormData {
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
         keepId);
-    // template options could be optional. Include them, only if they are present
-    if(this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems ) {
-      // check the value on each item and its subtree
-      this._checkSubTreeValues(this.templateOptions.formHeaderItems);
-      ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue,
-          noDisabledItem, keepId);
-    }
     // return a deep copy of the data
     return CommonUtils.deepCopy(ret);
   }
@@ -2397,7 +2226,10 @@ export default class LhcFormData {
    */
   _processItemFormula(item) {
     if (item.calculationMethod && item.calculationMethod.name) {
-      item.value = this.getFormulaResult(item);
+      let newValue = this.getFormulaResult(item);
+      if (!equal(newValue, item.value)) {
+        item.value = newValue;
+      }      
     }
   }
 
@@ -2515,20 +2347,20 @@ export default class LhcFormData {
           // get the source item object
           var sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
           if (sourceItem && sourceItem._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+            let newData;
             // check how to create the new data on target
             if (constructionType === CONSTANTS.DATA_CONTROL.CONSTRUCTION_ARRAY ) {
-              let newData = this._constructArrayByDataFormat(dataFormat, sourceItem);
-              // set the data
-              item[onAttribute] = CommonUtils.deepCopy(newData);
+              newData = this._constructArrayByDataFormat(dataFormat, sourceItem);
             }
             else if (constructionType === CONSTANTS.DATA_CONTROL.CONSTRUCTION_OBJECT ) {
-              let newData = this._constructObjectByDataFormat(dataFormat, sourceItem);
-              // set the data
-              item[onAttribute] = CommonUtils.deepCopy(newData);
+              newData = this._constructObjectByDataFormat(dataFormat, sourceItem);
             }
             else if (constructionType === CONSTANTS.DATA_CONTROL.CONSTRUCTION_SIMPLE) {
               // direct access to the data in source item
-              let newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
+              newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
+            }
+            // set the data if it is different than the existing value
+            if (!equal(item[onAttribute], newData)) {
               item[onAttribute] = CommonUtils.deepCopy(newData);
             }
           }
@@ -2688,8 +2520,9 @@ export default class LhcFormData {
         else if (listItems.length === 1) {
           options.defaultValue = listItems[0];
         }
-
-        item._unitAutocompOptions = options;
+        if(!equal(item._unitAutocompOptions, options)) {
+          item._unitAutocompOptions = options;
+        }
       }
     }
   }
@@ -2822,7 +2655,10 @@ export default class LhcFormData {
             }
           }
         }
-        item.value = item._multipleAnswers ? listVals : listVals[0];
+        let newValue = item._multipleAnswers ? listVals : listVals[0];
+        if (!equal(item.value, newValue)) {
+          item.value = newValue;
+        }        
       }
     }
   }
@@ -2854,7 +2690,7 @@ export default class LhcFormData {
    * @return a Promise that will resolve to the ValueSet expansion.
    */
   _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
-    var fhirClient = LForms.fhirContext;
+    var fhirClient = LForms.fhirContext.client;
     return fhirClient.request(this._buildURL(['ValueSet',valueSetID,'$expand'],
       {count: count, filter: fieldVal}
     ));
@@ -2874,7 +2710,7 @@ export default class LhcFormData {
     // Fetch the ValueSet
     var failMsg = "Could not retrieve the ValueSet definition for "+
           item.answerValueSet;
-    var fhirClient = LForms.fhirContext;
+    var fhirClient = LForms.fhirContext.client;
     // Cache the lookup of ValueSet IDs, which should not change.  (A page
     // reload will clear the cache.)
     if (!LForms._valueSetUrlToID)
@@ -2959,13 +2795,13 @@ export default class LhcFormData {
           options.url = expURL;
           options.fhir = true;
         }
-        else if (LForms.fhirContext) {
+        else if (LForms.fhirContext?.client) {
           const self = this;
           options.fhir = {search: function(fieldVal, count) {
             if (LForms.fhirCapabilities.urlExpandBroken)
               return self._findValueSetIDAndSearch(item, fieldVal, count);
             else {
-              var fhirClient =  LForms.fhirContext;
+              var fhirClient =  LForms.fhirContext.client;
               return fhirClient.request(self._buildURL(['ValueSet/$expand'],
                 {count: count, filter: fieldVal, url: item.answerValueSet}
               )).catch((errorData) => {
@@ -3023,9 +2859,8 @@ export default class LhcFormData {
         if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
           options.defaultValue = options.listItems[0];
       }
-      //item._autocompOptions = options; ??
       // check if the new option has changed
-      if (JSON.stringify(options) !== JSON.stringify(item._autocompOptions)) {
+      if (!equal(options, item._autocompOptions)) {
         item._autocompOptions = options;
       }
     } // end of list

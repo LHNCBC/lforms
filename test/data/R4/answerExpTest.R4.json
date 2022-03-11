@@ -1,0 +1,63 @@
+{
+  "status": "draft",
+  "name": "answerExpTest",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 29.0.3"
+      }
+    ]
+  },
+  "item": [
+    {
+      "type": "string",
+      "required": false,
+      "repeats": true,
+      "linkId": "q1",
+      "text": "q1"
+    },
+    {
+      "type": "choice",
+      "required": false,
+      "linkId": "q1List",
+      "text": "q1List",
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+        "valueExpression" : {
+          "language" : "text/fhirpath",
+          "expression" : "%resource.item.where(linkId='q1').answer.value"
+        }
+      }]
+    },
+    {
+      "type": "choice",
+      "required": false,
+      "linkId": "q2",
+      "text": "q2",
+      "answerOption": [{
+          "valueString": "one"
+        },
+        {
+          "valueString": "two"
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "required": false,
+      "linkId": "q3",
+      "text": "q3",
+      "answerOption": [{
+          "valueCoding": {"display": "one"}
+        },
+        {
+          "valueCoding": {"display": "two"}
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@ input[type=file] {
   display: inline;
 }
 
-.lf-attachment-button, .attach-button {
+.lhc-attachment-button, .attach-button {
   padding-left: 0.25em;
   padding-right: 0.25em;
   border-radius: 4px;
@@ -15,7 +15,7 @@ input[type=file] {
   vertical-align: top;
 }
 
-.lf-attachment-url, .lf-attachment-name {
+.lhc-attachment-url, .lhc-attachment-name {
   width: inherit !important;
 }
 
@@ -23,7 +23,7 @@ progress {
   vertical-align: text-bottom;
 }
 
-.download-link, .lf-attachment-upload {
+.download-link, .lhc-attachment-upload {
   margin-left: 0.5em;
 }
 

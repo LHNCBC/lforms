@@ -2,7 +2,7 @@
   <head>
     <title>Test for the compressed build of LForms using addFormToPage</title>
     <base href="/">
-    <link rel="stylesheet" href="/dist/latest/webcomponent/styles.css">
+    <link rel="stylesheet" href="/dist/lforms/webcomponent/styles.css">
     <style>
       .btn {
         display: inline-block;
@@ -51,13 +51,14 @@
     </div>
 
     <div id="formContainer"></div>
+    <div id="formContainer2"></div>
 
-    <script src="/dist/latest/webcomponent/assets/lib/zone.min.js"></script>
-    <script src="/dist/latest/webcomponent/runtime-es5.js"></script>
-    <script src="/dist/latest/webcomponent/polyfills-es5.js"></script>
-    <script src="/dist/latest/webcomponent/scripts.js"></script>
-    <script src="/dist/latest/webcomponent/main-es5.js"></script>
-    <script src="/dist/latest/fhir/lformsFHIRAll.min.js"></script>
+    <script src="/dist/lforms/webcomponent/assets/lib/zone.min.js"></script>
+    <script src="/dist/lforms/webcomponent/runtime-es5.js"></script>
+    <script src="/dist/lforms/webcomponent/polyfills-es5.js"></script>
+    <script src="/dist/lforms/webcomponent/scripts.js"></script>
+    <script src="/dist/lforms/webcomponent/main-es5.js"></script>
+    <script src="/dist/lforms/fhir/lformsFHIRAll.min.js"></script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
@@ -98,7 +99,7 @@
         var fileAnchor = document.querySelector('#fileAnchor');
         var questionnaire;
         reader.onload = function() {
-          var questionnaire = JSON.parse(reader.result);          
+          var questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
 
@@ -108,16 +109,26 @@
             })
             .catch(function(e) {
               console.log("Form Added with an error")
+              console.error(e);
               document.getElementById("loadMsg").innerHTML = e;
             })
+            $('#formContainer wc-lhc-form')[0].addEventListener('onFormReady', ()=>{
+              // Cause the event to bubble, since this element was just created.
+              $('#formContainer')[0].dispatchEvent(new Event('onFormReady'));
+            });
+            $('#formContainer wc-lhc-form')[0].addEventListener('onError', (e)=>{
+              // Cause the event to bubble, since this element was just created.
+              $('#formContainer')[0].dispatchEvent(new Event('onError', e));
+            });
           }
           catch(e) {
             console.log("Form Added with an error")
+            console.error(e);
             document.getElementById("loadMsg").innerHTML = e;
           }
 
         };
-        reader.readAsText(event.target.files[0]); 
+        reader.readAsText(event.target.files[0]);
       }
     </script>
   </body>

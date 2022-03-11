@@ -46,16 +46,19 @@ you don't accidentally add something that we are also working on.
 
 ## Build
 
-* Run `npm run build` to build the project and generate a production version of the js files, 
-   which are much smaller than the development version. It generates two versions of the js files: 
-   ES5 version and ES2015 version. The `/dist` directory is deleted and recreated during the process. 
-   It also concatenates all ES5 js files of the web component into a single `lhc-forms.es5.js` file 
-   and all ES2015 files into `lhc-forms.es2015.js` (along with a `styles.css` file) in the 
-   `/dist/webcomponent` directory, which are used in e2e tests and can be distributed to use 
-   in other projects. A copy of the individual built files and their source map files are also 
-   included in `/dist/webcomponent`. `zone.min.js` is not included in the built file, 
-   and a copy is put in `/dist/webcomponent/assets/lib` in case your project does not already include it.
-   It also generates FHIR libraries that support both R4 and STU3 versions. The files are located in `/dist/latest/fhir`.
+* Run `npm run build` to build the project and generate a production version of
+  the js files, which are much smaller than the development version. It
+  generates two versions of the js files, an ES5 version and ES2015 version, under
+  dist/lforms.  For details on the files to load, see ["Usng the LHC-Forms Web
+  Component"](#using).  The `dist` directory is deleted and recreated during the
+  process. 
+  
+  The build also concatenates all the js files (except for zone.min.js and the
+  FHIR support files) into a single `lhc-forms.es5.js` and `lhc-forms.es2015.js`
+  file, and these work, but we don't currently recommend their use because the
+  source maps don't work with these files.  Also, there is a dist/webcomponent
+  directory that is created with a copy of the files in dist/lforms, but that
+  is only needed for the tests.
 
 ## Running tests
 1. Run `npm run test` to run unit tests and e2e tests, which also copies the FHIR lib files 
@@ -73,10 +76,9 @@ you don't accidentally add something that we are also working on.
    The e2e tests is configured to use Chrome. If Chrome has been updated, run `npm run update-webdriver` 
    to update the Chrome web driver.
 
-## Using the LHC-Forms Web Component 
-There are several files to load, but the simplest way is to use our loader
-script.  If you are building this or installing via npm, these files will be
-under `dist/latest`.  If you are using the pre-built versions from
+## <a id="using">Using the LHC-Forms Web Component</a>
+There are several script files to load.  If you are building this or installing via npm, these files will be
+under `dist/lforms`.  If you are using the pre-built versions from
 https://clinicaltables.nlm.nih.gov/lforms-versions, then the file paths below
 are relative to those versioned directories.
 1. `webcomponent/styles.css`
@@ -84,11 +86,12 @@ are relative to those versioned directories.
 You need to include the following files in your project: 
 1. `webcomponent/styles.css`
 2. `webcomponent/assets/lib/zone.min.js` (unless you already have zone.min.js on the page)
+3. `webcomponent/scripts.js`
 4. `webcomponent/runtime-[es5|es2015].js`
 5. `webcomponent/polyfills-[es5|es2015].js`
-3. `webcomponent/scripts.js`
 6. `webcomponent/main-[es5|es2015].js`
-7. *One* of the FHIR support library files:
+7. *One* of the FHIR support library files, assuming you are planning to use
+   FHIR Questionnaires:
    * `fhir/lformsFHIRAll.min.js`
    * `fhir/R4/lformsFHIR.min.js`
    * `fhir/STU3/lformsFHIR.min.js`

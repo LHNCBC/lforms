@@ -1112,14 +1112,14 @@ function addCommonSDCImportFns(ns) {
                   LForms._valueSetAnswerCache[expURL] = answers;
                   item.answers = answers;
                   lfData._updateAutocompOptions(item, true);
-                }  
+                }
               }
-            }).catch(function(error) {              
+            }).catch(function(error) {
               throw new Error("Unable to load ValueSet from "+expURL);
             }));
           }
           else { // use FHIR context
-            var fhirClient = LForms.fhirContext;
+            var fhirClient = LForms.fhirContext.client;
             pendingPromises.push(fhirClient.request(lfData._buildURL(
               ['ValueSet','$expand'], {url: item.answerValueSet})
             ).then(function(response) {

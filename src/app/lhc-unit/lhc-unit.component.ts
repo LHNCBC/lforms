@@ -6,7 +6,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-unit.component.html',
   styleUrls: ['./lhc-unit.component.css']
 })
-export class LhcUnitComponent implements OnInit, OnChanges {
+export class LhcUnitComponent implements OnChanges {
 
   // Handle the unit list of the "quantity' typed item using the
   // lhc-autocomplete component
@@ -25,11 +25,7 @@ export class LhcUnitComponent implements OnInit, OnChanges {
 
   constructor(public lhcDataService: LhcDataService) { }
 
-  /**
-   * Initialize the component
-   */
-  ngOnInit(): void { }
-
+  
   /**
    * Invoked when the properties change
    * Reset the defualt settings

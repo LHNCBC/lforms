@@ -2,14 +2,59 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-
-## [30.0.0-beta.4] 2022-03-11
+## [30.0.1] 2022-03-11
 ### Added
 - Added options to hide tree line styles, indentation or repetition numbers.
 
+## [30.0.0] 2020-03-08
+### Fixed
+- Fixed a minor style issue
+### Changed
+- Code refactoring and clean up.
+- Made most commands in package.json work on Windows.
+
+## [30.0.0-beta.9] 2022-02-24
+### Fixed
+- Fixed a bug that the user saved data was overwritten by the values from initialExpression.
+### Changed
+- Added back the support of a CSS selector as the element parameter for LForms.Util functions 
+  such as getFormData, getUserData and getFormFHIRData.
+- Removed the redundant resourceType parameter in the LForms.Util.mergeFHIRDataIntoLForms function.
+
+## [30.0.0-beta.8] 2022-02-17
+### Fixed
+- Fixed a bug that saved user data in a form are lost when answer lists are updated
+  by FHIRPath expression.
+
+## [30.0.0-beta.7] 2022-02-17
+### Added
+- Support for the newer launchContext "name" data type, valueCoding.  For
+  backward compatibility, valueId is still supported.
+  (https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-launchContext.html)
+
+## [30.0.0-beta.6] 2022-02-15
+### Added
+- Support for arbitrary launchContext names and resource types.  A second
+  parameter has been added to LForms.Util.setFHIRContext which is a map between
+  launchContext variable names and FHIR resource instances (as objects).  This
+  allows an application that is familiar with a partictular Questionnaire
+  to pass in the needed resources.
+
+## [30.0.0-beta.5] 2022-02-09
+### Fixed
+- Fixed a a bug that repeating rows in horizontal table (gtable) are not added
+  at the end of the table.
+### Added
+- Added the support of the questionnaire-hidden extension on the horizontal tables
+  (gtable) and the matrix (table).
+
+## [30.0.0-beta.4] 2022-02-04
+### Fixed
+- calculatedExpression no longer forces fields to be read-only.
+
 ## [30.0.0-beta.3] 2022-01-25
 ### Added
-- Added an onError event, that returns an error when FHIR resources 
+- Added an onError event, that returns an error when FHIR resources
   fail to load, or when there is an exception during the initialization.
 - Added cypress for e2e tests.
 
@@ -24,10 +69,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [30.0.0-beta.0] 2021-12-10
 ### Changed
-- Included the initial release of the Web Component version of the LHC-Forms 
-  widget in the "next" directory. This will be reorganized out of the "next" 
+- Included the initial release of the Web Component version of the LHC-Forms
+  widget in the "next" directory. This will be reorganized out of the "next"
   directory prior to the non-beta release.
-  
+
 ## [29.3.1] 2021-10-20
 ### Fixed
 - If a form contained an attachment type question, hitting enter in another

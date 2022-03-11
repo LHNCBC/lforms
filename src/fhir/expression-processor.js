@@ -275,9 +275,13 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                       item._currentFhirQueryURLs = {};
                     let oldQueryURL = item._currentFhirQueryURLs[varName];
                     // If queryURL is not a new value, we don't need to do anything
-                    if (queryURL != oldQueryURL) {
+                    if (queryURL !== oldQueryURL) {
                       item._currentFhirQueryURLs[varName] = queryURL;
-                      if (!undefinedExprVal) {
+                      if (undefinedExprVal) {
+                        newVal = undefined;
+                        updateValue = true;
+                      }
+                      else {
                         // Look for a cached result
                         if (this._queryCache.hasOwnProperty(queryURL)) {
                           newVal = this._queryCache[queryURL];
@@ -398,8 +402,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       // the query; otherwise just use fetch.
       // Also, set the format to JSON.
       queryURL += (queryURL.indexOf('?')>0 ? '&' : '?')+'_format=json';
-      if (!/^https?:/.test(queryURL) && LForms.fhirContext) {
-        fetchPromise = LForms.fhirContext.request(queryURL);
+      if (!/^https?:/.test(queryURL) && LForms.fhirContext?.client) {
+        fetchPromise = LForms.fhirContext.client.request(queryURL);
       }
       else {
         fetchPromise = fetch(queryURL).then(function(response) {
@@ -466,18 +470,17 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         var fVars = {};
         for (var k in itemVars)
           fVars[k] = itemVars[k];
-        const fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] :
+        const contextNode = item._elementId ? this._elemIDToQRItem[item._elementId] :
           this._lfData._fhirVariables.resource;
         var compiledExpr = this._compiledExpressions[expression];
         if (!compiledExpr) {
           compiledExpr = this._compiledExpressions[expression] =
             this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
         }
-        fhirPathVal = compiledExpr(fhirContext, fVars);
+        fhirPathVal = compiledExpr(contextNode, fVars);
       }
       catch (e) {
-        // Sometimes an expression will rely on data that hasn't been filled in
-        // yet.
+        // Sometimes an expression will rely on data that hasn't been filled in yet.
         console.log(e);
       }
       return fhirPathVal;

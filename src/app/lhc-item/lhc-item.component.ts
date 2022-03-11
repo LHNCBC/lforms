@@ -7,7 +7,7 @@ import { WindowService} from '../../lib/window.service';
   templateUrl: './lhc-item.component.html',
   styleUrls: ['./lhc-item.component.css'],
 })
-export class LhcItemComponent implements OnInit {
+export class LhcItemComponent {
 
   @Input() item;
 
@@ -30,9 +30,5 @@ export class LhcItemComponent implements OnInit {
   getItemViewModeClass(item) {
     return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
   }
-
-  ngOnInit(): void {
-  }
-
   
 }

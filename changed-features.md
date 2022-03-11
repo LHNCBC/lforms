@@ -50,6 +50,8 @@
       be hidden from the data table. The default is false.
   * showFormOptionPanel - a boolean that controls whether to show the option panel
       that displays all the form options.
+  * showFormOptionPanelButton - a boolean that controls whether to show the button
+      next to the form title that hides/shows the form options panel.
   * useAnimation - a boolean that controls whether to use animation on the form.
       The default is true.
   * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to

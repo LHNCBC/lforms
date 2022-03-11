@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
-// @Injectable({
-//   providedIn: 'root'
-// })
-
 /**
  * Get the real time size (and styles) from the window object.
  */
@@ -16,9 +12,9 @@ export class WindowService {
   constructor() { 
     this._windowWidth$ = new BehaviorSubject(window.innerWidth);
     this._viewMode$ = new BehaviorSubject('lg'); // lg, md, sm
-    //console.log("in window.service constructor: " + this._windowWidth$.getValue());
   }
   
+
   /**
    * Get the window's current width as a number
    * @returns the value of the window's width
@@ -27,6 +23,7 @@ export class WindowService {
     return this._windowWidth$.getValue();
   }
   
+
   /**
    * Get view mode as a string
    * @returns the view mode value
@@ -34,6 +31,7 @@ export class WindowService {
   getViewMode(): string {
     return this._viewMode$.getValue();
   }
+
 
   /**
    * Set the width
@@ -59,6 +57,7 @@ export class WindowService {
     this._viewMode$.next(viewMode);
   }
 
+
   /**
    * Get the window's current width as an obserable
    * @returns a number as an observable
@@ -66,6 +65,7 @@ export class WindowService {
   get windowWidth(): Observable<number> {
     return this._windowWidth$.asObservable();
   }
+  
 
   /**
    * Get view mode CSS class as an obserable

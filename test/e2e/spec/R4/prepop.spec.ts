@@ -54,7 +54,7 @@ describe('Form pre-population', function() {
       TestUtil.waitForFHIRLibsLoaded()
       setServerFHIRContext(serverFHIRNum);
       tp.loadFromTestData('phq9.json', 'R4');
-      
+
       // This test form does prepoluation of the first answer.
       // This is also a test of prepoluation of list questions.
       var firstQ = element(by.id('/44250-9/1'));
@@ -68,7 +68,7 @@ describe('Form pre-population', function() {
   }
 
   describe('with bower packages', function() {
-  
+
     beforeAll(function () {
       tp.openBaseTestPage();
       TestUtil.waitForFHIRLibsLoaded()
@@ -108,7 +108,7 @@ describe('Form pre-population', function() {
         it('should load values from observationLinkPeriod', function() {
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
-          TestUtil.waitForElementPresent(weightField);          
+          TestUtil.waitForElementPresent(weightField);
           browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
             return val == '95'
           })}, 1000);

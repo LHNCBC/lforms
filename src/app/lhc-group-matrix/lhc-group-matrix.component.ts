@@ -6,15 +6,12 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-group-matrix.component.html',
   styleUrls: ['./lhc-group-matrix.component.css']
 })
-export class LhcGroupMatrixComponent implements OnInit {
+export class LhcGroupMatrixComponent {
 
   @Input() item;
   @Input() formLevel: boolean = false;
   
   constructor(public lhcDataService: LhcDataService) {
-  }
-
-  ngOnInit(): void {
   }
 
 }

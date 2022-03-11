@@ -6,16 +6,15 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-button-popover.component.html',
   styleUrls: ['./lhc-button-popover.component.css']
 })
-export class LhcButtonPopoverComponent implements OnInit {
+export class LhcButtonPopoverComponent {
 
   @Input() item: any;
   @Input() popoverType: string;
   @Input() formLevel: boolean = false;
   @Input() buttonLabel: string = null;
+  @Input() append: boolean = false;
   constructor(private lhcDataService: LhcDataService) { }
 
-  ngOnInit(): void {    
-  }
 
   /**
    * Send the popover content to screen reader log when the popover button is clicked

@@ -28,7 +28,7 @@
   top: 0;
 }
 /* shorter vertical bar of a tree line for the last item of a level */
-.lhc-item.lf-tree-line.lf-last-item::after {
+.lhc-item.lf-tree-line.lhc-last-item::after {
   height: 14px;
 }
 /*no tree lines for form level horizontal and matrix layouts */
@@ -57,14 +57,14 @@
   left: 6px;
 }
 /* normal vertical bar of a tree line for the last item of a level */
-.lf-indentation-bar .lhc-item.lf-last-item::after {
+.lf-indentation-bar .lhc-item.lhc-last-item::after {
   height: 100%;
 }
 /* round bar ends for the first and the last item */
-.lf-indentation-bar .lhc-item.lf-first-item::after {
+.lf-indentation-bar .lhc-item.lhc-first-item::after {
   border-top-left-radius: 4px;
 }
-.lf-indentation-bar .lhc-item.lf-last-item::after {
+.lf-indentation-bar .lhc-item.lhc-last-item::after {
   border-bottom-left-radius: 4px;
 }
 /* end of bar style */

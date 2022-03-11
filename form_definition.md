@@ -80,11 +80,11 @@ about the meaning of each key:
   'table' (default) is the only template supported. More supported templates would be added.
 * <a name="templateOptions"></a>**templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
+    * showQuestionCode - a boolean that controls whether to show question codes.
+      The default is false.
     * showCodingInstruction - a boolean that controls whether to show coding
       instructions inline or as popover messages (false: in popover; true: inline).
       The default is false;
-    * showFormOptionPanelButton - a boolean that controls whether to show the button
-      next to the form title that hides/shows the form options panel.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTMLInInstructions - a boolean that controls whether to allow HTML

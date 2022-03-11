@@ -3,11 +3,6 @@
   "code": "X-001",
   "name": "RxTerms Demo",
   "template": "form-view-b",
-  "templateOptions": {
-    "hideFormControls": true,
-    "showFormHeader": false,
-    "showColumnHeaders": false
-  },
   "items": [
     {
       "questionCode": "X-002",

@@ -1,0 +1,304 @@
+{
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 30.0.0-beta.4"
+      }
+    ]
+  },
+  "status": "draft",
+  "resourceType": "Questionnaire",
+  "title": "A questionnaire for testing questionnaire-hidden extension",
+  "description": "This questionnaire is essentially the same as questionnaire-hidden-extension.json but does not use the questionnaire-hidden extension, so that the behavior with and without that extension can be compared.",
+  "item": [
+    {
+      "text": "displayed question in vertical list",
+      "linkId": "q1",
+      "type": "string"
+    },
+
+    {
+      "text": "hidden question in vertical list",
+      "linkId": "q2",
+      "type": "string",
+      "extension": [
+      ]
+    },
+
+
+    {
+      "text": "displayed vertical group that contains a hidden group",
+      "linkId": "g-displayed-vertical-group",
+      "type": "group",
+      "item": [
+        {
+          "text": "hidden vertical group in a displayed vertical group",
+          "linkId": "g-displayed-vertical-group/g-hidden-vertical-group",
+          "type": "group",
+          "extension": [
+          ],
+          "item": [
+            {
+              "type": "string",
+              "text": "a question in a hidden vertical group in a displayed vertical group",
+              "linkId": "g-displayed-vertical-group/g-hidden-vertical-group/q1"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "text": "hidden vertical group",
+      "linkId": "g-hidden-vertical-group",
+      "type": "group",
+      "extension": [
+      ],
+      "item": [
+        {
+          "type": "string",
+          "text": "a question in a hidden vertical group",
+          "linkId": "g-hidden-vertical-group/q1"
+        }
+      ]
+    },
+
+    {
+      "text": "hidden horizontal group",
+      "linkId": "g-hidden-horizontal-group",
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [{
+              "system": "http://hl7.org/fhir/questionnaire-item-control",
+              "code": "gtable", 
+              "display": "Group Table"
+            }],
+            "text": "Group Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "string",
+          "text": "a question in a hidden horizontal group",
+          "linkId": "g-hidden-horizontal-group/q1"
+        }
+      ]
+    },
+
+    {
+      "text": "hidden matrix",
+      "linkId": "g-hidden-matrix",
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [{
+              "system": "http://hl7.org/fhir/questionnaire-item-control",
+              "code": "table", 
+              "display": "Vertical Answer Table"
+            }],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "text": "a question in a hidden matrix",
+          "linkId": "g-hidden-matrix/q1",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10427-5",
+                "display": "Yes - Identical (Same)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10428-3",
+                "display": "Yes - Fraternal (Different)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "text": "horizontal group with a hidden column",
+      "linkId": "g-horizontal-group",
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [{
+              "system": "http://hl7.org/fhir/questionnaire-item-control",
+              "code": "gtable", 
+              "display": "Group Table"
+            }],
+            "text": "Group Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "string",
+          "text": "a hidden question in a horizontal group",
+          "linkId": "g-horizontal-group/q1",
+          "extension": [
+          ]
+        },
+        {
+          "type": "string",
+          "text": "a displayed question in a horizontal group",
+          "linkId": "g-horizontal-group/q2"
+        }
+      ]
+    },
+
+    {
+      "text": "displayed matrix",
+      "linkId": "g-displayed-matrix",
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [{
+              "system": "http://hl7.org/fhir/questionnaire-item-control",
+              "code": "table", 
+              "display": "Vertical Answer Table"
+            }],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "text": "a hidden question in a matrix",
+          "linkId": "g-displayed-matrix/q1",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10427-5",
+                "display": "Yes - Identical (Same)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10428-3",
+                "display": "Yes - Fraternal (Different)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "text": "a displayed question in a matrix",
+          "linkId": "g-displayed-matrix/q2",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10427-5",
+                "display": "Yes - Identical (Same)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10428-3",
+                "display": "Yes - Fraternal (Different)"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA32-8",
+                "display": "No"
+              }
+            }
+          ]
+        }
+
+      ]
+    }
+
+
+
+  ]
+}

@@ -10,8 +10,6 @@ export class LhcItemQuantityComponent implements OnInit {
   @Input() item;
   isQuantity: boolean = false;
 
-  constructor() { }
-
   /**
    * Initialize the component
    */

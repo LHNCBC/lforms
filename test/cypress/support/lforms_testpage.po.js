@@ -130,7 +130,7 @@ export class TestPage {
     raceField: '#/54126-8/54134-2/1/1',
     eyeField: '#/9267-6/1',
     scoreField: '#/9269-2/1',
-    // searchResults: this.autoCompHelpers.searchResults,  //TODO, probably not working with cypress
+    searchResults: '#searchResults'
     // searchResult: this.autoCompHelpers.searchResult, //TODO, probably not working with cypress
     // helpers: this.autoCompHelpers,
     // TODO rewrite in cypress
@@ -266,16 +266,43 @@ export class TestPage {
 
 
   /**
-   * Display a form on the test page
+   * Display a form on the test page, and asserts that the form is ready
    * @param formIndex the form's index in the forms list
    */
   openFormByIndex(formIndex) {
+    let formFinished=false;
+    function formFinishedListener() {formFinished = true}
+    cy.get('#test-form').then((el)=> {
+      el[0].addEventListener('onFormReady', formFinishedListener);
+      el[0].addEventListener('onError', formFinishedListener);
+    });
+
     // make a selection on the 'select' dropdown list
     cy.get("#form-list").select(formIndex);
     var button = cy.get('#load-form-data');
     if (button) {
       button.click();
     }
+
+    // Wait for the form to appear and be "ready" (or error out)
+    cy.get('.lhc-form-title', {timeout: 4000}).should('be.visible').then(
+      {timeout: 4000}, ()=>{
+
+      return new Cypress.Promise((resolve) => {
+        function checkFormFinished() {
+          if (formFinished) {
+            resolve();
+            cy.get('#test-form').then((el)=> {
+              el[0].removeEventListener('onFormReady', formFinishedListener);
+              el[0].removeEventListener('onError', formFinishedListener);
+            });
+          }
+          else
+            setTimeout(checkFormFinished, 50);
+        }
+        setTimeout(checkFormFinished, 50);
+      });
+    });
   }
 
   /**

@@ -3,10 +3,6 @@
   "code": "54127-6H",
   "name": "USSG-FHT, (with mock-up items for horizontal layout demo)",
   "template": "form-view-b",
-  "templateOptions": {
-    "hideFormControls": false,
-    "showFormHeader": true
-  },
   "items": [
     {
       "questionCode": "54126-8",
