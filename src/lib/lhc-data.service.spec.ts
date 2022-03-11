@@ -25,8 +25,8 @@ describe('LhcDataService', () => {
         hideRepetitionNumber: false
       }
     });
-    expect(service.getTreeLineClass()).toBe('lf-tree-line');
-    expect(service.getIndentationClass()).toBe('lf-indentation');
+    expect(service.getTreeLineClass()).toBe('lhc-tree-line');
+    expect(service.getIndentationClass()).toBe('lhc-indentation');
     expect(service.isHideRepetitionNumber()).toBeFalse();
   });
 

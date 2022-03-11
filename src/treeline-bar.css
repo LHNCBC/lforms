@@ -2,11 +2,11 @@
   position: relative;
 }
 /* indentation before an item */
-.lhc-item.lf-indentation {
+.lhc-item.lhc-indentation {
   padding-left: 24px;
 }
 /* the horizontal bar of a tree line */
-.lhc-item.lf-tree-line::before {
+.lhc-item.lhc-tree-line::before {
   content: "";
   position: absolute;
   left: 12px;
@@ -17,7 +17,7 @@
   height: 0;
 }
 /* the vertical bar of a tree line */
-.lhc-item.lf-tree-line::after {
+.lhc-item.lhc-tree-line::after {
   content: "";
   position: absolute;
   left: 12px;
@@ -28,7 +28,7 @@
   top: 0;
 }
 /* shorter vertical bar of a tree line for the last item of a level */
-.lhc-item.lf-tree-line.lhc-last-item::after {
+.lhc-item.lhc-tree-line.lhc-last-item::after {
   height: 14px;
 }
 /*no tree lines for form level horizontal and matrix layouts */

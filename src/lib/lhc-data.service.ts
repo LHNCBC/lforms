@@ -145,15 +145,6 @@ export class LhcDataService {
 
 
   /**
-   * Get the indentation style of the form
-   * @returns {string}
-   */
-  getIndentationStyle() {
-    return this.lhcFormData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
-  }
-
-
-  /**
    * Check if there's only one repeating item in a group
    * (so that the 'remove' button won't show on this item)
    * @param item an item in the lforms form items array
@@ -266,7 +257,7 @@ export class LhcDataService {
    * @returns {string}
    */
   getTreeLineClass() {
-    return this.getLhcFormData().templateOptions.hideTreeLine ? '' : 'lf-tree-line';
+    return this.getLhcFormData().templateOptions.hideTreeLine ? '' : 'lhc-tree-line';
   }
 
   /**
@@ -274,7 +265,7 @@ export class LhcDataService {
    * @returns {string}
    */
   getIndentationClass() {
-    return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lf-indentation';
+    return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
   }
 
   /**
