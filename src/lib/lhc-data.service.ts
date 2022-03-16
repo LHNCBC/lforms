@@ -257,8 +257,8 @@ export class LhcDataService {
    * @returns {string}
    */
   getTreeLineClass() {
-    return this.getLhcFormData().templateOptions.hideTreeLine || this.getLhcFormData().templateOptions.hideIndentation
-      ? '' : 'lhc-tree-line';
+    const templateOptions = this.getLhcFormData().templateOptions;
+    return templateOptions.hideTreeLine || templateOptions.hideIndentation ? '' : 'lhc-tree-line';
   }
 
   /**
@@ -268,6 +268,25 @@ export class LhcDataService {
   getIndentationClass() {
     return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
   }
+
+  /**
+   * get CSS class list for an item
+   * @param item an item in a form
+   * @param viewMode view mode of the item
+   */
+  getItemClassList(item, viewMode) {
+    const classList = [
+      'lhc-item',
+      this.getItemViewModeClass(item, viewMode),
+      this.getTreeLineClass(),
+      this.getIndentationClass(),
+      this.getSiblingStatus(item),
+      this.getRowClass(item),
+      this.getActiveRowClass(item)
+    ];
+    return classList.join(' ');
+  }
+
 
   /**
    * Whether to hide repetition number before question text

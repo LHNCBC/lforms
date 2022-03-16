@@ -58,15 +58,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  /**
-   * get CSS class of view mode for an item
-   * @param item an item in a form
-   * @returns
-   */
-  getItemViewModeClass(item) {
-    return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
-  }
-
 
   /**
    * Set up the observer on window size
@@ -184,23 +175,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
         lhcFD.setTemplateOptions(this.options);
       }
     }
-  }
-
-  /**
-   * get CSS class list for an item
-   * @param item an item in a form
-   */
-  getItemClassList(item) {
-    const classList = [
-      'lhc-item',
-      this.getItemViewModeClass(item),
-      this.lhcDataService.getTreeLineClass(),
-      this.lhcDataService.getIndentationClass(),
-      this.lhcDataService.getSiblingStatus(item),
-      this.lhcDataService.getRowClass(item),
-      this.lhcDataService.getActiveRowClass(item)
-    ];
-    return classList.join(' ');
   }
 
 }

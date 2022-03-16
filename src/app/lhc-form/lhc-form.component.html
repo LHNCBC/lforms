@@ -32,7 +32,7 @@
           <ng-container *ngIf="lhcFormData.items">
             <ng-container *ngFor ="let item of lhcFormData.items; trackBy: lhcDataService.trackByElementId">
               <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)"
-                [item]="item" class="{{getItemClassList(item)}}">
+                [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}">
               </lhc-item>
               <!--header item-->
             </ng-container>
