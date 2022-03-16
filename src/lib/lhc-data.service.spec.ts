@@ -42,11 +42,11 @@ describe('LhcDataService', () => {
   it('should hide indentation', () => {
     service.setLhcFormData({
       templateOptions: {
-        hideTreeLine: true,
         hideIndentation: true
       }
     });
     expect(service.getIndentationClass()).toBe('');
+    expect(service.getTreeLineClass()).toBe('');
   });
 
   it('should hide repetition number', () => {

@@ -257,7 +257,8 @@ export class LhcDataService {
    * @returns {string}
    */
   getTreeLineClass() {
-    return this.getLhcFormData().templateOptions.hideTreeLine ? '' : 'lhc-tree-line';
+    return this.getLhcFormData().templateOptions.hideTreeLine || this.getLhcFormData().templateOptions.hideIndentation
+      ? '' : 'lhc-tree-line';
   }
 
   /**
