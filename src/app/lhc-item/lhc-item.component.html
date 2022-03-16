@@ -15,8 +15,7 @@
         <div *ngIf="item.items" class="lhc-item-group-body">
           <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">
             <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView"
-              [item]="item"
-              class="lhc-item {{getItemViewModeClass(item)}} {{lhcDataService.getTreeLineClass(item)}} {{lhcDataService.getIndentationClass(item)}} {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
+              [item]="item" class="{{getItemClassList(item)}}">
             </lhc-item>
           </ng-container>
         </div>
