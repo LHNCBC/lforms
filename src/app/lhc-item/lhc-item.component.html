@@ -20,7 +20,7 @@
           </ng-container>
         </div>
         <!-- a button at the end of each repeating section -->
-        <div class="lf-table-item {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && lhcDataService.targetShown(item) && !item._isHiddenFromView">
+        <div class="lf-table-item lf-button-padding {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && lhcDataService.targetShown(item) && !item._isHiddenFromView">
           <div class="{{lhcDataService.getSkipLogicClass(item)}}">
             <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ Add another "{{item._text}}"'></lhc-button-popover>
           </div>
