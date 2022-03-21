@@ -388,7 +388,6 @@ export class LhcDataService {
         if (!item._unusedItemWarning)
           item._unusedItemWarning = 'Please enter info in the blank "' +
             item._text+'"';
-        //$scope.sendMsgToScreenReader(item._unusedItemWarning);
       }
     }
     if (!anyEmpty) {

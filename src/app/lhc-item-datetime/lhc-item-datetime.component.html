@@ -8,7 +8,6 @@
       nzPlaceHolder="MM/DD/YYYY HH:MM:SS"
       nzSize="small"
       [(ngModel)]="item.value"
-      (ngModelChange)="onChange($event)"
       (nzOnOk)="onOk($event)"
       (focus)="lhcDataService.setActiveRow(item)"
       attr.aria-required="{{item._answerRequired}}"

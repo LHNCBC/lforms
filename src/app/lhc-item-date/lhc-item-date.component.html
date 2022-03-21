@@ -7,7 +7,6 @@
     nzPlaceHolder="MM/DD/YYYY"
     nzSize="small"
     [(ngModel)]="item.value"
-    (ngModelChange)="onChange($event)"
     (focus)="lhcDataService.setActiveRow(item)"
     attr.aria-required="{{ item._answerRequired }}"
   ></nz-date-picker>
