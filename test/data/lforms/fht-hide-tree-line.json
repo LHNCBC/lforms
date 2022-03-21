@@ -1,7 +1,7 @@
 {
   "codeSystem": "LOINC",
   "code": "54127-6N",
-  "name": "USSG-FHT, (with mock-up items for skip logic demo)",
+  "name": "USSG-FHT, (hide tree line)",
   "template": "table",
   "templateOptions": {
     "hideTreeLine": true

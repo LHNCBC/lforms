@@ -1,10 +1,10 @@
 {
   "codeSystem": "LOINC",
   "code": "54127-6N",
-  "name": "USSG-FHT, (with mock-up items for skip logic demo)",
+  "name": "USSG-FHT, (hide indentation)",
   "template": "table",
   "templateOptions": {
-    "hideRepetitionNumber": true
+    "hideIndentation": true
   },
   "items": [
     {

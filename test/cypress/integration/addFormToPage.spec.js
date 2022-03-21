@@ -122,7 +122,7 @@ describe('Tests of addFormToPage test page', function() {
     });
 
     it('should be able to hide tree line', function () {
-      const fhirFHTFile = 'test/data/R4/fht-hide-tree-line.json';
+      const fhirFHTFile = 'test/data/lforms/fht-hide-tree-line.json';
       cy.readFile(fhirFHTFile).then((fhirData) => {
         cy.window().then(win=>{
           win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
@@ -132,7 +132,7 @@ describe('Tests of addFormToPage test page', function() {
     });
 
     it('should be able to hide indentation', function () {
-      const fhirFHTFile = 'test/data/R4/fht-hide-indentation.json';
+      const fhirFHTFile = 'test/data/lforms/fht-hide-indentation.json';
       cy.readFile(fhirFHTFile).then((fhirData) => {
         cy.window().then(win=>{
           win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
@@ -143,7 +143,7 @@ describe('Tests of addFormToPage test page', function() {
     });
 
     it('should be able to hide repetition number', function () {
-      const fhirFHTFile = 'test/data/R4/fht-hide-repetition-number.json';
+      const fhirFHTFile = 'test/data/lforms/fht-hide-repetition-number.json';
       cy.readFile(fhirFHTFile).then((fhirData) => {
         cy.window().then(win=>{
           win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
