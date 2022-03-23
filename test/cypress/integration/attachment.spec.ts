@@ -3,8 +3,8 @@ import 'cypress-file-upload';
 import {browser, by, element, ExpectedConditions, protractor} from "protractor";
 import TestUtil from "../../e2e/spec/util";
 
-describe('Attachment support', ()=>{
-  describe('', ()=> {
+describe('Attachment support', () => {
+  describe('', () => {
     before(() => {
       cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('attachmentQ.json', null, {});
@@ -20,12 +20,12 @@ describe('Attachment support', ()=>{
       cy.get('#file-upload\\/1').should('have.attr', 'type', 'file');
     }
 
-    it('should show file inputs in both vertical and horizontal layouts', ()=>{
+    it('should show file inputs in both vertical and horizontal layouts', () => {
       cy.get('#file-upload\\/1').should('have.attr', 'type', 'file');
       cy.get('#file-upload-in-table\\/1\\/1').should('have.attr', 'type', 'file');
     });
 
-    it('should allow attachment of file data without a URL', ()=>{
+    it('should allow attachment of file data without a URL', () => {
       // Note that the test file we are attaching below is the same the file
       // containing the Questionnaire definition for the form (just for
       // convenience).
@@ -43,16 +43,31 @@ describe('Attachment support', ()=>{
       });
     });
 
-    it('should allow removal of an attachment', ()=>{
+    it('should allow removal of an attachment', () => {
       // Assumes an attachment was created above
       removeFirstAttachment();
     });
 
-    it('should not respond to presses of "enter" in unrelated fields', ()=>{
+    it('should not respond to presses of "enter" in unrelated fields', () => {
       // This is a test for the fix for
       // https://github.com/lhncbc/lforms/issues/71
       cy.get('#upload-desc\\/1\\/1').type('{enter}');
       cy.get('.lhc-attachment-url').should('not.exist');
+    });
+
+    it('should not allow files over maxSize size', (done) => {
+      // Create a temporary test file
+      let testData = '';
+      for (var i = 0; i < 5002; ++i) {
+        testData += 'z';
+      }
+      cy.task('createTempFile', {fileName: 'test.txt', content: testData});
+      cy.on('window:alert', (str) => {
+        expect(str).to.contains('size');
+        // The file input should still be there and be blank.
+        cy.get('#file-upload\\/1').should('have.value', '').then(() => done());
+      });
+      cy.get('#file-upload\\/1').attachFile('test.txt');
     });
   });
 });

@@ -16,6 +16,7 @@
 /test/cypress/downloads
 /test/cypress/screenshots
 /test/cypress/videos
+/test/cypress/fixtures/test.txt
 
 # dependencies
 /node_modules
