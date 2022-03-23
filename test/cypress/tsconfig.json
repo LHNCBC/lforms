@@ -3,6 +3,6 @@
   "include": ["**/*.ts"],
   "compilerOptions": {
     "sourceMap": true,
-    "types": ["cypress"]
+    "types": ["cypress", "cypress-file-upload"]
   }
 }
