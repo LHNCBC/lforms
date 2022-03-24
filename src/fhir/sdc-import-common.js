@@ -326,6 +326,7 @@ function addCommonSDCImportFns(ns) {
         }
         else {
           // Pick a Coding that is appropriate for this list item.
+          // Note:  It could be an off list Coding.
           if (lfItem.answers) {
             var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
             for (var k=0, kLen=codings.length; k<kLen && !answer; ++k) {
@@ -342,6 +343,10 @@ function addCommonSDCImportFns(ns) {
                 }
               }
             }
+          }
+          if (!answer && lfDataType === 'CWE') { // no match in the list.
+            answer = self._processCWECNEValueInQR({valueCoding: fhirVal});
+            answer._notOnList = true;
           }
         }
       }

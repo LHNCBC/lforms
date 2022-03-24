@@ -70,12 +70,14 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @param value the new data in item.value
    */
   updateDisplayedValue(itemValue:any) {
-    if (itemValue) {
-      if (!this.multipleSelections) {
-        let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
-        itemValue.text : itemValue[this.options.acOptions.display] : itemValue.text;
+    // Note:  This runs both in response to user interaction and to JavaScript
+    // changes.
+    if (!this.multipleSelections) {
+      if (!itemValue)
+        this.acInstance.setFieldVal('', false);
+      else {
+        let dispVal = this.updateAutocompSelectionModel(itemValue);
         if (typeof dispVal === 'string') {
-          this.acInstance.storeSelectedItem(dispVal, itemValue.code);
           let fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
           this.acInstance.setFieldVal(fieldVal, false);
         }
@@ -84,6 +86,28 @@ export class LhcAutocompleteComponent implements OnChanges {
         }
       }
     }
+    else {  // multi-select (here handling calculated values)
+      this.acInstance.clearStoredSelection();
+      if (Array.isArray(itemValue)) {
+        for (let v of itemValue) {
+          let dispVal = this.updateAutocompSelectionModel(v);
+          this.acInstance.addToSelectedArea(dispVal);
+        }
+      }
+    }
+  }
+
+
+  /**
+   *  Updates the autocompleter's model to register an item as selected.
+   * @param answer an object with data (possibly with a code) for the answer
+   * @return the display text determined for the answer.
+   */
+  updateAutocompSelectionModel(answer) {
+    let dispVal = this.acType === "prefetch" ? answer._notOnList ?
+      answer.text : answer[this.options.acOptions.display] : answer.text;
+    this.acInstance.storeSelectedItem(dispVal, answer.code);
+    return dispVal;
   }
 
 
@@ -142,7 +166,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   /**
    * Set up the autocompleter
    */
-  setupAutocomplete(): void {  
+  setupAutocomplete(): void {
     // reset status
     this.selectedItems = [];
     this.multipleSelections = false;
@@ -166,8 +190,8 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.acType = 'search'
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
-      // prefectch autocomplete
-      else if (acOptions.listItems) {
+      // prefetch autocomplete
+      else { //if (acOptions.listItems) {
         this.acType = 'prefetch';
         let listItemsText = [], listItemsCode = [];
         // get a list of display text, code and create a answer text to answer item mapping.
