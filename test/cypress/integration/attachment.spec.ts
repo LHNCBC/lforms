@@ -1,7 +1,5 @@
 import * as util from "../support/util.js";
 import 'cypress-file-upload';
-import {browser, by, element, ExpectedConditions, protractor} from "protractor";
-import TestUtil from "../../e2e/spec/util";
 
 describe('Attachment support', () => {
   describe('', () => {
@@ -55,7 +53,7 @@ describe('Attachment support', () => {
       cy.get('.lhc-attachment-url').should('not.exist');
     });
 
-    it('should not allow files over maxSize size', (done) => {
+    it('should not allow files over maxSize size', () => {
       // Create a temporary test file
       let testData = '';
       for (var i = 0; i < 5002; ++i) {
@@ -65,9 +63,101 @@ describe('Attachment support', () => {
       cy.on('window:alert', (str) => {
         expect(str).to.contains('size');
         // The file input should still be there and be blank.
-        cy.get('#file-upload\\/1').should('have.value', '').then(() => done());
+        cy.get('#file-upload\\/1').should('have.value', '');
       });
       cy.get('#file-upload\\/1').attachFile('test.txt');
+    });
+
+    it('should only allow permitted mime types', () => {
+      // The questionnaire is configured to only allow .json & .txt
+      var testData = '';
+      for (var i = 0; i < 2; ++i)
+        testData += 'z';
+      cy.task('createTempFile', {fileName: 'test.zip', content: testData});
+      cy.on('window:alert', (str) => {
+        expect(str).to.contains('type');
+        // The file input should still be there and be blank.
+        cy.get('#file-upload\\/1').should('have.value', '');
+      });
+      cy.get('#file-upload\\/1').attachFile('test.zip');
+
+      // Also try a blank mime type
+      cy.task('createTempFile', {fileName: 'test', content: testData});
+      cy.on('window:alert', (str) => {
+        expect(str).to.contains('type');
+        // The file input should still be there and be blank.
+        cy.get('#file-upload\\/1').should('have.value', '');
+      });
+      cy.get('#file-upload\\/1').attachFile('test');
+    });
+
+    it('should allow attachment of a URL without file data and without name', () => {
+      cy.get('.toggle-attachment-fields').eq(0).click(); // button
+      cy.get('input[type=text]').as('inputs').should('have.length', 3);
+      cy.get('@inputs').eq(0).type('http://one');
+      cy.get('.attach-button').click();
+      // Confirm the fields are replaced by a link
+      cy.get('#file-upload\\/1').should('not.exist');
+      cy.get('a').should('have.text', 'http://one')
+        .and('have.attr', 'href', 'http://one');
+      cy.window().then((win) => {
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, arguments[0]);
+        let answer = qr.item[0].answer[0].valueAttachment;
+        console.log(answer);
+        expect(answer.title).to.be.undefined;
+        expect(answer.data).to.be.undefined;
+        expect(answer.url).to.equal('http://one');
+        expect(answer.creation).to.be.undefined;
+        expect(answer.contentType).to.be.undefined;
+        removeFirstAttachment();
+      });
+    });
+
+    it('should allow attachment of a URL without file data', () => {
+      cy.get('.toggle-attachment-fields').eq(0).click(); // button
+      cy.get('input[type=text]').as('inputs').should('have.length', 3);
+      cy.get('@inputs').eq(0).type('http://one');
+      cy.get('@inputs').eq(1).type('two');
+      cy.get('.attach-button').click();
+      // Confirm the fields are replaced by a link
+      cy.get('#file-upload\\/1').should('not.exist');
+      cy.get('a').should('have.text', 'two')
+        .and('have.attr', 'href', 'http://one');
+      cy.window().then((win) => {
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, arguments[0]);
+        let answer = qr.item[0].answer[0].valueAttachment;
+        console.log(answer);
+        expect(answer.title).to.equal('two');
+        expect(answer.data).to.be.undefined;
+        expect(answer.url).to.equal('http://one');
+        expect(answer.creation).to.be.undefined;
+        expect(answer.contentType).to.be.undefined;
+      });
+    });
+
+    it('should allow a second attachment, with both a URL and file data', () => {
+      cy.get('#add-upload\\/1').click(); // "add another"
+      cy.get('.lhc-attachment-button').should('exist');
+      cy.get('.toggle-attachment-fields').eq(0).click(); // button
+      cy.get('input[type=text]').as('inputs').should('have.length', 3);
+      cy.get('@inputs').eq(0).type('http://three');
+      cy.get('@inputs').eq(1).type('four');
+      cy.get('#file-upload\\/2').attachFile('upload-file.json');
+      cy.get('.attach-button').click();
+      // Confirm the fields are replaced by a link
+      cy.get('#file-upload\\/1').should('not.exist');
+      cy.get('a').as('anchors').should('have.length', 2);
+      cy.get('@anchors').eq(1).should('have.text', 'four');
+      cy.window().then((win) => {
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, arguments[0]);
+        let answer = qr.item[0].answer[1].valueAttachment;
+        console.log(answer);
+        expect(answer.title).to.equal('four');
+        expect(typeof answer.data).to.equal('string');
+        expect(answer.url).to.equal('http://three');
+        expect(typeof answer.creation).to.equal('string');
+        expect(answer.contentType).to.equal('application/json');
+      });
     });
   });
 });
