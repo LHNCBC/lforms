@@ -191,7 +191,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
       // prefetch autocomplete
-      else { //if (acOptions.listItems) {
+      else { // whether or not there are currently list items
         this.acType = 'prefetch';
         let listItemsText = [], listItemsCode = [];
         // get a list of display text, code and create a answer text to answer item mapping.
