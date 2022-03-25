@@ -83,4 +83,39 @@ describe('Unused repeating item/section control', function() {
     });
 
   });
+
+  describe('repeating section contains date typed questions', function() {
+    
+    let dtField1 = '#X11/1/1 input',
+        dtField2 = '#X11/2/1 input',
+        dtField3 = '#X11/3/1 input',
+        dateTimeField2 = '#X12/2/1 input',
+        addButton1 = '#add-X1/1',
+        addButton2 = '#add-X1/2',
+        popover1 = '#add-content-X1/1',
+        popover2 = '#add-content-X1/2';
+        
+    it("should not add new section if any DT/DTM fields are empty", function() {
+      cy.visit('/test/pages/lforms_testpage.html');
+      cy.get("#loadBtn").contains("Load From File");
+      cy.get('#fileAnchor').uploadFile('test/data/R4/date-in-repeating-group.json');
+      cy.get('.lhc-form-title').contains('Demo form with DT, DTM in repeating group');
+     
+      cy.byCss(addButton1).click();
+      cy.byCss(popover1).should('be.visible');
+      cy.byCss(dtField1).type("01/01/2022");
+      cy.byCss(addButton1).click();
+      cy.byCss(popover1).should('not.exist');
+      cy.byCss(dtField2).should('be.visible');
+
+      cy.byCss(addButton2).click();
+      cy.byCss(popover2).should('be.visible');
+      cy.byCss(dateTimeField2).type("01/01/2022 01:02:03");
+      cy.byCss(addButton2).click();
+      cy.byCss(popover2).should('not.exist');
+      cy.byCss(dtField3).should('be.visible');
+      
+    });
+
+  });
 });
