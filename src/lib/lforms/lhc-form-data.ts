@@ -2227,7 +2227,7 @@ export default class LhcFormData {
       let newValue = this.getFormulaResult(item);
       if (!equal(newValue, item.value)) {
         item.value = newValue;
-      }      
+      }
     }
   }
 
@@ -2656,7 +2656,7 @@ export default class LhcFormData {
         let newValue = item._multipleAnswers ? listVals : listVals[0];
         if (!equal(item.value, newValue)) {
           item.value = newValue;
-        }        
+        }
       }
     }
   }
@@ -2854,8 +2854,19 @@ export default class LhcFormData {
         // If this is not a saved form with user data, and
         // there isn't already a default value set (handled elsewhere), and
         // there is just one item in the list, use that as the default value.
-        if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
+        // This was not working correctly (no answer stored in the data model)
+        // for multi-select lists, and since FHIR does not have this idea, I am
+        // disabling it for that case.
+        if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1
+            && maxSelect !== '*') {
           options.defaultValue = options.listItems[0];
+        }
+        else if (maxSelect == '*') {
+          // Disable autoFill in this case.  (TBD: we will disable it in all
+          // cases, but autoFill for multi-select lists was not working for
+          // LForms already, so this much is not a breaking change.)
+          options.autoFill = false;
+        }
       }
       // check if the new option has changed
       if (!equal(options, item._autocompOptions)) {

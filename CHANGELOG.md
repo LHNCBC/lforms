@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.0.1] 2020-03-22
+### Fixed
+- Fixed answerExpression and calculatedExpression processing so that for list
+  fields, both answers and answer lists can be set by an expression that depends
+  on the answers of another field.
+
 ## [30.0.0] 2020-03-08
 ### Fixed
 - Fixed a minor style issue
@@ -13,7 +19,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed a bug that the user saved data was overwritten by the values from initialExpression.
 ### Changed
-- Added back the support of a CSS selector as the element parameter for LForms.Util functions 
+- Added back the support of a CSS selector as the element parameter for LForms.Util functions
   such as getFormData, getUserData and getFormFHIRData.
 - Removed the redundant resourceType parameter in the LForms.Util.mergeFHIRDataIntoLForms function.
 
