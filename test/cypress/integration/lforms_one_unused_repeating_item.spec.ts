@@ -84,7 +84,7 @@ describe('Unused repeating item/section control', function() {
 
   });
 
-  describe('repeating section contains date typed questions', function() {
+  describe('repeating section containing date typed questions', function() {
     
     let dtField1 = '#X11/1/1 input',
         dtField2 = '#X11/2/1 input',
