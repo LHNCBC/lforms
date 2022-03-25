@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "30.0.1",
+  "version": "30.1.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -52,7 +52,7 @@
     "@angular/router": "~11.2.14",
     "@lhncbc/ucum-lhc": "^4.1.4",
     "@types/jquery": "^3.5.5",
-    "autocomplete-lhc": "^18.2.0",
+    "autocomplete-lhc": "^18.4.0",
     "fast-copy": "^2.1.1",
     "fast-deep-equal": "^3.1.3",
     "fhirpath": "^2.10.1",
