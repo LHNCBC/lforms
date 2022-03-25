@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.0.2] 2020-03-25
+### Fixed
+- Fixed a performance issue in the initial loading of a Questionnaire when it
+  contains a lot of choice and/or open-choice items.
+- Fixed a bug that the values of date or dateTime items in a repeating group
+  are not checked when adding a new repeating group.
+- Fixed a style issue for the first item in a group.
+
 ## [30.0.1] 2020-03-22
 ### Fixed
 - Fixed answerExpression and calculatedExpression processing so that for list
