@@ -24,15 +24,13 @@ describe('Attachment support', () => {
     });
 
     it('should allow attachment of file data without a URL', () => {
-      // Note that the test file we are attaching below is the same the file
-      // containing the Questionnaire definition for the form (just for
-      // convenience).
       cy.get('#file-upload\\/1').attachFile('upload-file.json');
       // Confirm the file is replaced by a link
+      cy.get('#file-upload\\/1').should('not.exist');
       cy.get('a').should('have.text', 'upload-file.json');
       // Check the export into FHIR for the value
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, arguments[0]);
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, null);
         let answer = qr.item[0].answer[0].valueAttachment;
         expect(answer.title).to.equal('upload-file.json');
         expect(typeof answer.data).to.equal('string');
@@ -101,9 +99,8 @@ describe('Attachment support', () => {
       cy.get('a').should('have.text', 'http://one')
         .and('have.attr', 'href', 'http://one');
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, arguments[0]);
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, null);
         let answer = qr.item[0].answer[0].valueAttachment;
-        console.log(answer);
         expect(answer.title).to.be.undefined;
         expect(answer.data).to.be.undefined;
         expect(answer.url).to.equal('http://one');
@@ -124,9 +121,8 @@ describe('Attachment support', () => {
       cy.get('a').should('have.text', 'two')
         .and('have.attr', 'href', 'http://one');
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, arguments[0]);
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, null);
         let answer = qr.item[0].answer[0].valueAttachment;
-        console.log(answer);
         expect(answer.title).to.equal('two');
         expect(answer.data).to.be.undefined;
         expect(answer.url).to.equal('http://one');
@@ -149,13 +145,67 @@ describe('Attachment support', () => {
       cy.get('a').as('anchors').should('have.length', 2);
       cy.get('@anchors').eq(1).should('have.text', 'four');
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, arguments[0]);
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, null);
         let answer = qr.item[0].answer[1].valueAttachment;
-        console.log(answer);
         expect(answer.title).to.equal('four');
         expect(typeof answer.data).to.equal('string');
         expect(answer.url).to.equal('http://three');
         expect(typeof answer.creation).to.equal('string');
+        expect(answer.contentType).to.equal('application/json');
+      });
+    });
+
+    it('should support an attachment in a saved QuestionnaireRepsonse', () => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('attachmentQ.json', null, {});
+      // Use the current page to get a QR
+      cy.get('#file-upload\\/1').attachFile('upload-file.json');
+      cy.get('#file-upload\\/1').should('not.exist');
+      cy.get('a').should('have.text', 'upload-file.json');
+      cy.readFile(`${Cypress.config('fixturesFolder')}/upload-file.json`).then((q) => {
+        cy.window().then((win) => {
+          var lfData_temp = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+          let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, null);
+          var lfData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, lfData_temp, 'R4');
+          // Open another page where we can use addFormToPage
+          cy.visit('test/pages/addFormToPageTest.html');
+          // Add the form as the first on the page
+          cy.get('#formContainer2').then(() => {
+            win.LForms.Util.addFormToPage(lfData, 'formContainer2');
+            cy.get('a').should('have.text', 'upload-file.json')
+              .then(() => {
+                const qr2 = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', document.getElementById('formContainer2'));
+                let answer = qr2.item[0].answer[0].valueAttachment;
+                expect(answer.title).to.equal('upload-file.json');
+                expect(typeof answer.data).to.equal('string');
+                expect(typeof answer.creation).to.equal('string')
+                expect(answer.contentType).to.equal('application/json');
+              });
+          });
+        });
+      });
+    });
+
+    it('should allow extraction of the attachment item into an Observation', function () {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('attachmentQ.json', null, {});
+      // Use the current page to get a QR
+      cy.get('#file-upload\\/1').attachFile('upload-file.json');
+      cy.get('#file-upload\\/1').should('not.exist');
+      cy.get('a').should('have.text', 'upload-file.json');
+      cy.window().then((win) => {
+        let fhirData = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, {extract: true});
+        expect(Array.isArray(fhirData)).to.equal(true);
+        expect(fhirData.length).to.equal(2);
+        let answer = fhirData[0].item[0].answer[0].valueAttachment;
+        expect(answer.title).to.equal('upload-file.json');
+        expect(typeof answer.data).to.equal('string');
+        expect(typeof answer.creation).to.equal('string')
+        expect(answer.contentType).to.equal('application/json');
+        answer = fhirData[1].valueAttachment; // answer in the extracted Observation
+        expect(answer.title).to.equal('upload-file.json');
+        expect(typeof answer.data).to.equal('string');
+        expect(typeof answer.creation).to.equal('string')
         expect(answer.contentType).to.equal('application/json');
       });
     });
