@@ -36,7 +36,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   private changeSize = new Subject();
   private observer: any;
-  
+
   constructor(private winService: WindowService,
     public lhcDataService: LhcDataService,
     private host: ElementRef,
@@ -58,15 +58,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  /**
-   * get CSS class of view mode for an item
-   * @param item an item in a form
-   * @returns
-   */
-  getItemViewModeClass(item) {
-    return this.lhcDataService.getItemViewModeClass(item, this.viewMode)
-  }
-  
 
   /**
    * Set up the observer on window size

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.1.0] 2022-03-25
+### Added
+- Added options to hide tree line styles, indentation or repetition numbers.
+
 ## [30.0.1] 2020-03-22
 ### Fixed
 - Fixed answerExpression and calculatedExpression processing so that for list
