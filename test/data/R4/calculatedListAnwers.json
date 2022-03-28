@@ -1,0 +1,97 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "New Form",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "inputList",
+      "text": "Input",
+      "type": "choice",
+      "repeats": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "b",
+            "display": "blue"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "g",
+            "system": "colors",
+            "display": "green"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "singleSelectOutput",
+      "text": "Single-select output",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "calculatedAnswer",
+          "text": "Calculated answer",
+          "type": "open-choice",
+          "extension": [{
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+            "valueExpression": {
+              "description": "initial integer value",
+              "language" : "text/fhirpath",
+              "expression": "%resource.item.where(linkId='inputList').answer.value[0]"
+            }
+          }]
+        },
+        {
+          "linkId": "calculatedListOption",
+          "text": "Calculated list options",
+          "type": "open-choice",
+          "extension": [{
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+            "valueExpression": {
+              "description": "initial integer value",
+              "language" : "text/fhirpath",
+              "expression": "%resource.repeat(item).where(linkId='calculatedAnswer').answer.value"
+            }
+          }]
+        }
+      ]
+    },
+    {
+      "linkId": "multiSelectOutput",
+      "text": "Multi-select output",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "calculatedAnswers",
+          "text": "Calculated answers",
+          "type": "open-choice",
+          "repeats": true,
+          "extension": [{
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+            "valueExpression": {
+              "description": "initial integer value",
+              "language" : "text/fhirpath",
+              "expression": "%resource.item.where(linkId='inputList').answer.value"
+            }
+          }]
+        },
+        {
+          "linkId": "calculatedListOptions",
+          "text": "Calculated list options",
+          "type": "open-choice",
+          "repeats": true,
+          "extension": [{
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+            "valueExpression": {
+              "description": "initial integer value",
+              "language" : "text/fhirpath",
+              "expression": "%resource.repeat(item).where(linkId='calculatedAnswers').answer.value"
+            }
+          }]
+        }
+      ]
+    }
+
+  ]
+}

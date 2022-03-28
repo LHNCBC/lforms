@@ -1,7 +1,7 @@
 <ng-container *ngIf="item">
   <div class="lhc-item-group-title lhc-de-label-button">
     <div class="lhc-de-label">
-      <lhc-item-question-text [item]="item"></lhc-item-question-text>  
+      <lhc-item-question-text [item]="item"></lhc-item-question-text>
     </div>
     <div class="lhc-de-button">
       <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" class="lhc-float-button lhc-button" type="button"
@@ -9,21 +9,20 @@
                 title='Remove this "{{ item._text }}"'>-</button>
     </div>
   </div>
-  
+
   <!-- sub items -->
   <div *ngIf="item.items" class="lhc-item-group-body">
     <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">
-      <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView" 
-        [item]="item" 
-        class="lhc-item {{getItemViewModeClass(item)}} {{lhcDataService.getSiblingStatus(item)}} {{lhcDataService.getRowClass(item)}} {{lhcDataService.getActiveRowClass(item)}}">
+      <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView"
+        [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}">
       </lhc-item>
     </ng-container>
   </div>
 
   <!-- a button at the end of each repeating section -->
-  <div *ngIf="item._lastRepeatingItem" class="{{lhcDataService.getSkipLogicClass(item)}}">
+  <div *ngIf="item._lastRepeatingItem" class="lhc-button-padding {{lhcDataService.getSkipLogicClass(item)}}">
     <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ Add another "{{item._text}}"'></lhc-button-popover>
   </div>
-  
+
 </ng-container>
 

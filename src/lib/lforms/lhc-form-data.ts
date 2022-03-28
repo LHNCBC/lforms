@@ -91,16 +91,19 @@ export default class LhcFormData {
                           // "1", "2", "3", "4", "5", "6" -- listed in columns
       }
     },
-    // controls whether to use tree lines for indentations
-    useTreeLineStyle: true, // true -- use tree lines
-                            // false -- use bars
     // form's table column headers' display names for question text, values and units
     // for now they should not be accessible to users
     columnHeaders: [
       {"name" : "Name"},
       {"name" : "Value"},
       {"name" : "Units"}
-    ]
+    ],
+    // whether to hide tree line styles
+    hideTreeLine: false,
+    // whether to hide indentation before each item
+    hideIndentation: false,
+    // whether to hide repetition numbers next to the item's text
+    hideRepetitionNumber: false
   };
 
   // other instance level variables that were not previously listed
@@ -2226,7 +2229,7 @@ export default class LhcFormData {
       let newValue = this.getFormulaResult(item);
       if (!equal(newValue, item.value)) {
         item.value = newValue;
-      }      
+      }
     }
   }
 
@@ -2655,7 +2658,7 @@ export default class LhcFormData {
         let newValue = item._multipleAnswers ? listVals : listVals[0];
         if (!equal(item.value, newValue)) {
           item.value = newValue;
-        }        
+        }
       }
     }
   }
@@ -2853,8 +2856,19 @@ export default class LhcFormData {
         // If this is not a saved form with user data, and
         // there isn't already a default value set (handled elsewhere), and
         // there is just one item in the list, use that as the default value.
-        if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
+        // This was not working correctly (no answer stored in the data model)
+        // for multi-select lists, and since FHIR does not have this idea, I am
+        // disabling it for that case.
+        if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1
+            && maxSelect !== '*') {
           options.defaultValue = options.listItems[0];
+        }
+        else if (maxSelect == '*') {
+          // Disable autoFill in this case.  (TBD: we will disable it in all
+          // cases, but autoFill for multi-select lists was not working for
+          // LForms already, so this much is not a breaking change.)
+          options.autoFill = false;
+        }
       }
       // check if the new option has changed
       if (!equal(options, item._autocompOptions)) {
@@ -3265,7 +3279,6 @@ export default class LhcFormData {
     }
     return ret;
   }
-
 
 
 };

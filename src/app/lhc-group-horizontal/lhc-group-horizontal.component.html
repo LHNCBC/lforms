@@ -1,5 +1,5 @@
 <ng-container *ngIf="item">
-  <div class="lhc-layout-horizontal lf-table-item {{lhcDataService.getSiblingStatus(item)}} " 
+  <div class="lhc-layout-horizontal lf-table-item {{lhcDataService.getSiblingStatus(item)}} "
     *ngIf="item._horizontalTableHeader && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId]">
     <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
         ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
@@ -35,19 +35,19 @@
         </td>
 
         <ng-container *ngFor="let cell of row.cells; trackBy: lhcDataService.trackByElementId">
-          <td *ngIf="!cell._isHiddenFromView" 
+          <td *ngIf="!cell._isHiddenFromView"
               class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
             <div class="lf-form-item-data tooltipContainer">
               <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
-            </div>  
+            </div>
           </td>
-        </ng-container> 
+        </ng-container>
       </tr>
       </tbody>
     </table>
 
     <!-- a button at the end of each repeating section -->
-    <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item) && !item._isHiddenFromView" class="{{lhcDataService.getSkipLogicClass(item)}}">
+    <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item) && !item._isHiddenFromView" class="lhc-button-padding {{lhcDataService.getSkipLogicClass(item)}}">
       <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ Add another row of "{{item._text}}"' [append]="true"></lhc-button-popover>
     </div>
   </div>
