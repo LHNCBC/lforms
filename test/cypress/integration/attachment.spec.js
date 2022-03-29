@@ -7,10 +7,6 @@ describe('Attachment support', () => {
       util.addFormToPage('attachmentQ.json', null, {});
     });
 
-    after(() => {
-      cy.task('removeTempFixtures');
-    })
-
     /**
      *  Removes the first attachment.
      */
@@ -27,6 +23,9 @@ describe('Attachment support', () => {
     });
 
     it('should allow attachment of file data without a URL', () => {
+      // Note that the test file we are attaching below is the same the file
+      // containing the Questionnaire definition for the form (just for
+      // convenience).
       cy.get('#file-upload\\/1').uploadFile('test/data/lforms/attachmentQ.json');
       // Confirm the file is replaced by a link
       cy.get('#file-upload\\/1').should('not.exist');
@@ -37,7 +36,7 @@ describe('Attachment support', () => {
         let answer = qr.item[0].answer[0].valueAttachment;
         expect(answer.title).to.equal('attachmentQ.json');
         expect(typeof answer.data).to.equal('string');
-        expect(typeof answer.creation).to.equal('string')
+        expect(typeof answer.creation).to.equal('string');
         expect(answer.contentType).to.equal('application/json');
       });
     });
@@ -60,13 +59,14 @@ describe('Attachment support', () => {
       for (var i = 0; i < 5002; ++i) {
         testData += 'z';
       }
-      cy.task('createTempFile', {fileName: 'test.txt', content: testData});
-      cy.on('window:alert', (str) => {
-        expect(str).to.contains('size');
-        // The file input should still be there and be blank.
-        cy.get('#file-upload\\/1').should('have.value', '');
+      cy.task('createTempFile', {fileName: 'test.txt', content: testData}).then((tempFilePath) => {
+        cy.on('window:alert', (str) => {
+          expect(str).to.contains('size');
+          // The file input should still be there and be blank.
+          cy.get('#file-upload\\/1').should('have.value', '');
+        });
+        cy.get('#file-upload\\/1').uploadFile(tempFilePath);
       });
-      cy.get('#file-upload\\/1').uploadFile('test/cypress/fixtures/test.txt');
     });
 
     it('should only allow permitted mime types', () => {
@@ -74,22 +74,24 @@ describe('Attachment support', () => {
       var testData = '';
       for (var i = 0; i < 2; ++i)
         testData += 'z';
-      cy.task('createTempFile', {fileName: 'test.zip', content: testData});
-      cy.on('window:alert', (str) => {
-        expect(str).to.contains('type');
-        // The file input should still be there and be blank.
-        cy.get('#file-upload\\/1').should('have.value', '');
+      cy.task('createTempFile', {fileName: 'test.zip', content: testData}).then((tempFilePath) => {
+        cy.on('window:alert', (str) => {
+          expect(str).to.contains('type');
+          // The file input should still be there and be blank.
+          cy.get('#file-upload\\/1').should('have.value', '');
+        });
+        cy.get('#file-upload\\/1').uploadFile(tempFilePath);
       });
-      cy.get('#file-upload\\/1').uploadFile('test/cypress/fixtures/test.zip');
 
       // Also try a blank mime type
-      cy.task('createTempFile', {fileName: 'test', content: testData});
-      cy.on('window:alert', (str) => {
-        expect(str).to.contains('type');
-        // The file input should still be there and be blank.
-        cy.get('#file-upload\\/1').should('have.value', '');
+      cy.task('createTempFile', {fileName: 'test', content: testData}).then((tempFilePath) => {
+        cy.on('window:alert', (str) => {
+          expect(str).to.contains('type');
+          // The file input should still be there and be blank.
+          cy.get('#file-upload\\/1').should('have.value', '');
+        });
+        cy.get('#file-upload\\/1').uploadFile(tempFilePath);
       });
-      cy.get('#file-upload\\/1').uploadFile('test/cypress/fixtures/test');
     });
 
     it('should allow attachment of a URL without file data and without name', () => {
