@@ -1340,7 +1340,7 @@ export default class LhcFormData {
     var hasSavedData = false;
     for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
-      if (!LhcFormUtils.isItemValueEmpty(item)) {
+      if (!LhcFormUtils.isItemValueEmpty(item.value)) {
         hasSavedData = true;
         break;
       }

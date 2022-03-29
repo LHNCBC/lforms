@@ -316,52 +316,8 @@ const CommonUtils = {
       msg = 'The question "'+item.text+'" produced the following warning:  '+msg;
     console.log(msg);
     // TBD: add a warning visible on the page.
-  },
+  }
   
-
-  // TODO: move to lhc-form-utils.js
-  /**
-   * Check if an item's value is empty, where the data has no meaningful use.
-   * @param value the value to be tested
-   * @returns {boolean}
-   * @private
-   */
-   isItemValueEmpty: function(value) {
-    var empty = true;
-    if(value !== null && value !== undefined && value !== '' && typeof value !== 'function') {
-      if(typeof value === 'string' || value instanceof String) {
-        empty = value.trim() === '';
-      }
-      else if(Array.isArray(value)) {
-        for(var i=0; i < value.length; ++i) {
-          if(! this.isItemValueEmpty(value[i])) {
-            empty = false;
-            break;
-          }
-        }
-      }
-      else if(typeof value === 'object') {
-        var keys = Object.keys(value);
-        if(keys.length > 0) {
-          for(var i=0, iLen=keys.length; i<iLen; i++) {
-            if(! this.isItemValueEmpty(value[keys[i]])) {
-              empty = false;
-              break;
-            }
-          }
-        }
-        else if(value.constructor !== Object) { // e.g., a Date object has zero length keys
-          empty = false;
-        }
-      }
-      else {
-        empty = false;
-      }
-    }
-
-    return empty;
-  },
-
 };
 
 export default CommonUtils;
