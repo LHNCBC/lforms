@@ -16,8 +16,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       it('non-hidden field G1/G1.4 should be displayed', function() {
         cy.visit('test/pages/addFormToPageTest.html');
         util.addFormToPage('Argonaut-questionnaire-questionnaire-example-asq3.json', null, {fhirVersion});
-        cy.get('.lhc-form-title').should('exist');
-        cy.get('#label-G1\\.4\\/1\\/1').should('exist');
+        cy.get('.lhc-form-title').should('be.visible');
+        cy.get('#label-G1\\.4\\/1\\/1').should('be.visible');
       });
     });
   })(fhirVersions[i]);
