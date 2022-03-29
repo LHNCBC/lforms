@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.1.1] 2022-3-29
+### Fixed
+- Fixed a bug that observations were extracted from items that were either hidden or
+  had no values.
+  
 ## [30.1.0] 2022-03-25
 ### Added
 - Added options to hide tree line styles, indentation or repetition numbers.
