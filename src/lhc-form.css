@@ -90,7 +90,7 @@
   background-color: #FFF8C6;
 }
 
-.lhc-form input[readonly], 
+.lhc-form input[readonly],
 .lhc-form textarea[readonly],
 .lhc-form .ant-picker-input>input[readonly] {
   background-color: #E8E8E8;
@@ -207,7 +207,7 @@
 /* restore autocomplete default styles */
 /* Also, unit fields sometimes have answer lists and sometimes not, so set the
  * padding there two for consistent field widths. */
- .lhc-form input.ansList,  
+ .lhc-form input.ansList,
  .lhc-form input.search_field {
   padding-right: 14px;
 }
@@ -380,4 +380,9 @@ screen_reader_only {
   position: fixed;
   left: -1000px;
   top: -1000px;
+}
+
+
+.lhc-button-padding {
+  padding-left: 4px;
 }

@@ -17,11 +17,11 @@ export class LhcDataService {
     this.srLog = new ScreenReaderLog();
    }
 
-  
+
   /**
    * Get the lhcFormData object
    * @returns the lhcFormData object
-   */ 
+   */
   getLhcFormData(): any {
     return this.lhcFormData;
   }
@@ -145,15 +145,6 @@ export class LhcDataService {
 
 
   /**
-   * Get the indentation style of the form
-   * @returns {string}
-   */
-  getIndentationStyle() {
-    return this.lhcFormData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
-  }
-
-
-  /**
    * Check if there's only one repeating item in a group
    * (so that the 'remove' button won't show on this item)
    * @param item an item in the lforms form items array
@@ -259,6 +250,50 @@ export class LhcDataService {
     if (item._firstSibling)
       status += ' lhc-first-item'
     return status;
+  }
+
+  /**
+   * Get CSS classes for the tree line
+   * @returns {string}
+   */
+  getTreeLineClass() {
+    const templateOptions = this.getLhcFormData().templateOptions;
+    return templateOptions.hideTreeLine || templateOptions.hideIndentation ? '' : 'lhc-tree-line';
+  }
+
+  /**
+   * Get CSS classes for the indentation
+   * @returns {string}
+   */
+  getIndentationClass() {
+    return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
+  }
+
+  /**
+   * get CSS class list for an item
+   * @param item an item in a form
+   * @param viewMode view mode of the item
+   */
+  getItemClassList(item, viewMode) {
+    const classList = [
+      'lhc-item',
+      this.getItemViewModeClass(item, viewMode),
+      this.getTreeLineClass(),
+      this.getIndentationClass(),
+      this.getSiblingStatus(item),
+      this.getRowClass(item),
+      this.getActiveRowClass(item)
+    ];
+    return classList.join(' ');
+  }
+
+
+  /**
+   * Whether to hide repetition number before question text
+   * @returns {boolean}
+   */
+  isHideRepetitionNumber() {
+    return this.getLhcFormData().templateOptions.hideRepetitionNumber;
   }
 
 
@@ -479,7 +514,7 @@ export class LhcDataService {
     return row.header._elementId;
   }
 
-  
+
   /**
    * Track by column's id, which is "col" + the item's element id in the first row
    * @param index *ngFor index, not used
