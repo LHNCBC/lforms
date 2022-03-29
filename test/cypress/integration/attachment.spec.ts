@@ -1,5 +1,4 @@
 import * as util from "../support/util.js";
-import 'cypress-file-upload';
 
 describe('Attachment support', () => {
   describe('', () => {
@@ -24,15 +23,15 @@ describe('Attachment support', () => {
     });
 
     it('should allow attachment of file data without a URL', () => {
-      cy.get('#file-upload\\/1').attachFile('upload-file.json');
+      cy.get('#file-upload\\/1').uploadFile('test/data/lforms/attachmentQ.json');
       // Confirm the file is replaced by a link
       cy.get('#file-upload\\/1').should('not.exist');
-      cy.get('a').should('have.text', 'upload-file.json');
+      cy.get('a').should('have.text', 'attachmentQ.json');
       // Check the export into FHIR for the value
       cy.window().then((win) => {
         let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, null);
         let answer = qr.item[0].answer[0].valueAttachment;
-        expect(answer.title).to.equal('upload-file.json');
+        expect(answer.title).to.equal('attachmentQ.json');
         expect(typeof answer.data).to.equal('string');
         expect(typeof answer.creation).to.equal('string')
         expect(answer.contentType).to.equal('application/json');
@@ -63,7 +62,7 @@ describe('Attachment support', () => {
         // The file input should still be there and be blank.
         cy.get('#file-upload\\/1').should('have.value', '');
       });
-      cy.get('#file-upload\\/1').attachFile('test.txt');
+      cy.get('#file-upload\\/1').uploadFile('test/cypress/fixtures/test.txt');
     });
 
     it('should only allow permitted mime types', () => {
@@ -77,7 +76,7 @@ describe('Attachment support', () => {
         // The file input should still be there and be blank.
         cy.get('#file-upload\\/1').should('have.value', '');
       });
-      cy.get('#file-upload\\/1').attachFile('test.zip');
+      cy.get('#file-upload\\/1').uploadFile('test/cypress/fixtures/test.zip');
 
       // Also try a blank mime type
       cy.task('createTempFile', {fileName: 'test', content: testData});
@@ -86,7 +85,7 @@ describe('Attachment support', () => {
         // The file input should still be there and be blank.
         cy.get('#file-upload\\/1').should('have.value', '');
       });
-      cy.get('#file-upload\\/1').attachFile('test');
+      cy.get('#file-upload\\/1').uploadFile('test/cypress/fixtures/test');
     });
 
     it('should allow attachment of a URL without file data and without name', () => {
@@ -138,7 +137,7 @@ describe('Attachment support', () => {
       cy.get('input[type=text]').as('inputs').should('have.length', 3);
       cy.get('@inputs').eq(0).type('http://three');
       cy.get('@inputs').eq(1).type('four');
-      cy.get('#file-upload\\/2').attachFile('upload-file.json');
+      cy.get('#file-upload\\/2').uploadFile('test/data/lforms/attachmentQ.json');
       cy.get('.attach-button').click();
       // Confirm the fields are replaced by a link
       cy.get('#file-upload\\/1').should('not.exist');
@@ -159,10 +158,10 @@ describe('Attachment support', () => {
       cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('attachmentQ.json', null, {});
       // Use the current page to get a QR
-      cy.get('#file-upload\\/1').attachFile('upload-file.json');
+      cy.get('#file-upload\\/1').uploadFile('test/data/lforms/attachmentQ.json');
       cy.get('#file-upload\\/1').should('not.exist');
-      cy.get('a').should('have.text', 'upload-file.json');
-      cy.readFile(`${Cypress.config('fixturesFolder')}/upload-file.json`).then((q) => {
+      cy.get('a').should('have.text', 'attachmentQ.json');
+      cy.readFile(`test/data/lforms/attachmentQ.json`).then((q) => {
         cy.window().then((win) => {
           var lfData_temp = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
           let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, null);
@@ -172,11 +171,11 @@ describe('Attachment support', () => {
           // Add the form as the first on the page
           cy.get('#formContainer2').then(() => {
             win.LForms.Util.addFormToPage(lfData, 'formContainer2');
-            cy.get('a').should('have.text', 'upload-file.json')
+            cy.get('a').should('have.text', 'attachmentQ.json')
               .then(() => {
                 const qr2 = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', document.getElementById('formContainer2'));
                 let answer = qr2.item[0].answer[0].valueAttachment;
-                expect(answer.title).to.equal('upload-file.json');
+                expect(answer.title).to.equal('attachmentQ.json');
                 expect(typeof answer.data).to.equal('string');
                 expect(typeof answer.creation).to.equal('string')
                 expect(answer.contentType).to.equal('application/json');
@@ -190,20 +189,20 @@ describe('Attachment support', () => {
       cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('attachmentQ.json', null, {});
       // Use the current page to get a QR
-      cy.get('#file-upload\\/1').attachFile('upload-file.json');
+      cy.get('#file-upload\\/1').uploadFile('test/data/lforms/attachmentQ.json');
       cy.get('#file-upload\\/1').should('not.exist');
-      cy.get('a').should('have.text', 'upload-file.json');
+      cy.get('a').should('have.text', 'attachmentQ.json');
       cy.window().then((win) => {
         let fhirData = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, {extract: true});
         expect(Array.isArray(fhirData)).to.equal(true);
         expect(fhirData.length).to.equal(2);
         let answer = fhirData[0].item[0].answer[0].valueAttachment;
-        expect(answer.title).to.equal('upload-file.json');
+        expect(answer.title).to.equal('attachmentQ.json');
         expect(typeof answer.data).to.equal('string');
         expect(typeof answer.creation).to.equal('string')
         expect(answer.contentType).to.equal('application/json');
         answer = fhirData[1].valueAttachment; // answer in the extracted Observation
-        expect(answer.title).to.equal('upload-file.json');
+        expect(answer.title).to.equal('attachmentQ.json');
         expect(typeof answer.data).to.equal('string');
         expect(typeof answer.creation).to.equal('string')
         expect(answer.contentType).to.equal('application/json');

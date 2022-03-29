@@ -25,6 +25,7 @@ export class LhcItemAttachmentComponent {
     if (files) {
       let newFile = files[0];
       const item = this.item;
+      console.log(newFile);
       if (!newFile.type) {
         // Per the FHIR specification, we can't proceed without a mime
         // type.
@@ -69,7 +70,7 @@ export class LhcItemAttachmentComponent {
     }
   }
 
-  
+
   /**
    * Creates an attachment for an item based on the data entered by the
    * user.
