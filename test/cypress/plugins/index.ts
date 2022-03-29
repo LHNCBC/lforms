@@ -13,6 +13,15 @@ module.exports = (on, config) => {
     createTempFile({fileName, content}) {
       fs.writeFileSync(`${config.fixturesFolder}/${fileName}`, content);
       return null;
+    },
+    removeTempFixtures() {
+      ['test', 'test.txt', 'test.zip'].forEach((fileName) => {
+          const filePath = `${config.fixturesFolder}/${fileName}`;
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+      });
+      return null;
     }
   })
 }

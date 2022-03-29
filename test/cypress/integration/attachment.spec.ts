@@ -7,6 +7,10 @@ describe('Attachment support', () => {
       util.addFormToPage('attachmentQ.json', null, {});
     });
 
+    after(() => {
+      cy.task('removeTempFixtures');
+    })
+
     /**
      *  Removes the first attachment.
      */
