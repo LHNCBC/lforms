@@ -221,11 +221,15 @@ export class LhcAutocompleteComponent implements OnChanges {
       // add event handler
       Def.Autocompleter.Event.observeListSelections(this.options.elementId, this.onSelectionHandler.bind(this));
 
-      // to avoid the error of ExpressionChangedAfterItHasBeenCheckedError ??
-      let that = this;
-      // setInterval(function(){ that.dataModelChange.emit(that.dataModel); }, 5);
-      setTimeout(function(){ that.dataModelChange.emit(that.dataModel); }, 1);
-
+      // emit an change event when there is a value on the item
+      if (this.dataModel !== undefined) {
+        let that = this;
+        // Use setTimeout to avoid the error of ExpressionChangedAfterItHasBeenCheckedError?
+        setTimeout(function(){ 
+          // note: this will cause angular to refresh the views.
+          that.dataModelChange.emit(that.dataModel); 
+        }, 1);
+      }
     }
   }
 

@@ -2,11 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.1.1] 2022-3-29
+## [30.1.2] 2022-3-30
 ### Fixed
 - Fixed a bug that observations were extracted from items that were either hidden or
   had no values.
   
+## [30.1.1] 2020-03-30
+### Fixed
+- Fixed a performance issue in the initial loading of a Questionnaire when it
+  contains a lot of choice and/or open-choice items.
+- Fixed a bug that the values of date or dateTime items in a repeating group
+  are not checked when adding a new repeating group.
+- Fixed a style issue for the first item in a group.
+
 ## [30.1.0] 2022-03-25
 ### Added
 - Added options to hide tree line styles, indentation or repetition numbers.

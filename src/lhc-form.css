@@ -222,31 +222,6 @@
   color: #015DAD;
 }
 
-
-
-
-/* popover dialog
-.lhc-form .lhc-de-label.has-popover-warning .popover {
-  border-color: #eea236;
-  border-width: 1px;
-  padding: 0;
-  background-color: #fcf8e3;
-}
-.lhc-form .lhc-de-label.has-popover-warning .popover .arrow:after {
-  border-top-color: #fcf8e3;
-}
-.lhc-form .popover {
-  max-width: 600px;
-  width: auto;
-}
-.lhc-form .popover-content {
-  max-height: 600px;
-  height: auto;
-  overflow-y: auto;
-} */
-
-
-
 /*** button row ***/
 .lhc-form .lhc-form-table-row.button-row {
   background: none;
@@ -263,8 +238,6 @@
 .lf-top-section .lhc-layout-matrix .lhc-form-matrix-table-title {
   display: none;
 }
-
-
 
 .lhc-form-view {
   margin: 15px;
@@ -338,18 +311,15 @@
   padding: 4px 2px 4px 2px;
 }
 
-
-/* first row in the form */
-.lhc-form-body > .lhc-item.lhc-first-item lhc-item-question{
+/* first row in a group or in the form */
+.lhc-form lhc-item.lhc-first-item > lhc-item-question{
   border-top: none;
-
 }
+
 /* prefix */
 .lhc-form .prefix {
   padding-right: 0.25em; /* space between the prefix and the question */
 }
-
-
 
 /* popover is attached to page under <body> */
 div.ant-popover-title {
