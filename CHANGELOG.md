@@ -9,6 +9,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug that the values of date or dateTime items in a repeating group
   are not checked when adding a new repeating group.
 - Fixed a style issue for the first item in a group.
+
 ## [30.1.0] 2022-03-25
 ### Added
 - Added options to hide tree line styles, indentation or repetition numbers.
