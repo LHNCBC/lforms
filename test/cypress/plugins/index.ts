@@ -17,7 +17,11 @@ module.exports = (on, config) => {
      */
     createTempFile({fileName, content}) {
       tmp.setGracefulCleanup();
-      const dirOptions = {prefix: 'lformsTest2', unsafeCleanup: true, tmpdir: `${config.fileServerFolder}/tmp`};
+      const tmpFolder = `${config.fileServerFolder}/tmp`;
+      if (!fs.existsSync(tmpFolder)){
+        fs.mkdirSync(tmpFolder);
+      }
+      const dirOptions = {prefix: 'lformsTest2', unsafeCleanup: true, tmpdir: tmpFolder};
       const dirPath = tmp.dirSync(dirOptions).name;
       const pathName = path.join(dirPath, fileName);
       fs.writeFileSync(pathName, content);
