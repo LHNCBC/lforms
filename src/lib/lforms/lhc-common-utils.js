@@ -326,7 +326,7 @@ const CommonUtils = {
    * @returns {boolean}
    * @private
    */
-   isItemValueEmpty: function(value) {
+  isItemValueEmpty: function(value) {
     var empty = true;
     if(value !== null && value !== undefined && value !== '' && typeof value !== 'function') {
       if(typeof value === 'string' || value instanceof String) {

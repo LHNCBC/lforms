@@ -1994,12 +1994,13 @@ export default class LhcFormData {
           }
           isEmpty = !notEmpty;
         }
-        // single selection answer list or attachment
+        // single selection answer, Date object or attachment
         else if (typeof item.value === 'object') {
           // An attachment should have either either value.data or value.url,
           const v = item.value;
-          isEmpty = (v.data === undefined || v.data === null) && !v.url && // attachment
-            !v.text; // !v.text means !(undefined or null or "")
+          isEmpty = (v.data === undefined || v.data === null) && !v.url && // not an attachment
+            !v.text && // !v.text means !(undefined or null or "")  // not an answer object
+            !(v instanceof Date); // not a Date object (for DT and DTM. TM is a string in item.value)
         }
         // simple type
         else if (item.value !== undefined && item.value !== null && item.value !=="") {

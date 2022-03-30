@@ -1,0 +1,31 @@
+{
+  "status": "draft",
+  "title": "Demo form with DT, DTM in repeating group",
+  "resourceType": "Questionnaire",
+  "item": [
+    {
+      "type": "group",
+      "repeats": true,
+      "linkId": "X1",
+      "text": "A Repeating Group",
+      "item": [
+        {
+          "type": "date",
+          "linkId": "X11",
+          "text": "Date"
+        },
+        {
+          "type": "dateTime",
+          "linkId": "X12",
+          "text": "Date and Time"
+        },
+        {
+          "type": "string",
+          "linkId": "X13",
+          "text": "String"
+        }
+      ]
+    }
+  ]
+}
+
