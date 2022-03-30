@@ -121,5 +121,36 @@ describe('Tests of addFormToPage test page', function() {
       cy.get('#formContainer').should('contain', "USSG-FHT");
     });
 
+    it('should be able to hide tree line', function () {
+      const fhirFHTFile = 'test/data/lforms/fht-hide-tree-line.json';
+      cy.readFile(fhirFHTFile).then((fhirData) => {
+        cy.window().then(win=>{
+          win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
+        });
+      });
+      cy.get('lhc-item.lhc-tree-line').should('not.exist');
+    });
+
+    it('should be able to hide indentation', function () {
+      const fhirFHTFile = 'test/data/lforms/fht-hide-indentation.json';
+      cy.readFile(fhirFHTFile).then((fhirData) => {
+        cy.window().then(win=>{
+          win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
+        });
+      });
+      cy.get('lhc-item.lhc-tree-line').should('not.exist');
+      cy.get('lhc-item.lhc-indentation').should('not.exist');
+    });
+
+    it('should be able to hide repetition number', function () {
+      const fhirFHTFile = 'test/data/lforms/fht-hide-repetition-number.json';
+      cy.readFile(fhirFHTFile).then((fhirData) => {
+        cy.window().then(win=>{
+          win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
+        });
+      });
+      cy.get('.lf-sn').should('not.exist');
+    });
+
   });
 });

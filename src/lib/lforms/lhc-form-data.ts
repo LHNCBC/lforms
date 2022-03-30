@@ -91,16 +91,19 @@ export default class LhcFormData {
                           // "1", "2", "3", "4", "5", "6" -- listed in columns
       }
     },
-    // controls whether to use tree lines for indentations
-    useTreeLineStyle: true, // true -- use tree lines
-                            // false -- use bars
     // form's table column headers' display names for question text, values and units
     // for now they should not be accessible to users
     columnHeaders: [
       {"name" : "Name"},
       {"name" : "Value"},
       {"name" : "Units"}
-    ]
+    ],
+    // whether to hide tree line styles
+    hideTreeLine: false,
+    // whether to hide indentation before each item
+    hideIndentation: false,
+    // whether to hide repetition numbers next to the item's text
+    hideRepetitionNumber: false
   };
 
   // other instance level variables that were not previously listed
@@ -3277,7 +3280,6 @@ export default class LhcFormData {
     }
     return ret;
   }
-
 
 
 };
