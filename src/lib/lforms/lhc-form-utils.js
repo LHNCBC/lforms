@@ -226,7 +226,7 @@ const FormUtils = {
           break;
         case "QuestionnaireResponse":
           if (options.extract)
-            fhirData = fhir.SDC.convertLFormsToQRAndObs(formData,
+            fhirData = fhir.SDC.convertLFormsToQRAndExtracFHIRData(formData,
               options.noExtensions, options.subject);
           else
             fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,

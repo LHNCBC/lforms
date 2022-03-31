@@ -1,7 +1,7 @@
 import * as util from "../support/util";
 
-describe('Form with extrac observation extension', ()=>{
-  it('should be able to extrac observations', ()=> {
+describe('Form with extract observation extension', ()=>{
+  it('should be able to extract observations', ()=> {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
     cy.window().then((win)=> {

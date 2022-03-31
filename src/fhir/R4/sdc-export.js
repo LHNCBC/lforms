@@ -43,7 +43,7 @@ var self = {
    *  wish to put all of the returned resources into a transaction Bundle for
    *  creating them on a FHIR server.
    */
-   convertLFormsToQRAndObs: function(lfData, noExtensions, subject) {
+  convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {
     var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
     if (!qr.id) {
       qr.id = this._commonExport._getUniqueId(
