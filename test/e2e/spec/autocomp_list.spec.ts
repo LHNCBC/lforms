@@ -110,11 +110,11 @@ describe('autocomp list', function() {
   });
 
 
-  it('should autofill lists when there is just one item', function() {
+  it('should not autofill lists when there is just one item', function() {
     tp.LoadForm.openRxTerms();
     var rxterms = new RxTerms();
     tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'AZELEX');
-    expect(TestUtil.getAttribute(rxterms.strengthAndForm,'value')).toEqual('20% Cream');
+    expect(TestUtil.getAttribute(rxterms.strengthAndForm,'value')).toEqual('');
   });
 
   it('should not display SeqNum on answers that one of them has a numeric value', function() {
