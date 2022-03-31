@@ -11,7 +11,7 @@
       <label *ngIf="item.dataType=== 'CWE'" nz-radio [nzValue]="{'text': otherValue, '_notOnList': true}"
       [(ngModel)]="otherRadioModel" [id]="item._elementId + '_other'" class="lhc-answer">Other
         <input type="text" [(ngModel)]="otherValue" class="lhc-answer-other-input"
-        [id]="item._elementId + '_otherValue'" nz-input
+        [id]="item._elementId + '_otherValue'" nz-input [disabled]="item._readOnly"
         *ngIf="radioValue && radioValue._notOnList" (keyup)="onOtherValueChange($event)"
         (focus)="lhcDataService.setActiveRow(item)"/>
       </label>
