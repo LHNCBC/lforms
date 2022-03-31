@@ -10,10 +10,10 @@ module.exports = (on, config) => {
       return null;
     },
     /**
-     * Creates a temporary file under [project root]/tmp/test.
+     * Creates a temporary file under [project root]/tmp/test, after cleaning up the test folder.
      * Returns path relative to project root.
      */
-    createTempFile({fileName, content}) {
+    createTempFileAndCleanup({fileName, content}) {
       const tmpFolder = `${config.fileServerFolder}/tmp/test`;
       fs.rmdirSync(tmpFolder, { recursive: true });
       fs.mkdirSync(tmpFolder, { recursive: true });

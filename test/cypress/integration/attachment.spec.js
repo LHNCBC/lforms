@@ -59,7 +59,7 @@ describe('Attachment support', () => {
       for (var i = 0; i < 5002; ++i) {
         testData += 'z';
       }
-      cy.task('createTempFile', {fileName: 'test.txt', content: testData}).then((tempFilePath) => {
+      cy.task('createTempFileAndCleanup', {fileName: 'test.txt', content: testData}).then((tempFilePath) => {
         cy.on('window:alert', (str) => {
           expect(str).to.contains('size');
           // The file input should still be there and be blank.
@@ -74,7 +74,7 @@ describe('Attachment support', () => {
       var testData = '';
       for (var i = 0; i < 2; ++i)
         testData += 'z';
-      cy.task('createTempFile', {fileName: 'test.zip', content: testData}).then((tempFilePath) => {
+      cy.task('createTempFileAndCleanup', {fileName: 'test.zip', content: testData}).then((tempFilePath) => {
         cy.on('window:alert', (str) => {
           expect(str).to.contains('type');
           // The file input should still be there and be blank.
@@ -84,7 +84,7 @@ describe('Attachment support', () => {
       });
 
       // Also try a blank mime type
-      cy.task('createTempFile', {fileName: 'test', content: testData}).then((tempFilePath) => {
+      cy.task('createTempFileAndCleanup', {fileName: 'test', content: testData}).then((tempFilePath) => {
         cy.on('window:alert', (str) => {
           expect(str).to.contains('type');
           // The file input should still be there and be blank.
