@@ -6,6 +6,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed a bug that observations were extracted from items that were either hidden or
   had no values.
+- Fixed a bug that boolean value false was not extracted correctly.
   
 ## [30.1.1] 2022-03-30
 ### Fixed

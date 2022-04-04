@@ -1,7 +1,7 @@
 import * as util from "../support/util";
 
 describe('Form with extract observation extension', ()=>{
-  it('should be able to extract observations', ()=> {
+  it('should be able to extract observations and should get boolean value (true) correctly', ()=> {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
     cy.window().then((win)=> {
@@ -55,7 +55,7 @@ describe('Form with extract observation extension', ()=>{
     })
   });
 
-  it('should not extract observations from hidden items', ()=> {
+  it('should not extract observations from hidden items and should get boolean value (false) correctly', ()=> {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
     
