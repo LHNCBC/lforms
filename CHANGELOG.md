@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [31.0.0] 2020-04-04
+### Changed
+- Removed a feature that when autocomplete would automatically selects the answer
+  if there is only one answer in the answer list.
+  
 ## [30.1.1] 2020-03-30
 ### Fixed
 - Fixed a performance issue in the initial loading of a Questionnaire when it
