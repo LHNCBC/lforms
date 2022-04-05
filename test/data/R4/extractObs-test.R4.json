@@ -1,0 +1,117 @@
+{
+  "resourceType": "Questionnaire",
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+      "valueBoolean": true
+    }
+  ],
+  "title": "observationExtract Test Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "blItem1",
+      "text": "boolean skip logic source 1",
+      "type": "boolean",
+      "required": true,
+      "initial": [
+        {
+          "valueBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "choiceItem1",
+      "text": "choice item 1, displayed when boolean item is true",
+      "type": "choice",
+      "enableWhen": [
+        {
+          "question": "blItem1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "all",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "code1",
+            "display": "answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "code2",
+            "display": "answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "code3",
+            "display": "answer 3"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "code4",
+            "display": "answer 4"
+          }
+        }
+      ],
+      "initial": [
+        {
+          "valueCoding": {
+            "code": "code1",
+            "display": "answer 1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "choiceItem2",
+      "text": "choice item 2, displayed when choice item 1 is 'answer 1'",
+      "type": "choice",
+      "enableWhen": [
+        {
+          "question": "choiceItem1",
+          "operator": "=",
+          "answerCoding": {
+            "code": "code1",
+            "display": "answer 1"
+          }
+        }
+      ],
+      "enableBehavior": "all",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "codea",
+            "display": "answer a"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "codeb",
+            "display": "answer b"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "codec",
+            "display": "answer c"
+          }
+        }
+      ],
+      "initial": [
+        {
+          "valueCoding": {
+            "code": "codea",
+            "display": "answer a"
+          }
+        }
+      ]
+    }
+  ]
+}
