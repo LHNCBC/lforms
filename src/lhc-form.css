@@ -356,3 +356,19 @@ screen_reader_only {
 .lhc-button-padding {
   padding-left: 4px;
 }
+
+/* disabled items */
+/* remove the delete button on disabled mulitple selection autocomplete */
+.lhc-form .lhc-item-readyonly button {
+  display: none;
+}
+.lhc-form .ant-checkbox-disabled+span,
+.lhc-form .ant-radio-disabled+span,
+.lhc-form input:disabled,
+.lhc-form .ant-picker-input>input-disabled, 
+.lhc-form .ant-picker-input>input[disabled],
+.lhc-form .lhc-item-readyonly {
+  color: rgba(0,0,0,.75);
+  cursor: not-allowed;
+  /* opacity: 0.5; */
+}

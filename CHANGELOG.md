@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.1.3] 2020-04-04
+### Changed
+- Adjusted the styles of readonly items
+
 ## [30.1.2] 2022-03-30
 ### Fixed
 - Fixed a bug that observations were extracted from items that were either hidden or
