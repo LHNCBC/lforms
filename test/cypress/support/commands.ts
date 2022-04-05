@@ -56,17 +56,18 @@ Cypress.Commands.add(
 );
 
 // Get one or more DOM elements by element's id where '/' is escaped
-// and "#" is added.
+// and "#" is added if not already present.
 Cypress.Commands.add(
   'byId',
   { prevSubject: 'optional' },
   (subject, idSelector) => {
+    const cySelector = idSelector[0] === "#" ? idSelector.replace(/\//g,"\\/") : "#" + idSelector.replace(/\//g,"\\/");
     // escape the / in the id
     if (subject) {
-      return cy.wrap(subject).get("#" + idSelector.replace(/\//g,"\\/"));
+      return cy.wrap(subject).get(cySelector);
     }
     else {
-      return cy.get("#" + idSelector.replace(/\//g,"\\/"));
+      return cy.get(cySelector);
     }
   }
 );
