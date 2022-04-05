@@ -69,7 +69,7 @@ export class LhcItemAttachmentComponent {
     }
   }
 
-  
+
   /**
    * Creates an attachment for an item based on the data entered by the
    * user.

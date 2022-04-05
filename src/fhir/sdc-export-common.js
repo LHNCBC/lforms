@@ -1041,6 +1041,23 @@ function addCommonSDCExportFns(ns) {
       currentItem = currentItem._parentItem;
     }
   };
+
+
+  /**
+   * Check if the item has a value
+   * @param {*} item  an item in lforms with attritues set by lforms
+   * @returns {boolean}
+   */
+  self._hasItemValue = function (item) {
+    // not a group item, or a display item
+    // not hidden by skip logic 
+    // has values
+    return item.dataType!=="SECTION" && item.dataType!=="TITLE" &&
+           item._skipLogicStatus!== "target-disabled" &&
+           !LForms.Util.isItemValueEmpty(item.value) ? true : false;
+  };
+
+  
 }
 
 export default addCommonSDCExportFns;
