@@ -2,7 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.1.1] 2020-03-30
+## [30.1.3] 2020-04-04
+### Changed
+- Adjusted the styles of readonly items
+
+## [30.1.2] 2022-03-30
+### Fixed
+- Fixed a bug that observations were extracted from items that were either hidden or
+  had no values.
+- Fixed a bug that boolean value false was not extracted correctly.
+  
+## [30.1.1] 2022-03-30
 ### Fixed
 - Fixed a performance issue in the initial loading of a Questionnaire when it
   contains a lot of choice and/or open-choice items.

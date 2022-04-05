@@ -10,7 +10,7 @@
       [nzDisabled]="item._readOnly"
       [(ngModel)]="otherCheckboxModel" [id]="item._elementId + '_other'">Other</label>
       <input type="text" [(ngModel)]="otherValue" class="lhc-answer-other-input" [id]="item._elementId + '_otherValue'" nz-input
-      *ngIf="otherCheckboxModel" (keyup)="onOtherValueChange($event)"
+      *ngIf="otherCheckboxModel" (keyup)="onOtherValueChange($event)" [disabled]="item._readOnly"
       (focus)="lhcDataService.setActiveRow(item)"/>
     </div>
   </div>
