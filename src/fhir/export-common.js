@@ -101,6 +101,12 @@ var self = {
           val: item.value
         }];
         break;
+      case "BL":
+        values = [{
+          key: "valueBoolean",
+          val: item.value // undefined, null, or '' values should have been skipped before calling this function
+        }];
+        break;
       default:
         values = [{
           key: "valueString",
