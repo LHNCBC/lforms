@@ -77,7 +77,7 @@ you don't accidentally add something that we are also working on.
    to update the Chrome web driver.
 
 ## <a id="using">Using the LHC-Forms Web Component</a>
-There are several script files to load.  If you are building this or installing via npm, these files will be
+There are several script files to load.  If you are building this, these files will be
 under `dist/lforms`.  If you are using the pre-built versions from
 https://clinicaltables.nlm.nih.gov/lforms-versions, then the file paths below
 are relative to those versioned directories.
@@ -96,4 +96,7 @@ You need to include the following files in your project:
    * `fhir/R4/lformsFHIR.min.js`
    * `fhir/STU3/lformsFHIR.min.js`
 
-There is an example of an app using these files at https://lhcforms.nlm.nih.gov/lforms-fhir-app/.
+There is an example of an app using these files at
+https://lhcforms.nlm.nih.gov/lforms-fhir-app/.
+For details about how to work with this library, and for information about an
+announcements list, see the [documentation](https://lhncbc.github.io/lforms/).
