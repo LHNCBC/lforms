@@ -875,6 +875,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           dcSource.sendKeys(protractor.Key.ENTER);
 
           TestUtil.waitForValue(dcTarget1, '')
+          dcTarget1.click();
+          cy.get(tp.Autocomp.searchResults).should('be.visible');
           dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
           dcTarget1.sendKeys(protractor.Key.ENTER);
           
