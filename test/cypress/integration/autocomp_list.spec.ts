@@ -83,7 +83,7 @@ describe('autocomp list', () => {
 
   it('should autofill lists when there is just one item', () => {
     tp.LoadForm.openRxTerms();
-    cy.byId('/X-002/nameAndRoute/1/1').type('AZELEX');
+    cy.byId('/X-002/nameAndRoute/1/1').type('AZELEX').wait(200);
     cy.get('#searchResults tr:first-child').click();
     cy.byId('/X-002/strengthAndForm/1/1').should('have.value', '20% Cream');
   });
@@ -92,13 +92,13 @@ describe('autocomp list', () => {
     tp.LoadForm.openFullFeaturedForm();
 
     // no sequence number
-    cy.byId('/numeric_answer/1').click();
+    cy.byId('/numeric_answer/1').click().wait(200);
     cy.get('#searchResults #completionOptions ul li:first-child').should('have.text', '1');
     cy.get('#searchResults #completionOptions ul li:nth-child(2)').should('have.text', 'Answer 2');
     cy.get('#searchResults #completionOptions ul li:nth-child(3)').should('have.text', 'Answer 3');
 
     // has sequence number
-    cy.byId('/type9/1').click();
+    cy.byId('/type9/1').click().wait(200);
     cy.get('#searchResults #completionOptions ul li:first-child .listNum').should('be.visible').should('have.text', '1:');
     cy.get('#searchResults #completionOptions ul li:nth-child(2) .listNum').should('be.visible').should('have.text', '2:');
     cy.get('#searchResults #completionOptions ul li:nth-child(3) .listNum').should('be.visible').should('have.text', '3:');
