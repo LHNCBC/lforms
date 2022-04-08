@@ -1,0 +1,588 @@
+{
+  "name": "Testing readonly (editable='0') on different datatypes",
+  "items": [
+    {
+      "dataType": "SECTION",
+      "question": "Readonly item without initial/default values",
+      "linkId": "group1",
+      "items": [
+        {
+          "dataType": "ST",
+          "question": "ST",
+          "editable": "0",
+          "linkId": "st"
+        },
+        {
+          "dataType": "BL",
+          "question": "BL",
+          "editable": "0",
+          "linkId": "bl"
+        },
+        {
+          "dataType": "INT",
+          "question": "INT",
+          "editable": "0",
+          "linkId": "int"
+        },
+        {
+          "dataType": "REAL",
+          "question": "REAL",
+          "editable": "0",
+          "linkId": "real"
+        },
+        {
+          "dataType": "DT",
+          "question": "DT",
+          "editable": "0",
+          "linkId": "dt"
+        },
+        {
+          "dataType": "DTM",
+          "question": "DTM",
+          "editable": "0",
+          "linkId": "dtm"
+        },
+        {
+          "dataType": "TM",
+          "question": "TM",
+          "editable": "0",
+          "linkId": "tm"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, single selection",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "cne-single"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, multiple selections",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+              
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+              
+            }
+          ],
+          "linkId": "cne-multiple"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, single selection, radio button",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "cne-single-radio"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, multiple selections, checkboxes",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "cne-multiple-checkbox"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, single selection",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "cwe-single"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, multiple selections",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "cwe-multiple"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, single selection, radio button",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "cwe-single-radio"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, multiple selections, checkboxes",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "cwe-multiple-checkbox"
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "Readonly item with initial/default values",
+      "linkId": "group2",
+      "items": [
+        {
+          "dataType": "ST",
+          "question": "ST",
+          "editable": "0",
+          "value": "a string",
+          "linkId": "g2/st"
+        },
+        {
+          "dataType": "BL",
+          "question": "BL",
+          "editable": "0",
+          "value": true,
+          "linkId": "g2/bl"
+        },
+        {
+          "dataType": "INT",
+          "question": "INT",
+          "editable": "0",
+          "value": 123,
+          "linkId": "g2/int"
+        },
+        {
+          "dataType": "REAL",
+          "question": "REAL",
+          "editable": "0",
+          "value": 123.45,
+          "linkId": "g2/real"
+        },
+        {
+          "dataType": "DT",
+          "question": "DT",
+          "editable": "0",
+          "value": "01/15/2022",
+          "linkId": "g2/dt"
+        },
+        {
+          "dataType": "DTM",
+          "question": "DTM",
+          "editable": "0",
+          "value": "01/15/2022 13:15:17",
+          "linkId": "g2/dtm"
+        },
+        {
+          "dataType": "TM",
+          "question": "TM",
+          "editable": "0",
+          "value": "13:15:17",
+          "linkId": "g2/tm"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, single selection",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "value": {
+            "code": "c1",
+            "text": "Answer 1"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cne-single"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, multiple selections",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "value": [{
+            "code": "c1",
+            "text": "Answer 1"
+          },
+          {
+            "code": "c2",
+            "text": "Answer 2"
+          }],
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cne-multiple"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, single selection, radio button",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "value": {
+            "code": "c1",
+            "text": "Answer 1"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cne-single-radio"
+        },
+        {
+          "dataType": "CNE",
+          "question": "CNE, multiple selections, checkboxes",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "value": [{
+            "code": "c1",
+            "text": "Answer 1"
+          },
+          {
+            "code": "c2",
+            "text": "Answer 2"
+          }],
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cne-multiple-checkbox"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, single selection",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "value": {
+            "code": "c1",
+            "text": "Answer 1"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cwe-single"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, multiple selections",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "value": [{
+            "code": "c1",
+            "text": "Answer 1"
+          },
+          "off list value"
+          ],
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cwe-multiple"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, single selection, radio button",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "value": "off list value",
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cwe-single-radio"
+        },
+        {
+          "dataType": "CWE",
+          "question": "CWE, multiple selections, checkboxes",
+          "editable": "0",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "value": [{
+            "code": "c1",
+            "text": "Answer 1"
+          },
+           "off list value"
+          ],
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "linkId": "g2/cwe-multiple-checkbox"
+        }
+      ]
+    }
+    
+  ]
+}
+

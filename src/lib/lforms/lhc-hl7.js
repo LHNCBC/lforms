@@ -2,6 +2,7 @@
  * A package to generate HL7 messgages from LForms form data
  */
 import CommonUtils from "./lhc-common-utils.js";
+import LhcFormUtils from "./lhc-form-utils.js";
 
 const LhcHL7 = {
   LOINC_URI: 'http://loinc.org',
@@ -319,7 +320,7 @@ const LhcHL7 = {
         var max = item.questionCardinality.max;
         if (max && (max === "*" || parseInt(max) > 1)) {
           // if it has value
-          if (!CommonUtils.isItemValueEmpty(item.value)) {
+          if (!LhcFormUtils.isItemValueEmpty(item.value)) {
             // get the repeating instance letter
             if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
               repeatingIndex = 1;
@@ -423,7 +424,7 @@ const LhcHL7 = {
         }
       }
       // a question, only when it has value
-      else if (!CommonUtils.isItemValueEmpty(item.value)) {
+      else if (!LhcFormUtils.isItemValueEmpty(item.value)) {
         var isArrayVal = Array.isArray(item.value);
         var vals = isArrayVal ? item.value : [item.value];
 
@@ -496,7 +497,7 @@ const LhcHL7 = {
         }
         // questions
         else {
-          empty = CommonUtils.isItemValueEmpty(item.value);
+          empty = LhcFormUtils.isItemValueEmpty(item.value);
         }
       } // end of for loop
     }

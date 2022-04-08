@@ -153,7 +153,7 @@ const FormUtils = {
    *  includes the LForm's rendered form, a CSS selector for that element, an
    *  LFormsData object, or an LForms form definition (parsed).  If not
    *  provided, the first form found in the page will be used.
-   * @param options A hash of other options.  See convertLFormsToFHIRData for
+   * @param options A hash of other options.  See _convertLFormsToFHIRData for
    *  the allowed values.
    * @returns {*} the requested FHIR resource.  For Questionnaire, the full form definition
    *  will be returned, but or DiagnosticReport and QuestionnaireResponse, empty
@@ -226,7 +226,7 @@ const FormUtils = {
           break;
         case "QuestionnaireResponse":
           if (options.extract)
-            fhirData = fhir.SDC.convertLFormsToFHIRData(formData,
+            fhirData = fhir.SDC.convertLFormsToQRAndExtracFHIRData(formData,
               options.noExtensions, options.subject);
           else
             fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
