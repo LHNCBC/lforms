@@ -652,8 +652,28 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined)
         item.value = undefined;
-      else
-        this._fhir.SDC._processFHIRValues(item, fhirPathRes); // sets item.value
+      else if (!item._initialExpressionValueSet && !item._newlyCreated) {
+        // if the question repeats (not the answer repeats)
+        if (this._fhir.SDC._questionRepeats(item)) {
+          item._initialExpressionValueSet = true;
+          // if it has multiple answers 
+          if (fhirPathRes.length>0) {
+            // assign the first value to the first item
+            this._fhir.SDC._processFHIRValues(item, [fhirPathRes[0]]); // sets item.value
+
+            // add new repeating items, (assign one answer for each repeating item)
+            for (var i=1, iLen=fhirPathRes.length; i<iLen; i++) {
+              var newItem = this._lfData.appendRepeatingItems(item);
+              newItem._newlyCreated = true;
+              this._fhir.SDC._processFHIRValues(newItem, [fhirPathRes[i]]); // sets item.value
+            }
+          }
+        }
+        // question does not repeats (might have repeating answers)
+        else {
+          this._fhir.SDC._processFHIRValues(item, fhirPathRes); // sets item.value, which handles repeating answers
+        }
+      }
       let changed = !deepEqual(oldVal, item.value);
       item._calculatedValue = item.value;
       // If this is the first run of the expressions, and there is
@@ -661,7 +681,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       // what the user entered (or erased) and if it doesn't, we halt further
       // calculations for this field and restore the saved value.
       if (changed && isCalcExp && !this._firstExpressionRunComplete
-          && this._lfData.hasSavedData) {
+          && this._lfData.hasSavedData) {  // TODO: do we need to remove newly created items?
         item._userModifiedCalculatedValue = true;
         item.value = oldVal;
         changed = false;
