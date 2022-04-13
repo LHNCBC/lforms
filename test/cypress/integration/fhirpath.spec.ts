@@ -58,12 +58,24 @@ describe('answerExpression', () => {
   });
 
   it('should not clear a list field if the form has just loaded with saved data', () => {
+    // This is the case when a QuestionnaireResponse is loaded in that has a
+    // value in a field whose list comes from an answerExpression or a
+    // cqf-expression.  Initially, there is no list, but when the expression
+    // runs, a list is obtained.  Because the data in the field is saved data,
+    // it should not be cleared, even if it is not in the current list.  For
+    // example, in the RxTerms form below, if the user saved a drug name and a
+    // strength value, when the form is later loaded, RxTerms might have been
+    // updated and no longer have the selected strength value, or even the drug
+    // name itself.  We must be careful not to discard the user's data just
+    // because the form is re-opened.
+
+    // Load the RxTerms test form and get a QuestionnaireResponse.
     cy.get('#fileAnchor').uploadFile(`test/data/R4/rxterms.R4.json`);
     cy.byId('medication/1/1').click().type('ar').wait(200);
-    cy.get('#searchResults li:first-child').click({force: true});
+    cy.get('#searchResults li:first-child').click();
     cy.byId('strength/1/1').click().wait(200);
     cy.get('#searchResults li').should('have.length.above', 0);
-    cy.get('#searchResults li:first-child').click({force: true});
+    cy.get('#searchResults li:first-child').click();
     cy.byId('rxcui/1/1').should('not.have.value', '');
     cy.window().then((win) => {
       let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
@@ -191,14 +203,12 @@ describe('answerExpression', () => {
  * @param qr the QuestionnaireResponse
  * @param elemID the ID of an element into which the form should be shown.
  * @param win the window object.
- * @return a promise that resolves when the browser has been instructed to
- *  render the form.
  */
 function showQQR(q, qr, elemID, win) {
   const lfd = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
   let merged = win.LForms.Util.mergeFHIRDataIntoLForms(qr, lfd, 'R4');
   merged = new win.LForms.LFormsData(merged);
-  win.LForms.Util.addFormToPage(merged, elemID);
+  cy.wrap(win.LForms.Util.addFormToPage(merged, elemID));
 }
 
 // Confirms that the saved data is still on the displayed form.

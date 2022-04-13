@@ -35,7 +35,7 @@ for (let i = 0, len = fhirVersions.length; i < len; ++i) {
           cy.get('#searchResults li:first-child').should('have.text', 'Argentinean');
 
           cy.byId(ff.disease).click().type('arm').wait(200);
-          cy.get('#searchResults li:first-child').click({force: true});
+          cy.get('#searchResults li:first-child').click();
           cy.byId(ff.disease).should('have.value', 'Arm pain');
         });
       });
