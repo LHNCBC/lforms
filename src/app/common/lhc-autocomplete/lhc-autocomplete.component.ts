@@ -225,9 +225,9 @@ export class LhcAutocompleteComponent implements OnChanges {
       if (this.dataModel !== undefined) {
         let that = this;
         // Use setTimeout to avoid the error of ExpressionChangedAfterItHasBeenCheckedError?
-        setTimeout(function(){ 
+        setTimeout(function(){
           // note: this will cause angular to refresh the views.
-          that.dataModelChange.emit(that.dataModel); 
+          that.dataModelChange.emit(that.dataModel);
         }, 1);
       }
     }
@@ -243,9 +243,10 @@ export class LhcAutocompleteComponent implements OnChanges {
     if (itemValue) {
       if (this.multipleSelections && Array.isArray(itemValue)) {
         for (var i=0, len=itemValue.length; i<len; ++i) {
-          let dispVal = this.acType === "prefetch" && !itemValue[i]._notOnList ?
-            itemValue[i][this.displayProp] : itemValue[i].text;
-          this.acInstance.storeSelectedItem(dispVal, itemValue[i].code);
+          let v = itemValue[i];
+          let dispVal = typeof v === 'string' ? v :
+            this.acType === "prefetch" && !v._notOnList ? v[this.displayProp] : v.text;
+          this.acInstance.storeSelectedItem(dispVal, v.code);
           this.acInstance.addToSelectedArea(dispVal);
         }
         // Clear the field value for multi-select lists

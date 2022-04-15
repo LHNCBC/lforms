@@ -72,8 +72,9 @@ function addCommonSDCFns(ns) {
    * @private
    */
   self._questionRepeats = function(item) {
-    return item && item.questionCardinality && item.questionCardinality.max &&
-        (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+    return item._questionRepeatable!==undefined ? item._questionRepeatable :
+      item.questionCardinality && item.questionCardinality.max &&
+      (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
   };
 
 
@@ -84,8 +85,9 @@ function addCommonSDCFns(ns) {
    * @private
    */
   self._answerRepeats = function(item) {
-    return item && item.answerCardinality && item.answerCardinality.max &&
-        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+    return item._multipleAnswers!==undefined ? item._multipleAnswers :
+      item.answerCardinality && item.answerCardinality.max &&
+      (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
   };
 
 

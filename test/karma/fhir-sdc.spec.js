@@ -38,7 +38,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 {system: 'cs1', code: '3', text: 'three'}],
               fhirVal: {display: 'two', code: '2', system: 'cs1'},
               fhirVal2: {display: 'three', code: '3', system: 'cs1'}
-            }, {
+            }/*, {
               answers: [{code: '1', text: 'one'},
                 {code: '2', text: 'two'},
                 {code: '3', text: 'three'}],
@@ -54,7 +54,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }, {
               answers: [{code: '1'}, {code: '2'}, {code: '3'}],
               fhirVal: {code: '2'}, fhirVal2: {code: '3'}
-            }];
+            }*/];
             for (let multiselect of [false, true]) {
               for (let {answers, fhirVal, fhirVal2} of answerValCases) {
                 for (let dataType of ['CNE', 'CWE']) {
@@ -66,6 +66,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                       if (multiselect) {
                         fhirVals.push(JSON.parse(JSON.stringify(fhirVal2)));
                         lfItem.answerCardinality = {max: '*'};
+                        lfItem._multipleAnswers = true;
                       }
                       if (type === 'CodeableConcept') {
                         // Make each value a CodeableConcept (containing the
@@ -86,6 +87,44 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
           });
 
+          xdescribe('list fields and off-list coding values', function() {
+            let answers = [{system: 'cs1', code: '1', text: 'one'},
+                {system: 'cs1', code: '2', text: 'two'},
+                {system: 'cs1', code: '3', text: 'three'}];
+            let cases = [
+              [{display: 'four'}, {display: 'five'}],
+              [{display: 'four', code: '1'}, {display: 'five', code: '2'}],
+              [{display: 'four', code: '2', system: 'cs1'}, {display: 'five', code: '3', system: 'cs1'}]];
+            let expectedOutput = [
+                [{text: 'four', _notOnList: true}, {text: 'five', _notOnList: true}],
+                // The next one is because the code systems did not match
+                [{text: 'four', text: '1', _notOnList: true}, {text: 'five', code: '2', _notOnList: true}],
+                // The next one is because the codes do not match
+                [{text: 'four', code: '2', system: 'cs1', _notOnList: true},
+                 {text: 'five', code: '3', system: 'cs1', _notOnList: true}]];
+            cases.forEach((caseN, n)=>{
+              for (let multiselect of [false, true]) {
+                it('should handle off-list answers for '+
+                   (multiselect ? 'multiselect' : 'single-select')+' lists', function() {
+                  let lfItem = {dataType: 'CWE', answers};
+                  let fhirVals = [caseN[0]];
+                  if (multiselect) {
+                    fhirVals.push(caseN[1]);
+                    lfItem.answerCardinality = {max: '*'};
+                  }
+                  fhir.SDC._processFHIRValues(lfItem, fhirVals);
+                  let expected = expectedOutput[n];
+                  if (!multiselect)
+                    expected = expected[0];
+                  assert.deepEqual(lfItem.value, expected);
+console.log(JSON.stringify(lfItem.value));
+console.log(JSON.stringify(expected));
+console.log(JSON.stringify(lfItem.value) == JSON.stringify(expected))
+                });
+              }
+            });
+          });
+
           describe('list fields and off-list string values', function() {
             let answers = [{system: 'cs1', code: '1', text: 'one'},
                 {system: 'cs1', code: '2', text: 'two'},
@@ -98,6 +137,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 if (multiselect) {
                   fhirVals.push('five');
                   lfItem.answerCardinality = {max: '*'};
+                  lfItem._multipleAnswers = true;
                 }
                 fhir.SDC._processFHIRValues(lfItem, fhirVals);
                 let expected = multiselect ? fhirVals : fhirVals[0];
@@ -698,16 +738,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 var qItem = {};
 
                 qItem.type = LForms.FHIR[fhirVersion].SDC._getFhirDataType(fixture);
-                LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
                 // Default processing depends on the answer repeat.
+                var lfItem = {};
                 if (fixture.answerCardinality && fixture.answerCardinality.max === "*") {
+                  fixture._multipleAnswers = lfItem._multipleAnswers = true;
                   qItem.extension = [];
                   qItem.extension.push({
                     "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
                     "valueBoolean": true
                   });
                 }
-                var lfItem = {};
+                LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
                 lfItem.answerCardinality = fixture.answerCardinality;
                 LForms.FHIR[fhirVersion].SDC._processDataType(lfItem,qItem);
                 lfItem.answers = fixture.answers;
@@ -1679,6 +1720,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           var lfFile = 'test/data/item-answer-item.json';
           it('should convert to item.answer.item as appropriate', function (itDone) {
             $.get(lfFile, function(lfData) { // load the lforms json
+              lfData = new LForms.LFormsData(lfData);
               var fhirQr = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, lfData);
               var answer = fhirQr.item[0].item[0].answer;
               assert.equal(answer[0].valueCoding.code, 'LA33-6');

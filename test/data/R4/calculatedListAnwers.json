@@ -44,7 +44,7 @@
         },
         {
           "linkId": "calculatedListOption",
-          "text": "Calculated list options",
+          "text": "Calculated list option",
           "type": "open-choice",
           "extension": [{
             "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",

@@ -1235,8 +1235,7 @@ export default class LhcFormData {
         (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
     item._answerRequired = item.answerCardinality.min &&
         (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
-    item._multipleAnswers = item.answerCardinality.max &&
-        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+    item._multipleAnswers = LhcFormUtils._hasMultipleAnswers(item);
 
     // set up readonly flag
     item._readOnly = (item.editable && item.editable === "0") ||
@@ -1246,6 +1245,15 @@ export default class LhcFormData {
       this._fhir.SDC.processExtensions(item, 'obj_text');
       this._fhir.SDC.processExtensions(item, 'obj_prefix');
     }
+  }
+
+
+  /**
+   *  Returns true if the item is hidden for any reason.
+   */
+  _isHidden(item) {
+    return item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._isHiddenFromView ||
+      item._enableWhenExpVal === false;
   }
 
 
@@ -1274,9 +1282,9 @@ export default class LhcFormData {
       // set the last sibling status
       item._lastSibling = i === lastSiblingIndex;
 
-      // consider if the last sibling is hidden by skip logic, or is hidden by an FHIR extension
+      // consider if the last sibling is hidden by skip logic, or is hidden by a FHIR extension
       if (!foundLastSibling) {
-        if (item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._isHiddenFromView) {
+        if (this._isHidden(item)) {
           item._lastSibling = false;
           lastSiblingIndex -= 1;
         }
@@ -1549,7 +1557,7 @@ export default class LhcFormData {
     var objReturn = {};
 
     // special handling for the user-typed value for CWE data type
-    if (typeCWE && obj._notOnList && obj._displayText) {
+    if (typeCWE && obj._notOnList && !obj.code && !obj.system && obj._displayText) {
       // return a string value
       objReturn = obj._displayText;
     }
@@ -1561,6 +1569,43 @@ export default class LhcFormData {
       }
     }
     return objReturn;
+  }
+
+
+  /**
+   *  Returns an array of the values for the given item.  The returned values may be part of
+   *  the data model, and should not be changed.
+   * @param lfItem the LFormsData item.
+   */
+  getItemValues(lfItem) {
+    var rtn;
+    // TBD - get the unit as well -- maybe store it in a Quantity structure with
+    // the value
+    if (!lfItem._questionRepeatable) {
+      var itemVal = lfItem.value;
+      if (itemVal === undefined || itemVal === null)
+        rtn = [];
+      else
+        rtn = lfItem._multipleAnswers ? itemVal : [itemVal]; // always return an array
+    }
+    else {
+      rtn = [];
+      var siblings = lfItem._parentItem.items;
+      var linkId = lfItem.linkId;
+      var foundLinkId = false;
+      for (var i=0, len=siblings.length; i<len; ++i) {
+        var s = siblings[i];
+        if (s.linkId === linkId) {
+          rtn.push(s.value);
+          foundLinkId = true;
+        }
+        else if (foundLinkId) {
+          // At this point the linkId has changed and we have left the repeating group
+          break;
+        }
+      }
+    }
+    return rtn;
   }
 
 
@@ -1901,6 +1946,32 @@ export default class LhcFormData {
 
 
   /**
+   *  Finds the index in the parent item array at which new repetitions of the
+   *  given item should be added.
+   * @param item a repeating item or a repeating group item
+   * @return the index at which to add the repeating item.
+   */
+  _findIndexForNewRepetition(item) {
+    var insertPosition = 0;
+    var inRepeating = false;
+    for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
+      if (item._parentItem.items[i].linkId === item.linkId) {
+        inRepeating = true;
+      }
+      if (inRepeating && item._parentItem.items[i].linkId !== item.linkId) {
+        insertPosition = i;
+        break;
+      }
+    }
+    // until the last item
+    if (inRepeating && i===iLen) {
+      insertPosition = i;
+    }
+    return insertPosition;
+  }
+
+
+  /**
    * Add a repeating item or a repeating section at the end of the repeating group
    * and update form status
    * @param item a repeating item or a repeating group item
@@ -1913,22 +1984,7 @@ export default class LhcFormData {
     newItem._id = maxRecId + 1;
 
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
-      var insertPosition = 0;
-      var inRepeating = false;
-      for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
-        if (item._parentItem.items[i].linkId === item.linkId) {
-          inRepeating = true;
-        }
-        if (inRepeating && item._parentItem.items[i].linkId !== item.linkId) {
-          insertPosition = i;
-          break;
-        }
-      }
-      // until the last item
-      if (inRepeating && i===iLen) {
-        insertPosition = i;
-      }
-
+      var insertPosition = this._findIndexForNewRepetition(item);
       item._parentItem.items.splice(insertPosition, 0, newItem);
       newItem._parentItem = item._parentItem;
 
@@ -2094,7 +2150,7 @@ export default class LhcFormData {
 
 
   /**
-   * Remove a repeating item or a repeating section and update form status
+   *  Adjusts the number of repeating items a repeating item or a repeating section and update form status
    * @param item an item
    */
   removeRepeatingItems(item) {
@@ -2111,6 +2167,72 @@ export default class LhcFormData {
 
     this._resetInternalData();
     var readerMsg = 'Removed ' + this.itemDescription(item);
+    this._actionLogs.push(readerMsg);
+  }
+
+
+  /**
+   *  Adjusts the number of repeating items in order to accomdate the number of
+   *  values in the given array, and assignes the items their values from the
+   *  array.
+   * @param item an item (possibly repeating) to which values are to be
+   *  assigned.
+   * @param vals an array of values to be assigned to item and its repetitions.
+   *  If "item" does not support more than one value, an error will be logged if
+   *  this array contains more than one value.
+   */
+  setRepeatingItems(item, vals) {
+    var repetitionCountChanged = false;
+    // if the question repeats (not the answer repeats)
+    if (item._questionRepeatable) {
+      // if it has multiple answers
+      if (item._parentItem && Array.isArray(item._parentItem.items)) { // not sure this check is needed
+        var repetitions = this._getRepeatingItems(item);
+        var numReps = repetitions.length;
+        var newRowsNeeded = vals.length - numReps;
+        if (newRowsNeeded > 0) {
+          // Add new rows
+          var maxRecId = this.getRepeatingItemMaxId(item);
+          var insertPosition = this._findIndexForNewRepetition(item);
+          var parentItemHidden = this._isHidden(item._parentItem);
+          for (var i=0; i<newRowsNeeded; ++i) {
+            var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
+            newItem._id = maxRecId + 1;
+            item._parentItem.items.splice(insertPosition, 0, newItem);
+            newItem._parentItem = item._parentItem;
+            repetitions.push(newItem);
+            // preset the skip logic status to target-disabled on the new items
+            this._presetSkipLogicStatus(newItem, parentItemHidden);
+          }
+        }
+        else if (newRowsNeeded < 0) {
+          // Remove extra rows
+          var insertPosition = this._findIndexForNewRepetition(item);
+          item._parentItem.items.splice(insertPosition+newRowsNeeded, -newRowsNeeded);
+        }
+        // Set values now that the right number of rows are present
+        for (var i=0, len=vals.length; i<len; ++i)
+          repetitions[i].value = vals[i];
+        repetitionCountChanged = (newRowsNeeded !== 0);
+      }
+    }
+    // question does not repeat (might have repeating answers)
+    else {
+      if (!item._multipleAnswers) {
+        if (vals.length > 1) {
+          console.log('An attempt was made to assign multiple values ('+
+            JSON.stringify(vals)+') to question "'+item.question+'"');
+        }
+        else
+          item.value = vals[0];
+      }
+      else
+        item.value = vals;
+    }
+
+    if (repetitionCountChanged)
+      this._resetInternalData();
+    var readerMsg = 'Set values for ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
   }
 
@@ -2586,6 +2708,10 @@ export default class LhcFormData {
       delete item._modifiedAnswers;
     }
   }
+
+
+  /**
+   *
 
 
   /**

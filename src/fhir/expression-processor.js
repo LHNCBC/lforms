@@ -223,17 +223,26 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             for (let i=0, len=exts.length; i<len; ++i) {
               let ext = exts[i];
               // Skip initialExpressions if we are not including those.
-              if (includeInitialExpr || ext.url != sdc.fhirExtInitialExp) {
+              let isInitialExp = ext.url == sdc.fhirExtInitialExp;
+              if (includeInitialExpr || !isInitialExp) {
+                let isCalcExp = ext.url == sdc.fhirExtCalculatedExp;
+                // We only run initialExpression or calculatedExpression
+                // on one of the repeating items of the repeating group (the
+                // last one, because there is a flag to mark the last one).
+                if ((isCalcExp || isInitialExp) && item._questionRepeatable && !item._lastRepeatingItem)
+                  continue; // skip to next expression extension for this item
+
                 // Skip calculated expressions of editable fields for which the user has
                 // edited the value.
-                let isCalcExp = ext.url == sdc.fhirExtCalculatedExp;
                 // Compare the item.value to the last calculated value (if any).  If
                 // they differ, then the user has edited the field, and in that case we
                 // skip setting the value and halt further calculations for the field.
-                if (isCalcExp && !item._userModifiedCalculatedValue &&
-                    item._calculatedValue &&
-                    !deepEqual(item._calculatedValue, item.value)) {
-                  item._userModifiedCalculatedValue = true;
+                if (isCalcExp && !item._userModifiedCalculatedValue && item._calculatedValue) {
+                  // Get the current values for the item, which might be
+                  // repeating.
+                  var currentVals = this._lfData.getItemValues(item);
+                  if (!deepEqual(item._calculatedValue, currentVals))
+                    item._userModifiedCalculatedValue = true;
                 }
 
                 if (!isCalcExp || !item._userModifiedCalculatedValue) {
@@ -646,47 +655,30 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @return true if the value changed
      */
     _setItemValueFromFHIRPath: function(item, fhirPathRes, isCalcExp) {
-      var oldVal = item.value;
-      var fhirPathVal;
-      if (fhirPathRes !== undefined)
-        fhirPathVal = fhirPathRes[0];
-      if (fhirPathVal === null || fhirPathVal === undefined)
-        item.value = undefined;
-      else if (!item._initialExpressionValueSet && !item._newlyCreated) {
-        // if the question repeats (not the answer repeats)
-        if (this._fhir.SDC._questionRepeats(item)) {
-          item._initialExpressionValueSet = true;
-          // if it has multiple answers 
-          if (fhirPathRes.length>0) {
-            // assign the first value to the first item
-            this._fhir.SDC._processFHIRValues(item, [fhirPathRes[0]]); // sets item.value
-
-            // add new repeating items, (assign one answer for each repeating item)
-            for (var i=1, iLen=fhirPathRes.length; i<iLen; i++) {
-              var newItem = this._lfData.appendRepeatingItems(item);
-              newItem._newlyCreated = true;
-              this._fhir.SDC._processFHIRValues(newItem, [fhirPathRes[i]]); // sets item.value
-            }
-          }
+      var oldVal = this._lfData.getItemValues(item);
+      // If the FHIRPath expression resulted in an error, fhirPathRes is
+      // undefined.  TBD - show an error to the user.  I think the safest thing
+      // to do here is to leave the item untouched.
+      var newVal = undefined;
+      var changed = false;
+      if (fhirPathRes !== undefined) {
+        newVal = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
+        changed = !deepEqual(oldVal, newVal);
+        // If this is the first run of the expressions, and there is
+        // saved user data, then we check whether the calculated value matches
+        // what the user entered (or erased) and if it doesn't, we halt further
+        // calculations for this field and restore the saved value.
+        if (changed && isCalcExp && !this._firstExpressionRunComplete
+            && this._lfData.hasSavedData) {  // TODO: do we need to remove newly created items?
+          item._userModifiedCalculatedValue = true;
+          changed = false;
         }
-        // question does not repeats (might have repeating answers)
-        else {
-          this._fhir.SDC._processFHIRValues(item, fhirPathRes); // sets item.value, which handles repeating answers
+        else if (changed) {
+          this._lfData.setRepeatingItems(item, newVal);
+          item._calculatedValue = newVal;
         }
       }
-      let changed = !deepEqual(oldVal, item.value);
-      item._calculatedValue = item.value;
-      // If this is the first run of the expressions, and there is
-      // saved user data, then we check whether the calculated value matches
-      // what the user entered (or erased) and if it doesn't, we halt further
-      // calculations for this field and restore the saved value.
-      if (changed && isCalcExp && !this._firstExpressionRunComplete
-          && this._lfData.hasSavedData) {  // TODO: do we need to remove newly created items?
-        item._userModifiedCalculatedValue = true;
-        item.value = oldVal;
-        changed = false;
-      }
-      return changed
+      return changed;
     },
   };
 

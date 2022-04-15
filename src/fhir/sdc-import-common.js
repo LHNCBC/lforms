@@ -294,22 +294,23 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   *   Assigns FHIR values to an LForms item.
-   *  @param lfItem the LForms item to receive the values from fhirVals
+   *   Converts FHIR values to an LForms item values, but does not assign the
+   *   values to the item.  (For a function that assigns values, call _processFHIRValues).
+   *  @param lfItem the LForms item to for which these are new values
    *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
    *   Complex types like Quantity should have _type set to the type, if
    *   possible, or an attempt will be made to guess the FHIR type from the
    *   lfItem's data type.
-   *  @param setDefault if true, the default value in lfItem will be set instead
-   *   of the value.
+   *  @param forDefault if true, the intented target of the values is the item's
+   *   default value instead of the item value.
+   *  @return an array of the processed/converted values
    */
-  self._processFHIRValues = function(lfItem, fhirVals, setDefault) {
+  self._convertFHIRValues = function(lfItem, fhirVals, forDefault) {
     var lfDataType = lfItem.dataType;
-    var isMultiple = lfItem.answerCardinality && lfItem.answerCardinality.max === '*';
     var answers = [];
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
-      var answer = null;
+      var answer = undefined; // reset back to undefined each iteration
       if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
         var codings = null;
         if (fhirVal._type === 'CodeableConcept') {
@@ -347,6 +348,7 @@ function addCommonSDCImportFns(ns) {
           if (!answer && lfDataType === 'CWE') { // no match in the list.
             answer = self._processCWECNEValueInQR({valueCoding: fhirVal});
             answer._notOnList = true;
+            answer._displayText = answer.text;
           }
         }
       }
@@ -358,9 +360,9 @@ function addCommonSDCImportFns(ns) {
       }
       // For date types, convert them to date objects, but only for values.
       // If we're setting defaultAnswer, leave them as strings.
-      else if (!setDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string')
+      else if (!forDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string')
         answer = new Date(fhirVal);
-      else if (!setDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string')
+      else if (!forDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string')
         answer = LForms.Util.stringToDTDateISO(fhirVal);
       else {
         answer = fhirVal;
@@ -368,7 +370,22 @@ function addCommonSDCImportFns(ns) {
       if (answer !== undefined)
         answers.push(answer);
     }
-    if (isMultiple) {
+    return answers;
+  };
+
+  /**
+   *   Assigns FHIR values to an LForms item.
+   *  @param lfItem the LForms item to receive the values from fhirVals
+   *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
+   *   Complex types like Quantity should have _type set to the type, if
+   *   possible, or an attempt will be made to guess the FHIR type from the
+   *   lfItem's data type.
+   *  @param setDefault if true, the default value in lfItem will be set instead
+   *   of the value.
+   */
+  self._processFHIRValues = function(lfItem, fhirVals, setDefault) {
+    var answers = this._convertFHIRValues(lfItem, fhirVals, setDefault);
+    if (LForms.Util._hasMultipleAnswers(lfItem)) {
       if (setDefault)
         lfItem.defaultAnswer = answers;
       else
@@ -1156,6 +1173,16 @@ function addCommonSDCImportFns(ns) {
     var retValue;
     // a valueCoding, which is one of the answers
     if (qrItemValue.valueCoding) {
+      /*  TBD - change to this to avoid undefined values
+      var c = qrItemValue.valueCoding;
+      retValue = {};
+      if (c.code)
+        retValue.code = c.code;
+      if (c.display)
+        retValue.text = c.display;
+      if (c.system)
+        retValue.system = c.sysetm;
+      */
       retValue = {
         "code": qrItemValue.valueCoding.code,
         "text": qrItemValue.valueCoding.display,

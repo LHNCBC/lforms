@@ -200,30 +200,6 @@ var self = {
 
 
   /**
-   * Check if a LForms item has repeating questions
-   * @param item a LForms item
-   * @returns {*|boolean}
-   * @private
-   */
-  _questionRepeats: function(item) {
-    return item && item.questionCardinality && item.questionCardinality.max &&
-        (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1)
-  },
-
-
-  /**
-   * Check if a LForms item has repeating answers
-   * @param item a LForms item
-   * @returns {*|boolean}
-   * @private
-   */
-  _answerRepeats: function(item) {
-    return item && item.answerCardinality && item.answerCardinality.max &&
-        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)
-  },
-
-
-  /**
    *  Processes settings for a list field with choices.
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
