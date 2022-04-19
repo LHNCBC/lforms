@@ -72,7 +72,6 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "description": "initial string value",
             "language" : "text/fhirpath",
             "expression": "('aaa').combine('bbb')"
           }
@@ -88,7 +87,6 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "description": "initial string value",
             "language" : "text/fhirpath",
             "expression": "('aaa').combine('bbb')"
           }
@@ -104,7 +102,6 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "description": "initial string value",
             "language" : "text/fhirpath",
             "expression": "%questionnaire.contained[0].expansion.contains"
           }
@@ -121,7 +118,6 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
           "valueExpression": {
-            "description": "initial string value",
             "language" : "text/fhirpath",
             "expression": "%questionnaire.contained[0].expansion.contains"
           }

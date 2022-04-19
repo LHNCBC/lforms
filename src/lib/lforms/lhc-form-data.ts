@@ -1583,7 +1583,7 @@ export default class LhcFormData {
     // the value
     if (!lfItem._questionRepeatable) {
       var itemVal = lfItem.value;
-      if (itemVal === undefined || itemVal === null)
+      if (LhcFormUtils.isItemValueEmpty(itemVal))
         rtn = [];
       else
         rtn = lfItem._multipleAnswers ? itemVal : [itemVal]; // always return an array
@@ -1596,7 +1596,8 @@ export default class LhcFormData {
       for (var i=0, len=siblings.length; i<len; ++i) {
         var s = siblings[i];
         if (s.linkId === linkId) {
-          rtn.push(s.value);
+          if (!LhcFormUtils.isItemValueEmpty(s.value))
+            rtn.push(s.value);
           foundLinkId = true;
         }
         else if (foundLinkId) {
@@ -2180,20 +2181,40 @@ export default class LhcFormData {
    * @param vals an array of values to be assigned to item and its repetitions.
    *  If "item" does not support more than one value, an error will be logged if
    *  this array contains more than one value.
+   * @return if the number if repetitions changes, this will return the new
+   *  "last" repetition item; otherwise it will return undefined.
    */
   setRepeatingItems(item, vals) {
     var repetitionCountChanged = false;
+    var repetitions;
     // if the question repeats (not the answer repeats)
     if (item._questionRepeatable) {
       // if it has multiple answers
       if (item._parentItem && Array.isArray(item._parentItem.items)) { // not sure this check is needed
-        var repetitions = this._getRepeatingItems(item);
+        repetitions = this._getRepeatingItems(item);
         var numReps = repetitions.length;
         var newRowsNeeded = vals.length - numReps;
+        repetitionCountChanged = (newRowsNeeded !== 0);
+        var maxRecId, insertPosition;
+        if (newRowsNeeded < 0) {
+          // Remove extra rows.
+          insertPosition = this._findIndexForNewRepetition(item) + newRowsNeeded;
+          item._parentItem.items.splice(insertPosition, -newRowsNeeded);
+          repetitions.splice(newRowsNeeded);
+          if (vals.length === 0) {
+            // In this case we have removed the last row.  Add it back.
+            // We could just clear the  field, but it might have child items
+            // which would also need to be clear.
+            newRowsNeeded = 1;
+            maxRecId = 0;
+          }
+        }
         if (newRowsNeeded > 0) {
           // Add new rows
-          var maxRecId = this.getRepeatingItemMaxId(item);
-          var insertPosition = this._findIndexForNewRepetition(item);
+          if (insertPosition === undefined) {
+            insertPosition = this._findIndexForNewRepetition(item);
+            maxRecId = this.getRepeatingItemMaxId(item);
+          }
           var parentItemHidden = this._isHidden(item._parentItem);
           for (var i=0; i<newRowsNeeded; ++i) {
             var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
@@ -2205,15 +2226,9 @@ export default class LhcFormData {
             this._presetSkipLogicStatus(newItem, parentItemHidden);
           }
         }
-        else if (newRowsNeeded < 0) {
-          // Remove extra rows
-          var insertPosition = this._findIndexForNewRepetition(item);
-          item._parentItem.items.splice(insertPosition+newRowsNeeded, -newRowsNeeded);
-        }
         // Set values now that the right number of rows are present
         for (var i=0, len=vals.length; i<len; ++i)
           repetitions[i].value = vals[i];
-        repetitionCountChanged = (newRowsNeeded !== 0);
       }
     }
     // question does not repeat (might have repeating answers)
@@ -2234,6 +2249,8 @@ export default class LhcFormData {
       this._resetInternalData();
     var readerMsg = 'Set values for ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
+    // Return the new last repetition
+    return repetitionCountChanged ? repetitions[repetitions.length - 1] : undefined;
   }
 
 

@@ -48,7 +48,8 @@ export class LhcAutocompleteComponent implements OnChanges {
         // with the FHIR resoruce data loaded, asynchronously. At this moment the saved the user data are already in the data model
         // and the autocomplete is already set up, with potentially an empty list if the answer list is loaded (asynchronously)
         // by FHIRPath expressions or data controls.
-        let keepDataModel = changes.isFormReady?.currentValue;  //this.isFormReady might be a different value;
+        let keepDataModel = changes.isFormReady !== undefined ? changes.isFormReady?.currentValue :
+          this.isFormReady ;  //this.isFormReady might be a different value;
         keepDataModel = keepDataModel && !changes.value?.currentValue;
         this.cleanupAutocomplete(keepDataModel);
         this.setupAutocomplete();
@@ -99,13 +100,21 @@ export class LhcAutocompleteComponent implements OnChanges {
 
 
   /**
+   *  Returns the display value of an answer.
+   */
+  getDisplayValue(answer) {
+    return typeof answer === 'string' ? answer :
+      this.acType === "prefetch" && !answer._notOnList ? answer[this.displayProp] : answer.text;
+  }
+
+
+  /**
    *  Updates the autocompleter's model to register an item as selected.
    * @param answer an object with data (possibly with a code) for the answer
    * @return the display text determined for the answer.
    */
   updateAutocompSelectionModel(answer) {
-    let dispVal = this.acType === "prefetch" ? answer._notOnList ?
-      answer.text : answer[this.options.acOptions.display] : answer.text;
+    let dispVal = this.getDisplayValue(answer);
     this.acInstance.storeSelectedItem(dispVal, answer.code);
     return dispVal;
   }
@@ -244,8 +253,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       if (this.multipleSelections && Array.isArray(itemValue)) {
         for (var i=0, len=itemValue.length; i<len; ++i) {
           let v = itemValue[i];
-          let dispVal = typeof v === 'string' ? v :
-            this.acType === "prefetch" && !v._notOnList ? v[this.displayProp] : v.text;
+          let dispVal = this.getDisplayValue(v);
           this.acInstance.storeSelectedItem(dispVal, v.code);
           this.acInstance.addToSelectedArea(dispVal);
         }
@@ -255,8 +263,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.selectedItems = itemValue;
       }
       else {
-        let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
-        itemValue.text : itemValue[this.displayProp] : itemValue.text;
+        let dispVal = this.getDisplayValue(itemValue);
         if (typeof dispVal === 'string') {
           this.acInstance.storeSelectedItem(dispVal, itemValue.code);
           let fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;

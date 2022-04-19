@@ -42,6 +42,11 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
     // An array of pending x-fhir-query results
     this._pendingQueries = [];
 
+    // A hash of calculated values, where the keys are the part of item_.elememntId
+    // minus the final repetition number (so it is shared by instances of
+    // repeating fields).
+    this._calculatedValues = {};
+
     // Keeps track of whether a request to run the calculations has come in
     // while we were already busy.
     this._pendingRun = false;
@@ -237,19 +242,17 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                 // Compare the item.value to the last calculated value (if any).  If
                 // they differ, then the user has edited the field, and in that case we
                 // skip setting the value and halt further calculations for the field.
-                if (isCalcExp && !item._userModifiedCalculatedValue && item._calculatedValue) {
+                var calcVal = this._calculatedValues[this._getRepetitionKey(item)];
+                if (isCalcExp && !item._userModifiedCalculatedValue && calcVal) {
                   // Get the current values for the item, which might be
                   // repeating.
                   var currentVals = this._lfData.getItemValues(item);
-                  if (!deepEqual(item._calculatedValue, currentVals))
+                  if (!deepEqual(calcVal, currentVals))
                     item._userModifiedCalculatedValue = true;
                 }
 
                 if (!isCalcExp || !item._userModifiedCalculatedValue) {
                   let varName = ext.valueExpression.name; // i.e., a variable name
-                  var itemVars;
-                  if (varName)
-                    itemVars = this._getItemVariables(item);
                   var oldVal;
                   let newVal;
                   var updateValue = false
@@ -341,7 +344,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       // Process child items
       if (item.items) {
         var childChanges;
-        for (var j=0, len=item.items.length; j<len; ++j) {
+        var childItems = item.items;
+        for (var j=0; j<childItems.length; ++j) { // childItem.length can change as we process expressions
           // Note:  We need to process all the child items; we cannot do an
           // early loop exit based on rtn.
           childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesByVarsOnly);
@@ -659,10 +663,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       // If the FHIRPath expression resulted in an error, fhirPathRes is
       // undefined.  TBD - show an error to the user.  I think the safest thing
       // to do here is to leave the item untouched.
-      var newVal = undefined;
       var changed = false;
       if (fhirPathRes !== undefined) {
-        newVal = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
+        var newVal = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
         changed = !deepEqual(oldVal, newVal);
         // If this is the first run of the expressions, and there is
         // saved user data, then we check whether the calculated value matches
@@ -674,12 +677,36 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           changed = false;
         }
         else if (changed) {
-          this._lfData.setRepeatingItems(item, newVal);
-          item._calculatedValue = newVal;
+          var newLastItem = this._lfData.setRepeatingItems(item, newVal);
+/*
+          if (newLastItem)
+            item = newLastItem;
+          item._calculatedValue = newVal; // set on the new last item
+*/
         }
+//        else
+//          item._calculatedValue = newVal;
+
+        // Store the calculated value.
+        this._calculatedValues[this._getRepetitionKey(item)] = newVal;
       }
       return changed;
     },
+
+
+    /**
+     *  Returns the key used to store/retrieve the calculated value for a given
+     *  item's repetitions.
+     */
+    _getRepetitionKey: function(item) {
+      var rtn = item._repetitionKey;
+      if (!rtn && item._elementId) {
+        var found = item._elementId.match(/\/\d+$/);
+        if (found)
+          rtn = item._repetitionKey = item._elementId.substring(0, found.index);
+      }
+      return rtn;
+    }
   };
 
 })();

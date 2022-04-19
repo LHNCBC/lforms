@@ -3,8 +3,11 @@ import * as util from '../support/util.js';
 // Tests of the support for calculatedExpression.
 // Most of this is currently tested by either karma or protractor.
 describe('calculatedExpression', () => {
-  it('should not cause a field to be readonly', () => {
+  before(()=>{
     cy.visit('test/pages/addFormToPageTest.html');
+  });
+
+  it('should not cause a field to be readonly', () => {
     util.addFormToPage('editableCalcExp.json', null, {fhirVersion: 'R4'});
     // Check that the BMI field is not disabled
     cy.get('#\\/39156-5\\/1').invoke('attr', 'disabled').should('eq', undefined);
@@ -12,7 +15,6 @@ describe('calculatedExpression', () => {
 
   describe('for single-select lists', ()=>{
     it('should be able to set off-list Codings as answers', ()=> {
-      cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('calculatedListAnwers.json', null, {fhirVersion: 'R4'});
       cy.get('#inputList\\/1').click();
       cy.get('#completionOptions li:first-child').click();
@@ -28,7 +30,6 @@ describe('calculatedExpression', () => {
     });
 
     it('should be able to set answer lists from list answers', ()=> {
-      cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('calculatedListAnwers.json', null, {fhirVersion: 'R4'});
       cy.get('#inputList\\/1').click();
       cy.get('#completionOptions li:first-child').click(); // first item in list
@@ -43,7 +44,6 @@ describe('calculatedExpression', () => {
 
   describe('for multi-select lists', ()=>{
     it('should be able to set off-list Codings as answers', ()=> {
-      cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('calculatedListAnwers.json', null, {fhirVersion: 'R4'});
       cy.get('#inputList\\/1').click();
       cy.get('#completionOptions li:first-child').click()
@@ -60,6 +60,61 @@ describe('calculatedExpression', () => {
       cy.get('#completionOptions li:first-child').should('be.visible');
       cy.get('#completionOptions li:first-child').contains('blue');
       cy.get('#completionOptions li:nth-child(2)').contains('green');
+    });
+  });
+
+  describe('splitting a string', ()=>{
+    before(()=>{
+      util.addFormToPage('questionnaire-calculatedExpression.json', null, {fhirVersion: 'R4'});
+      cy.get('#string-to-split\\/1').type('ab');
+    });
+
+
+    it('should be able to assign strings to a string field', ()=>{
+      cy.get('#repeating-string\\/1').should('have.value', 'a');
+      cy.get('#repeating-string\\/2').should('have.value', 'b');
+    });
+
+    it('should be able to assign strings to a list field', ()=>{
+      cy.get('#repeating-open-choice\\/1').prev().find('li:first-child').should('contain', 'a');
+      cy.get('#repeating-open-choice\\/1').prev().find('li:nth-child(2)').should('contain', 'b');
+    });
+
+    it('should be able to remove a repetition of a string field and a value from a list', ()=>{
+      cy.get('#string-to-split\\/1').type('{moveToEnd}').type('{backspace}');
+      cy.get('#string-to-split\\/1').should('have.value', 'a');
+      cy.get('#repeating-string\\/1').should('have.value', 'a');
+      cy.get('#repeating-string\\/2').should('not.exist');
+      cy.get('#repeating-open-choice\\/1').prev().find('li:first-child').should('contain', 'a');
+    });
+
+    it('should be not delete the last repitition of a field', ()=>{
+      cy.get('#string-to-split\\/1').type('{moveToEnd}').type('{backspace}');
+      cy.get('#repeating-string\\/1').should('have.value', '');
+      cy.get("#repeating-open-choice\\/1").prev().find('li').should('not.exist');
+    });
+
+    it('should allow the user to override values of the repeating string field', ()=> {
+      cy.get('#repeating-string\\/1').type('o'); // check for bug where the first character is disappears
+      cy.get('#repeating-string\\/1').should('have.value', 'o');
+      cy.get('#repeating-string\\/1').type('ne');
+      cy.get('#add-repeating-string\\/1').click();
+      cy.get('#repeating-string\\/2').type('two');
+      cy.get('#repeating-string\\/1').should('have.value', 'one');
+      cy.get('#repeating-string\\/2').should('have.value', 'two');
+    });
+
+    it('should be able to update the number of selecting codings', ()=>{
+      cy.get('#oneCoding\\/1').click();
+      cy.byCss("#searchResults li").eq(0).contains('Yes').click();
+      cy.get("#repeating-open-choice-coding\\/1").prev().find('li:first-child').should('contain', 'Blue');
+      cy.get("#repeating-open-choice-coding\\/1").prev().find('li').its('length').should('eq', 1)
+      // Now allow both codings.
+      cy.get('#oneCoding\\/1').click();
+      cy.byCss("#searchResults li").eq(1).contains('No').click();
+      cy.get("#repeating-open-choice-coding\\/1").prev().find('li:first-child').should('contain', 'Blue');
+      cy.get("#repeating-open-choice-coding\\/1").prev().find('li:nth-child(2)').should('contain', 'Green');
+      cy.get("#repeating-open-choice-coding\\/1").prev().find('li').its('length').should('eq', 2);
     });
   });
 });
