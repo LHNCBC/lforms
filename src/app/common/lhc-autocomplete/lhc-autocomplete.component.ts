@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
+import * as deepEqual from 'fast-deep-equal';
 
 @Component({
   selector: 'lhc-autocomplete',
@@ -48,9 +49,31 @@ export class LhcAutocompleteComponent implements OnChanges {
         // with the FHIR resoruce data loaded, asynchronously. At this moment the saved the user data are already in the data model
         // and the autocomplete is already set up, with potentially an empty list if the answer list is loaded (asynchronously)
         // by FHIRPath expressions or data controls.
-        let keepDataModel = changes.isFormReady !== undefined ? changes.isFormReady?.currentValue :
-          this.isFormReady ;  //this.isFormReady might be a different value;
-        keepDataModel = keepDataModel && !changes.value?.currentValue;
+        // In the RxTerms form with saved data, the list for the saved drug
+        // strength is loaded after an empty list has been set, and
+        // changes.isFormReady.previousValue is false, but
+        // isFormReady.currentValue is true.
+        var isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
+          this.isFormReady ;
+        // If the list has changed, don't keep the data model, unless we are in
+        // the situation described above when form first loads.
+        var keepDataModel;
+        var newValue = changes.value !== undefined;
+        var oldList = changes?.options?.previousValue?.acOptions?.listItems;
+        var newList = changes?.options?.currentValue?.acOptions?.listItems;
+        if (newValue)
+          keepDataModel = false;
+        else if (!isFormReady) {
+          keepDataModel = oldList?.length == 0; // might not have been set yet
+        }
+        else {
+          keepDataModel = deepEqual(oldList, newList);
+        }
+
+/*
+        let keepDataModel = !isFormReady && !changes.value?.currentValue ||
+          equal(changes?.options?.currentValue?.acOptions?.listItems, changes?.options?.previousValue?.acOptions?.listItems);
+          */
         this.cleanupAutocomplete(keepDataModel);
         this.setupAutocomplete();
       }
