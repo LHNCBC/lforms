@@ -268,7 +268,7 @@ function addSDCImportFns(ns) {
       val._type = 'Coding';
     else
       val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
-    if (val) {
+    if (val !== undefined && val !== null) {
       this._processFHIRValues(lfItem, [val], true);
     }
   };
