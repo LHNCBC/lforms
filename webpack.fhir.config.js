@@ -53,6 +53,7 @@ function makeConfigs(env) {
   // Limit build per env
   let buildSTU3 = !env || !env.r4Only;
   let buildFHIR = !env || !env.mainOnly;
+  let debugging = env?.debugging
 
   let configs = [];
   let fhirVersions = Object.keys(require('./src/fhir/versions'));
@@ -84,7 +85,7 @@ function makeConfigs(env) {
         minConfig.entry = entryFile;
         minConfig.output.path = distFhirPath + '/' + version;
         minConfig.output.filename = 'lformsFHIR.min.js';
-        minConfig.mode = 'production';
+        minConfig.mode = debugging? 'none' : 'production';
         minConfig.externals = fhirExternals;
         minConfig.devtool = 'source-map';
         configs.push(minConfig);
@@ -98,7 +99,7 @@ function makeConfigs(env) {
     // for the source map file.
     allFHIRConfig.output.path = distFhirPath;
     allFHIRConfig.output.filename = 'lformsFHIRAll.min.js';
-    allFHIRConfig.mode = 'production';
+    allFHIRConfig.mode = debugging? 'none' : 'production';
     allFHIRConfig.devtool = 'source-map';
     allFHIRConfig.externals = fhirExternals;
     configs.push(allFHIRConfig);
