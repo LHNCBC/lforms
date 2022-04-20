@@ -1173,7 +1173,6 @@ function addCommonSDCImportFns(ns) {
     var retValue;
     // a valueCoding, which is one of the answers
     if (qrItemValue.valueCoding) {
-      /*  TBD - change to this to avoid undefined values
       var c = qrItemValue.valueCoding;
       retValue = {};
       if (c.code)
@@ -1182,12 +1181,13 @@ function addCommonSDCImportFns(ns) {
         retValue.text = c.display;
       if (c.system)
         retValue.system = c.sysetm;
-      */
+      /*
       retValue = {
         "code": qrItemValue.valueCoding.code,
         "text": qrItemValue.valueCoding.display,
         "system": qrItemValue.valueCoding.system
       };
+      */
     }
     // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {

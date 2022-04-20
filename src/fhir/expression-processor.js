@@ -253,21 +253,24 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 
                 if (!isCalcExp || !item._userModifiedCalculatedValue) {
                   let varName = ext.valueExpression.name; // i.e., a variable name
+                  var itemVars;
+                  if (varName)
+                    itemVars = this._getItemVariables(item); // creates item._fhirVariables if necessary
                   var oldVal;
                   let newVal;
-                  var updateValue = false
+                  var updateValue = false;
                   if (ext.valueExpression.language=="text/fhirpath") {
                     if (varName) {
                       // Temporarily delete the old value, so we don't have
                       // circular references.
-                      oldVal = item._fhirVariables[varName];
-                      delete item._fhirVariables[varName];
+                      oldVal = itemVars[varName];
+                      delete itemVars[varName];
                     }
                     newVal = this._evaluateFHIRPath(item,
                       ext.valueExpression.expression);
                     updateValue = true;
                     if (varName)
-                      item._fhirVariables[varName] = oldVal; // update handled below
+                      itemVars[varName] = oldVal; // update handled below
                   }
                   else if (ext.valueExpression.language=="application/x-fhir-query") {
                     let queryURL = ext.valueExpression.expression;
@@ -396,7 +399,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (!rtn) {
         // Create a hash for variables that will have access to
         // variables defined higher up in the tree.
-        item._fhirVariables = Object.create(
+        rtn = item._fhirVariables = Object.create(
           this._itemWithVars(item)._fhirVariables);
       }
       return rtn;
