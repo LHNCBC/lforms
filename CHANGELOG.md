@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.1.4] 2020-04-20
+### Fixed
+- Fixed a bug that the initial value of boolean type was not imported correctly
+  when it was false.
+
 ## [30.1.3] 2020-04-04
 ### Changed
 - Adjusted the styles of readonly items
