@@ -36,6 +36,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   displayProp: string = '';
   viewInitialized = false;
 
+
   /**
    * Invokded when the properties change
    * Reset the defualt settings
@@ -45,36 +46,7 @@ export class LhcAutocompleteComponent implements OnChanges {
     if (this.viewInitialized) {
       // reset autocompleter when 'options' changes
       if (changes.options) {
-        // need to keep the dataModel while cleaning up the previous autocomplete, when the form is initially rendered
-        // with the FHIR resoruce data loaded, asynchronously. At this moment the saved the user data are already in the data model
-        // and the autocomplete is already set up, with potentially an empty list if the answer list is loaded (asynchronously)
-        // by FHIRPath expressions or data controls.
-        // In the RxTerms form with saved data, the list for the saved drug
-        // strength is loaded after an empty list has been set, and
-        // changes.isFormReady.previousValue is false, but
-        // isFormReady.currentValue is true.
-        var isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
-          this.isFormReady ;
-        // If the list has changed, don't keep the data model, unless we are in
-        // the situation described above when form first loads.
-        var keepDataModel;
-        var newValue = changes.value !== undefined;
-        var oldList = changes?.options?.previousValue?.acOptions?.listItems;
-        var newList = changes?.options?.currentValue?.acOptions?.listItems;
-        if (newValue)
-          keepDataModel = false;
-        else if (!isFormReady) {
-          keepDataModel = oldList?.length == 0; // might not have been set yet
-        }
-        else {
-          keepDataModel = deepEqual(oldList, newList);
-        }
-
-/*
-        let keepDataModel = !isFormReady && !changes.value?.currentValue ||
-          equal(changes?.options?.currentValue?.acOptions?.listItems, changes?.options?.previousValue?.acOptions?.listItems);
-          */
-        this.cleanupAutocomplete(keepDataModel);
+        this.cleanupAutocomplete(this.keepDataModel(changes));
         this.setupAutocomplete();
       }
       // item.value changed by data control or fhirpath express after the autocompleter is initialized
@@ -85,6 +57,58 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.updateDisplayedValue(this.dataModel)
       }
     }
+  }
+
+
+  /**
+   *  Decides whether the data model should be preserved when reconstructing the autocomplete-lhc widget.
+   * @param changes the changes object passed to ngOnChanges
+   * @return true if the data model should be kept
+   */
+  keepDataModel(changes) {
+    var rtn;
+    // need to keep the dataModel while cleaning up the previous autocomplete,
+    // when the form is initially rendered with the FHIR resoruce data loaded,
+    // asynchronously. At this moment the saved the user data are already in the
+    // data model and the autocomplete is already set up, with potentially an
+    // empty list if the answer list is loaded (asynchronously) by FHIRPath
+    // expressions or data controls.
+    // In the RxTerms form with saved data, the list for the saved drug
+    // strength is loaded after an empty list has been set, and
+    // changes.isFormReady.previousValue is false, but
+    // isFormReady.currentValue is true.  In that case we need to keep the data
+    // model.
+    var isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
+      this.isFormReady ;
+    // If the list has changed, don't keep the data model, unless we are in
+    // the situation described above when form first loads.
+    var newValue = changes.value !== undefined;
+    var oldList = changes?.options?.previousValue?.acOptions?.listItems;
+    var newList = changes?.options?.currentValue?.acOptions?.listItems;
+    if (newValue)
+      rtn = false;
+    else if (!isFormReady) {
+      // If the form was not ready, then the list might just be getting set, so
+      // we keep the data model.
+      rtn = true;
+    }
+    else {
+      var prevOpts = changes?.options?.previousValue?.acOptions;
+      var currentOpts = changes?.options?.currentValue?.acOptions;
+      // The list contents might be defined with listItems or 'url' or 'fhir'.
+      var prevConfig = prevOpts?.listItems;
+      var currentConfig = currentOpts?.listItems;
+      if (prevConfig === undefined && currentConfig === undefined) {
+        prevConfig = prevOpts?.url;
+        currentConfig = currentOpts?.url;
+      }
+      if (prevConfig === undefined && currentConfig === undefined) {
+        prevConfig = prevOpts?.fhir;
+        currentConfig = currentOpts?.fhir;
+      }
+      rtn = deepEqual(prevConfig, currentConfig);
+    }
+    return rtn;
   }
 
 

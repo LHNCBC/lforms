@@ -2458,7 +2458,6 @@ export default class LhcFormData {
    * @private
    */
   _updateDataByDataControl(item) {
-
     for (var i= 0, iLen=item.dataControl.length; i<iLen; i++) {
       var source = item.dataControl[i].source,
           onAttribute = item.dataControl[i].onAttribute,
