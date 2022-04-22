@@ -69,7 +69,6 @@ describe('calculatedExpression', () => {
       cy.get('#string-to-split\\/1').type('ab');
     });
 
-
     it('should be able to assign strings to a string field', ()=>{
       cy.get('#repeating-string\\/1').should('have.value', 'a');
       cy.get('#repeating-string\\/2').should('have.value', 'b');

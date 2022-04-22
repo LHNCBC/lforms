@@ -675,20 +675,13 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         // what the user entered (or erased) and if it doesn't, we halt further
         // calculations for this field and restore the saved value.
         if (changed && isCalcExp && !this._firstExpressionRunComplete
-            && this._lfData.hasSavedData) {  // TODO: do we need to remove newly created items?
+            && this._lfData.hasSavedData) {
           item._userModifiedCalculatedValue = true;
           changed = false;
         }
         else if (changed) {
           var newLastItem = this._lfData.setRepeatingItems(item, newVal);
-/*
-          if (newLastItem)
-            item = newLastItem;
-          item._calculatedValue = newVal; // set on the new last item
-*/
         }
-//        else
-//          item._calculatedValue = newVal;
 
         // Store the calculated value.
         this._calculatedValues[this._getRepetitionKey(item)] = newVal;

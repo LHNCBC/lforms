@@ -2727,10 +2727,6 @@ export default class LhcFormData {
 
 
   /**
-   *
-
-
-  /**
    * Reset item.value with modified answers if the item has a value (or an array of values)
    * @param item the item for which it has an item.value or item.defaultAnswers
    * @private
