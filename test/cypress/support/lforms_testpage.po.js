@@ -7,8 +7,7 @@ export class TestPage {
   attrTestUrl = '/test/pages/directiveAttrTest.html';
   directiveTestUrl = '/test/pages/directiveTest.html';
   testPageUrl = '/test/pages/lforms_testpage.html';
-  // Visiting live page to utilize full features of window.LForms object.
-  buildFHIRPathURL = 'http://localhost:4200/test/build_test_fhirpath.html';
+  buildFHIRPathURL = '/test/pages/build_test_fhirpath.html';
   addFormToPageTest = '/test/pages/addFormToPageTest.html';
 
 //  autoCompHelpers = new autoCompBasePage();
