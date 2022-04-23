@@ -38,7 +38,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 {system: 'cs1', code: '3', text: 'three'}],
               fhirVal: {display: 'two', code: '2', system: 'cs1'},
               fhirVal2: {display: 'three', code: '3', system: 'cs1'}
-            }/*, {
+            }, {
               answers: [{code: '1', text: 'one'},
                 {code: '2', text: 'two'},
                 {code: '3', text: 'three'}],
@@ -54,7 +54,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }, {
               answers: [{code: '1'}, {code: '2'}, {code: '3'}],
               fhirVal: {code: '2'}, fhirVal2: {code: '3'}
-            }*/];
+            }];
             for (let multiselect of [false, true]) {
               for (let {answers, fhirVal, fhirVal2} of answerValCases) {
                 for (let dataType of ['CNE', 'CWE']) {
@@ -87,21 +87,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
           });
 
-          xdescribe('list fields and off-list coding values', function() {
+          describe('list fields and off-list coding values', function() {
             let answers = [{system: 'cs1', code: '1', text: 'one'},
                 {system: 'cs1', code: '2', text: 'two'},
                 {system: 'cs1', code: '3', text: 'three'}];
             let cases = [
               [{display: 'four'}, {display: 'five'}],
-              [{display: 'four', code: '1'}, {display: 'five', code: '2'}],
-              [{display: 'four', code: '2', system: 'cs1'}, {display: 'five', code: '3', system: 'cs1'}]];
+              [{display: 'four', code: '1'}, {display: 'five', code: '2'}]];
             let expectedOutput = [
                 [{text: 'four', _notOnList: true}, {text: 'five', _notOnList: true}],
                 // The next one is because the code systems did not match
-                [{text: 'four', text: '1', _notOnList: true}, {text: 'five', code: '2', _notOnList: true}],
-                // The next one is because the codes do not match
-                [{text: 'four', code: '2', system: 'cs1', _notOnList: true},
-                 {text: 'five', code: '3', system: 'cs1', _notOnList: true}]];
+                [{text: 'four', code: '1', _notOnList: true}, {text: 'five', code: '2', _notOnList: true}]];
             cases.forEach((caseN, n)=>{
               for (let multiselect of [false, true]) {
                 it('should handle off-list answers for '+
@@ -111,15 +107,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   if (multiselect) {
                     fhirVals.push(caseN[1]);
                     lfItem.answerCardinality = {max: '*'};
+                    lfItem._multipleAnswers = true;
                   }
                   fhir.SDC._processFHIRValues(lfItem, fhirVals);
                   let expected = expectedOutput[n];
+                  // The processing code sets _displayText because these are
+                  // not on the list.
+                  expected.forEach((v)=>v._displayText = v.text);
                   if (!multiselect)
                     expected = expected[0];
+
                   assert.deepEqual(lfItem.value, expected);
-console.log(JSON.stringify(lfItem.value));
-console.log(JSON.stringify(expected));
-console.log(JSON.stringify(lfItem.value) == JSON.stringify(expected))
                 });
               }
             });
