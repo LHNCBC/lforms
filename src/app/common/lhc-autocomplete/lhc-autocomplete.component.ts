@@ -93,16 +93,19 @@ export class LhcAutocompleteComponent implements OnChanges {
       rtn = true;
     }
     else {
+      // The form is ready.  Check whether the list has changed.
       var prevOpts = changes?.options?.previousValue?.acOptions;
       var currentOpts = changes?.options?.currentValue?.acOptions;
-      // The list contents might be defined with listItems or 'url' or 'fhir'.
+      // First case: prefetched lists, defined with 'listItems'
       var prevConfig = prevOpts?.listItems;
       var currentConfig = currentOpts?.listItems;
       if (prevConfig === undefined && currentConfig === undefined) {
+        // Second case: search lists, defined with 'url'
         prevConfig = prevOpts?.url;
         currentConfig = currentOpts?.url;
       }
       if (prevConfig === undefined && currentConfig === undefined) {
+        // Third case: search lists, defined with 'fhir'
         prevConfig = prevOpts?.fhir;
         currentConfig = currentOpts?.fhir;
       }
@@ -148,6 +151,7 @@ export class LhcAutocompleteComponent implements OnChanges {
 
   /**
    *  Returns the display value of an answer.
+   * @param answer an object with the data for one selected answer
    */
   getDisplayValue(answer) {
     return typeof answer === 'string' ? answer :

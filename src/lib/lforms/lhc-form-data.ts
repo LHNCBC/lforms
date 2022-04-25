@@ -1601,7 +1601,7 @@ export default class LhcFormData {
           foundLinkId = true;
         }
         else if (foundLinkId) {
-          // At this point the linkId has changed and we have left the repeating group
+          // At this point the s.linkId has changed and we have left the repeating group
           break;
         }
       }
@@ -2151,7 +2151,7 @@ export default class LhcFormData {
 
 
   /**
-   *  Adjusts the number of repeating items a repeating item or a repeating section and update form status
+   *  Remove a repeating item or a repeating section and update form status
    * @param item an item
    */
   removeRepeatingItems(item) {
@@ -2173,7 +2173,7 @@ export default class LhcFormData {
 
 
   /**
-   *  Adjusts the number of repeating items in order to accomdate the number of
+   *  Adjusts the number of repeating items in order to accomodate the number of
    *  values in the given array, and assignes the items their values from the
    *  array.
    * @param item an item (possibly repeating) to which values are to be

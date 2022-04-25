@@ -373,6 +373,7 @@ function addCommonSDCImportFns(ns) {
     return answers;
   };
 
+
   /**
    *   Assigns FHIR values to an LForms item.
    *  @param lfItem the LForms item to receive the values from fhirVals

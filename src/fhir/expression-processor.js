@@ -47,6 +47,10 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
     // repeating fields).
     this._calculatedValues = {};
 
+    // A hash of item._elementId values to "repitition key" values which can be used as
+    // keys in this._calcualtedValues.
+    this._repetitionKeys = {};
+
     // Keeps track of whether a request to run the calculations has come in
     // while we were already busy.
     this._pendingRun = false;
@@ -693,13 +697,15 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
     /**
      *  Returns the key used to store/retrieve the calculated value for a given
      *  item's repetitions.
+     * @param item an instance of a repeating item.
      */
     _getRepetitionKey: function(item) {
-      var rtn = item._repetitionKey;
+      var rtn = this._repetitionKeys[item._elementId];
       if (!rtn && item._elementId) {
         var found = item._elementId.match(/\/\d+$/);
-        if (found)
-          rtn = item._repetitionKey = item._elementId.substring(0, found.index);
+        if (found) {
+          rtn = this._repetitionKeys[item._elementId] = item._elementId.substring(0, found.index);
+        }
       }
       return rtn;
     }
