@@ -1022,7 +1022,8 @@ export default class LhcFormData {
       // if this is not a saved form with user data, and
       // there is a default value, and
       // there is no embedded data
-      else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+      else if (!this.hasSavedData && item.defaultAnswer !== undefined && item.defaultAnswer !== null && 
+        (item.value === undefined || item.value === null)) {
         this._lfItemValueFromDefaultAnswer(item);
       }
 
