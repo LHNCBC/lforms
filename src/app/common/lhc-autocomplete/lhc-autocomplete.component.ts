@@ -94,20 +94,23 @@ export class LhcAutocompleteComponent implements OnChanges {
     }
     else {
       // The form is ready.  Check whether the list has changed.
-      var prevOpts = changes?.options?.previousValue?.acOptions;
-      var currentOpts = changes?.options?.currentValue?.acOptions;
-      // First case: prefetched lists, defined with 'listItems'
-      var prevConfig = prevOpts?.listItems;
-      var currentConfig = currentOpts?.listItems;
-      if (prevConfig === undefined && currentConfig === undefined) {
-        // Second case: search lists, defined with 'url'
-        prevConfig = prevOpts?.url;
-        currentConfig = currentOpts?.url;
+      var prevOpts = changes?.options?.previousValue?.acOptions || {};
+      var currentOpts = changes?.options?.currentValue?.acOptions || {};
+      var prevConfig, currentConfig;
+      if (prevOpts.listItems !== undefined || currentOpts.listItems !== undefined) {
+        // First case: prefetched lists, defined with 'listItems'
+        prevConfig = prevOpts.listItems;
+        currentConfig = currentOpts.listItems;
       }
-      if (prevConfig === undefined && currentConfig === undefined) {
+      else if (prevOpts.url !== undefined || currentOpts.url !== undefined) {
+        // Second case: search lists, defined with 'url'
+        prevConfig = prevOpts.url;
+        currentConfig = currentOpts.url;
+      }
+      else {
         // Third case: search lists, defined with 'fhir'
-        prevConfig = prevOpts?.fhir;
-        currentConfig = currentOpts?.fhir;
+        prevConfig = prevOpts.fhir;
+        currentConfig = currentOpts.fhir;
       }
       rtn = deepEqual(prevConfig, currentConfig);
     }

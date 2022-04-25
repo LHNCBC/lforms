@@ -94,9 +94,9 @@ describe('calculatedExpression', () => {
     });
 
     it('should allow the user to override values of the repeating string field', ()=> {
-      cy.get('#repeating-string\\/1').type('o'); // check for bug where the first character is disappears
-      cy.get('#repeating-string\\/1').should('have.value', 'o');
-      cy.get('#repeating-string\\/1').type('ne');
+      // Type 'one', but while doing so, check for a bug where the first character disappears
+      cy.get('#repeating-string\\/1').type('o').should('have.value', 'o').type('ne');
+
       cy.get('#add-repeating-string\\/1').click();
       cy.get('#repeating-string\\/2').type('two');
       cy.get('#repeating-string\\/1').should('have.value', 'one');
