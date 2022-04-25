@@ -256,7 +256,7 @@ function addSDCImportFns(ns) {
         val._type = 'Coding';
       else
         val = self._getFHIRValueWithPrefixKey(elem, /^value/);
-      if (val)
+      if (val !== undefined && val !== null)
         vals.push(val);
     });
     if (vals.length > 0)
