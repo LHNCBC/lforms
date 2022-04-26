@@ -97,3 +97,24 @@ Cypress.Commands.add('typeTab', (shiftKey, ctrlKey) => {
       ctrlKey: ctrlKey
   });
 });
+
+// Type in a search box and wait until search queries are finished.
+Cypress.Commands.add(
+  'typeAndWait',
+  { prevSubject: 'optional' },
+  (subject, term) => {
+    // Intercept the last query which would contain 'filter={term}'.
+    cy.intercept({
+      method: 'GET',
+      query: {
+        filter: term
+      }
+    }).as('lastSearchQuery');
+    cy.wrap(subject).type(term);
+    cy.wait('@lastSearchQuery');
+    // It's guaranteed that the queries have returned. But there was still a slight
+    // chance that the next Cypress command catches some element before the application
+    // finishes updating DOM.
+    cy.wait(10);
+  }
+);

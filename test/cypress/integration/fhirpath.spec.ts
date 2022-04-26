@@ -71,9 +71,9 @@ describe('answerExpression', () => {
 
     // Load the RxTerms test form and get a QuestionnaireResponse.
     cy.get('#fileAnchor').uploadFile(`test/data/R4/rxterms.R4.json`);
-    cy.byId('medication/1/1').click().type('ar').wait(200);
+    cy.byId('medication/1/1').click().typeAndWait('ar');
     cy.get('#searchResults li:first-child').click();
-    cy.byId('strength/1/1').click().wait(200);
+    cy.byId('strength/1/1').click();
     cy.get('#searchResults li').should('have.length.above', 0);
     cy.get('#searchResults li:first-child').click();
     cy.byId('rxcui/1/1').should('not.have.value', '');
