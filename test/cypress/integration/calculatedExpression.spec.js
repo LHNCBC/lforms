@@ -116,4 +116,16 @@ describe('calculatedExpression', () => {
       cy.get("#repeating-open-choice-coding\\/1").prev().find('li').its('length').should('eq', 2);
     });
   });
+
+  describe('splitting a string in a repeating group', ()=>{
+    it('should be able to have separate repetition sets within repetitions of a group', ()=>{
+      cy.byId('non-repeating-q/1/1').type('ab');
+      cy.byId('add-repeating-group/1').click(); // add repetition of group
+      cy.byId('non-repeating-q/2/1').type('cd');
+      cy.byId('repeating-q-in-repeating-group/1/1').should('have.value', 'a');
+      cy.byId('repeating-q-in-repeating-group/1/2').should('have.value', 'b');
+      cy.byId('repeating-q-in-repeating-group/2/1').should('have.value', 'c');
+      cy.byId('repeating-q-in-repeating-group/2/2').should('have.value', 'd');
+    });
+  });
 });

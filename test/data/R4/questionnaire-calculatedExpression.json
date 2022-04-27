@@ -155,7 +155,37 @@
           }
         }
       ]
+    },
+    {
+      "type": "group",
+      "repeats": true,
+      "linkId": "repeating-group",
+      "text": "Repeating group containing a repeating item",
+      "extension": [{
+        "url": "http://hl7.org/fhir/StructureDefinition/variable",
+        "valueExpression": {
+          "name": "splitString",
+          "language" : "text/fhirpath",
+          "expression": "item.where(linkId='non-repeating-q').answer.valueString"
+        }
+      }],
+      "item": [{
+        "type": "string",
+        "text": "Enter string to create repetitions of the next question",
+        "linkId": "non-repeating-q"
+      }, {
+        "type": "string",
+        "text": "Calculated repeptitions",
+        "repeats": true,
+        "linkId": "repeating-q-in-repeating-group",
+        "extension": [{
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "language" : "text/fhirpath",
+            "expression": "%splitString.toChars()"
+          }
+        }]
+      }]
     }
-
   ]
 }
