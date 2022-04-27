@@ -103,13 +103,8 @@ Cypress.Commands.add(
   'typeAndWait',
   { prevSubject: 'optional' },
   (subject, term) => {
-    // Intercept the last query which would contain 'filter={term}'.
-    cy.intercept({
-      method: 'GET',
-      query: {
-        filter: term
-      }
-    }).as('lastSearchQuery');
+    // Intercept the last query which would contain '={term}'.
+    cy.intercept('GET', '*=' + term + '**').as('lastSearchQuery');
     cy.wrap(subject).type(term);
     cy.wait('@lastSearchQuery');
     // It's guaranteed that the queries have returned. But there was still a slight
