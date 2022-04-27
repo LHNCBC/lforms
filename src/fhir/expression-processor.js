@@ -490,10 +490,20 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         var fVars = {};
         for (var k in itemVars)
           fVars[k] = itemVars[k];
-        const contextNode = item._elementId ? this._elemIDToQRItem[item._elementId] :
-          this._lfData._fhirVariables.resource;
+        let contextNode, base;
+        if (item._elementId) {
+          contextNode = this._elemIDToQRItem[item._elementId];
+          contextNode ||= {}; // the item might not be present in the QR if there is no value
+          base = 'Questionnaire.item';
+        }
+        else {
+          contextNode = this._lfData._fhirVariables.resource;
+        }
+
         var compiledExpr = this._compiledExpressions[expression];
         if (!compiledExpr) {
+          if (base)
+            expression = {base, expression};
           compiledExpr = this._compiledExpressions[expression] =
             this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
         }
