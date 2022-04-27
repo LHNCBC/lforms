@@ -166,7 +166,7 @@
         "valueExpression": {
           "name": "splitString",
           "language" : "text/fhirpath",
-          "expression": "item.where(linkId='non-repeating-q').answer.valueString"
+          "expression": "item.where(linkId='non-repeating-q').answer.value"
         }
       }],
       "item": [{

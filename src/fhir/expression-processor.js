@@ -494,7 +494,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         if (item._elementId) {
           contextNode = this._elemIDToQRItem[item._elementId];
           contextNode ||= {}; // the item might not be present in the QR if there is no value
-          base = 'Questionnaire.item';
+          base = 'QuestionnaireResponse.item';
         }
         else {
           contextNode = this._lfData._fhirVariables.resource;
