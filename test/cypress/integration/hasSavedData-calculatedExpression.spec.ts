@@ -26,9 +26,9 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
         let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
         expect(mergedFormData.hasSavedData).to.equal(true)
         win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
-        cy.get('.lhc-form-title').contains('Questionnaire for testing initialExpression');        
+        cy.get('.lhc-form-title').contains('Questionnaire for testing calculatedExpression');
         cy.byId(intFieldId).should('have.value','');
-        cy.byId(strFieldId).should('have.value','');      
+        cy.byId(strFieldId).should('have.value','');
       });
     });
   });
@@ -43,9 +43,9 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
         let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
         expect(mergedFormData.hasSavedData).to.equal(true)
         win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
-        cy.get('.lhc-form-title').contains('Questionnaire for testing initialExpression');        
+        cy.get('.lhc-form-title').contains('Questionnaire for testing calculatedExpression');
         cy.byId(intFieldId).should('have.value','456');
-        cy.byId(strFieldId).should('have.value','def456');      
+        cy.byId(strFieldId).should('have.value','def456');
       });
     });
   });
@@ -63,12 +63,12 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
         mergedFormData.hasSavedData = false;
 
         win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
-        cy.get('.lhc-form-title').contains('Questionnaire for testing initialExpression');        
+        cy.get('.lhc-form-title').contains('Questionnaire for testing calculatedExpression');
         cy.byId(intFieldId).should('have.value','123');
         cy.byId(strFieldId).should('have.value','abc123');
-      
+
       });
-    });  
+    });
   });
 
 });

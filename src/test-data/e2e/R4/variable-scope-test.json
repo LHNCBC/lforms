@@ -38,7 +38,7 @@
             "name": "Y",
             "language": "text/fhirpath",
             "expression": "%X + 2",
-            "comment": "References another variable on the same group"
+            "description": "References another variable on the same group"
           }
         }
       ],
@@ -76,7 +76,7 @@
                 "name": "Z",
                 "language": "text/fhirpath",
                 "expression": "1",
-                "comment": "A variable defined on the field where it is used"
+                "description": "A variable defined on the field where it is used"
               }
             }, {
               "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",

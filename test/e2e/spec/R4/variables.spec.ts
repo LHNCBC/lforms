@@ -104,7 +104,7 @@ describe('FHIR variables', function() {
     it('should be useable by other expressions', function() {
       tp.loadFromTestData('named-expressions.json', 'R4');
       let fieldA = elID('idA/1');
-      TestUtil.sendKeys(fieldA, '1');      
+      TestUtil.sendKeys(fieldA, '1');
       let fieldC = elID('idC/1');
       expect(fieldC.getAttribute('value')).toBe('6');
       TestUtil.clear(fieldA);

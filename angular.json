@@ -86,17 +86,44 @@
                   "maximumError": "150kb"
                 }
               ]
+            },
+            "debugging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": true,
+              "namedChunks": false,
+              "extractLicenses": false,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "20mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "60kb",
+                  "maximumError": "1500kb"
+                }
+              ]
             }
           }
         },
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "browserTarget": "lforms:build"
+            "browserTarget": "lforms:build:debugging"
           },
           "configurations": {
             "production": {
-              "browserTarget": "lforms:build:production"
+              "browserTarget": "lforms:build:debugging"
             }
           }
         },

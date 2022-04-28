@@ -18,9 +18,9 @@ export class LhcWatcherComponent implements OnChanges {
   constructor(private lhcDataService: LhcDataService) { }
 
 
-  // the event is trigger when data changes on 
+  // the event is trigger when data changes on
   // primitive data types (int, real, string)
-  // and boolean, date, datetime, time 
+  // and boolean, date, datetime, time
   // for answer list with radio/checkboxes, all worked including cwe user typed values.
   // for answer list with ac (single choice, mulitple choice), prefect or search field. all worked finally.
   ngOnChanges(changes) {
@@ -29,17 +29,19 @@ export class LhcWatcherComponent implements OnChanges {
       let lfData = this.lhcDataService.getLhcFormData()
       lfData.updateOnSourceItemChange(this.item)
       this.lhcDataService.sendActionsToScreenReader();
-      
+
       // run FHIRPATH expression when there is a data change
       if (LForms.FHIR && lfData) {
         if (lfData._hasResponsiveExpr) {
-          lfData._expressionProcessor.runCalculations(false).then(()=>{
+          setTimeout(function(){
+            lfData._expressionProcessor.runCalculations(false).then(()=>{
+            });
           });
         }
       }
     }
 
-    //TODO: since lhc-validate is also detecting changes on the item.value, it might be efficient 
+    //TODO: since lhc-validate is also detecting changes on the item.value, it might be efficient
     // to run some functions that need to be executed only when an item's value changes.
 
   }

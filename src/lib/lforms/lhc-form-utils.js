@@ -16,7 +16,7 @@ const FormUtils = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
-   * @param {Object} [options] A hash of options. See avaialble options under templateOptions in 
+   * @param {Object} [options] A hash of options. See avaialble options under templateOptions in
    * form_definition.md. 'preppopulate' and 'fhirVersion' are not options in the templateOptions,
    * but are included in the 'options' parameter.
    * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
@@ -262,13 +262,13 @@ const FormUtils = {
 
 
   /**
-   * Merges a FHIR resource (typically QuestionnaireResponse) into an LForms form object 
-   * (which was likely the result of converting a FHIR Questionnaire). In addition to 
-   * QuestionnaireResponse, we also support either DiagnosticReport (DSTU2) or a Bundle 
+   * Merges a FHIR resource (typically QuestionnaireResponse) into an LForms form object
+   * (which was likely the result of converting a FHIR Questionnaire). In addition to
+   * QuestionnaireResponse, we also support either DiagnosticReport (DSTU2) or a Bundle
    * containing a DiagnosticReport, but only if the DiagnosticReport was generated from LForms.
-   * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained" 
+   * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained"
    * Observation resources,or a Bundle with DiagnosticReport and Observation resources.
-   * @param formData an LForms form definition or LFormsData object. This can be obtained from 
+   * @param formData an LForms form definition or LFormsData object. This can be obtained from
    * a FHIR Questionnaire by using LForms.Util.convertFHIRQuestionnaireToLForms.
    * @param fhirVersion - the version of FHIR in which the fhirData is
    *  written.  This maybe be omitted if the Questionnaire resource (in
@@ -280,7 +280,7 @@ const FormUtils = {
   mergeFHIRDataIntoLForms: function(fhirData, formData, fhirVersion) {
     // For backward compatibility, ignore the old resourceType parameter.
     // It used to support a resourceType as the first parameter, the rest of the
-    // parameters are the same. 
+    // parameters are the same.
     if (typeof fhirData === "string") {
       fhirData = formData;
       formData = fhirVersion;
@@ -295,12 +295,12 @@ const FormUtils = {
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
           formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
-        case "Bundle": 
+        case "Bundle":
           // Bundle should contain DiagnosticReport
-          if (fhirData.type === "searchset" && 
+          if (fhirData.type === "searchset" &&
               fhirData.entry.find(ele => ele.resource.resourceType === "DiagnosticReport")) {
             formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-            formData.hasSavedData = true; // will be used to determine whether to update or save    
+            formData.hasSavedData = true; // will be used to determine whether to update or save
           }
           break;
         case "QuestionnaireResponse":
@@ -571,7 +571,7 @@ const FormUtils = {
   /**
    * Find the first wc-lhc-form web component within a DOM element, or in the HTML body,
    * and return the form data object from the wc-lhc-form web component.
-   * @param element optional, a DOM element or a CSS selector of the DOM element that contains 
+   * @param element optional, a DOM element or a CSS selector of the DOM element that contains
    * a custom element 'wc-lhc-form'. If it is not provided, the function searches in the HTML body.
    * for the first 'wc-lhc-form'.
    * @returns {*}
@@ -877,7 +877,7 @@ const FormUtils = {
    * @param {*} formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
    *  LFormsData object, or an LForms form definition (parsed).  If not
-   *  provided, the first form found in the page will be used.   
+   *  provided, the first form found in the page will be used.
    */
   getAnswersResourceStatus : function(formDataSource) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string')
@@ -963,6 +963,20 @@ const FormUtils = {
     return Promise.all([
       this.loadScript(urlR4),
       this.loadScript(urlStu3)])
+  },
+
+
+  /**
+   *  Returns true if the given item from an LForms form definition has multiple answers (i.e. multi-select
+   *  list).
+   */
+  _hasMultipleAnswers: function(item) {
+    // Note that we do not set item._multipleAnswers here because this gets
+    // called when importing a Questionnaire as a part of processing default
+    // values, and we don't want that internal flag as a part of the LForms form
+    // definition.
+    return item.answerCardinality && item.answerCardinality.max &&
+      (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
   }
 
 };
