@@ -57,7 +57,7 @@ export class TestPage {
     nameID: '/54126-8/54125-0/1/1', // string
     gender: '#/54126-8/54131-8/1/1', // answer
     race: '#/54126-8/54134-2/1/1', // multiple answers
- //   ethnicity: elementFactory('/54126-8/54133-4/1/1'), TODO ???
+    ethnicity: '#/54126-8/54133-4/1/1',
     dob: '#/54126-8/21112-8/1/1 input',
     height: '#/54126-8/8302-2/1/1', // number
     weight: '#/54126-8/29463-7/1/1', // number
