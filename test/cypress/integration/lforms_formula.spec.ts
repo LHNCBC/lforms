@@ -41,7 +41,8 @@ describe('formula', () => {
   it('should work with calculation method having skip logic disabled sources', () => {
     tp.openBaseTestPage();
     cy.get('#fileAnchor').uploadFile('test/data/lforms/skip-logic-calculation-method.json');
-    cy.get('.lhc-form-title').should('be.visible').wait(100);
+    cy.get('.lhc-form-title').should('be.visible');
+    cy.get('#fileAnchor').should('have.value', '');
     let sklSource = 'SKL-CONTROL/1';
     let sklTarget = 'A-ITEM/1';
     let noSklItem = 'B-ITEM/1';
