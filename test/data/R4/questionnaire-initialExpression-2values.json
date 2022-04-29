@@ -1,0 +1,113 @@
+{
+  "resourceType" : "Questionnaire",
+  "id" : "sirb-adverse-event-questionnaire-populate",
+  "contained": [
+    {
+      "resourceType" : "QuestionnaireResponse",
+      "item": [{
+        "linkId": "in8.9",
+        "answer": [{
+          "valueString": "Blue"
+        }, {
+          "valueString": "Green"
+        }]
+      }]
+    }
+  ],
+  "extension" : [
+    {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+        "description" : "variable to store the incoming data from the launchContext extension for populate and other expressions",
+        "name" : "lookupInitiateStudy",
+        "language" : "text/fhirpath",
+        "expression" : "%questionnaire.contained[0]"
+      }
+    }
+  ],
+  "url" : "http://hl7.org/fhir/us/sirb/Questionnaire/sirb-adverse-event-questionnaire-populate",
+  "name" : "AE_Questionnaire",
+  "title" : "Adverse Medical Event Questionnaire",
+  "status" : "draft",
+  "subjectType" : [ "ResearchStudy" ],
+  "item" : [
+    {
+      "linkId" : "mae4",
+      "text" : "Tests I",
+      "_text" : {
+        "extension" : [
+          {
+            "url" : "http://hl7.org/fhir/StructureDefinition/rendering-style",
+            "valueString" : "color:#274e90; font-size: 150%"
+          }
+        ]
+      },
+      "type" : "group",
+      "required" : false,
+      "item" : [
+        {
+          "linkId" : "mae4.1",
+          "text" : "Where Adverse Medical Event Occurred",
+          "_text" : {
+            "extension" : [
+              {
+                "url" : "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString" : "color:#2a623d;  font-size: 125%"
+              }
+            ]
+          },
+          "type" : "group",
+          "required" : false,
+          "repeats" : false,
+          "item" : [
+            {
+              "linkId" : "answersFromParentQR",
+              "text" : "LinkID: answersFromParentQR [Getting data from parent questionnnaire - will be hidden with questionnaire-hidden extension later]  initialExpression:  %lookupInitiateStudy.descendants().where(linkId = 'in8.9').answer.value",
+              "type" : "string",
+              "extension" : [
+                {
+                  "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+                  "valueExpression" : {
+                    "language" : "text/fhirpath",
+                    "expression" : "%lookupInitiateStudy.descendants().where(linkId = 'in8.9').answer.value"
+                  }
+                }
+              ],
+              "required" : false,
+              "repeats": true
+            },
+            {
+              "linkId" : "questionUsingParentQRAnswersAsList",
+              "text" : "LinkID: questionUsingParentQRAnswersAsList; answerExpression: %resource.repeat(item).where(linkId = 'answersFromParentQR').answer.value",
+              "type" : "open-choice",
+              "extension" : [
+                {
+                  "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept" : {
+                    "coding" : [
+                      {
+                        "system" : "http://hl7.org/fhir/questionnaire-item-control",
+                        "code" : "drop-down",
+                        "display" : "Drop down"
+                      }
+                    ],
+                    "text" : "Drop down"
+                  }
+                },
+                {
+                  "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+                  "valueExpression" : {
+                    "language" : "text/fhirpath",
+                    "expression" : "%resource.descendants().where(linkId = 'answersFromParentQR').answer.value"
+                  }
+                }
+              ],
+              "required" : false,
+              "repeats": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

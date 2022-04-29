@@ -4,7 +4,7 @@ import { browser, logging, element, by, WebElementPromise, ExpectedConditions } 
 import { protractor } from 'protractor/built/ptor';
 
 describe('load saved user data', function() {
-  let tp: TestPage; 
+  let tp: TestPage;
   let ff: any;
   let LForms: any = (global as any).LForms;
 
@@ -18,7 +18,7 @@ describe('load saved user data', function() {
 
   it('should load BL, ST, DT, DTM, INT, answer lists', function() {
 
-    expect(ff.q0.getAttribute('ng-reflect-model')).toBe("true");
+    expect(ff.q0.element(by.css('button')).getAttribute('class')).toContain("ant-switch-checked");
     expect(ff.q1.getAttribute('value')).toBe('no data type');
     expect(ff.q2.getAttribute('value')).toBe('100');
     expect(ff.q3.getAttribute('value')).toBe('user input value');
@@ -30,7 +30,7 @@ describe('load saved user data', function() {
     expect(ff.q8.getAttribute('value')).toBe('');
     expect(ff.q9.getAttribute('value')).toBe('');
     // NEXT: the saved value is 11/20/2015 10:10 !!
-    expect(ff.q99.getAttribute('value')).toBe('11/20/2015 10:10:00'); //DTM 
+    expect(ff.q99.getAttribute('value')).toBe('11/20/2015 10:10:00'); //DTM
     expect(ff.multiAnswers.count()).toBe(6);
     expect(ff.multiAnswers.get(0).getText()).toBe('×Answer 1');
     expect(ff.multiAnswers.get(1).getText()).toBe('×Answer 3');
@@ -238,7 +238,7 @@ describe('load saved user data', function() {
 });
 
 describe('load saved user data, where hasSavedData is set to true', function() {
-  let tp: TestPage; 
+  let tp: TestPage;
   let ff: any;
   let LForms: any = (global as any).LForms;
 

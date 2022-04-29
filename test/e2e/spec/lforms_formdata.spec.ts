@@ -7,7 +7,7 @@ import { protractor } from 'protractor/built/ptor';
 
 describe('formdata: ', function() {
 
-  let tp: TestPage; 
+  let tp: TestPage;
   let ff: any;
   let LForms: any = (global as any).LForms;
 
@@ -21,7 +21,7 @@ describe('formdata: ', function() {
   describe('get form data', function() {
 
     it('should get a form data with 3 optional parameters.', function() {
-      
+
 
       tp.LoadForm.openUSSGFHTVertical();
 
@@ -114,7 +114,7 @@ describe('formdata: ', function() {
       });
     });
 
-    
+
     it('should assign a boolean value for type BL fields', function (done) {
       tp.LoadForm.openFullFeaturedForm();
       function checkBoolFieldVal(val, done=null) {
@@ -149,7 +149,7 @@ describe('formdata: ', function() {
       TestUtil.waitForElementDisplayed(ff.name)
       expect(TestUtil.getFieldValue(ff.gender)).toBe("Male")
       TestUtil.sendKeys(ff.height, "70");
-      expect(TestUtil.getFieldValue(ff.height)).toBe("70");      
+      expect(TestUtil.getFieldValue(ff.height)).toBe("70");
       TestUtil.sendKeys(ff.weight, "170");
       expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
@@ -235,18 +235,18 @@ describe('formdata: ', function() {
         expect(formData.items[2].value).toEqual({code:"c2",other:null,text:"Answer 2"});
       });
     });
-    
+
   });
 
   describe('defaultAnswer', function() {
     it('should work for various data types', function() {
       tp.LoadForm.openDefaultAnswerForm();
-      var blField = element(by.id('/blField/1'));
+      var blField = element(by.css('#\\/blField\\/1 button'));
       browser.wait(ExpectedConditions.presenceOf(blField), 5000);
-      expect(blField.getAttribute('ng-reflect-model')).toBe("true");
+      expect(blField.getAttribute('class')).toContain("ant-switch-checked");
 
       var intField = element(by.id('/intField/1'));
-      expect(TestUtil.getFieldValue(intField)).toBe("24");      
+      expect(TestUtil.getFieldValue(intField)).toBe("24");
       expect(TestUtil.getFieldValue(element(by.id('/decField/1')))).toBe("3.14159");
       expect(TestUtil.getFieldValue(element(by.id('/strField/1')))).toBe("Green");
 
@@ -396,5 +396,5 @@ describe('formdata: ', function() {
     });
   });
 
-  
+
 });

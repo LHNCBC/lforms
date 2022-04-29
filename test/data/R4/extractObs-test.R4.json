@@ -112,6 +112,21 @@
           }
         }
       ]
+    },
+    {
+      "linkId": "blItem2",
+      "text": "boolean with initial value false",
+      "type": "boolean",
+      "initial": [
+        {
+          "valueBoolean": false
+        }
+      ]
+    },
+    {
+      "linkId": "blItem3",
+      "text": "boolean with no initial value",
+      "type": "boolean"
     }
   ]
 }

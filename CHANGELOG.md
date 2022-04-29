@@ -2,11 +2,21 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [31.0.0] 2020-04-06
+## [31.0.0] 2020-04-29
 ### Changed
 - Removed a feature in which the autocompletion list fields would default to 
   the answer list value if there were just one answer in the list.
   
+## [30.1.5] 2020-04-22
+### Fixed
+- Support for multiple values coming from intialExpression or calculateExpresion
+  on fields that are of type string or coding.
+
+## [30.1.4] 2020-04-20
+### Fixed
+- Fixed a bug that the initial value of boolean type was not imported correctly
+  when it was false.
+
 ## [30.1.3] 2020-04-04
 ### Changed
 - Adjusted the styles of readonly items
@@ -16,7 +26,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug that observations were extracted from items that were either hidden or
   had no values.
 - Fixed a bug that boolean value false was not extracted correctly.
-  
+
 ## [30.1.1] 2022-03-30
 ### Fixed
 - Fixed a performance issue in the initial loading of a Questionnaire when it

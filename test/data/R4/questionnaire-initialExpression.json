@@ -7,6 +7,19 @@
       "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
     ]
   },
+  "contained": [{
+    "resourceType": "ValueSet",
+    "id": "colors",
+    "expansion" : {
+      "contains": [{
+        "display": "Green",
+        "code": "g"
+      }, {
+        "display": "Blue",
+        "code": "b"
+      }]
+    }
+  }],
   "item": [
     {
       "type": "integer",
@@ -46,6 +59,67 @@
             "description": "initial string value",
             "language" : "text/fhirpath",
             "expression": "'abc123'"
+          }
+        }
+      ]
+    },
+    {
+      "type": "string",
+      "repeats": true,
+      "linkId": "repeating-string",
+      "text": "Repeating string",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language" : "text/fhirpath",
+            "expression": "('aaa').combine('bbb')"
+          }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "repeating-open-choice",
+      "text": "Repeating open-choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language" : "text/fhirpath",
+            "expression": "('aaa').combine('bbb')"
+          }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "repeating-open-choice-coding",
+      "text": "Repeating open-choice with off-list codings",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language" : "text/fhirpath",
+            "expression": "%questionnaire.contained[0].expansion.contains"
+          }
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "repeats": true,
+      "linkId": "repeating-choice",
+      "text": "Repeating choice with on-list codings",
+      "answerValueSet": "#colors",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "language" : "text/fhirpath",
+            "expression": "%questionnaire.contained[0].expansion.contains"
           }
         }
       ]

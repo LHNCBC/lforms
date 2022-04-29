@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
+import * as deepEqual from 'fast-deep-equal';
 
 @Component({
   selector: 'lhc-autocomplete',
@@ -35,6 +36,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   displayProp: string = '';
   viewInitialized = false;
 
+
   /**
    * Invokded when the properties change
    * Reset the defualt settings
@@ -44,13 +46,7 @@ export class LhcAutocompleteComponent implements OnChanges {
     if (this.viewInitialized) {
       // reset autocompleter when 'options' changes
       if (changes.options) {
-        // need to keep the dataModel while cleaning up the previous autocomplete, when the form is initially rendered
-        // with the FHIR resoruce data loaded, asynchronously. At this moment the saved the user data are already in the data model
-        // and the autocomplete is already set up, with potentially an empty list if the answer list is loaded (asynchronously)
-        // by FHIRPath expressions or data controls.
-        let keepDataModel = changes.isFormReady?.currentValue;  //this.isFormReady might be a different value;
-        keepDataModel = keepDataModel && !changes.value?.currentValue;
-        this.cleanupAutocomplete(keepDataModel);
+        this.cleanupAutocomplete(this.keepDataModel(changes));
         this.setupAutocomplete();
       }
       // item.value changed by data control or fhirpath express after the autocompleter is initialized
@@ -61,6 +57,64 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.updateDisplayedValue(this.dataModel)
       }
     }
+  }
+
+
+  /**
+   *  Decides whether the data model should be preserved when reconstructing the autocomplete-lhc widget.
+   * @param changes the changes object passed to ngOnChanges
+   * @return true if the data model should be kept
+   */
+  keepDataModel(changes) {
+    var rtn;
+    // need to keep the dataModel while cleaning up the previous autocomplete,
+    // when the form is initially rendered with the FHIR resoruce data loaded,
+    // asynchronously. At this moment the saved the user data are already in the
+    // data model and the autocomplete is already set up, with potentially an
+    // empty list if the answer list is loaded (asynchronously) by FHIRPath
+    // expressions or data controls.
+    // In the RxTerms form with saved data, the list for the saved drug
+    // strength is loaded after an empty list has been set, and
+    // changes.isFormReady.previousValue is false, but
+    // isFormReady.currentValue is true.  In that case we need to keep the data
+    // model.
+    var isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
+      this.isFormReady ;
+    // If the list has changed, don't keep the data model, unless we are in
+    // the situation described above when form first loads.
+    var newValue = changes.value !== undefined;
+    var oldList = changes?.options?.previousValue?.acOptions?.listItems;
+    var newList = changes?.options?.currentValue?.acOptions?.listItems;
+    if (newValue)
+      rtn = false;
+    else if (!isFormReady) {
+      // If the form was not ready, then the list might just be getting set, so
+      // we keep the data model.
+      rtn = true;
+    }
+    else {
+      // The form is ready.  Check whether the list has changed.
+      var prevOpts = changes?.options?.previousValue?.acOptions || {};
+      var currentOpts = changes?.options?.currentValue?.acOptions || {};
+      var prevConfig, currentConfig;
+      if (prevOpts.listItems !== undefined || currentOpts.listItems !== undefined) {
+        // First case: prefetched lists, defined with 'listItems'
+        prevConfig = prevOpts.listItems;
+        currentConfig = currentOpts.listItems;
+      }
+      else if (prevOpts.url !== undefined || currentOpts.url !== undefined) {
+        // Second case: search lists, defined with 'url'
+        prevConfig = prevOpts.url;
+        currentConfig = currentOpts.url;
+      }
+      else {
+        // Third case: search lists, defined with 'fhir'
+        prevConfig = prevOpts.fhir;
+        currentConfig = currentOpts.fhir;
+      }
+      rtn = deepEqual(prevConfig, currentConfig);
+    }
+    return rtn;
   }
 
 
@@ -99,13 +153,22 @@ export class LhcAutocompleteComponent implements OnChanges {
 
 
   /**
+   *  Returns the display value of an answer.
+   * @param answer an object with the data for one selected answer
+   */
+  getDisplayValue(answer) {
+    return typeof answer === 'string' ? answer :
+      this.acType === "prefetch" && !answer._notOnList ? answer[this.displayProp] : answer.text;
+  }
+
+
+  /**
    *  Updates the autocompleter's model to register an item as selected.
    * @param answer an object with data (possibly with a code) for the answer
    * @return the display text determined for the answer.
    */
   updateAutocompSelectionModel(answer) {
-    let dispVal = this.acType === "prefetch" ? answer._notOnList ?
-      answer.text : answer[this.options.acOptions.display] : answer.text;
+    let dispVal = this.getDisplayValue(answer);
     this.acInstance.storeSelectedItem(dispVal, answer.code);
     return dispVal;
   }
@@ -225,9 +288,9 @@ export class LhcAutocompleteComponent implements OnChanges {
       if (this.dataModel !== undefined) {
         let that = this;
         // Use setTimeout to avoid the error of ExpressionChangedAfterItHasBeenCheckedError?
-        setTimeout(function(){ 
+        setTimeout(function(){
           // note: this will cause angular to refresh the views.
-          that.dataModelChange.emit(that.dataModel); 
+          that.dataModelChange.emit(that.dataModel);
         }, 1);
       }
     }
@@ -243,9 +306,9 @@ export class LhcAutocompleteComponent implements OnChanges {
     if (itemValue) {
       if (this.multipleSelections && Array.isArray(itemValue)) {
         for (var i=0, len=itemValue.length; i<len; ++i) {
-          let dispVal = this.acType === "prefetch" && !itemValue[i]._notOnList ?
-            itemValue[i][this.displayProp] : itemValue[i].text;
-          this.acInstance.storeSelectedItem(dispVal, itemValue[i].code);
+          let v = itemValue[i];
+          let dispVal = this.getDisplayValue(v);
+          this.acInstance.storeSelectedItem(dispVal, v.code);
           this.acInstance.addToSelectedArea(dispVal);
         }
         // Clear the field value for multi-select lists
@@ -254,8 +317,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.selectedItems = itemValue;
       }
       else {
-        let dispVal = this.acType === "prefetch" ? itemValue._notOnList ?
-        itemValue.text : itemValue[this.displayProp] : itemValue.text;
+        let dispVal = this.getDisplayValue(itemValue);
         if (typeof dispVal === 'string') {
           this.acInstance.storeSelectedItem(dispVal, itemValue.code);
           let fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
