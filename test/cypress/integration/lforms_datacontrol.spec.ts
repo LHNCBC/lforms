@@ -1,226 +1,176 @@
-import { TestPage } from "./lforms_testpage.po";
-import { RxTerms } from "./rxterms.po";
-import TestUtil from "./util";
-import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
-import { protractor } from 'protractor/built/ptor';
+import {TestPage} from '../support/lforms_testpage.po.js';
 
+describe('data control', () => {
+  const tp: TestPage = new TestPage();
+  const ff: any = tp.FullFeaturedForm;
+  const rxterms = {
+    strengthAndForm: '/X-002/strengthAndForm/1/1',
+    drugName: '/X-002/nameAndRoute/1/1',
+    rxcui: '/X-002/RxCUI/1/1'
+  };
 
-describe('data control', function() {
-  let tp: TestPage = new TestPage(); 
-  let ff: any = tp.FullFeaturedForm;
-  let LForms: any = (global as any).LForms;
-  let rxterms = new RxTerms();
-
-  beforeAll(async () => {
-    await browser.waitForAngularEnabled(false);
-  });
-
-  it('data change on source field should update target fields', function() {
+  it('data change on source field should update target fields', () => {
     tp.LoadForm.openFullFeaturedForm();
+    cy.byId(ff.dcSource).type('Haloperidol');
+    cy.byId(ff.searchResults).should('be.visible');
+    cy.byId(ff.dcSource).type('{downArrow}').blur().should('have.value', 'Haloperidol (Oral Pill)');
 
-    TestUtil.sendKeys(ff.dcSource, 'Haloperidol');
-    browser.wait(function() {
-      return ff.searchResults.isDisplayed();
-    }, tp.WAIT_TIMEOUT_1);
-    ff.dcSource.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcSource.sendKeys(protractor.Key.TAB);
-    expect(ff.dcSource.getAttribute('value')).toBe("Haloperidol (Oral Pill)");
+    cy.byId(ff.dcTarget1).click().type('{downArrow}').type('{downArrow}').blur()
+      .should('have.value', '1 mg Tab');
 
-    ff.dcTarget1.click();
-    ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcTarget1.sendKeys(protractor.Key.TAB);
-    expect(ff.dcTarget1.getAttribute('value')).toBe("1 mg Tab");
-
-    ff.dcTarget2.getAttribute('value').then(function(v) {
-      expect(v.trim()).toBe("0.5 mg Tab");
-    });
+    cy.byId(ff.dcTarget2).invoke('val').invoke('trim').should('eq', '0.5 mg Tab');
 
     // pick a different value on source field
-    ff.dcSource.clear();
-    TestUtil.sendKeys(ff.dcSource, 'Haloperidol');
-    browser.wait(function() {
-      return ff.searchResults.isDisplayed();
-    }, tp.WAIT_TIMEOUT_1);
-    ff.dcSource.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcSource.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcSource.sendKeys(protractor.Key.TAB);
-    expect(ff.dcSource.getAttribute('value')).toBe("Haloperidol (Injectable)");
+    cy.byId(ff.dcSource).clear().type('Haloperidol');
+    cy.byId(ff.searchResults).should('be.visible');
+    cy.byId(ff.dcSource).type('{downArrow}').type('{downArrow}').blur()
+      .should('have.value', 'Haloperidol (Injectable)');
 
-    ff.dcTarget1.click();
-    ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.dcTarget1.sendKeys(protractor.Key.TAB);
-    expect(ff.dcTarget1.getAttribute('value')).toBe("5 mg/ml Sol");
+    cy.byId(ff.dcTarget1).click().type('{downArrow}').type('{downArrow}').type('{downArrow}').blur()
+      .should('have.value', '5 mg/ml Sol');
 
-    ff.dcTarget2.getAttribute('value').then(function(v) {
-      expect(v.trim()).toBe("5 mg/ml Injection 1 ml");
-    });
-
+    cy.byId(ff.dcTarget2).invoke('val').invoke('trim').should('eq', '5 mg/ml Injection 1 ml');
   });
 
-  it('can control questionCardinality of a horizontal table', function() {
+  it('can control questionCardinality of a horizontal table', () => {
     tp.LoadForm.openFullFeaturedForm();
 
-    var src = element(by.id('/cardinalityControl/1'));
-    var btnAdd1 = element(by.id('add-/horizontalTable/1'));
-    var btnAdd2 = element(by.id('add-/horizontalTable/2'));
-    var btnDel1 = element(by.id('del-/horizontalTable/1'));
-    var btnDel2 = element(by.id('del-/horizontalTable/2'));
-    var field1 = element(by.id('/horizontalTable/colA/1/1'));
-    var field2 = element(by.id('/horizontalTable/colA/2/1'));
+    const src = '/cardinalityControl/1';
+    const btnAdd1 = 'add-/horizontalTable/1';
+    const btnAdd2 = 'add-/horizontalTable/2';
+    const btnDel1 = 'del-/horizontalTable/1';
+    const btnDel2 = 'del-/horizontalTable/2';
+    const field1 = '/horizontalTable/colA/1/1';
+    const field2 = '/horizontalTable/colA/2/1';
 
     // initially a non-repeating table, no 'add' buttons
-    TestUtil.waitForElementNotPresent(btnAdd1)
-    expect(field1.isDisplayed()).toBe(true);
-    TestUtil.waitForElementNotPresent(field2)
+    cy.byId(btnAdd1).should('not.exist');
+    cy.byId(field1).should('be.visible');
+    cy.byId(field2).should('not.exist');
 
     // make it repeating
-    src.click();
-    src.sendKeys(protractor.Key.ARROW_DOWN);
-    src.sendKeys(protractor.Key.ARROW_DOWN);
-    src.sendKeys(protractor.Key.TAB);
-    expect(btnAdd1.isDisplayed()).toBe(true);
+    cy.byId(src).click().type('{downArrow}').type('{downArrow}').blur();
+    cy.byId(btnAdd1).should('be.visible');
 
-    TestUtil.waitForElementNotPresent(btnAdd2)
-    TestUtil.waitForElementNotPresent(btnDel1)
-    TestUtil.waitForElementNotPresent(btnDel2)
-    expect(btnAdd1.getText()).toBe('+ Add another row of "A non-repeating horizontal table"');
+    cy.byId(btnAdd2).should('not.exist');
+    cy.byId(btnDel1).should('not.exist');
+    cy.byId(btnDel2).should('not.exist');
+    cy.byId(btnAdd1).should('contain', 'Add another row of "A non-repeating horizontal table"');
 
     // 'add' button works
-    btnAdd1.click();
-    TestUtil.waitForElementPresent(btnAdd1);
-    TestUtil.waitForElementNotPresent(btnAdd2)
+    cy.byId(btnAdd1).click();
+    cy.byId(btnAdd1).should('be.visible');
+    cy.byId(btnAdd2).should('not.exist');
 
-    expect(btnDel1.isDisplayed()).toBe(true);
-    expect(btnDel2.isDisplayed()).toBe(true);
-    expect(btnAdd1.getText()).toBe('+ Add another row of "A non-repeating horizontal table"');
-    expect(field1.isDisplayed()).toBe(true);
-    expect(field2.isDisplayed()).toBe(true);
+    cy.byId(btnDel1).should('be.visible');
+    cy.byId(btnDel2).should('be.visible');
+    cy.byId(btnAdd1).should('contain', 'Add another row of "A non-repeating horizontal table"');
+    cy.byId(field1).should('be.visible');
+    cy.byId(field2).should('be.visible');
 
     // 'del' button works
-    //TestUtil.sendKeys(ff.dcSource, 'Haloperidol');
-    TestUtil.clickAddRemoveButton(btnDel1);
-    expect(btnAdd2.isDisplayed()).toBe(true);
-    TestUtil.waitForElementNotPresent(btnAdd1)
-    
-    TestUtil.waitForElementNotPresent(btnDel1)
-    TestUtil.waitForElementNotPresent(btnDel2)
-    TestUtil.waitForElementNotPresent(field1)
+    cy.byId(btnDel1).click();
+    cy.byId(btnAdd2).should('be.visible');
+    cy.byId(btnAdd1).should('not.exist');
 
-    expect(field2.isDisplayed()).toBe(true);
+    cy.byId(btnDel1).should('not.exist');
+    cy.byId(btnDel2).should('not.exist');
+    cy.byId(field1).should('not.exist');
+    cy.byId(field2).should('be.visible');
 
     // change back to non-repeating table
-    src.click();
-    src.sendKeys(protractor.Key.ARROW_DOWN);
-    src.sendKeys(protractor.Key.TAB);
-    TestUtil.waitForElementNotPresent(btnAdd1)
-    TestUtil.waitForElementNotPresent(btnAdd2)
-    TestUtil.waitForElementNotPresent(btnDel1)
-    TestUtil.waitForElementNotPresent(btnDel2)
-    TestUtil.waitForElementNotPresent(field1)
-
-    expect(field2.isDisplayed()).toBe(true);
-
+    cy.byId(src).click().type('{downArrow}').blur();
+    cy.byId(btnAdd1).should('not.exist');
+    cy.byId(btnAdd2).should('not.exist');
+    cy.byId(btnDel1).should('not.exist');
+    cy.byId(btnDel2).should('not.exist');
+    cy.byId(field1).should('not.exist');
+    cy.byId(field2).should('be.visible');
   });
 
-  it('saved item value should be displayed when the value contains extra data for data controls', function() {
+  it('saved item value should be displayed when the value contains extra data for data controls', () => {
     tp.LoadForm.openNewGeneticForm();
 
-    var catgory = element(by.id('/81250-3/83005-9/1/1')),
-        codingsystem = element(by.id('/81250-3/82122-3/1/1'));
+    cy.byId('/81250-3/83005-9/1/1').should('have.value', 'Simple Variant');
+    cy.byId('/81250-3/82122-3/1/1').should('have.value', 'ClinVar Variants');
 
-    expect(catgory.getAttribute('value')).toBe("Simple Variant");
-    expect(codingsystem.getAttribute('value')).toBe("ClinVar Variants");
-
-    browser.driver.executeAsyncScript(function () {
-      var callback = arguments[arguments.length - 1];
-      var fData = LForms.Util.getUserData();
-      callback(fData);
-    }).then(function (formData:any) {
+    cy.window().then((win) => {
+      const formData = win.LForms.Util.getUserData();
 
       // category
-      expect(formData.itemsData[8].items[0].value.code).toEqual('LA26801-3');
-      expect(formData.itemsData[8].items[0].value.text).toEqual('Simple Variant');
-      expect(formData.itemsData[8].items[0].value._displayText).toBeUndefined();
-      expect(formData.itemsData[8].items[0].value.data).toEqual({
-        "dnaChangeTypeList": [
-          { "text": "Wild Type", "code": "LA9658-1" },
-          { "text": "Deletion", "code": "LA6692-3" },
-          { "text": "Duplication", "code": "LA6686-5" },
-          { "text": "Insertion", "code": "LA6687-3" },
-          { "text": "Insertion/Deletion", "code": "LA6688-1" },
-          { "text": "Inversion", "code": "LA6689-9" },
-          { "text": "Substitution", "code": "LA6690-7" }
+      expect(formData.itemsData[8].items[0].value.code).to.equal('LA26801-3');
+      expect(formData.itemsData[8].items[0].value.text).to.equal('Simple Variant');
+      expect(formData.itemsData[8].items[0].value._displayText).to.be.undefined;
+      expect(formData.itemsData[8].items[0].value.data).to.deep.equal({
+        dnaChangeTypeList: [
+          {text: 'Wild Type', code: 'LA9658-1'},
+          {text: 'Deletion', code: 'LA6692-3'},
+          {text: 'Duplication', code: 'LA6686-5'},
+          {text: 'Insertion', code: 'LA6687-3'},
+          {text: 'Insertion/Deletion', code: 'LA6688-1'},
+          {text: 'Inversion', code: 'LA6689-9'},
+          {text: 'Substitution', code: 'LA6690-7'}
         ],
-        "variantCodeSystemList": [
-          {"text": "ClinVar Variants", "code": "CLINVAR-V",
-            "data": {"url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"}},
-          {"text": "ClinVar Alleles", "code": "CLINVAR-A",
-            "data": {"url": "https://clinicaltables.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,AlleleID"}},
-          {"text": "COSMIC", "code": "cosmic-Smpl",
-            "data": {"url": "https://clinicaltables.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"}},
-          {"text": "Other variant source", "code": "LA46-8"}
+        variantCodeSystemList: [
+          {
+            text: 'ClinVar Variants', code: 'CLINVAR-V',
+            data: {url: 'https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID'}
+          },
+          {
+            text: 'ClinVar Alleles', code: 'CLINVAR-A',
+            data: {url: 'https://clinicaltables.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,AlleleID'}
+          },
+          {
+            text: 'COSMIC', code: 'cosmic-Smpl',
+            data: {url: 'https://clinicaltables.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site'}
+          },
+          {text: 'Other variant source', code: 'LA46-8'}
         ]
-      })
-      
+      });
+
       // coding system
-      expect(formData.itemsData[8].items[1].value.code).toEqual('CLINVAR-V');
-      expect(formData.itemsData[8].items[1].value.text).toEqual('ClinVar Variants');
-      expect(formData.itemsData[8].items[1].value._displayText).toBeUndefined();
-      expect(formData.itemsData[8].items[1].value.data).toEqual({
-        "url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"
-      })
-    })
+      expect(formData.itemsData[8].items[1].value.code).to.equal('CLINVAR-V');
+      expect(formData.itemsData[8].items[1].value.text).to.equal('ClinVar Variants');
+      expect(formData.itemsData[8].items[1].value._displayText).to.be.undefined;
+      expect(formData.itemsData[8].items[1].value.data).to.deep.equal({
+        url: 'https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID'
+      });
+    });
   });
 
-
-  it('can control a item that also controls another item', function() {
+  it('can control a item that also controls another item', () => {
     tp.LoadForm.openRxTerms();
 
     // search a drug
-    rxterms.drugName.click();
-    TestUtil.sendKeys(rxterms.drugName, 'aspercreme');
-    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
-    rxterms.drugName.sendKeys(protractor.Key.ARROW_DOWN);
-    rxterms.drugName.sendKeys(protractor.Key.TAB);
-    expect(rxterms.drugName.getAttribute("value")).toBe("ASPERCREME (Topical)")
+    cy.byId(rxterms.drugName).click().type('aspercreme');
+    cy.byId(tp.Autocomp.searchResults).should('be.visible');
+    cy.byId(rxterms.drugName).type('{downArrow}').blur().should('have.value', 'ASPERCREME (Topical)');
     // strength is set
-    rxterms.strengthAndForm.click();
-    rxterms.strengthAndForm.sendKeys(protractor.Key.ARROW_DOWN);
-    rxterms.strengthAndForm.sendKeys(protractor.Key.TAB);
-    expect(rxterms.strengthAndForm.getAttribute("value")).toBe("10% Cream")
+    cy.byId(rxterms.strengthAndForm).click().type('{downArrow}').blur()
+      .should('have.value', '10% Cream');
     // cui is set
-    expect(rxterms.rxcui.getAttribute("value")).toBe("1101827")
+    cy.byId(rxterms.rxcui).should('have.value', '1101827');
 
     // search another drug
-    rxterms.drugName.click();
-    rxterms.drugName.clear();
-    TestUtil.sendKeys(rxterms.drugName, 'ASTELIN');
-    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
-    rxterms.drugName.sendKeys(protractor.Key.ARROW_DOWN);
-    rxterms.drugName.sendKeys(protractor.Key.TAB);
-    expect(rxterms.drugName.getAttribute("value")).toBe("ASTELIN (Nasal)")
+    cy.byId(rxterms.drugName).click().clear().type('ASTELIN');
+    cy.byId(tp.Autocomp.searchResults).should('be.visible');
+    cy.byId(rxterms.drugName).type('{downArrow}').blur().should('have.value', 'ASTELIN (Nasal)');
     // strength is reset
-    rxterms.strengthAndForm.click();
-    rxterms.strengthAndForm.sendKeys(protractor.Key.ARROW_DOWN);
-    rxterms.strengthAndForm.sendKeys(protractor.Key.TAB);
-    expect(rxterms.strengthAndForm.getAttribute("value")).toBe("137 mcg/puff Metered dose spray")
+    cy.byId(rxterms.strengthAndForm).click().type('{downArrow}').blur()
+      .should('have.value', '137 mcg/puff Metered dose spray');
     // cui is reset
-    expect(rxterms.rxcui.getAttribute("value")).toBe("1797876")
+    cy.byId(rxterms.rxcui).should('have.value', '1797876');
 
     // clean up the drug field
-    rxterms.drugName.click();
-    rxterms.drugName.clear();
-    rxterms.strengthAndForm.click()  // need to click this item and then click away to trigger a change in the test
-    rxterms.rxcui.click();
-    expect(rxterms.drugName.getAttribute("value")).toBe("")
-    rxterms.strengthAndForm.click()
+    cy.byId(rxterms.drugName).click().clear();
+    cy.byId(rxterms.strengthAndForm).click(); // need to click this item and then click away to trigger a change in the test
+    cy.byId(rxterms.rxcui).click();
+    cy.byId(rxterms.drugName).should('have.value', '');
+    cy.byId(rxterms.strengthAndForm).click();
     // strength is unset
-    expect(rxterms.strengthAndForm.getAttribute("value")).toBe("")
+    cy.byId(rxterms.strengthAndForm).should('have.value', '');
     // cui is unset
-    expect(rxterms.rxcui.getAttribute("value")).toBe("")
-
+    cy.byId(rxterms.rxcui).should('have.value', '');
   });
+
 });
