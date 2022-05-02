@@ -87,7 +87,7 @@ describe('calculatedExpression', () => {
       cy.get('#repeating-open-choice\\/1').prev().find('li:first-child').should('contain', 'a');
     });
 
-    it('should be not delete the last repitition of a field', ()=>{
+    it('should be not delete the last repetition of a field', ()=>{
       cy.get('#string-to-split\\/1').type('{moveToEnd}').type('{backspace}');
       cy.get('#repeating-string\\/1').should('have.value', '');
       cy.get("#repeating-open-choice\\/1").prev().find('li').should('not.exist');

@@ -1022,7 +1022,7 @@ export default class LhcFormData {
       // if this is not a saved form with user data, and
       // there is a default value, and
       // there is no embedded data
-      else if (!this.hasSavedData && item.defaultAnswer !== undefined && item.defaultAnswer !== null && 
+      else if (!this.hasSavedData && item.defaultAnswer !== undefined && item.defaultAnswer !== null &&
         (item.value === undefined || item.value === null)) {
         this._lfItemValueFromDefaultAnswer(item);
       }
@@ -1472,7 +1472,8 @@ export default class LhcFormData {
 
 
   /**
-   * Process each item on each level of the tree structure
+   * Process each item on each level of the tree structure when getting the user
+   * data from the form.
    * @param items the items array
    * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
@@ -1613,6 +1614,7 @@ export default class LhcFormData {
 
   /**
    * Process value where it is an object or an array of objects
+   * (when getting the user data from the form)
    * @param value the captured value
    * @param typeCWE optional, a flag indicates the item type is CWE, where data is
    * handled by autocomplete-lhc or radio buttons/checkboxes. default is false
@@ -1630,9 +1632,9 @@ export default class LhcFormData {
             answers.push(this._filterInternalData(value[j], typeCWE));
           }
           // for primitive data type (multiple values not supported yet)
-          //else {
-          //  answers.push(value[j]);
-          //}
+          else {
+            answers.push(value[j]);
+          }
         }
         retValue = answers;
       }
@@ -1647,6 +1649,7 @@ export default class LhcFormData {
 
   /**
    * Special handling for user input values, to get the original answer or unit object if there is one
+   * (when getting the user data from the form)
    * @param value the data object of the selected answer
    * @param dataType optional, the data type of the value
    * @private
