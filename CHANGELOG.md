@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.1.6] 2020-05-02
+### Fixed
+- Off-list string values from an open-choice field are now usable in an
+  expression for another open-choice field.
+
 ## [30.1.5] 2020-04-22
 ### Fixed
 - Support for multiple values coming from intialExpression or calculateExpresion
