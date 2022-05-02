@@ -79,6 +79,11 @@ describe('calculatedExpression', () => {
       cy.get('#repeating-open-choice\\/1').prev().find('li:nth-child(2)').should('contain', 'b');
     });
 
+    it('should be able to assign off-list string values from another field as values', ()=>{
+      cy.get('#repeating-open-choice-from-string\\/1').prev().find('li:first-child').should('contain', 'a');
+      cy.get('#repeating-open-choice-from-string\\/1').prev().find('li:nth-child(2)').should('contain', 'b');
+    });
+
     it('should be able to remove a repetition of a string field and a value from a list', ()=>{
       cy.get('#string-to-split\\/1').type('{moveToEnd}').type('{backspace}');
       cy.get('#string-to-split\\/1').should('have.value', 'a');
