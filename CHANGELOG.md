@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.1.6] 2020-05-02
+### Fixed
+- Fixed a bug that the radio button of "Other" of the CWE typed items losted
+  its checked state when a users types in the input field.
+
 ## [30.1.5] 2020-04-22
 ### Fixed
 - Support for multiple values coming from intialExpression or calculateExpresion
