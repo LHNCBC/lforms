@@ -115,7 +115,7 @@ describe('formdata: ', function() {
     });
 
 
-    it('should assign a boolean value for type BL fields', function (done) {
+    fit('should assign a boolean value for type BL fields', function (done) {
       tp.LoadForm.openFullFeaturedForm();
       function checkBoolFieldVal(val, done=null) {
         browser.driver.executeScript(function() {

@@ -2,17 +2,21 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.1.5] 2020-04-22
+## [30.2.0] 2022-05-05
+### Changed
+- Updated angular to v12 and ng-zorro-antd to v12.
+
+## [30.1.5] 2022-04-22
 ### Fixed
 - Support for multiple values coming from intialExpression or calculateExpresion
   on fields that are of type string or coding.
 
-## [30.1.4] 2020-04-20
+## [30.1.4] 2022-04-20
 ### Fixed
 - Fixed a bug that the initial value of boolean type was not imported correctly
   when it was false.
 
-## [30.1.3] 2020-04-04
+## [30.1.3] 2022-04-04
 ### Changed
 - Adjusted the styles of readonly items
 

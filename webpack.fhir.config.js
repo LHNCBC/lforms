@@ -5,6 +5,7 @@ function commonConfig() {
       path: __dirname,
     },
     optimization: {
+      minimize: true,
       minimizer: [
         // Disable the terser cache, which does not detect changes to the
         // webpack configuration (and sometimes keeps old configuration data).
@@ -19,10 +20,9 @@ function commonConfig() {
             format: {
               comments: false,
             },
-          },
-          cache: false,
-          parallel: true,
-          sourceMap: true // Must be set to true if using source-maps in production
+            sourceMap: true // Must be set to true if using source-maps in production
+          },          
+          parallel: true
         }),
       ],
     },
