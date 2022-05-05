@@ -1,265 +1,208 @@
-import { TestPage } from "./lforms_testpage.po";
-import TestUtil from "./util";
-import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
-import { protractor } from 'protractor/built/ptor';
+import {TestPage} from '../support/lforms_testpage.po.js';
 
-describe('load saved user data', function() {
-  let tp: TestPage;
-  let ff: any;
-  let LForms: any = (global as any).LForms;
+describe('load saved user data', () => {
+  const tp: TestPage = new TestPage();
+  const ff = tp.FormWithUserData;
 
-  beforeAll(async () => {
-    await browser.waitForAngularEnabled(false);
-    tp = new TestPage();
-    tp.LoadForm.openFormWithUserData()
-    ff = tp.FormWithUserData;
+  before(() => {
+    tp.LoadForm.openFormWithUserData();
   });
 
-
-  it('should load BL, ST, DT, DTM, INT, answer lists', function() {
-
-    expect(ff.q0.element(by.css('button')).getAttribute('class')).toContain("ant-switch-checked");
-    expect(ff.q1.getAttribute('value')).toBe('no data type');
-    expect(ff.q2.getAttribute('value')).toBe('100');
-    expect(ff.q3.getAttribute('value')).toBe('user input value');
-    expect(ff.q4.getAttribute('value')).toBe('11/17/2015');
-    expect(ff.q5.getAttribute('value')).toBe('Answer 2');
-    expect(ff.q6.getAttribute('value')).toBe('Answer 2');
-    expect(ff.q7.getAttribute('value')).toBe('Answer 3');
-
-    expect(ff.q8.getAttribute('value')).toBe('');
-    expect(ff.q9.getAttribute('value')).toBe('');
+  it('should load BL, ST, DT, DTM, INT, answer lists', () => {
+    cy.byId(ff.q0).find('button').should('have.class', 'ant-switch-checked');
+    cy.byId(ff.q1).should('have.value', 'no data type');
+    cy.byId(ff.q2).should('have.value', '100');
+    cy.byId(ff.q3).should('have.value', 'user input value');
+    cy.byId(ff.q4).should('have.value', '11/17/2015');
+    cy.byId(ff.q5).should('have.value', 'Answer 2');
+    cy.byId(ff.q6).should('have.value', 'Answer 2');
+    cy.byId(ff.q7).should('have.value', 'Answer 3');
+    cy.byId(ff.q8).should('have.value', '');
+    cy.byId(ff.q9).should('have.value', '');
     // NEXT: the saved value is 11/20/2015 10:10 !!
-    expect(ff.q99.getAttribute('value')).toBe('11/20/2015 10:10:00'); //DTM
-    expect(ff.multiAnswers.count()).toBe(6);
-    expect(ff.multiAnswers.get(0).getText()).toBe('×Answer 1');
-    expect(ff.multiAnswers.get(1).getText()).toBe('×Answer 3');
-    expect(ff.multiAnswers.get(2).getText()).toBe('×Answer 2');
-    expect(ff.multiAnswers.get(3).getText()).toBe('×User created answer');
-    expect(ff.multiAnswers.get(4).getText()).toBe('×Answer 2');
-    expect(ff.multiAnswers.get(5).getText()).toBe('×User created answer');
-
+    cy.byId(ff.q99).should('have.value', '11/20/2015 10:10:00'); //DTM
+    cy.get(ff.multiAnswers).should(($list) => {
+      expect($list).to.have.length(6);
+      expect($list.eq(0)).to.have.text('×Answer 1');
+      expect($list.eq(1)).to.have.text('×Answer 3');
+      expect($list.eq(2)).to.have.text('×Answer 2');
+      expect($list.eq(3)).to.have.text('×User created answer');
+      expect($list.eq(4)).to.have.text('×Answer 2');
+      expect($list.eq(5)).to.have.text('×User created answer');
+    });
   });
 
-  it('should load unit value', function(){
-    expect(ff.unit1.getAttribute('value')).toBe('123');
-    expect(ff.unit1_unit.getAttribute('value')).toBe('kgs');
-    expect(ff.unit2.getAttribute('value')).toBe('456');
-    expect(ff.unit2_unit.getAttribute('value')).toBe('kgs');
-    expect(TestUtil.getAttribute(element(by.id('/unit3/1')),'value')).toBe('789');
-    expect(TestUtil.getAttribute(element(by.id('unit_/unit3/1')),'value')).toBe('kgs');
+  it('should load unit value', () => {
+    cy.byId(ff.unit1).should('have.value', '123');
+    cy.byId(ff.unit1_unit).should('have.value', 'kgs');
+    cy.byId(ff.unit2).should('have.value', '456');
+    cy.byId(ff.unit2_unit).should('have.value', 'kgs');
+    cy.byId('/unit3/1').should('have.value', '789');
+    cy.byId('unit_/unit3/1').should('have.value', 'kgs');
   });
 
-  it('skip logic should work with loaded user data', function() {
-    expect(ff.src.getAttribute('value')).toBe('2');
-    TestUtil.waitForElementNotPresent(ff.t1);
-    expect(ff.t2.isDisplayed()).toBe(true);
-    expect(ff.t2.getAttribute('value')).toBe('200');
-    expect(ff.t4.isDisplayed()).toBe(true);
-    expect(ff.t4.getAttribute('value')).toBe('201');
-    expect(ff.t5.isDisplayed()).toBe(true);
-    expect(ff.t5.getAttribute('value')).toBe('202');
+  it('skip logic should work with loaded user data', () => {
+    cy.byId(ff.src).should('have.value', '2');
+    cy.byId(ff.t1).should('not.exist');
+    cy.byId(ff.t2).should('be.visible').should('have.value', '200');
+    cy.byId(ff.t4).should('be.visible').should('have.value', '201');
+    cy.byId(ff.t5).should('be.visible').should('have.value', '202');
   });
 
-  it('repeating items should be shown', function() {
-    expect(ff.rpq1_1.isDisplayed()).toBe(true);
-    expect(ff.rpq1_1.getAttribute('value')).toBe('instance A');
-    expect(ff.rpq1_2.isDisplayed()).toBe(true);
-    expect(ff.rpq1_2.getAttribute('value')).toBe('instance B');
-    expect(ff.rpq1_add_btn.isDisplayed()).toBe(true);
-    expect(ff.rpq1_add_btn.getText()).toBe('+ Add another "A Repeating Item"');
-
+  it('repeating items should be shown', () => {
+    cy.byId(ff.rpq1_1).should('be.visible').should('have.value', 'instance A');
+    cy.byId(ff.rpq1_2).should('be.visible').should('have.value', 'instance B');
+    cy.byId(ff.rpq1_add_btn).should('be.visible').should('contain', 'Add another "A Repeating Item"');
   });
 
-  it('repeating items/section within a repeating section should be shown', function() {
-    expect(ff.rpq2_1.isDisplayed()).toBe(true);
-    expect(ff.rpq2_2.isDisplayed()).toBe(true);
-    expect(ff.rpq3_1.isDisplayed()).toBe(true);
-    expect(ff.rpq3_1.getAttribute('value')).toBe('300');
-    expect(ff.rpq3_2.isDisplayed()).toBe(true);
-    expect(ff.rpq3_2.getAttribute('value')).toBe('301');
-    expect(ff.rpq4_1.isDisplayed()).toBe(true);
-    expect(ff.rpq4_2.isDisplayed()).toBe(true);
-    expect(ff.rpq4_3.isDisplayed()).toBe(true);
-    expect(ff.rpq4_5.isDisplayed()).toBe(true);
-    expect(ff.rpq5_1.isDisplayed()).toBe(true);
-    expect(ff.rpq5_1.getAttribute('value')).toBe('400');
-    expect(ff.rpq5_2.isDisplayed()).toBe(true);
-    expect(ff.rpq5_2.getAttribute('value')).toBe('401');
-    expect(ff.rpq5_3.isDisplayed()).toBe(true);
-    expect(ff.rpq5_3.getAttribute('value')).toBe('402');
-    expect(ff.rpq5_5.isDisplayed()).toBe(true);
-    expect(ff.rpq5_5.getAttribute('value')).toBe('403');
+  it('repeating items/section within a repeating section should be shown', () => {
+    cy.get(ff.rpq2_1).should('be.visible');
+    cy.get(ff.rpq2_2).should('be.visible');
+    cy.byId(ff.rpq3_1).should('be.visible').should('have.value', '300');
+    cy.byId(ff.rpq3_2).should('be.visible').should('have.value', '301');
+    cy.get(ff.rpq4_1).should('be.visible');
+    cy.get(ff.rpq4_2).should('be.visible');
+    cy.get(ff.rpq4_3).should('be.visible');
+    cy.get(ff.rpq4_5).should('be.visible');
+    cy.byId(ff.rpq5_1).should('be.visible').should('have.value', '400');
+    cy.byId(ff.rpq5_2).should('be.visible').should('have.value', '401');
+    cy.byId(ff.rpq5_3).should('be.visible').should('have.value', '402');
+    cy.byId(ff.rpq5_5).should('be.visible').should('have.value', '403');
 
-    expect(ff.rpq4_add_btn_1.isDisplayed()).toBe(true);
-    expect(ff.rpq4_add_btn_1.getText()).toBe('+ Add another "A repeating section in a repeating section"');
-    expect(ff.rpq4_add_btn_2.isDisplayed()).toBe(true);
-    expect(ff.rpq4_add_btn_2.getText()).toBe('+ Add another "A repeating section in a repeating section"');
-    expect(ff.rpq2_add_btn.isDisplayed()).toBe(true);
-    expect(ff.rpq2_add_btn.getText()).toBe('+ Add another "A Repeating Section"');
+    cy.byId(ff.rpq4_add_btn_1).should('be.visible').should('contain', 'Add another "A repeating section in a repeating section"');
+    cy.byId(ff.rpq4_add_btn_2).should('be.visible').should('contain', 'Add another "A repeating section in a repeating section"');
+    cy.byId(ff.rpq2_add_btn).should('be.visible').should('contain', 'Add another "A Repeating Section"');
 
-    expect(ff.rpq4_del_btn_3.isDisplayed()).toBe(true);
-    expect(ff.rpq4_del_btn_3.getText()).toBe('-');
-    expect(ff.rqp2_del_btn_2.isDisplayed()).toBe(true);
-    expect(ff.rqp2_del_btn_2.getText()).toBe('-');
-
+    cy.byId(ff.rpq4_del_btn_3).should('be.visible').should('have.text', '-');
+    cy.byId(ff.rqp2_del_btn_2).should('be.visible').should('have.text', '-');
   });
 
-  it('skip logic on repeating section should work too', function() {
-    ff.rpSrc2.clear();
-    TestUtil.sendKeys(ff.rpSrc2, '1');
-    TestUtil.waitForElementNotPresent(ff.rpTarget2a)
-    ff.rpSrc2.clear();
-    TestUtil.sendKeys(ff.rpSrc2, '2');
-    expect(ff.rpTarget2a.isDisplayed()).toBe(true);
-    ff.rpAdd.click();
-
-    expect(ff.rpTarget2a.isDisplayed()).toBe(true);
-    expect(ff.rpTarget2b.isDisplayed()).toBe(true);
-    ff.rpSrc2.clear();
-    TestUtil.sendKeys(ff.rpSrc2, '1');
-    TestUtil.waitForElementNotPresent(ff.rpTarget2a);
-    TestUtil.waitForElementNotPresent(ff.rpTarget2b);
+  it('skip logic on repeating section should work too', () => {
+    cy.byId(ff.rpSrc2).clear().type('1');
+    cy.byId(ff.rpTarget2a).should('not.exist');
+    cy.byId(ff.rpSrc2).clear().type('2');
+    cy.byId(ff.rpTarget2a).should('be.visible');
+    cy.byId(ff.rpAdd).click();
+    cy.byId(ff.rpTarget2a).should('be.visible');
+    cy.byId(ff.rpTarget2b).should('be.visible');
+    cy.byId(ff.rpSrc2).clear().type('1');
+    cy.byId(ff.rpTarget2a).should('not.exist');
+    cy.byId(ff.rpTarget2b).should('not.exist');
   });
 
-  it('form should be actionable', function() {
-
+  it('form should be actionable', () => {
     // add a repeating item
-    TestUtil.clickAddRemoveButton(ff.rpq1_add_btn);
-    TestUtil.waitForElementNotPresent(ff.rpq1_add_btn);
-    expect(ff.rpq1_add_btn_3.isDisplayed()).toBe(true);
-    expect(ff.rpq1_add_btn_3.getText()).toBe('+ Add another "A Repeating Item"');
-    expect(ff.rpq1_3.getAttribute('value')).toBe('');
+    cy.byId(ff.rpq1_add_btn).click().should('not.exist');
+    cy.byId(ff.rpq1_add_btn_3).should('be.visible').should('contain', 'Add another "A Repeating Item"');
+    cy.byId(ff.rpq1_3).should('have.value', '');
     // add a repeating section
-    TestUtil.clickAddRemoveButton(ff.rpq4_add_btn_1);
-    TestUtil.waitForElementNotPresent(ff.rpq4_add_btn_1);
-    expect(ff.rpq4_add_btn_1b.isDisplayed()).toBe(true);
-    expect(ff.rpq4_add_btn_1b.getText()).toBe('+ Add another "A repeating section in a repeating section"');
-    expect(ff.rpq5_4.getAttribute('value')).toBe('');
+    cy.byId(ff.rpq4_add_btn_1).click().should('not.exist');
+    cy.byId(ff.rpq4_add_btn_1b).should('be.visible').should('contain', 'Add another "A repeating section in a repeating section"');
+    cy.byId(ff.rpq5_4).should('have.value', '');
 
     // select from an answer list
-    ff.q5.click();
     // pick the 1st item, Answer 1
-    ff.q5.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.q5.sendKeys(protractor.Key.TAB);
-    expect(ff.q5.getAttribute('value')).toBe('Answer 1');
+    cy.byId(ff.q5).click().type('{downArrow}').blur()
+      .should('have.value', 'Answer 1');
 
     // select one more answer from multi select field
-    ff.q8.click();
     // pick the 1st item, Answer 2
-    ff.q8.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.q8.sendKeys(protractor.Key.TAB);
-    expect(ff.multiAnswers.count()).toBe(7);
-    expect(ff.multiAnswers.get(0).getText()).toBe('×Answer 1');
-    expect(ff.multiAnswers.get(1).getText()).toBe('×Answer 3');
-    expect(ff.multiAnswers.get(2).getText()).toBe('×Answer 2');
-    expect(ff.multiAnswers.get(3).getText()).toBe('×Answer 2');
-    expect(ff.multiAnswers.get(4).getText()).toBe('×User created answer');
-    expect(ff.multiAnswers.get(5).getText()).toBe('×Answer 2');
-    expect(ff.multiAnswers.get(6).getText()).toBe('×User created answer');
+    cy.byId(ff.q8).click().type('{downArrow}').blur();
+    cy.get(ff.multiAnswers).should(($list) => {
+      expect($list).to.have.length(7);
+      expect($list.eq(0)).to.have.text('×Answer 1');
+      expect($list.eq(1)).to.have.text('×Answer 3');
+      expect($list.eq(2)).to.have.text('×Answer 2');
+      expect($list.eq(3)).to.have.text('×Answer 2');
+      expect($list.eq(4)).to.have.text('×User created answer');
+      expect($list.eq(5)).to.have.text('×Answer 2');
+      expect($list.eq(6)).to.have.text('×User created answer');
+    });
   });
 
-  it('adding a repeating section that has repeating sub items with user data should show just one repeating item', function() {
+  it('adding a repeating section that has repeating sub items with user data should show just one repeating item', () => {
+    const addSectionButton = 'add-/rp-q2/2',
+      section3Label = 'label-/rp-q2/3',
+      section31Label = 'label-/rp-q2/rp-q4/3/1',
+      item31 = '/rp-q2/rp-q3/3/1',
+      item311 = '/rp-q2/rp-q4/rp-q5/3/1/1',
+      item312 = '/rp-q2/rp-q4/rp-q5/3/1/2';
 
-    var addSectionButton = element(by.id("add-/rp-q2/2")),
-        section3Label = element(by.id("label-/rp-q2/3")),
-        section31Label = element(by.id("label-/rp-q2/rp-q4/3/1")),
-        item31 = element(by.id("/rp-q2/rp-q3/3/1")),
-        item311 = element(by.id("/rp-q2/rp-q4/rp-q5/3/1/1")),
-        item312 = element(by.id("/rp-q2/rp-q4/rp-q5/3/1/2"));
-
-    addSectionButton.click();
-
-    expect(section3Label.isDisplayed()).toBe(true);
-    expect(section31Label.isDisplayed()).toBe(true);
-    expect(item31.isDisplayed()).toBe(true);
-    expect(item31.getAttribute('value')).toBe('');
-    expect(item311.isDisplayed()).toBe(true);
-    expect(item311.getAttribute('value')).toBe('');
-    TestUtil.waitForElementNotPresent(item312);
-
+    cy.byId(addSectionButton).click();
+    cy.byId(section3Label).should('be.visible');
+    cy.byId(section31Label).should('be.visible');
+    cy.byId(item31).should('be.visible').should('have.value', '');
+    cy.byId(item311).should('be.visible').should('have.value', '');
+    cy.byId(item312).should('not.exist');
   });
 
-  it('should display user value and default answers on CWE typed items when answers are displayed as radio buttons and checkboxes', function() {
+  it('should display user value and default answers on CWE typed items when answers are displayed as radio buttons and checkboxes', () => {
+    const cwe1Other = '/cwe-checkbox-user-value/1_other',
+      cwe1OtherValue = '/cwe-checkbox-user-value/1_otherValue',
 
-    var cwe1Other = element(by.id("/cwe-checkbox-user-value/1_other")).element(by.css('input')),
-        cwe1OtherValue = element(by.id("/cwe-checkbox-user-value/1_otherValue")),
+      cwe2Ans1 = '/cwe-checkbox-user-value-and-answer-code/1c1',
+      cwe2Other = '/cwe-checkbox-user-value-and-answer-code/1_other',
+      cwe2OtherValue = '/cwe-checkbox-user-value-and-answer-code/1_otherValue',
 
-        cwe2Ans1 = element(by.id("/cwe-checkbox-user-value-and-answer-code/1c1")).element(by.css('input')),
-        cwe2Other = element(by.id("/cwe-checkbox-user-value-and-answer-code/1_other")).element(by.css('input')),
-        cwe2OtherValue = element(by.id("/cwe-checkbox-user-value-and-answer-code/1_otherValue")),
+      cwe3Ans2 = '/cwe-checkbox-user-value-and-answer-text/1c2',
+      cwe3Other = '/cwe-checkbox-user-value-and-answer-text/1_other',
+      cwe3OtherValue = '/cwe-checkbox-user-value-and-answer-text/1_otherValue',
 
-        cwe3Ans2 = element(by.id("/cwe-checkbox-user-value-and-answer-text/1c2")).element(by.css('input')),
-        cwe3Other = element(by.id("/cwe-checkbox-user-value-and-answer-text/1_other")).element(by.css('input')),
-        cwe3OtherValue = element(by.id("/cwe-checkbox-user-value-and-answer-text/1_otherValue")),
+      cwe4Ans3 = '/cwe-checkbox-user-value-and-answer/1c3',
+      cwe4Other = '/cwe-checkbox-user-value-and-answer/1_other',
+      cwe4OtherValue = '/cwe-checkbox-user-value-and-answer/1_otherValue',
 
-        cwe4Ans3 = element(by.id("/cwe-checkbox-user-value-and-answer/1c3")).element(by.css('input')),
-        cwe4Other = element(by.id("/cwe-checkbox-user-value-and-answer/1_other")).element(by.css('input')),
-        cwe4OtherValue = element(by.id("/cwe-checkbox-user-value-and-answer/1_otherValue")),
+      cwe5Other = '/cwe-checkbox-default-answer/1_other',
+      cwe5OtherValue = '/cwe-checkbox-default-answer/1_otherValue',
 
-        cwe5Other = element(by.id("/cwe-checkbox-default-answer/1_other")).element(by.css('input')),
-        cwe5OtherValue = element(by.id("/cwe-checkbox-default-answer/1_otherValue")),
+      cwe6Other = '/cwe-radio-user-value/1_other',
+      cwe6OtherValue = '/cwe-radio-user-value/1_otherValue',
 
-        cwe6Other = element(by.id("/cwe-radio-user-value/1_other")).element(by.css('input')),
-        cwe6OtherValue = element(by.id("/cwe-radio-user-value/1_otherValue")),
-
-        cwe7Other = element(by.id("/cwe-radio-default-answer/1_other")).element(by.css('input')),
-        cwe7OtherValue = element(by.id("/cwe-radio-default-answer/1_otherValue"));
-
+      cwe7Other = '/cwe-radio-default-answer/1_other',
+      cwe7OtherValue = '/cwe-radio-default-answer/1_otherValue';
 
     // OTHER in checkbox display with the user value not in the answer list
-    expect(cwe1Other.isSelected()).toBe(true);
-    expect(cwe1OtherValue.getAttribute('value')).toBe('user typed value');
+    cy.byId(cwe1Other).find('input').should('be.checked');
+    cy.byId(cwe1OtherValue).should('have.value', 'user typed value');
     // OTHER and an answer that has only a 'code', in checkbox display with the user value not in the answer list
-    expect(cwe2Ans1.isSelected()).toBe(true);
-    expect(cwe2Other.isSelected()).toBe(true);
-    expect(cwe2OtherValue.getAttribute('value')).toBe('user typed value');
+    cy.byId(cwe2Ans1).find('input').should('be.checked');
+    cy.byId(cwe2Other).find('input').should('be.checked');
+    cy.byId(cwe2OtherValue).should('have.value', 'user typed value');
     // OTHER and an answer that has only a 'text', in checkbox display with the user value not in the answer list
-    expect(cwe3Ans2.isSelected()).toBe(true);
-    expect(cwe3Other.isSelected()).toBe(true);
-    expect(cwe3OtherValue.getAttribute('value')).toBe('user typed value');
+    cy.byId(cwe3Ans2).find('input').should('be.checked');
+    cy.byId(cwe3Other).find('input').should('be.checked');
+    cy.byId(cwe3OtherValue).should('have.value', 'user typed value');
     // OTHER and an answer that has a 'code and a 'text', in checkbox display with the user value not in the answer list
-    expect(cwe4Ans3.isSelected()).toBe(true);
-    expect(cwe4Other.isSelected()).toBe(true);
-    expect(cwe4OtherValue.getAttribute('value')).toBe('user typed value');
+    cy.byId(cwe4Ans3).find('input').should('be.checked');
+    cy.byId(cwe4Other).find('input').should('be.checked');
+    cy.byId(cwe4OtherValue).should('have.value', 'user typed value');
     // default answer is not in the answer list, checkbox display, other value set
-    expect(cwe5Other.isSelected()).toBe(true);
-    expect(cwe5OtherValue.getAttribute('value')).toBe('off-list default answer');
+    cy.byId(cwe5Other).find('input').should('be.checked');
+    cy.byId(cwe5OtherValue).should('have.value', 'off-list default answer');
     // OTHER, in radiobutton display with the user value not in the answer list
-    expect(cwe6Other.isSelected()).toBe(true);
-    expect(cwe6OtherValue.getAttribute('value')).toBe('user typed value');
+    cy.byId(cwe6Other).find('input').should('be.checked');
+    cy.byId(cwe6OtherValue).should('have.value', 'user typed value');
     // default answer is not in the answer list, radiobutton display, other value set
-    expect(cwe7Other.isSelected()).toBe(true);
-    expect(cwe7OtherValue.getAttribute('value')).toBe('off-list default answer');
-
+    cy.byId(cwe7Other).find('input').should('be.checked');
+    cy.byId(cwe7OtherValue).should('have.value', 'off-list default answer');
   });
-
 
 });
 
-describe('load saved user data, where hasSavedData is set to true', function() {
-  let tp: TestPage;
-  let ff: any;
-  let LForms: any = (global as any).LForms;
+describe('load saved user data, where hasSavedData is set to true', () => {
+  const tp: TestPage = new TestPage();
+  const ff = tp.FormWithUserData;
 
-  beforeAll(async () => {
-    await browser.waitForAngularEnabled(false);
-    tp = new TestPage();
-    tp.LoadForm.openFormWithUserData()
-    ff = tp.FormWithUserData;
+  before(() => {
+    tp.LoadForm.openFormWithUserData();
   });
 
-  it('should not load default values', function () {
-
+  it('should not load default values', () => {
     tp.LoadForm.openFormWithUserDataWithHasSavedData();
-    expect(ff.q5.getAttribute('value')).toBe('');
-
-    var cwe5Other = element(by.id("/cwe-checkbox-default-answer/1_other")),
-        cwe7Other = element(by.id("/cwe-radio-default-answer/1_other"));
-
+    cy.byId(ff.q5).should('have.value', '');
     // default answer is not in the answer list,
-    expect(cwe5Other.isSelected()).toBe(false);
-    expect(cwe7Other.isSelected()).toBe(false);
-
+    cy.byId('/cwe-checkbox-default-answer/1_other').should('not.be.checked');
+    cy.byId('/cwe-radio-default-answer/1_other').should('not.be.checked');
   });
+
 });
