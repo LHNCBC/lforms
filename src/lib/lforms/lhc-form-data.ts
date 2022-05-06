@@ -1631,7 +1631,7 @@ export default class LhcFormData {
           if (typeof value[j] === 'object') {
             answers.push(this._filterInternalData(value[j], typeCWE));
           }
-          // for primitive data type (multiple values not supported yet)
+          // for primitive data type
           else {
             answers.push(value[j]);
           }
