@@ -1,6 +1,6 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
 
-describe('Raido button checked/unchecked', () => {
+describe('Radio button checked/unchecked', () => {
   const tp: TestPage = new TestPage();
 
   it('should display checked state correctly', () => {
