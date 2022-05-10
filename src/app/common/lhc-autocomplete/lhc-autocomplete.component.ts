@@ -119,9 +119,9 @@ export class LhcAutocompleteComponent implements OnChanges {
 
 
   /**
-   * Update the display value of the autocomplte when the item.value is changed
+   * Update the display value of the autocompleter when the item.value is changed
    * changed by data control or fhirpath expression after the autocompleter is initialized
-   * @param value the new data in item.value
+   * @param itemValue the new data in item.value
    */
   updateDisplayedValue(itemValue:any) {
     // Note:  This runs both in response to user interaction and to JavaScript
@@ -349,7 +349,7 @@ export class LhcAutocompleteComponent implements OnChanges {
 
 
   /**
-   * Set up an item's value when an answer is selected from a 'prefect' autocompleter
+   * Set up an item's value when an answer is selected from a 'prefetch' autocompleter
    * @param selectedTexts the selected answer's text
    */
   setItemValueForPrefetchAC(selectedTexts: string[]): void {
@@ -364,7 +364,7 @@ export class LhcAutocompleteComponent implements OnChanges {
             return answerItem;
           }
           else if (this.allowNotOnList) {
-            return {"text" : text, "_notOnList": true}
+            return {"text" : text, "_notOnList": true, _displayText: text};
           }
           else {
             // do nothing. this should not happen?
