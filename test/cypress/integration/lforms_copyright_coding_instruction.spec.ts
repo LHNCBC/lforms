@@ -148,10 +148,7 @@ describe('popover buttons', () => {
     });
 
     it('should be able to display HTML/Text formatted coding instructions from FHIR R4 Questionnaire', () => {
-      cy.get('#fileAnchor').uploadFile('test/data/R4/ussg-fhp.json');
-      cy.get('.lhc-form-title').should('be.visible');
-      // Wait for loadFile() script work to be done after upload.
-      cy.get('#fileAnchor').should('have.value', '');
+      tp.loadFromTestData('ussg-fhp.json', 'R4');
       cy.window().then((win) => {
         const testForm: any = win.document.getElementById('test-form');
         testForm.options = {allowHTMLInInstructions: true};
@@ -225,9 +222,7 @@ describe('popover buttons', () => {
           break;
       }
 
-      cy.get('#fileAnchor').uploadFile('test/data/lforms/copyright-help.json');
-      cy.get('.lhc-form-title').should('be.visible');
-      cy.get('#fileAnchor').should('have.value', '');
+      tp.loadFromTestData('copyright-help.json');
 
       // tslint:disable-next-line:variable-name
       const field_1 = '/type0/1';
