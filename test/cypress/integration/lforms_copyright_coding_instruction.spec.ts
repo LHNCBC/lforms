@@ -122,6 +122,13 @@ describe('popover buttons', () => {
       cy.byId(helpPopover1).should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo1.nlm.nih.gov\'>LForms Demo 1</a>');
 
       cy.byId(field1).click();
+      cy.byId(helpPopover1).should('not.exist');
+      cy.byId(helpButton2).click();
+      cy.byId(helpPopover2).should('be.visible');
+      cy.get(inlineHTMLLink2).should('not.exist');
+      cy.byId(helpPopover2).should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo2.nlm.nih.gov\'>LForms Demo 2</a>');
+
+      cy.byId(field1).click();
       cy.byId(helpPopover2).should('not.exist');
       cy.byId(helpButton3).click();
       cy.byId(helpPopover3).should('be.visible').should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo3.nlm.nih.gov\'>LForms Demo 3</a>');
