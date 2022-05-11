@@ -429,6 +429,21 @@ export class TestPage {
     this.makeReaderLogVisible();
   }
 
+  /**
+   *  Loads a form from a JSON form definition file from the test/data
+   *  directory, and displays the form.
+   * @param filepath the path to the form definition file, relative to
+   *  test/data/fhirVersion (or just test/data if fhirVersion is not
+   *  provided.)
+   * @param fhirVersion (optional) the version of FHIR to use.
+   */
+  loadFromTestData(filepath, fhirVersion = 'lforms') {
+    cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/${filepath}`);
+    cy.get('.lhc-form-title').should('be.visible');
+    // Wait for loadFile() script work to be done after upload.
+    cy.get('#fileAnchor').should('have.value', '');
+  }
+
 
 }
 
