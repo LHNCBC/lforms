@@ -227,9 +227,7 @@ describe('skip logic', () => {
       }
 
       it('should work with skip logic source that itself is a skip logic target - ' + fhirVersions[i], () => {
-        cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersions[i]}/test-enablewhen.json`);
-        cy.get('.lhc-form-title').should('be.visible');
-        cy.get('#fileAnchor').should('have.value', '');
+        tp.loadFromTestData('test-enablewhen.json', fhirVersions[i]);
         const source = '4.1/1';
         const targetEqual = '4.3/1';
         const targetWithSklSourceExists = '4.4/1';

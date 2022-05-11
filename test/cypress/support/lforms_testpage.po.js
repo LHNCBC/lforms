@@ -438,10 +438,21 @@ export class TestPage {
    * @param fhirVersion (optional) the version of FHIR to use.
    */
   loadFromTestData(filepath, fhirVersion = 'lforms') {
+    if (fhirVersion !== 'lforms') {
+      this.setFHIRVersion(fhirVersion);
+    }
     cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/${filepath}`);
     cy.get('.lhc-form-title').should('be.visible');
     // Wait for loadFile() script work to be done after upload.
     cy.get('#fileAnchor').should('have.value', '');
+  }
+
+  /**
+   *  Selects a FHIR version.
+   * @param version the FHIR version to use.
+   */
+  setFHIRVersion(version) {
+    cy.get('#fhirVersion').select(version);
   }
 
 
