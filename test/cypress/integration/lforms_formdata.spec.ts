@@ -22,7 +22,7 @@ describe('formdata: ', () => {
       // pick the 1st item, centimeters
       cy.byId(ff.gender).click().type('{downArrow}').blur();
 
-      // pick the first 2 items, centimeters
+      // pick the first 2 items
       cy.byId(ff.race).click().type('{downArrow}').blur();
       cy.byId(ff.race).click().type('{downArrow}').blur();
 
@@ -94,7 +94,7 @@ describe('formdata: ', () => {
       tp.LoadForm.openUSSGFHTVertical();
       cy.byId(ff.name).type('Not Empty');
 
-      // pick the 1st item, centimeters
+      // pick the 1st item
       cy.byId(ff.gender).type('{downArrow}').blur();
       cy.byId(ff.name).should('be.visible');
       cy.byId(ff.gender).should('have.value', 'Male');
