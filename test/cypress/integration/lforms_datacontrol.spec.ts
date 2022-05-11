@@ -1,13 +1,9 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import {rxtermsControls as rxterms} from '../support/rxterms.po.js';
 
 describe('data control', () => {
   const tp: TestPage = new TestPage();
   const ff: any = tp.FullFeaturedForm;
-  const rxterms = {
-    strengthAndForm: '/X-002/strengthAndForm/1/1',
-    drugName: '/X-002/nameAndRoute/1/1',
-    rxcui: '/X-002/RxCUI/1/1'
-  };
 
   it('data change on source field should update target fields', () => {
     tp.LoadForm.openFullFeaturedForm();
