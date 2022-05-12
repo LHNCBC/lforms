@@ -6,7 +6,7 @@ function showSource(event) {
     var jqE = jQuery(elem);
     jqE.after(
       '<div style="display:none"> \
-         <iframe sandbox="allow-scripts allow-same-origin" style="width: 100%; height: 400px" \
+         <iframe sandbox="allow-scripts allow-same-origin allow-popups allow-modals" style="width: 100%; height: 400px" \
           src="https://jsfiddle.net/'+jqE.attr("_src")+
           '/embedded/result,js,html/dark/"> \
          </iframe> \
