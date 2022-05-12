@@ -13,9 +13,7 @@ describe('skip logic', () => {
 
   it('should support enableWhenExpression', () => {
     tp.openBaseTestPage();
-    cy.get('#fileAnchor').uploadFile('test/data/R4/enableWhenExpressionTest.json');
-    cy.get('.lhc-form-title').should('be.visible');
-    cy.get('#fileAnchor').should('have.value', '');
+    tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
 
     const n1 = 'n1/1';
     const n2 = 'n2/1';
@@ -204,9 +202,7 @@ describe('skip logic', () => {
     for (let i = 0; i < fhirVersions.length; i++) {
       if (fhirVersions[i] !== 'STU3') {
         it('should work with = and != operators - ' + fhirVersions[i], () => {
-          cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersions[i]}/test-enablewhen.json`);
-          cy.get('.lhc-form-title').should('be.visible');
-          cy.get('#fileAnchor').should('have.value', '');
+          tp.loadFromTestData('test-enablewhen.json', fhirVersions[1]);
           const source = '4.1/1';
           const targetEqual = '4.2/1';
           const targetNotEqual = '4.3/1';
@@ -257,9 +253,7 @@ describe('skip logic', () => {
     }
 
     it('should work with data control whose source is controlled by skip logic', () => {
-      cy.get('#fileAnchor').uploadFile(`test/data/lforms/test-skiplogic-datacontrol.json`);
-      cy.get('.lhc-form-title').should('be.visible');
-      cy.get('#fileAnchor').should('have.value', '');
+      tp.loadFromTestData('test-skiplogic-datacontrol.json');
       const source = '1/1';
       const skipLogicItem = '2/1';
       const dataControlItemWithSourceHavingSkipLogic = '3/1';
