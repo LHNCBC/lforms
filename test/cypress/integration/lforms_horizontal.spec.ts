@@ -1,12 +1,8 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import {rxtermsControls as rxtermsForm} from '../support/rxterms.po.js';
 
 describe('horizontal table', () => {
   const tp: TestPage = new TestPage();
-  const rxtermsForm = {
-    strengthAndForm: '/X-002/strengthAndForm/1/1',
-    drugName: '/X-002/nameAndRoute/1/1',
-    rxcui: '/X-002/RxCUI/1/1'
-  };
   const addRemoveButtons = '.lhc-float-button';
 
   it('should have one add button in the horizontal table when the form loads', () => {
