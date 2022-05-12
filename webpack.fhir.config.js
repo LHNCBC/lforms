@@ -5,7 +5,6 @@ function commonConfig() {
       path: __dirname,
     },
     optimization: {
-      minimize: true,
       minimizer: [
         // Disable the terser cache, which does not detect changes to the
         // webpack configuration (and sometimes keeps old configuration data).

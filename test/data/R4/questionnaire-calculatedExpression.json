@@ -116,6 +116,21 @@
       ]
     },
     {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "repeating-open-choice-from-string",
+      "text": "Repeating open-choice with off-list string values from other open-choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "language" : "text/fhirpath",
+            "expression": "%resource.item.where(linkId='repeating-open-choice').answer.value"
+          }
+        }
+      ]
+    },
+    {
       "type": "choice",
       "linkId": "oneCoding",
       "text": "Use just one coding below?",
