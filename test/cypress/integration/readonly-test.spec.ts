@@ -26,17 +26,17 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
 
     cy.byId("cne-single/1/1").should("be.disabled");
     cy.byId("cne-multiple/1/1").should("be.disabled");
-    cy.byId("cne-single-radio/1/1c1 .ant-radio").should("have.class", "ant-radio-disabled");
-    cy.byId("cne-single-radio/1/1c1 .ant-radio input").should("be.disabled");
-    cy.byId("cne-multiple-checkbox/1/1c1 .ant-checkbox").should("have.class", "ant-checkbox-disabled");
-    cy.byId("cne-multiple-checkbox/1/1c1 .ant-checkbox input").should("be.disabled");
+    cy.byId("cne-single-radio/1/1c1").find(".ant-radio").should("have.class", "ant-radio-disabled");
+    cy.byId("cne-single-radio/1/1c1").find(".ant-radio input").should("be.disabled");
+    cy.byId("cne-multiple-checkbox/1/1c1").find(".ant-checkbox").should("have.class", "ant-checkbox-disabled");
+    cy.byId("cne-multiple-checkbox/1/1c1").find(".ant-checkbox input").should("be.disabled");
 
     cy.byId("cwe-single/1/1").should("be.disabled");
     cy.byId("cwe-multiple/1/1").should("be.disabled");
-    cy.byId("cwe-single-radio/1/1c1 .ant-radio").should("have.class", "ant-radio-disabled");
-    cy.byId("cwe-single-radio/1/1c1 .ant-radio input").should("be.disabled");
-    cy.byId("cwe-multiple-checkbox/1/1c1 .ant-checkbox").should("have.class", "ant-checkbox-disabled");
-    cy.byId("cwe-multiple-checkbox/1/1c1 .ant-checkbox input").should("be.disabled");
+    cy.byId("cwe-single-radio/1/1c1").find(".ant-radio").should("have.class", "ant-radio-disabled");
+    cy.byId("cwe-single-radio/1/1c1").find(".ant-radio input").should("be.disabled");
+    cy.byId("cwe-multiple-checkbox/1/1c1").find(".ant-checkbox").should("have.class", "ant-checkbox-disabled");
+    cy.byId("cwe-multiple-checkbox/1/1c1").find(".ant-checkbox input").should("be.disabled");
 
 
     // with values
@@ -54,30 +54,30 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
 
     cy.byId("g2/cne-single/1/1").should("be.disabled");
     cy.byId("g2/cne-multiple/1/1").should("be.disabled");
-    cy.byId("g2/cne-single-radio/1/1c1 .ant-radio").should("have.class", "ant-radio-disabled");
-    cy.byId("g2/cne-single-radio/1/1c1 .ant-radio input").should("be.disabled");
-    cy.byId("g2/cne-multiple-checkbox/1/1c1 .ant-checkbox").should("have.class", "ant-checkbox-disabled");
-    cy.byId("g2/cne-multiple-checkbox/1/1c1 .ant-checkbox input").should("be.disabled");
+    cy.byId("g2/cne-single-radio/1/1c1").find(".ant-radio").should("have.class", "ant-radio-disabled");
+    cy.byId("g2/cne-single-radio/1/1c1").find(".ant-radio input").should("be.disabled");
+    cy.byId("g2/cne-multiple-checkbox/1/1c1").find(".ant-checkbox").should("have.class", "ant-checkbox-disabled");
+    cy.byId("g2/cne-multiple-checkbox/1/1c1").find(".ant-checkbox input").should("be.disabled");
 
     cy.byId("g2/cwe-single/1/1").should("be.disabled");
     cy.byId("g2/cwe-multiple/1/1").should("be.disabled");
-    cy.byCss("#g2/cwe-single-radio/1/1c1 .ant-radio").should("have.class", "ant-radio-disabled");
-    cy.byCss("#g2/cwe-single-radio/1/1c1 .ant-radio input").should("be.disabled");
-    cy.byCss("#g2/cwe-multiple-checkbox/1/1c1 .ant-checkbox").should("have.class", "ant-checkbox-disabled");
-    cy.byCss("#g2/cwe-multiple-checkbox/1/1c1 .ant-checkbox input").should("be.disabled");
+    cy.byCss("#g2/cwe-single-radio/1/1c1").find(".ant-radio").should("have.class", "ant-radio-disabled");
+    cy.byCss("#g2/cwe-single-radio/1/1c1").find(".ant-radio input").should("be.disabled");
+    cy.byCss("#g2/cwe-multiple-checkbox/1/1c1").find(".ant-checkbox").should("have.class", "ant-checkbox-disabled");
+    cy.byCss("#g2/cwe-multiple-checkbox/1/1c1").find(".ant-checkbox input").should("be.disabled");
 
     // selected answers in mutiple seletion ac should not have the x button
     cy.byCss("#item-g2/cne-multiple/1/1 .autocomp_selected li>button").should("have.text", "××");
     cy.byCss("#item-g2/cne-multiple/1/1 .autocomp_selected li>button").should("not.be.visible");
     cy.byCss("#item-g2/cwe-multiple/1/1 .autocomp_selected li>button").should("have.text", "××");
     cy.byCss("#item-g2/cwe-multiple/1/1 .autocomp_selected li>button").should("not.be.visible");
-    
-    // the other input field in CWE radio layout should be disabled too 
+
+    // the other input field in CWE radio layout should be disabled too
     cy.byId("g2/cwe-single-radio/1/1_otherValue").should("be.disabled");
-    // the other input field in CWE checkbox layout should be disabled too 
+    // the other input field in CWE checkbox layout should be disabled too
     cy.byId("g2/cwe-multiple-checkbox/1/1_otherValue").should("be.disabled");
   });
 
- 
+
 
 });
