@@ -4,12 +4,12 @@
   [nzDisabled]="item._readOnly" nz-row class="lhc-radio-group"
   [ngClass]="{'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl)}">
       <label *ngFor="let answer of item._modifiedAnswers; index as i" class="lhc-answer" nz-radio
-        [nzValue]="answer" [(ngModel)]="radioModels[i]" [id]="item._elementId + answer.code">
+        [nzValue]="answer" [ngModel]="radioModels[i]" [id]="item._elementId + answer.code">
         {{answer._displayText}}
       </label>
 
       <label *ngIf="item.dataType=== 'CWE'" nz-radio [nzValue]="{'text': otherValue, '_notOnList': true}"
-      [(ngModel)]="otherRadioModel" [id]="item._elementId + '_other'" class="lhc-answer">Other
+      [ngModel]="otherRadioModel" [id]="item._elementId + '_other'" class="lhc-answer">Other
         <input type="text" [(ngModel)]="otherValue" class="lhc-answer-other-input"
         [id]="item._elementId + '_otherValue'" nz-input [disabled]="item._readOnly"
         *ngIf="radioValue && radioValue._notOnList" (keyup)="onOtherValueChange($event)"
