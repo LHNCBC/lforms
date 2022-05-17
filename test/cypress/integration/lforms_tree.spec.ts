@@ -1,21 +1,15 @@
-import { TestPage } from "./lforms_testpage.po";
-import { browser, logging, element, by, WebElementPromise, ExpectedConditions } from 'protractor';
+import {TestPage} from '../support/lforms_testpage.po.js';
 
-describe('tree lines', function() {
-  let tp: TestPage = new TestPage(); 
+describe('tree lines', () => {
+  const tp: TestPage = new TestPage();
 
-  beforeAll(async () => {
-    await browser.waitForAngularEnabled(false);
-  });
-
-  it('should show the last items correctly as a sub-items', function() {
-
+  it('should show the last items correctly as a sub-items', () => {
     tp.LoadForm.openFormBuilder();
-    var treeItem1 = element(by.id('/questionHeaderC/answersC/textC/1/1/1')),
-        treeItem2 = element(by.id('/questionHeaderC/formulaC/1/1'));
+    const treeItem1 = '/questionHeaderC/answersC/textC/1/1/1';
+    const treeItem2 = '/questionHeaderC/formulaC/1/1';
 
-    expect(treeItem1.isDisplayed()).toBe(true);
-    expect(treeItem2.isDisplayed()).toBe(true);
-
+    cy.byId(treeItem1).should('be.visible');
+    cy.byId(treeItem2).should('be.visible');
   });
+
 });

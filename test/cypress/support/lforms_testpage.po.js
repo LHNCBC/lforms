@@ -121,7 +121,16 @@ export class TestPage {
   readerLogEntries = '#reader_log p';
 
   expectReaderLogEntries(expectedEntries) {
-    cy.get(this.readerLogEntries).should("eql", expectedEntries) // not 'equal'
+    cy.get(this.readerLogEntries).should(($p) => {
+      expect($p).to.have.length(expectedEntries.length);
+      for (let i = 0; i < expectedEntries.length; i++) {
+        expect($p.eq(i).text()).to.equal(expectedEntries[i]);
+      }
+    });
+  }
+
+  expectReaderLogEntriesEmpty() {
+    cy.get(this.readerLogEntries).should('not.exist');
   }
 
   Autocomp = {
