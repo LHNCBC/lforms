@@ -225,17 +225,17 @@ export class TestPage {
     rpq1_add_btn: '#add-/rp-q1/2',
     rpq1_add_btn_3: '#add-/rp-q1/3',
 
-    rpq2_1: '#label[for="/rp-q2/1"]',
-    rpq2_2: '#label[for="/rp-q2/2"]',
+    rpq2_1: 'label[for="/rp-q2/1"]',
+    rpq2_2: 'label[for="/rp-q2/2"]',
 
     rpq3_1: '#/rp-q2/rp-q3/1/1',
     rpq3_2: '#/rp-q2/rp-q3/2/1',
 
-    rpq4_1: '#label[for="/rp-q2/rp-q4/1/1"]',
-    rpq4_2: '#label[for="/rp-q2/rp-q4/1/2"]',
-    rpq4_3: '#label[for="/rp-q2/rp-q4/1/3"]',
-    rpq4_4: '#label[for="/rp-q2/rp-q4/1/4"]',
-    rpq4_5: '#label[for="/rp-q2/rp-q4/2/1"]',
+    rpq4_1: 'label[for="/rp-q2/rp-q4/1/1"]',
+    rpq4_2: 'label[for="/rp-q2/rp-q4/1/2"]',
+    rpq4_3: 'label[for="/rp-q2/rp-q4/1/3"]',
+    rpq4_4: 'label[for="/rp-q2/rp-q4/1/4"]',
+    rpq4_5: 'label[for="/rp-q2/rp-q4/2/1"]',
 
     rpq5_1: '#/rp-q2/rp-q4/rp-q5/1/1/1',
     rpq5_2: '#/rp-q2/rp-q4/rp-q5/1/2/1',
@@ -427,6 +427,32 @@ export class TestPage {
   resetReaderLog() {
     cy.get("#reader_log").invoke("html", "")
     this.makeReaderLogVisible();
+  }
+
+  /**
+   *  Loads a form from a JSON form definition file from the test/data
+   *  directory, and displays the form.
+   * @param filepath the path to the form definition file, relative to
+   *  test/data/fhirVersion (or just test/data if fhirVersion is not
+   *  provided.)
+   * @param fhirVersion (optional) the version of FHIR to use.
+   */
+  loadFromTestData(filepath, fhirVersion = 'lforms') {
+    if (fhirVersion !== 'lforms') {
+      this.setFHIRVersion(fhirVersion);
+    }
+    cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/${filepath}`);
+    cy.get('.lhc-form-title').should('be.visible');
+    // Wait for loadFile() script work to be done after upload.
+    cy.get('#fileAnchor').should('have.value', '');
+  }
+
+  /**
+   *  Selects a FHIR version.
+   * @param version the FHIR version to use.
+   */
+  setFHIRVersion(version) {
+    cy.get('#fhirVersion').select(version);
   }
 
 

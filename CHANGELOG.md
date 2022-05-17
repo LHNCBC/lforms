@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.1.6] 2020-05-02
+## [30.1.7] 2020-05-17
 ### Fixed
 - Fixed a bug that the radio button of "Other" of the CWE typed items lost
   its checked state when users typed in the input field.
+
+## [30.1.6] 2020-05-02
+### Fixed
+- Off-list string values from an open-choice field are now usable in an
+  expression for another open-choice field.
 
 ## [30.1.5] 2020-04-22
 ### Fixed
