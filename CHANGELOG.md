@@ -2,9 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.2.0] 2022-05-05
+## [30.2.0] 2022-05-18
 ### Changed
 - Updated angular to v12 and ng-zorro-antd to v12.
+
+## [30.1.7] 2020-05-17
+### Fixed
+- Fixed a bug that the radio button of "Other" of the CWE typed items lost
+  its checked state when users typed in the input field.
 
 ## [30.1.6] 2020-05-02
 ### Fixed
