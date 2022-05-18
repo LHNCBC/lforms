@@ -10,12 +10,6 @@
   "item": [
     {
       "type": "choice",
-      "code": [
-        {
-          "code": "type-choice",
-          "display": "choice, with an answerOption.initialSelected"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -63,12 +57,6 @@
     },
     {
       "type": "choice",
-      "code": [
-        {
-          "code": "type-choice",
-          "display": "choice, with an answerOption.initialSelected and an initial.value[x]"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -125,12 +113,6 @@
 
     {
       "type": "open-choice",
-      "code": [
-        {
-          "code": "type-open-choice",
-          "display": "open-choice, with an answerOption.initialSelected"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -203,12 +185,6 @@
     },
     {
       "type": "open-choice",
-      "code": [
-        {
-          "code": "type-open-choice",
-          "display": "open-choice, with an answerOption.initialSelected and an initial.valueString"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -287,12 +263,6 @@
 
     {
       "type": "choice",
-      "code": [
-        {
-          "code": "type-choice-m",
-          "display": "choice, repeats, with two answerOption.initialSelected"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -343,12 +313,6 @@
     },
     {
       "type": "choice",
-      "code": [
-        {
-          "code": "type-choice-m",
-          "display": "choice, repeats, with two answerOption.initialSelected and two initial.value[x]"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -414,12 +378,6 @@
 
     {
       "type": "open-choice",
-      "code": [
-        {
-          "code": "type-open-choice-m",
-          "display": "open-choice, repeats, with two answerOption.initialSelected"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -469,12 +427,6 @@
     },
     {
       "type": "open-choice",
-      "code": [
-        {
-          "code": "type-open-choice-m",
-          "display": "open-choice, repeats, with two answerOption.initialSelected and two initial.value[x]"
-        }
-      ],
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",

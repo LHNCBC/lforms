@@ -38,6 +38,7 @@ For "status", if it was not previously set at import, it will be set to "draft" 
   required to include an expansion.
 * answerOption:  Except answerOption.initialSelected.  (See below.)
 * initial
+* answerOption.initialSelected
 
 ### Extensions
 * maxSize
