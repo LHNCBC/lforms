@@ -55,18 +55,20 @@ Cypress.Commands.add(
   }
 );
 
-// Get one or more DOM elements by element's id where '/' is escaped
-// and "#" is added.
+// Get one or more DOM elements by element's id where '/' and '.' is escaped
+// and "#" is added if not already present.
 Cypress.Commands.add(
   'byId',
   { prevSubject: 'optional' },
   (subject, idSelector) => {
+    const escapedSelector = idSelector.replace(/\//g,"\\/").replace(/\./g,"\\.");
+    const cySelector = escapedSelector[0] === "#" ? escapedSelector : "#" + escapedSelector;
     // escape the / in the id
     if (subject) {
-      return cy.wrap(subject).get("#" + idSelector.replace(/\//g,"\\/"));
+      return cy.wrap(subject).get(cySelector);
     }
     else {
-      return cy.get("#" + idSelector.replace(/\//g,"\\/"));
+      return cy.get(cySelector);
     }
   }
 );
@@ -96,3 +98,19 @@ Cypress.Commands.add('typeTab', (shiftKey, ctrlKey) => {
       ctrlKey: ctrlKey
   });
 });
+
+// Type in a search box and wait until search queries are finished.
+Cypress.Commands.add(
+  'typeAndWait',
+  { prevSubject: 'optional' },
+  (subject, term) => {
+    // Intercept the last query which would contain '={term}'.
+    cy.intercept('GET', '*=' + term + '**').as('lastSearchQuery');
+    cy.wrap(subject).type(term);
+    cy.wait('@lastSearchQuery');
+    // It's guaranteed that the queries have returned. But there was still a slight
+    // chance that the next Cypress command catches some element before the application
+    // finishes updating DOM.
+    cy.wait(10);
+  }
+);

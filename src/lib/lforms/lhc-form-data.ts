@@ -9,7 +9,7 @@
 import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
-import * as version from "../../version.json";
+import version from '../../version.json';
 
 import Validation from "./lhc-form-validation.js"
 
@@ -1631,7 +1631,7 @@ export default class LhcFormData {
           if (typeof value[j] === 'object') {
             answers.push(this._filterInternalData(value[j], typeCWE));
           }
-          // for primitive data type (multiple values not supported yet)
+          // for primitive data type
           else {
             answers.push(value[j]);
           }
