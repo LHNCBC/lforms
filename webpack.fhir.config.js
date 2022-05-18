@@ -4,25 +4,18 @@ function commonConfig() {
     output: {
       path: __dirname,
     },
+    cache: false,
     optimization: {
       minimizer: [
-        // Disable the terser cache, which does not detect changes to the
-        // webpack configuration (and sometimes keeps old configuration data).
-        // In particular, changes to the filename lformsFHIRAll.min.js did not
-        // show up in the output sourcemap when the cache was used.  (However,
-        // I don't think it should show up at all, but that is separate problem.)
-        // Disabling the cache adds 4-5s to 31s build.  Having the cache on
-        // resulted in several lost hours debugging a very confusing problem.
         new TerserPlugin({
           extractComments: false,
           terserOptions: {
             format: {
               comments: false,
             },
-          },
-          cache: false,
-          parallel: true,
-          sourceMap: true // Must be set to true if using source-maps in production
+            sourceMap: true // Must be set to true if using source-maps in production
+          },          
+          parallel: true
         }),
       ],
     },

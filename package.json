@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "30.1.7",
+  "version": "30.2.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -16,7 +16,7 @@
     "start-dist-public": "node bin/start-public.js  --dist",
     "build:lforms-dev:update": "npm run build:lforms-dev && npm run build:prepare-zip && shx cp -rf dist/$npm_package_name-$npm_package_version/webcomponent dist/$npm_package_name && npm run copy-built-files",
     "build:lforms-dev": "ng build --configuration=debugging --extra-webpack-config webpack.lforms.extra.config.js && node concatenate.js",
-    "build:lforms": "ng build --prod --extra-webpack-config webpack.lforms.extra.config.js && node concatenate.js",
+    "build:lforms": "ng build --configuration production --extra-webpack-config webpack.lforms.extra.config.js && node concatenate.js",
     "build:fhir-dev:update": "npm run build:fhir-dev && shx cp -rf dist/$npm_package_name-$npm_package_version/fhir dist/$npm_package_name && npm run copy-fhir-lib",
     "build:fhir-dev": "webpack --config ./webpack.fhir.config.js --env fhirOnly=true --env debugging=true",
     "build:fhir": "webpack --config ./webpack.fhir.config.js --env fhirOnly=true",
@@ -44,15 +44,15 @@
     "cy:run": "cypress run"
   },
   "dependencies": {
-    "@angular/animations": "~11.2.14",
-    "@angular/common": "~11.2.14",
-    "@angular/compiler": "~11.2.14",
-    "@angular/core": "~11.2.14",
-    "@angular/elements": "^11.2.14",
-    "@angular/forms": "~11.2.14",
-    "@angular/platform-browser": "~11.2.14",
-    "@angular/platform-browser-dynamic": "~11.2.14",
-    "@angular/router": "~11.2.14",
+    "@angular/animations": "~12.2.16",
+    "@angular/common": "~12.2.16",
+    "@angular/compiler": "~12.2.16",
+    "@angular/core": "~12.2.16",
+    "@angular/elements": "^12.2.16",
+    "@angular/forms": "~12.2.16",
+    "@angular/platform-browser": "~12.2.16",
+    "@angular/platform-browser-dynamic": "~12.2.16",
+    "@angular/router": "~12.2.16",
     "@lhncbc/ucum-lhc": "^4.1.4",
     "@types/jquery": "^3.5.5",
     "autocomplete-lhc": "^18.4.0",
@@ -61,16 +61,16 @@
     "fhirpath": "^2.10.1",
     "jquery": "^3.5.1",
     "moment": "^2.29.3",
-    "ng-zorro-antd": "^11.4.1",
+    "ng-zorro-antd": "^12.1.1",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "~6.6.7",
     "tslib": "^2.0.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.1102.15",
-    "@angular/cli": "^11.2.14",
-    "@angular/compiler-cli": "~11.2.14",
+    "@angular-devkit/build-angular": "^12.2.17",
+    "@angular/cli": "^12.2.17",
+    "@angular/compiler-cli": "~12.2.16",
     "@cypress/schematic": "^1.6.0",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
@@ -79,7 +79,7 @@
     "chai": "^4.3.4",
     "codelyzer": "^6.0.0",
     "concat": "^1.0.3",
-    "cypress": "^9.5.3",
+    "cypress": "^9.6.0",
     "cypress-plugin-tab": "^1.0.5",
     "fs-extra": "^9.0.0",
     "jasmine-core": "~3.6.0",
@@ -93,12 +93,12 @@
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "mocha": "^9.2.0",
-    "ngx-build-plus": "^11.0.0",
+    "ngx-build-plus": "^12.2.0",
     "protractor": "~7.0.0",
     "shx": "^0.3.3",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.0.8",
-    "webpack-cli": "^4.9.1"
+    "typescript": "~4.3.5",
+    "webpack-cli": "^4.9.2"
   }
 }
