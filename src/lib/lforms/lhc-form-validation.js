@@ -4,6 +4,8 @@
 import CommonUtils from "./lhc-common-utils.js";
 
 const Validation = {
+  _timeout: 1500,
+
   // supported keys in restrictions
   _restrictionKeys : [
     "minExclusive",

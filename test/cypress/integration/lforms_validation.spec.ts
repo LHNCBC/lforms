@@ -11,6 +11,7 @@ function testOneType(eleInput, eleAway, eleContainer, eleMessage, value1, value2
   // show message when the focus is gone
   cy.get(eleAway).click();
   cy.get(eleContainer).contains(eleMessage).should('be.visible');
+  // message disappears after a short period
   cy.get(eleContainer).contains(eleMessage).should('not.be.visible');
   // get back focus again and message should be shown
   cy.byId(eleInput).click();
@@ -131,6 +132,10 @@ describe('Validations', () => {
   describe('data type validations (table)', () => {
     beforeEach(() => {
       tp.LoadForm.openValidationTest();
+      cy.window().then((win) => {
+        // Reduce the duration that validation messages stay, to have faster tests.
+        win.LForms.Validations._timeout = 100;
+      });
       cy.byId(int).should('be.visible');
     });
 
@@ -247,6 +252,7 @@ describe('Validations', () => {
       // show message when the focus is gone
       cy.get(lblst3).click();
       cy.get(errorContainer).contains(errorRequire).should('be.visible');
+      // message disappears after a short period
       cy.get(errorContainer).contains(errorRequire).should('not.be.visible');
       // get back focus and message should be shown
       cy.byId(st0).click();
@@ -275,6 +281,7 @@ describe('Validations', () => {
       // show message when the focus is gone
       cy.get(lblst0).click();
       cy.get(errorContainer).contains(errorRequire).should('be.visible');
+      // message disappears after a short period
       cy.get(errorContainer).contains(errorRequire).should('not.be.visible');
       // get back focus and message should be shown
       cy.byId(dt).click();
@@ -299,6 +306,7 @@ describe('Validations', () => {
       // show message when the focus is gone
       cy.get(lblbl).click();
       cy.get(errorContainer).contains(errorRequire).should('be.visible');
+      // message disappears after a short period
       cy.get(errorContainer).contains(errorRequire).should('not.be.visible');
       // get back focus and message should be shown
       cy.byId(cne1).click();
@@ -323,6 +331,7 @@ describe('Validations', () => {
       // show message when the focus is gone
       cy.get(lblbl).click(); // focuses other field
       cy.get(errorContainer).contains(errorRequire).should('be.visible');
+      // message disappears after a short period
       cy.get(errorContainer).contains(errorRequire).should('not.be.visible');
       // get back focus and message should be shown
       cy.byId(cwe1).click();
@@ -353,6 +362,7 @@ describe('Validations', () => {
       cy.get(lblbl).click();
       cy.get(errorContainer).contains(errorMinInclusive).should('be.visible');
       cy.get(errorContainer).contains(errorMaxExclusive).should('not.exist');
+      // message disappears after a short period
       cy.get(errorContainer).contains(errorMinInclusive).should('not.be.visible');
       // get back focus and message should be shown
       cy.byId(inta).click();
@@ -391,6 +401,7 @@ describe('Validations', () => {
       cy.get(lblbl).click();
       cy.get(errorContainer).contains(errorMinInclusive).should('be.visible');
       cy.get(errorContainer).contains(errorMaxExclusive).should('not.exist');
+      // message disappears after a short period
       cy.get(errorContainer).contains(errorMinInclusive).should('not.be.visible');
       // get back focus and message should be shown
       cy.byId(reala).click();
@@ -434,6 +445,7 @@ describe('Validations', () => {
       cy.get(errorContainer).contains(errorMinLength).should('be.visible');
       cy.get(errorContainer).contains(errorPattern).should('be.visible');
       cy.get(errorContainer).contains(errorMaxLength).should('not.exist');
+      // message disappears after a short period
       cy.get(errorContainer).contains(errorMinLength).should('not.be.visible');
       cy.get(errorContainer).contains(errorPattern).should('not.be.visible');
       // get back focus and message should be shown
@@ -524,41 +536,36 @@ describe('Validations', () => {
       });
     });
 
-    // TODO: As of 09/16/2021,this test passed on linux firefox but not on linux chrome. Other tests in this file need to run with chrome to pass.
-    // suspect the issue is related to the datef field/calendar widget not being in the views. but cannot confirm that yet.
-    // Use the next test with a short form instead
-    // it('should validate when required inputs are entered', function () {
+    it('should validate when required inputs are entered', () => {
+      tp.LoadForm.openFullFeaturedForm();
+      const skipLogicTrigger = '/sl_source_to_test_required/1';
+      // Entering 1 will show a previously hidden section with required inputs to make sure they now
+      // trigger the validation
+      cy.byId(skipLogicTrigger).type('1');
 
-    //   tp.LoadForm.openFullFeaturedForm();
-    //   const skipLogicTrigger = element(by.id('/sl_source_to_test_required/1'));
-    //   // Entering 1 will show a previously hidden section with required inputs to make sure they now
-    //   // trigger the validation
-    //   TestUtil.sendKeys(skipLogicTrigger, '1');
+      const otherEl = '/required_tx/1';
 
-    //   let otherEl = element(by.id("/required_tx/1"))
+      // Fill the required fields
+      const dtEl = '/required_dt/1';
+      cy.byId(dtEl).find('input').clear().type('10/16/2020');
+      cy.byId(otherEl).click();
+      const dtmEl = '/required_dtm/1';
+      cy.byId(dtmEl).find('input').type('10/16/2020 16:00:00');
+      cy.byId(otherEl).click();
+      const txEl = '/required_tx/1';
+      cy.byId(txEl).type('test');
+      const stEl = '/required_st/1';
+      cy.byId(stEl).type('test');
+      const originalHiddenEl1 = '/sl_target_to_test_required1/1';
+      cy.byId(originalHiddenEl1).type('test');
+      const originalHiddenSubEl1 = '/sl_target_header/sl_target_to_test_required/1/1';
+      cy.byId(originalHiddenSubEl1).type('test');
 
-    //   // Fill the required fields
-    //   const dtEl = element(by.id('/required_dt/1')).element(by.css("input"));
-    //   dtEl.clear()
-    //   // this test does not work with chrome v93.0.4577.82 and/or its webdriver. "/" is not appearing in the field
-    //   TestUtil.sendKeys(dtEl, '10/16/2020');
-    //   otherEl.click();
-    //   const dtmEl = element(by.id('/required_dtm/1')).element(by.css("input"));
-    //   // this test does not work with chrome v93.0.4577.82 and/or its webdriver. "/" is not appearing in the field
-    //   TestUtil.sendKeys(dtmEl, '10/16/2020 16:00:00');
-    //   otherEl.click()
-    //   const txEl = element(by.id('/required_tx/1'));
-    //   TestUtil.sendKeys(txEl, 'test');
-    //   const stEl = element(by.id('/required_st/1'));
-    //   TestUtil.sendKeys(stEl, 'test');
-    //   const originalHiddenEl1 = element(by.id('/sl_target_to_test_required1/1'));
-    //   TestUtil.sendKeys(originalHiddenEl1, 'test');
-    //   const originalHiddenSubEl1 = element(by.id('/sl_target_header/sl_target_to_test_required/1/1'));
-    //   TestUtil.sendKeys(originalHiddenSubEl1, 'test');
-
-    //   const errors = browser.driver.executeScript('return LForms.Util.checkValidity()');
-    //   expect(errors).toEqual(null);
-    // });
+      cy.window().then((win) => {
+        const errors = win.LForms.Util.checkValidity();
+        expect(errors).to.be.null;
+      });
+    });
 
     it('should validate when required inputs are entered, with a short form', () => {
       tp.openBaseTestPage();
