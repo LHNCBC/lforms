@@ -183,6 +183,10 @@ describe('Validations', () => {
   describe('restrictions validations (table)', () => {
     beforeEach(() => {
       tp.LoadForm.openValidationTest();
+      cy.window().then((win) => {
+        // Reduce the duration that validation messages stay, to have faster tests.
+        win.LForms.Validations._timeout = 100;
+      });
       cy.byId(int).should('be.visible');
     });
 
@@ -364,6 +368,7 @@ describe('Validations', () => {
       cy.get(errorContainer).contains(errorMaxExclusive).should('not.exist');
       // message disappears after a short period
       cy.get(errorContainer).contains(errorMinInclusive).should('not.be.visible');
+      cy.get(errorContainer).contains(errorMaxExclusive).should('not.exist');
       // get back focus and message should be shown
       cy.byId(inta).click();
       cy.get(errorContainer).contains(errorMinInclusive).should('be.visible');
@@ -403,6 +408,7 @@ describe('Validations', () => {
       cy.get(errorContainer).contains(errorMaxExclusive).should('not.exist');
       // message disappears after a short period
       cy.get(errorContainer).contains(errorMinInclusive).should('not.be.visible');
+      cy.get(errorContainer).contains(errorMaxExclusive).should('not.exist');
       // get back focus and message should be shown
       cy.byId(reala).click();
       cy.get(errorContainer).contains(errorMinInclusive).should('be.visible');
