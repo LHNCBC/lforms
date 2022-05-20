@@ -319,6 +319,10 @@ export class TestPage {
    */
   openBaseTestPage() {
     cy.visit(this.testPageUrl);
+    cy.window().then((win) => {
+      // Reduce the duration that validation messages stay, to have faster tests.
+      win.LForms.Validations._timeout = 100;
+    });
   }
 
   /**

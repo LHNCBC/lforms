@@ -132,10 +132,6 @@ describe('Validations', () => {
   describe('data type validations (table)', () => {
     beforeEach(() => {
       tp.LoadForm.openValidationTest();
-      cy.window().then((win) => {
-        // Reduce the duration that validation messages stay, to have faster tests.
-        win.LForms.Validations._timeout = 100;
-      });
       cy.byId(int).should('be.visible');
     });
 
@@ -183,10 +179,6 @@ describe('Validations', () => {
   describe('restrictions validations (table)', () => {
     beforeEach(() => {
       tp.LoadForm.openValidationTest();
-      cy.window().then((win) => {
-        // Reduce the duration that validation messages stay, to have faster tests.
-        win.LForms.Validations._timeout = 100;
-      });
       cy.byId(int).should('be.visible');
     });
 
