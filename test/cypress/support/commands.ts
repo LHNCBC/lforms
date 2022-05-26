@@ -111,6 +111,6 @@ Cypress.Commands.add(
     // It's guaranteed that the queries have returned. But there was still a slight
     // chance that the next Cypress command catches some element before the application
     // finishes updating DOM.
-    cy.wait(10);
+    cy.wait(100);
   }
 );
