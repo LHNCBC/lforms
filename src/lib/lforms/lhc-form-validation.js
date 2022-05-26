@@ -4,6 +4,9 @@
 import CommonUtils from "./lhc-common-utils.js";
 
 const Validation = {
+  // the period of time (in milliseconds)  for which a validation massage is displayed after the control loses focus
+  _timeout: 1500,
+
   // supported keys in restrictions
   _restrictionKeys : [
     "minExclusive",
