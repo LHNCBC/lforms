@@ -36,9 +36,9 @@ For "status", if it was not previously set at import, it will be set to "draft" 
 * maxLength
 * answerValueSet:  Supported, with the exception "contained" ValueSets are
   required to include an expansion.
-* answerOption:  Except answerOption.initialSelected.  (See below.)
-* initial
+* answerOption
 * answerOption.initialSelected
+* initial
 
 ### Extensions
 * maxSize

@@ -235,7 +235,7 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Precess answer value
+   * Process answer value
    * @param {*} answer an entry in item.answerOption or in item.initial
    * @param {*} vals an array that contains all default answers
    */
