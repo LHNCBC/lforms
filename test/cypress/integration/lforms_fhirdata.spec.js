@@ -1054,54 +1054,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }
               ]);
               // choice
-              expect(fhirData.item[7].initial).toEqual([
-                {
-                  "valueCoding": {
-                    "code": "c2",
-                    "display": "Answer 2"
-                  }
-                }
-              ]);
+              expect(fhirData.item[7].answerOption[1].initialSelected).toEqual(true)
+              expect(fhirData.item[7].initial).toEqual(undefined);
               // open-choice
-              expect(fhirData.item[8].initial).toEqual([
-                {
-                  "valueString":"User typed answer"
-                }
-              ]);
-
+              expect(fhirData.item[8].initial).toEqual(undefined);
 
               // choice, multiple selection
-              expect(fhirData.item[9].initial).toEqual([
-                {
-                  "valueCoding": {
-                    "code": "c1",
-                    "display": "Answer 1"
-                  }
-                },
-                {
-                  "valueCoding": {
-                    "code": "c3",
-                    "display": "Answer 3"
-                  }
-                }
-              ]);
+              expect(fhirData.item[9].answerOption[0].initialSelected).toEqual(true)
+              expect(fhirData.item[9].answerOption[2].initialSelected).toEqual(true)
+              expect(fhirData.item[9].initial).toEqual(undefined);
+
               // open-choice, multiple selection
-              expect(fhirData.item[10].initial).toEqual([
-                {
-                  "valueCoding": {
-                    "code": "c1",
-                    "display": "Answer 1"
-                  }
-                },
-                {
-                  "valueCoding": {
-                    "code": "c3",
-                    "display": "Answer 3"
-                  }
-                },
-                { "valueString" :  "User typed answer a"},
-                { "valueString" :  "User typed answer b"}
-              ]);
+              expect(fhirData.item[10].answerOption[0].initialSelected).toEqual(true)
+              expect(fhirData.item[10].answerOption[2].initialSelected).toEqual(true)
+              expect(fhirData.item[10].initial).toEqual(undefined);
+             
             });
           }
 
