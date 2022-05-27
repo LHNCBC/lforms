@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.2.1] 2020-05-19
+## [30.3.0] 2020-05-19
 ### Added
 - Added support for answerOption.initialSelected in R4 Questionnaire
 
