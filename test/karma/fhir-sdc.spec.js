@@ -29,8 +29,33 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhir = LForms.FHIR[fhirVersion];
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
+        describe.only('import of initial.valueQuantity', ()=>{
+          var quantity = {
+            value: 5.3,
+            comparator: '>',
+            unit: 'kg',
+            system: 'http://unitsofmeasure.org',
+            code: 'kg',
+          };
+          var fhirQ = {
+            resourceType: 'Questionnaire',
+            item: [{
+              linkId: 'q1',
+              type: 'quantity',
+              initial: [{
+                valueQuantity: quantity
+              }]
+            }]
+          }
+          var lfd = new LForms.LFormsData(fhir.SDC.convertQuestionnaireToLForms(fhirQ));
+          var lfItem = lfd.items[0];
+          assert.equal(lfItem.value, quantity.value);
+          assert.equal(lfItem.comparator, quantity.comparator);
+          assert.deepEqual(lfItem.unit, {name: quantity.unit, code: quantity.code,
+            system: quantity.system});
+        });
+
         describe('_processFHIRValues', function() {
-        let i=0;
           describe('list fields with coding values', function () {
             let answerValCases = [{
               answers: [{system: 'cs1', code: '1', text: 'one'},

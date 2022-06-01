@@ -682,7 +682,8 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       // to do here is to leave the item untouched.
       var changed = false;
       if (fhirPathRes !== undefined) {
-        var newVal = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
+        var [newVal, messages] = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
+        const msgSource = 'FHIRPath value expression'
         changed = !deepEqual(oldVal, newVal);
         // If this is the first run of the expressions, and there is
         // saved user data, then we check whether the calculated value matches
@@ -694,7 +695,10 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           changed = false;
         }
         else if (changed) {
-          var newLastItem = this._lfData.setRepeatingItems(item, newVal);
+          var newLastItem = this._lfData.setRepeatingItems(item, newVal, messages, msgSource);
+        }
+        else { // the messages might have changed
+          this._lfData.setRepeatingItemMessages(item, messages, msgSource);
         }
 
         // Store the calculated value.

@@ -9,6 +9,8 @@
 import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
+import {internalUtil} from "./internal-utils.js";
+import {ErrorMessages} from "./error-messages.js";
 import * as version from "../../version.json";
 
 import Validation from "./lhc-form-validation.js"
@@ -18,7 +20,7 @@ import Validation from "./lhc-form-validation.js"
 declare var LForms: any;
 
 import {Units, Formulas} from "./lhc-form-units.js";
-import equal from "fast-deep-equal";
+import deepEqual from "fast-deep-equal";
 
 export default class LhcFormData {
 
@@ -132,6 +134,9 @@ export default class LhcFormData {
   _hasResponsiveExpr;
   copyrightNotice;
   type;
+  _showErrors;
+  _showWarnings;
+  _showInfo;
 
   /**
    * Constructor
@@ -178,6 +183,21 @@ export default class LhcFormData {
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
     this._initializeInternalData();
+
+    this.setMessageLevel('info');
+  }
+
+  /**
+   *  Sets the level of error/warning/info mesages to show on the form.
+   * @param level - if set to 'error' only error messages will be shown, if set
+   *  to 'warning', error and warnings will be shown, and if set to 'info' all
+   *  message types will be shown.  If any other value (e.g., null) no messages
+   *  will be shown.
+   */
+  setMessageLevel(level) {
+    this._showInfo = level=='info';
+    this._showWarnings = this._showInfo || level=='warning';
+    this._showErrors = this._showWarnings || level=='error';
   }
 
 
@@ -634,7 +654,7 @@ export default class LhcFormData {
             if (!sourceItem) {
               // This is an error in the form definition.  Provide a useful
               // debugging message.
-              throw new Error("Data control for item '"+item.question+ "' refers to source item '"+source.sourceLinkId+
+              throw new Error("Data control for item '" +item.question+ "' refers to source item '"+source.sourceLinkId+
                 "' which was not found as a sibling, ancestor, or ancestor sibling.");
             }
             if (sourceItem._dataControlTargets) {
@@ -2185,12 +2205,23 @@ export default class LhcFormData {
    * @param vals an array of values to be assigned to item and its repetitions.
    *  If "item" does not support more than one value, an error will be logged if
    *  this array contains more than one value.
+   * @param messages an Object whose key is a message source identifier and
+   *  whose value is an array of message objects for each value.  See
+   *  _convertFHIRValues for the format.
+   * @param messageSource a string indentifier for the source of these messages,
+   *  to distinguish them from messages from other sources.
    * @return if the number if repetitions changes, this will return the new
    *  "last" repetition item; otherwise it will return undefined.
    */
-  setRepeatingItems(item, vals) {
+  setRepeatingItems(item, vals, messages, messageSource) {
     var repetitionCountChanged = false;
     var repetitions;
+    let messagesChanged = false;
+    if (!deepEqual(item._lastComputedMessages, messages)) {
+      item._lastComputedRepeatingMessages = messages;
+      messagesChanged = true;
+    }
+
     // if the question repeats (not the answer repeats)
     if (item._questionRepeatable) {
       // if it has multiple answers
@@ -2231,22 +2262,28 @@ export default class LhcFormData {
           }
         }
         // Set values now that the right number of rows are present
-        for (var i=0, len=vals.length; i<len; ++i)
-          repetitions[i].value = vals[i];
+        for (var i=0, len=vals.length; i<len; ++i) {
+          internalUtil.assignValueToItem(repetitions[i], vals[i]);
+          if (messagesChanged)
+            internalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
+        }
       }
     }
     // question does not repeat (might have repeating answers)
     else {
       if (!item._multipleAnswers) {
+        internalUtil.assignValueToItem(item, vals[0]);
         if (vals.length > 1) {
-          console.log('An attempt was made to assign multiple values ('+
-            JSON.stringify(vals)+') to question "'+item.question+'"');
+          internalUtil.addItemWarning(item, 'MultipleValuesForNonRepeat');
+          console.log(JSON.stringify(vals));
         }
         else
-          item.value = vals[0];
+          internalUtil.removeItemWarning(item, 'MultipleValuesForNonRepeat');
       }
       else
         item.value = vals;
+      if (messagesChanged)
+        internalUtil.setItemMessagesArray(item, messages, messageSource);
     }
 
     if (repetitionCountChanged)
@@ -2255,6 +2292,38 @@ export default class LhcFormData {
     this._actionLogs.push(readerMsg);
     // Return the new last repetition
     return repetitionCountChanged ? repetitions[repetitions.length - 1] : undefined;
+  }
+
+
+  /**
+   *  Sets the messages for a group of repeating items.  The assumption is that
+   *  the caller knows that the neither the values or nor the number items has
+   *  changed, or else setRepeatingItems should have been called instead.
+   * @param item an item (possibly repeating) to which values are to be
+   *  assigned.
+   * @param messages an Object whose key is a message source identifier and
+   *  whose value is an array of message objects for each value.  See
+   *  _convertFHIRValues for the format.
+   * @param messageSource a string indentifier for the source of these messages,
+   *  to distinguish them from messages from other sources.
+   */
+  setRepeatingItemMessages(item, messages, messageSource) {
+    if (!deepEqual(item._lastComputedMessages, messages)) {
+      item._lastComputedRepeatingMessages = messages;
+      if (item._questionRepeatable) {
+        // if it has multiple answers
+        if (item._parentItem && Array.isArray(item._parentItem.items)) { // not sure this check is needed
+          const repetitions = this._getRepeatingItems(item);
+          for (var i=0, len=repetitions.length; i<len; ++i) {
+            internalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
+          }
+        }
+      }
+      // question does not repeat
+      else {
+        internalUtil.setItemMessagesArray(item, messages, messageSource);
+      }
+    }
   }
 
 
@@ -2371,7 +2440,7 @@ export default class LhcFormData {
   _processItemFormula(item) {
     if (item.calculationMethod && item.calculationMethod.name) {
       let newValue = this.getFormulaResult(item);
-      if (!equal(newValue, item.value)) {
+      if (!deepEqual(newValue, item.value)) {
         item.value = newValue;
       }
     }
@@ -2503,7 +2572,7 @@ export default class LhcFormData {
               newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
             }
             // set the data if it is different than the existing value
-            if (!equal(item[onAttribute], newData)) {
+            if (!deepEqual(item[onAttribute], newData)) {
               item[onAttribute] = CommonUtils.deepCopy(newData);
             }
           }
@@ -2663,7 +2732,7 @@ export default class LhcFormData {
         else if (listItems.length === 1) {
           options.defaultValue = listItems[0];
         }
-        if(!equal(item._unitAutocompOptions, options)) {
+        if(!deepEqual(item._unitAutocompOptions, options)) {
           item._unitAutocompOptions = options;
         }
       }
@@ -2799,7 +2868,7 @@ export default class LhcFormData {
           }
         }
         let newValue = item._multipleAnswers ? listVals : listVals[0];
-        if (!equal(item.value, newValue)) {
+        if (!deepEqual(item.value, newValue)) {
           item.value = newValue;
         }
       }
@@ -3014,7 +3083,7 @@ export default class LhcFormData {
         }
       }
       // check if the new option has changed
-      if (!equal(options, item._autocompOptions)) {
+      if (!deepEqual(options, item._autocompOptions)) {
         item._autocompOptions = options;
       }
     } // end of list

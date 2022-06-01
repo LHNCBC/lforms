@@ -303,14 +303,28 @@ function addCommonSDCImportFns(ns) {
    *   lfItem's data type.
    *  @param forDefault if true, the intented target of the values is the item's
    *   default value instead of the item value.
-   *  @return an array of the processed/converted values
+   *  @return an array of the processed/converted values, and an array of any error/warning/info
+   *   messages for each of those messages.  For each item in the messages
+   *   array, if there is a message there will be an object with keys "errors",
+   *   "warnings", and "info" (if those exist), the values of which will will be
+   *   an object with message ID keys (from error-messages.js) and message text
+   *   values in the currently selected language.  Regarding the answers, note
+   *   that Quantities will be returned as is, because those go into more than
+   *   one field on the item, but some error checking will be done for them.
    */
   self._convertFHIRValues = function(lfItem, fhirVals, forDefault) {
+    // Note that this is used by the import process, and so lfItem is an item
+    // from the lforms definition object in that case, not an item from LFormsData.
+    // On the other hand, it is also used by the ExpressionProcessor, an in that
+    // case lfItem is an item from LFormsData.
     var lfDataType = lfItem.dataType;
     var answers = [];
+    const messages = [];
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
       var answer = undefined; // reset back to undefined each iteration
+      let errors = {};
+      let hasMessages = false;
       if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
         var codings = null;
         if (fhirVal._type === 'CodeableConcept') {
@@ -354,9 +368,17 @@ function addCommonSDCImportFns(ns) {
       }
       else if(fhirVal._type === 'Quantity' && (lfDataType === 'QTY' ||
           lfDataType === 'REAL' || lfDataType === 'INT')) {
-        if (fhirVal.value !== undefined) {
-          answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
+        if (fhirVal.comparator !== undefined) {
+          LForms.Util.errorMessages.addErrorMessage(errors, 'comparatorInQuantity',);
+          hasMessages = true;
+          errors.push(LForms.Util.errorMessages.getMsg());
         }
+        if (fhirVal.value === undefined) {
+          LForms.Util.errorMessages.addErrorMessage(errors, 'undefinedQuantityValue');
+          hasMessages = true;
+        }
+        else
+          answer = fhirVal;
       }
       // For date types, convert them to date objects, but only for values.
       // If we're setting defaultAnswer, leave them as strings.
@@ -367,10 +389,10 @@ function addCommonSDCImportFns(ns) {
       else {
         answer = fhirVal;
       }
-      if (answer !== undefined)
-        answers.push(answer);
+      answers.push(answer);
+      messages.push(hasMessages ? {errors} : null);
     }
-    return answers;
+    return [answers, messages];
   };
 
 
@@ -385,18 +407,22 @@ function addCommonSDCImportFns(ns) {
    *   of the value.
    */
   self._processFHIRValues = function(lfItem, fhirVals, setDefault) {
-    var answers = this._convertFHIRValues(lfItem, fhirVals, setDefault);
-    if (LForms.Util._hasMultipleAnswers(lfItem)) {
-      if (setDefault)
-        lfItem.defaultAnswer = answers;
-      else
-        lfItem.value = answers;
+    // Currently this is called for:
+    //   - importing an Observation value (prepop) (a single value, but could
+    //     have components referred to by child items)
+    //   - processing default answers during an import.  For default answers, we
+    //     do not assign the value here, but just put it in defaultAnswer.
+    // Note that when importing, we are creating a LForms form definition, but
+    // not and LFormsData object.
+    let [answers, messages] = this._convertFHIRValues(lfItem, fhirVals, setDefault);
+    let val = LForms.Util._hasMultipleAnswers(lfItem) ? answers : answers[0];
+    if (setDefault) {
+      lfItem.defaultAnswer = val;
+      lfItem.defaultAnswerMessages = messages;
     }
-    else { // there should just be one answer
-      if (setDefault)
-        lfItem.defaultAnswer = answers[0];
-      else
-        lfItem.value = answers[0];
+    else {
+      LForms.Util._internalUtil.assignValueToItem(lfItem, val);
+      LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processFHIRValues');
     }
   };
 
@@ -1095,13 +1121,7 @@ function addCommonSDCImportFns(ns) {
     return rtn;
   };
 
-
-  /**
-   *  Loads answerValueSets for prefetched lists.
-   * @param lfData the LFormsData for the form
-   * @return an array of promise objects which resolve when the answer valuesets
-   * have been loaded and imported.
-   */
+/** *  Loads answerValueSets for prefetched lists.  * @param lfData the LFormsData for the form * @return an array of promise objects which resolve when the answer valuesets * have been loaded and imported.  */
   self.loadAnswerValueSets = function (lfData) {
     var pendingPromises = [];
     var items = lfData.itemList;

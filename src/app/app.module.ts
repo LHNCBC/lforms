@@ -13,12 +13,7 @@ import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 
-import * as ucumPkg from '@lhncbc/ucum-lhc';
-import LhcFormUtils from '../lib/lforms/lhc-form-utils.js';
-import LhcFormData  from '../lib/lforms/lhc-form-data';
-import LhcHL7 from '../lib/lforms/lhc-hl7.js';
-import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
-import Validation from '../lib/lforms/lhc-form-validation.js';
+import { LForms } from './lforms';
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -61,8 +56,6 @@ import { SafeHtmlPipe } from './safe-html.pipe';
 import { LhcButtonPopoverComponent } from './lhc-button-popover/lhc-button-popover.component';
 import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
 
-import version from '../version.json';
-import * as FHIRSupport from '../fhir/versions.js';
 
 registerLocaleData(en);
 
@@ -127,24 +120,12 @@ registerLocaleData(en);
 export class AppModule {
   constructor(private injector: Injector) {
 
-    let lforms = {
-      LFormsData: LhcFormData,
-      HL7: LhcHL7,
-      ucumPkg: ucumPkg,
-      Util: LhcFormUtils,
-      Def: Def,
-      Validations: Validation,
-      lformsVersion: version.lformsVersion
-    }
-    lforms.Util.FHIRSupport = FHIRSupport;
-    
-    window['LForms'] = lforms;
-        
+    window['LForms'] = LForms;
+
     // define the web component
     customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));
-
   }
-  
+
   ngDoBootstrap() {}
 }
 

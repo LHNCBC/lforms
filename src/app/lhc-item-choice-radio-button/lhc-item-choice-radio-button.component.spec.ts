@@ -166,7 +166,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
   });
 
 
-  it('should render a list of radio buttons', () => {
+  fit('should render a list of radio buttons', () => {
     component.item = itemRadioCNE;
     fixture.detectChanges();
 
