@@ -42,8 +42,11 @@
       display: none;
     }
   </style>
+  <script src="http://stuk.github.io/jszip/dist/jszip.min.js"></script>
+  <script src="http://stuk.github.io/jszip-utils/dist/jszip-utils.js"></script>
+  <script src="http://stuk.github.io/jszip/vendor/FileSaver.js"></script>
 </head>
-  
+
 <body style="padding: 1em">
 
   <div id="lforms-form">
@@ -52,7 +55,7 @@
       <div class="panel-body">
         <p>Select a form from the list and click the button to display the form:</p>
           <select id="form-list" class="form-control">
-            <option value="">--- Please Select ---</option>            
+            <option value="">--- Please Select ---</option>
           </select>
         <br><br>
         <button id="load-form-data" class="btn btn-success" onclick="loadFormFromList()">Load Form</button>
@@ -79,6 +82,8 @@
 
         <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
         <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+        <input type="file" id="convZipFileAnchor" onchange="loadConvertAndSaveZippedForms(event)" class="hide" />
+        <button id="convBtn" type="button" class="btn btn-success" onclick="document.querySelector('#convZipFileAnchor').click()">Convert Between LForm/FHIR (zip file)</button>
 
       </div>
     </div>
@@ -96,7 +101,7 @@
               allowMultipleEmptyRepeatingItems: true
             }},
         {text: 'Glasgow Coma Score (with score rules)', name: 'glasgow'},
-        {text: 'Full-Featured Demo', name: 'allInOne', 
+        {text: 'Full-Featured Demo', name: 'allInOne',
             tempOptions: {
               allowHTMLInInstructions: true,
               allowMultipleEmptyRepeatingItems: true
@@ -104,7 +109,7 @@
         {text: 'Form Builder created test form', name: 'formBuilder'},
         {text: 'Minimum Data Set - version 3.0', name: 'MDS3'},
         {text: 'Form With User Data', name: 'formWithUserData'},
-        {text: 'Form With User Data, hasSavedData=true', name: 'formWithUserData', 
+        {text: 'Form With User Data, hasSavedData=true', name: 'formWithUserData',
             formOptions: {
               hasSavedData: true
             }},
@@ -139,22 +144,22 @@
 
       testForm.addEventListener('onError', e => {
         console.log("onError")
-        console.log(e); 
+        console.log(e);
       });
 
 
       /**
        * Load the form list to DOM
-       */ 
+       */
       function loadFormList() {
         let formList = document.getElementById("form-list");
-        testForms.forEach(form => {          
+        testForms.forEach(form => {
           let option = document.createElement("option");
           option.text = form.text;
           option.value = JSON.stringify({
-            url: "/test-data/form-data/" + form.name + ".json", 
+            url: "/test-data/form-data/" + form.name + ".json",
             tempOptions: form.tempOptions,
-            formOptions: form.formOptions})          
+            formOptions: form.formOptions})
           formList.add(option);
         })
       }
@@ -163,7 +168,7 @@
        * Get JSON data from a form URL
        */
       async function loadJsonFromUrl(url) {
-        return await fetch(url).then( 
+        return await fetch(url).then(
           response => response.json());
       }
 
@@ -172,7 +177,7 @@
        */
       async function fetchAndDisplayForm(strForm) {
         let jsonForm = JSON.parse(strForm)
-        let formData = await loadJsonFromUrl(jsonForm.url);   
+        let formData = await loadJsonFromUrl(jsonForm.url);
         testForm.questionnaire = formData;
         if (jsonForm.formOptions) {
           Object.assign(formData,jsonForm.formOptions)
@@ -184,7 +189,7 @@
       }
 
       /**
-       * Load form from dropdown form list 
+       * Load form from dropdown form list
        */
       function loadFormFromList() {
         let formList = document.getElementById("form-list");
@@ -194,8 +199,8 @@
           fetchAndDisplayForm(formList.value);
         }
       };
-      
-      // load the form list into DOM 
+
+      // load the form list into DOM
       loadFormList();
 
       /**
@@ -217,7 +222,7 @@
         return LForms.FHIR[getFHIRVersion()];
       }
 
-      // options  
+      // options
       function toggleCodingInstructionFormat() {
         if (testForm.questionnaire) {
           let options = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
@@ -232,7 +237,7 @@
         if (testForm.lhcFormData) {
           // change a value
           testForm.lhcFormData.items[0].items[0].value= 'after reset';
-        }          
+        }
       };
 
       /**
@@ -279,7 +284,7 @@
           console.log(hl7Seg.replace(/\r/g,'\r\n'));
         }
       }
-      
+
       /**
        * Get 'DiagnosticReport' as a "transaction" bundle from the form and display it in console
        */
@@ -306,7 +311,7 @@
 
       /**
        * Get 'QuestionnaireResponse' data from the form and display it in console
-       */      
+       */
       function showFHIRSDCResponse() {
         if (testForm.lhcFormData) {
           var sdc = getFHIR().SDC.convertLFormsToQuestionnaireResponse(testForm.lhcFormData);
@@ -321,7 +326,7 @@
       async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
 
         let formUrl = 'test-data/form-data/' + questionnaireFileName;
-        let formJson = await loadJsonFromUrl(formUrl);   
+        let formJson = await loadJsonFromUrl(formUrl);
 
         let fhirResUrl = 'test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
@@ -329,7 +334,7 @@
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                     fhirJson, formJson, getFHIRVersion());
         testForm.questionnaire = mergedFormData;
-        
+
       };
 
 
@@ -348,14 +353,14 @@
       function testMergeQR2LForms() {
         loadAndMergeFHIRDataFile('fhir-sdc-response-ussgfht.json', 'FHTData.json', 'QuestionnaireResponse');
       }
-          
+
       function testMergeQR2LForms_CWE() {
         loadAndMergeFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', 'allInOne.json', 'QuestionnaireResponse')
       }
 
       function testSearchOnFHIRServer() {
         var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
-        
+
         fetch(dataURL, {
           method: 'GET'
         })
@@ -390,12 +395,123 @@
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.
           testForm.prepop = window.prepopulateFHIR;
-          
+
         };
-        reader.readAsText(event.target.files[0]); 
+        reader.readAsText(event.target.files[0]);
       }
 
 
+      /**
+       * Converting between LForms json and FHIR Questionnaire.
+       * Load a zip file of LForms or FHIR questionnaire files from local file system,
+       * convert to the other format, and save back as a new zip file, "converted-forms.zip".
+       */
+      function loadConvertAndSaveZippedForms(event) {
+        var jsZip = new JSZip(); // input zip
+        jsZip.loadAsync(event.target.files[0])
+          .then(function(zip) {
+            document.querySelector('#convZipFileAnchor').value = '';
+            let inputZipEntries = [];
+            zip.forEach((relativePath, zipEntry) => {
+              if(zipEntry.dir) {
+                console.log(zipEntry.name + ' is a directory')
+              }
+              else if(! zipEntry.name.endsWith('.json')) {
+                console.log(zipEntry.name + ' is not a .json file, ignored.')
+              }
+              else {
+                inputZipEntries.push(zipEntry);
+              }
+            });
+            alert(inputZipEntries.length + ' json files to process, click "OK" to continue');
+            convertAllForms(inputZipEntries).then(outZip => {
+              outZip.generateAsync({type:"blob"})
+                .then(function (blob) {
+                  saveAs(blob, 'converted-forms.zip');
+                });
+            });
+          }, (err) => console.log("Error occurred while loading/processing the zip file."));
+      }
+
+
+      /**
+       * Convert forms in the given input zip entries and write the converted forms to the output zip.
+       * It supports two-way conversion between lforms and FHIR questionnaire based on the input type.
+       * @param inputZipEntries the input zip file entries (all json files, non-json files have been excluded).
+       * @return a promise that resolves to the output JSZip object.
+       */
+      function convertAllForms(inputZipEntries) {
+        let totalNumFiles = inputZipEntries.length;
+        let maxParallel = 25; // how many files to process concurrently
+        let numOnGoing = 0;   // tracks how many files are currently being processed
+        let startTime = Date.now();
+        let outZip = new JSZip(); // output zip
+
+        return new Promise((resolve, reject) => {
+          convertConcurrently(resolve, reject);
+        });
+
+        // process the forms concurrently up to maxParallel at a time
+        function convertConcurrently(resolve, reject) {
+          console.log('%d of %d files processed; %d ongoing', totalNumFiles - inputZipEntries.length, totalNumFiles, numOnGoing);
+          while(inputZipEntries.length) {
+            if(numOnGoing < maxParallel) {
+              numOnGoing += 1;
+              let zipEntry = inputZipEntries.shift();
+              zipEntry.async('string').then((data) => {
+                try {
+                  let converted = convertForm(JSON.parse(data));
+                  if(converted) {
+                    outZip.file(zipEntry.name, JSON.stringify(converted));
+                  }
+                } catch (e) {
+                  console.error('ERROR processing %s, skipped; %s', zipEntry.name, e);
+                }
+                numOnGoing -= 1;
+                if(numOnGoing === 0 && inputZipEntries.length === 0) {
+                  console.log('All done, total time used: %s', (Date.now() - startTime));
+                  resolve(outZip);
+                }
+              });
+            }
+            else {
+              setTimeout(() => {convertConcurrently(resolve, reject)}, 5);
+              break;
+            }
+          }
+          if(inputZipEntries.length === 0) console.log('All entries submitted for processing');
+        }
+      }
+
+
+      /**
+       * Converting from lforms json to FHIR questionnaire or the other way around, depending on
+       * what type of form the input is.
+       * @param form can be either LForms json or FHIR questionnaire json
+       * @return the converted json, or null if failed
+       */
+      function convertForm(form) {
+        let result;
+        if(form.resourceType) { // FHIR to LForms
+          if(form.resourceType === 'Questionnaire') {
+            result = getFHIR().SDC.convertQuestionnaireToLForms(form);
+          }
+          else {
+            console.error('Unable to convert non-questionnaire resources:', form.code);
+            result = null;
+          }
+        }
+        else { // lforms to FHIR Questionnaire // set the code and id field (if not already set)
+          result = getFHIR().SDC.convertLFormsToQuestionnaire(form);
+          if(!(result.code && result.code[0] && result.code[0].code)) {
+            result.code = [{code: form.code, display: form.name, system: 'http://loinc.org'}];
+          }
+          if(! result.id) {
+            result.id = result.code[0].code;
+          }
+        }
+        return result;
+      }
     </script>
 
 <!-- zone.js is not included in LHC-Forms web component -->
@@ -406,7 +522,7 @@
     <script src="../scripts.js" ></script>
     <script src="../vendor.js"></script>
     <script src="../main.js"></script>
-    
+
     <script src="/test/lib/fhir/R4/lformsFHIR.min.js"></script>
     <script src="/test/lib/fhir/STU3/lformsFHIR.min.js"></script>
 

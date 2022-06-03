@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.2.1] 2022-06-03
+### Changed
+- Added a button on the test page (test/lforms_testpage.html) to batch convert lforms
+  to FHIR questionnaires or vice versa, where both input and output are zip files
+
 ## [30.2.0] 2022-05-18
 ### Changed
 - Updated angular to v12 and ng-zorro-antd to v12.
