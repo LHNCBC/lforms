@@ -1,0 +1,18 @@
+Hello?
+<div *ngIf="item.messages" role="alert">
+  {{item.messages}}
+  <ng-container *ngFor="let msgSource of item.messages | keyvalue">
+    <ng-container *ngIf="showErrors()">
+      <div class="lf-item-error" ng-container *ngFor="let m of
+      msgSource.value.errors | keyvalue">Error: {{m.value}}</div>
+    </ng-container>
+    <ng-container *ngIf="showWarnings()">
+      <div class="lf-item-warning" ng-container *ngFor="let m of
+      msgSource.value.warnings | keyvalue">Warning: {{m.value}}</div>
+    </ng-container>
+    <ng-container *ngIf="showInfo()">
+      <div class="lf-item-info" ng-container *ngFor="let m of msgSource.value.info
+      | keyvalue">{{m.value}}</div>
+    </ng-container>
+  </ng-container>
+</div>
