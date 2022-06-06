@@ -88,6 +88,20 @@ export const TestUtil = {
       + ' ' +
       [(100 + date.getHours()).toString().substr(1),
       (100 + date.getMinutes()).toString().substr(1), "00"].join(':');
+  },
+
+  /**
+   *
+   *  For fields with an autocomplete-lhc list, this verifies
+   *  the number items in the list.
+   * @param fieldId the element ID of the field
+   * @param count expected number of list items
+   */
+  verifyFieldListLength(fieldId, count) {
+    cy.byId(fieldId).should(el => {
+      const actualCount = el[0].autocomp?.rawList_?.length || 0;
+      expect(actualCount).to.equal(count);
+    });
   }
 
 };
