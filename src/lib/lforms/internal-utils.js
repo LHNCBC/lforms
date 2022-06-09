@@ -10,7 +10,6 @@ const defaultMsgSource = 'Other message source';
 
 export const internalUtil = {
 
-
   /**
    *  Sets the value of the item, which is the case of a quantity, involves more
    *  than one field (at present -- that might change.)
@@ -26,7 +25,7 @@ export const internalUtil = {
       if (val.comparator)
         item.comparator = val.comparator
       if (val.unit || val.code) {
-        item.unit = {name: val.unit, code: val.code, system:val.system};
+        item.unit = {name: val.unit, code: val.code, system: val.system};
       }
     }
     else
@@ -47,16 +46,16 @@ export const internalUtil = {
   setItemMessagesArray: function(item, messages, messageSource) {
     // Consolidate the array of message objects into one object for this item.
     // The code below is optimized for the usual case where there are no messages.
-    let itemMsg, keys;
+    let itemMsg, msgTypes;
     for (let m of messages) {
       if (m) {
         if (!itemMsg) {
-          itemMsg = {errors: [], warnings: [], info: []};
-          keys = Object.keys(itemMsg);
+          itemMsg = {errors: {}, warnings: {}, info: {}};
+          msgTypes = Object.keys(itemMsg);
         }
-        for (k of keys) {
-          if (m[k]) {
-            Array.prototype.push.apply(itemMsg[k], m[k]);
+        for (let t of msgTypes) {
+          if (m[t]) {
+            Object.assign(itemMsg[t], m[t]);
           }
         }
       }
@@ -71,12 +70,13 @@ export const internalUtil = {
    *  messages are statements about things that happened, not validation.
    * @param item an item from and lforms form definition
    * @param messages a message object (see _convertFHIRValues for
-   * details)
+   *  details).  May be null or undefined to remove the messages for
+   *  messageSource.
    * @param messageSource a string indentifier for the source of these messages,
    *  to distinguish them from messages from other sources.
    */
   setItemMessages: function(item, messages, messageSource) {
-    if (messages && messages.length) {
+    if (messages) {
       if (!item.messages)
         item.messages = {};
       item.messages[messageSource] = messages;
@@ -133,3 +133,8 @@ export const internalUtil = {
   }
 
 }
+
+internalUtil.errorMessages = ErrorMessages;
+// Set the default language for error messages.  Apps can call this with a
+// different language code, if error-messages.js has messages in that language.
+internalUtil.errorMessages.setLanguage('en');

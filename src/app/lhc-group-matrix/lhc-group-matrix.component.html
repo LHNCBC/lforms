@@ -26,7 +26,7 @@
             aria-describedby="help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}">
           <td class="lf-question">
             <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
-            <lhc-item-messages [item]="item" ></lhc-item-messages>
+            <lhc-item-messages [item]="subItem" ></lhc-item-messages>
           </td>
           <td *ngFor="let answer of item.items[0].answers; index as i"
             class="lf-form-matrix-cell">

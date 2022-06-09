@@ -8,6 +8,8 @@ function addCommonSDCImportFns(ns) {
 
   var self = ns;
 
+  var errorMessages = LForms.Util._internalUtil.errorMessages;
+
   // FHIR extension urls
   self.fhirExtUrlCardinalityMin = "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs";
   self.fhirExtUrlCardinalityMax = "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs";
@@ -369,16 +371,17 @@ function addCommonSDCImportFns(ns) {
       else if(fhirVal._type === 'Quantity' && (lfDataType === 'QTY' ||
           lfDataType === 'REAL' || lfDataType === 'INT')) {
         if (fhirVal.comparator !== undefined) {
-          LForms.Util.errorMessages.addErrorMessage(errors, 'comparatorInQuantity',);
+          errorMessages.addMsg(errors, 'comparatorInQuantity');
           hasMessages = true;
-          errors.push(LForms.Util.errorMessages.getMsg());
         }
-        if (fhirVal.value === undefined) {
+        /*
+        if (fhirVal.value === undefined) {  // TBD might allow this case
           LForms.Util.errorMessages.addErrorMessage(errors, 'undefinedQuantityValue');
           hasMessages = true;
         }
         else
-          answer = fhirVal;
+        */
+        answer = fhirVal;
       }
       // For date types, convert them to date objects, but only for values.
       // If we're setting defaultAnswer, leave them as strings.
@@ -418,7 +421,7 @@ function addCommonSDCImportFns(ns) {
     let val = LForms.Util._hasMultipleAnswers(lfItem) ? answers : answers[0];
     if (setDefault) {
       lfItem.defaultAnswer = val;
-      lfItem.defaultAnswerMessages = messages;
+      LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, 'default answers');
     }
     else {
       LForms.Util._internalUtil.assignValueToItem(lfItem, val);

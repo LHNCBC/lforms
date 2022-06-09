@@ -3,7 +3,6 @@
  * LhcFormUtils is also set as window.LForms.Util, which is used by the externally loaded lformsFHIR js lib.
  */
 import CommonUtils from "./lhc-common-utils.js";
-import {ErrorMessages} from './error-messages.js';
 import {internalUtil} from "./internal-utils.js";
 
 const FormUtils = {
@@ -982,11 +981,6 @@ const FormUtils = {
   }
 
 };
-
-FormUtils.errorMessages = ErrorMessages;
-// Set the default language for error messages.  Apps can call this with a
-// different language code, if error-messages.js has messages in that language.
-FormUtils.errorMessages.setLanguage('en');
 
 FormUtils._internalUtil = internalUtil;
 

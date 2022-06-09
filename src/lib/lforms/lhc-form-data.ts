@@ -184,7 +184,7 @@ export default class LhcFormData {
     // that are used for widget control and/or for performance improvement.
     this._initializeInternalData();
 
-    this.setMessageLevel('info');
+    // this.setMessageLevel('info'); // for now hide messages by default
   }
 
   /**
@@ -919,6 +919,7 @@ export default class LhcFormData {
         this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
       }
 
+      this.setMessageLevel(this.templateOptions.messageLevel);
     }
   }
 
@@ -2198,7 +2199,7 @@ export default class LhcFormData {
 
   /**
    *  Adjusts the number of repeating items in order to accomodate the number of
-   *  values in the given array, and assignes the items their values from the
+   *  values in the given array, and assigns the items their values from the
    *  array.
    * @param item an item (possibly repeating) to which values are to be
    *  assigned.

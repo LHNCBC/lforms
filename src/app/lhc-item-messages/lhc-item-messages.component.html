@@ -1,6 +1,4 @@
-Hello?
 <div *ngIf="item.messages" role="alert">
-  {{item.messages}}
   <ng-container *ngFor="let msgSource of item.messages | keyvalue">
     <ng-container *ngIf="showErrors()">
       <div class="lf-item-error" ng-container *ngFor="let m of

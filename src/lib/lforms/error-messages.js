@@ -16,7 +16,7 @@ export const ErrorMessages = {
     'comparatorInQuantity': {
       'en': 'This item cannot accept a quantity with a comparator'
     },
-    'undefinedQuantityValue': {
+    'undefinedQuantityValue': { // Not sure we want to require this
       'en': 'A quantity must have a value'
     },
     'MultipleValuesForNonRepeat': {
@@ -24,12 +24,11 @@ export const ErrorMessages = {
     }
   },
 
+
   /**
    *  Returns the text for a message.
    * @param messageID the id of the message
-   * @return An object with keys 'message' and messageType (which will be either
-   *  'error', 'warning', or 'info').  If there is no message in the requested
-   *  language, and error will be thrown.
+   * @return the text corresponding to messageID.
    */
   //static getMsg(messageID) {
   getMsg: function (messageID) {
@@ -40,6 +39,17 @@ export const ErrorMessages = {
     if (!message)
       throw new Error('Unknown language code "'+this.language+'" for message ID "' +messageID+'"');
     return message;
+  },
+
+
+  /**
+   *  Adds the message with the given ID to the given message object.
+   * @param msgObj an object to which the message will be added, with the given
+   * messageID as the key and the text as the value.
+   * @param messageID the id of the message
+   */
+  addMsg: function (msgObj, messageID) {
+    msgObj[messageID] = this.getMsg(messageID);
   },
 
 

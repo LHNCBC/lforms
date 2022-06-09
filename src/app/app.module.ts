@@ -90,7 +90,8 @@ registerLocaleData(en);
     LhcGroupMatrixComponent,
     SafeHtmlPipe,
     LhcButtonPopoverComponent,
-    LhcItemAttachmentComponent
+    LhcItemAttachmentComponent,
+    LhcItemMessagesComponent
   ],
   imports: [
     BrowserModule,

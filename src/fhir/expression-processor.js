@@ -47,7 +47,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
     // repeating fields).
     this._calculatedValues = {};
 
-    // A hash of item._elementId values to "repitition key" values which can be used as
+    // A hash of item._elementId values to "repetition key" values which can be used as
     // keys in this._calcualtedValues.
     this._repetitionKeys = {};
 
