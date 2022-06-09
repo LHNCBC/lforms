@@ -81,11 +81,12 @@
         <input type="file" id="convZipFileAnchor" onchange="loadConvertAndSaveZippedForms(event)" class="hide" />
         <button id="convBtn" type="button" class="btn btn-success" onclick="document.querySelector('#convZipFileAnchor').click()">Convert Between LHC-Forms/FHIR (zip file)</button>
         <div id="formConvStarted" style="display:none; margin:100px; font-size:150%; color:darkred">
-          Converting your forms... this may take a while. The resulting zip file will be downloaded automatically to cypress/downloads folder.
+          Converting your forms... this may take a while.
+          The resulting zip file will be downloaded automatically to your browser's default downloads folder.
         </div>
         <div id="formConvDone" style="display:none; margin:100px; font-size:150%; color:green">
-          Forms conversion has been completed, the result file (in the form of converted-forms-DATE_TIME.zip) has been
-          downloaded automatically to the lforms/cypress/downloads/ folder.
+          Forms conversion has been completed, the result file (with a name like converted-forms-DATE_TIME.zip) has been
+          downloaded automatically to your browser's default downloads folder.
           <button type="button" class="btn btn-success" onclick="document.querySelector('#formConvDone').style.display='none'">Dismiss</button>
         </div>
       </div>
@@ -507,7 +508,6 @@
         let result;
         if(form.resourceType) { // FHIR to LForms
           if(form.resourceType === 'Questionnaire') {
-            // result = getFHIR().SDC.convertQuestionnaireToLForms(form);
             result = LForms.Util.convertFHIRQuestionnaireToLForms(form, fhirVersion);
           }
           else {
@@ -516,7 +516,6 @@
           }
         }
         else { // lforms to FHIR Questionnaire, set the code and id (if not already set)
-          //result = getFHIR().SDC.convertLFormsToQuestionnaire(form);
           result = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, new LForms.LFormsData(form));
           if(!(result.code && result.code[0] && result.code[0].code)) {
             result.code = [{code: form.code, display: form.name, system: 'http://loinc.org'}];

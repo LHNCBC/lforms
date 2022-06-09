@@ -41,7 +41,8 @@
     "test-coverage": "ng test --no-watch --code-coverage",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version | awk '{print $NF}')",
     "cy:open": "cypress open",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run",
+    "test-pages": "http-server"
   },
   "dependencies": {
     "@angular/animations": "~12.2.16",
@@ -82,6 +83,7 @@
     "cypress": "^9.6.0",
     "cypress-plugin-tab": "^1.0.5",
     "fs-extra": "^9.0.0",
+    "http-server": "^14.1.1",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "jszip": "^3.10.0",
