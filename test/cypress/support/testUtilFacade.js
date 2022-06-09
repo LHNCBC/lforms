@@ -91,7 +91,6 @@ export const TestUtil = {
   },
 
   /**
-   *
    *  For fields with an autocomplete-lhc list, this verifies
    *  the number items in the list.
    * @param fieldId the element ID of the field

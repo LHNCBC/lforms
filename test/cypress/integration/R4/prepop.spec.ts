@@ -133,6 +133,7 @@ describe('Form pre-population', () => {
           setServerFHIRContext(serverFHIRNum);
           setFHIRPrepopulation(false);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
+          cy.wait(20); // give asynchronous prepopulation a chance to happen
           cy.byId('/29463-7/1').should('have.value', '');
         });
 
@@ -156,8 +157,8 @@ describe('Form pre-population', () => {
           po.openPage();
           setServerFHIRContext(serverFHIRNum);
           setFHIRPrepopulation(false);
-          // tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           cy.get('#fileAnchor').uploadFile('test/data/R4/weightHeightQuestionnaire.json');
+          cy.wait(20);
           cy.byId('/29463-7/1').should('have.value', '');
         });
 

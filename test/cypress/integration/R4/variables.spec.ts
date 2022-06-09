@@ -29,7 +29,7 @@ describe('FHIR variables', () => {
     it('should have expected values before typing', () => {
       cy.byId(fieldB1).should('have.value', '');
       cy.byId(fieldC).should('have.value', '');
-      cy.byId(fieldC).should('have.value', '');
+      cy.byId(fieldD).should('have.value', '');
       cy.byId(fieldE).should('have.value', '');
     });
 
@@ -55,7 +55,8 @@ describe('FHIR variables', () => {
   describe('x-fhir-query variable test form', () => {
     before(() => {
       cy.window().then((win) => {
-        win.LForms.Util.setFHIRContext(fhirMock.mockFHIRContext(fhirVersion, null, fhirMock.mockData));
+        const fhirContext = new Function('return ' + fhirMock.mockFHIRContext)();
+        win.LForms.Util.setFHIRContext(fhirContext(fhirVersion, null, fhirMock.mockData));
       });
       tp.loadFromTestData('x-fhir-query-test.R4.json', 'R4');
     });
