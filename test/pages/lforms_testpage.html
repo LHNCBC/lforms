@@ -85,7 +85,7 @@
           The resulting zip file will be downloaded automatically to your browser's default downloads folder.
         </div>
         <div id="formConvDone" style="display:none; margin:100px; font-size:150%; color:green">
-          Forms conversion has been completed, the result file (with a name like converted-forms-DATE_TIME.zip) has been
+          Forms conversion has been completed. The result file (with a name like converted-forms-DATE_TIME.zip) has been
           downloaded automatically to your browser's default downloads folder.
           <button type="button" class="btn btn-success" onclick="document.querySelector('#formConvDone').style.display='none'">Dismiss</button>
         </div>
@@ -530,6 +530,8 @@
     </script>
 
     <!-- ES2015 files of the LHC-Forms web component -->
+    <script src="/node_modules/jszip/dist/jszip.min.js"></script>
+    <script src="/node_modules/jszip/vendor/FileSaver.js"></script>
     <script src="/dist/lforms/webcomponent/assets/lib/zone.min.js"></script>
     <script src="/dist/lforms/webcomponent/runtime-es5.js"></script>
     <script src="/dist/lforms/webcomponent/polyfills-es5.js"></script>

@@ -56,9 +56,7 @@
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
             "scripts": [
-              "./node_modules/jquery/dist/jquery.min.js",
-              "./node_modules/jszip/dist/jszip.min.js",
-              "./node_modules/jszip/vendor/FileSaver.js"
+              "./node_modules/jquery/dist/jquery.min.js"
             ]
           },
           "configurations": {

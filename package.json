@@ -42,7 +42,7 @@
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version | awk '{print $NF}')",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "test-pages": "http-server"
+    "test-pages": "http-server -o /test/pages/lforms_testpage.html"
   },
   "dependencies": {
     "@angular/animations": "~12.2.16",
