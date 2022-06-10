@@ -1361,7 +1361,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
             assert.equal(lfItem.dataType, 'QTY');
-            assert.equal(lfItem.defaultAnswer, 222);
+            assert.deepEqual(lfItem.defaultAnswer, {value: 222, _type: 'Quantity'});
           });
 
           it('should convert/merge FHIR valueQuantity to LForms QTY item value', function () {
