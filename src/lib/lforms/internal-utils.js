@@ -20,7 +20,7 @@ export const internalUtil = {
    *  have an LForms format structure representing a Quantity).
    */
   assignValueToItem: function(item, val) {
-    if (val._type === 'Quantity') {
+    if (val && val._type === 'Quantity') {
       item.value = val.value;
       if (val.comparator)
         item.comparator = val.comparator

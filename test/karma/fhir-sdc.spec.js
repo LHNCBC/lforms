@@ -29,7 +29,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhir = LForms.FHIR[fhirVersion];
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
-        describe.only('import of initial.valueQuantity', ()=>{
+        it('should import initial.valueQuantity', ()=>{
           var quantity = {
             value: 5.3,
             comparator: '>',
@@ -41,18 +41,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             resourceType: 'Questionnaire',
             item: [{
               linkId: 'q1',
-              type: 'quantity',
-              initial: [{
-                valueQuantity: quantity
-              }]
+              type: 'quantity'
             }]
           }
+          if (fhirVersion === 'STU3')
+            fhirQ.item[0].initialQuantity = quantity;
+          else {
+            fhirQ.item[0].initial = [{valueQuantity: quantity}];
+          }
+
           var lfd = new LForms.LFormsData(fhir.SDC.convertQuestionnaireToLForms(fhirQ));
           var lfItem = lfd.items[0];
-          assert.equal(lfItem.value, quantity.value);
-          assert.equal(lfItem.comparator, quantity.comparator);
-          assert.deepEqual(lfItem.unit, {name: quantity.unit, code: quantity.code,
-            system: quantity.system});
+          var expectedValue = LForms.Util.deepCopy(quantity);
+          expectedValue._type = 'Quantity';
+          assert.deepEqual(lfItem.value, expectedValue);
         });
 
         describe('_processFHIRValues', function() {

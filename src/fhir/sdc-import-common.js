@@ -280,6 +280,7 @@ function addCommonSDCImportFns(ns) {
               else
                 val.value = result.toVal;
               val.code = ucumUnit.code;
+              val.unit = ucumUnit.name || ucumUnit.code; // name can be undefined
             }
           }
           if (!matchingUnit)

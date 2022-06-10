@@ -1596,9 +1596,11 @@ export default class LhcFormData {
 
 
   /**
-   *  Returns an array of the values for the given item.  The returned values may be part of
-   *  the data model, and should not be changed.
+   *  Returns an array of the values for the given item.
    * @param lfItem the LFormsData item.
+   * @return an array of the values for the given item.  The returned values may be part of
+   *  the data model, and should not be changed.  For each repetition of the
+   *  item, a value will be returned even if the value is undefined.
    */
   getItemValues(lfItem) {
     var rtn;
@@ -1606,6 +1608,12 @@ export default class LhcFormData {
     // the value
     if (!lfItem._questionRepeatable) {
       var itemVal = lfItem.value;
+
+      // Exclue empty values, because FHIRPath will only return the values that
+      // are there.  (For example, in the RxTerms form, when there is no strength
+      // list, the RxCUI variable expression comes back empty.)
+// Other case: prepop of Gender in USSG-FHT field fails, because the code is not in
+// the list, so want to show a message, but the value is "undefined".
       if (LhcFormUtils.isItemValueEmpty(itemVal))
         rtn = [];
       else
