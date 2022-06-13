@@ -773,12 +773,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                     "valueBoolean": true
                   });
                 }
+                LForms.FHIR[fhirVersion].SDC._handleChoiceField(qItem,fixture);
                 LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
                 lfItem.answerCardinality = fixture.answerCardinality;
                 LForms.FHIR[fhirVersion].SDC._processDataType(lfItem,qItem);
                 lfItem.answers = fixture.answers;
                 LForms.FHIR[fhirVersion].SDC._processDefaultAnswer(lfItem,qItem);
                 assert.deepEqual(lfItem.defaultAnswer,fixture.defaultAnswer);
+
               }
             }
           });

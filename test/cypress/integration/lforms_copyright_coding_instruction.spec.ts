@@ -18,7 +18,7 @@ describe('popover buttons', () => {
 
     it('should show a copyright popover message on an item', () => {
       cy.byId('/type0/1').click();
-      cy.byId('copyright-content-all-in-one').should('not.be.visible');
+      cy.byId('copyright-content-all-in-one').should('not.exist');
       cy.byId('copyright-button-/type0/1').click();
       cy.byId('copyright-content-/type0/1').should('be.visible').should('have.text', 'A Copyright notice of the item');
     });
@@ -64,7 +64,7 @@ describe('popover buttons', () => {
       cy.byId(helpPopover0).should('be.visible').should('have.text', 'simple text instructions');
 
       cy.byId(field1).click();
-      cy.byId(helpPopover0).should('not.be.visible');
+      cy.byId(helpPopover0).should('not.exist');
 
       cy.byId(helpButton1).click();
       cy.byId(helpPopover1).should('be.visible');

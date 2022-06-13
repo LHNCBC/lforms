@@ -271,6 +271,19 @@ var self = {
         option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
       }
 
+      // check default answers, coding only for now
+      if (item.defaultAnswer && (item.dataType === 'CWE' || item.dataType === 'CNE')) {
+        var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+        item.defaultAnswer : [item.defaultAnswer];
+    
+        // go through each default value and set the initialSelected on the matching answer item
+        for(var j=0, jLen=defaultAnswers.length; j<jLen; j++ ) {
+          if (LForms.Util.areTwoAnswersSame(defaultAnswers[j], answer, item)) {
+            option.initialSelected = true;
+          }        
+        }
+      }
+
       optionArray.push(option);
     }
     return optionArray;
@@ -287,11 +300,18 @@ var self = {
     if(item.defaultAnswer === null || item.defaultAnswer === undefined || item.defaultAnswer === '') {
       return;
     }
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+    // for Coding, the default answer is handled in _handleAnswers(), where
+    // initialSelected is set on the answer items.
+    if (dataType === "CWE" || dataType === 'CNE') {
+      return;
+    }
+
     // item.defaultAnswer could be an array of multiple default values or a single value
     var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
       item.defaultAnswer : [item.defaultAnswer];
 
-    var dataType = this._getAssumedDataTypeForExport(item);
     var valueKey = this._getValueKeyByDataType("value", item);
     var answer = null;
     targetItem.initial = [];
@@ -302,31 +322,6 @@ var self = {
       // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
       // Attachment, Coding, Quantity, Reference(Resource)
 
-      // for Coding
-      if (dataType === 'CWE' || dataType === 'CNE' ) {
-        // could be a code object or a string
-        if (typeof defaultAnswers[i] === 'object') {
-          var coding = {"code": defaultAnswers[i].code};
-          if(defaultAnswers[i].text !== undefined) {
-            coding.display = defaultAnswers[i].text;
-          }
-          // code system
-          var codeSystem = defaultAnswers[i].system || item.answerCodeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-
-          answer = {};
-          answer[valueKey] = coding;
-          targetItem.initial.push(answer);
-        }
-        // user typed answer that is not on the answer list.
-        else if (typeof defaultAnswers[i] === 'string') {
-          targetItem.initial.push({
-            "valueString": defaultAnswers[i]
-          })
-        }
-      }
       // for Quantity,
       // [{
       //   // from Element: extension
@@ -336,7 +331,7 @@ var self = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
+      if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
         answer = {};
         answer[valueKey] = this._makeQuantity(defaultAnswers[i], item.units);
         targetItem.initial.push(answer);

@@ -12,7 +12,7 @@ for (let i = 0, len = fhirVersions.length; i < len; ++i) {
         describe('FHIRPath calculated-expression', () => {
           function testBMIFormula() {
             TestUtil.waitForFHIRLibsLoaded();
-            cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/weightHeightQuestionnaire.json`);
+            tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
             cy.byId('/29463-7/1').click().type('70');
             cy.byId('/8302-2/1').click().type('60');
             cy.byId('/39156-5/1').should('have.value', 30.1);
@@ -39,7 +39,7 @@ describe('answerExpression', () => {
   before(() => {
     tp.openBaseTestPage();
     TestUtil.waitForFHIRLibsLoaded();
-    cy.get('#fileAnchor').uploadFile(`test/data/lforms/answerExpressionTest.json`);
+    tp.loadFromTestData('answerExpressionTest.json');
   });
 
   it('should be able to populate a list', () => {
@@ -70,7 +70,7 @@ describe('answerExpression', () => {
     // because the form is re-opened.
 
     // Load the RxTerms test form and get a QuestionnaireResponse.
-    cy.get('#fileAnchor').uploadFile(`test/data/R4/rxterms.R4.json`);
+    tp.loadFromTestData('rxterms.R4.json', 'R4');
     cy.byId('medication/1/1').click().typeAndWait('ar');
     cy.get('#searchResults li:first-child').click();
     cy.byId('strength/1/1').click();

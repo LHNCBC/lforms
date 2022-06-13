@@ -121,7 +121,16 @@ export class TestPage {
   readerLogEntries = '#reader_log p';
 
   expectReaderLogEntries(expectedEntries) {
-    cy.get(this.readerLogEntries).should("eql", expectedEntries) // not 'equal'
+    cy.get(this.readerLogEntries).should(($p) => {
+      expect($p).to.have.length(expectedEntries.length);
+      for (let i = 0; i < expectedEntries.length; i++) {
+        expect($p.eq(i).text()).to.equal(expectedEntries[i]);
+      }
+    });
+  }
+
+  expectReaderLogEntriesEmpty() {
+    cy.get(this.readerLogEntries).should('not.exist');
   }
 
   Autocomp = {
@@ -310,6 +319,10 @@ export class TestPage {
    */
   openBaseTestPage() {
     cy.visit(this.testPageUrl);
+    cy.window().then((win) => {
+      // Reduce the duration that validation messages stay, to have faster tests.
+      win.LForms.Validations._timeout = 100;
+    });
   }
 
   /**
@@ -441,10 +454,34 @@ export class TestPage {
     if (fhirVersion !== 'lforms') {
       this.setFHIRVersion(fhirVersion);
     }
+
+    let formFinished = false;
+    function formFinishedListener() {formFinished = true}
+    cy.get('#test-form').then((el)=> {
+      el[0].addEventListener('onFormReady', formFinishedListener);
+      el[0].addEventListener('onError', formFinishedListener);
+    });
+
     cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/${filepath}`);
-    cy.get('.lhc-form-title').should('be.visible');
-    // Wait for loadFile() script work to be done after upload.
-    cy.get('#fileAnchor').should('have.value', '');
+
+    // Wait for the form to appear and be "ready" (or error out)
+    cy.get('.lhc-form-title').should('be.visible').then(
+      {timeout: 4000}, ()=>{
+        return new Cypress.Promise((resolve) => {
+          function checkFormFinished() {
+            if (formFinished) {
+              resolve();
+              cy.get('#test-form').then((el)=> {
+                el[0].removeEventListener('onFormReady', formFinishedListener);
+                el[0].removeEventListener('onError', formFinishedListener);
+              });
+            }
+            else
+              setTimeout(checkFormFinished, 50);
+          }
+          setTimeout(checkFormFinished, 50);
+        });
+      });
   }
 
   /**

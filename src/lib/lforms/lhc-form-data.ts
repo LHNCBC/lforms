@@ -11,7 +11,7 @@ import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
 import {internalUtil} from "./internal-utils.js";
 import {ErrorMessages} from "./error-messages.js";
-import * as version from "../../version.json";
+import version from '../../version.json';
 
 import Validation from "./lhc-form-validation.js"
 
