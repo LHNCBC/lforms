@@ -9,8 +9,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemQuestionTextComponent implements OnInit {
   @Input() item: any;
 
-  constructor(public lhcDataService: LhcDataService) {
-  }
+  constructor(public lhcDataService: LhcDataService) {}
 
   ngOnInit(): void {}
 
