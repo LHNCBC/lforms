@@ -375,13 +375,6 @@ function addCommonSDCImportFns(ns) {
           errorMessages.addMsg(errors, 'comparatorInQuantity');
           hasMessages = true;
         }
-        /*
-        if (fhirVal.value === undefined) {  // TBD might allow this case
-          LForms.Util.errorMessages.addErrorMessage(errors, 'undefinedQuantityValue');
-          hasMessages = true;
-        }
-        else
-        */
         answer = fhirVal;
       }
       // For date types, convert them to date objects, but only for values.

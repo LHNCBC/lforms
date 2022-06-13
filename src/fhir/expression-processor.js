@@ -688,7 +688,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (fhirPathRes !== undefined) {
         var [newVal, messages] = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
         var nonEmptyNewVal = newVal.filter(x=>!LForms.Util.isItemValueEmpty(x));
-        const msgSource = 'FHIRPath value expression'
+        const msgSource = 'FHIRPath value expression';
         changed = !deepEqual(oldVal, nonEmptyNewVal);
         // If this is the first run of the expressions, and there is
         // saved user data, then we check whether the calculated value matches

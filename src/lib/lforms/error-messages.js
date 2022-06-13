@@ -4,20 +4,11 @@
  *  validation, because there is no good way to remove the old messages when
  *  they don't apply without adversely impacting peformance.
  */
-/*
-class A {
-  static field = 'Inner y';
-}
-*/
+
 export const ErrorMessages = {
-//export class ErrorMessages {
-//  static messages = [{
   messages: {
     'comparatorInQuantity': {
       'en': 'This item cannot accept a quantity with a comparator'
-    },
-    'undefinedQuantityValue': { // Not sure we want to require this
-      'en': 'A quantity must have a value'
     },
     'MultipleValuesForNonRepeat': {
       'en': 'An attempt was made to assign multiple values to a non-repeating item.'
@@ -30,7 +21,6 @@ export const ErrorMessages = {
    * @param messageID the id of the message
    * @return the text corresponding to messageID.
    */
-  //static getMsg(messageID) {
   getMsg: function (messageID) {
     const messageData = this.messages[messageID];
     if (!messageData)
@@ -58,7 +48,6 @@ export const ErrorMessages = {
    * @param language the language code for the message.  This must be one of the
    *  languages of the messages above.
    */
-  //static setLanguage(language) {
   setLanguage: function (language) {
     this.language = language;
   }

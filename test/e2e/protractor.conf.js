@@ -8,14 +8,14 @@ const { SpecReporter, StacktraceOption } = require('jasmine-spec-reporter');
  * @type { import("protractor").Config }
  */
 exports.config = {
-  allScriptsTimeout: 1100000,
+  allScriptsTimeout: 11000,
 
   specs: [
     // finished tests
     './spec/argonaut.spec.ts',
     './spec/autocomp_list.spec.ts',
     './spec/buildTest.spec.ts',
-    './spec/fhirpath.spec.ts',
+    './spec/fhirpath.spec.ts', 
     './spec/lforms_datatype.spec.ts',
     './spec/lforms_fhirdata.spec.ts',
     './spec/lforms_formdata.spec.ts',
@@ -33,7 +33,7 @@ exports.config = {
     './spec/attachment.spec.ts',
     './spec/R4/prepop.spec.ts',
     './spec/R4/variables.spec.ts',
-    './spec/addFormToPage.spec.ts',
+    './spec/addFormToPage.spec.ts', 
 //    './spec/lforms_one_unused_repeating_item.spec.ts',
     './spec/lforms_tree.spec.ts',
     './spec/screen_reader_log.spec.ts',
@@ -58,7 +58,7 @@ exports.config = {
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
-    defaultTimeoutInterval: 3000000,
+    defaultTimeoutInterval: 30000,
     print: function() {}
   },
   onPrepare: async () => {
