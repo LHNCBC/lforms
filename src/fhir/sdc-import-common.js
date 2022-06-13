@@ -1118,7 +1118,12 @@ function addCommonSDCImportFns(ns) {
     return rtn;
   };
 
-/** *  Loads answerValueSets for prefetched lists.  * @param lfData the LFormsData for the form * @return an array of promise objects which resolve when the answer valuesets * have been loaded and imported.  */
+  /**
+   *  Loads answerValueSets for prefetched lists.
+   * @param lfData the LFormsData for the form
+   * @return an array of promise objects which resolve when the answer valuesets
+   * have been loaded and imported.
+   */
   self.loadAnswerValueSets = function (lfData) {
     var pendingPromises = [];
     var items = lfData.itemList;
