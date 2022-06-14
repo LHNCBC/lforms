@@ -13,7 +13,7 @@ module.exports = function(config) {
       '/base/app/data/': '/base/src/test-data/form-data/',
       '/test/data/': '/base/src/test-data/e2e/'
     },
-
+    
     plugins: [
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
@@ -21,7 +21,7 @@ module.exports = function(config) {
       require('karma-mocha'),
       require('karma-chai'),
       require('karma-mocha-reporter')
-
+      
     ],
 
     // frameworks to use
