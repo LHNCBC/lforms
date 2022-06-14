@@ -5,7 +5,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [30.4.0] 2020-06-13
 ### Added
 - The beginnings of support to show error messages for individual fields.
-### Changed
 
 ## [30.3.0] 2020-05-19
 ### Added
