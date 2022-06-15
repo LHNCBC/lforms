@@ -856,9 +856,16 @@ function addCommonSDCImportFns(ns) {
         case "REAL":
         case "QTY":
           if (qrValue.valueQuantity) {
-            item.value = qrValue.valueQuantity.value;
-            if(qrValue.valueQuantity.code) {
-              item.unit = {name: qrValue.valueQuantity.code};
+            var quantity = qrValue.valueQuantity;
+            item.value = quantity.value;
+            var unitName = quantity.unit || quantity.code;
+            if (unitName) {
+              item.unit = {name: unitName};
+              if (quantity.code) {
+                item.unit.code = quantity.code;
+                if (quantity.system)
+                  item.unit.system = quantity.system;
+              }
             }
           }
           else if (qrValue.valueDecimal) {

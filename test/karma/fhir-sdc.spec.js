@@ -1675,7 +1675,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         // import - xl
-        describe('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
+        describe.only('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
           it('FHIR quantity should become LForms QTY with correct value from QuestionnaireResponse', function (itDone) {
             var lfDefFile = 'test/data/lforms-def-for-fhir-import-qn-response.json';
             var qrFile = 'test/data/fhir-import-qn-response.json';
@@ -1686,6 +1686,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                   'QuestionnaireResponse', fhirQnRespData, lfFormDef, fhirVersion);
                 assert.equal(mergedFormData.items[0].value, 333.0);
+                assert.deepEqual(mergedFormData.items[0].unit, {name: 'm', code: "m",
+                  system: "http://unitsofmeasure.org"});
                 assert.equal(mergedFormData.items[0].dataType, 'QTY');
                 itDone();
               }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
