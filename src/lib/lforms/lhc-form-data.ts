@@ -1607,7 +1607,7 @@ export default class LhcFormData {
     if (!lfItem._questionRepeatable) {
       var itemVal = lfItem.value;
 
-      // Excldue empty values, because FHIRPath will only return the values that
+      // Exclude empty values, because FHIRPath will only return the values that
       // are there.  (For example, in the RxTerms form, when there is no strength
       // list, the RxCUI variable expression comes back empty.)
       if (LhcFormUtils.isItemValueEmpty(itemVal))
