@@ -9,7 +9,7 @@
 import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
-import {internalUtil} from "./internal-utils.js";
+import {InternalUtil} from "./internal-utils.js";
 import {ErrorMessages} from "./error-messages.js";
 import version from '../../version.json';
 
@@ -1607,7 +1607,7 @@ export default class LhcFormData {
     if (!lfItem._questionRepeatable) {
       var itemVal = lfItem.value;
 
-      // Excldue empty values, because FHIRPath will only return the values that
+      // Exclude empty values, because FHIRPath will only return the values that
       // are there.  (For example, in the RxTerms form, when there is no strength
       // list, the RxCUI variable expression comes back empty.)
       if (LhcFormUtils.isItemValueEmpty(itemVal))
@@ -2213,7 +2213,7 @@ export default class LhcFormData {
    * @param messages an Object whose key is a message source identifier and
    *  whose value is an array of message objects for each value.  See
    *  _convertFHIRValues for the format.
-   * @param messageSource a string indentifier for the source of these messages,
+   * @param messageSource a string identifier for the source of these messages,
    *  to distinguish them from messages from other sources.
    * @return if the number if repetitions changes, this will return the new
    *  "last" repetition item; otherwise it will return undefined.
@@ -2268,27 +2268,27 @@ export default class LhcFormData {
         }
         // Set values now that the right number of rows are present
         for (var i=0, len=vals.length; i<len; ++i) {
-          internalUtil.assignValueToItem(repetitions[i], vals[i]);
+          InternalUtil.assignValueToItem(repetitions[i], vals[i]);
           if (messagesChanged)
-            internalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
+            InternalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
         }
       }
     }
     // question does not repeat (might have repeating answers)
     else {
       if (!item._multipleAnswers) {
-        internalUtil.assignValueToItem(item, vals[0]);
+        InternalUtil.assignValueToItem(item, vals[0]);
         if (vals.length > 1) {
-          internalUtil.addItemWarning(item, 'MultipleValuesForNonRepeat');
+          InternalUtil.addItemWarning(item, 'MultipleValuesForNonRepeat');
           console.log(JSON.stringify(vals));
         }
         else
-          internalUtil.removeItemWarning(item, 'MultipleValuesForNonRepeat');
+          InternalUtil.removeItemWarning(item, 'MultipleValuesForNonRepeat');
       }
       else
         item.value = vals;
       if (messagesChanged)
-        internalUtil.setItemMessagesArray(item, messages, messageSource);
+        InternalUtil.setItemMessagesArray(item, messages, messageSource);
     }
 
     if (repetitionCountChanged)
@@ -2320,13 +2320,13 @@ export default class LhcFormData {
         if (item._parentItem && Array.isArray(item._parentItem.items)) { // not sure this check is needed
           const repetitions = this._getRepeatingItems(item);
           for (var i=0, len=repetitions.length; i<len; ++i) {
-            internalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
+            InternalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
           }
         }
       }
       // question does not repeat
       else {
-        internalUtil.setItemMessagesArray(item, messages, messageSource);
+        InternalUtil.setItemMessagesArray(item, messages, messageSource);
       }
     }
   }
