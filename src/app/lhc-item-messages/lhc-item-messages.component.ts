@@ -9,10 +9,10 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemMessagesComponent implements OnInit {
 
   @Input() item;
-  JSON;  // for debugging
+//  JSON;  // for debugging
 
   constructor(public lhcDataService: LhcDataService) {
-    this.JSON = JSON; // for debugging
+//    this.JSON = JSON; // for debugging
   }
 
 

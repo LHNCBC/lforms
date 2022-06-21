@@ -3,7 +3,7 @@
  * LhcFormUtils is also set as window.LForms.Util, which is used by the externally loaded lformsFHIR js lib.
  */
 import CommonUtils from "./lhc-common-utils.js";
-import {internalUtil} from "./internal-utils.js";
+import {InternalUtil} from "./internal-utils.js";
 
 const FormUtils = {
   // TODO: need an udpate
@@ -982,7 +982,7 @@ const FormUtils = {
 
 };
 
-FormUtils._internalUtil = internalUtil;
+FormUtils._internalUtil = InternalUtil;
 
 const LhcFormUtils = {...CommonUtils,  ...FormUtils};
 

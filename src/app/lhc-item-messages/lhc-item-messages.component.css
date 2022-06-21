@@ -1,4 +1,4 @@
-.lf-item-error:before {
+.lhc-item-error:before {
   content: "\26A0";
   color: red;
   margin-left: 3px;
@@ -6,15 +6,15 @@
   font-weight: bold;
 }
 
-.lf-item-error {
+.lhc-item-error {
   background-color: orange;
 }
 
-.lf-item-warning {
+.lhc-item-warning {
   background-color: lightyellow;
 }
 
-.lf-item-warning:before {
+.lhc-item-warning:before {
   content: "\26A0";
   color: orange;
   margin-left: 3px;
@@ -22,7 +22,7 @@
   font-weight: bold;
 }
 
-.lf-item-info:before {
+.lhc-item-info:before {
   content: "\1F6C8";
   margin-right: 6px;
 }

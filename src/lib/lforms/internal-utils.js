@@ -8,7 +8,7 @@ import {ErrorMessages} from "./error-messages.js";
  */
 const defaultMsgSource = 'Other message source';
 
-export const internalUtil = {
+export const InternalUtil = {
 
   /**
    *  Sets the value of the item, which is the case of a quantity, involves more
@@ -134,7 +134,7 @@ export const internalUtil = {
 
 }
 
-internalUtil.errorMessages = ErrorMessages;
+InternalUtil.errorMessages = ErrorMessages;
 // Set the default language for error messages.  Apps can call this with a
 // different language code, if error-messages.js has messages in that language.
-internalUtil.errorMessages.setLanguage('en');
+InternalUtil.errorMessages.setLanguage('en');

@@ -54,10 +54,10 @@ describe('LhcItemMessagesComponent', () => {
 
   it('should not show messages by default', ()=>{
     const componentDe: DebugElement = fixture.debugElement;
-    const errorDe = componentDe.query(By.css('.lf-item-error'));
+    const errorDe = componentDe.query(By.css('.lhc-item-error'));
     expect(errorDe).toBeNull();
     expect(component.showErrors()).toBe(false);
-    const warningDe = componentDe.query(By.css('.lf-item-warning'));
+    const warningDe = componentDe.query(By.css('.lhc-item-warning'));
     expect(warningDe).toBeNull();
     expect(component.showWarnings()).toBe(false);
     expect(component.showInfo()).toBe(false);
@@ -68,10 +68,10 @@ describe('LhcItemMessagesComponent', () => {
     lfData.setMessageLevel('error');
     fixture.detectChanges();
     const componentDe: DebugElement = fixture.debugElement;
-    const errorDe = componentDe.query(By.css('.lf-item-error'));
+    const errorDe = componentDe.query(By.css('.lhc-item-error'));
     expect(errorDe.nativeElement).toBeTruthy();
     expect(component.showErrors()).toBe(true);
-    const warningDe = componentDe.query(By.css('.lf-item-warning'));
+    const warningDe = componentDe.query(By.css('.lhc-item-warning'));
     expect(warningDe).toBeNull();
     expect(component.showWarnings()).toBe(false);
     expect(component.showInfo()).toBe(false);
@@ -82,10 +82,10 @@ describe('LhcItemMessagesComponent', () => {
     lfData.setMessageLevel('warning');
     fixture.detectChanges();
     const componentDe: DebugElement = fixture.debugElement;
-    const errorDe = componentDe.query(By.css('.lf-item-error'));
+    const errorDe = componentDe.query(By.css('.lhc-item-error'));
     expect(errorDe).toBeTruthy();
     expect(component.showErrors()).toBe(true);
-    const warningDe = componentDe.query(By.css('.lf-item-warning'));
+    const warningDe = componentDe.query(By.css('.lhc-item-warning'));
     expect(warningDe).toBeTruthy();
     expect(component.showWarnings()).toBe(true);
     expect(component.showInfo()).toBe(false);
@@ -96,10 +96,10 @@ describe('LhcItemMessagesComponent', () => {
     lfData.setMessageLevel('info');
     fixture.detectChanges();
     const componentDe: DebugElement = fixture.debugElement;
-    const errorDe = componentDe.query(By.css('.lf-item-error'));
+    const errorDe = componentDe.query(By.css('.lhc-item-error'));
     expect(errorDe).toBeTruthy();
     expect(component.showErrors()).toBe(true);
-    const warningDe = componentDe.query(By.css('.lf-item-warning'));
+    const warningDe = componentDe.query(By.css('.lhc-item-warning'));
     expect(warningDe).toBeTruthy();
     expect(component.showWarnings()).toBe(true);
     expect(component.showInfo()).toBe(true);
@@ -114,7 +114,7 @@ describe('LhcItemMessagesComponent', () => {
 
     it('should show multiple messages from one source', ()=>{
       const componentDe: DebugElement = fixture.debugElement;
-      const errorDes = componentDe.queryAll(By.css('.lf-item-error'));
+      const errorDes = componentDe.queryAll(By.css('.lhc-item-error'));
       expect(errorDes.length).toBe(2);
       expect(errorDes[0].nativeElement.textContent).toContain('An error message');
       expect(errorDes[1].nativeElement.textContent).toContain('Another error message');
@@ -123,7 +123,7 @@ describe('LhcItemMessagesComponent', () => {
 
     it('should show messages from multiple sources', ()=> {
       const componentDe: DebugElement = fixture.debugElement;
-      const warningDes = componentDe.queryAll(By.css('.lf-item-warning'));
+      const warningDes = componentDe.queryAll(By.css('.lhc-item-warning'));
       expect(warningDes.length).toBe(2);
       expect(warningDes[0].nativeElement.textContent).toContain('First warning');
       expect(warningDes[1].nativeElement.textContent).toContain('Final warning');
