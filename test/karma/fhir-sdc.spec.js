@@ -52,9 +52,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           var lfd = new LForms.LFormsData(fhir.SDC.convertQuestionnaireToLForms(fhirQ));
           var lfItem = lfd.items[0];
-          var expectedValue = LForms.Util.deepCopy(quantity);
-          expectedValue._type = 'Quantity';
-          assert.deepEqual(lfItem.value, expectedValue);
+          assert.equal(lfItem.value, quantity.value);
+          assert.equal(lfItem.comparator, quantity.comparator);
+          assert.equal(lfItem.unit.name, quantity.unit);
+          assert.equal(lfItem.unit.code, quantity.code);
+          assert.equal(lfItem.unit.system, quantity.system);
         });
 
         describe('_processFHIRValues', function() {

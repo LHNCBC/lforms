@@ -239,16 +239,21 @@ function addSDCImportFns(ns) {
    * @param {*} answer an entry in item.answerOption or in item.initial
    * @param {*} vals an array that contains all default answers
    */
-  self._processDefaultAnswerValue = function (answer, vals) {        
+  self._processDefaultAnswerValue = function (answer, vals) {
     answer = LForms.Util.deepCopy(answer); // Use a clone to avoid changing the original
     var val = answer.valueCoding;
     if (val)
       val._type = 'Coding'
-    else 
-      val = self._getFHIRValueWithPrefixKey(answer, /^value/);
+    else  {
+      val = answer.valueQuantity;
+      if (val)
+        val._type = 'Quantity';
+      else
+        val = self._getFHIRValueWithPrefixKey(answer, /^value/);
+    }
 
     if (val !== undefined && val !== null)
-      vals.push(val);         
+      vals.push(val);
   };
 
 
@@ -260,7 +265,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
-  
+
     var vals = [];
     // check item.answerOption.initialSelected
     if (qItem.answerOption) {
@@ -270,14 +275,14 @@ function addSDCImportFns(ns) {
         }
       })
     }
-    
+
     // check item.initial
     if (qItem.initial && vals.length === 0) {
       qItem.initial.forEach(function(elem) {
         self._processDefaultAnswerValue(elem, vals)
       });
     }
-    
+
     // set default values
     if (vals.length > 0)
       this._processFHIRValues(lfItem, vals, true);
