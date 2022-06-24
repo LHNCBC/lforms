@@ -244,13 +244,8 @@ function addSDCImportFns(ns) {
     var val = answer.valueCoding;
     if (val)
       val._type = 'Coding'
-    else  {
-      val = answer.valueQuantity;
-      if (val)
-        val._type = 'Quantity';
-      else
-        val = self._getFHIRValueWithPrefixKey(answer, /^value/);
-    }
+    else
+      val = self._getFHIRValueWithPrefixKey(answer, /^value/);
 
     if (val !== undefined && val !== null)
       vals.push(val);
