@@ -3,10 +3,14 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
-## [30.3.1] 2020-06-24
+## [30.4.1] 2020-06-24
 ### Fixed
 - Fixed a bug that FHIRPATH expressions are not calculated on newly added
   repeating items.
+  
+## [30.4.0] 2020-06-13
+### Added
+- The beginnings of support to show error messages for individual fields.
 
 ## [30.3.0] 2020-05-19
 ### Added
