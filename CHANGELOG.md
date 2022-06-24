@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [30.3.1] 2020-06-24
+### Fixed
+- Fixed a bug that FHIRPATH expressions are not calculated on newly added
+  repeating items.
+
 ## [30.3.0] 2020-05-19
 ### Added
 - Added support for answerOption.initialSelected in R4 Questionnaire

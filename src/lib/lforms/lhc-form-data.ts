@@ -1946,6 +1946,11 @@ export default class LhcFormData {
     var readerMsg = 'Added ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
+    // run FHIRPATH expression when a new item is added
+    if (LForms.FHIR && this._hasResponsiveExpr) {
+      this._expressionProcessor.runCalculations(false).then(()=>{});
+    }
+
     return newItem;
   }
 
@@ -2173,6 +2178,12 @@ export default class LhcFormData {
     this._resetInternalData();
     var readerMsg = 'Removed ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
+
+    // run FHIRPATH expression when a new item is removed
+    if (LForms.FHIR && this._hasResponsiveExpr) {
+      this._expressionProcessor.runCalculations(false).then(()=>{});
+    }
+    
   }
 
 
