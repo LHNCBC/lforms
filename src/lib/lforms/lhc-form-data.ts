@@ -944,7 +944,8 @@ export default class LhcFormData {
         console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
       }
     }
-    item.value = value;
+
+    InternalUtil.assignValueToItem(item, value);
   }
 
 
@@ -1046,11 +1047,6 @@ export default class LhcFormData {
       else if (!this.hasSavedData && item.defaultAnswer !== undefined && item.defaultAnswer !== null &&
         (item.value === undefined || item.value === null)) {
         this._lfItemValueFromDefaultAnswer(item);
-      }
-
-      // normalize unit value if there is one, needed by calculationMethod
-      if (item.unit && !item.unit.text) {
-        item.unit.text = item.unit.name;
       }
 
       // id

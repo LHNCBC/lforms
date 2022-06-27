@@ -11,9 +11,9 @@ module.exports = function(config) {
     // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
     proxies: {
       '/base/app/data/': '/base/src/test-data/form-data/',
-      '/test/data/': '/base/src/test-data/e2e/'
+      '/test/data/': '/base/test/data/'
     },
-    
+
     plugins: [
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
@@ -21,7 +21,7 @@ module.exports = function(config) {
       require('karma-mocha'),
       require('karma-chai'),
       require('karma-mocha-reporter')
-      
+
     ],
 
     // frameworks to use
@@ -32,6 +32,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      {pattern: 'test/data/**/*.json', included: false, served: true},
       {pattern: 'src/test-data/**/*.json', included: false, served: true},
       {pattern: 'src/test-data/**/*.js', included: true, served: true},
       'dist/webcomponent/assets/lib/zone.min.js',
