@@ -2,11 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-
 ## [30.4.1] 2020-06-24
 ### Fixed
 - Fixed a bug that FHIRPATH expressions are not calculated on newly added
   repeating items.
+- Fixed a bug that enableWhen is not working on prepopulated answers.
   
 ## [30.4.0] 2020-06-13
 ### Added
