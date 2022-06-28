@@ -1,0 +1,608 @@
+{
+	"resourceType" : "Questionnaire",
+	"id" : "sirb-protocol-questionnaire-populate",
+	"contained" : [
+		{
+			"resourceType" : "QuestionnaireResponse",
+			"status" : "completed",
+			"item" : [
+				{
+					"linkId" : "in1",
+					"text" : "Research Study Details",
+					"item" : [
+						{
+							"linkId" : "in1.1",
+							"text" : "Study Title",
+							"answer" : [
+								{
+									"valueString" : "Comparison of efficacy of 4 types of immunotherapy for skin cancer"
+								}
+							]
+						},
+						{
+							"linkId" : "in1.2",
+							"text" : "Study Title (Short)",
+							"answer" : [
+								{
+									"valueString" : "Efficacy of immunotherapy for skin cancer"
+								}
+							]
+						},
+						{
+							"linkId" : "in1.3",
+							"text" : "IRB Protocol Number",
+							"answer" : [
+								{
+									"valueString" : "P20000000"
+								}
+							]
+						},
+						{
+							"linkId" : "in1.4",
+							"text" : "Study Type",
+							"answer" : [
+								{
+									"valueCoding" : {
+										"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+										"code" : "INT",
+										"display" : "Interventional"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"linkId" : "in9",
+					"text" : "IDE/IND and FDA exemption",
+					"item" : [
+						{
+							"linkId" : "in9.1",
+							"text" : "Does this study require a FDA exemption?",
+							"answer" : [
+								{
+									"valueCoding" : {
+										"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+										"code" : "Y",
+										"display" : "Yes"
+									}
+								}
+							]
+						},
+						{
+							"linkId" : "in9.2",
+							"text" : "Is an IND or IDE being used in this study?",
+							"answer" : [
+								{
+									"valueCoding" : {
+										"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+										"code" : "Y",
+										"display" : "Yes"
+									}
+								}
+							]
+						},
+						{
+							"linkId" : "in9.4",
+							"text" : "Please select IND or IDE:",
+							"answer" : [
+								{
+									"valueCoding" : {
+										"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+										"code" : "IND",
+										"display" : "IND"
+									}
+								}
+							]
+						},
+						{
+							"linkId" : "in9.3",
+							"text" : "IND/IDE Number",
+							"answer" : [
+								{
+									"valueString" : "89012"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"extension" : [
+		{
+			"url" : "http://hl7.org/fhir/StructureDefinition/variable",
+			"valueExpression" : {
+				"description" : "variable to store the incoming data from the launchContext extension for populate and other expressions",
+				"name" : "lookupInitiateStudy",
+				"language" : "text/fhirpath",
+				"expression" : "%questionnaire.contained[0]"
+			}
+		},
+		{
+			"url" : "http://hl7.org/fhir/StructureDefinition/variable",
+			"valueExpression" : {
+				"description" : "type of exemption IND or IDE",
+				"name" : "typeExemptionIDEIDN",
+				"language" : "text/fhirpath",
+				"expression" : "%resource.item.item.where(linkId = 'p1.4').answer.value.code"
+			}
+		}
+	],
+	"version" : "0.1.0",
+	"name" : "Protocol_questionnaire",
+	"title" : "Protocol Questionnaire",
+	"status" : "draft",
+	"item" : [
+		{
+			"linkId" : "p1",
+			"text" : "Research Study",
+			"type" : "group",
+			"required" : false,
+			"item" : [
+				{
+					"extension" : [
+						{
+							"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+							"valueCodeableConcept" : {
+								"coding" : [
+									{
+										"system" : "http://hl7.org/fhir/questionnaire-item-control",
+										"code" : "drop-down",
+										"display" : "Drop down"
+									}
+								],
+								"text" : "Drop down"
+							}
+						},
+						{
+							"url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+							"valueExpression" : {
+								"language" : "text/fhirpath",
+								"expression" : "%lookupInitiateStudy.descendants().where(linkId = 'in1.4').answer.valueCoding"
+							}
+						}
+					],
+					"linkId" : "p1.1",
+					"text" : "Study Type",
+					"type" : "choice",
+					"required" : true,
+					"answerOption" : [
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "INT",
+								"display" : "Interventional"
+							}
+						},
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "OBS",
+								"display" : "Observational"
+							}
+						}
+					],
+					"item" : [
+						{
+							"extension" : [
+								{
+									"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+									"valueCodeableConcept" : {
+										"coding" : [
+											{
+												"system" : "http://hl7.org/fhir/questionnaire-item-control",
+												"code" : "help",
+												"display" : "Help-Button"
+											}
+										],
+										"text" : "Help-Button"
+									}
+								}
+							],
+							"linkId" : "p1.1_help",
+							"text" : "Select the study type, either Interventional (Clinical Trial) or Observational (Non-Interventional)",
+							"type" : "display"
+						}
+					]
+				},
+				{
+					"extension" : [
+						{
+							"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+							"valueCodeableConcept" : {
+								"coding" : [
+									{
+										"system" : "http://hl7.org/fhir/questionnaire-item-control",
+										"code" : "drop-down",
+										"display" : "Drop down"
+									}
+								],
+								"text" : "Drop down"
+							}
+						}
+					],
+					"linkId" : "p1.2",
+					"text" : "Intervention",
+					"type" : "choice",
+					"enableWhen" : [
+						{
+							"question" : "p1.1",
+							"operator" : "=",
+							"answerCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "INT"
+							}
+						}
+					],
+					"required" : true,
+					"repeats" : false,
+					"readOnly" : false,
+					"answerOption" : [
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "DBV",
+								"display" : "Drug/Biologic/Vaccine"
+							}
+						},
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "DEV",
+								"display" : "Device"
+							}
+						},
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "SBE",
+								"display" : "Social/Behavioral/educational (SBE)"
+							}
+						},
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "PRO",
+								"display" : "Procedural"
+							}
+						}
+					],
+					"item" : [
+						{
+							"extension" : [
+								{
+									"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+									"valueCodeableConcept" : {
+										"coding" : [
+											{
+												"system" : "http://hl7.org/fhir/questionnaire-item-control",
+												"code" : "help",
+												"display" : "Help-Button"
+											}
+										],
+										"text" : "Help-Button"
+									}
+								}
+							],
+							"linkId" : "p1.2_help",
+							"text" : "A process or action that is the focus of a clinical study. Interventions include drugs, medical devices, procedures, vaccines, and other products that are either investigational or already available. Interventions can also include noninvasive approaches, such as education or modifying diet and exercise.",
+							"type" : "display"
+						}
+					]
+				},
+				{
+					"extension" : [
+						{
+							"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+							"valueCodeableConcept" : {
+								"coding" : [
+									{
+										"system" : "http://hl7.org/fhir/questionnaire-item-control",
+										"code" : "drop-down",
+										"display" : "Drop down"
+									}
+								],
+								"text" : "Drop down"
+							}
+						},
+						{
+							"url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+							"valueExpression" : {
+								"language" : "text/fhirpath",
+								"expression" : "%lookupInitiateStudy.descendants().where(linkId = 'in9.1').answer.valueCoding"
+							}
+						}
+					],
+					"linkId" : "p1.3",
+					"text" : "Does this protocol require a FDA exemption?",
+					"type" : "choice",
+					"enableWhen" : [
+						{
+							"question" : "p1.2",
+							"operator" : "=",
+							"answerCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "DBV"
+							}
+						},
+						{
+							"question" : "p1.2",
+							"operator" : "=",
+							"answerCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "DEV"
+							}
+						}
+					],
+					"enableBehavior" : "any",
+					"required" : false,
+					"repeats" : false,
+					"readOnly" : false,
+					"answerOption" : [
+						{
+							"valueCoding" : {
+								"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+								"code" : "Y",
+								"display" : "Yes"
+							}
+						},
+						{
+							"valueCoding" : {
+								"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+								"code" : "N",
+								"display" : "No"
+							}
+						}
+					]
+				},
+				{
+					"extension" : [
+						{
+							"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+							"valueCodeableConcept" : {
+								"coding" : [
+									{
+										"system" : "http://hl7.org/fhir/questionnaire-item-control",
+										"code" : "drop-down",
+										"display" : "Drop down"
+									}
+								],
+								"text" : "Drop down"
+							}
+						},
+						{
+							"url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+							"valueExpression" : {
+								"language" : "text/fhirpath",
+								"expression" : "%lookupInitiateStudy.descendants().where(linkId = 'in9.2').answer.valueCoding"
+							}
+						}
+					],
+					"linkId" : "p1.30",
+					"text" : "Is an IND or IDE being used in this study?",
+					"type" : "choice",
+					"enableWhen" : [
+						{
+							"question" : "p1.3",
+							"operator" : "=",
+							"answerCoding" : {
+								"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+								"code" : "Y"
+							}
+						}
+					],
+					"required" : false,
+					"repeats" : false,
+					"readOnly" : false,
+					"answerOption" : [
+						{
+							"valueCoding" : {
+								"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+								"code" : "Y",
+								"display" : "Yes"
+							}
+						},
+						{
+							"valueCoding" : {
+								"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+								"code" : "N",
+								"display" : "No"
+							}
+						}
+					],
+					"item" : [
+						{
+							"extension" : [
+								{
+									"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+									"valueCodeableConcept" : {
+										"coding" : [
+											{
+												"system" : "http://hl7.org/fhir/questionnaire-item-control",
+												"code" : "help",
+												"display" : "Help-Button"
+											}
+										],
+										"text" : "Help-Button"
+									}
+								}
+							],
+							"linkId" : "p1.30_help",
+							"text" : "Is an Investigational New Drug (IND) or Investigational Device Exemption (IDE) being used?",
+							"type" : "display"
+						}
+					]
+				},
+				{
+					"extension" : [
+						{
+							"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+							"valueCodeableConcept" : {
+								"coding" : [
+									{
+										"system" : "http://hl7.org/fhir/questionnaire-item-control",
+										"code" : "drop-down",
+										"display" : "Drop down"
+									}
+								],
+								"text" : "Drop down"
+							}
+						},
+						{
+							"url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+							"valueExpression" : {
+								"language" : "text/fhirpath",
+								"expression" : "%lookupInitiateStudy.descendants().where(linkId = 'in9.4').answer.valueCoding"
+							}
+						}
+					],
+					"linkId" : "p1.4",
+					"text" : "Type of exemption",
+					"type" : "choice",
+					"enableWhen" : [
+						{
+							"question" : "p1.3",
+							"operator" : "=",
+							"answerCoding" : {
+								"system" : "http://terminology.hl7.org/CodeSystem/v2-0532",
+								"code" : "Y"
+							}
+						}
+					],
+					"required" : false,
+					"repeats" : false,
+					"readOnly" : false,
+					"answerOption" : [
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "IND",
+								"display" : "IND"
+							}
+						},
+						{
+							"valueCoding" : {
+								"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+								"code" : "IDE",
+								"display" : "IDE"
+							}
+						}
+					],
+					"item" : [
+						{
+							"extension" : [
+								{
+									"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+									"valueCodeableConcept" : {
+										"coding" : [
+											{
+												"system" : "http://hl7.org/fhir/questionnaire-item-control",
+												"code" : "help",
+												"display" : "Help-Button"
+											}
+										],
+										"text" : "Help-Button"
+									}
+								}
+							],
+							"linkId" : "p1.4_help",
+							"text" : "Select Investigational New Drug (IND) or Investigational Device Exemption (IDE)",
+							"type" : "display"
+						}
+					]
+				},
+				{
+					"extension" : [
+						{
+							"url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+							"valueExpression" : {
+								"language" : "text/fhirpath",
+								"expression" : "%lookupInitiateStudy.descendants().where(linkId = 'in1.2').answer.value"
+							}
+						}
+					],
+					"linkId" : "p1.6",
+					"text" : "Study Title (Short)",
+					"type" : "string",
+					"required" : false,
+					"item" : [
+						{
+							"extension" : [
+								{
+									"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+									"valueCodeableConcept" : {
+										"coding" : [
+											{
+												"system" : "http://hl7.org/fhir/questionnaire-item-control",
+												"code" : "help",
+												"display" : "Help-Button"
+											}
+										],
+										"text" : "Help-Button"
+									}
+								}
+							],
+							"linkId" : "p1.6_help",
+							"text" : "A short study title written in language intended for the lay public.",
+							"type" : "display"
+						}
+					]
+				},
+				{
+					"extension" : [
+						{
+							"url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+							"valueExpression" : {
+								"language" : "text/fhirpath",
+								"expression" : "%lookupInitiateStudy.descendants().where(linkId = 'in1.3').answer.value"
+							}
+						}
+					],
+					"linkId" : "p1.9",
+					"text" : "IRB Protocol Number",
+					"type" : "string",
+					"required" : false,
+					"item" : [
+						{
+							"extension" : [
+								{
+									"url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+									"valueCodeableConcept" : {
+										"coding" : [
+											{
+												"system" : "http://hl7.org/fhir/questionnaire-item-control",
+												"code" : "help",
+												"display" : "Help-Button"
+											}
+										],
+										"text" : "Help-Button"
+									}
+								}
+							],
+							"linkId" : "p1.9_help",
+							"text" : "Provided by the sIRB. Will not be available at the time of initial submission.",
+							"type" : "display"
+						}
+					]
+				}
+			]
+		},
+		{
+			"linkId" : "p3.1.14",
+			"text" : "Discuss the total duration of investigational product administration (including any open-label lead-in, if applicable).",
+			"type" : "text",
+			"required" : false,
+			"enableWhen" : [
+				{
+					"question" : "p1.1",
+					"operator" : "=",
+					"answerCoding" : {
+						"system" : "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+						"code" : "INT"
+					}
+				}
+			]
+		}
+	]
+}
