@@ -133,4 +133,60 @@ describe('calculatedExpression', () => {
       cy.byId('repeating-q-in-repeating-group/2/2').should('have.value', 'd');
     });
   });
+
+  describe('answerExpression and calculatedExpress on repeating items', ()=>{
+    it('should have FHIRPATH expression calculated when a repeating item is added and/or removed', ()=>{
+      util.addFormToPage('fhirpath-expression-on-repeating-items.R4.json', null, {fhirVersion: 'R4'});
+
+      // expression works on the first group
+      cy.byId('p1.10.1.1/1/1/1/1').click();
+      cy.get('#searchResults li').should('have.length', 2);
+      cy.get('#searchResults li').first().should('be.visible');
+      cy.byId('p1.10.1.1/1/1/1/1').type('{downArrow}').type('{enter}');
+      cy.byId('p1.10.1.1/1/1/1/1').should('have.value', 'NIH');
+      cy.byId('p1.10.1.2/1/1/1/1').should('have.value', 'NIH-2021-5678901234567');
+
+      // add a new repeating group
+      cy.byId('add-p1.10.1/1/1/1').click();
+      // expression works on the second group
+      cy.byId('p1.10.1.1/1/1/2/1').click();
+      cy.get('#searchResults li').should('have.length', 2);
+      cy.get('#searchResults li').first().should('be.visible');
+      cy.byId('p1.10.1.1/1/1/2/1').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('p1.10.1.1/1/1/2/1').should('have.value', 'Immunotherapy Industry Association');
+      cy.byId('p1.10.1.2/1/1/2/1').should('have.value', 'IIA900000');
+
+      // add a third repeating group
+      cy.byId('add-p1.10.1/1/1/2').click();
+      // expression works on the third group
+      cy.byId('p1.10.1.1/1/1/3/1').click();
+      cy.get('#searchResults li').should('have.length', 2);
+      cy.get('#searchResults li').first().should('be.visible');
+      cy.byId('p1.10.1.1/1/1/3/1').type('{downArrow}').type('{enter}');
+      cy.byId('p1.10.1.1/1/1/3/1').should('have.value', 'NIH');
+      cy.byId('p1.10.1.2/1/1/3/1').should('have.value', 'NIH-2021-5678901234567');
+
+      // delete the second repeating group
+      cy.byId('del-p1.10.1/1/1/2').click();
+      // values remains in the remaining 2 groups
+      cy.byId('p1.10.1.1/1/1/1/1').should('have.value', 'NIH');
+      cy.byId('p1.10.1.2/1/1/1/1').should('have.value', 'NIH-2021-5678901234567');
+      cy.byId('p1.10.1.1/1/1/3/1').should('have.value', 'NIH');
+      cy.byId('p1.10.1.2/1/1/3/1').should('have.value', 'NIH-2021-5678901234567');
+      // expression works in the remaining 2 groups
+      cy.byId('p1.10.1.1/1/1/1/1').click();
+      cy.get('#searchResults li').should('have.length', 2);
+      cy.get('#searchResults li').first().should('be.visible');
+      cy.byId('p1.10.1.1/1/1/1/1').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('p1.10.1.1/1/1/1/1').should('have.value', 'Immunotherapy Industry Association');
+      cy.byId('p1.10.1.2/1/1/1/1').should('have.value', 'IIA900000');
+
+      cy.byId('p1.10.1.1/1/1/3/1').click();
+      cy.get('#searchResults li').should('have.length', 2);
+      cy.get('#searchResults li').first().should('be.visible');
+      cy.byId('p1.10.1.1/1/1/3/1').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('p1.10.1.1/1/1/3/1').should('have.value', 'Immunotherapy Industry Association');
+      cy.byId('p1.10.1.2/1/1/3/1').should('have.value', 'IIA900000');
+    });
+  });
 });

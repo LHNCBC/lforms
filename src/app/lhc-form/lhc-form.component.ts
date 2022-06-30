@@ -135,6 +135,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                 if (self.lhcFormData && (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr)) {
                   self.lhcFormData._expressionProcessor.runCalculations(!self.lhcFormData.hasSavedData)
                     .then(() => {
+                      self.lhcFormData._checkFormControls();
                       self.formReady();
                     })
                     .catch(error => {

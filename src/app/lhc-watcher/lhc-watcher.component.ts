@@ -17,7 +17,6 @@ export class LhcWatcherComponent implements OnChanges {
 
   constructor(private lhcDataService: LhcDataService) { }
 
-
   // the event is trigger when data changes on
   // primitive data types (int, real, string)
   // and boolean, date, datetime, time
@@ -25,7 +24,6 @@ export class LhcWatcherComponent implements OnChanges {
   // for answer list with ac (single choice, mulitple choice), prefect or search field. all worked finally.
   ngOnChanges(changes) {
     if (!changes.value.firstChange && !equal(changes.value.currentValue, changes.value.previousValue)) {
-      // if (!changes.value.firstChange) {
       let lfData = this.lhcDataService.getLhcFormData()
       lfData.updateOnSourceItemChange(this.item)
       this.lhcDataService.sendActionsToScreenReader();
