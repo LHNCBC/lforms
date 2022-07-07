@@ -120,6 +120,10 @@
               // Cause the event to bubble, since this element was just created.
               $('#formContainer')[0].dispatchEvent(new Event('onError', e));
             });
+            // The prepopulateFHIR variable below is a hack for the test code to signal
+            // prepopulation is desired.
+            var formContainer = $('#formContainer wc-lhc-form')[0];
+            formContainer.prepop = window.prepopulateFHIR;
           }
           catch(e) {
             console.log("Form Added with an error")

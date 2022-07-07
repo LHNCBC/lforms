@@ -1,0 +1,367 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "sirb-protocol-questionnaire-populate",
+  "contained": [
+    {
+      "resourceType": "QuestionnaireResponse",
+      "status": "completed",
+      "item": [
+        {
+          "linkId": "in5",
+          "text": "Other Organization(s) Involved",
+          "item": [
+            {
+              "linkId": "in5.1",
+              "text": "Relationship Type",
+              "answer": [
+                {
+                  "valueCoding": {
+                    "system": "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+                    "code": "SFS",
+                    "display": "Sponsor or Funding Source"
+                  }
+                }
+              ]
+            },
+            {
+              "linkId": "in5.2",
+              "text": "Organization Name",
+              "answer": [
+                {
+                  "valueString": "NIH"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.3",
+              "text": "Phone",
+              "answer": [
+                {
+                  "valueString": "1800CALLNIH"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.4",
+              "text": "Sponsor or Funding Source Protocol Number, if applicable",
+              "answer": [
+                {
+                  "valueString": "NIH-2021-5678901234567"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.5",
+              "text": "Other Organization Name, Relationship Type, Phone and Protocol Number (read-only)",
+              "answer": [
+                {
+                  "valueString": "NIH  |   1800CALLNIH  |  NIH-2021-5678901234567  |  Sponsor or Funding Source"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.6",
+              "text": "Protocol Number with Organization Name (read-only)",
+              "answer": [
+                {
+                  "valueString": "NIH-2021-5678901234567  (NIH)"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "linkId": "in5",
+          "text": "Other Organization(s) Involved",
+          "item": [
+            {
+              "linkId": "in5.1",
+              "text": "Relationship Type",
+              "answer": [
+                {
+                  "valueCoding": {
+                    "system": "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+                    "code": "SFS",
+                    "display": "Sponsor or Funding Source"
+                  }
+                }
+              ]
+            },
+            {
+              "linkId": "in5.2",
+              "text": "Organization Name",
+              "answer": [
+                {
+                  "valueString": "Immunotherapy Industry Association"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.3",
+              "text": "Phone",
+              "answer": [
+                {
+                  "valueString": "1800IMMUNE1"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.4",
+              "text": "Sponsor or Funding Source Protocol Number, if applicable",
+              "answer": [
+                {
+                  "valueString": "IIA900000"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.5",
+              "text": "Other Organization Name, Relationship Type, Phone and Protocol Number (read-only)",
+              "answer": [
+                {
+                  "valueString": "Immunotherapy Industry Association  |  1800IMMUNE1  |  IIA900000  |  Sponsor or Funding Source"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.6",
+              "text": "Protocol Number with Organization Name (read-only)",
+              "answer": [
+                {
+                  "valueString": "IIA900000  (Immunotherapy Industry Association)"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "linkId": "in5",
+          "text": "Other Organization(s) Involved",
+          "item": [
+            {
+              "linkId": "in5.1",
+              "text": "Relationship Type",
+              "answer": [
+                {
+                  "valueCoding": {
+                    "system": "http://hl7.org/fhir/us/sirb/CodeSystem/temporarycodes",
+                    "code": "CRO",
+                    "display": "Contract Research Organization (CRO)"
+                  }
+                }
+              ]
+            },
+            {
+              "linkId": "in5.2",
+              "text": "Organization Name",
+              "answer": [
+                {
+                  "valueString": "CRO of North Carolina"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.3",
+              "text": "Phone",
+              "answer": [
+                {
+                  "valueString": "1800555CRO1"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.5",
+              "text": "Other Organization Name, Relationship Type, Phone and Protocol Number (read-only)",
+              "answer": [
+                {
+                  "valueString": "CRO of North Carolina  |  1800555CRO1  |  N/A  |  Contract Research Organization (CRO)"
+                }
+              ]
+            },
+            {
+              "linkId": "in5.6",
+              "text": "Protocol Number with Organization Name (read-only)",
+              "answer": [
+                {
+                  "valueString": "N/A  (CRO of North Carolina)"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression": {
+        "description": "variable to store the incoming data from the launchContext extension for populate and other expressions",
+        "name": "lookupInitiateStudy",
+        "language": "text/fhirpath",
+        "expression": "%questionnaire.contained[0]"
+      }
+    }
+  ],
+  "url": "http://hl7.org/fhir/us/sirb/Questionnaire/sirb-protocol-questionnaire-populate",
+  "version": "0.1.0",
+  "name": "Protocol_questionnaire",
+  "title": "Protocol Questionnaire",
+  "status": "draft",
+  "subjectType": [
+    "ResearchStudy"
+  ],
+  "item": [
+    {
+      "linkId": "p1",
+      "text": "Research Study",
+      "type": "group",
+      "required": false,
+      "item": [
+        {
+          "linkId": "p1.10",
+          "text": "Sponsor Name(s) and Protocol Number",
+          "_text": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "color:#2a623d;  font-size: 125%"
+              }
+            ]
+          },
+          "type": "group",
+          "required": false,
+          "repeats": false,
+          "item": [
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+                  "valueExpression": {
+                    "language": "text/fhirpath",
+                    "expression": "%lookupInitiateStudy.item.where(linkId = 'in5' and  item.answer.value.code = 'SFS').item.where(linkId = 'in5.2').answer.value"
+                  }
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+                  "valueBoolean": true
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/designNote",
+                  "valueMarkdown": "See FHIR Specification Feedback Jira ticket FHIR-36338. Information obtained from other types of external sources (e.g. launch context, fhir-x-query, etc.) SHOULD only be used for initialExpression and calculatedExpression logic.  Other behavior such as enableWhen or answerExpression should always be driven off of answers within the Questionnaire (even if they are hidden answers that are populated from an initialExpression)."
+                }
+              ],
+              "linkId": "ExternalDataFor_p1.10.1.1",
+              "text": "External Data For linkId p1.10.1.1",
+              "type": "open-choice",
+              "required": false,
+              "repeats": true
+            },
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/variable",
+                  "valueExpression": {
+                    "description": "Sponsor Selected for this repetition of the repeating group",
+                    "name": "sponsorSelectedThisRepetition",
+                    "language": "text/fhirpath",
+                    "expression": "item.where(linkId = 'p1.10.1.1').answer.valueCoding.display"
+                  }
+                }
+              ],
+              "linkId": "p1.10.1",
+              "text": "Sponsor",
+              "type": "group",
+              "required": false,
+              "repeats": true,
+              "item": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                        "coding": [
+                          {
+                            "system": "http://hl7.org/fhir/questionnaire-item-control",
+                            "code": "drop-down",
+                            "display": "Drop down"
+                          }
+                        ],
+                        "text": "Drop down"
+                      }
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+                      "valueExpression": {
+                        "language": "text/fhirpath",
+                        "expression": "%resource.repeat(item).where(linkId = 'ExternalDataFor_p1.10.1.1').answer.value"
+                      }
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/designNote",
+                      "valueMarkdown": "See FHIR Specification Feedback Jira ticket FHIR-36338. Information obtained from other types of external sources (e.g. launch context, fhir-x-query, etc.) SHOULD only be used for initialExpression and calculatedExpression logic.  Other behavior such as enableWhen or answerExpression should always be driven off of answers within the Questionnaire (even if they are hidden answers that are populated from an initialExpression)."
+                    }
+                  ],
+                  "linkId": "p1.10.1.1",
+                  "text": "Sponsor Name",
+                  "type": "open-choice",
+                  "required": false
+                },
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                        "coding": [
+                          {
+                            "system": "http://hl7.org/fhir/questionnaire-item-control",
+                            "code": "drop-down",
+                            "display": "Drop down"
+                          }
+                        ],
+                        "text": "Drop down"
+                      }
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+                      "valueExpression": {
+                        "language": "text/fhirpath",
+                        "expression": "%lookupInitiateStudy.item.where(linkId = 'in5' and item.where(answer.valueString = %sponsorSelectedThisRepetition)).item.where(linkId = 'in5.4').answer.valueString"
+                      }
+                    }
+                  ],
+                  "linkId": "p1.10.1.2",
+                  "text": "Sponsor Protocol Number",
+                  "type": "string",
+                  "required": false,
+                  "item": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                          "valueCodeableConcept": {
+                            "coding": [
+                              {
+                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                "code": "help",
+                                "display": "Help-Button"
+                              }
+                            ],
+                            "text": "Help-Button"
+                          }
+                        }
+                      ],
+                      "linkId": "p1.10.1.2_help",
+                      "text": "Unique Protocol Identification Number used by the sponsor.",
+                      "type": "display"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

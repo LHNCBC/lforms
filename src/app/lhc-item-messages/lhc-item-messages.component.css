@@ -1,0 +1,28 @@
+.lhc-item-error:before {
+  content: "\26A0";
+  color: red;
+  margin-left: 3px;
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+.lhc-item-error {
+  background-color: orange;
+}
+
+.lhc-item-warning {
+  background-color: lightyellow;
+}
+
+.lhc-item-warning:before {
+  content: "\26A0";
+  color: orange;
+  margin-left: 3px;
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+.lhc-item-info:before {
+  content: "\1F6C8";
+  margin-right: 6px;
+}

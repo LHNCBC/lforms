@@ -1,6 +1,7 @@
 // TODO $ not defined in BasePage
 //const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
 //const elementFactory = TestUtil.elementFactory;
+import {setFHIRVersion} from './util';
 
 export class TestPage {
 
@@ -349,15 +350,6 @@ export class TestPage {
 
 
   /**
-   *  Selects a FHIR version.
-   * @param version the FHIR version to use.
-   */
-  setFHIRVersion(version) {
-    let fhirVersionField = cy.get('#fhirVersion');
-    fhirVersionField.select(version);
-  }
-
-  /**
    *  Clicks the given add/remove repeating item button, and sleeps a bit to let the page stop moving.
    */
   clickAddRemoveButton(button) {
@@ -376,7 +368,7 @@ export class TestPage {
   getTestDataPathName(filepath, fhirVersion=null) {
     let pathParts = [__dirname, '../../src/test-data/e2e']
     if (fhirVersion) {
-      this.setFHIRVersion(fhirVersion);
+      setFHIRVersion(fhirVersion);
       pathParts.push(fhirVersion);
     }
     pathParts.push(filepath);
@@ -452,7 +444,7 @@ export class TestPage {
    */
   loadFromTestData(filepath, fhirVersion = 'lforms') {
     if (fhirVersion !== 'lforms') {
-      this.setFHIRVersion(fhirVersion);
+      setFHIRVersion(fhirVersion);
     }
 
     let formFinished = false;
@@ -483,15 +475,6 @@ export class TestPage {
         });
       });
   }
-
-  /**
-   *  Selects a FHIR version.
-   * @param version the FHIR version to use.
-   */
-  setFHIRVersion(version) {
-    cy.get('#fhirVersion').select(version);
-  }
-
 
 }
 
