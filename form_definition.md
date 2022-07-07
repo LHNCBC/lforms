@@ -95,7 +95,6 @@ about the meaning of each key:
       question. For an answer list, it can be an answer label, text, code or
       their combination, using the syntax such as:  {"code": "B12"}, {"label: "A"}, 
       {"text": "Male"}, {"text": "Male", "code": "LA2-8"} and etc.
-      For "CWE" answer lists, off-list answers need to be specified as a string.
       For a date field, it can be a date shortcut (like "t" for today).
       For other field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the selected template.

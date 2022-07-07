@@ -29,8 +29,37 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhir = LForms.FHIR[fhirVersion];
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
+        it('should import initial.valueQuantity', ()=>{
+          var quantity = {
+            value: 5.3,
+            comparator: '>',
+            unit: 'kg',
+            system: 'http://unitsofmeasure.org',
+            code: 'kg',
+          };
+          var fhirQ = {
+            resourceType: 'Questionnaire',
+            item: [{
+              linkId: 'q1',
+              type: 'quantity'
+            }]
+          }
+          if (fhirVersion === 'STU3')
+            fhirQ.item[0].initialQuantity = quantity;
+          else {
+            fhirQ.item[0].initial = [{valueQuantity: quantity}];
+          }
+
+          var lfd = new LForms.LFormsData(fhir.SDC.convertQuestionnaireToLForms(fhirQ));
+          var lfItem = lfd.items[0];
+          assert.equal(lfItem.value, quantity.value);
+          assert.equal(lfItem.comparator, quantity.comparator);
+          assert.equal(lfItem.unit.name, quantity.unit);
+          assert.equal(lfItem.unit.code, quantity.code);
+          assert.equal(lfItem.unit.system, quantity.system);
+        });
+
         describe('_processFHIRValues', function() {
-        let i=0;
           describe('list fields with coding values', function () {
             let answerValCases = [{
               answers: [{system: 'cs1', code: '1', text: 'one'},
@@ -746,12 +775,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                     "valueBoolean": true
                   });
                 }
+                LForms.FHIR[fhirVersion].SDC._handleChoiceField(qItem,fixture);
                 LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
                 lfItem.answerCardinality = fixture.answerCardinality;
                 LForms.FHIR[fhirVersion].SDC._processDataType(lfItem,qItem);
                 lfItem.answers = fixture.answers;
                 LForms.FHIR[fhirVersion].SDC._processDefaultAnswer(lfItem,qItem);
                 assert.deepEqual(lfItem.defaultAnswer,fixture.defaultAnswer);
+
               }
             }
           });
@@ -1334,7 +1365,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
             assert.equal(lfItem.dataType, 'QTY');
-            assert.equal(lfItem.defaultAnswer, 222);
+            assert.deepEqual(lfItem.defaultAnswer, {value: 222, _type: 'Quantity'});
           });
 
           it('should convert/merge FHIR valueQuantity to LForms QTY item value', function () {

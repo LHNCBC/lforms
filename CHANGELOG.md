@@ -2,22 +2,50 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [31.0.0] 2020-04-29
+## [31.0.0] 2020-07-05
 ### Changed
 - Removed a feature in which the autocompletion list fields would default to 
   the answer list value if there were just one answer in the list.
   
+## [30.4.1] 2020-06-24
+### Fixed
+- Fixed a bug that FHIRPATH expressions are not calculated on newly added
+  repeating items.
+- Fixed a bug that enableWhen is not working on prepopulated answers.
+  
+## [30.4.0] 2020-06-13
+### Added
+- The beginnings of support to show error messages for individual fields.
+
+## [30.3.0] 2020-05-19
+### Added
+- Added support for answerOption.initialSelected in R4 Questionnaire
+
+## [30.2.0] 2022-05-18
+### Changed
+- Updated angular to v12 and ng-zorro-antd to v12.
+
+## [30.1.7] 2020-05-17
+### Fixed
+- Fixed a bug that the radio button of "Other" of the CWE typed items lost
+  its checked state when users typed in the input field.
+
+## [30.1.6] 2020-05-02
+### Fixed
+- Off-list string values from an open-choice field are now usable in an
+  expression for another open-choice field.
+
 ## [30.1.5] 2020-04-22
 ### Fixed
 - Support for multiple values coming from intialExpression or calculateExpresion
   on fields that are of type string or coding.
 
-## [30.1.4] 2020-04-20
+## [30.1.4] 2022-04-20
 ### Fixed
 - Fixed a bug that the initial value of boolean type was not imported correctly
   when it was false.
 
-## [30.1.3] 2020-04-04
+## [30.1.3] 2022-04-04
 ### Changed
 - Adjusted the styles of readonly items
 

@@ -47,7 +47,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
     // repeating fields).
     this._calculatedValues = {};
 
-    // A hash of item._elementId values to "repitition key" values which can be used as
+    // A hash of item._elementId values to "repetition key" values which can be used as
     // keys in this._calcualtedValues.
     this._repetitionKeys = {};
 
@@ -247,10 +247,11 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                 // they differ, then the user has edited the field, and in that case we
                 // skip setting the value and halt further calculations for the field.
                 var calcVal = this._calculatedValues[this._getRepetitionKey(item)];
+                let currentVals;
                 if (isCalcExp && !item._userModifiedCalculatedValue && calcVal) {
                   // Get the current values for the item, which might be
                   // repeating.
-                  var currentVals = this._lfData.getItemValues(item);
+                  currentVals = this._lfData.getItemValues(item);
                   if (!deepEqual(calcVal, currentVals))
                     item._userModifiedCalculatedValue = true;
                 }
@@ -318,7 +319,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                             // Update the item with the fetched value, and
                             // update the variable if there was a name defined.
                             var fChanged = self._updateItemFromExp(
-                              item, ext.url, varName, newVal, isCalcExp);
+                              item, ext.url, varName, newVal, isCalcExp, currentVals);
                             if (varName) {
                               var vChanged = self._updateItemVariable(item, varName,
                                 newVal);
@@ -335,7 +336,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                     // Update the item with the fetched value, and
                     // update the variable if there was a name defined.
                     var fChanged = this._updateItemFromExp(
-                      item, ext.url, varName, newVal, isCalcExp);
+                      item, ext.url, varName, newVal, isCalcExp, currentVals);
                     fieldChanged = fieldChanged || fChanged;
                     if (varName)
                       this._updateItemVariable(item, varName, newVal);
@@ -442,9 +443,10 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param newVal the new value of the variable (if any)
      * @param isCalcExp whether the expression was a calculated expression.
      *  This could be detected from expURL, but the caller already knows it.
+     * @param currentVals (optional) the current values of item, if known
      * @return true if the field value changed
      */
-    _updateItemFromExp(item, expURL, varName, newVal, isCalcExp) {
+    _updateItemFromExp(item, expURL, varName, newVal, isCalcExp, currentVals) {
       var fieldChanged = false;
       var sdc = this._fhir.SDC;
       if (isCalcExp || expURL != sdc.fhirExtVariable) {
@@ -466,7 +468,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           item._enableWhenExpVal = newVal;
         }
         else // else initial or calculated expression
-          fieldChanged = this._setItemValueFromFHIRPath(item, newVal, isCalcExp);
+          fieldChanged = this._setItemValueFromFHIRPath(item, newVal, isCalcExp, currentVals);
       }
       return fieldChanged;
     },
@@ -673,17 +675,21 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param fhirPathRes the result of a FHIRPath evaluation.
      * @param isCalcExp whether this is from a calculated expression, in which
      *  case a decision will be made whether to skip setting the value.
+     * @param oldVal (optional) the item current item values, if known
      * @return true if the value changed
      */
-    _setItemValueFromFHIRPath: function(item, fhirPathRes, isCalcExp) {
-      var oldVal = this._lfData.getItemValues(item);
+    _setItemValueFromFHIRPath: function(item, fhirPathRes, isCalcExp, oldVal) {
+      if (oldVal === undefined)
+        oldVal = this._lfData.getItemValues(item);
       // If the FHIRPath expression resulted in an error, fhirPathRes is
       // undefined.  TBD - show an error to the user.  I think the safest thing
       // to do here is to leave the item untouched.
       var changed = false;
       if (fhirPathRes !== undefined) {
-        var newVal = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
-        changed = !deepEqual(oldVal, newVal);
+        var [newVal, messages] = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
+        var nonEmptyNewVal = newVal.filter(x=>!LForms.Util.isItemValueEmpty(x));
+        const msgSource = 'FHIRPath value expression';
+        changed = !deepEqual(oldVal, nonEmptyNewVal);
         // If this is the first run of the expressions, and there is
         // saved user data, then we check whether the calculated value matches
         // what the user entered (or erased) and if it doesn't, we halt further
@@ -694,11 +700,14 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           changed = false;
         }
         else if (changed) {
-          var newLastItem = this._lfData.setRepeatingItems(item, newVal);
+          var newLastItem = this._lfData.setRepeatingItems(item, newVal, messages, msgSource);
+        }
+        else { // the messages might have changed
+          this._lfData.setRepeatingItemMessages(item, messages, msgSource);
         }
 
         // Store the calculated value.
-        this._calculatedValues[this._getRepetitionKey(item)] = newVal;
+        this._calculatedValues[this._getRepetitionKey(item)] = nonEmptyNewVal;
       }
       return changed;
     },

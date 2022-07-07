@@ -79,9 +79,6 @@ export class LhcItemChoiceRadioButtonComponent implements OnChanges {
    * @param value
    */
   onOtherValueChange(value: any) : void {
-    if (this.radioValue._notOnList) {
-      this.item.value = this.radioValue = { "text": this.otherValue, "_notOnList": true};
-    }
-
+    this.item.value = { "text": this.otherValue, "_notOnList": true};
   }
 }

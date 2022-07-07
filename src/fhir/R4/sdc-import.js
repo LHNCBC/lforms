@@ -235,6 +235,24 @@ function addSDCImportFns(ns) {
 
 
   /**
+   * Process answer value
+   * @param {*} answer an entry in item.answerOption or in item.initial
+   * @param {*} vals an array that contains all default answers
+   */
+  self._processDefaultAnswerValue = function (answer, vals) {
+    answer = LForms.Util.deepCopy(answer); // Use a clone to avoid changing the original
+    var val = answer.valueCoding;
+    if (val)
+      val._type = 'Coding'
+    else
+      val = self._getFHIRValueWithPrefixKey(answer, /^value/);
+
+    if (val !== undefined && val !== null)
+      vals.push(val);
+  };
+
+
+  /**
    * Parse questionnaire item for default answer
    *
    * @param lfItem {object} - LForms item object to assign default answer
@@ -243,22 +261,24 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    if(!qItem.initial) {
-      return;
+    var vals = [];
+    // check item.answerOption.initialSelected
+    if (qItem.answerOption) {
+      qItem.answerOption.forEach(function(elem) {
+        if (elem.initialSelected) {
+          self._processDefaultAnswerValue(elem, vals)
+        }
+      })
     }
 
-    var vals = [];
-    qItem.initial.forEach(function(elem) {
-      var answer = null;
-      elem = LForms.Util.deepCopy(elem); // Use a clone to avoid changing the original
-      var val = elem.valueCoding;
-      if (val)
-        val._type = 'Coding';
-      else
-        val = self._getFHIRValueWithPrefixKey(elem, /^value/);
-      if (val !== undefined && val !== null)
-        vals.push(val);
-    });
+    // check item.initial
+    if (qItem.initial && vals.length === 0) {
+      qItem.initial.forEach(function(elem) {
+        self._processDefaultAnswerValue(elem, vals)
+      });
+    }
+
+    // set default values
     if (vals.length > 0)
       this._processFHIRValues(lfItem, vals, true);
   };

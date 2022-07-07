@@ -626,7 +626,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge all DiagnosticReport (contained) data back into the form', function() {
             tp.openBaseTestPage();
-            tp.setFHIRVersion(fhirVersion);
+            util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr")).click();
             //browser.waitForAngular();
@@ -652,7 +652,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
             tp.openBaseTestPage();
-            tp.setFHIRVersion(fhirVersion);
+            util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-bundle-dr")).click();
 
@@ -673,7 +673,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           //  tp.LoadForm.openUSSGFHTVertical();
             tp.openBaseTestPage();
-            tp.setFHIRVersion(fhirVersion);
+            util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr-default-values")).click();
             //browser.waitForAngular();
@@ -695,7 +695,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {
             tp.LoadForm.openUSSGFHTVertical();
-            tp.setFHIRVersion(fhirVersion);
+            util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-qr")).click();
             // Make it wait for a value to appear
@@ -728,7 +728,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge FHIR SDC QuestionnaireResponse with User Data on CWE fields back into the form', function() {
             tp.LoadForm.openFullFeaturedForm();
-            tp.setFHIRVersion(fhirVersion);
+            util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-qr-cwe")).click();
 
@@ -858,7 +858,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('data control in Questionnaire', function() {
         before(function () {
           cy.visit('test/pages/addFormToPageTest.html');
-          tp.setFHIRVersion(fhirVersion);
+          util.setFHIRVersion(fhirVersion);
           util.addFormToPage('questionnaire-data-control.json', null, {fhirVersion});
         });
 
@@ -1059,54 +1059,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }
               ]);
               // choice
-              expect(fhirData.item[7].initial).toEqual([
-                {
-                  "valueCoding": {
-                    "code": "c2",
-                    "display": "Answer 2"
-                  }
-                }
-              ]);
+              expect(fhirData.item[7].answerOption[1].initialSelected).toEqual(true)
+              expect(fhirData.item[7].initial).toEqual(undefined);
               // open-choice
-              expect(fhirData.item[8].initial).toEqual([
-                {
-                  "valueString":"User typed answer"
-                }
-              ]);
-
+              expect(fhirData.item[8].initial).toEqual(undefined);
 
               // choice, multiple selection
-              expect(fhirData.item[9].initial).toEqual([
-                {
-                  "valueCoding": {
-                    "code": "c1",
-                    "display": "Answer 1"
-                  }
-                },
-                {
-                  "valueCoding": {
-                    "code": "c3",
-                    "display": "Answer 3"
-                  }
-                }
-              ]);
+              expect(fhirData.item[9].answerOption[0].initialSelected).toEqual(true)
+              expect(fhirData.item[9].answerOption[2].initialSelected).toEqual(true)
+              expect(fhirData.item[9].initial).toEqual(undefined);
+
               // open-choice, multiple selection
-              expect(fhirData.item[10].initial).toEqual([
-                {
-                  "valueCoding": {
-                    "code": "c1",
-                    "display": "Answer 1"
-                  }
-                },
-                {
-                  "valueCoding": {
-                    "code": "c3",
-                    "display": "Answer 3"
-                  }
-                },
-                { "valueString" :  "User typed answer a"},
-                { "valueString" :  "User typed answer b"}
-              ]);
+              expect(fhirData.item[10].answerOption[0].initialSelected).toEqual(true)
+              expect(fhirData.item[10].answerOption[2].initialSelected).toEqual(true)
+              expect(fhirData.item[10].initial).toEqual(undefined);
+
             });
           }
 
@@ -1148,7 +1115,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         if (fhirVersion === 'R4') {
           it('should get answers from a question that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
-            tp.setFHIRVersion(fhirVersion);
+            util.setFHIRVersion(fhirVersion);
             util.addFormToPage('question-under-question.R4.json', null, {fhirVersion});
 
             let childItem = element(by.id('q2/1/1'));
@@ -1173,7 +1140,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should get answers from a question in a group that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
-            tp.setFHIRVersion(fhirVersion);
+            util.setFHIRVersion(fhirVersion);
             util.addFormToPage('group-under-question.R4.json', null, {fhirVersion});
 
             let childItem = element(by.id('q2/1/1/1'));

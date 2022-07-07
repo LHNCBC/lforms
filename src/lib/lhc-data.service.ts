@@ -79,7 +79,7 @@ export class LhcDataService {
         // not to show validation messages after 1.5 seconds
         item._showValidation = false;
         item._visitedBefore = true;
-      }, 1500);
+      }, window['LForms'].Validations._timeout);
     }
     // the following visits (and leaving the field), not to show validation messages
     // hover over the field still shows the validation messages

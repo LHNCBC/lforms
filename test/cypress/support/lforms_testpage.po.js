@@ -1,6 +1,7 @@
 // TODO $ not defined in BasePage
 //const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
 //const elementFactory = TestUtil.elementFactory;
+import {setFHIRVersion} from './util';
 
 export class TestPage {
 
@@ -57,7 +58,7 @@ export class TestPage {
     nameID: '/54126-8/54125-0/1/1', // string
     gender: '#/54126-8/54131-8/1/1', // answer
     race: '#/54126-8/54134-2/1/1', // multiple answers
- //   ethnicity: elementFactory('/54126-8/54133-4/1/1'), TODO ???
+    ethnicity: '#/54126-8/54133-4/1/1',
     dob: '#/54126-8/21112-8/1/1 input',
     height: '#/54126-8/8302-2/1/1', // number
     weight: '#/54126-8/29463-7/1/1', // number
@@ -121,7 +122,16 @@ export class TestPage {
   readerLogEntries = '#reader_log p';
 
   expectReaderLogEntries(expectedEntries) {
-    cy.get(this.readerLogEntries).should("eql", expectedEntries) // not 'equal'
+    cy.get(this.readerLogEntries).should(($p) => {
+      expect($p).to.have.length(expectedEntries.length);
+      for (let i = 0; i < expectedEntries.length; i++) {
+        expect($p.eq(i).text()).to.equal(expectedEntries[i]);
+      }
+    });
+  }
+
+  expectReaderLogEntriesEmpty() {
+    cy.get(this.readerLogEntries).should('not.exist');
   }
 
   Autocomp = {
@@ -225,17 +235,17 @@ export class TestPage {
     rpq1_add_btn: '#add-/rp-q1/2',
     rpq1_add_btn_3: '#add-/rp-q1/3',
 
-    rpq2_1: '#label[for="/rp-q2/1"]',
-    rpq2_2: '#label[for="/rp-q2/2"]',
+    rpq2_1: 'label[for="/rp-q2/1"]',
+    rpq2_2: 'label[for="/rp-q2/2"]',
 
     rpq3_1: '#/rp-q2/rp-q3/1/1',
     rpq3_2: '#/rp-q2/rp-q3/2/1',
 
-    rpq4_1: '#label[for="/rp-q2/rp-q4/1/1"]',
-    rpq4_2: '#label[for="/rp-q2/rp-q4/1/2"]',
-    rpq4_3: '#label[for="/rp-q2/rp-q4/1/3"]',
-    rpq4_4: '#label[for="/rp-q2/rp-q4/1/4"]',
-    rpq4_5: '#label[for="/rp-q2/rp-q4/2/1"]',
+    rpq4_1: 'label[for="/rp-q2/rp-q4/1/1"]',
+    rpq4_2: 'label[for="/rp-q2/rp-q4/1/2"]',
+    rpq4_3: 'label[for="/rp-q2/rp-q4/1/3"]',
+    rpq4_4: 'label[for="/rp-q2/rp-q4/1/4"]',
+    rpq4_5: 'label[for="/rp-q2/rp-q4/2/1"]',
 
     rpq5_1: '#/rp-q2/rp-q4/rp-q5/1/1/1',
     rpq5_2: '#/rp-q2/rp-q4/rp-q5/1/2/1',
@@ -310,6 +320,10 @@ export class TestPage {
    */
   openBaseTestPage() {
     cy.visit(this.testPageUrl);
+    cy.window().then((win) => {
+      // Reduce the duration that validation messages stay, to have faster tests.
+      win.LForms.Validations._timeout = 100;
+    });
   }
 
   /**
@@ -336,15 +350,6 @@ export class TestPage {
 
 
   /**
-   *  Selects a FHIR version.
-   * @param version the FHIR version to use.
-   */
-  setFHIRVersion(version) {
-    let fhirVersionField = cy.get('#fhirVersion');
-    fhirVersionField.select(version);
-  }
-
-  /**
    *  Clicks the given add/remove repeating item button, and sleeps a bit to let the page stop moving.
    */
   clickAddRemoveButton(button) {
@@ -363,7 +368,7 @@ export class TestPage {
   getTestDataPathName(filepath, fhirVersion=null) {
     let pathParts = [__dirname, '../../src/test-data/e2e']
     if (fhirVersion) {
-      this.setFHIRVersion(fhirVersion);
+      setFHIRVersion(fhirVersion);
       pathParts.push(fhirVersion);
     }
     pathParts.push(filepath);
@@ -429,6 +434,47 @@ export class TestPage {
     this.makeReaderLogVisible();
   }
 
+  /**
+   *  Loads a form from a JSON form definition file from the test/data
+   *  directory, and displays the form.
+   * @param filepath the path to the form definition file, relative to
+   *  test/data/fhirVersion (or just test/data if fhirVersion is not
+   *  provided.)
+   * @param fhirVersion (optional) the version of FHIR to use.
+   */
+  loadFromTestData(filepath, fhirVersion = 'lforms') {
+    if (fhirVersion !== 'lforms') {
+      setFHIRVersion(fhirVersion);
+    }
+
+    let formFinished = false;
+    function formFinishedListener() {formFinished = true}
+    cy.get('#test-form').then((el)=> {
+      el[0].addEventListener('onFormReady', formFinishedListener);
+      el[0].addEventListener('onError', formFinishedListener);
+    });
+
+    cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/${filepath}`);
+
+    // Wait for the form to appear and be "ready" (or error out)
+    cy.get('.lhc-form-title').should('be.visible').then(
+      {timeout: 4000}, ()=>{
+        return new Cypress.Promise((resolve) => {
+          function checkFormFinished() {
+            if (formFinished) {
+              resolve();
+              cy.get('#test-form').then((el)=> {
+                el[0].removeEventListener('onFormReady', formFinishedListener);
+                el[0].removeEventListener('onError', formFinishedListener);
+              });
+            }
+            else
+              setTimeout(checkFormFinished, 50);
+          }
+          setTimeout(checkFormFinished, 50);
+        });
+      });
+  }
 
 }
 

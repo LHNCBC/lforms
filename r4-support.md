@@ -36,7 +36,8 @@ For "status", if it was not previously set at import, it will be set to "draft" 
 * maxLength
 * answerValueSet:  Supported, with the exception "contained" ValueSets are
   required to include an expansion.
-* answerOption:  Except answerOption.initialSelected.  (See below.)
+* answerOption
+* answerOption.initialSelected
 * initial
 
 ### Extensions
@@ -83,9 +84,6 @@ from LHC-Forms, the extensions will still be present.
      flexible about entry of dates and times.  Possibly we will need to write
      our own.
 * answerValueSet:  "contained" ValueSets without expansions are unsupported
-* answerOption.initialSelected:  For now you need to use item.intial.value[x]
-  instead, despite the contraint that says, "answerOption.empty() or
-  initial.empty()".
 
 ### Extensions
 Note that non-supported extensions are simply ignored, but are also retained on
