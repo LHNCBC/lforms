@@ -32,7 +32,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         it('should import initial.valueQuantity', ()=>{
           var quantity = {
             value: 5.3,
-            comparator: '>',
             unit: 'kg',
             system: 'http://unitsofmeasure.org',
             code: 'kg',
@@ -53,7 +52,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           var lfd = new LForms.LFormsData(fhir.SDC.convertQuestionnaireToLForms(fhirQ));
           var lfItem = lfd.items[0];
           assert.equal(lfItem.value, quantity.value);
-          assert.equal(lfItem.comparator, quantity.comparator);
           assert.equal(lfItem.unit.name, quantity.unit);
           assert.equal(lfItem.unit.code, quantity.code);
           assert.equal(lfItem.unit.system, quantity.system);
@@ -1677,7 +1675,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         // import - xl
-        describe.only('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
+        describe('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
           it('FHIR quantity should become LForms QTY with correct value from QuestionnaireResponse', function (itDone) {
             var lfDefFile = 'test/data/lforms-def-for-fhir-import-qn-response.json';
             var qrFile = 'test/data/fhir-import-qn-response.json';

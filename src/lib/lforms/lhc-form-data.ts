@@ -10,7 +10,6 @@ import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
-import {ErrorMessages} from "./error-messages.js";
 import version from '../../version.json';
 
 import Validation from "./lhc-form-validation.js"
@@ -2272,7 +2271,7 @@ export default class LhcFormData {
     }
     // question does not repeat (might have repeating answers)
     else {
-      if (!item._multipleAnswers) {
+      if (!item._multipleAnswers) { // no repeating answers
         InternalUtil.assignValueToItem(item, vals[0]);
         if (vals.length > 1) {
           InternalUtil.addItemWarning(item, 'MultipleValuesForNonRepeat');
@@ -2281,7 +2280,7 @@ export default class LhcFormData {
         else
           InternalUtil.removeItemWarning(item, 'MultipleValuesForNonRepeat');
       }
-      else
+      else // repeating answers (e.g., a multi-selection list)
         item.value = vals;
       if (messagesChanged)
         InternalUtil.setItemMessagesArray(item, messages, messageSource);

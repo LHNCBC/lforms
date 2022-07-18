@@ -15,18 +15,20 @@ export const InternalUtil = {
    *  than one field (at present -- that might change.)
    * @param item the item receiving the value.
    * @param val the new value, which if it its origin was FHIR, should have
-   *  already been processed.  A quantity value is expected to be an Object with
-   *  a _type key set to Quantity and with the standard FHIR fields (as we don't
-   *  have an LForms format structure representing a Quantity).
+   *  already been processed and converted.  A quantity value is expected to be an Object with
+   *  a _type key set to Quantity but with the LForms fields for units, plus
+   *  a "value" field.
    */
   assignValueToItem: function(item, val) {
     if (val && val._type === 'Quantity') {
       item.value = val.value;
-      if (val.comparator)
+      if (val.comparator) // we might drop support for comparator
         item.comparator = val.comparator
-      if (val.unit || val.code) {
-        item.unit = {name: val.unit, code: val.code, system: val.system};
-      }
+      item.unit = {name: val.unit}
+      if (val.code)
+        item.unit.code = val.code;
+      if (val.system)
+        item.unit.system = val.system;
     }
     else
       item.value = val;

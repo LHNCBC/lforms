@@ -35,8 +35,12 @@ module.exports = function(config) {
       {pattern: 'test/data/**/*.json', included: false, served: true},
       {pattern: 'src/test-data/**/*.json', included: false, served: true},
       {pattern: 'src/test-data/**/*.js', included: true, served: true},
+      {pattern: 'dist/webcomponent/*.js.map', included: false, served: true},
       'dist/webcomponent/assets/lib/zone.min.js',
-      'dist/webcomponent/lhc-forms.es5.js',
+      'dist/webcomponent/scripts.js',
+      'dist/webcomponent/runtime-es5.js',
+      'dist/webcomponent/polyfills-es5.js',
+      'dist/webcomponent/main-es5.js',
       'src/fhir/*/lformsFHIR.js',
       'test/karma/*.js'
     ],
@@ -90,6 +94,9 @@ module.exports = function(config) {
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
+
+
+    listenAddress: 'localhost',
 
     // Concurrency level
     // how many browser should be started simultaneous
