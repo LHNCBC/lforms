@@ -3,7 +3,7 @@
 
 module.exports = function (config) {
   config.set({
-    basePath: '',
+    basePath: '.',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
       require('karma-jasmine'),
@@ -13,6 +13,7 @@ module.exports = function (config) {
       require('@angular-devkit/build-angular/plugins/karma')
     ],
     files: [
+      {pattern: 'test/data/**/*.json', included: false, served: true},
       { pattern: './node_modules/jquery/dist/jquery.min.js', watched: false },
       { pattern: './node_modules/zone.js/dist/zone.min.js', watched: false }
     ],
@@ -30,7 +31,8 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['ChromeHeadless'],
-    singleRun: false,
+    singleRun: true,
+    listenAddress: 'localhost', // binds the test server to localhost
     restartOnFileChange: true
   });
 };

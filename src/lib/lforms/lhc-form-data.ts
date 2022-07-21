@@ -2722,7 +2722,14 @@ export default class LhcFormData {
       if (item.dataType === CONSTANTS.DATA_TYPE.QTY) {
         var options:any = {
           listItems: listItems,
-          matchListValue: true,
+          // matchListValue:
+          //   true if there is a unit list and (no unitOpen extension, or optionsOnly, or optionsOrType)
+          //     - Notes: 1) unitOption's comments imply CNE when there is a unit list
+          //        2) optionsOrType:  Does not accept free-text, and we are not
+          //           yet providing user entry of a coded value
+          //   true if there is not a units list and (unitOpen = optionsOnly)
+          matchListValue: item.units && (!item._unitOpen || item._unitOpen != 'optionsOrString') ||
+            !item.units && item._unitOpen == 'optionsOnly',
           autoFill: true,
           display: "_displayUnit"
         };

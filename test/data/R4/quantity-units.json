@@ -1,0 +1,123 @@
+{
+  "resourceType": "Questionnaire",
+  "item": [{
+    "text": "quantity without units or unit-open",
+    "linkId": "q1",
+    "type": "quantity"
+  }, {
+    "text": "quantity without units but with unit-open set to optionsOrString",
+    "linkId": "q2",
+    "type": "quantity",
+    "extension": [{
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+      "valueCode": "optionsOrString"
+    }]
+  }, {
+    "text": "quantity without units but with unit-open set to optionsOrType",
+    "linkId": "q3",
+    "type": "quantity",
+    "extension": [{
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+      "valueCode": "optionsOrType"
+    }, {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem",
+      "valueCode": "http://unitsofmeasure.org"
+    }]
+  }, {
+    "text": "quantity without units but with unit-open set to optionsOnly",
+    "linkId": "q4",
+    "type": "quantity",
+    "extension": [{
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+      "valueCode": "optionsOnly"
+    }]
+  }, {
+    "text": "quantity with units but without unit-open",
+    "linkId": "q5",
+    "type": "quantity",
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "[lb_av]",
+        "display": "lbs"
+      }
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "kg",
+        "display": "kilograms"
+      }
+    }]
+  }, {
+    "text": "quantity with units and with unit-open=optionsOrString",
+    "linkId": "q6",
+    "type": "quantity",
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "[lb_av]",
+        "display": "lbs"
+      }
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "kg",
+        "display": "kilograms"
+      }
+    }, {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+      "valueCode": "optionsOrString"
+    }]
+  }, {
+    "text": "quantity with units and with unit-open=optionsOrType",
+    "linkId": "q7",
+    "type": "quantity",
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "[lb_av]",
+        "display": "lbs"
+      }
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "kg",
+        "display": "kilograms"
+      }
+    }, {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+      "valueCode": "optionsOrType"
+    }, {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem",
+      "valueCode": "http://unitsofmeasure.org"
+    }]
+  }, {
+    "text": "quantity with units and with unit-open=optionsOnly",
+    "linkId": "q8",
+    "type": "quantity",
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "[lb_av]",
+        "display": "lbs"
+      }
+    }, {
+      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+      "valueCoding": {
+        "system": "http://unitsofmeasure.org",
+        "code": "kg",
+        "display": "kilograms"
+      }
+    }, {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+      "valueCode": "optionsOnly"
+    }]
+  }]
+}

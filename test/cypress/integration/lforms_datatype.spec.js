@@ -122,7 +122,7 @@ describe('Data Type', function() {
 
       expect(TestUtil.getAttribute(field1,'type')).toBe("text");
       expect(TestUtil.getAttribute(field1,'value')).toBe("2.5");
-      TestUtil.waitForElementNotPresent(units1)
+      TestUtil.waitForElementPresent(units1)
 
       expect(TestUtil.getAttribute(field2,'placeholder')).toBe("Type a number");
       expect(TestUtil.getAttribute(field2,'value')).toBe("");

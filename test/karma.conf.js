@@ -96,7 +96,7 @@ module.exports = function(config) {
     singleRun: true,
 
 
-    listenAddress: 'localhost',
+    listenAddress: 'localhost', // binds the test server to localhost
 
     // Concurrency level
     // how many browser should be started simultaneous

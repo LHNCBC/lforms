@@ -36,6 +36,16 @@ export const InternalUtil = {
 
 
   /**
+   *  Constructs a model object for an off-list unit.
+   * @param unitText the text the user typed for the off-list unit
+   * @return an object suitable for item.unit.
+   */
+  modelForOffListUnit: function(text) {
+    return text ? {name: text} : undefined;
+  },
+
+
+  /**
    *  Sets the "messages" attribute of the given item.  If the given array of
    *  messages object only consists of nulls (no messages), then the messages
    *  attribute will be removed from the item.
