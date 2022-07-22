@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [30.4.2] 2022-07-07
+### Changed
+- Added a button on the test page (test/pages/lforms_testpage.html) to batch convert lforms
+  to FHIR questionnaires or vice versa, where both input and output are zip files
+
 ## [30.4.1] 2020-06-24
 ### Fixed
 - Fixed a bug that FHIRPATH expressions are not calculated on newly added
