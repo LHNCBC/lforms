@@ -1,5 +1,5 @@
 // Tests for ExpressionProcessor
-describe('ExpresssionProcessor', function () {
+describe('ExpressionProcessor', function () {
   describe('_evaluateFHIRPath', function() {
     it('should use the FHIR model', function(done) {
       // Test by checking that QR.item.answer.value works to return a value (as
@@ -305,8 +305,8 @@ describe('ExpresssionProcessor', function () {
         }
         catch(e) {done(e)}
       });
-
     });
+
 
     it('should set the unit if a commensurate unit is found',  (done)=>{
       // Change the expression to use the second valueQuantity
@@ -388,5 +388,35 @@ describe('ExpresssionProcessor', function () {
         catch(e) {done(e)}
       });
     });
+
+    it('should report an error for a non-matching system if unitOpen=optionsOrType', (done)=>{
+      const qCopy = JSON.parse(JSON.stringify(questionnaire));
+      const valueExp = qCopy.item[0].extension[3].valueExpression;
+      valueExp.expression = valueExp.expression.replace(/extension\[0\]/, 'extension[2]');
+      qCopy.item[0].extension.push({
+        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+        "valueCode": "optionsOrType"
+      });
+      qCopy.item[0].extension.push({
+        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem",
+        "valueCanonical": "http://example.com"
+      });
+
+      const form = LForms.Util.convertFHIRQuestionnaireToLForms(qCopy, 'R4');
+      const lfData = new LForms.LFormsData(form);
+      const exp = lfData._expressionProcessor;
+      const testItem = lfData.items[0];
+      assert(!testItem.messages);
+      exp.runCalculations().then(() => {
+        try {
+          assert.equal(testItem.value, undefined);
+          assert.equal(testItem.unit, undefined);
+          assert(testItem.messages);
+          done();
+        }
+        catch(e) {done(e)}
+      });
+    });
   });
+
 });
