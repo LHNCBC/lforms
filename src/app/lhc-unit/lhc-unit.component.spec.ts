@@ -96,55 +96,7 @@ describe('LhcUnitComponent', () => {
     expect(unitDe.nativeElement.readOnly).toBe(true);
   });
 
-// Could not do this part in Karma.  (For example, I could not simulate a tab
-// key press, or wait between two blur events.) Switched to Cypress.
-/*
-  fit('should have a CNE list for a quantity with units list but without unit-open', ()=>{
-    component.item = lfData.items[4];
-    component.ngOnChanges({}); // Not clear why detectChanges doesn't call this
-    fixture.detectChanges();
-    const componentDe: DebugElement = fixture.debugElement;
-    const unitDe = componentDe.query(By.css('#unit_q5\\/1'));
-    expect(unitDe).not.toBeNull();
-
-    // Confirm we cannot type a value into it
-    unitDe.nativeElement.dispatchEvent(new Event('click')); // focus element first
-    unitDe.nativeElement.value = 'meters';
-    unitDe.nativeElement.dispatchEvent(new Event('change'));
-  //  fixture.detectChanges();
-    unitDe.nativeElement.dispatchEvent(new Event('blur'));
-    unitDe.nativeElement.blur();
-    window.document.body.click();
-
-    let div = document.createElement('div');
-    div.innerHTML = '<input id=unfocus type=text>'
-    document.body.appendChild(div);
-    document.getElementById('unfocus').click();
-    //document.querySelector('#unfocus').click();
-   // componentDe.nativeElement.click();
-   // componentDe.nativeElement.dispatchEvent(new Event('click')); // focus element first
-    fixture.detectChanges();
-    document.getElementById('unfocus').click();
-    expect(unitDe.nativeElement.value).toBe(undefined);
-    expect(component.item.unit).toBe(undefined);
-  });
-
-  it('should have a CWE list for a quantity with units list and with unit-open=optionsOrString', ()=>{
-    component.item = lfData.items[5];
-    component.ngOnChanges({}); // Not clear why detectChanges doesn't call this
-    fixture.detectChanges();
-    const componentDe: DebugElement = fixture.debugElement;
-    const unitDe = componentDe.query(By.css('#unit_q6\\/1'));
-    expect(unitDe).not.toBeNull();
-
-    // Confirm we can type a value into it
-    unitDe.nativeElement.dispatchEvent(new Event('click')); // focus element first
-    unitDe.nativeElement.value = 'meters';
-    unitDe.nativeElement.dispatchEvent(new Event('change'));
-    fixture.detectChanges();
-    unitDe.nativeElement.dispatchEvent(new Event('blur'));
-    fixture.detectChanges();
-    expect(component.item.unit).toEqual({name: 'meters'});
-  });
-*/
+// Certain tests could not be done in Karma.  (For example, I could not simulate a tab
+// key press, or wait between two blur events.) Switched to Cypress for those
+// tests, in test/cypress/integration/quantity-cases.spec.js
 });
