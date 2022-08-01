@@ -717,13 +717,13 @@ export class LhcDataService {
       this.lhcFormData.updateOnSourceItemChange(item)
       
       this.sendActionsToScreenReader();
-      // run FHIRPATH expression
-      if (LForms.FHIR && this.lhcFormData._hasResponsiveExpr) {
-        let self = this;
-          setTimeout(function(){
-            self.lhcFormData._expressionProcessor.runCalculations(false).then(()=>{});
-          });
-      }
+      // // run FHIRPATH expression
+      // if (LForms.FHIR && this.lhcFormData._hasResponsiveExpr) {
+      //   let self = this;
+      //     setTimeout(function(){
+      //       self.lhcFormData._expressionProcessor.runCalculations(false).then(()=>{});
+      //     });
+      // }
     }
   };
 }
