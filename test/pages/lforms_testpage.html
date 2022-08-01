@@ -78,7 +78,17 @@
 
         <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
         <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
-
+        <input type="file" id="convZipFileAnchor" onchange="loadConvertAndSaveZippedForms(event)" class="hide" />
+        <button id="convBtn" type="button" class="btn btn-success" onclick="document.querySelector('#convZipFileAnchor').click()">Convert Between LHC-Forms/FHIR (zip file)</button>
+        <div id="formConvStarted" style="display:none; margin:100px; font-size:150%; color:darkred">
+          Converting your forms... this may take a while.
+          The resulting zip file will be downloaded automatically to your browser's default downloads folder.
+        </div>
+        <div id="formConvDone" style="display:none; margin:100px; font-size:150%; color:green">
+          Forms conversion has been completed. The result file (with a name like converted-forms-DATE_TIME.zip) has been
+          downloaded automatically to your browser's default downloads folder.
+          <button type="button" class="btn btn-success" onclick="document.querySelector('#formConvDone').style.display='none'">Dismiss</button>
+        </div>
       </div>
     </div>
 
@@ -397,9 +407,132 @@
       }
 
 
+      /**
+       * Converting between LForms json and FHIR Questionnaire.
+       * Load a zip file of LForms or FHIR questionnaire files from local file system,
+       * convert to the other format, and save back as a new zip file, "converted-forms.zip".
+       */
+      function loadConvertAndSaveZippedForms(event) {
+        var fhirVersion = getFHIRVersion();
+        var jsZip = new JSZip(); // input zip
+        let resultFileName = 'converted-forms-' +
+          (new Date()).toISOString().split('.')[0].replace('T', '_').replace(/[^0-9_]/g, '') + '.zip';
+
+        jsZip.loadAsync(event.target.files[0])
+          .then(function(zip) {
+            document.querySelector('#convZipFileAnchor').value = '';
+            let inputZipEntries = [];
+            zip.forEach((relativePath, zipEntry) => {
+              if(zipEntry.dir) {
+                console.log(zipEntry.name + ' is a directory')
+              }
+              else if(! zipEntry.name.endsWith('.json')) {
+                console.log(zipEntry.name + ' is not a .json file, ignored.')
+              }
+              else {
+                inputZipEntries.push(zipEntry);
+              }
+            });
+
+            document.getElementById("formConvStarted").style.display = 'block';
+            convertAllForms(inputZipEntries, fhirVersion).then(outZip => {
+              outZip.generateAsync({type:"blob"})
+                .then(function (blob) {
+                  saveAs(blob, resultFileName);
+                  document.getElementById("formConvStarted").style.display = 'none';
+                  document.getElementById("formConvDone").style.display = 'block';
+                });
+            });
+          }, (err) => console.log("Error occurred while loading/processing the zip file."));
+      }
+
+
+      /**
+       * Convert forms in the given input zip entries and write the converted forms to the output zip.
+       * It supports two-way conversion between lforms and FHIR questionnaire based on the input type.
+       * @param inputZipEntries the input zip file entries (all json files, non-json files have been excluded).
+       * @param fhirVersion the selected FHIR version, e.g., STU3, R4
+       * @return a promise that resolves to the output JSZip object.
+       */
+      function convertAllForms(inputZipEntries, fhirVersion) {
+        let totalNumFiles = inputZipEntries.length;
+        let maxParallel = 25; // how many files to process concurrently
+        let numOnGoing = 0;   // tracks how many files are currently being processed
+        let startTime = Date.now();
+        let outZip = new JSZip(); // output zip
+
+        return new Promise((resolve, reject) => {
+          convertConcurrently(resolve, reject);
+        });
+
+        // process the forms concurrently up to maxParallel at a time
+        function convertConcurrently(resolve, reject) {
+          console.log('%d of %d files processed; %d ongoing', totalNumFiles - inputZipEntries.length, totalNumFiles, numOnGoing);
+          while(inputZipEntries.length) {
+            if(numOnGoing < maxParallel) {
+              numOnGoing += 1;
+              let zipEntry = inputZipEntries.shift();
+              zipEntry.async('string').then((data) => {
+                try {
+                  let converted = convertForm(JSON.parse(data), fhirVersion);
+                  if(converted) {
+                    outZip.file(zipEntry.name, JSON.stringify(converted));
+                  }
+                } catch (e) {
+                  console.error('ERROR processing %s, skipped; %s', zipEntry.name, e);
+                }
+                numOnGoing -= 1;
+                if(numOnGoing === 0 && inputZipEntries.length === 0) {
+                  console.log('All done, total time used: %s', (Date.now() - startTime));
+                  resolve(outZip);
+                }
+              });
+            }
+            else {
+              setTimeout(() => {convertConcurrently(resolve, reject)}, 5);
+              break;
+            }
+          }
+          if(inputZipEntries.length === 0) console.log('All entries submitted for processing');
+        }
+      }
+
+
+      /**
+       * Converting from lforms json to FHIR questionnaire or the other way around, depending on
+       * what type of form the input is.
+       * @param form can be either LForms json or FHIR questionnaire json
+       * @param fhirVersion the selected FHIR version, e.g., STU3, R4
+       * @return the converted json, or null if failed
+       */
+      function convertForm(form, fhirVersion) {
+        let result;
+        if(form.resourceType) { // FHIR to LForms
+          if(form.resourceType === 'Questionnaire') {
+            result = LForms.Util.convertFHIRQuestionnaireToLForms(form, fhirVersion);
+          }
+          else {
+            console.error('Unable to convert non-questionnaire resources:', form.code);
+            result = null;
+          }
+        }
+        else { // lforms to FHIR Questionnaire, set the code and id (if not already set)
+          result = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, new LForms.LFormsData(form));
+          if(!(result.code && result.code[0] && result.code[0].code)) {
+            result.code = [{code: form.code, display: form.name, system: 'http://loinc.org'}];
+          }
+          if(! result.id) {
+            result.id = result.code[0].code;
+          }
+        }
+        return result;
+      }
+
     </script>
 
     <!-- ES2015 files of the LHC-Forms web component -->
+    <script src="/node_modules/jszip/dist/jszip.min.js"></script>
+    <script src="/node_modules/jszip/vendor/FileSaver.js"></script>
     <script src="/dist/lforms/webcomponent/assets/lib/zone.min.js"></script>
     <script src="/dist/lforms/webcomponent/runtime-es5.js"></script>
     <script src="/dist/lforms/webcomponent/polyfills-es5.js"></script>
