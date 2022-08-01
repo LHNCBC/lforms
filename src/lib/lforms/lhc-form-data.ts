@@ -2204,7 +2204,6 @@ export default class LhcFormData {
     if (LForms.FHIR && this._hasResponsiveExpr) {
       this._expressionProcessor.runCalculations(false).then(()=>{});
     }
-    
   }
 
 
@@ -2543,6 +2542,7 @@ export default class LhcFormData {
    * @private
    */
   _updateDataByDataControl(item) {
+    var dataChanged = false;
     for (var i= 0, iLen=item.dataControl.length; i<iLen; i++) {
       var source = item.dataControl[i].source,
           onAttribute = item.dataControl[i].onAttribute,
@@ -2586,12 +2586,18 @@ export default class LhcFormData {
             // set the data if it is different than the existing value
             if (!deepEqual(item[onAttribute], newData)) {
               item[onAttribute] = CommonUtils.deepCopy(newData);
+              dataChanged = true;
             }
           }
         }
         // "EXTERNAL" uses "url" and optional "urlOptions" (an array), TBD
       } // end if source
     } // end of the loop of the data control
+
+    // TODO: if any item.value changes, run fhirpath expression and/or skip logic
+    if (dataChanged) {
+      //...
+    }
   }
 
 

@@ -83,6 +83,7 @@
       "repeats": true,
       "linkId": "repeating-open-choice",
       "text": "Repeating open-choice",
+      "answerValueSet": "#colors",
       "extension": [
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
@@ -98,6 +99,7 @@
       "repeats": true,
       "linkId": "repeating-open-choice-coding",
       "text": "Repeating open-choice with off-list codings",
+      "answerValueSet": "#colors",
       "extension": [
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",

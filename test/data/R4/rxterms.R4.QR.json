@@ -1,0 +1,56 @@
+{
+    "resourceType": "QuestionnaireResponse",
+    "meta": {
+        "profile": [
+            "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|2.7"
+        ],
+        "tag": [
+            {
+                "code": "lformsVersion: 31.0.0"
+            }
+        ]
+    },
+    "status": "completed",
+    "authored": "2022-07-29T02:25:52.824Z",
+    "item": [
+        {
+            "linkId": "medications_table",
+            "text": "Medications",
+            "item": [
+                {
+                    "linkId": "medication",
+                    "text": "Medication Name",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "ARAVA (Oral Pill)",
+                                "display": "ARAVA (Oral Pill)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "strength",
+                    "text": "Strength",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "213377",
+                                "display": " 10 mg Tab"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "rxcui",
+                    "text": "RxCUI",
+                    "answer": [
+                        {
+                            "valueString": "213377"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

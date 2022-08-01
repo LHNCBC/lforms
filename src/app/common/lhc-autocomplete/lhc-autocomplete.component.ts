@@ -1,6 +1,8 @@
 import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
 import * as deepEqual from 'fast-deep-equal';
+import copy from "fast-copy";
+import { LhcDataService} from '../../../lib/lhc-data.service';
 
 @Component({
   selector: 'lhc-autocomplete',
@@ -16,7 +18,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   //   .toolTip
   //   .acOptions
   @Input() options: any;
-  // two-way data binding for dataModel
+  @Input() item:any;
   @Input() dataModel: any;
   @Input() isFormReady: boolean;
   @Output() dataModelChange: EventEmitter<any>  = new EventEmitter<any>();
@@ -36,6 +38,9 @@ export class LhcAutocompleteComponent implements OnChanges {
   displayProp: string = '';
   viewInitialized = false;
 
+  constructor(
+    public lhcDataService: LhcDataService
+  ) {}
 
   /**
    * Invokded when the properties change
@@ -43,78 +48,46 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @param changes changes.prop contains the old and the new value
    */
   ngOnChanges(changes) {
+    
     if (this.viewInitialized) {
-      // reset autocompleter when 'options' changes
-      if (changes.options) {
-        this.cleanupAutocomplete(this.keepDataModel(changes));
+      let dataChanged:boolean;
+      // answer list and data model both change, both the answer list and values are changed by fhirpath expressions or data controls.
+      if (changes.options && changes.dataModel) {
+        this.cleanupAutocomplete(true);
         this.setupAutocomplete();
+        dataChanged = changes.dataModel && !deepEqual(this.dataModel, changes.dataModel.previousValue);
       }
-      // item.value changed by data control or fhirpath express after the autocompleter is initialized
-      // Need to find way to distinguish the two different changes:
-      // 1) emitted by ac itself, which does not need to run updateDisplayedValue,
-      // 2) from outside of ac
+      // a new answer list
+      else if (changes.options) {
+        // need to keep the dataModel while cleaning up the previous autocomplete,
+        // when the form is initially rendered with the FHIR resoruce data loaded,
+        // asynchronously. At this moment the saved the user data are already in the
+        // data model and the autocomplete is already set up, with potentially an
+        // empty list if the answer list is loaded (asynchronously) by FHIRPath
+        // expressions or data controls.
+        // In the RxTerms form with saved data, the list for the saved drug
+        // strength is loaded after an empty list has been set, and
+        // changes.isFormReady.previousValue is false, but
+        // isFormReady.currentValue is true.  In that case we need to keep the data
+        // model.
+        let keepDataModel = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true ? true: false;
+        this.cleanupAutocomplete(keepDataModel);
+        this.setupAutocomplete();
+        dataChanged = !keepDataModel;
+      }
+      // data mode changes, from outside of ac by fhirpath expressions or data controls
       else if (changes.dataModel) {
+        // update the selected value in the autocomplete field
         this.updateDisplayedValue(this.dataModel)
+        dataChanged = true;
       }
-    }
-  }
 
-
-  /**
-   *  Decides whether the data model should be preserved when reconstructing the autocomplete-lhc widget.
-   * @param changes the changes object passed to ngOnChanges
-   * @return true if the data model should be kept
-   */
-  keepDataModel(changes) {
-    var rtn;
-    // need to keep the dataModel while cleaning up the previous autocomplete,
-    // when the form is initially rendered with the FHIR resoruce data loaded,
-    // asynchronously. At this moment the saved the user data are already in the
-    // data model and the autocomplete is already set up, with potentially an
-    // empty list if the answer list is loaded (asynchronously) by FHIRPath
-    // expressions or data controls.
-    // In the RxTerms form with saved data, the list for the saved drug
-    // strength is loaded after an empty list has been set, and
-    // changes.isFormReady.previousValue is false, but
-    // isFormReady.currentValue is true.  In that case we need to keep the data
-    // model.
-    var isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
-      this.isFormReady ;
-    // If the list has changed, don't keep the data model, unless we are in
-    // the situation described above when form first loads.
-    var newValue = changes.value !== undefined;
-    var oldList = changes?.options?.previousValue?.acOptions?.listItems;
-    var newList = changes?.options?.currentValue?.acOptions?.listItems;
-    if (newValue)
-      rtn = false;
-    else if (!isFormReady) {
-      // If the form was not ready, then the list might just be getting set, so
-      // we keep the data model.
-      rtn = true;
+      // run the change function
+      if (dataChanged) {
+        this.dataModelChange.emit(this.dataModel);  
+        this.lhcDataService.onItemValueChange(this.item, null, null, true)
+      }
     }
-    else {
-      // The form is ready.  Check whether the list has changed.
-      var prevOpts = changes?.options?.previousValue?.acOptions || {};
-      var currentOpts = changes?.options?.currentValue?.acOptions || {};
-      var prevConfig, currentConfig;
-      if (prevOpts.listItems !== undefined || currentOpts.listItems !== undefined) {
-        // First case: prefetched lists, defined with 'listItems'
-        prevConfig = prevOpts.listItems;
-        currentConfig = currentOpts.listItems;
-      }
-      else if (prevOpts.url !== undefined || currentOpts.url !== undefined) {
-        // Second case: search lists, defined with 'url'
-        prevConfig = prevOpts.url;
-        currentConfig = currentOpts.url;
-      }
-      else {
-        // Third case: search lists, defined with 'fhir'
-        prevConfig = prevOpts.fhir;
-        currentConfig = currentOpts.fhir;
-      }
-      rtn = deepEqual(prevConfig, currentConfig);
-    }
-    return rtn;
   }
 
 
@@ -180,7 +153,10 @@ export class LhcAutocompleteComponent implements OnChanges {
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
+    // initial setup with default/initial value or values from QR
     this.setupAutocomplete();
+    this.dataModelChange.emit(this.dataModel);  
+    this.lhcDataService.onItemValueChange(this.item, null, null, true)
     this.viewInitialized = true;
   }
 
@@ -218,7 +194,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       // reset the field value
       this.acInstance.setFieldVal('', false);
       // reset the data model value
-      if (!keepDataModel) {
+      if (!keepDataModel && this.dataModel !==undefined) {
         this.dataModel = null;
       }
       this.acInstance.destroy();
@@ -256,43 +232,30 @@ export class LhcAutocompleteComponent implements OnChanges {
       // prefetch autocomplete
       else { // whether or not there are currently list items
         this.acType = 'prefetch';
-        let listItemsText = [], listItemsCode = [];
+        let listItemsText = [];
         // get a list of display text, code and create a answer text to answer item mapping.
         // (autocomplete-lhc requires answer text to be unique)
         acOptions.listItems.forEach(item => {
           listItemsText.push(item[this.displayProp]);
-          listItemsCode.push(item.code);
           this.prefetchTextToItem[item[this.displayProp].trim()] = item;
         }, this);
 
-        acOptions.codes = listItemsCode;
 
         // acOptions has matchListValue, maxSelected, codes
         // Using this.options.elementId causes the autocompleter to be refreshed without an autocompleter created in a horizontal table.
         // (where the rows lists are created as a new array, instead of keeping the same reference. Not confirmed, but I suspect this is the reason.)
         // It works with vertical layout though.
         // Using this.ac.nativeElement works in both cases.
-        //   this.acInstance = new Def.Autocompleter.Prefetch(this.options.elementId, listItemsText, acOptions);
         this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
       }
 
       let defaultItem =  acOptions.defaultValue
       // set up initial values if there is value
-      let savedValue = this.dataModel || defaultItem;
+      let savedValue = this.dataModel || defaultItem;  //boolean is not a valid data type for answerOption
       this.setItemInitValue(savedValue)
 
       // add event handler
       Def.Autocompleter.Event.observeListSelections(this.options.elementId, this.onSelectionHandler.bind(this));
-
-      // emit an change event when there is a value on the item
-      if (this.dataModel !== undefined) {
-        let that = this;
-        // Use setTimeout to avoid the error of ExpressionChangedAfterItHasBeenCheckedError?
-        setTimeout(function(){
-          // note: this will cause angular to refresh the views.
-          that.dataModelChange.emit(that.dataModel);
-        }, 1);
-      }
     }
   }
 
@@ -337,22 +300,31 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @param event the event emitted from an autocompleter
    */
   onSelectionHandler(event) {
+    let changed = false;
     if (this.acType === 'prefetch') {
       let selectedTexts = this.acInstance.getSelectedItems()
-      this.setItemValueForPrefetchAC(selectedTexts);
+      changed = this.setItemValueForPrefetchAC(selectedTexts);
     }
     else if (this.acType === 'search') {
-      this.setItemValueForSearchAC(event);
+      changed = this.setItemValueForSearchAC(event);
     }
-    this.dataModelChange.emit(this.dataModel);
+
+    if (changed) {
+      // run the change function
+      this.dataModelChange.emit(this.dataModel);
+      this.lhcDataService.onItemValueChange(this.item, null, null, true)      
+    }
+    
   }
 
 
   /**
    * Set up an item's value when an answer is selected from a 'prefetch' autocompleter
    * @param selectedTexts the selected answer's text
+   * @return {boolean} whether item's value has changed
    */
-  setItemValueForPrefetchAC(selectedTexts: string[]): void {
+  setItemValueForPrefetchAC(selectedTexts: string[]): boolean {
+    let currentValue = copy(this.dataModel);
     if (selectedTexts) {
       if (selectedTexts.length === 0) {
         this.dataModel = null;
@@ -386,8 +358,10 @@ export class LhcAutocompleteComponent implements OnChanges {
     else {
       this.dataModel = null;
     }
-  }
 
+    return deepEqual(currentValue, this.dataModel) ? false: true;
+  }
+ 
 
   /**
    * Get the selected answer object from a 'search' autocompleter
@@ -415,10 +389,12 @@ export class LhcAutocompleteComponent implements OnChanges {
   /**
    * Set up an item's value when an answer is selected from a 'search' autocompleter
    * @param selectedTexts the selected answer's text
+   * @return {boolean} whether the item's value has changed
    */
   setItemValueForSearchAC(eventData) {
     var itemText = eventData.final_val;
     var onList = eventData.on_list;
+    let currentValue = copy(this.dataModel);
     if (this.acType === 'search') {
       // single selection
       if (!this.multipleSelections) {
@@ -443,5 +419,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       }
     }
     this.dataModel = this.selectedItems;
+
+    return deepEqual(currentValue, this.dataModel) ? false: true;
   }
 }

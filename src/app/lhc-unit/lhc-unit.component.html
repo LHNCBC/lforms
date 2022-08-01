@@ -2,6 +2,7 @@
 <ng-container *ngIf="hasUnitAutocomplete">
   <lhc-autocomplete 
     [options]="options" 
+    [item]="item"
     [(dataModel)]="item.unit"
     (onBlurFn)="lhcDataService.activeRowOnBlur(item)"
     (onFocusFn)="lhcDataService.setActiveRow(item)"

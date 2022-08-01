@@ -2,10 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [31.0.0] 2020-07-05
+## [31.0.0] 2020-08-01
 ### Changed
 - Removed a feature in which the autocompletion list fields would default to 
   the answer list value if there were just one answer in the list.
+- Changed the implementation on how the data changes in questionnaire data are handled.
+- Added the active row indicator for the radio buttons and checkboxes.
   
 ## [30.4.1] 2020-06-24
 ### Fixed

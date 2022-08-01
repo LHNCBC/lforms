@@ -66,19 +66,25 @@ export class LhcItemChoiceRadioButtonComponent implements OnChanges {
 
 
   /**
-   * Invoked when the value in 'other' radio button changes
-   * @param value the value object for 'other'
+   * Invoked when the value of the radio group changes
+   * @param value the new value of a radio button
    */
   onRadioModelChange(value: any): void {
-    this.item.value = this.radioValue;
+    this.radioValue = value;
+    let prevValue = this.item.value;
+    this.item.value = value;
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue) 
   }
 
 
   /**
    * Invoked when the value in the other value input field changes
-   * @param value
+   * @param otherValue the value in the other value input
    */
-  onOtherValueChange(value: any) : void {
-    this.item.value = { "text": this.otherValue, "_notOnList": true};
+  onOtherValueChange(otherValue: any) : void {
+    this.otherValue = otherValue;
+    let prevValue = this.item.value;
+    this.item.value = { "text": otherValue, "_notOnList": true};
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue)
   }
 }

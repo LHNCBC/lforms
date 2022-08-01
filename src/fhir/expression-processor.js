@@ -77,6 +77,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *   there are no pending runs left to do.
      */
     runCalculations: function(includeInitialExpr) {
+      console.log("***in runCalculations***")
       // Defer running calculations while we are waiting for earlier runs to
       // finish.
       if (this._currentRunPromise) // then we will just return that promise
@@ -101,8 +102,10 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             if (!self._firstExpressionRunComplete) // if this is the first run
               self._firstExpressionRunComplete = true;
             self._currentRunPromise = undefined;
-            if (self._pendingRun)
+            if (self._pendingRun) {
+              console.log("***runCalculations called again in runCalculations***")
               return self.runCalculations(false); // will set self._currentRunPromise again
+            }
           },
           (failureReason) => {
             console.log("Run of expressions failed; reason follows");
@@ -246,14 +249,16 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                 // Compare the item.value to the last calculated value (if any).  If
                 // they differ, then the user has edited the field, and in that case we
                 // skip setting the value and halt further calculations for the field.
+                
                 var calcVal = this._calculatedValues[this._getRepetitionKey(item)];
                 let currentVals;
                 if (isCalcExp && !item._userModifiedCalculatedValue && calcVal) {
                   // Get the current values for the item, which might be
                   // repeating.
                   currentVals = this._lfData.getItemValues(item);
-                  if (!deepEqual(calcVal, currentVals))
+                  if (!deepEqual(calcVal, currentVals) && !item._answerListReset) {
                     item._userModifiedCalculatedValue = true;
+                  }
                 }
 
                 if (!isCalcExp || !item._userModifiedCalculatedValue) {
@@ -324,6 +329,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                               var vChanged = self._updateItemVariable(item, varName,
                                 newVal);
                             }
+                            
+                            if (item._answerListReset) item._answerListReset =false; 
+
                             return {fields: fChanged, variables: vChanged};
                           }));
                         }
@@ -344,6 +352,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                 }
               }
             }
+
+            if (item._answerListReset) item._answerListReset =false; 
+
             rtn = {fields: fieldChanged, variables: item._varChanged};
           }
         }
@@ -494,7 +505,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           fVars[k] = itemVars[k];
         let contextNode, base;
         if (item._elementId) {
-          contextNode = this._elemIDToQRItem[item._elementId];
+          contextNode = this._elemIDToQRItem[item._elementId]; // for the strength field it has not value and contextNode is not found
           contextNode ||= {}; // the item might not be present in the QR if there is no value
           base = 'QuestionnaireResponse.item';
         }
@@ -502,7 +513,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           contextNode = this._lfData._fhirVariables.resource;
         }
 
-        var compiledExpr = this._compiledExpressions[expression];
+        var compiledExpr = this._compiledExpressions[expression]; // compiledExpr = undefined; expression = "iif(%strengthList.count() > 1, {}, %strengthList[0])"
         if (!compiledExpr) {
           if (base)
             expression = {base, expression};
@@ -663,6 +674,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         item.answers = newList;
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithModifiedAnswers(item);
+        // user selected/typed value will be reset when the answer list has changed
+        item._userModifiedCalculatedValue = false;
+        item._answerListReset = true;
       }
       return changed;
     },
@@ -689,7 +703,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         var [newVal, messages] = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
         var nonEmptyNewVal = newVal.filter(x=>!LForms.Util.isItemValueEmpty(x));
         const msgSource = 'FHIRPath value expression';
-        changed = !deepEqual(oldVal, nonEmptyNewVal);
+        changed = !deepEqual(oldVal, nonEmptyNewVal);  // for calculatedExpression in rxterms strength field, oldVal and nonEmptyNewVal are same????!!!
         // If this is the first run of the expressions, and there is
         // saved user data, then we check whether the calculated value matches
         // what the user entered (or erased) and if it doesn't, we halt further
@@ -700,7 +714,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
           changed = false;
         }
         else if (changed) {
-          var newLastItem = this._lfData.setRepeatingItems(item, newVal, messages, msgSource);
+          var newLastItem = this._lfData.setRepeatingItems(item, newVal, messages, msgSource);  // value is  set on strength field on the first run (first data change?)
         }
         else { // the messages might have changed
           this._lfData.setRepeatingItemMessages(item, messages, msgSource);
