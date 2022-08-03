@@ -247,7 +247,7 @@ function addCommonSDCImportFns(ns) {
    *  assumed that obs has an appropriate data type for its value.
    */
   self.importObsValue = function(lfItem, obs) {
-    // Get the value from obs, based on lfItem's data type.  (The altertnative
+    // Get the value from obs, based on lfItem's data type.  (The alternative
     // seems to be looping through the keys on obs looking for something that
     // starts with "value".
     var val = null;
@@ -444,8 +444,6 @@ function addCommonSDCImportFns(ns) {
       // specified. (These are R5 features, but we are including support for any
       // version.)
 
-      //item._unitOpen = extension.valueCode;
-      //item._unitSuppSystem = extension.valueCanonical;
       if (!lfItem.units) {
         // In this case the quantity should not have a unit.
         if (quantity.unit) {
@@ -473,6 +471,7 @@ function addCommonSDCImportFns(ns) {
           if (isUCUMUnit && !matchingUnit && !ucumUnit && lfUnit.system === self.UCUM_URI)
             ucumUnit = lfUnit;
         }
+        quantity = LForms.Util.deepCopy(quantity); // so we don't change the input argument
         if (!matchingUnit && ucumUnit) {
           // See if we can convert to the ucumUnit we found
           var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(
@@ -495,23 +494,16 @@ function addCommonSDCImportFns(ns) {
             // Then accept the nonmatching unit, but only as a string
             delete quantity.code;
             delete quantity.system;
-            answer = importFHIRQuantity(quantity);
           }
-          else if (lfItem._unitSuppSystem && lfItem._unitOpen == 'optionsOrType' &&
-                   lfItem._unitSuppSystem == quantity.system) {
-            answer = importFHIRQuantity(quantity);
-          }
-          else {
+          else if (!(lfItem._unitSuppSystem && lfItem._unitOpen == 'optionsOrType' &&
+                   lfItem._unitSuppSystem == quantity.system)) {
             errors = {};
             errorMessages.addMsg(errors, 'nonMatchingQuantityUnit');
           }
         }
-        else {
-          lfItem.unit = matchingUnit;
-        }
       }
       if (!errors) {
-        answer = quantity;
+        answer = importFHIRQuantity(quantity);
       }
     }
 
@@ -983,16 +975,8 @@ function addCommonSDCImportFns(ns) {
         case "QTY":
           if (qrValue.valueQuantity) {
             var quantity = qrValue.valueQuantity;
-            item.value = quantity.value;
-            var unitName = quantity.unit || quantity.code;
-            if (unitName) {
-              item.unit = {name: unitName};
-              if (quantity.code) {
-                item.unit.code = quantity.code;
-                if (quantity.system)
-                  item.unit.system = quantity.system;
-              }
-            }
+            var lformsQuantity = importFHIRQuantity(quantity);
+            LForms.Util._internalUtil.assignValueToItem(item, lformsQuantity, 'Quantity');
           }
           else if (qrValue.valueDecimal) {
             item.value = qrValue.valueDecimal;

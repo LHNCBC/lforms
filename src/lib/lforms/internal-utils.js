@@ -18,17 +18,19 @@ export const InternalUtil = {
    *  already been processed and converted.  A quantity value is expected to be an Object with
    *  a _type key set to Quantity but with the LForms fields for units, plus
    *  a "value" field.
+   * @param type (optional) the type of the value, e.g. 'Quantity'.  If this is
+   *  set, then val._type will not be checked.
    */
-  assignValueToItem: function(item, val) {
-    if (val && val._type === 'Quantity') {
+  assignValueToItem: function(item, val, type) {
+    type = type || val && val._type;
+    if (val && type === 'Quantity') {
       item.value = val.value;
-      if (val.comparator) // we might drop support for comparator
-        item.comparator = val.comparator
-      item.unit = {name: val.unit}
-      if (val.code)
+      item.unit = {name: val.name}
+      if (val.code) {
         item.unit.code = val.code;
-      if (val.system)
-        item.unit.system = val.system;
+        if (val.system)
+          item.unit.system = val.system;
+      }
     }
     else
       item.value = val;

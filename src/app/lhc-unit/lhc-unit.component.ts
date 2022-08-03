@@ -35,16 +35,9 @@ export class LhcUnitComponent implements OnChanges {
    * @param changes changes.prop contains the old and the new value
    */
   ngOnChanges(changes) {
-console.log("%%% In ngOnChanges in lhc-unit");
     let item = this.item;
     if (item) {
       this.hasUnitAutocomplete = !!item._unitAutocompOptions;
-      // I thought about hiding the input field when configuration precluded
-      // there being a unit, but then decided it was better if users could see
-      // there was no unit.
-      this.hasUnitInputField = !this.hasUnitAutocomplete;
-       // !item._unitAutocompOptions &&
-       //  item._unitOpen && item._unitOpen != 'optionsOnly';
 
       // Set whether the field is readOnly.
       // For now, if unitOpen is set optionsOrType and there are no units, make
@@ -69,7 +62,6 @@ console.log("%%% In ngOnChanges in lhc-unit");
    *  Updates the model in response to a change event on the input (non-autocompleter) field.
    */
   updateModel(event) {
-console.log("%%% in updateModel");
     let offListUnit = event.target.value;
     this.item.unit = {name: offListUnit};
   }
