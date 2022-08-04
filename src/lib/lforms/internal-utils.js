@@ -16,8 +16,8 @@ export const InternalUtil = {
    * @param item the item receiving the value.
    * @param val the new value, which if it its origin was FHIR, should have
    *  already been processed and converted.  A quantity value is expected to be an Object with
-   *  a _type key set to Quantity but with the LForms fields for units, plus
-   *  a "value" field.
+   *  a _type key set to Quantity but with the LForms fields for units ('name',
+   *  'code', and 'system'), plus a "value" field.
    * @param type (optional) the type of the value, e.g. 'Quantity'.  If this is
    *  set, then val._type will not be checked.
    */
