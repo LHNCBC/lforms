@@ -2,11 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [30.4.0] 2020-06-13
+## [31.0.0] 2022-08-04
+### Changed
+- FHIR Quantities with a comparator can no longer be stored or loaded into a
+  Questionnaire.  This change is in line with
+  https://jira.hl7.org/browse/FHIR-37468.
+### Fixed
+- Fixes for handling Quantities in expressions.
+
+## [30.4.0] 2022-06-13
 ### Added
 - The beginnings of support to show error messages for individual fields.
 
-## [30.3.0] 2020-05-19
+## [30.3.0] 2022-05-19
 ### Added
 - Added support for answerOption.initialSelected in R4 Questionnaire
 
@@ -14,17 +22,17 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Updated angular to v12 and ng-zorro-antd to v12.
 
-## [30.1.7] 2020-05-17
+## [30.1.7] 2022-05-17
 ### Fixed
 - Fixed a bug that the radio button of "Other" of the CWE typed items lost
   its checked state when users typed in the input field.
 
-## [30.1.6] 2020-05-02
+## [30.1.6] 2022-05-02
 ### Fixed
 - Off-list string values from an open-choice field are now usable in an
   expression for another open-choice field.
 
-## [30.1.5] 2020-04-22
+## [30.1.5] 2022-04-22
 ### Fixed
 - Support for multiple values coming from intialExpression or calculateExpresion
   on fields that are of type string or coding.
