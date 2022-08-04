@@ -10,6 +10,17 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixes for handling Quantities in expressions.
 
+## [30.4.2] 2022-07-07
+### Changed
+- Added a button on the test page (test/pages/lforms_testpage.html) to batch convert lforms
+  to FHIR questionnaires or vice versa, where both input and output are zip files
+
+## [30.4.1] 2022-06-24
+### Fixed
+- Fixed a bug that FHIRPATH expressions are not calculated on newly added
+  repeating items.
+- Fixed a bug that enableWhen is not working on prepopulated answers.
+
 ## [30.4.0] 2022-06-13
 ### Added
 - The beginnings of support to show error messages for individual fields.

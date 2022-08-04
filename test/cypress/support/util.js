@@ -58,7 +58,7 @@ function getTestDataPathName(filepath, fhirVersion=null) {
  *  addFormToPageTest.html.
  * @param version the FHIR version to use.
  */
-function setFHIRVersion(version) {
+export function setFHIRVersion(version) {
   let fhirVersionField = cy.get('#fhirVersion');
   fhirVersionField.select(version);
 }

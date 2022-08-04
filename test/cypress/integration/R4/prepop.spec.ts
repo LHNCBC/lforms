@@ -1,6 +1,7 @@
 import {TestPage} from '../../support/lforms_testpage.po.js';
 import {AddFormToPageTestPage} from '../../support/addFormToPageTest.po.js';
 import {TestUtil} from '../../support/testUtilFacade.js';
+import * as util from '../../support/util.js';
 
 const fhirVersion = 'R4'; // for questionnaire resources
 const mockFHIRContext = require('../../support/R4/fhir_context').mockFHIRContext;
@@ -182,6 +183,23 @@ describe('Form pre-population', () => {
       tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
       cy.byId('/29463-7/1').should('have.value', '95');
       cy.byId('unit_/29463-7/1').should('have.value', 'kg');
+    });
+  });
+
+  describe('enableWhen and initialExpression', ()=>{
+    it('enableWhen should work on the answer lists populated by initialExpression', ()=>{
+      cy.visit('test/pages/addFormToPageTest.html');
+      
+      util.addFormToPage('expression-on-data-from-prepopulation.json', null, {fhirVersion: 'R4'});
+
+      cy.byId('p1.1/1/1').should('have.value','Interventional')
+      cy.byId('p1.2/1/1').should('be.visible');
+      cy.byId('p1.2/1/1').should('have.value','');
+      cy.byId('p1.2/1/1').click()
+      cy.get('#searchResults li').should('have.length', 4);
+
+      cy.byId('p3.1.14/1').should('be.visible');
+      
     });
   });
 });
