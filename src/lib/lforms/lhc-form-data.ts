@@ -550,7 +550,7 @@ export default class LhcFormData {
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
 
-    // run FHIRPATH expression
+    // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
       let self = this;
         setTimeout(function(){
@@ -1975,7 +1975,7 @@ export default class LhcFormData {
     var readerMsg = 'Added ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
-    // run FHIRPATH expression when a new item is added
+    // run FHIRPath expression when a new item is added
     if (LForms.FHIR && this._hasResponsiveExpr) {
       this._expressionProcessor.runCalculations(false).then(()=>{});
     }
@@ -2208,7 +2208,7 @@ export default class LhcFormData {
     var readerMsg = 'Removed ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
-    // run FHIRPATH expression when a new item is removed
+    // run FHIRPath expression when a new item is removed
     if (LForms.FHIR && this._hasResponsiveExpr) {
       this._expressionProcessor.runCalculations(false).then(()=>{});
     }

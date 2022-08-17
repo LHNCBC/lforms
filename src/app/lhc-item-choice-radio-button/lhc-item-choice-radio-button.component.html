@@ -32,8 +32,8 @@
         [ngModel]="otherValue"
         (ngModelChange)="onOtherValueChange($event)"
         class="lhc-answer-other-input"
-        [id]="item._elementId + '_otherValue'" n
-        z-input 
+        [id]="item._elementId + '_otherValue'" 
+        nz-input 
         [disabled]="item._readOnly"
         *ngIf="radioValue && radioValue._notOnList" 
         (focus)="lhcDataService.setActiveRow(item)"/>

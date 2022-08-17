@@ -29,7 +29,7 @@ export class LhcItemTimeComponent implements OnChanges {
   /**
    * model change event handler
    * @param value the new date/time
-   * Note: It is trigger twice. One when the "OK" button is clicked, the other when the input field loses focus.
+   * Note: It is triggered twice. One when the "OK" button is clicked, the other when the input field loses focus.
    */
   onModelChange(value: Date): void {
     let prevValue = this.item.value;

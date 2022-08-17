@@ -92,7 +92,7 @@ describe('autocomp list', () => {
 
     tp.loadFromTestData('rxterms.R4.with-autofill-calexp.json', 'R4');
     
-    // autofill when the streng has one item in the list
+    // autofill when the strength has one item in the list
     cy.byId('medication/1/1').typeAndWait('AZELEX')
     cy.get('#searchResults li:first-child').click();
     cy.byId('strength/1/1').should('have.value', '20% Cream');
@@ -103,7 +103,7 @@ describe('autocomp list', () => {
     cy.byId('strength/1/1').should('have.value', '1 unt Injection');
     cy.byId('rxcui/1/1').should('have.value', '1719235');
 
-    // no autofill when the streng has more than one item in the list
+    // no autofill when the strength has more than one item in the list
     cy.byId('medication/1/1').clear().typeAndWait('GAS-X')
     cy.get('#searchResults li:first-child').click();
     cy.byId('strength/1/1').should('have.value', '');
@@ -114,7 +114,7 @@ describe('autocomp list', () => {
     cy.byId('strength/1/1').should('have.value', '80 mg Tab');
     cy.byId('rxcui/1/1').should('have.value', '210273');
 
-    // still works: autofill when the streng has one item in the list
+    // still works: autofill when the strength has one item in the list
     cy.byId('medication/1/1').clear().typeAndWait('Factor X')
     cy.get('#searchResults li:first-child').click();
     cy.byId('strength/1/1').should('have.value', '1 unt Injection');

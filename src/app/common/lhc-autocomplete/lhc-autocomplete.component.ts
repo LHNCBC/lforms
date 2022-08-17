@@ -60,8 +60,8 @@ export class LhcAutocompleteComponent implements OnChanges {
       // a new answer list
       else if (changes.options) {
         // need to keep the dataModel while cleaning up the previous autocomplete,
-        // when the form is initially rendered with the FHIR resoruce data loaded,
-        // asynchronously. At this moment the saved the user data are already in the
+        // when the form is initially rendered with the FHIR resource data loaded,
+        // asynchronously. At this moment the saved user data are already in the
         // data model and the autocomplete is already set up, with potentially an
         // empty list if the answer list is loaded (asynchronously) by FHIRPath
         // expressions or data controls.
@@ -70,12 +70,12 @@ export class LhcAutocompleteComponent implements OnChanges {
         // changes.isFormReady.previousValue is false, but
         // isFormReady.currentValue is true.  In that case we need to keep the data
         // model.
-        let keepDataModel = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true ? true: false;
+        let keepDataModel = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true;
         this.cleanupAutocomplete(keepDataModel);
         this.setupAutocomplete();
         dataChanged = !keepDataModel;
       }
-      // data mode changes, from outside of ac by fhirpath expressions or data controls
+      // data model changes, from outside of ac by fhirpath expressions or data controls
       else if (changes.dataModel) {
         // update the selected value in the autocomplete field
         this.updateDisplayedValue(this.dataModel)
@@ -391,7 +391,7 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @param selectedTexts the selected answer's text
    * @return {boolean} whether the item's value has changed
    */
-  setItemValueForSearchAC(eventData) {
+  setItemValueForSearchAC(eventData):boolean {
     var itemText = eventData.final_val;
     var onList = eventData.on_list;
     let currentValue = copy(this.dataModel);
