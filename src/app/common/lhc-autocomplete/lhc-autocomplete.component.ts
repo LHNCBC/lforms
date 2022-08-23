@@ -364,7 +364,10 @@ export class LhcAutocompleteComponent implements OnChanges {
             return answerItem;
           }
           else if (this.allowNotOnList) {
-            return {"text" : text, "_notOnList": true, _displayText: text};
+            // TBD should use options.display if set, not _displayText
+            var displayKey = this.options.display || '_displayText';
+            return this.options.modelForOffListItem ? this.options.modelForOffListItem(text) :
+              {"text" : text, "_notOnList": true, _displayText: text};
           }
           else {
             // do nothing. this should not happen?

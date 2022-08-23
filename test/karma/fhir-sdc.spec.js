@@ -32,7 +32,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         it('should import initial.valueQuantity', ()=>{
           var quantity = {
             value: 5.3,
-            comparator: '>',
             unit: 'kg',
             system: 'http://unitsofmeasure.org',
             code: 'kg',
@@ -53,7 +52,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           var lfd = new LForms.LFormsData(fhir.SDC.convertQuestionnaireToLForms(fhirQ));
           var lfItem = lfd.items[0];
           assert.equal(lfItem.value, quantity.value);
-          assert.equal(lfItem.comparator, quantity.comparator);
           assert.equal(lfItem.unit.name, quantity.unit);
           assert.equal(lfItem.unit.code, quantity.code);
           assert.equal(lfItem.unit.system, quantity.system);
@@ -1688,6 +1686,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                   'QuestionnaireResponse', fhirQnRespData, lfFormDef, fhirVersion);
                 assert.equal(mergedFormData.items[0].value, 333.0);
+                assert.deepEqual(mergedFormData.items[0].unit, {name: 'm', code: "m",
+                  system: "http://unitsofmeasure.org"});
                 assert.equal(mergedFormData.items[0].dataType, 'QTY');
                 itDone();
               }).done().fail(function(err){console.log('Unable to load ' + qrFile);});

@@ -1,3 +1,18 @@
+import {importFHIRQuantity} from './import-common.js'
+
+// TBD import this path function from fhirpath.js.  When that is done, also
+// remove the regex test for /Quantity$/ below and replace it with a simple
+// equality check for a path of 'Quantity'.
+/**
+ *  For a given result of a fhirpath.js evaluation, returns the path from the
+ *  nearest FHIR type to the result which might be a fragement of that type.
+ *  (Example:  Questionnaire.item, given a result consisting of items.)
+ */
+function path(fhirpathRes) {
+  return fhirpathRes.__path__;
+}
+
+
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -38,6 +53,8 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
   self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
   self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
+  self.fhirExtUnitOpen = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen";
+  self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -89,6 +106,14 @@ function addCommonSDCImportFns(ns) {
     extension.url = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression';
     return true; // add extension to LForms item
   };
+  self.extensionHandlers[self.fhirExtUnitOpen] = function(extension, item) {
+    item._unitOpen = extension.valueCode;
+  }
+  self.extensionHandlers[self.fhirExtUnitSuppSystem] = function(extension, item) {
+    item._unitSuppSystem = extension.valueCanonical;
+  }
+
+
 
   self.formLevelFields = [
     // Resource
@@ -222,7 +247,7 @@ function addCommonSDCImportFns(ns) {
    *  assumed that obs has an appropriate data type for its value.
    */
   self.importObsValue = function(lfItem, obs) {
-    // Get the value from obs, based on lfItem's data type.  (The altertnative
+    // Get the value from obs, based on lfItem's data type.  (The alternative
     // seems to be looping through the keys on obs looking for something that
     // starts with "value".
     var val = null;
@@ -323,8 +348,11 @@ function addCommonSDCImportFns(ns) {
     var lfDataType = lfItem.dataType;
     var answers = [];
     const messages = [];
+    const fhirValPath = path(fhirVals); // TBD - should be on each value, as they might vary
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
+      if (typeof fhirVal == 'object')
+        fhirVal.__path__ = fhirValPath; // TBD - work around for getting path on individual nodes
       var answer = undefined; // reset back to undefined each iteration
       let errors = {};
       let hasMessages = false;
@@ -369,13 +397,12 @@ function addCommonSDCImportFns(ns) {
           }
         }
       }
-      else if(fhirVal._type === 'Quantity' && (lfDataType === 'QTY' ||
-          lfDataType === 'REAL' || lfDataType === 'INT')) {
-        if (fhirVal.comparator !== undefined) {
-          errorMessages.addMsg(errors, 'comparatorInQuantity');
-          hasMessages = true;
-        }
-        answer = fhirVal;
+      else if((lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT') &&
+              (fhirVal._type === 'Quantity' || /Quantity$/.test(path(fhirVal)))) {
+        delete fhirVal.__path__;
+        fhirVal._type = 'Quantity';
+        [answer, errors] = this._convertFHIRQuantity(lfItem, fhirVal);
+        hasMessages = !!errors;
       }
       // For date types, convert them to date objects, but only for values.
       // If we're setting defaultAnswer, leave them as strings.
@@ -390,6 +417,97 @@ function addCommonSDCImportFns(ns) {
       messages.push(hasMessages ? {errors} : null);
     }
     return [answers, messages];
+  };
+
+
+  /**
+   *  Checks a FHIR Quantity for suitability for the given lfItem, converts
+   *  its units as necessary, and sets error messages.
+   * @param lfItem the LForms item to for which these are new values
+   * @param quantity the FHIR Quantity value for the item
+   * @return an array of two elements:  the processed/converted value (possibly
+   *  null if there were an error), and an error/warning/info messages object
+   *  (see _convertFHIRValues for the format) if there were messages.  In the
+   *  case of an error, the converted value will be undefined.  Otherwise, the
+   *  converted value will have fields for item.unit plus a 'value' field for
+   *  the value.
+   */
+  self._convertFHIRQuantity = function(lfItem, quantity, forDefault) {
+    let answer, errors;
+    if (quantity.comparator !== undefined) {
+      errors = {};
+      errorMessages.addMsg(errors, 'comparatorInQuantity');
+    }
+    else {
+      // The unit must match one of the provided units list, or be convertible
+      // to such, unless the extensions unitOpen and unitSupplementalSystem are
+      // specified. (These are R5 features, but we are including support for any
+      // version.)
+
+      if (!lfItem.units) {
+        // In this case the quantity should not have a unit.
+        if (quantity.unit) {
+          errorMessages.addMsg(errors, 'nonMatchingQuantityUnit');
+        }
+        else
+          answer = importFHIRQuantity(quantity);
+      }
+      else {
+        // Try to find a matching unit
+        var matchingUnit;
+        var valSystem = quantity.system;
+        // On SMART sandbox, quantity.system might have a trailing slash (which is wrong, at least
+        // for UCUM).  For now, just remove it.
+        if (valSystem && valSystem[valSystem.length - 1] === '/')
+          valSystem = valSystem.slice(0, -1);
+        var isUCUMUnit = valSystem === self.UCUM_URI;
+        var ucumUnit;
+        for (var i=0, len=lfItem.units.length; i<len && !matchingUnit; ++i) {
+          var lfUnit = lfItem.units[i];
+          if (lfUnit.system && (lfUnit.system===valSystem && lfUnit.code===quantity.code) ||
+              !lfUnit.system && (lfUnit.name===quantity.unit)) {
+            matchingUnit = lfUnit;
+          }
+          if (isUCUMUnit && !matchingUnit && !ucumUnit && lfUnit.system === self.UCUM_URI)
+            ucumUnit = lfUnit;
+        }
+        quantity = LForms.Util.deepCopy(quantity); // so we don't change the input argument
+        if (!matchingUnit && ucumUnit) {
+          // See if we can convert to the ucumUnit we found
+          var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(
+            quantity.code, quantity.value, ucumUnit.code);
+          if (result.status === 'succeeded') {
+            matchingUnit = ucumUnit;
+            // Round the result to the same number of significant digits as the
+            // input value.
+            var originalSD = this._significantDigits(quantity.value);
+            if (originalSD > 0)
+              quantity.value = parseFloat(result.toVal.toPrecision(originalSD));
+            else
+              quantity.value = result.toVal;
+            quantity.code = ucumUnit.code;
+            quantity.unit = ucumUnit.name || ucumUnit.code; // name can be undefined
+          }
+        }
+        if (!matchingUnit) {
+          if (lfItem._unitOpen == 'optionsOrString') {
+            // Then accept the nonmatching unit, but only as a string
+            delete quantity.code;
+            delete quantity.system;
+          }
+          else if (!(lfItem._unitSuppSystem && lfItem._unitOpen == 'optionsOrType' &&
+                   lfItem._unitSuppSystem == quantity.system)) {
+            errors = {};
+            errorMessages.addMsg(errors, 'nonMatchingQuantityUnit');
+          }
+        }
+      }
+      if (!errors) {
+        answer = importFHIRQuantity(quantity);
+      }
+    }
+
+    return [answer, errors];
   };
 
 
@@ -856,10 +974,9 @@ function addCommonSDCImportFns(ns) {
         case "REAL":
         case "QTY":
           if (qrValue.valueQuantity) {
-            item.value = qrValue.valueQuantity.value;
-            if(qrValue.valueQuantity.code) {
-              item.unit = {name: qrValue.valueQuantity.code};
-            }
+            var quantity = qrValue.valueQuantity;
+            var lformsQuantity = importFHIRQuantity(quantity);
+            LForms.Util._internalUtil.assignValueToItem(item, lformsQuantity, 'Quantity');
           }
           else if (qrValue.valueDecimal) {
             item.value = qrValue.valueDecimal;

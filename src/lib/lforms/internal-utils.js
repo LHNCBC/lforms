@@ -15,21 +15,35 @@ export const InternalUtil = {
    *  than one field (at present -- that might change.)
    * @param item the item receiving the value.
    * @param val the new value, which if it its origin was FHIR, should have
-   *  already been processed.  A quantity value is expected to be an Object with
-   *  a _type key set to Quantity and with the standard FHIR fields (as we don't
-   *  have an LForms format structure representing a Quantity).
+   *  already been processed and converted.  A quantity value is expected to be an Object with
+   *  a _type key set to Quantity but with the LForms fields for units ('name',
+   *  'code', and 'system'), plus a "value" field.
+   * @param type (optional) the type of the value, e.g. 'Quantity'.  If this is
+   *  set, then val._type will not be checked.
    */
-  assignValueToItem: function(item, val) {
-    if (val && val._type === 'Quantity') {
+  assignValueToItem: function(item, val, type) {
+    type = type || val && val._type;
+    if (val && type === 'Quantity') {
       item.value = val.value;
-      if (val.comparator)
-        item.comparator = val.comparator
-      if (val.unit || val.code) {
-        item.unit = {name: val.unit, code: val.code, system: val.system};
+      item.unit = {name: val.name}
+      if (val.code) {
+        item.unit.code = val.code;
+        if (val.system)
+          item.unit.system = val.system;
       }
     }
     else
       item.value = val;
+  },
+
+
+  /**
+   *  Constructs a model object for an off-list unit.
+   * @param unitText the text the user typed for the off-list unit
+   * @return an object suitable for item.unit.
+   */
+  modelForOffListUnit: function(text) {
+    return text ? {name: text} : undefined;
   },
 
 

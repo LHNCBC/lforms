@@ -10,6 +10,9 @@ export const ErrorMessages = {
     'comparatorInQuantity': {
       'en': 'This item cannot accept a quantity with a comparator'
     },
+    'nonMatchingQuantityUnit': {
+      'en': 'An attempt was made to assign a quantity with a non-matching unit.'
+    },
     'MultipleValuesForNonRepeat': {
       'en': 'An attempt was made to assign multiple values to a non-repeating item.'
     }
