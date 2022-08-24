@@ -10,7 +10,6 @@ import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
-import {ErrorMessages} from "./error-messages.js";
 import version from '../../version.json';
 
 import Validation from "./lhc-form-validation.js"
@@ -2290,7 +2289,7 @@ export default class LhcFormData {
     }
     // question does not repeat (might have repeating answers)
     else {
-      if (!item._multipleAnswers) {
+      if (!item._multipleAnswers) { // no repeating answers
         InternalUtil.assignValueToItem(item, vals[0]);
         if (vals.length > 1) {
           InternalUtil.addItemWarning(item, 'MultipleValuesForNonRepeat');
@@ -2299,7 +2298,7 @@ export default class LhcFormData {
         else
           InternalUtil.removeItemWarning(item, 'MultipleValuesForNonRepeat');
       }
-      else
+      else // repeating answers (e.g., a multi-selection list)
         item.value = vals;
       if (messagesChanged)
         InternalUtil.setItemMessagesArray(item, messages, messageSource);
@@ -2741,8 +2740,15 @@ export default class LhcFormData {
       if (item.dataType === CONSTANTS.DATA_TYPE.QTY) {
         var options:any = {
           listItems: listItems,
-          matchListValue: true,
-          autoFill: false,
+          // matchListValue:
+          //   true if there is a unit list and (no unitOpen extension, or optionsOnly, or optionsOrType)
+          //     - Notes: 1) unitOption's comments imply CNE when there is a unit list
+          //        2) optionsOrType:  Does not accept free-text, and we are not
+          //           yet providing user entry of a coded value
+          //   true if there is not a units list and (unitOpen = optionsOnly)
+          matchListValue: item.units && (!item._unitOpen || item._unitOpen != 'optionsOrString') ||
+            !item.units && item._unitOpen == 'optionsOnly',
+          autoFill: true,
           display: "_displayUnit"
         };
         if (defaultUnit !== undefined) {

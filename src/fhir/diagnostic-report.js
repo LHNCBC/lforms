@@ -1,3 +1,5 @@
+import {importFHIRQuantity} from './import-common.js'
+
 /**
  * A package to handle FHIR DiagnosticReport for LForms
  * https://www.hl7.org/fhir/diagnosticreport.html
@@ -305,18 +307,11 @@ var dr = {
           // else handle as Quantity
         case "REAL": // handle as Quantity
         case "QTY":
-          let qty = obx.valueQuantity;
+          let qty = importFHIRQuantity(obx.valueQuantity);
           item.value = qty.value;
-          let unitName = qty.unit || qty.code;
-          if (unitName || qty.code || qty.system) {
-            item.unit = {};
-            if (unitName)
-              item.unit.name = unitName;
-            if (qty.code)
-              item.unit.code = qty.code;
-            if (qty.system)
-              item.unit.system = qty.system;
-          }
+          delete qty.value;
+          if (qty.name || qty.code || qty.system)
+            item.unit = qty;
           break;
         case "DT":
           item.value = LForms.Util.stringToDTDateISO(obx.valueDate);

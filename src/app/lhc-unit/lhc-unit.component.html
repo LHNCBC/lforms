@@ -9,4 +9,13 @@
     [isFormReady]="lhcDataService.isFormReady()"
     ></lhc-autocomplete>
 </ng-container>
-
+<ng-container  *ngIf="!hasUnitAutocomplete">
+  <input type="text"
+   [readOnly]="options.readOnly"
+   placeholder="{{options.toolTip}}"
+   id="{{options.elementId}}"
+   value="{{item?.unit?.name||item?.unit?.code}}"
+   (blur)="lhcDataService.activeRowOnBlur(item)"
+   (focus)="lhcDataService.setActiveRow(item)"
+   (change)="updateModel($event)">
+</ng-container>

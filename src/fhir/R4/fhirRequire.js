@@ -36,4 +36,3 @@ fhir.reservedVarNames = {};
 ['context', 'resource'].forEach(function(name) {
   fhir.reservedVarNames[name] = true;
 });
-

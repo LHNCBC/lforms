@@ -1,5 +1,5 @@
 // Tests for ExpressionProcessor
-describe('ExpresssionProcessor', function () {
+describe('ExpressionProcessor', function () {
   describe('_evaluateFHIRPath', function() {
     it('should use the FHIR model', function(done) {
       // Test by checking that QR.item.answer.value works to return a value (as
@@ -246,4 +246,177 @@ describe('ExpresssionProcessor', function () {
       assert.equal(Object.keys(exp1._queryCache).length, 1);
     });
   });
+
+
+  describe('Quantities from expressions', ()=>{
+    // see https://jira.hl7.org/browse/FHIR-30581
+
+    const questionnaire = {resourceType: 'Questionnaire',
+      item: [{
+        linkId: 'q1', type: 'quantity',
+        extension: [{
+          url: "data for expressions",
+          valueQuantity: {
+            value: 5, unit: "kg", code: "kg", system: "http://unitsofmeasure.org"
+          }
+        }, {
+          url: "data for expressions",
+          valueQuantity: {
+            value: 5, unit: "mg", code: "mg", system: "http://unitsofmeasure.org"
+          }
+        }, {
+          url: "data for expressions",
+          valueQuantity: {
+            value: 4, unit: "m", code: "m", system: "http://unitsofmeasure.org"
+          }
+        }, {
+          "url": LForms.FHIR.R4.SDC.fhirExtCalculatedExp,
+          "valueExpression": {
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item[0].extension[0].value"
+          }
+        }, {
+          "url": LForms.FHIR.R4.SDC.fhirExtUrlUnitOption,
+          "valueCoding": {
+            display: "kilograms", code: "kg", system: "http://unitsofmeasure.org"
+          }
+        }, {
+          "url": LForms.FHIR.R4.SDC.fhirExtUrlUnitOption,
+          "valueCoding": {
+            display: "g", code: "g", system: "http://unitsofmeasure.org"
+          }
+        }]
+      }
+    ]};
+
+
+    it('should set the unit if a matching unit is found',  (done)=>{
+      const form = LForms.Util.convertFHIRQuestionnaireToLForms(questionnaire, 'R4');
+      const lfData = new LForms.LFormsData(form);
+      const exp = lfData._expressionProcessor;
+      exp.runCalculations().then(() => {
+        try {
+          const val = questionnaire.item[0].extension[0].valueQuantity;
+          assert.equal(lfData.items[0].value, val.value);
+          assert.equal(lfData.items[0].unit.code, val.code);
+          assert.equal(lfData.items[0].unit.system, val.system);
+          assert.equal(lfData.items[0].unit.name, val.unit);
+          done();
+        }
+        catch(e) {done(e)}
+      });
+    });
+
+
+    it('should set the unit if a commensurate unit is found',  (done)=>{
+      // Change the expression to use the second valueQuantity
+      const qCopy = JSON.parse(JSON.stringify(questionnaire));
+      const valueExp = qCopy.item[0].extension[3].valueExpression;
+      valueExp.expression = valueExp.expression.replace(/extension\[0\]/, 'extension[1]');
+
+      const form = LForms.Util.convertFHIRQuestionnaireToLForms(qCopy, 'R4');
+      const lfData = new LForms.LFormsData(form);
+      const exp = lfData._expressionProcessor;
+      exp.runCalculations().then(() => {
+        try {
+          const val = qCopy.item[0].extension[1].valueQuantity;
+          const matchingUnit = qCopy.item[0].extension[4].valueCoding;
+          assert.equal(lfData.items[0].value, val.value/1000000); // converted from mg to kg
+          assert.equal(lfData.items[0].unit.code, matchingUnit.code);
+          assert.equal(lfData.items[0].unit.system, matchingUnit.system);
+          assert.equal(lfData.items[0].unit.name, matchingUnit.display);
+          done();
+        }
+        catch(e) {done(e)}
+      });
+    });
+
+    it('should report an error and not fill in the value if a commensurate unit is not found',  (done)=>{
+      // This is probably an error, either in the coding of the data the
+      // expression found, or in the design of the Questionnaire.  It should
+      // probably not be allowed even if the unit-open extension is specified.
+      // Change the expression to use the third valueQuantity
+      const qCopy = JSON.parse(JSON.stringify(questionnaire));
+      const valueExp = qCopy.item[0].extension[3].valueExpression;
+      valueExp.expression = valueExp.expression.replace(/extension\[0\]/, 'extension[2]');
+
+      const form = LForms.Util.convertFHIRQuestionnaireToLForms(qCopy, 'R4');
+      const lfData = new LForms.LFormsData(form);
+      const exp = lfData._expressionProcessor;
+      const testItem = lfData.items[0];
+      assert(!testItem.messages);
+      exp.runCalculations().then(() => {
+        try {
+          assert.equal(testItem.value, undefined);
+          assert.equal(testItem.unit, undefined);
+          assert(testItem.messages);
+          done();
+        }
+        catch(e) {done(e)}
+      });
+    });
+
+
+    it('should not report an error for a non-matching unit if unitOpen is set', (done)=>{
+      const qCopy = JSON.parse(JSON.stringify(questionnaire));
+      const valueExp = qCopy.item[0].extension[3].valueExpression;
+      valueExp.expression = valueExp.expression.replace(/extension\[0\]/, 'extension[2]');
+      qCopy.item[0].extension.push({
+        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+        "valueCode": "optionsOrType"
+      });
+      qCopy.item[0].extension.push({
+        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem",
+        "valueCanonical": "http://unitsofmeasure.org"
+      });
+
+      const form = LForms.Util.convertFHIRQuestionnaireToLForms(qCopy, 'R4');
+      const lfData = new LForms.LFormsData(form);
+      const exp = lfData._expressionProcessor;
+      const testItem = lfData.items[0];
+      assert(!testItem.messages);
+      exp.runCalculations().then(() => {
+        try {
+          const val = qCopy.item[0].extension[2].valueQuantity;
+          assert.equal(lfData.items[0].value, val.value);
+          assert.equal(lfData.items[0].unit.code, val.code);
+          assert.equal(lfData.items[0].unit.system, val.system);
+          assert.equal(lfData.items[0].unit.name, val.unit);
+          assert(!testItem.messages);
+          done();
+        }
+        catch(e) {done(e)}
+      });
+    });
+
+    it('should report an error for a non-matching system if unitOpen=optionsOrType', (done)=>{
+      const qCopy = JSON.parse(JSON.stringify(questionnaire));
+      const valueExp = qCopy.item[0].extension[3].valueExpression;
+      valueExp.expression = valueExp.expression.replace(/extension\[0\]/, 'extension[2]');
+      qCopy.item[0].extension.push({
+        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen",
+        "valueCode": "optionsOrType"
+      });
+      qCopy.item[0].extension.push({
+        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem",
+        "valueCanonical": "http://example.com"
+      });
+
+      const form = LForms.Util.convertFHIRQuestionnaireToLForms(qCopy, 'R4');
+      const lfData = new LForms.LFormsData(form);
+      const exp = lfData._expressionProcessor;
+      const testItem = lfData.items[0];
+      assert(!testItem.messages);
+      exp.runCalculations().then(() => {
+        try {
+          assert.equal(testItem.value, undefined);
+          assert.equal(testItem.unit, undefined);
+          assert(testItem.messages);
+          done();
+        }
+        catch(e) {done(e)}
+      });
+    });
+  });
+
 });
