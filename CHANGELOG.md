@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [31.0.1] 2022-08-26
+### Fixed
+- A very minor fix to the formatting of the form title, probably not visible to
+  a user, but which was causing a test to fail in another package.
+
 ## [31.0.0] 2022-08-04
 ### Changed
 - FHIR Quantities with a comparator can no longer be stored or loaded into a
