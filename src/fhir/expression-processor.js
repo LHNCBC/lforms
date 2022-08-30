@@ -25,6 +25,7 @@
 
 export let ExpressionProcessor;
 const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
+import copy from "fast-copy";
 
 (function() {
   "use strict";
@@ -247,14 +248,13 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                 // Compare the item.value to the last calculated value (if any).  If
                 // they differ, then the user has edited the field, and in that case we
                 // skip setting the value and halt further calculations for the field.
-                
-                var calcVal = this._calculatedValues[this._getRepetitionKey(item)];
+                var prevCalcVals = this._calculatedValues[this._getRepetitionKey(item)];
                 let currentVals;
-                if (isCalcExp && !item._userModifiedCalculatedValue && calcVal) {
+                if (isCalcExp && !item._userModifiedCalculatedValue && prevCalcVals) {
                   // Get the current values for the item, which might be
                   // repeating.
                   currentVals = this._lfData.getItemValues(item);
-                  if (!deepEqual(calcVal, currentVals) && !item._answerListReset) {
+                  if (!this._equalAnswers(prevCalcVals, currentVals) && !item._answerListReset) {
                     item._userModifiedCalculatedValue = true;
                   }
                 }
@@ -669,7 +669,14 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }
 
       if (changed) {
+        // reset the answer list
         item.answers = newList;
+        if (!this._lfData.hasSavedData) {
+          // reset the previously selected answer (by user or by fhirpath expression)
+          item.value = null;
+          // reset the cached calculated value
+          this._calculatedValues[this._getRepetitionKey(item)] = [];
+        }
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithModifiedAnswers(item);
         // user selected/typed value will be reset when the answer list has changed
@@ -739,7 +746,95 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         }
       }
       return rtn;
+    },
+
+
+    /**
+     * Check if two answers or two arrays of answers have the same value, 
+     * ignoring any fields starting with "_"
+     * @param {*} answer1 an array of answer values/objects
+     * @param {*} answer2 an array of answer values/objects
+     */
+    _equalAnswers(answer1, answer2) {
+
+      let ans1 = copy(answer1), ans2 = copy(answer2);
+
+      // answer1 is an array
+      if (Array.isArray(ans1)) {
+        ans1.forEach(answer => { this._filterAnswerFields(answer) })
+      }          
+
+      // answer2 is an array
+      if (Array.isArray(ans2)) {
+        ans2.forEach(answer => { this._filterAnswerFields(answer) })
+      }          
+
+      let rtn = deepEqual(ans1, ans2)
+      return rtn;
+    },
+
+
+    /**
+     * a function to remove fields starting with "_" in an answer object
+     * @param {*} answer an answer value/object
+     */
+    _filterAnswerFields(answer) {
+      if (typeof answer === 'object' && !(answer instanceof Date)) {
+        Object.keys(answer).forEach(key => {
+          if (key && key[0]==="_") {
+            delete answer[key]
+          }
+        })  
+      }
+    },
+
+
+    /**
+     * Check if two answers have the same value, ignoring any fields starting with "_"
+     * @param {*} answer1 an answer value/object 
+     * @param {*} answer2 an answer value/object
+     */
+    _equalAnswerObjects(answer1, answer2) {
+      // answers in FHIR questionnaire support integer, date, time, string, and Coding (and Reference)
+      let type1 = typeof answer1, type2 = typeof answer2;
+      let isEqual;
+      if (type1 != type2) {
+        return false;
+      }
+      else {
+        switch (type1) {
+          case "string":
+          case "number":
+            isEqual = answer1 === answer2;
+            break;
+          case "object":
+            // both are Date objects
+            if (answer1 instanceof Date && answer2 instanceof Date) {
+              isEqual = answer1 === answer2;
+            }
+            // other objects
+            else {
+              let keys1 = Object.keys(answer1), keys2 = Object.keys(answer2);
+              let ans1 = {}, ans2 = {};
+              // ignore fields whose name starts with '_'
+              keys1.forEach(key => { 
+                if (key[0] !=="_") {
+                  ans1[key] = answer1[key];
+                }
+              })
+              keys2.forEach(key => { 
+                if (key[0] !=="_") {
+                  ans2[key] = answer2[key];
+                }
+              })
+              isEqual = deepEqual(ans1, ans2)
+           }
+           break;
+        }
+      }
+      return isEqual;      
     }
+
   };
 
 })();

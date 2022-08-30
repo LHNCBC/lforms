@@ -97,7 +97,7 @@ describe('answerExpression', () => {
             showQQR(q, qr, 'formContainer', win2);
             cy.byId('strength/1/1').click();
             cy.get('#searchResults li').should('have.length.above', 0);
-            checkSavedDataPresent();
+            checkSavedDataPresent(); // error
             cy.then(() => {
               // Test the same thing with a vertical layout
               q.item[0].extension.splice(1, 1); // delete itemControl "gtable" extension

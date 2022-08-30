@@ -88,9 +88,44 @@ describe('autocomp list', () => {
     cy.byId('/X-002/strengthAndForm/1/1').should('have.value', '');
   });
 
-  it('should autofill lists when there is just one answer, and item has a calculationExpression to autofill', () => {
-
+  it('should autofill lists when there is just one answer, and the item has a calculationExpression (to autofill) then an answerExpression', () => {
+    tp.openBaseTestPage()
     tp.loadFromTestData('rxterms.R4.with-autofill-calexp.json', 'R4');
+    
+    // autofill when the strength has one item in the list
+    cy.byId('medication/1/1').typeAndWait('AZELEX')
+    cy.get('#searchResults li:first-child').click();
+    cy.byId('strength/1/1').should('have.value', '20% Cream');
+    cy.byId('rxcui/1/1').should('have.value', '1043753');
+
+    cy.byId('medication/1/1').clear().typeAndWait('Factor X')
+    cy.get('#searchResults li:first-child').click();
+    cy.byId('strength/1/1').should('have.value', '1 unt Injection');
+    cy.byId('rxcui/1/1').should('have.value', '1719235');
+
+    // no autofill when the strength has more than one item in the list
+    cy.byId('medication/1/1').clear().typeAndWait('GAS-X')
+    cy.get('#searchResults li:first-child').click();
+    cy.byId('strength/1/1').should('have.value', '');
+    cy.byId('rxcui/1/1').should('have.value', '');
+
+    cy.byId('strength/1/1').click()
+    cy.get('#searchResults li:first-child').click();
+    cy.byId('strength/1/1').should('have.value', '80 mg Tab');
+    cy.byId('rxcui/1/1').should('have.value', '210273');
+
+    // still works: autofill when the strength has one item in the list
+    cy.byId('medication/1/1').clear().typeAndWait('Factor X')
+    cy.get('#searchResults li:first-child').click();
+    cy.byId('strength/1/1').should('have.value', '1 unt Injection');
+    cy.byId('rxcui/1/1').should('have.value', '1719235');
+  });
+
+
+  it('should autofill lists when there is just one answer, and the item has an answerExpressn then a calculationExpression (to autofill)', () => {
+
+    tp.openBaseTestPage()
+    tp.loadFromTestData('rxterms.R4.with-autofill-calexp2.json', 'R4');
     
     // autofill when the strength has one item in the list
     cy.byId('medication/1/1').typeAndWait('AZELEX')
