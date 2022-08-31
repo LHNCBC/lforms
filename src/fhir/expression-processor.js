@@ -673,7 +673,7 @@ import copy from "fast-copy";
         item.answers = newList;
         // reset item.value 
         // 1) when there are user saved data from QuestionnaireResponse and 
-        //    the initial loading (and fhirpath expressions have run once) 
+        //    the initial loading (and fhirpath expressions) have run once
         // 2) when there are no user saved data.
         if (this._lfData.hasSavedData && this._firstExpressionRunComplete || !this._lfData.hasSavedData) {
           // reset the previously selected answer (by user or by fhirpath expression)
@@ -794,6 +794,7 @@ import copy from "fast-copy";
 
 
     /**
+     * Not used.
      * Check if two answers have the same value, ignoring any fields starting with "_"
      * @param {*} answer1 an answer value/object 
      * @param {*} answer2 an answer value/object
