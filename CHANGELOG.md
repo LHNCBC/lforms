@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [31.1.0] 2020-08-30
+## [32.0.0] 2020-08-30
 ### Changed
 - Removed a feature in which the autocompletion list fields would default to 
   the answer list value if there were just one answer in the list.
