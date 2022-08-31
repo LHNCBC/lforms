@@ -1,9 +1,8 @@
 <form *ngIf="lhcFormData" class="lhc-form lf-template-table novalidate {{viewModeClass}}" autocomplete="off" #lhcFormContainer>
 
     <div class="lhc-form-title" role="heading" aria-level=1>
-      <span id="label-{{ lhcFormData.code }}" class="lf-question" [style]="lhcFormData._obj_titleCSS">
-        {{lhcFormData.name || lhcFormData.fhirQName}}
-      </span>
+      <span id="label-{{ lhcFormData.code }}" class="lf-question" [style]="lhcFormData._obj_titleCSS"
+        >{{lhcFormData.name || lhcFormData.fhirQName}}</span>
       <span class="lf-item-code" *ngIf="lhcFormData.templateOptions.showQuestionCode">
         <a *ngIf="lhcFormData._linkToDef" href="{{ lhcFormData._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ lhcFormData.code }}]</a>
         <span *ngIf="!lhcFormData._linkToDef">[{{ lhcFormData.code }}]</span>
