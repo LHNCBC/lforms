@@ -680,11 +680,12 @@ import copy from "fast-copy";
           item.value = null;
           // reset the cached calculated value
           this._calculatedValues[this._getRepetitionKey(item)] = [];
+          // user selected/typed value will be reset when the answer list has changed
+          item._userModifiedCalculatedValue = false;
         }
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithModifiedAnswers(item);
-        // user selected/typed value will be reset when the answer list has changed
-        item._userModifiedCalculatedValue = false;
+        
         item._answerListReset = true;
       }
       return changed;
@@ -790,56 +791,7 @@ import copy from "fast-copy";
           }
         })  
       }
-    },
-
-
-    /**
-     * Not used.
-     * Check if two answers have the same value, ignoring any fields starting with "_"
-     * @param {*} answer1 an answer value/object 
-     * @param {*} answer2 an answer value/object
-     */
-    _equalAnswerObjects(answer1, answer2) {
-      // answers in FHIR questionnaire support integer, date, time, string, and Coding (and Reference)
-      let type1 = typeof answer1, type2 = typeof answer2;
-      let isEqual;
-      if (type1 != type2) {
-        return false;
-      }
-      else {
-        switch (type1) {
-          case "string":
-          case "number":
-            isEqual = answer1 === answer2;
-            break;
-          case "object":
-            // both are Date objects
-            if (answer1 instanceof Date && answer2 instanceof Date) {
-              isEqual = answer1 === answer2;
-            }
-            // other objects
-            else {
-              let keys1 = Object.keys(answer1), keys2 = Object.keys(answer2);
-              let ans1 = {}, ans2 = {};
-              // ignore fields whose name starts with '_'
-              keys1.forEach(key => { 
-                if (key[0] !=="_") {
-                  ans1[key] = answer1[key];
-                }
-              })
-              keys2.forEach(key => { 
-                if (key[0] !=="_") {
-                  ans2[key] = answer2[key];
-                }
-              })
-              isEqual = deepEqual(ans1, ans2)
-           }
-           break;
-        }
-      }
-      return isEqual;      
     }
-
   };
 
 })();
