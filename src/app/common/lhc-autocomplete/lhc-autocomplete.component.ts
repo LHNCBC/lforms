@@ -59,21 +59,10 @@ export class LhcAutocompleteComponent implements OnChanges {
       }
       // a new answer list
       else if (changes.options) {
-        // need to keep the dataModel while cleaning up the previous autocomplete,
-        // when the form is initially rendered with the FHIR resource data loaded,
-        // asynchronously. At this moment the saved user data are already in the
-        // data model and the autocomplete is already set up, with potentially an
-        // empty list if the answer list is loaded (asynchronously) by FHIRPath
-        // expressions or data controls.
-        // In the RxTerms form with saved data, the list for the saved drug
-        // strength is loaded after an empty list has been set, and
-        // changes.isFormReady.previousValue is false, but
-        // isFormReady.currentValue is true.  In that case we need to keep the data
-        // model.
-        let keepDataModel = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true;
-        this.cleanupAutocomplete(keepDataModel);
+        let {keep, dataModelChanged}  = this.keepDataModel(changes);
+        this.cleanupAutocomplete(keep);
         this.setupAutocomplete();
-        dataChanged = !keepDataModel;
+        dataChanged = dataModelChanged || !keep;
       }
       // data model changes, from outside of ac by fhirpath expressions or data controls
       else if (changes.dataModel) {
@@ -90,6 +79,78 @@ export class LhcAutocompleteComponent implements OnChanges {
     }
   }
 
+
+  /**
+   *  Decides whether the data model should be preserved when reconstructing the autocomplete-lhc widget.
+   * @param changes the changes object passed to ngOnChanges
+   * @return true if the data model should be kept
+   */
+   keepDataModel(changes) {
+    let keep, dataModelChanged;
+    // need to keep the dataModel while cleaning up the previous autocomplete,
+    // when the form is initially rendered with the FHIR resoruce data loaded,
+    // asynchronously. At this moment the saved the user data are already in the
+    // data model and the autocomplete is already set up, with potentially an
+    // empty list if the answer list is loaded (asynchronously) by FHIRPath
+    // expressions or data controls.
+    // In the RxTerms form with saved data, the list for the saved drug
+    // strength is loaded after an empty list has been set, and
+    // changes.isFormReady.previousValue is false, but
+    // isFormReady.currentValue is true.  In that case we need to keep the data
+    // model.
+
+    // let isFormReady = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true;  
+    let isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
+      this.isFormReady ;
+    // if we are in the situation described above when form first loads.
+    
+    if (isFormReady) {
+      // The form is ready.  Check whether the list has changed.
+      var prevOpts = changes?.options?.previousValue?.acOptions || {};
+      var currentOpts = changes?.options?.currentValue?.acOptions || {};
+      var prevConfig, currentConfig;
+      if (prevOpts.listItems !== undefined || currentOpts.listItems !== undefined) {
+        // First case: prefetched lists, defined with 'listItems'
+        prevConfig = prevOpts.listItems;
+        currentConfig = currentOpts.listItems;
+      }
+      else if (prevOpts.url !== undefined || currentOpts.url !== undefined) {
+        // Second case: search lists, defined with 'url'
+        prevConfig = prevOpts.url;
+        currentConfig = currentOpts.url;
+      }
+      else if (prevOpts.fhir !== undefined || currentOpts.fhir !== undefined) {
+        // Third case: search lists, defined with 'fhir'
+        prevConfig = prevOpts.fhir;
+        currentConfig = currentOpts.fhir;
+      }
+      keep = deepEqual(prevConfig, currentConfig);
+
+      // special case for maxSelect
+      if (prevOpts.maxSelect !== currentOpts.maxSelect) {
+        // if only maxSelect (repeats) changes, keep the current data model
+        // multiple selection changes to single selection        
+        if ((prevOpts.maxSelect === "*" ||  parseInt(prevOpts.maxSelect)> 1) && 
+            parseInt(currentOpts.maxSelect) === 1) {
+          this.dataModel = this.dataModel[0];
+          dataModelChanged = true;
+        }
+        // single selection changes to mulitple selection
+        else if (parseInt(prevOpts.maxSelect) === 1 && 
+          (currentOpts.maxSelect === "*" ||  parseInt(currentOpts.maxSelect)> 1)) {
+          this.dataModel = [this.dataModel];
+          dataModelChanged = true;
+        }
+        keep = true;
+      }
+    }
+    else {
+      // If the form was not ready, then the list might just be getting set, so
+      // we keep the data model.
+      keep = true;
+    }
+    return {keep, dataModelChanged};
+  }
 
   /**
    * Update the display value of the autocompleter when the item.value is changed
