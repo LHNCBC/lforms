@@ -3,6 +3,7 @@ import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autoc
 import * as deepEqual from 'fast-deep-equal';
 import copy from "fast-copy";
 import { LhcDataService} from '../../../lib/lhc-data.service';
+import { KeyedRead } from '@angular/compiler';
 
 @Component({
   selector: 'lhc-autocomplete',
@@ -83,7 +84,8 @@ export class LhcAutocompleteComponent implements OnChanges {
   /**
    *  Decides whether the data model should be preserved when reconstructing the autocomplete-lhc widget.
    * @param changes the changes object passed to ngOnChanges
-   * @return true if the data model should be kept
+   * @return {boolean, boolean} two flags, one indicates whether the data model should be kept, 
+   * the other indicates whether the data model has changed.
    */
    keepDataModel(changes) {
     let keep, dataModelChanged;

@@ -9,7 +9,7 @@
         {
           "code": "c1",
           "text": "1 row, no repeating",
-          "questionCardinality": {
+          "answerCardinality": {
             "min": "1",
             "max": "1"
           }
@@ -17,7 +17,7 @@
         {
           "code": "c2",
           "text": "1 row, repeating",
-          "questionCardinality": {
+          "answerCardinality": {
             "min": "1",
             "max": "*"
           }
@@ -25,7 +25,7 @@
         {
           "code": "c3",
           "text": "2 rows, no repeating",
-          "questionCardinality": {
+          "answerCardinality": {
             "min": "2",
             "max": "2"
           }
@@ -33,7 +33,7 @@
         {
           "code": "c4",
           "text": "2 rows, repeating",
-          "questionCardinality": {
+          "answerCardinality": {
             "min": "2",
             "max": "*"
           }
@@ -41,7 +41,7 @@
         {
           "code": "c5",
           "text": "2 rows, repeating, 5 rows max",
-          "questionCardinality": {
+          "answerCardinality": {
             "min": "2",
             "max": "5"
           }
@@ -83,7 +83,7 @@
             "sourceLinkId": "/cardinalityControl"
           },
           "construction": "SIMPLE",
-          "dataFormat": "value.questionCardinality",
+          "dataFormat": "value.answerCardinality",
           "onAttribute": "answerCardinality"
         }
       ],
