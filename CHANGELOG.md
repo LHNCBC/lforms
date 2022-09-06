@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [31.0.2] 2022-08-31
+### Fixed
+- Updated fhirpath.js to 3.0.0 to get a fix for
+  https://github.com/lhncbc/lforms/issues/102
+
 ## [31.0.1] 2022-08-26
 ### Fixed
 - A very minor fix to the formatting of the form title, probably not visible to
