@@ -37,8 +37,8 @@
               </label>
               <label *ngIf="!subItem._multipleAnswers">
                 <input type="radio" id="{{subItem._elementId + answer.code}}"
-                  aria-labeledby="answer-{{index}}" [(ngModel)]="subItem.value" [value]="answer"
-                        name="{{subItem._elementId}}" (change)="lhcDataService.resetRadioListOtherValue(subItem)">
+                  aria-labeledby="answer-{{index}}" [ngModel]="subItem.value" [value]="answer" name="{{subItem._elementId}}"
+                  (change)="lhcDataService.updateRadioListValue(subItem, answer)">
               </label>
             </span>
           </td>

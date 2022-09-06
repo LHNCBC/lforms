@@ -57,7 +57,7 @@ describe('answerExpression', () => {
     });
   });
 
-  it('should not clear a list field if the form has just loaded with saved data', () => {
+  it('should not clear a list field if the form has just loaded with saved data, with 3 different reterms questionnaires', () => {
     // This is the case when a QuestionnaireResponse is loaded in that has a
     // value in a field whose list comes from an answerExpression or a
     // cqf-expression.  Initially, there is no list, but when the expression
@@ -69,120 +69,131 @@ describe('answerExpression', () => {
     // name itself.  We must be careful not to discard the user's data just
     // because the form is re-opened.
 
-    // Load the RxTerms test form and get a QuestionnaireResponse.
-    tp.loadFromTestData('rxterms.R4.json', 'R4');
-    cy.byId('medication/1/1').click().typeAndWait('ar');
-    cy.get('#searchResults li:first-child').click();
-    cy.byId('strength/1/1').click();
-    cy.get('#searchResults li').should('have.length.above', 0);
-    cy.get('#searchResults li:first-child').click();
-    cy.byId('rxcui/1/1').should('not.have.value', '');
-    cy.window().then((win) => {
-      let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
-      cy.visit('/test/pages/addFormToPageTest.html');
-      cy.window().then((win2) => {
-        win2.LForms.Util.removeFormsFromPage('formContainer');
-        win2.LForms.Util.removeFormsFromPage('formContainer2');
-        cy.readFile('test/data/R4/rxterms.R4.json').then((q) => {
-          const qOrig = JSON.parse(JSON.stringify(q)); // a copy
-          const qrOrig = JSON.parse(JSON.stringify(qr)); // a copy
-          showQQR(q, qr, 'formContainer', win2);
-          cy.byId('strength/1/1').click();
-          cy.get('#searchResults li').should('have.length.above', 0);
-          checkSavedDataPresent();
-          cy.then(() => {
-            // Now confirm that if the value in the strength field does not match its
-            // list, it still does not get cleared (see note above).
-            qr.item[0].item[1].answer[0].valueCoding.code = 'I am not in the list';
+    let questionnaires = [
+      "rxterms.R4.json", // a rxterms questionnaire where the strength item has an answerExpression
+      "rxterms.R4.with-autofill-calexp.json", // a rxterms questionnaire where the strength item has an answerExpression then a calculatedExpression (autofill)'
+      "rxterms.R4.with-autofill-calexp2.json" // a rxterms questionnaire where the strength item has a calculatedExpression (autofill) then an answerExpression'
+    ]
+
+    questionnaires.forEach(q => {
+      tp.openBaseTestPage();
+      TestUtil.waitForFHIRLibsLoaded();
+   
+      // Load the RxTerms test form and get a QuestionnaireResponse.
+      tp.loadFromTestData(q, 'R4');
+      cy.byId('medication/1/1').click().typeAndWait('ar');
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('strength/1/1').click();
+      cy.get('#searchResults li').should('have.length.above', 0);
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('rxcui/1/1').should('not.have.value', '');
+      cy.window().then((win) => {
+        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+        cy.visit('/test/pages/addFormToPageTest.html');
+        cy.window().then((win2) => {
+          win2.LForms.Util.removeFormsFromPage('formContainer');
+          win2.LForms.Util.removeFormsFromPage('formContainer2');
+          cy.readFile('test/data/R4/rxterms.R4.json').then((q) => {
+            const qOrig = JSON.parse(JSON.stringify(q)); // a copy
+            const qrOrig = JSON.parse(JSON.stringify(qr)); // a copy
             showQQR(q, qr, 'formContainer', win2);
             cy.byId('strength/1/1').click();
             cy.get('#searchResults li').should('have.length.above', 0);
             checkSavedDataPresent();
             cy.then(() => {
-              // Test the same thing with a vertical layout
-              q.item[0].extension.splice(1, 1); // delete itemControl "gtable" extension
+              // Now confirm that if the value in the strength field does not match its
+              // list, it still does not get cleared (see note above).
+              qr.item[0].item[1].answer[0].valueCoding.code = 'I am not in the list';
               showQQR(q, qr, 'formContainer', win2);
               cy.byId('strength/1/1').click();
               cy.get('#searchResults li').should('have.length.above', 0);
               checkSavedDataPresent();
               cy.then(() => {
-                // Test again with a drug code that is off list
-                qr.item[0].item[0].answer[0].valueCoding.code = 'off-list code';
+                // Test the same thing with a vertical layout
+                q.item[0].extension.splice(1, 1); // delete itemControl "gtable" extension
                 showQQR(q, qr, 'formContainer', win2);
-                cy.byId('strength/1/1').should('be.visible');
+                cy.byId('strength/1/1').click();
+                cy.get('#searchResults li').should('have.length.above', 0);
                 checkSavedDataPresent();
                 cy.then(() => {
-                  // Test again with a drug name that has no code (was never on the list)
-                  qr.item[0].item[0].answer[0].valueCoding = {display: 'Off-list drug name'};
+                  // Test again with a drug code that is off list
+                  qr.item[0].item[0].answer[0].valueCoding.code = 'off-list code';
                   showQQR(q, qr, 'formContainer', win2);
                   cy.byId('strength/1/1').should('be.visible');
                   checkSavedDataPresent();
-
                   cy.then(() => {
-                    // Test with multiple values in the strength
-                    q = JSON.parse(JSON.stringify(qOrig));
-                    qr = JSON.parse(JSON.stringify(qrOrig));
-                    q.item[0].item[1].repeats = true;
-                    delete q.item[0].item[2].extension;
-                    qr.item[0].item[1].answer[1] = {valueCoding: {display: 'other value'}};
+                    // Test again with a drug name that has no code (was never on the list)
+                    qr.item[0].item[0].answer[0].valueCoding = {display: 'Off-list drug name'};
                     showQQR(q, qr, 'formContainer', win2);
-                    cy.byId('strength/1/1').click();
-                    cy.get('#searchResults li').should('have.length.above', 0);
-                    cy.byId('medication/1/1').should('not.have.value', '');
-                    // The strength field's values are in the multi-select area.
-                    cy.byId('strength/1/1').then((el) => {
-                      const selectedItems = el[0].autocomp.getSelectedItems();
-                      expect(selectedItems && selectedItems.length).to.equal(2);
-                    });
-                    cy.byId('rxcui/1/1').should('not.have.value', '');
+                    cy.byId('strength/1/1').should('be.visible');
+                    checkSavedDataPresent();
+  
                     cy.then(() => {
-                      // Test with radio buttons
+                      // Test with multiple values in the strength
                       q = JSON.parse(JSON.stringify(qOrig));
                       qr = JSON.parse(JSON.stringify(qrOrig));
-                      q.item[0].extension.splice(1, 1); // delete itemControl "gtable" extension
-                      // Replace the strength field drop down with radio buttons
-                      q.item[0].item[1].extension[0] = {
-                        url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
-                        valueCodeableConcept: {
-                          text: 'Radio Button',
-                          coding: [
-                            {
-                              code: 'radio-button',
-                              display: 'Radio Button',
-                              system: 'http://hl7.org/fhir/questionnaire-item-control'
-                            }
-                          ]
-                        }
-                      };
+                      q.item[0].item[1].repeats = true;
+                      delete q.item[0].item[2].extension;
+                      qr.item[0].item[1].answer[1] = {valueCoding: {display: 'other value'}};
                       showQQR(q, qr, 'formContainer', win2);
+                      cy.byId('strength/1/1').click();
+                      cy.get('#searchResults li').should('have.length.above', 0);
                       cy.byId('medication/1/1').should('not.have.value', '');
-                      cy.byId('strength/1/1213377').find('input').should('be.checked');
+                      // The strength field's values are in the multi-select area.
+                      cy.byId('strength/1/1').then((el) => {
+                        const selectedItems = el[0].autocomp.getSelectedItems();
+                        expect(selectedItems && selectedItems.length).to.equal(2);
+                      });
                       cy.byId('rxcui/1/1').should('not.have.value', '');
                       cy.then(() => {
-                        // Test with checkboxes an multiple values
-                        q = JSON.parse(JSON.stringify(q)); // make a copy for the new test
-                        qr = JSON.parse(JSON.stringify(qr));
-                        q.item[0].item[1].repeats = true;
+                        // Test with radio buttons
+                        q = JSON.parse(JSON.stringify(qOrig));
+                        qr = JSON.parse(JSON.stringify(qrOrig));
+                        q.item[0].extension.splice(1, 1); // delete itemControl "gtable" extension
+                        // Replace the strength field drop down with radio buttons
                         q.item[0].item[1].extension[0] = {
-                          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-                          "valueCodeableConcept": {
-                            "text": "Check-box",
-                            "coding": [
+                          url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+                          valueCodeableConcept: {
+                            text: 'Radio Button',
+                            coding: [
                               {
-                                "code": "check-box",
-                                "display": "Check-box",
-                                "system": "http://hl7.org/fhir/questionnaire-item-control"
+                                code: 'radio-button',
+                                display: 'Radio Button',
+                                system: 'http://hl7.org/fhir/questionnaire-item-control'
                               }
                             ]
                           }
                         };
-                        qr.item[0].item[1].answer[1] = {valueString: 'other value'};
                         showQQR(q, qr, 'formContainer', win2);
                         cy.byId('medication/1/1').should('not.have.value', '');
                         cy.byId('strength/1/1213377').find('input').should('be.checked');
-                        cy.byId('strength/1/1_other').find('input').should('be.checked');
-                        cy.byId('strength/1/1_otherValue').should('have.value', 'other value');
                         cy.byId('rxcui/1/1').should('not.have.value', '');
+                        cy.then(() => {
+                          // Test with checkboxes an multiple values
+                          q = JSON.parse(JSON.stringify(q)); // make a copy for the new test
+                          qr = JSON.parse(JSON.stringify(qr));
+                          q.item[0].item[1].repeats = true;
+                          q.item[0].item[1].extension[0] = {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                              "text": "Check-box",
+                              "coding": [
+                                {
+                                  "code": "check-box",
+                                  "display": "Check-box",
+                                  "system": "http://hl7.org/fhir/questionnaire-item-control"
+                                }
+                              ]
+                            }
+                          };
+                          qr.item[0].item[1].answer[1] = {valueString: 'other value'};
+                          showQQR(q, qr, 'formContainer', win2);
+                          cy.byId('medication/1/1').should('not.have.value', '');
+                          cy.byId('strength/1/1213377').find('input').should('be.checked');
+                          cy.byId('strength/1/1_other').find('input').should('be.checked');
+                          cy.byId('strength/1/1_otherValue').should('have.value', 'other value');
+                          cy.byId('rxcui/1/1').should('not.have.value', '');
+                        });
                       });
                     });
                   });
@@ -191,9 +202,10 @@ describe('answerExpression', () => {
             });
           });
         });
-      });
-    });
+      });  
+    })
   });
+
 });
 
 /**

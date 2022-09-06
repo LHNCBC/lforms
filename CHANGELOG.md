@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.0.0] 2020-08-30
+### Changed
+- Removed a feature in which the autocompletion list fields would default to 
+  the answer list value if there were just one answer in the list.
+- Changed the implementation on how the data changes in questionnaire data are handled.
+- Added the active row indicator for the radio buttons and checkboxes.
+  
 ## [31.0.1] 2022-08-26
 ### Fixed
 - A very minor fix to the formatting of the form title, probably not visible to
@@ -22,7 +29,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [30.4.1] 2022-06-24
 ### Fixed
-- Fixed a bug that FHIRPATH expressions are not calculated on newly added
+- Fixed a bug that FHIRPath expressions are not calculated on newly added
   repeating items.
 - Fixed a bug that enableWhen is not working on prepopulated answers.
 

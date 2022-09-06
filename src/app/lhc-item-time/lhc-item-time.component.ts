@@ -28,13 +28,16 @@ export class LhcItemTimeComponent implements OnChanges {
 
   /**
    * model change event handler
-   * @param result the new date/time
+   * @param value the new date/time
+   * Note: It is triggered twice. One when the "OK" button is clicked, the other when the input field loses focus.
    */
-  onChange(result: Date): void {
-    if (this.time) {
-      let strTime = this.time.toTimeString();
+  onModelChange(value: Date): void {
+    let prevValue = this.item.value;
+    if (value) {
+      let strTime = value.toTimeString();
       if (strTime) {
         this.item.value = strTime.slice(0,8); // "hh:mm:ss"
+        this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue);
       }
     }
   }

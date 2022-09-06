@@ -81,12 +81,50 @@ describe('autocomp list', () => {
     cy.get(ff.searchResults).contains('Variant ID <a>').should('be.visible');
   });
 
-  it('should autofill lists when there is just one item', () => {
+  it('should not autofill lists when there is just one answer', () => {
     tp.LoadForm.openRxTerms();
     cy.byId('/X-002/nameAndRoute/1/1').typeAndWait('AZELEX');
     cy.get('#searchResults tr:first-child').click();
-    cy.byId('/X-002/strengthAndForm/1/1').should('have.value', '20% Cream');
+    cy.byId('/X-002/strengthAndForm/1/1').should('have.value', '');
   });
+
+  let testFiles = {'rxterms.R4.with-autofill-calexp.json': 'should autofill lists when there is just one answer, on the item that has a calculationExpression (to autofill) listed before an answerExpression', 
+   'rxterms.R4.with-autofill-calexp2.json': 'should autofill lists when there is just one answer, on the item that has an answerExpressn listed before a calculationExpression (to autofill)'};
+
+  Object.keys(testFiles).forEach(qFile=>{
+    it(testFiles[qFile], () => {
+      tp.openBaseTestPage()
+      tp.loadFromTestData(qFile, 'R4');
+      
+      // autofill when the strength has one item in the list
+      cy.byId('medication/1/1').typeAndWait('AZELEX')
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('strength/1/1').should('have.value', '20% Cream');
+      cy.byId('rxcui/1/1').should('have.value', '1043753');
+  
+      cy.byId('medication/1/1').clear().typeAndWait('Factor X')
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('strength/1/1').should('have.value', '1 unt Injection');
+      cy.byId('rxcui/1/1').should('have.value', '1719235');
+  
+      // no autofill when the strength has more than one item in the list
+      cy.byId('medication/1/1').clear().typeAndWait('GAS-X')
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('strength/1/1').should('have.value', '');
+      cy.byId('rxcui/1/1').should('have.value', '');
+  
+      cy.byId('strength/1/1').click()
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('strength/1/1').should('have.value', '80 mg Tab');
+      cy.byId('rxcui/1/1').should('have.value', '210273');
+  
+      // still works: autofill when the strength has one item in the list
+      cy.byId('medication/1/1').clear().typeAndWait('Factor X')
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('strength/1/1').should('have.value', '1 unt Injection');
+      cy.byId('rxcui/1/1').should('have.value', '1719235');
+    });
+  }) 
 
   it('should not display SeqNum on answers that one of them has a numeric value', () => {
     tp.LoadForm.openFullFeaturedForm();

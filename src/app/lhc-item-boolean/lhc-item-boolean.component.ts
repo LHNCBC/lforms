@@ -38,6 +38,10 @@ export class LhcItemBooleanComponent implements AfterViewInit {
    * @param value the new value in model
    */
   onModelChange(value) {
+    let prevValue = this.item.value;
+    this.item.value = value;
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue)
+    
     this.liveAnnouncer.announce(value);
   }
 

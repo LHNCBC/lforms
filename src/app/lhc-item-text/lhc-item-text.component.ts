@@ -11,4 +11,9 @@ export class LhcItemTextComponent {
   
   constructor(public lhcDataService: LhcDataService) { }
 
+  onModelChange(value) {
+    let prevValue = this.item.value;
+    this.item.value = value;
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue)
+  }
 }

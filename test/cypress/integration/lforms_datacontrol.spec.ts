@@ -84,6 +84,35 @@ describe('data control', () => {
     cy.byId(field2).should('be.visible');
   });
 
+  it('can control answerCardinality of an item with answer list', () => {
+    tp.openBaseTestPage();
+ 
+    tp.loadFromTestData('dataControl-answerCardinality.json');
+    const src = '/cardinalityControl/1';
+    const dst = '/test_changing_repeats/1';
+
+    // initially no repeats
+    cy.byId(dst).scrollIntoView();
+    // pick an answer
+    // strength is reset
+    cy.byId(dst).click().type('{downArrow}').blur()
+    cy.byId(dst).should('have.value', "Answer 1");
+     
+    // make it repeating
+    cy.byId(src).click().type('{downArrow}').type('{downArrow}').blur();
+    cy.byId("item-"+dst).byCss('span.autocomp_selected li').eq(0).should('have.text', '×Answer 1')
+
+    // add another answer
+    cy.byId(dst).click().type('{downArrow}').blur();
+    cy.byId("item-"+dst).byCss('span.autocomp_selected li').eq(0).should('have.text', '×Answer 1')
+    cy.byId("item-"+dst).byCss('span.autocomp_selected li').eq(1).should('have.text', '×Answer 2')
+
+    // change back to non-repeating table
+    cy.byId(src).click().type('{downArrow}').blur();
+    cy.byId(dst).should('have.value', "Answer 1");
+
+  });
+
   it('saved item value should be displayed when the value contains extra data for data controls', () => {
     tp.LoadForm.openNewGeneticForm();
 
