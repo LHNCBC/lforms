@@ -1,0 +1,13 @@
+version: "2.4"
+services:
+ lform-app:
+    build: .
+    container_name: lform
+    restart: on-failure
+    ports:
+      - "${HTTP:-8080}:4200"
+    healthcheck:
+      test: ["CMD", "cd /app && yarn healthcheck"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
