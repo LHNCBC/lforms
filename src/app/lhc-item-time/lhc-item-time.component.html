@@ -6,10 +6,10 @@
     nzFormat="HH:mm:ss"
     nzPlaceHolder="HH:mm:ss"
     nzSize="small"
-    [(ngModel)]="time"
+    [ngModel]="time"
+    (ngModelChange)="onModelChange($event)"
     (focus)="lhcDataService.setActiveRow(item)"
     attr.aria-required="{{ item._answerRequired }}"
-    (ngModelChange)="onChange($event)"
   >
   </nz-time-picker>
 </ng-container>

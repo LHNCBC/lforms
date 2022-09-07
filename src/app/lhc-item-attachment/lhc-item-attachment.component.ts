@@ -71,8 +71,7 @@ export class LhcItemAttachmentComponent {
 
 
   /**
-   * Creates an attachment for an item based on the data entered by the
-   * user.
+   * Deletes an attachment for an item.
    */
   removeAttachment(item): void {
     delete item.value;
@@ -80,6 +79,8 @@ export class LhcItemAttachmentComponent {
     delete item._attachmentURL;
     delete item._fileInfo;
     delete item._useURL;
+
+    this.lhcDataService.onItemValueChange(this.item, null, null, true);
   }
 
 
@@ -99,6 +100,7 @@ export class LhcItemAttachmentComponent {
         value.url = item._attachmentURL;
       }
 
+      // uploaded file
       if (item._fileInfo) { // attach the data too
         const fileInfo = item._fileInfo;
         value.contentType = fileInfo.type;
@@ -121,11 +123,17 @@ export class LhcItemAttachmentComponent {
           }
           delete value._progress;
           value.data = data.slice(commaIndex + 1);
+
+          this.lhcDataService.onItemValueChange(this.item, null, null, true);
         };
         reader.onprogress = (progressEvent) => {
           item._progress = progressEvent.loaded / progressEvent.total;
         };
         reader.readAsDataURL(fileInfo);
+      }
+      // url and title
+      else {
+        this.lhcDataService.onItemValueChange(this.item, null, null, true);
       }
     }
   }

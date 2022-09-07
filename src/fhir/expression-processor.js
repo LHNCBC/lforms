@@ -25,6 +25,7 @@
 
 export let ExpressionProcessor;
 const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
+import copy from "fast-copy";
 
 (function() {
   "use strict";
@@ -101,8 +102,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             if (!self._firstExpressionRunComplete) // if this is the first run
               self._firstExpressionRunComplete = true;
             self._currentRunPromise = undefined;
-            if (self._pendingRun)
+            if (self._pendingRun) {
               return self.runCalculations(false); // will set self._currentRunPromise again
+            }
           },
           (failureReason) => {
             console.log("Run of expressions failed; reason follows");
@@ -246,14 +248,15 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                 // Compare the item.value to the last calculated value (if any).  If
                 // they differ, then the user has edited the field, and in that case we
                 // skip setting the value and halt further calculations for the field.
-                var calcVal = this._calculatedValues[this._getRepetitionKey(item)];
+                var prevCalcVals = this._calculatedValues[this._getRepetitionKey(item)];
                 let currentVals;
-                if (isCalcExp && !item._userModifiedCalculatedValue && calcVal) {
+                if (isCalcExp && !item._userModifiedCalculatedValue && prevCalcVals) {
                   // Get the current values for the item, which might be
                   // repeating.
                   currentVals = this._lfData.getItemValues(item);
-                  if (!deepEqual(calcVal, currentVals))
+                  if (!this._equalAnswers(prevCalcVals, currentVals) && !item._answerListReset) {
                     item._userModifiedCalculatedValue = true;
+                  }
                 }
 
                 if (!isCalcExp || !item._userModifiedCalculatedValue) {
@@ -324,6 +327,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                               var vChanged = self._updateItemVariable(item, varName,
                                 newVal);
                             }
+                            
+                            if (item._answerListReset) item._answerListReset =false; 
+
                             return {fields: fChanged, variables: vChanged};
                           }));
                         }
@@ -344,6 +350,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
                 }
               }
             }
+
+            if (item._answerListReset) item._answerListReset =false; 
+
             rtn = {fields: fieldChanged, variables: item._varChanged};
           }
         }
@@ -660,9 +669,24 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }
 
       if (changed) {
+        // reset the answer list
         item.answers = newList;
+        // reset item.value 
+        // 1) when there are user saved data from QuestionnaireResponse and 
+        //    the initial loading (and fhirpath expressions) have run once
+        // 2) when there are no user saved data.
+        if (this._lfData.hasSavedData && this._firstExpressionRunComplete || !this._lfData.hasSavedData) {
+          // reset the previously selected answer (by user or by fhirpath expression)
+          item.value = null;
+          // reset the cached calculated value
+          this._calculatedValues[this._getRepetitionKey(item)] = [];
+          // user selected/typed value will be reset when the answer list has changed
+          item._userModifiedCalculatedValue = false;
+        }
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithModifiedAnswers(item);
+        
+        item._answerListReset = true;
       }
       return changed;
     },
@@ -727,6 +751,46 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         }
       }
       return rtn;
+    },
+
+
+    /**
+     * Check if two answers or two arrays of answers have the same value, 
+     * ignoring any fields starting with "_"
+     * @param {*} answer1 an array of answer values/objects
+     * @param {*} answer2 an array of answer values/objects
+     */
+    _equalAnswers(answer1, answer2) {
+
+      let ans1 = copy(answer1), ans2 = copy(answer2);
+
+      // answer1 is an array
+      if (Array.isArray(ans1)) {
+        ans1.forEach(answer => { this._filterAnswerFields(answer) })
+      }          
+
+      // answer2 is an array
+      if (Array.isArray(ans2)) {
+        ans2.forEach(answer => { this._filterAnswerFields(answer) })
+      }          
+
+      let rtn = deepEqual(ans1, ans2)
+      return rtn;
+    },
+
+
+    /**
+     * a function to remove fields starting with "_" in an answer object
+     * @param {*} answer an answer value/object
+     */
+    _filterAnswerFields(answer) {
+      if (typeof answer === 'object' && !(answer instanceof Date)) {
+        Object.keys(answer).forEach(key => {
+          if (key && key[0]==="_") {
+            delete answer[key]
+          }
+        })  
+      }
     }
   };
 

@@ -11,7 +11,7 @@
   "items": [
     {
       "questionCode": "g1m1",
-      "dataType": "CNE",
+      "dataType": "CWE",
       "answerCardinality": {
         "min": "0",
         "max": "1"
@@ -39,7 +39,7 @@
     },
     {
       "questionCode": "g1m2",
-      "dataType": "CNE",
+      "dataType": "CWE",
       "answerCardinality": {
         "min": "0",
         "max": "1"
@@ -67,7 +67,7 @@
     },
     {
       "questionCode": "g1m3",
-      "dataType": "CNE",
+      "dataType": "CWE",
       "answerCardinality": {
         "min": "0",
         "max": "1"
@@ -95,7 +95,7 @@
     },
     {
       "questionCode": "g1m4",
-      "dataType": "CNE",
+      "dataType": "CWE",
       "answerCardinality": {
         "min": "0",
         "max": "1"

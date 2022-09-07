@@ -26,7 +26,7 @@ describe('Attachment support', () => {
       // Note that the test file we are attaching below is the same the file
       // containing the Questionnaire definition for the form (just for
       // convenience).
-      cy.get('#file-upload\\/1').uploadFile('test/data/lforms/attachmentQ.json');
+      cy.get('#file-upload\\/1').selectFile('test/data/lforms/attachmentQ.json');
       // Confirm the file is replaced by a link
       cy.get('#file-upload\\/1').should('not.exist');
       cy.get('a').should('have.text', 'attachmentQ.json');
@@ -65,7 +65,7 @@ describe('Attachment support', () => {
           // The file input should still be there and be blank.
           cy.get('#file-upload\\/1').should('have.value', '');
         });
-        cy.get('#file-upload\\/1').uploadFile(tempFilePath);
+        cy.get('#file-upload\\/1').selectFile(tempFilePath);
       });
     });
 
@@ -80,7 +80,7 @@ describe('Attachment support', () => {
           // The file input should still be there and be blank.
           cy.get('#file-upload\\/1').should('have.value', '');
         });
-        cy.get('#file-upload\\/1').uploadFile(tempFilePath);
+        cy.get('#file-upload\\/1').selectFile(tempFilePath);
       });
 
       // Also try a blank mime type
@@ -90,7 +90,7 @@ describe('Attachment support', () => {
           // The file input should still be there and be blank.
           cy.get('#file-upload\\/1').should('have.value', '');
         });
-        cy.get('#file-upload\\/1').uploadFile(tempFilePath);
+        cy.get('#file-upload\\/1').selectFile(tempFilePath);
       });
     });
 
@@ -143,7 +143,7 @@ describe('Attachment support', () => {
       cy.get('input[type=text]').as('inputs').should('have.length', 3);
       cy.get('@inputs').eq(0).type('http://three');
       cy.get('@inputs').eq(1).type('four');
-      cy.get('#file-upload\\/2').uploadFile('test/data/lforms/attachmentQ.json');
+      cy.get('#file-upload\\/2').selectFile('test/data/lforms/attachmentQ.json');
       cy.get('.attach-button').click();
       // Confirm the fields are replaced by a link
       cy.get('#file-upload\\/1').should('not.exist');
@@ -164,7 +164,7 @@ describe('Attachment support', () => {
       cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('attachmentQ.json', null, {});
       // Use the current page to get a QR
-      cy.get('#file-upload\\/1').uploadFile('test/data/lforms/attachmentQ.json');
+      cy.get('#file-upload\\/1').selectFile('test/data/lforms/attachmentQ.json');
       cy.get('#file-upload\\/1').should('not.exist');
       cy.get('a').should('have.text', 'attachmentQ.json');
       cy.readFile(`test/data/lforms/attachmentQ.json`).then((q) => {
@@ -195,7 +195,7 @@ describe('Attachment support', () => {
       cy.visit('test/pages/addFormToPageTest.html');
       util.addFormToPage('attachmentQ.json', null, {});
       // Use the current page to get a QR
-      cy.get('#file-upload\\/1').uploadFile('test/data/lforms/attachmentQ.json');
+      cy.get('#file-upload\\/1').selectFile('test/data/lforms/attachmentQ.json');
       cy.get('#file-upload\\/1').should('not.exist');
       cy.get('a').should('have.text', 'attachmentQ.json');
       cy.window().then((win) => {
