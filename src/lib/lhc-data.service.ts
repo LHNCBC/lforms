@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ScreenReaderLog } from './screen-reader-log';
+import deepEqual from "fast-deep-equal";
 
+declare var LForms: any;
 // @Injectable({
 //   providedIn: 'root'
 // })
@@ -44,16 +46,17 @@ export class LhcDataService {
    * Set the active row in table
    * @param index index of an item in the lforms form items array
    */
-   setActiveRow(item) {
-    this.lhcFormData.setActiveRow(item);
+  setActiveRow(item) {
+    if (this.lhcFormData && item) {
+      this.lhcFormData.setActiveRow(item);
 
-    // for screen reader (only the newly added messages will be read by screen readers)
-    if (item._validationErrors) {
-      item._validationErrors.forEach(error => {
-        this.sendMsgToScreenReader(`${item.question} ${error}`)
-      });
+      // for screen reader (only the newly added messages will be read by screen readers)
+      if (item._validationErrors) {
+        item._validationErrors.forEach(error => {
+          this.sendMsgToScreenReader(`${item.question} ${error}`)
+        });
+      }
     }
-
   }
 
 
@@ -161,7 +164,7 @@ export class LhcDataService {
    * @param item an item in the lforms form items array
    * @returns {boolean}
    */
-   hasOneRepeatingRow(item) {
+  hasOneRepeatingRow(item) {
     var ret = false;
     var tableInfo = this.lhcFormData._horizontalTableInfo[item._codePath + item._parentIdPath_];
     if (tableInfo && tableInfo.tableRows && tableInfo.tableRows.length === 1) {
@@ -228,7 +231,7 @@ export class LhcDataService {
    * @param item an item in the lforms form items array
    * @returns {string}
    */
-   getRepeatingSN(item) {
+  getRepeatingSN(item) {
     var ret = '';
     if (item._questionRepeatable) {
       var sn = item._idPath.slice(1);
@@ -567,6 +570,9 @@ export class LhcDataService {
       // add the answer to the selected list
       item.value = [answer];
     }
+
+    // run the change function
+    this.onItemValueChange(item, null, null, true)
   };
 
 
@@ -622,15 +628,25 @@ export class LhcDataService {
         }
       }
     }
+
+    // run the change function
+    this.onItemValueChange(item, null, null, true)
   };
 
 
   /**
-   * Reset the 'otherValue' when an answer from the list is selected by user
-   * @param item a form item that has an answer list and support single selections
+   * Updates the value for an item whose answers are displayed as a list of radio buttons,
+   * one of which has just been selected or deselected.
+   * Reset the 'otherValue' when an answer from the list is selected by user.
+   * @param item a form item that has an answer list and supports single selections
+   * @param answer an answer object in the answer list
    */
-  resetRadioListOtherValue(item) {
+  updateRadioListValue(item, answer) {
+    item.value = answer;
     item._otherValueChecked = false;
+
+    // run the change function
+    this.onItemValueChange(item, null, null, true)
   };
 
 
@@ -640,10 +656,12 @@ export class LhcDataService {
    * @param otherValue the user typed string value for the "OTHER" radio button
    */
   updateRadioListValueForOther(item, otherValue) {
-
     // add/update the other value
     if (item._otherValueChecked) {
       item.value = { "text": otherValue, "_notOnList": true};
+
+      // run the change function
+      this.onItemValueChange(item, null, null, true)
     }
   };
 
@@ -653,7 +671,7 @@ export class LhcDataService {
    * so that screen readers can read it.
    * @param msg the message to be read
    */
-   sendMsgToScreenReader(msg) {
+  sendMsgToScreenReader(msg) {
     this.srLog.add(msg);
   };
 
@@ -681,6 +699,27 @@ export class LhcDataService {
     return !!this.lhcFormData._formReady;
   };
 
+
+  /**
+   * Run LhcFormData's skip logic, formula and data control, and
+   * run FHIRPath expressions if FHIRPath lib is loaded and there are FHIRPath expressions
+   * in the Quesionnaire.
+   * @param item an item in the LhcFormData
+   * @param currentValue the current value of an item.value
+   * @param previousValue the previous value of an item.value
+   * @param skipComparison whether to skip comparision of previous value and current value. defalut is false.
+   */
+  onItemValueChange(item, currentValue, previousValue, skipComparison=false) {
+    if (this.lhcFormData && 
+      (skipComparison || !skipComparison && !deepEqual(currentValue, previousValue))) {
+      
+      // run lforms internal changes
+      this.lhcFormData.updateOnSourceItemChange(item)
+      
+      this.sendActionsToScreenReader();
+
+    }
+  };
 }
 
 

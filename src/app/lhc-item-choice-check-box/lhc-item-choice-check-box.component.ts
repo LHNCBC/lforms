@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
 
 @Component({
   selector: 'lhc-item-choice-check-box',
@@ -16,6 +17,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   checkboxModels: boolean[] = [];
   otherCheckboxModel: boolean = null;
 
+  // the previous value, because nz-checkbox-wrapper does not have access to the previous value in the ngOnChange event
+  prevCheckBoxValue: any = null;
+
   constructor(
     private commonUtils: CommonUtilsService,
     public lhcDataService: LhcDataService
@@ -26,13 +30,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    */
   setInitialValue(): void {
 
-    if (
-      this.item &&
-      this.item.value &&
-      Array.isArray(this.item.value) &&
-      this.item._modifiedAnswers &&
-      Array.isArray(this.item._modifiedAnswers)
-    ) {
+    if (this.item && this.item.value && Array.isArray(this.item.value) &&
+        this.item._modifiedAnswers && Array.isArray(this.item._modifiedAnswers)) {
       let iLen = this.item._modifiedAnswers.length;
       this.checkboxModels = new Array(iLen);
 
@@ -41,7 +40,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         if (value._notOnList) {
           this.otherCheckboxModel = true;
           this.otherValue = value.text;
-        } else {
+        } 
+        else {
           for (let i = 0; i < iLen; i++) {
             let answer = this.item._modifiedAnswers[i];
             if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
@@ -50,6 +50,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
           }
         }
       }
+
+      this.prevCheckBoxValue = this.item.value;
     }
   }
 
@@ -69,24 +71,29 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
 
   /**
    * Invoked when the selection of checkbox changes
-   * @param value
+   * @param value the selected values of a checkbox group
    */
   onCheckboxModelChange(value: any): void {
     this.item.value = value;
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+    this.prevCheckBoxValue = this.item.value;
   }
 
   /**
    * Invoked when the value in the input field of 'other' changes
-   * @param value change event
+   * @param otherValue the value in the other value input
    */
-  onOtherValueChange(value: any): void {
+  onOtherValueChange(otherValue: any): void {
     if (this.otherCheckboxModel) {
-      this.item.value = this.item.value.map((answer) => {
+      this.item.value = CommonUtils.deepCopy(this.prevCheckBoxValue).map((answer) => {
         if (answer._notOnList) {
-          answer.text = this.otherValue;
+          answer.text = otherValue;
         }
         return answer;
       });
+      this.otherValue = otherValue;
+      this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+      this.prevCheckBoxValue = this.item.value;
     }
   }
 }

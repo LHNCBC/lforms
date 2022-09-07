@@ -1,0 +1,93 @@
+{
+  "name": "answerCardinality of a CNE item controlled by dataControl",
+  "items": [
+    {
+      "questionCode": "cardinalityControl",
+      "question": "This controls answerCardinality of the next item",
+      "dataType": "CNE",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "1 row, no repeating",
+          "answerCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "code": "c2",
+          "text": "1 row, repeating",
+          "answerCardinality": {
+            "min": "1",
+            "max": "*"
+          }
+        },
+        {
+          "code": "c3",
+          "text": "2 rows, no repeating",
+          "answerCardinality": {
+            "min": "2",
+            "max": "2"
+          }
+        },
+        {
+          "code": "c4",
+          "text": "2 rows, repeating",
+          "answerCardinality": {
+            "min": "2",
+            "max": "*"
+          }
+        },
+        {
+          "code": "c5",
+          "text": "2 rows, repeating, 5 rows max",
+          "answerCardinality": {
+            "min": "2",
+            "max": "5"
+          }
+        }
+      ],
+      "linkId": "/cardinalityControl"
+    },
+
+    {
+      "questionCode": "test_changing_repeats",
+      "question": "A CNE",
+      "dataType": "CNE",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer 1",
+          "other": null
+        },
+        {
+          "code": "c2",
+          "text": "Answer 2",
+          "other": null
+        },
+        {
+          "code": "c3",
+          "text": "Answer 3",
+          "other": null
+        },
+        {
+          "code": "c4",
+          "text": "Other:",
+          "other": true
+        }
+      ],
+      "dataControl": [
+        {
+          "source": {
+            "sourceType": "INTERNAL",
+            "sourceLinkId": "/cardinalityControl"
+          },
+          "construction": "SIMPLE",
+          "dataFormat": "value.answerCardinality",
+          "onAttribute": "answerCardinality"
+        }
+      ],
+      "linkId": "/test_changing_repeats"
+    }
+ ]
+}

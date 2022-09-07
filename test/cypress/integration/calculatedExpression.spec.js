@@ -135,7 +135,7 @@ describe('calculatedExpression', () => {
   });
 
   describe('answerExpression and calculatedExpress on repeating items', ()=>{
-    it('should have FHIRPATH expression calculated when a repeating item is added and/or removed', ()=>{
+    it('should have FHIRPath expression calculated when a repeating item is added and/or removed', ()=>{
       util.addFormToPage('fhirpath-expression-on-repeating-items.R4.json', null, {fhirVersion: 'R4'});
 
       // expression works on the first group

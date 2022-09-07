@@ -47,8 +47,6 @@ import { LhcItemTextComponent } from './lhc-item-text/lhc-item-text.component';
 import { LhcItemQuestionTextComponent } from './lhc-item-question-text/lhc-item-question-text.component';
 import { LhcItemQuestionComponent } from './lhc-item-question/lhc-item-question.component';
 import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.component';
-import { LhcChangeDetectionComponent } from './lhc-change-detection/lhc-change-detection.component';
-import { LhcWatcherComponent} from './lhc-watcher/lhc-watcher.component';
 import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertical.component';
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
@@ -83,8 +81,6 @@ registerLocaleData(en);
     LhcItemQuestionTextComponent,
     LhcItemQuestionComponent,
     LhcItemDisplayComponent,
-    LhcChangeDetectionComponent,
-    LhcWatcherComponent,
     LhcGroupVerticalComponent,
     LhcGroupHorizontalComponent,
     LhcGroupMatrixComponent,
