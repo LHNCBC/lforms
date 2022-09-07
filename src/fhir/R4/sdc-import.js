@@ -57,43 +57,6 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Process questionnaire item recursively
-   *
-   * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
-   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
-   * @returns {{}} - Converted 'item' field object as defined by LForms definition.
-   * @private
-   */
-  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-
-    var targetItem = {};
-    //A lot of parsing depends on data type. Extract it first.
-    self._processDataType(targetItem, qItem);
-    self._processTextAndPrefix(targetItem, qItem);
-    self._processCodeAndLinkId(targetItem, qItem);
-    self._processDisplayItemCode(targetItem, qItem);
-    self._processEditable(targetItem, qItem);
-    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
-    self._processDisplayControl(targetItem, qItem);
-    self._processDataControl(targetItem, qItem);
-    self._processRestrictions(targetItem, qItem);
-    self._processHiddenItem(targetItem, qItem);
-    self._processUnitList(targetItem, qItem);
-    self._processAnswers(targetItem, qItem, containedVS);
-    self._processDefaultAnswer(targetItem, qItem);
-    self._processExternallyDefined(targetItem, qItem);
-    self._processTerminologyServer(targetItem, qItem);
-    self._processSkipLogic(targetItem, qItem, linkIdItemMap);
-    self._processExtensions(targetItem, qItem);
-    self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
-    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
-
-    return targetItem;
-  };
-
-
-  /**
    * Parse questionnaire object for skip logic information
    *
    * @param lfItem {object} - LForms item object to assign the skip logic
@@ -130,21 +93,6 @@ function addSDCImportFns(ns) {
       if(qItem.enableBehavior) {
         lfItem.skipLogic.logic = qItem.enableBehavior.toUpperCase();
       }
-    }
-  };
-
-
-  /**
-   * Parse Questionnaire item for externallyDefined url
-   *
-   * @param lfItem - LForms item object to assign externallyDefined
-   * @param qItem - Questionnaire item object
-   * @private
-   */
-  self._processExternallyDefined = function (lfItem, qItem) {
-    var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
-    if (externallyDefined && externallyDefined.valueUri) {
-      lfItem.externallyDefined = externallyDefined.valueUri;
     }
   };
 

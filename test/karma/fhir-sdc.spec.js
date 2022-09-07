@@ -1409,13 +1409,26 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert externally defined', function (done) {
             $.get('/base/app/data/validationTestForm.json', function(validationTestForm) {
-              var optionsRes = validationTestForm.items[23].externallyDefined;
+              const itemIndex = 27; // for the item with externally defined set
+              var optionsRes = validationTestForm.items[itemIndex].externallyDefined;
+              assert.equal(typeof optionsRes, 'string');
               // Display control
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(validationTestForm)));
               var convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
 
               assert.equal(convertedLfData.items.length, 34);
-              assert.equal(convertedLfData.items[23].externallyDefined, optionsRes);
+              assert.equal(convertedLfData.items[itemIndex].externallyDefined, optionsRes);
+
+              // Also check that it an handle the old URL for backward
+              // compatibility.
+              const ext = fhirQ.item[itemIndex].extension[1];
+              assert.equal(typeof ext.url, 'string');
+              assert.equal(ext.url, fhir.SDC.fhirExtUrlExternallyDefined);
+              ext.url = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+              convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
+              assert.equal(convertedLfData.items.length, 34);
+              assert.equal(convertedLfData.items[itemIndex].externallyDefined, optionsRes);
+
               done();
             });
           });

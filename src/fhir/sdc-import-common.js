@@ -38,7 +38,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlMinLength = "http://hl7.org/fhir/StructureDefinition/minLength";
   self.fhirExtUrlRegex = "http://hl7.org/fhir/StructureDefinition/regex";
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
-  self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+  self.fhirExtUrlExternallyDefined = "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
@@ -113,6 +113,13 @@ function addCommonSDCImportFns(ns) {
     item._unitSuppSystem = extension.valueCanonical;
   }
 
+  self.extensionHandlers[self.fhirExtUrlExternallyDefined] =  // (also handle old URL below)
+  self.extensionHandlers["http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined"] =
+  function(extension, item) {
+    if (extension.valueUri) {
+      item.externallyDefined = extension.valueUri;
+    }
+  }
 
 
   self.formLevelFields = [
@@ -216,6 +223,42 @@ function addCommonSDCImportFns(ns) {
       lfData.code = codeAndSystemObj.code;
       lfData.codeSystem = codeAndSystemObj.system;
     }
+  };
+
+
+  /**
+   * Process questionnaire item recursively
+   *
+   * @param qItem - item object as defined in FHIR Questionnaire.
+   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
+   * @returns {{}} - Converted 'item' field object as defined by LForms definition.
+   * @private
+   */
+  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
+
+    var targetItem = {};
+    //A lot of parsing depends on data type. Extract it first.
+    self._processExtensions(targetItem, qItem);
+    self._processDataType(targetItem, qItem);
+    self._processTextAndPrefix(targetItem, qItem);
+    self._processCodeAndLinkId(targetItem, qItem);
+    self._processDisplayItemCode(targetItem, qItem);
+    self._processEditable(targetItem, qItem);
+    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
+    self._processDisplayControl(targetItem, qItem);
+    self._processDataControl(targetItem, qItem);
+    self._processRestrictions(targetItem, qItem);
+    self._processHiddenItem(targetItem, qItem);
+    self._processUnitList(targetItem, qItem);
+    self._processAnswers(targetItem, qItem, containedVS);
+    self._processDefaultAnswer(targetItem, qItem);
+    self._processTerminologyServer(targetItem, qItem);
+    self._processSkipLogic(targetItem, qItem, linkIdItemMap);
+    self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
+    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
+
+    return targetItem;
   };
 
 
@@ -1197,6 +1240,21 @@ function addCommonSDCImportFns(ns) {
     var tServer = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtTerminologyServer);
     if (tServer && tServer.valueUrl) {
       lfItem.terminologyServer = tServer.valueUrl;
+    }
+  };
+
+
+  /**
+   * Parse Questionnaire item for externallyDefined url
+   *
+   * @param lfItem - LForms item object to assign externallyDefined
+   * @param qItem - Questionnaire item object
+   * @private
+   */
+  self._processExternallyDefined = function (lfItem, qItem) {
+    var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
+    if (externallyDefined && externallyDefined.valueUri) {
+      lfItem.externallyDefined = externallyDefined.valueUri;
     }
   };
 

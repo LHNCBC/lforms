@@ -55,41 +55,6 @@ function addSDCImportFns(ns) {
     return answersVS;
   };
 
-  /**
-   * Process questionnaire item recursively
-   *
-   * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
-   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
-   * @returns {{}} - Converted 'item' field object as defined by LForms definition.
-   * @private
-   */
-  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-
-    var targetItem = {};
-    //A lot of parsing depends on data type. Extract it first.
-    self._processDataType(targetItem, qItem);
-    self._processTextAndPrefix(targetItem, qItem);
-    self._processCodeAndLinkId(targetItem, qItem);
-    _processDisplayItemCode(targetItem, qItem);
-    _processEditable(targetItem, qItem);
-    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
-    self._processDisplayControl(targetItem, qItem);
-    self._processDataControl(targetItem, qItem);
-    self._processRestrictions(targetItem, qItem);
-    self._processHiddenItem(targetItem, qItem);
-    self._processUnitList(targetItem, qItem);
-    _processAnswers(targetItem, qItem, containedVS);
-    self._processDefaultAnswer(targetItem, qItem);
-    _processExternallyDefined(targetItem, qItem);
-    self._processTerminologyServer(targetItem, qItem);
-    _processSkipLogic(targetItem, qItem, linkIdItemMap);
-    self._processExtensions(targetItem, qItem);
-    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
-
-    return targetItem;
-  };
-
 
   /**
    * Parse questionnaire object for answer cardinality
@@ -125,7 +90,7 @@ function addSDCImportFns(ns) {
    *                              item to navigate the tree for skip logic source items.
    * @private
    */
-  function _processSkipLogic(lfItem, qItem, linkIdItemMap) {
+  self._processSkipLogic = function (lfItem, qItem, linkIdItemMap) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
@@ -149,21 +114,6 @@ function addSDCImportFns(ns) {
         }
         lfItem.skipLogic.conditions.push(condition);
       }
-    }
-  }
-
-
-  /**
-   * Parse Questionnaire item for externallyDefined url
-   *
-   * @param lfItem - LForms item object to assign externallyDefined
-   * @param qItem - Questionnaire item object
-   * @private
-   */
-  function _processExternallyDefined(lfItem, qItem) {
-    var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
-    if (externallyDefined && externallyDefined.valueUri) {
-      lfItem.externallyDefined = externallyDefined.valueUri;
     }
   }
 
@@ -193,7 +143,7 @@ function addSDCImportFns(ns) {
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @private
    */
-  function _processAnswers(lfItem, qItem, containedVS) {
+  self._processAnswers = function (lfItem, qItem, containedVS) {
     if(qItem.option) {
       lfItem.answers = [];
       for(var i = 0; i < qItem.option.length; i++) {
@@ -247,7 +197,7 @@ function addSDCImportFns(ns) {
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processEditable(lfItem, qItem) {
+  self._processEditable = function(lfItem, qItem) {
     if (qItem.readOnly) {
       lfItem.editable = '0';
     }
@@ -290,7 +240,7 @@ function addSDCImportFns(ns) {
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processDisplayItemCode(lfItem, qItem) {
+  self._processDisplayItemCode = function(lfItem, qItem) {
     if (qItem.type === "display" && qItem.linkId) {
       var codes = qItem.linkId.split("/");
       if (codes && codes[codes.length-1]) {
