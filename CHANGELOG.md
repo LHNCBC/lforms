@@ -2,13 +2,18 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [32.0.0] 2020-08-30
+## [32.0.1] 2022-08-31
+### Fixed
+- Updated fhirpath.js to 3.0.0 to get a fix for
+  https://github.com/lhncbc/lforms/issues/102
+
+## [32.0.0] 2022-08-30
 ### Changed
-- Removed a feature in which the autocompletion list fields would default to 
+- Removed a feature in which the autocompletion list fields would default to
   the answer list value if there were just one answer in the list.
 - Changed the implementation on how the data changes in questionnaire data are handled.
 - Added the active row indicator for the radio buttons and checkboxes.
-  
+
 ## [31.0.1] 2022-08-26
 ### Fixed
 - A very minor fix to the formatting of the form title, probably not visible to
