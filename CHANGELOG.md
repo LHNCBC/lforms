@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.0.2] 2022-09-07
+### Fixed
+- Moved the URI for the custom FHIR extension lforms generates to store
+  the "externallyDefined" setting out of the HL7 namespace.
+- Minor refactoring of the SDC import code, which should not impact users,
+  except that for STU3 item.definition will no longer be lost if you convert to
+  LForms format and and back to FHIR.  (The R4 import did not have that issue.)
+
 ## [32.0.1] 2022-08-31
 ### Fixed
 - Updated fhirpath.js to 3.0.0 to get a fix for

@@ -310,7 +310,7 @@ function addCommonSDCExportFns(ns) {
   self._handleExternallyDefined = function(targetItem, item) {
     if (item.externallyDefined) {
       targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+        "url": self.fhirExtUrlExternallyDefined,
         "valueUri": item.externallyDefined
       });
     }
@@ -1050,14 +1050,14 @@ function addCommonSDCExportFns(ns) {
    */
   self._hasItemValue = function (item) {
     // not a group item, or a display item
-    // not hidden by skip logic 
+    // not hidden by skip logic
     // has values
     return item.dataType!=="SECTION" && item.dataType!=="TITLE" &&
            item._skipLogicStatus!== "target-disabled" &&
            !LForms.Util.isItemValueEmpty(item.value) ? true : false;
   };
 
-  
+
 }
 
 export default addCommonSDCExportFns;
