@@ -1,9 +1,8 @@
 import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
-import * as deepEqual from 'fast-deep-equal';
 import copy from "fast-copy";
 import { LhcDataService} from '../../../lib/lhc-data.service';
-import { KeyedRead } from '@angular/compiler';
+import CommonUtils from "../../../lib/lforms/lhc-common-utils.js";
 
 @Component({
   selector: 'lhc-autocomplete',
@@ -56,7 +55,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       if (changes.options && changes.dataModel) {
         this.cleanupAutocomplete(true);
         this.setupAutocomplete();
-        dataChanged = changes.dataModel && !deepEqual(this.dataModel, changes.dataModel.previousValue);
+        dataChanged = changes.dataModel && !CommonUtils.deepEqual(this.dataModel, changes.dataModel.previousValue);
       }
       // a new answer list
       else if (changes.options) {
@@ -126,7 +125,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         prevConfig = prevOpts.fhir;
         currentConfig = currentOpts.fhir;
       }
-      keep = deepEqual(prevConfig, currentConfig);
+      keep = CommonUtils.deepEqual(prevConfig, currentConfig);
 
       // special case for maxSelect
       if (prevOpts.maxSelect !== currentOpts.maxSelect) {
@@ -193,8 +192,45 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @param answer an object with the data for one selected answer
    */
   getDisplayValue(answer) {
-    return typeof answer === 'string' ? answer :
-      this.acType === "prefetch" && !answer._notOnList ? answer[this.displayProp] : answer.text;
+
+    let displayValue = null;
+    
+    if (typeof answer === 'string') {
+      displayValue = answer;
+    }
+    // an answer in a prefetch answer list
+    else if (this.acType === "prefetch") {
+      if (!answer._notOnList) {
+        // answer is an item in the listItemsForModel if there is an listItemsForModel
+        if (this.options.acOptions.listItemsForModel) {
+          for (let i=0, iLen = this.options.acOptions.listItemsForModel.length; i<iLen; i++) {
+            if (CommonUtils.deepEqual(answer, this.options.acOptions.listItemsForModel[i])) {
+              // get the display text from the modified answer list (listItems)
+              displayValue = this.options.acOptions.listItems[i][this.displayProp]
+              break;
+            }
+          }
+        }
+        // there is no listItemsForModel or no listItems
+        else {
+          displayValue = answer[this.displayProp] ? answer[this.displayProp]: answer.text;
+        }
+      }
+      // not-on-list, coding and string
+      else if (answer._notOnList) {
+        displayValue = answer.text;
+      }
+    } 
+    // search
+    else {
+      displayValue = answer[this.displayProp];
+    }
+
+    return displayValue;
+
+    // return typeof answer === 'string' ? answer :
+    //   this.acType === "prefetch" && !answer._notOnList ? answer[this.displayProp] : answer.text;
+
   }
 
 
@@ -298,11 +334,10 @@ export class LhcAutocompleteComponent implements OnChanges {
         let listItemsText = [];
         // get a list of display text, code and create a answer text to answer item mapping.
         // (autocomplete-lhc requires answer text to be unique)
-        acOptions.listItems.forEach(item => {
+        acOptions.listItems.forEach((item, index) => {
           listItemsText.push(item[this.displayProp]);
-          this.prefetchTextToItem[item[this.displayProp].trim()] = item;
+          this.prefetchTextToItem[item[this.displayProp].trim()] = acOptions.listItemsForModel ? acOptions.listItemsForModel[index] : item;
         }, this);
-
 
         // acOptions has matchListValue, maxSelected, codes
         // Using this.options.elementId causes the autocompleter to be refreshed without an autocompleter created in a horizontal table.
@@ -393,7 +428,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.dataModel = null;
       }
       else {
-        let items = selectedTexts.map(text => {
+        let selectedAnswerItems = selectedTexts.map(text => {
           let answerItem = this.prefetchTextToItem[text];
           if (answerItem) {
             return answerItem;
@@ -410,11 +445,11 @@ export class LhcAutocompleteComponent implements OnChanges {
         });
         // mulitple selection
         if (this.multipleSelections) {
-          this.dataModel = items;
+          this.dataModel = selectedAnswerItems;
         }
         // single selection
-        else if (items.length >=0 && items[0]) {
-          this.dataModel = items[0]
+        else if (selectedAnswerItems.length >=0 && selectedAnswerItems[0]) {
+          this.dataModel = selectedAnswerItems[0]
         }
         else {
           this.dataModel = null;
@@ -425,7 +460,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       this.dataModel = null;
     }
 
-    return deepEqual(currentValue, this.dataModel) ? false: true;
+    return CommonUtils.deepEqual(currentValue, this.dataModel) ? false: true;
   }
  
 
@@ -486,6 +521,6 @@ export class LhcAutocompleteComponent implements OnChanges {
     }
     this.dataModel = this.selectedItems;
 
-    return deepEqual(currentValue, this.dataModel) ? false: true;
+    return CommonUtils.deepEqual(currentValue, this.dataModel) ? false: true;
   }
 }

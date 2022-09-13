@@ -19,12 +19,9 @@ import Validation from "./lhc-form-validation.js"
 declare var LForms: any;
 
 import {Units, Formulas} from "./lhc-form-units.js";
-import deepEqual from "fast-deep-equal";
 
 export default class LhcFormData {
 
-  // // form type. for now the only type is "LOINC"
-  // type: null,
   // form's code
   code = null;
   codeList = null;
@@ -32,9 +29,6 @@ export default class LhcFormData {
   // form's name
   name = null;
 
-  // // a pre-defined view template used to display the form
-  // // only 'table' is supported for now.
-  // template: null,
   // additional options that controls the selected view template
   templateOptions:any = {};
 
@@ -92,13 +86,6 @@ export default class LhcFormData {
                           // "1", "2", "3", "4", "5", "6" -- listed in columns
       }
     },
-    // form's table column headers' display names for question text, values and units
-    // for now they should not be accessible to users
-    columnHeaders: [
-      {"name" : "Name"},
-      {"name" : "Value"},
-      {"name" : "Units"}
-    ],
     // whether to hide tree line styles
     hideTreeLine: false,
     // whether to hide indentation before each item
@@ -115,7 +102,6 @@ export default class LhcFormData {
   _idPath = "";
   _displayLevel = 0;
   _linkToDef = null;
-  _formDone;
   _formReady;
   _horizontalTableInfo = {};
   itemList;
@@ -171,8 +157,6 @@ export default class LhcFormData {
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
     }
-    // when the skip logic rule says the form is done
-    this._formDone = false;
 
     // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
     if (LForms.FHIR && data.fhirVersion) {
@@ -301,11 +285,11 @@ export default class LhcFormData {
 
 
   /**
-   *   Returns the object containing the FHIR support.  If this LFormsData
-   *   does not have fhirVersion set or if support for that version is not
-   *   loaded, then a support object for some FHIR version will be returned,
-   *   if any is loaded.  (In some cases, we do not care which version is
-   *   used.)  If no fhir support is loaded, then an exception will be thrown.
+   *  Returns the object containing the FHIR support.  If this LFormsData
+   *  does not have fhirVersion set or if support for that version is not
+   *  loaded, then a support object for some FHIR version will be returned,
+   *  if any is loaded.  (In some cases, we do not care which version is
+   *  used.)  If no fhir support is loaded, then an exception will be thrown.
    */
   _getFHIRSupport() {
     var rtn = this._fhir;
@@ -320,6 +304,7 @@ export default class LhcFormData {
     }
     return rtn;
   }
+
 
  /**
    *  Loads FHIR resources necessary to show the form.  These are loaded
@@ -459,7 +444,6 @@ export default class LhcFormData {
     this._checkFormControls();
 
   }
-
 
 
   /**
@@ -866,9 +850,6 @@ export default class LhcFormData {
     }
 
     // templateOptions
-    // not to use deep copy here, because of the unexpected deep copy result on arrays.
-
-
     // make a copy of the existing options of the form data
     var currentOptions = CommonUtils.deepCopy(this.templateOptions);
     var defaultOptions = CommonUtils.deepCopy(this._defaultTemplateOptions);
@@ -914,18 +895,9 @@ export default class LhcFormData {
       if (!existingOptions)
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
 
-
-      // get the fields that contains array
-      var columnHeaders = newOptions.columnHeaders;
-      delete newOptions.columnHeaders;
       // merge the options
-      //this.templateOptions = jQuery.extend({}, existingOptions, newOptions);
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
-      // process columnHeaders
-      if (columnHeaders) {
-        this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
-      }
-
+     
       this.setMessageLevel(this.templateOptions.messageLevel);
     }
   }
@@ -1041,12 +1013,12 @@ export default class LhcFormData {
       // the value objects with the corresponding objects from the answer list,
       // so that when they are displayed as radio buttons, angular will recognize the
       // one or more answer options as equal to the values.
-      this._setModifiedAnswers(item); // sets item._modifiedAnswers
+//      this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
       // reset item.value with modified answers if the item has a value (or an array of values)
       if (item.dataType === CONSTANTS.DATA_TYPE.CWE ||
           item.dataType === CONSTANTS.DATA_TYPE.CNE) {
-        this._resetItemValueWithModifiedAnswers(item);
+        this._resetItemValueWithAnswers(item);
       }
       // if this is not a saved form with user data, and
       // there is a default value, and
@@ -1163,28 +1135,6 @@ export default class LhcFormData {
 
     }
   }
-
-
-  // _keepCopiesOfRepeatableQuestions() {
-
-  //   // for each item on this level
-  //   for (let i=0, iLen=this.items.length; i<iLen; i++) {
-  //     var item = this.items[i];
-
-  //     if (item._questionRepeatable && item._id === 1) {
-  //       // remove _parentItem if there is one
-  //       delete item._parentItem;
-  //       var itemRepeatable = CommonUtils.deepCopy(item);
-  //       // remove user data
-  //       this._removeUserDataAndRepeatingSubItems(itemRepeatable);
-  //       this._repeatableItems[item.linkId] = itemRepeatable;
-  //     }
-  //     // set a reference to its parent item
-  //     item._parentItem = parentItem;
-
-  //   }
-
-  // }
 
 
   /**
@@ -1511,9 +1461,8 @@ export default class LhcFormData {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       var itemData:any = {};
-      // for user typed data of a CWE item, _answerOther is already in item.value as {text: _answerOther}.
-      // for 'other' in answer that requires an extra text input, the user typed data is kept in item.valueOther.
-
+      // for user typed data of a CWE item, it is in item.value as {text: "some other value", _notOnList: true}.
+      
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
       // or if the item is hidden and the flag is set to ignore hidden items
       if (noDisabledItem && item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ||
@@ -1583,9 +1532,9 @@ export default class LhcFormData {
     var objReturn = {};
 
     // special handling for the user-typed value for CWE data type
-    if (typeCWE && obj._notOnList && !obj.code && !obj.system && obj._displayText) {
+    if (typeCWE && obj._notOnList && !obj.code && !obj.system) {
       // return a string value
-      objReturn = obj._displayText;
+      objReturn = obj.text;
     }
     else {
       for (var field in obj) {
@@ -2235,7 +2184,7 @@ export default class LhcFormData {
     var repetitionCountChanged = false;
     var repetitions;
     let messagesChanged = false;
-    if (!deepEqual(item._lastComputedMessages, messages)) {
+    if (!CommonUtils.deepEqual(item._lastComputedMessages, messages)) {
       item._lastComputedRepeatingMessages = messages;
       messagesChanged = true;
     }
@@ -2326,7 +2275,7 @@ export default class LhcFormData {
    *  to distinguish them from messages from other sources.
    */
   setRepeatingItemMessages(item, messages, messageSource) {
-    if (!deepEqual(item._lastComputedMessages, messages)) {
+    if (!CommonUtils.deepEqual(item._lastComputedMessages, messages)) {
       item._lastComputedRepeatingMessages = messages;
       if (item._questionRepeatable) {
         // if it has multiple answers
@@ -2458,7 +2407,7 @@ export default class LhcFormData {
   _processItemFormula(item) {
     if (item.calculationMethod && item.calculationMethod.name) {
       let newValue = this.getFormulaResult(item);
-      if (!deepEqual(newValue, item.value)) {
+      if (!CommonUtils.deepEqual(newValue, item.value)) {
         item.value = newValue;
       }
     }
@@ -2473,7 +2422,7 @@ export default class LhcFormData {
     if (item.dataControl && Array.isArray(item.dataControl)) {
       this._updateDataByDataControl(item);
       // Force a reset of answers
-      this._updateAutocompOptions(item, true);
+      this._updateAutocompOptions(item);
       this._updateUnitAutocompOptions(item);
     }
   }
@@ -2590,7 +2539,7 @@ export default class LhcFormData {
               newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
             }
             // set the data if it is different than the existing value
-            if (!deepEqual(item[onAttribute], newData)) {
+            if (!CommonUtils.deepEqual(item[onAttribute], newData)) {
               item[onAttribute] = CommonUtils.deepCopy(newData);
             }
           }
@@ -2757,7 +2706,7 @@ export default class LhcFormData {
         else if (listItems.length === 1) {
           options.defaultValue = listItems[0];
         }
-        if(!deepEqual(item._unitAutocompOptions, options)) {
+        if(!CommonUtils.deepEqual(item._unitAutocompOptions, options)) {
           item._unitAutocompOptions = options;
         }
       }
@@ -2766,157 +2715,87 @@ export default class LhcFormData {
 
 
   /**
-   * Initializes (if not already done) item._modifiedAnswers.
-   * Also sets item._hasOneAnswerLabel
-   * @param item the item for which labeled answers should be created.
-   * @param forceReset always reset item._modifiedAnswers, default is false
-   */
-  _setModifiedAnswers(item, forceReset=false) {
-
-    if (item.dataType === CONSTANTS.DATA_TYPE.CNE ||
-        item.dataType === CONSTANTS.DATA_TYPE.CWE) {
-      // initial setting or a reset triggered by Data Control
-      if (!item._modifiedAnswers || forceReset) {
-        var answers = [];
-
-        // 'answers' might be null even for CWE
-        // need to recheck answers in case its value has been changed by data control
-        if (Array.isArray(item.answers))
-          answers = item.answers;
-        else if (item._answerValueSetKey) {
-          var vsAnswers = LForms._valueSetAnswerCache[item._answerValueSetKey];
-          if (vsAnswers)
-            answers = vsAnswers;
-        }
-
-        // reset the modified answers (for the display text)
-        item._modifiedAnswers = [];
-        item._hasOneAnswerLabel = false;
-        item._hasOneNumericAnswer = false;
-        for (var i = 0, iLen = answers.length; i < iLen; i++) {
-          var answerData = CommonUtils.deepCopy(answers[i]);
-
-          var displayText = answerData.text;
-          // label is a string
-          if (answerData.label) {
-            displayText = answerData.label + ". " + displayText;
-            item._hasOneAnswerLabel = true;
-          }
-          // check if one of the values is numeric
-          else {
-            if (!item._hasOneNumericAnswer && !isNaN(answerData.text)) {
-              item._hasOneNumericAnswer = true;
-            }
-          }
-
-          if (answerData.score !== undefined && answerData.score !== null) // score is an int
-            displayText = displayText + " - " + answerData.score;
-          // always uses _displayText in autocomplete-lhc for display
-          answerData._displayText = displayText;
-          item._modifiedAnswers.push(answerData);
-        }
-      }
-    }
-    // data type has been changed (by Data Control)
-    else if(forceReset) {
-      delete item._modifiedAnswers;
-    }
-  }
-
-
-  /**
-   * Reset item.value with modified answers if the item has a value (or an array of values)
+   * Reset item.value with answers if the item has a value (or an array of values)
    * @param item the item for which it has an item.value or item.defaultAnswers
    * @private
    */
-  _resetItemValueWithModifiedAnswers(item) {
+   _resetItemValueWithAnswers(item) {
 
-    if (item._modifiedAnswers) {
-      // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
-      var modifiedValue = null;
-      // item.value has the priority over item.defaultAnswer
-      // if this is a saved form with user data, default answers are not to be used.
-      var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
-      if (answerValue) {
-        modifiedValue = [];
-        // could be an array of multiple default values or a single value
-        var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
-            answerValue : [answerValue];
-        if (item.dataType !== 'CWE') {
-          modifiedValue = answerValueArray;
-        }
-        else {
-          // go through each value, there could be multiple not-on-list values
-          for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
-            // string value is allowed only if it is CWE
-            if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
-              modifiedValue.push({
-                "text": answerValueArray[i],
-                "_displayText": answerValueArray[i],
-                "_notOnList" : true});
-              // for radio button/checkbox display, where only one "Other" option is displayed
-              item._answerOther = answerValueArray[i];
-              item._otherValueChecked = true;
-            }
-            else {
-              modifiedValue.push(answerValueArray[i]);
-            }
+    // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
+    // convert it to the internal format of {text: 'string value', _notOnList: true}
+
+    var modifiedValue = null;
+    // item.value has the priority over item.defaultAnswer
+    // if this is a saved form with user data, default answers are not to be used.
+    // (item.value could be a coding that is no on the answer list, in R5)
+    var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
+    if (answerValue) {
+      modifiedValue = [];
+      // could be an array of multiple default values or a single value
+      var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
+          answerValue : [answerValue];
+      if (item.dataType !== 'CWE') {
+        modifiedValue = answerValueArray;
+      }
+      else {
+        // go through each value, there could be multiple not-on-list values
+        for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
+          // string value is allowed only if it is CWE
+          if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
+            modifiedValue.push({
+              "text": answerValueArray[i],
+              "_notOnList" : true});
+            // for radio button/checkbox display, where only one "Other" option is displayed
+            item._answerOther = answerValueArray[i];
+            item._otherValueChecked = true;
+          }
+          else {
+            modifiedValue.push(answerValueArray[i]);
           }
         }
       }
+    }
 
-      if (modifiedValue) {
-        var listVals = [];
-        for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
-          var userValue = modifiedValue[k];
-          var found = false;
-          // for search field, assume the user values are valid answers
-          if (item.externallyDefined) {
-            listVals = modifiedValue;
-          }
-          // for item has a answer list
-          else {
-            for (var j=0, jLen=item._modifiedAnswers.length; !found && j<jLen; ++j) {
-              if (CommonUtils.areTwoAnswersSame(userValue, item._modifiedAnswers[j], item)) {
-                listVals.push(item._modifiedAnswers[j]);
+    if (modifiedValue) {
+      var listVals = [];
+      for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
+        var userValue = modifiedValue[k];
+        var found = false;
+        // for search field, assume the user values are valid answers
+        if (item.externallyDefined) {
+          listVals = modifiedValue;
+        }
+        // for item has a answer list
+        else {
+          if (Array.isArray(item.answers)) {
+            for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
+              if (CommonUtils.areTwoAnswersSame(userValue, item.answers[j], item)) {
+                listVals.push(item.answers[j]);
                 found = true;
               }
             }
-            // a saved value or a default value is not on the list (default answer must be one of the answer items).
-            // non-matching value objects are kept, (data control or others might use data on these objects)
-            if (userValue && !found) {
-              if (userValue.text) userValue._displayText = userValue.text;
-              // need a new copy of the data to trigger a change in the data model in autocompleter component
-              // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
-              listVals.push(CommonUtils.deepCopy(userValue));
-            }
+          }
+          else {
+            found = false;
+          }
+          // a saved value or a default value is not on the list (default answer must be one of the answer items).
+          // non-matching value objects are kept, (data control or others might use data on these objects)
+          if (userValue && !found) {
+            // need a new copy of the data to trigger a change in the data model in autocompleter component
+            // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
+            var userValueCopy = CommonUtils.deepCopy(userValue);
+            userValueCopy._notOnList = true;  // _notOnList might have been set already
+            listVals.push(userValueCopy);
           }
         }
-        let newValue = item._multipleAnswers ? listVals : listVals[0];
-        if (!deepEqual(item.value, newValue)) {
-          item.value = newValue;
-        }
+      }
+      let newValue = item._multipleAnswers ? listVals : listVals[0];
+      if (!CommonUtils.deepEqual(item.value, newValue)) {
+        item.value = newValue;
       }
     }
   }
 
-
-  // /**
-  //  *  Uses the FHIR client to search the given ValueSet for the string
-  //  *  fieldVal.
-  //  * @param valueSetID the ID of the ValueSet to search (expand)
-  //  * @param fieldVal the value on which to filter the ValueSet
-  //  * @param count the maximum count to return
-  //  * @return a Promise that will resolve to the ValueSet expansion.
-  //  */
-  // _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
-  //   var fhirClient = LForms.fhirContext.getFHIRAPI();
-  //   return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
-  //     query: {_format: 'application/json', count: count,
-  //     filter: fieldVal}}).then(function(response) {
-  //       return response.data;
-  //     });
-  // }
 
   /**
    *  Uses the FHIR client to search the given ValueSet for the string
@@ -2982,18 +2861,16 @@ export default class LhcFormData {
 
   /**
    * Update an item's autocomplete options
+   * It handles 3 cases in order of priority: 1) item.externallyDefined, 2) item.answerValueSet,
+   * and 3) item.answers
    * @param item an item on the form
    * @param forceReset force to reset _modifiedAnswers, default is false
    * @private
    */
-  _updateAutocompOptions(item, forceReset=false) {
+  _updateAutocompOptions(item) {
     // for list only
     if (item.dataType === CONSTANTS.DATA_TYPE.CNE ||
       item.dataType === CONSTANTS.DATA_TYPE.CWE) {
-
-      if (!item._modifiedAnswers || forceReset) {
-        this._setModifiedAnswers(item, forceReset);
-      }
 
       var maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
       if (maxSelect !== '*' && typeof maxSelect === 'string') {
@@ -3006,6 +2883,7 @@ export default class LhcFormData {
         autoFill: false
       };
 
+      // externallyDefined
       var url = item.externallyDefined;
       if (url) {
         options.url = url;
@@ -3021,6 +2899,7 @@ export default class LhcFormData {
             h[i] = h[i].replace(/</g, '&lt;');
         }
       }
+      // answerValueSet
       else if (item.isSearchAutocomplete && item.answerValueSet) {
         var valueSetUri = item.answerValueSet;
         // See if there is a terminology server for expanding this valueset
@@ -3063,11 +2942,13 @@ export default class LhcFormData {
             'to have been called to provide access to a FHIR server.');
         }
       }
+      // answers
       else {
-        options.listItems = item._modifiedAnswers;
-        // add seq num when there is no labels and no numeric values as answer
-        options.addSeqNum = !item._hasOneAnswerLabel && !item._hasOneNumericAnswer;
-        options.display = "_displayText";
+        [options.listItems, options.addSeqNum] =
+          CommonUtils.getAnswerDisplayTextWithLabelAndScore(item.answers); //item._modifiedAnswers;
+        options.display = '_displayText';
+        // keep a copy of original answers for setting the model value
+        options.listItemsForModel = item.answers;
 
         // See if there are list headings, and set them up if so.
         // The only way to determine this is to check whether parentAnswerCode
@@ -3092,7 +2973,7 @@ export default class LhcFormData {
         }
       }
       // check if the new option has changed
-      if (!deepEqual(options, item._autocompOptions)) {
+      if (!CommonUtils.deepEqual(options, item._autocompOptions)) {
         item._autocompOptions = options;
       }
     } // end of list
@@ -3443,15 +3324,6 @@ export default class LhcFormData {
    */
   getSkipLogicClass(item) {
       return item._skipLogicStatus;
-  }
-
-
-  /**
-   * Check if the form is decided by skip logic as finished.
-   * @returns {boolean|*}
-   */
-  isFormDone() {
-    return this._formDone;
   }
 
 

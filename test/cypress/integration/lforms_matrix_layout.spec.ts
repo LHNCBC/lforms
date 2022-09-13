@@ -117,8 +117,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[0].value[1].code).to.equal('c2');
       expect(formData.itemsData[0].value[1].text).to.equal('Answer 2');
-      expect(formData.itemsData[0].value[2].code).to.be.undefined;
-      expect(formData.itemsData[0].value[2].text).to.be.undefined;
+      expect(formData.itemsData[0].value[2]).to.be.undefined;
       expect(formData.itemsData[1].value).to.be.undefined;
       expect(formData.itemsData[2].value).to.be.undefined;
       expect(formData.itemsData[3].value).to.be.undefined;
@@ -134,8 +133,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[0].value[1].code).to.equal('c2');
       expect(formData.itemsData[0].value[1].text).to.equal('Answer 2');
-      expect(formData.itemsData[0].value[2].code).to.be.undefined;
-      expect(formData.itemsData[0].value[2].text).to.equal('other values');
+      expect(formData.itemsData[0].value[2]).to.equal('other values');
       expect(formData.itemsData[1].value).to.be.undefined;
       expect(formData.itemsData[2].value).to.be.undefined;
       expect(formData.itemsData[3].value).to.be.undefined;
@@ -151,8 +149,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[0].value[1].code).to.equal('c2');
       expect(formData.itemsData[0].value[1].text).to.equal('Answer 2');
-      expect(formData.itemsData[0].value[2].code).to.be.undefined;
-      expect(formData.itemsData[0].value[2].text).to.equal('other values again');
+      expect(formData.itemsData[0].value[2]).to.equal('other values again');
       expect(formData.itemsData[1].value).to.be.undefined;
       expect(formData.itemsData[2].value).to.be.undefined;
       expect(formData.itemsData[3].value).to.be.undefined;
@@ -166,8 +163,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[0].value[1].code).to.equal('c2');
       expect(formData.itemsData[0].value[1].text).to.equal('Answer 2');
-      expect(formData.itemsData[0].value[2].code).to.be.undefined;
-      expect(formData.itemsData[0].value[2].text).to.equal('other values again');
+      expect(formData.itemsData[0].value[2]).to.equal('other values again');
       expect(formData.itemsData[1].value).to.be.undefined;
       expect(formData.itemsData[2].value).to.be.undefined;
       expect(formData.itemsData[3].value[0].code).to.equal('c1');
@@ -181,8 +177,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[0].value[1].code).to.equal('c2');
       expect(formData.itemsData[0].value[1].text).to.equal('Answer 2');
-      expect(formData.itemsData[0].value[2].code).to.be.undefined;
-      expect(formData.itemsData[0].value[2].text).to.equal('other values again');
+      expect(formData.itemsData[0].value[2]).to.equal('other values again');
       expect(formData.itemsData[1].value).to.be.undefined;
       expect(formData.itemsData[2].value).to.be.undefined;
       expect(formData.itemsData[3].value[0].code).to.equal('c1');
@@ -199,8 +194,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[0].value[1].code).to.equal('c2');
       expect(formData.itemsData[0].value[1].text).to.equal('Answer 2');
-      expect(formData.itemsData[0].value[2].code).to.be.undefined;
-      expect(formData.itemsData[0].value[2].text).to.equal('other values again');
+      expect(formData.itemsData[0].value[2]).to.equal('other values again');
       expect(formData.itemsData[1].value).to.be.undefined;
       expect(formData.itemsData[2].value).to.be.undefined;
       expect(formData.itemsData[3].value.length).to.equal(2);
@@ -218,8 +212,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[0].value[1].code).to.equal('c2');
       expect(formData.itemsData[0].value[1].text).to.equal('Answer 2');
-      expect(formData.itemsData[0].value[2].code).to.be.undefined;
-      expect(formData.itemsData[0].value[2].text).to.equal('other values again');
+      expect(formData.itemsData[0].value[2]).to.equal('other values again');
       expect(formData.itemsData[1].value).to.be.undefined;
       expect(formData.itemsData[2].value).to.be.undefined;
       expect(formData.itemsData[3].value.length).to.equal(3);
@@ -227,8 +220,7 @@ describe('Form level Matrix layout', () => {
       expect(formData.itemsData[3].value[0].text).to.equal('Answer 1');
       expect(formData.itemsData[3].value[1].code).to.equal('c4');
       expect(formData.itemsData[3].value[1].text).to.equal('Answer 4');
-      expect(formData.itemsData[3].value[2].code).to.be.undefined;
-      expect(formData.itemsData[3].value[2].text).to.equal('others');
+      expect(formData.itemsData[3].value[2]).to.equal('others');
     });
     // the value on the first question does not change
   });

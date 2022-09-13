@@ -24,7 +24,6 @@
 // call has finished.
 
 export let ExpressionProcessor;
-const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 import copy from "fast-copy";
 
 (function() {
@@ -193,7 +192,7 @@ import copy from "fast-copy";
     _updateItemVariable: function (item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
       item._fhirVariables[varName] = newVal;
-      if (!deepEqual(oldVal, newVal)) {
+      if (!this._deepEqual(oldVal, newVal)) {
         item._varChanged = true; // flag for re-running expressions.
       }
       return item._varChanged;
@@ -684,7 +683,7 @@ import copy from "fast-copy";
           item._userModifiedCalculatedValue = false;
         }
         this._lfData._updateAutocompOptions(item, true);
-        this._lfData._resetItemValueWithModifiedAnswers(item);
+        this._lfData._resetItemValueWithAnswers(item);
         
         item._answerListReset = true;
       }
@@ -713,7 +712,7 @@ import copy from "fast-copy";
         var [newVal, messages] = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
         var nonEmptyNewVal = newVal.filter(x=>!LForms.Util.isItemValueEmpty(x));
         const msgSource = 'FHIRPath value expression';
-        changed = !deepEqual(oldVal, nonEmptyNewVal);
+        changed = !this._deepEqual(oldVal, nonEmptyNewVal);
         // If this is the first run of the expressions, and there is
         // saved user data, then we check whether the calculated value matches
         // what the user entered (or erased) and if it doesn't, we halt further
@@ -774,7 +773,7 @@ import copy from "fast-copy";
         ans2.forEach(answer => { this._filterAnswerFields(answer) })
       }          
 
-      let rtn = deepEqual(ans1, ans2)
+      let rtn = this._deepEqual(ans1, ans2)
       return rtn;
     },
 
@@ -791,6 +790,17 @@ import copy from "fast-copy";
           }
         })  
       }
+    },
+
+    
+   /**
+    * deep comparison of two objects
+    * @param {*} obj1 an object
+    * @param {*} obj2 an object
+    * @returns 
+    */
+    _deepEqual(obj1, obj2) {
+      return JSON.stringify(obj1) === JSON.stringify(obj2)    
     }
   };
 

@@ -1,10 +1,10 @@
 <nz-checkbox-wrapper style="width: 100%;"  (nzOnChange)="onCheckboxModelChange($event)" *ngIf="item">
   <div nz-row [ngClass]="{'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl)}">
-    <div *ngFor="let answer of item._modifiedAnswers; index as i">
+    <div *ngFor="let answer of acOptions.listItems; index as i">
       <label 
         nz-checkbox 
         (click)="lhcDataService.setActiveRow(item)"
-        [nzValue]="answer" 
+        [nzValue]="item.answers[i]" 
         [(ngModel)]="checkboxModels[i]"
         [nzDisabled]="item._readOnly"
         [id]="item._elementId + answer.code">
