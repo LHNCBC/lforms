@@ -55,6 +55,7 @@
     "@lhncbc/ucum-lhc": "^4.1.4",
     "@types/jquery": "^3.5.5",
     "autocomplete-lhc": "^18.4.0",
+    "deep-equal": "^2.0.5",
     "fast-copy": "^2.1.1",
     "fhirpath": "^3.0.0",
     "jquery": "^3.5.1",

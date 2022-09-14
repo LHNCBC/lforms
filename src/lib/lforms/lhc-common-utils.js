@@ -3,6 +3,7 @@
  */
 import moment from "moment"
 import copy from "fast-copy";
+import deepEqual from "deep-equal";
 
 const CommonUtils = {
 
@@ -313,7 +314,7 @@ const CommonUtils = {
    * @returns 
    */
   deepEqual: function(obj1, obj2) {
-    return JSON.stringify(obj1) === JSON.stringify(obj2)
+    return deepEqual(obj1, obj2);
   },
 
 
@@ -332,9 +333,9 @@ const CommonUtils = {
   
 
   /**
-   * Changes the answer's display text when there is a lable and/or a score
+   * Changes the answer's display text when there is a label and/or a score
    * @param {*} answers the answers on an item
-   * @returns answers of with a _displayText
+   * @returns answers with a modified display text on each answer item
    */
   getAnswerDisplayTextWithLabelAndScore: function(answers) {
     // reset the modified answers (for the display text)
@@ -358,7 +359,7 @@ const CommonUtils = {
           }
         }
   
-        if (answerData.score !== undefined && answerData.score !== null) // score is an int
+        if (answerData.score !== undefined && answerData.score !== null)
           displayText = displayText + " - " + answerData.score;
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
