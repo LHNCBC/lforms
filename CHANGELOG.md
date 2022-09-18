@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.1.0] 2022-09-18
+### Added
+- Added support the entryFormat extension
+
 ## [32.0.2] 2022-09-07
 ### Fixed
 - Moved the URI for the custom FHIR extension lforms generates to store

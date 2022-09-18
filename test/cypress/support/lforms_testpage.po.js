@@ -404,7 +404,7 @@ export class TestPage {
    * Get the datetime string in DTM picker's default format for the current time with the given offset.
    * @param offsetMS the offset from the current time, in milliseconds, optional.
    *        Use a negative offset for past time, positive for future, zero or unspecified for "current"
-   * @return the datetime string in the DTM datetime picker's default format (MM/DD/YYYY HH:MM).
+   * @return the datetime string in the DTM datetime picker's default format (MM/DD/YYYY HH:MM:SS).
    */
   getCurrentDTMString(offsetMS) {
     offsetMS = offsetMS || 0;

@@ -4,7 +4,7 @@
     id="{{item._elementId}}"
     class="lhc-date-picker"
     nzFormat="MM/dd/yyyy"
-    nzPlaceHolder="MM/DD/YYYY"
+    nzPlaceHolder="{{item._toolTip}}"
     nzSize="small"
     (ngModelChange)="onModelChange($event)"
     [(ngModel)]="item.value"

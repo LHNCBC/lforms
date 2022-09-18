@@ -55,6 +55,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
   self.fhirExtUnitOpen = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen";
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
+  self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -82,7 +83,8 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
     self.fhirExtUrlDataControl,
-    self.fhirExtChoiceOrientation
+    self.fhirExtChoiceOrientation,
+    self.fhirExtEntryFormat
   ]);
 
   // Simple functions for mapping extensions to properties in the internal structure.
@@ -121,6 +123,11 @@ function addCommonSDCImportFns(ns) {
     }
   }
 
+  self.extensionHandlers[self.fhirExtEntryFormat] = function (extension, item) {
+    if (extension.valueString) {
+      item._entryFormat = extension.valueString;
+    }    
+  }
 
   self.formLevelFields = [
     // Resource
