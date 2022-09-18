@@ -2719,7 +2719,7 @@ export default class LhcFormData {
    * @param item the item for which it has an item.value or item.defaultAnswers
    * @private
    */
-   _resetItemValueWithAnswers(item) {
+  _resetItemValueWithAnswers(item) {
 
     // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
     // convert it to the internal format of {text: 'string value', _notOnList: true}

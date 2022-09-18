@@ -335,7 +335,8 @@ const CommonUtils = {
   /**
    * Changes the answer's display text when there is a label and/or a score
    * @param {*} answers the answers on an item
-   * @returns answers with a modified display text on each answer item
+   * @returns answers with a modified display text on each answer item, and
+   *          a flag whether to add sequence number for the each answer's displayed text.
    */
   getAnswerDisplayTextWithLabelAndScore: function(answers) {
     // reset the modified answers (for the display text)
