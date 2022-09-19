@@ -7,7 +7,7 @@ describe('entryFormat extension', () => {
       util.addFormToPage('questionnaire-with-entryFormat.json', null, {fhirVersion: "R4"});
     });
 
-    it('should display the tooltips imported from the entryFormat extensions', () => {
+    it('should display the placeholders imported from the entryFormat extensions', () => {
       cy.byId('/type-integer/1').invoke('attr', 'placeholder').should('eq','integer: a entry format from questionnaire');
       cy.byId('/type-decimal/1').invoke('attr', 'placeholder').should('eq','decimal: a entry format from questionnaire');
       cy.byId('/type-string/1').invoke('attr', 'placeholder').should('eq','string: a entry format from questionnaire');

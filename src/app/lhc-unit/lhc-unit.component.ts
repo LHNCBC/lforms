@@ -52,7 +52,7 @@ export class LhcUnitComponent implements OnChanges {
 
       this.options.elementId = "unit_" + item._elementId
       this.options.acOptions = item._unitAutocompOptions;
-      this.options.tooltip = item._toolTip;
+      this.options.placeholder = item._placeholder;
       this.options.modelForOffListItem = InternalUtil.modelForOffListUnit;
     }
   }

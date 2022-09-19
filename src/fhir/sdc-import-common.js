@@ -83,8 +83,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
     self.fhirExtUrlDataControl,
-    self.fhirExtChoiceOrientation,
-    self.fhirExtEntryFormat
+    self.fhirExtChoiceOrientation
   ]);
 
   // Simple functions for mapping extensions to properties in the internal structure.
@@ -126,6 +125,7 @@ function addCommonSDCImportFns(ns) {
   self.extensionHandlers[self.fhirExtEntryFormat] = function (extension, item) {
     if (extension.valueString) {
       item._entryFormat = extension.valueString;
+      return true; // add extension to LForms item
     }    
   }
 

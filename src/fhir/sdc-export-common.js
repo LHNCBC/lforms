@@ -136,15 +136,6 @@ function addCommonSDCExportFns(ns) {
       });
     }
 
-    // entryFormat is imported from a Questionnnaire only
-    // THe default value of LHC-Forms internal item._tooltip is not exported
-    if(item._entryFormat) {
-      targetItem.extension.push({
-        url: "http://hl7.org/fhir/StructureDefinition/entryFormat",
-        valueString: item._entryFormat
-      });
-    }
-
     // linkId
     targetItem.linkId = item.linkId;
 

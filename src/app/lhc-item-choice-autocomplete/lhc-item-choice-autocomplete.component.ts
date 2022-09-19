@@ -28,7 +28,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
         this.options = {
           elementId: this.item._elementId,
           acOptions: this.item._autocompOptions,
-          toolTip: this.item._toolTip,
+          placeholder: this.item._placeholder,
           readOnly: this.item._readOnly
         }
       }  

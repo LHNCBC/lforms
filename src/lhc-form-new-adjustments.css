@@ -52,7 +52,7 @@ lhc-item-time .ant-picker-input>input[type="text"] {
   font-size: 90%;
   font-weight: 700;
 }
-/* html5 tooltip style */
+/* html5 placeholder style */
 lhc-item-date .ant-picker-input>input::placeholder,
 lhc-item-datetime .ant-picker-input>input::placeholder,
 lhc-item-time .ant-picker-input>input::placeholder {
