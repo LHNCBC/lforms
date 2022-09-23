@@ -1363,8 +1363,8 @@ function addCommonSDCImportFns(ns) {
    * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
    * @param qrItemValue a value of item in QuestionnaireResponse
    * @param lfItem an item in lforms
-   * @param notOnList a flag indicates if the item's value is one of the answer in the answer list.
-   * default is false.
+   * @param notOnList a flag indicates if the item's value is known to be not any of the answers 
+   * in the answer list. If false or undefined, a check of the answers will be made.
    * @returns {{code: *, text: *}}
    * @private
    */

@@ -2899,7 +2899,7 @@ export default class LhcFormData {
             h[i] = h[i].replace(/</g, '&lt;');
         }
       }
-      // answerValueSet
+      // isSearchAutocomplete && answerValueSet
       else if (item.isSearchAutocomplete && item.answerValueSet) {
         var valueSetUri = item.answerValueSet;
         // See if there is a terminology server for expanding this valueset
@@ -2947,7 +2947,7 @@ export default class LhcFormData {
         [options.listItems, options.addSeqNum] =
           CommonUtils.getAnswerDisplayTextWithLabelAndScore(item.answers); //item._modifiedAnswers;
         options.display = '_displayText';
-        // keep a copy of original answers for setting the model value
+        // use the original answers as the models (used in the autocomplete component)
         options.listItemsForModel = item.answers;
 
         // See if there are list headings, and set them up if so.
