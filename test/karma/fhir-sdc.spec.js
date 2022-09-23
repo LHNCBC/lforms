@@ -59,6 +59,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         describe('entryFormat extension', function() {
           let fhirQ = {
+            "resouceType": "Questionnaire",
             "item": [{
               "extension": [
                 {
@@ -73,11 +74,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           };
 
           it('should handle the import and export of the entryFormat entension', function() {
-            let lfItem = fhir.SDC._processQuestionnaireItem(fhirQ.item[0], fhirQ);
-            assert.equal(lfItem._entryFormat, 'string: a entry format from questionnaire');
+            let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            assert.equal(formData.items[0]._entryFormat, 'string: a entry format from questionnaire');
 
-            let out = fhir.SDC._processItem(LForms.Util.initializeCodes(lfItem), {});
-            assert.deepEqual(out.extension, fhirQ.item[0].extension);
+            let out = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, formData);
+            assert.deepEqual(out.item[0].extension, fhirQ.item[0].extension);
           });
         });
 
