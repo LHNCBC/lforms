@@ -2715,7 +2715,9 @@ export default class LhcFormData {
 
 
   /**
-   * Reset item.value with answers if the item has a value (or an array of values)
+   * Reset item.value to an answer object (or multiple answers) in item.answers, or 
+   * to an object where _notOnList is set to true.
+   * 
    * @param item the item for which it has an item.value or item.defaultAnswers
    * @private
    */
@@ -2864,7 +2866,6 @@ export default class LhcFormData {
    * It handles 3 cases in order of priority: 1) item.externallyDefined, 2) item.answerValueSet,
    * and 3) item.answers
    * @param item an item on the form
-   * @param forceReset force to reset _modifiedAnswers, default is false
    * @private
    */
   _updateAutocompOptions(item) {
