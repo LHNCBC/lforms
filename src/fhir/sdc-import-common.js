@@ -434,7 +434,7 @@ function addCommonSDCImportFns(ns) {
             }
           }
           if (!answer && lfDataType === 'CWE') { // no match in the list.
-            answer = self._processCWECNEValueInQR({valueCoding: fhirVal}, lfItem);
+            answer = self._processCWECNEValueInQR({valueCoding: fhirVal}, lfItem, true);
           }
         }
       }
@@ -1363,10 +1363,12 @@ function addCommonSDCImportFns(ns) {
    * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
    * @param qrItemValue a value of item in QuestionnaireResponse
    * @param lfItem an item in lforms
+   * @param notOnList a flag indicates if the item's value is one of the answer in the answer list.
+   * default is false.
    * @returns {{code: *, text: *}}
    * @private
    */
-  self._processCWECNEValueInQR = function(qrItemValue, lfItem) {
+  self._processCWECNEValueInQR = function(qrItemValue, lfItem, notOnList) {
     var retValue;
     // a valueCoding, which is one of the answers
     if (qrItemValue.valueCoding) {
@@ -1379,9 +1381,13 @@ function addCommonSDCImportFns(ns) {
       if (c.system)
         retValue.system = c.sysetm;
 
+      
+      if (notOnList) {
+        retValue._notOnList = true;
+      }
       // compare retValue to the item.answers
       // if not same, add "_notOnList: true" to retValue
-      if (lfItem.dataType === 'CWE' && lfItem.answers) {
+      else if (lfItem.dataType === 'CWE' && lfItem.answers) {
         var found = false;
         for(var i=0, len=lfItem.answers.length; i<len; i++) {
           if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {
