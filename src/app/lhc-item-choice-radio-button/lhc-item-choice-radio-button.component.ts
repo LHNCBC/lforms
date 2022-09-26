@@ -29,7 +29,7 @@ export class LhcItemChoiceRadioButtonComponent implements OnChanges {
   setInitialValue(): void {
     // there is a saved value and there is an answer list
     if (this.item && this.item.value &&
-      this.item._modifiedAnswers && Array.isArray(this.item._modifiedAnswers)) {
+      this.item.answers && Array.isArray(this.item.answers)) {
 
       this.radioValue = this.item.value;
       // saved value is not on the answer list
@@ -39,11 +39,11 @@ export class LhcItemChoiceRadioButtonComponent implements OnChanges {
       }
       // saved value is on the answer list
       else {
-        let iLen = this.item._modifiedAnswers.length;
+        let iLen = this.item.answers.length;
         this.radioModels = new Array(iLen)
 
         for(let i=0; i < iLen; i++ ) {
-          let answer = this.item._modifiedAnswers[i];
+          let answer = this.item.answers[i];
           if (this.commonUtils.areTwoAnswersSame(this.item.value, answer, this.item)) {
             this.radioModels[i] = true;
             break;

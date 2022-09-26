@@ -5,6 +5,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box.component';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
+
 describe('LhcItemChoiceCheckBoxComponent', () => {
   let component: LhcItemChoiceCheckBoxComponent;
   let fixture: ComponentFixture<LhcItemChoiceCheckBoxComponent>;
@@ -47,33 +48,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
         "text": "Extra long answer text 12345 Answer X2"
       }
     ],
-    "_modifiedAnswers": [
-      {
-        "code": "c1",
-        "text": "Answer X",
-        "_displayText": "Answer X"
-      },
-      {
-        "code": "c2",
-        "text": "Answer Y",
-        "_displayText": "Answer Y"
-      },
-      {
-        "code": "c3",
-        "text": "Answer Z",
-        "_displayText": "Answer Z"
-      },
-      {
-        "code": "c4",
-        "text": "Extra long answer text 1234 Answer X1",
-        "_displayText": "Extra long answer text 1234 Answer X1"
-      },
-      {
-        "code": "c5",
-        "text": "Extra long answer text 12345 Answer X2",
-        "_displayText": "Extra long answer text 12345 Answer X2"
-      }
-    ],
+
     "linkId": "/q1a"
   };
 
@@ -114,7 +89,11 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
         "text": "Extra long answer text 12345 Answer X2"
       }
     ],
-    "_modifiedAnswers": [
+    "linkId": "/q1a"
+  };
+
+  let acOptions = {
+    "listItems": [
       {
         "code": "c1",
         "text": "Answer X",
@@ -140,10 +119,8 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
         "text": "Extra long answer text 12345 Answer X2",
         "_displayText": "Extra long answer text 12345 Answer X2"
       }
-    ],
-    "linkId": "/q1a"
+    ]
   };
-
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -168,6 +145,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   it('should render a list of checkboxes', () => {
     component.item = itemCheckboxCNE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     const checkboxes = element.querySelectorAll('input[type="checkbox"]')
@@ -182,6 +160,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   it('should render a list of checkboxes, with other', () => {
     component.item = itemCheckboxCWE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     const checkboxes = element.querySelectorAll('input[type="checkbox"]')
@@ -199,14 +178,14 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   it('should set item.value', () => {
     component.item = itemCheckboxCNE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     let radio:HTMLElement = element.querySelector('#' + itemCheckboxCNE._elementId + itemCheckboxCNE.answers[0].code)
     radio.click();
     expect(component.item.value).toEqual([{
       "code": "c1",
-      "text": "Answer X",
-      "_displayText": "Answer X"
+      "text": "Answer X"
     }])
 
     //item.value should change, when a different checkbox is clicked
@@ -214,26 +193,24 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     radio.click();
     expect(component.item.value).toEqual([{
       "code": "c1",
-      "text": "Answer X",
-      "_displayText": "Answer X"
+      "text": "Answer X"
     },{
       "code": "c2",
-      "text": "Answer Y",
-      "_displayText": "Answer Y"
+      "text": "Answer Y"
     }])
 
   })
 
   it('should set item.value, when the "other" checkbox is selected', () => {
     component.item = itemCheckboxCWE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     let radio:HTMLElement = element.querySelector('#' + itemCheckboxCWE._elementId + itemCheckboxCWE.answers[2].code)
     radio.click();
     expect(component.item.value).toEqual([{
       "code": "c3",
-      "text": "Answer Z",
-      "_displayText": "Answer Z"
+      "text": "Answer Z"
     }])
 
     //item.value should change, when the "other" checkbox is clicked
@@ -242,8 +219,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     fixture.detectChanges();
     expect(component.item.value).toEqual([{
       "code": "c3",
-      "text": "Answer Z",
-      "_displayText": "Answer Z"
+      "text": "Answer Z"
     },{
       "text": null,
       "_notOnList": true
@@ -260,7 +236,6 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
       expect(component.item.value).toEqual([{
         "code": "c3",
         "text": "Answer Z",
-        "_displayText": "Answer Z"
       },{
         "text": "some value",
         "_notOnList": true
@@ -272,6 +247,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   it('should have lhc-vertical class with column 1', () => {
     component.item = itemCheckboxCNE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
     const containerDiv = element.querySelector('div[nz-row]');
     expect(containerDiv.classList).toContain('lhc-vertical');
@@ -279,6 +255,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   it('should not have lhc-vertical class with column 0', () => {
     component.item = itemCheckboxCWE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
     const containerDiv = element.querySelector('div[nz-row]');
     expect(containerDiv.classList).not.toContain('lhc-vertical');

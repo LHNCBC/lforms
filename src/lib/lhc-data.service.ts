@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ScreenReaderLog } from './screen-reader-log';
-import deepEqual from "fast-deep-equal";
+import CommonUtils from "./lforms/lhc-common-utils.js";
 
 declare var LForms: any;
 // @Injectable({
@@ -192,15 +192,6 @@ export class LhcDataService {
       ret = position + "-" + format;
     }
     return ret;
-  }
-
-
-  /**
-   * Check if the form is finished
-   * @returns {boolean|*|*}
-   */
-  isFormDone() {
-    return this.lhcFormData.isFormDone();
   }
 
 
@@ -711,7 +702,7 @@ export class LhcDataService {
    */
   onItemValueChange(item, currentValue, previousValue, skipComparison=false) {
     if (this.lhcFormData && 
-      (skipComparison || !skipComparison && !deepEqual(currentValue, previousValue))) {
+      (skipComparison || !skipComparison && !CommonUtils.deepEqual(currentValue, previousValue))) {
       
       // run lforms internal changes
       this.lhcFormData.updateOnSourceItemChange(item)

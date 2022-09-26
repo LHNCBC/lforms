@@ -66,22 +66,19 @@ describe('display controls demo', () => {
     cy.byId(item2Other).find('input').click();
     cy.window().then((win) => {
       const formData = win.LForms.Util.getFormData();
-      expect(formData.items[2].value.code == null).to.be.true; // allow undefined (Chrome)
-      expect(formData.items[2].value.text == null).to.be.true; // allow undefined (Chrome)
+      expect(formData.items[2].value == null).to.be.true; // allow undefined (Chrome)
     });
 
     cy.byId(item2OtherValue).type('other values');
     cy.window().then((win) => {
       const formData = win.LForms.Util.getFormData();
-      expect(formData.items[2].value.code).to.be.undefined;
-      expect(formData.items[2].value.text).to.equal('other values');
+      expect(formData.items[2].value).to.equal('other values');
     });
 
     cy.byId(item2OtherValue).clear().type('other values again');
     cy.window().then((win) => {
       const formData = win.LForms.Util.getFormData();
-      expect(formData.items[2].value.code).to.be.undefined;
-      expect(formData.items[2].value.text).to.equal('other values again');
+      expect(formData.items[2].value).to.equal('other values again');
 
       // third answer list
       expect(formData.items[3].value).to.deep.equal([{code: 'c2', text: 'Answer Y'},
@@ -115,8 +112,7 @@ describe('display controls demo', () => {
     cy.window().then((win) => {
       const formData = win.LForms.Util.getFormData();
       expect(formData.items[4].value[0]).to.deep.equal({code: 'c1', text: 'Answer X'});
-      expect(formData.items[4].value[1].code == null).to.be.true; // allow undefined
-      expect(formData.items[4].value[1].text == null).to.be.true; // allow undefined
+      expect(formData.items[4].value[1] == null).to.be.true; // allow undefined
     });
 
     cy.byId(item4OtherValue).type('other values');
@@ -125,8 +121,7 @@ describe('display controls demo', () => {
       expect(formData.items[4].value.length).to.equal(2);
       expect(formData.items[4].value[0].code).to.equal('c1');
       expect(formData.items[4].value[0].text).to.equal('Answer X');
-      expect(formData.items[4].value[1].code).to.be.undefined;
-      expect(formData.items[4].value[1].text).to.equal('other values');
+      expect(formData.items[4].value[1]).to.equal('other values');
     });
 
     // change the other value alone will update the data model when the checkbox is checked.
@@ -136,15 +131,13 @@ describe('display controls demo', () => {
       expect(formData.items[4].value.length).to.equal(2);
       expect(formData.items[4].value[0].code).to.equal('c1');
       expect(formData.items[4].value[0].text).to.equal('Answer X');
-      expect(formData.items[4].value[1].code).to.be.undefined;
-      expect(formData.items[4].value[1].text).to.equal('other values again');
+      expect(formData.items[4].value[1]).to.equal('other values again');
 
       // other model values are not changed
       expect(formData.items[1].value.code).to.equal('c3');
       expect(formData.items[1].value.text).to.equal('Extra long answer text 123456789 Answer Z');
 
-      expect(formData.items[2].value.code).to.be.undefined;
-      expect(formData.items[2].value.text).to.equal('other values again');
+      expect(formData.items[2].value).to.equal('other values again');
 
       expect(formData.items[3].value).to.deep.equal([{code: 'c1', text: 'Answer X'},
         {code: 'c2', text: 'Answer Y'}]);

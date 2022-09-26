@@ -417,7 +417,7 @@ function addCommonSDCImportFns(ns) {
           // Pick a Coding that is appropriate for this list item.
           // Note:  It could be an off list Coding.
           if (lfItem.answers) {
-            var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
+            var itemAnswers = lfItem.answers;
             for (var k=0, kLen=codings.length; k<kLen && !answer; ++k) {
               var coding = codings[k];
               for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
@@ -434,9 +434,7 @@ function addCommonSDCImportFns(ns) {
             }
           }
           if (!answer && lfDataType === 'CWE') { // no match in the list.
-            answer = self._processCWECNEValueInQR({valueCoding: fhirVal});
-            answer._notOnList = true;
-            answer._displayText = answer.text;
+            answer = self._processCWECNEValueInQR({valueCoding: fhirVal}, lfItem, true);
           }
         }
       }
@@ -1036,7 +1034,7 @@ function addCommonSDCImportFns(ns) {
           if (ns._answerRepeats(item)) {
             var value = [];
             for (var j=0,jLen=answer.length; j<jLen; j++) {
-              var val = ns._processCWECNEValueInQR(answer[j]);
+              var val = ns._processCWECNEValueInQR(answer[j], item);
               if (val) {
                 value.push(val);
               }
@@ -1044,7 +1042,7 @@ function addCommonSDCImportFns(ns) {
             item.value = value;
           }
           else {
-            var val = ns._processCWECNEValueInQR(qrValue);
+            var val = ns._processCWECNEValueInQR(qrValue, item);
             if (val) {
               item.value = val;
             }
@@ -1313,7 +1311,7 @@ function addCommonSDCImportFns(ns) {
         let answers = LForms._valueSetAnswerCache[vsKey];
         if (answers) {
           item.answers = answers;
-          lfData._updateAutocompOptions(item, true);
+          lfData._updateAutocompOptions(item);
         }
         else { // if not already loaded
           if (expURL) {
@@ -1331,7 +1329,7 @@ function addCommonSDCImportFns(ns) {
                 if (answers) {
                   LForms._valueSetAnswerCache[expURL] = answers;
                   item.answers = answers;
-                  lfData._updateAutocompOptions(item, true);
+                  lfData._updateAutocompOptions(item);
                 }
               }
             }).catch(function(error) {
@@ -1348,7 +1346,7 @@ function addCommonSDCImportFns(ns) {
               if (answers) {
                 LForms._valueSetAnswerCache[vsKey] = answers;
                 item.answers = answers;
-                lfData._updateAutocompOptions(item, true);
+                lfData._updateAutocompOptions(item);
               }
             }).catch(function(error) {
               throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
@@ -1364,10 +1362,13 @@ function addCommonSDCImportFns(ns) {
   /**
    * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
    * @param qrItemValue a value of item in QuestionnaireResponse
+   * @param lfItem an item in lforms
+   * @param notOnList a flag indicates if the item's value is known to be not any of the answers 
+   * in the answer list. If false or undefined, a check of the answers will be made.
    * @returns {{code: *, text: *}}
    * @private
    */
-  self._processCWECNEValueInQR = function(qrItemValue) {
+  self._processCWECNEValueInQR = function(qrItemValue, lfItem, notOnList) {
     var retValue;
     // a valueCoding, which is one of the answers
     if (qrItemValue.valueCoding) {
@@ -1379,6 +1380,25 @@ function addCommonSDCImportFns(ns) {
         retValue.text = c.display;
       if (c.system)
         retValue.system = c.sysetm;
+
+      
+      if (notOnList) {
+        retValue._notOnList = true;
+      }
+      // compare retValue to the item.answers
+      // if not same, add "_notOnList: true" to retValue
+      else if (lfItem.dataType === 'CWE' && lfItem.answers) {
+        var found = false;
+        for(var i=0, len=lfItem.answers.length; i<len; i++) {
+          if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          retValue._notOnList = true;
+        }  
+      }
     }
     // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {

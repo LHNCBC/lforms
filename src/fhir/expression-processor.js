@@ -24,8 +24,8 @@
 // call has finished.
 
 export let ExpressionProcessor;
-const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
 import copy from "fast-copy";
+import deepEqual from "deep-equal";
 
 (function() {
   "use strict";
@@ -684,7 +684,7 @@ import copy from "fast-copy";
           item._userModifiedCalculatedValue = false;
         }
         this._lfData._updateAutocompOptions(item, true);
-        this._lfData._resetItemValueWithModifiedAnswers(item);
+        this._lfData._resetItemValueWithAnswers(item);
         
         item._answerListReset = true;
       }
@@ -792,6 +792,7 @@ import copy from "fast-copy";
         })  
       }
     }
+
   };
 
 })();
