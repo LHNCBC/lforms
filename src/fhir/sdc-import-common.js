@@ -55,6 +55,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
   self.fhirExtUnitOpen = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen";
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
+  self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -121,6 +122,12 @@ function addCommonSDCImportFns(ns) {
     }
   }
 
+  self.extensionHandlers[self.fhirExtEntryFormat] = function (extension, item) {
+    if (extension.valueString) {
+      item._entryFormat = extension.valueString;
+      return true; // add extension to LForms item
+    }    
+  }
 
   self.formLevelFields = [
     // Resource

@@ -6,7 +6,7 @@
       <input [name]="item._text" type="file" class="lhc-attachment-upload"
              #fileInput
              (change)="onChange($event)"
-             placeholder="{{item._toolTip}}" [disabled]="item._readOnly"
+             placeholder="{{item._placeholder}}" [disabled]="item._readOnly"
              id="{{'file-'+item._elementId}}" (focus)="lhcDataService.setActiveRow(item)"
              (blur)="lhcDataService.activeRowOnBlur(item)" />
       <button type="button" class="lhc-attachment-button toggle-attachment-fields" title="{{item._useURL ?

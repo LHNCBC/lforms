@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.1.0] 2022-09-18
+### Added
+- Added support the entryFormat extension
+
 ## [32.0.3] 2022-09-12
 ### Changed
 - Removed item._modifiedAnswers and use item.answers directly.

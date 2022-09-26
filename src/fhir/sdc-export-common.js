@@ -136,7 +136,6 @@ function addCommonSDCExportFns(ns) {
       });
     }
 
-
     // linkId
     targetItem.linkId = item.linkId;
 

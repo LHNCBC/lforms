@@ -1,0 +1,381 @@
+{
+  "name": "Questionnaire with entryFormat",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ]
+  },
+  "item": [
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "boolean: a entry format from questionnaire"
+        }
+      ],
+      "type": "boolean",
+      "code": [
+        {
+          "code": "type-boolean",
+          "display": "boolean"
+        }
+      ],
+      "linkId": "/type-boolean",
+      "text": "boolean"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "integer: a entry format from questionnaire"
+        }
+      ],
+      "type": "integer",
+      "code": [
+        {
+          "code": "type-integer",
+          "display": "integer"
+        }
+      ],
+      "linkId": "/type-integer",
+      "text": "integer"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "decimal: a entry format from questionnaire"
+        }
+      ],
+      "type": "decimal",
+      "code": [
+        {
+          "code": "type-decimal",
+          "display": "decimal"
+        }
+      ],
+      "linkId": "/type-decimal",
+      "text": "decimal"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "string: a entry format from questionnaire"
+        }
+      ],
+      "type": "string",
+      "code": [
+        {
+          "code": "type-string",
+          "display": "string"
+        }
+      ],
+      "linkId": "/type-string",
+      "text": "string"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "date: a entry format from questionnaire"
+        }
+      ],
+      "type": "date",
+      "code": [
+        {
+          "code": "type-date",
+          "display": "date"
+        }
+      ],
+      "linkId": "/type-date",
+      "text": "date"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "dateTime: a entry format from questionnaire"
+        }
+      ],
+      "type": "dateTime",
+      "code": [
+        {
+          "code": "type-dateTime",
+          "display": "dateTime"
+        }
+      ],
+      "linkId": "/type-dateTime",
+      "text": "dateTime"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "time: a entry format from questionnaire"
+        }
+      ],
+      "type": "time",
+      "code": [
+        {
+          "code": "type-time",
+          "display": "time"
+        }
+      ],
+      "linkId": "/type-time",
+      "text": "time"
+    },
+    {
+      "type": "choice",
+      "code": [
+        {
+          "code": "type-choice",
+          "display": "choice"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "choice: a entry format from questionnaire"
+        }
+      ],
+      "linkId": "/type-choice",
+      "text": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c4",
+            "display": "Other:"
+          }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "code": [
+        {
+          "code": "type-open-choice",
+          "display": "open-choice"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "open-choice: a entry format from questionnaire"
+        }
+      ],
+      "linkId": "/type-open-choice",
+      "text": "open-choice",
+      "answerOption": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+              "valueString": "1"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 1
+            }
+          ],
+          "valueCoding": {
+            "code": "c01",
+            "display": "With a label 1"
+          }
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+              "valueString": "2"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 2
+            }
+          ],
+          "valueCoding": {
+            "code": "c02",
+            "display": "With a label 2"
+          }
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+              "valueString": "3"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 3
+            }
+          ],
+          "valueCoding": {
+            "code": "c03",
+            "display": "With a label 3"
+          }
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "code": [
+        {
+          "code": "type-choice-m",
+          "display": "choice, multiple selection"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "choice repeats: a entry format from questionnaire"
+        }
+      ],
+      "repeats": true,
+      "linkId": "/type-choice-m",
+      "text": "choice, multiple selection",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c4",
+            "display": "Answer 4"
+          }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "code": [
+        {
+          "code": "type-open-choice-m",
+          "display": "open-choice, multiple selection"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+          "valueString": "open-choice repeats: a entry format from questionnaire"
+        }
+      ],
+      "repeats": true,
+      "linkId": "/type-open-choice-m",
+      "text": "open-choice, multiple selection",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c4",
+            "display": "Answer 4"
+          }
+        }
+      ]
+    }
+  ]
+}

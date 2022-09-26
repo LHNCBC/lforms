@@ -5,7 +5,7 @@
     class="lhc-datetime-picker"
     nzShowTime
     nzFormat="MM/dd/yyyy HH:mm:ss"
-    nzPlaceHolder="MM/DD/YYYY HH:MM:SS"
+    nzPlaceHolder="{{item._placeholder}}"
     nzSize="small"
     (ngModelChange)="onModelChange($event)"
     [(ngModel)]="item.value"

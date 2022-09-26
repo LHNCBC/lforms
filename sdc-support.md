@@ -27,6 +27,7 @@ fields.
 * required
 * repeats
 * readOnly
+* entryFormat
 
 ### Form Behavior
 See https://build.fhir.org/ig/HL7/sdc/behavior.html for descriptions of these
@@ -85,7 +86,6 @@ fields.
 * supportLink
 * choiceColumn
 * valueset-label
-* entryFormat
 * shortText
 * rendering-styleSensitive
 * optionalDisplay

@@ -57,6 +57,31 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           assert.equal(lfItem.unit.system, quantity.system);
         });
 
+        describe('entryFormat extension', function() {
+          let fhirQ = {
+            "resouceType": "Questionnaire",
+            "item": [{
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/entryFormat",
+                  "valueString": "string: a entry format from questionnaire"
+                }
+              ],
+              "type": "string",
+              "linkId": "/type-string",
+              "text": "string"
+            }]
+          };
+
+          it('should handle the import and export of the entryFormat entension', function() {
+            let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            assert.equal(formData.items[0]._entryFormat, 'string: a entry format from questionnaire');
+
+            let out = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, formData);
+            assert.deepEqual(out.item[0].extension, fhirQ.item[0].extension);
+          });
+        });
+
         describe('_processFHIRValues', function() {
           describe('list fields with coding values', function () {
             let answerValCases = [{

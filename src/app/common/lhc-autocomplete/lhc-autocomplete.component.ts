@@ -15,7 +15,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   // autocomplete-lhc options:
   //   .elementId
   //   .readOnly
-  //   .toolTip
+  //   .placeholder
   //   .acOptions
   @Input() options: any;
   @Input() item:any;

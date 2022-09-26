@@ -1046,52 +1046,20 @@ export default class LhcFormData {
       // set the first sibling status
       item._firstSibling = i === 0;
 
-      // set up tooltip and process user data if there's any user data.
-      if (!item._readOnly) {
-        switch (item.dataType) {
-          case CONSTANTS.DATA_TYPE.DT:
-            item._toolTip = "MM/DD/YYYY";
-            // process user data
-            if (item.value) {
-              item.value = CommonUtils.stringToDate(item.value);
-            }
-            break;
-          case CONSTANTS.DATA_TYPE.DTM:
-            item._toolTip = "MM/DD/YYYY HH:MM";
-            // process user data
-            if (item.value) {
-              item.value = CommonUtils.stringToDate(item.value);
-            }
-            break;
-          case CONSTANTS.DATA_TYPE.CNE:
-            if (item.externallyDefined)
-              item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";
-            else
-              item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
-            break;
-          case CONSTANTS.DATA_TYPE.CWE:
-            if (item.externallyDefined)
-              item._toolTip = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
-            else
-              item._toolTip = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
-            break;
-          case "SECTION":
-          case "TITLE":
-          case "":
-            item._toolTip = "";
-            break;
-          case CONSTANTS.DATA_TYPE.INT:
-          case CONSTANTS.DATA_TYPE.REAL:
-          case CONSTANTS.DATA_TYPE.QTY:
-            item._toolTip = "Type a number";
-            // internally all numeric values are of string type
-            if (typeof item.value === "number")
-              item.value = item.value + "";
-            break;
-          default: {
-            item._toolTip = "Type a value";
-          }
-        }
+      // set up placeholders
+      this._setupInFieldPlaceholders(item);
+
+      // convert date string to Date object
+      if (item.value && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
+          item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
+        item.value = CommonUtils.stringToDate(item.value);
+      }
+      // internally all numeric values are of string type
+      if ((item.dataType === CONSTANTS.DATA_TYPE.INT || 
+        item.dataType === CONSTANTS.DATA_TYPE.REAL ||
+        item.dataType === CONSTANTS.DATA_TYPE.QTY) &&
+        typeof item.value === "number") {
+          item.value = item.value + "";
       }
 
       // set up validation flag
@@ -1133,6 +1101,61 @@ export default class LhcFormData {
       // keep a reference to the previous item for checking repeating items.
       prevSibling = item;
 
+    }
+  }
+
+
+  /**
+   * Set up tool tip for an item. 
+   * Tool tips are usually displayed as in-field hints.
+   * @param item an item
+   */
+  _setupInFieldPlaceholders(item) {
+    // set up placeholder and process user data if there's any user data.
+    if (!item._readOnly) {
+      // use entryFormat if there is one imported from the Questionnaire resource
+      if (item._entryFormat) {
+        item._placeholder = item._entryFormat;
+      }
+      // otherwise set up a default placeholder
+      else {
+        switch (item.dataType) {
+          case CONSTANTS.DATA_TYPE.DT:
+            item._placeholder = "MM/DD/YYYY";
+            break;
+          case CONSTANTS.DATA_TYPE.DTM:
+            item._placeholder = "MM/DD/YYYY HH:MM:SS";
+            break;
+          case CONSTANTS.DATA_TYPE.TM:
+            item._placeholder = "HH:MM:SS";
+            break;    
+          case CONSTANTS.DATA_TYPE.CNE:
+            if (item.externallyDefined)
+              item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
+            else
+              item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";
+            break;
+          case CONSTANTS.DATA_TYPE.CWE:
+            if (item.externallyDefined)
+              item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
+            else
+              item._placeholder = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+            break;
+          case "SECTION":
+          case "TITLE":
+          case "":
+            item._placeholder = "";
+            break;
+          case CONSTANTS.DATA_TYPE.INT:
+          case CONSTANTS.DATA_TYPE.REAL:
+          case CONSTANTS.DATA_TYPE.QTY:
+            item._placeholder = "Type a number";
+            break;
+          default: {
+            item._placeholder = "Type a value";
+          }
+        }
+      }
     }
   }
 
