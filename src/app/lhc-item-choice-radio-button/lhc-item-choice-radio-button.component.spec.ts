@@ -48,33 +48,6 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
         "text": "Extra long answer text 12345 Answer X2"
       }
     ],
-    "_modifiedAnswers": [
-      {
-        "code": "c1",
-        "text": "Answer X",
-        "_displayText": "Answer X"
-      },
-      {
-        "code": "c2",
-        "text": "Answer Y",
-        "_displayText": "Answer Y"
-      },
-      {
-        "code": "c3",
-        "text": "Answer Z",
-        "_displayText": "Answer Z"
-      },
-      {
-        "code": "c4",
-        "text": "Extra long answer text 1234 Answer X1",
-        "_displayText": "Extra long answer text 1234 Answer X1"
-      },
-      {
-        "code": "c5",
-        "text": "Extra long answer text 12345 Answer X2",
-        "_displayText": "Extra long answer text 12345 Answer X2"
-      }
-    ],
     "linkId": "/q1a"
   };
 
@@ -115,7 +88,11 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
         "text": "Extra long answer text 12345 Answer X2"
       }
     ],
-    "_modifiedAnswers": [
+    "linkId": "/q1a"
+  };
+
+  let acOptions = {
+    "listItems": [
       {
         "code": "c1",
         "text": "Answer X",
@@ -141,8 +118,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
         "text": "Extra long answer text 12345 Answer X2",
         "_displayText": "Extra long answer text 12345 Answer X2"
       }
-    ],
-    "linkId": "/q1a"
+    ]
   };
 
   beforeEach(async () => {
@@ -168,6 +144,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   it('should render a list of radio buttons', () => {
     component.item = itemRadioCNE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     const radios = element.querySelectorAll('input[type="radio"]')
@@ -182,6 +159,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   it('should render a list of radio buttons, with other', () => {
     component.item = itemRadioCWE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     const radios = element.querySelectorAll('input[type="radio"]')
@@ -199,14 +177,14 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   it('should set item.value', () => {
     component.item = itemRadioCNE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     let radio:HTMLElement = element.querySelector('#' + itemRadioCNE._elementId + itemRadioCNE.answers[0].code)
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c1",
-      "text": "Answer X",
-      "_displayText": "Answer X"
+      "text": "Answer X"
     })
 
     //item.value should change, when a different radio button is clicked
@@ -214,22 +192,21 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",
-      "text": "Answer Y",
-      "_displayText": "Answer Y"
+      "text": "Answer Y"
     })
 
   })
 
   it('should set item.value, when the "other" radio button is selected', () => {
     component.item = itemRadioCWE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
 
     let radio:HTMLElement = element.querySelector('#' + itemRadioCWE._elementId + itemRadioCWE.answers[2].code)
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c3",
-      "text": "Answer Z",
-      "_displayText": "Answer Z"
+      "text": "Answer Z"
     })
 
     //item.value should change, when the "other" radio button is clicked
@@ -263,6 +240,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
       "text": "Answer X"
     }
     component.item = itemRadioCNE;
+    component.acOptions = acOptions;
     component.ngOnChanges(null); // manually invoke ngOnChange, but why above tests do not need to??
 
     fixture.detectChanges();
@@ -283,8 +261,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",
-      "text": "Answer Y",
-      "_displayText": "Answer Y"
+      "text": "Answer Y"
     })
 
 
@@ -296,6 +273,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
       "text": "Some Value"
     }
     component.item = itemRadioCWE;
+    component.acOptions = acOptions;
     component.ngOnChanges(null); // manually invoke ngOnChange, but why above tests do not need to??
     fixture.detectChanges();
 
@@ -315,13 +293,13 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",
-      "text": "Answer Y",
-      "_displayText": "Answer Y"
+      "text": "Answer Y"
     })
   })
 
   it('should have lhc-vertical class with column 1', () => {
     component.item = itemRadioCNE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
     const containerDiv = element.querySelector('nz-radio-group');
     expect(containerDiv.classList).toContain('lhc-vertical');
@@ -329,6 +307,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   it('should not have lhc-vertical class with column 0', () => {
     component.item = itemRadioCWE;
+    component.acOptions = acOptions;
     fixture.detectChanges();
     const containerDiv = element.querySelector('nz-radio-group');
     expect(containerDiv.classList).not.toContain('lhc-vertical');

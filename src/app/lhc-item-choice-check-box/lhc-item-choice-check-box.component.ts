@@ -31,8 +31,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   setInitialValue(): void {
 
     if (this.item && this.item.value && Array.isArray(this.item.value) &&
-        this.item._modifiedAnswers && Array.isArray(this.item._modifiedAnswers)) {
-      let iLen = this.item._modifiedAnswers.length;
+        this.item.answers && Array.isArray(this.item.answers)) {
+      let iLen = this.item.answers.length;
       this.checkboxModels = new Array(iLen);
 
       for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
@@ -43,7 +43,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         } 
         else {
           for (let i = 0; i < iLen; i++) {
-            let answer = this.item._modifiedAnswers[i];
+            let answer = this.item.answers[i];
             if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
               this.checkboxModels[i] = true;
             }

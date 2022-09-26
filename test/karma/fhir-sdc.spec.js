@@ -163,9 +163,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   }
                   fhir.SDC._processFHIRValues(lfItem, fhirVals);
                   let expected = expectedOutput[n];
-                  // The processing code sets _displayText because these are
-                  // not on the list.
-                  expected.forEach((v)=>v._displayText = v.text);
+                  
                   if (!multiselect)
                     expected = expected[0];
 

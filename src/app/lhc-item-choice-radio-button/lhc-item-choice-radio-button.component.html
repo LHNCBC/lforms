@@ -8,11 +8,11 @@
     class="lhc-radio-group"
     [ngClass]="{'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl)}">
     <label 
-      *ngFor="let answer of item._modifiedAnswers; index as i" 
+      *ngFor="let answer of acOptions.listItems; index as i" 
       class="lhc-answer" 
       nz-radio
       (click)="lhcDataService.setActiveRow(item)"
-      [nzValue]="answer" 
+      [nzValue]="item.answers[i]" 
       [(ngModel)]="radioModels[i]" 
       [id]="item._elementId + answer.code">
       {{answer._displayText}}

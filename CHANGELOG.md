@@ -6,6 +6,13 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added support the entryFormat extension
 
+## [32.0.3] 2022-09-12
+### Changed
+- Removed item._modifiedAnswers and use item.answers directly.
+- Removed fast-deep-equal package that is causing failed e2e tests in cypress.
+### Fixed
+- Fixed a bug that a user typed value on open-choice item is not set as a string value.
+
 ## [32.0.2] 2022-09-07
 ### Fixed
 - Moved the URI for the custom FHIR extension lforms generates to store
