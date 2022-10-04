@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.1.1] 2022-10-02
+### Fixed
+- Fixed a bug that enableWhen does not work on the values calculated from FHIRPath
+  expressions.
+
 ## [32.1.0] 2022-09-18
 ### Added
 - Added support the entryFormat extension

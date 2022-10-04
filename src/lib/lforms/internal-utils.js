@@ -1,7 +1,7 @@
 // Utility functions for files in the lforms project, not intended to be called
 // by application code.
 import {ErrorMessages} from "./error-messages.js";
-
+import CommonUtils from "../lforms/lhc-common-utils.js";
 /**
  *  A default message source identifier (for when the messageSource parameter
  *  below is optional and not provided.
@@ -20,20 +20,37 @@ export const InternalUtil = {
    *  'code', and 'system'), plus a "value" field.
    * @param type (optional) the type of the value, e.g. 'Quantity'.  If this is
    *  set, then val._type will not be checked.
+   * @return {boolean} whether the item.value or item.unit has changed.
    */
   assignValueToItem: function(item, val, type) {
+    var changed = false;
     type = type || val && val._type;
     if (val && type === 'Quantity') {
-      item.value = val.value;
-      item.unit = {name: val.name}
+      if (item.value !== val.value) {
+        item.value = val.value;
+        changed = true;
+      }
+      if (item.unit !== val.name) {
+        item.unit = {name: val.name}
+        changed = true;
+      }
+      
       if (val.code) {
-        item.unit.code = val.code;
-        if (val.system)
+        if (item.unit.code !== val.code) {
+          item.unit.code = val.code;
+          changed = true;
+        }
+        if (val.system && item.unit.system !== val.system)
           item.unit.system = val.system;
+          changed = true;
       }
     }
-    else
+    else if (!CommonUtils.deepEqual(item.value, val)) {
       item.value = val;
+      changed = true;
+    }
+    
+    return changed;
   },
 
 
