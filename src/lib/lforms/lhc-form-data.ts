@@ -490,6 +490,7 @@ export default class LhcFormData {
    * @param sourceItem - LFormsData of a source item.
    * @param processItem - A call back function with signature:
    *      function(item): item - Updated LFormsData of traversed item.
+   * @return {boolean} whether the skip logic status has changed
    */
   updateSkipLogicControlledItems(sourceItem, processItem) {
     var changed = false;
@@ -699,11 +700,12 @@ export default class LhcFormData {
    */
   _updateItemSkipLogicStatus(item, disabled) {
     var changed = false;
+    var isDisabled;
     // if one item is hidden all of its decedents should be hidden.
     // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
     if (disabled) {
       changed = this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) || changed;
-      var isDisabled = true;
+      isDisabled = true;
     }
     // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
     else {
@@ -723,7 +725,7 @@ export default class LhcFormData {
       else if (item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         changed = this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_ENABLED) || changed;
       }
-      var isDisabled = item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+      isDisabled = item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
     }
     // process the sub items
     if (item.items && item.items.length > 0) {
@@ -2279,7 +2281,7 @@ export default class LhcFormData {
         }
         // Set values now that the right number of rows are present
         for (var i=0, len=vals.length; i<len; ++i) {
-          valueChanged = InternalUtil.assignValueToItem(repetitions[i], vals[i]);
+          valueChanged = InternalUtil.assignValueToItem(repetitions[i], vals[i]) || valueChanged;
           if (messagesChanged)
             InternalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
         }
@@ -2288,7 +2290,7 @@ export default class LhcFormData {
     // question does not repeat (might have repeating answers)
     else {
       if (!item._multipleAnswers) { // no repeating answers
-        valueChanged = InternalUtil.assignValueToItem(item, vals[0]);
+        valueChanged = InternalUtil.assignValueToItem(item, vals[0]) || valueChanged;
         if (vals.length > 1) {
           InternalUtil.addItemWarning(item, 'MultipleValuesForNonRepeat');
           console.log(JSON.stringify(vals));

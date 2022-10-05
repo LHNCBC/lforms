@@ -30,19 +30,15 @@ export const InternalUtil = {
         item.value = val.value;
         changed = true;
       }
-      if (item.unit !== val.name) {
-        item.unit = {name: val.name}
-        changed = true;
-      }
-      
+
+      var newUnit = {name: val.name};
       if (val.code) {
-        if (item.unit.code !== val.code) {
-          item.unit.code = val.code;
-          changed = true;
-        }
-        if (val.system && item.unit.system !== val.system)
-          item.unit.system = val.system;
-          changed = true;
+        newUnit.code = val.code;
+        if (val.system) newUnit.system = val.system;
+      }
+      if (!CommonUtils.deepEqual(item.unit, newUnit)) {
+        item.unit = newUnit;
+        changed = false;
       }
     }
     else if (!CommonUtils.deepEqual(item.value, val)) {
