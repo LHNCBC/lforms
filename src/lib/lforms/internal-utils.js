@@ -38,7 +38,7 @@ export const InternalUtil = {
       }
       if (!CommonUtils.deepEqual(item.unit, newUnit)) {
         item.unit = newUnit;
-        changed = false;
+        changed = true;
       }
     }
     else if (!CommonUtils.deepEqual(item.value, val)) {

@@ -13,7 +13,7 @@
     "Patient"
   ],
   "date": "2022-09-28",
-  "description": "This questionnaire is to demonstrate a delay in updating an item responding to FHIR Path calculations",
+  "description": "This questionnaire is to demonstrate updating an item with enableWhen responding to FHIR Path calculations",
   "item": [
     {
       "linkId": "Intro",
@@ -442,7 +442,7 @@
       "readOnly": true,
       "item": [
         {
-          "linkId": "negResultDisplayMsg",
+          "linkId": "posResultDisplayMsg",
           "text": "Congratulations! You have 4 or more fruits.",
           "type": "display"
         }

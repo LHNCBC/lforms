@@ -1,7 +1,6 @@
 import * as util from '../support/util.js';
 
 // Tests of the support for launchContext.
-// Most of this is currently tested by either karma or protractor.
 describe('launchContext', () => {
   it('should support off-list "name" values', () => {
     cy.visit('test/pages/addFormToPageTest.html');

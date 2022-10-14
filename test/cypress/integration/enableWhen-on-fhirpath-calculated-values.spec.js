@@ -1,7 +1,6 @@
 import * as util from '../support/util.js';
 
-// Tests of the support for calculatedExpression.
-// Most of this is currently tested by either karma or protractor.
+// Tests the interaction between enableWhen and calculatedExpression.
 describe('enableWhen on calculatedExpression', () => {
   before(()=>{
     cy.visit('test/pages/addFormToPageTest.html');
@@ -28,7 +27,7 @@ describe('enableWhen on calculatedExpression', () => {
     cy.byId("posResultInterpretation/1").should('have.value', 'positive.')
     cy.byId("negResultInterpretation/1").should('not.exist')
 
-    // select on "No", there are still 4 "Yes" remaining, the resutl item shoudl still show
+    // select on "No", there are still 4 "Yes" remaining, the result item should still show
     cy.byId("Q1apples/1LA32-8").find('input').click();
     cy.byId("fruitScore/1").should('have.value', "4");
     cy.byId("posResultInterpretation/1").should('be.visible')
