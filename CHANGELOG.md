@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.2.0] 2022-10-18
+### Added
+- Added support the currenly published URI for the preferred terminology server
+  extension, though that URI will be changing
+  (https://jira.hl7.org/browse/FHIR-23977).
+
 ## [32.1.0] 2022-09-18
 ### Added
 - Added support the entryFormat extension

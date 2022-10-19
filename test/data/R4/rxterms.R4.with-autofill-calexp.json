@@ -18,7 +18,7 @@
       "type": "group",
       "extension": [
         {
-          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
           "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
         },
         {

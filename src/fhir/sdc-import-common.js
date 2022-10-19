@@ -104,8 +104,13 @@ function addCommonSDCImportFns(ns) {
   self.extensionHandlers[
     "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression"] = function(extension, item) {
     // Update the URI to the current one.
-    extension.url = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression';
+    extension.url = self.fhirExtInitialExp;
     return true; // add extension to LForms item
+  };
+  self.extensionHandlers[
+    "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer"] = function(extension, item) {
+    // Update the URI to the current one.
+    extension.url = self.fhirExtTerminologyServer;
   };
   self.extensionHandlers[self.fhirExtUnitOpen] = function(extension, item) {
     item._unitOpen = extension.valueCode;
@@ -126,7 +131,7 @@ function addCommonSDCImportFns(ns) {
     if (extension.valueString) {
       item._entryFormat = extension.valueString;
       return true; // add extension to LForms item
-    }    
+    }
   }
 
   self.formLevelFields = [
@@ -1370,7 +1375,7 @@ function addCommonSDCImportFns(ns) {
    * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
    * @param qrItemValue a value of item in QuestionnaireResponse
    * @param lfItem an item in lforms
-   * @param notOnList a flag indicates if the item's value is known to be not any of the answers 
+   * @param notOnList a flag indicates if the item's value is known to be not any of the answers
    * in the answer list. If false or undefined, a check of the answers will be made.
    * @returns {{code: *, text: *}}
    * @private
@@ -1388,7 +1393,7 @@ function addCommonSDCImportFns(ns) {
       if (c.system)
         retValue.system = c.sysetm;
 
-      
+
       if (notOnList) {
         retValue._notOnList = true;
       }
@@ -1404,7 +1409,7 @@ function addCommonSDCImportFns(ns) {
         }
         if (!found) {
           retValue._notOnList = true;
-        }  
+        }
       }
     }
     // a valueString, which is a user supplied value that is not in the answers
