@@ -1,0 +1,452 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/Questionnaire"
+    ]
+  },
+  "name": "DemoDelayAfterCalc",
+  "title": "enableWhen on calculated value from FHIRPath Expression",
+  "status": "draft",
+  "experimental": true,
+  "subjectType": [
+    "Patient"
+  ],
+  "date": "2022-09-28",
+  "description": "This questionnaire is to demonstrate updating an item with enableWhen responding to FHIR Path calculations",
+  "item": [
+    {
+      "linkId": "Intro",
+      "text": "Do you have 4 or more of these 5 fruits? You must answer all questions.",
+      "type": "display"
+    },
+    {
+      "linkId": "Q1apples",
+      "text": "1. Apples?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA33-6",
+            "display": "Yes"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA32-8",
+            "display": "No"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "Q2berries",
+      "text": "2. Berries?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA33-6",
+            "display": "Yes"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA32-8",
+            "display": "No"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "Q3cherries",
+      "text": "3. Cherries?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA33-6",
+            "display": "Yes"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA32-8",
+            "display": "No"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "Q4dates",
+      "text": "4. Dates?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA33-6",
+            "display": "Yes"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA32-8",
+            "display": "No"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "Q5figs",
+      "text": "5. Figs?",
+      "type": "choice",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA33-6",
+            "display": "Yes"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA32-8",
+            "display": "No"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "valueDecimal": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "fruitScore",
+      "text": "Fruit Count",
+      "type": "integer",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "scoreExt",
+            "language": "text/fhirpath",
+            "expression": "'http://hl7.org/fhir/StructureDefinition/ordinalValue'"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "fs1_value",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = 'Q1apples').answerOption.where(valueCoding.code=%resource.item.where(linkId = 'Q1apples').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "fs2_value",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = 'Q2berries').answerOption.where(valueCoding.code=%resource.item.where(linkId = 'Q2berries').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "fs3_value",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = 'Q3cherries').answerOption.where(valueCoding.code=%resource.item.where(linkId = 'Q3cherries').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "fs4_value",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = 'Q4dates').answerOption.where(valueCoding.code=%resource.item.where(linkId = 'Q4dates').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "fs5_value",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = 'Q5figs').answerOption.where(valueCoding.code=%resource.item.where(linkId = 'Q5figs').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "any_fs5_answered",
+            "language": "text/fhirpath",
+            "expression": "%fs1_value.exists() or %fs2_value.exists() or %fs3_value.exists() or %fs4_value.exists() or %fs5_value.exists()"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "description": "Total score calculation",
+            "language": "text/fhirpath",
+            "expression": "iif(%any_fs5_answered, iif(%fs1_value.exists(), %fs1_value, 0) + iif(%fs2_value.exists(), %fs2_value, 0) + iif(%fs3_value.exists(), %fs3_value, 0) + iif(%fs4_value.exists(), %fs4_value, 0) + iif(%fs5_value.exists(), %fs5_value, 0), {})"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "negResultInterpretation",
+      "text": "Your four-fruit possession score is ",
+      "type": "choice",
+      "enableWhen": [
+        {
+          "question": "fruitScore",
+          "operator": "<",
+          "answerInteger": 4
+        },
+        {
+          "question": "Q1apples",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q2berries",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q3cherries",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q4dates",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q5figs",
+          "operator": "exists",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "all",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://snomed.info/sct",
+            "code": "260385009",
+            "display": "negative."
+          },
+          "initialSelected": true
+        }
+      ],
+      "readOnly": true,
+      "item": [
+        {
+          "linkId": "negResultDisplayMsg",
+          "text": "You have fewer than 4 fruits.",
+          "type": "display"
+        }
+      ]
+    },
+    {
+      "linkId": "posResultInterpretation",
+      "text": "Your four-fruit possession score is ",
+      "type": "choice",
+      "enableWhen": [
+        {
+          "question": "fruitScore",
+          "operator": ">=",
+          "answerInteger": 4
+        },
+        {
+          "question": "Q1apples",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q2berries",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q3cherries",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q4dates",
+          "operator": "exists",
+          "answerBoolean": true
+        },
+        {
+          "question": "Q5figs",
+          "operator": "exists",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "all",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://snomed.info/sct",
+            "code": "10828004",
+            "display": "positive."
+          },
+          "initialSelected": true
+        }
+      ],
+      "readOnly": true,
+      "item": [
+        {
+          "linkId": "posResultDisplayMsg",
+          "text": "Congratulations! You have 4 or more fruits.",
+          "type": "display"
+        }
+      ]
+    }
+  ]
+}

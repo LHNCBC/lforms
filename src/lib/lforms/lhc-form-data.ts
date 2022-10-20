@@ -490,17 +490,20 @@ export default class LhcFormData {
    * @param sourceItem - LFormsData of a source item.
    * @param processItem - A call back function with signature:
    *      function(item): item - Updated LFormsData of traversed item.
+   * @return {boolean} whether the skip logic status has changed
    */
   updateSkipLogicControlledItems(sourceItem, processItem) {
+    var changed = false;
     // check skip logic
     if(sourceItem._skipLogicTargets) {
       for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
         var targetItem = sourceItem._skipLogicTargets[i];
-        this._updateItemSkipLogicStatus(targetItem, null);
-        this.updateSkipLogicControlledItems(targetItem, processItem);
+        changed = this._updateItemSkipLogicStatus(targetItem, null) || changed;
+        changed = this.updateSkipLogicControlledItems(targetItem, processItem) || changed;
       }
     }
-    processItem(sourceItem);
+    changed = processItem(sourceItem) || changed;
+    return changed;
   }
 
 
@@ -510,22 +513,27 @@ export default class LhcFormData {
    */
   updateOnSourceItemChange(sourceItem) {
     var _self = this;
-    this.updateSkipLogicControlledItems(sourceItem, function(item) {
-      // check formula
-      if(item._formulaTargets) {
-        for (var i= 0, iLen=item._formulaTargets.length; i<iLen; i++) {
-          var targetItem = item._formulaTargets[i];
-          _self._processItemFormula(targetItem);
+    var changed = true;
+    while(changed) {
+      changed = this.updateSkipLogicControlledItems(sourceItem, function(item) {
+        var chged = false;
+        // check formula
+        if(item._formulaTargets) {
+          for (var i= 0, iLen=item._formulaTargets.length; i<iLen; i++) {
+            var targetItem = item._formulaTargets[i];
+            chged = _self._processItemFormula(targetItem) || chged;
+          }
         }
-      }
-      // check data control
-      if(item._dataControlTargets) {
-        for (var i= 0, iLen=item._dataControlTargets.length; i<iLen; i++) {
-          var targetItem = item._dataControlTargets[i];
-          _self._processItemDataControl(targetItem);
+        // check data control
+        if(item._dataControlTargets) {
+          for (var i= 0, iLen=item._dataControlTargets.length; i<iLen; i++) {
+            var targetItem = item._dataControlTargets[i];
+            chged = _self._processItemDataControl(targetItem) || chged;
+          }
         }
-      }
-    });
+        return chged;
+      });
+    }
 
     // update internal status
     this._updateTreeNodes(this.items,this);
@@ -567,26 +575,32 @@ export default class LhcFormData {
    */
   _checkFormControls() {
 
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
+    var changed = true;
 
-      // run formula
-      if (item.calculationMethod) {
-        this._processItemFormula(item);
-      }
-      // run data control
-      if (item.dataControl) {
-        this._processItemDataControl(item);
-      }
-      // run skip logic
-      if (item.skipLogic) {
-        this._updateItemSkipLogicStatus(item, null);
-      }
-      // Hide the sub items if _isHiddenInDef flag is true.
-      if (item._isHiddenInDef) {
-        item._isHiddenFromView = true;
-        this._setSubItemsHidden(item);
-      }
+    while (changed) {
+      changed = false;
+      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+        var item = this.itemList[i];
+  
+        // run formula
+        if (item.calculationMethod) {
+          changed = this._processItemFormula(item) || changed;
+        }
+        // run data control
+        if (item.dataControl) {
+          changed = this._processItemDataControl(item) || changed;
+        }
+        // run skip logic
+        if (item.skipLogic) {
+          changed = this._updateItemSkipLogicStatus(item, null) || changed;
+        }
+        // Hide the sub items if _isHiddenInDef flag is true.
+        if (item._isHiddenInDef) {
+          if (!item._isHiddenFromView) changed = true;
+          item._isHiddenFromView = true;
+          changed = this._setSubItemsHidden(item) || changed;
+        }
+      }  
     }
 
     // update internal status
@@ -600,16 +614,20 @@ export default class LhcFormData {
   /**
    * Update sub items if the current item is hidden
    * @param item the item that is hidden
+   * @return {boolean} whether the item._isHiddenFromView has changed
    */
   _setSubItemsHidden(item) {
+    var changed = false;
     // process the sub items
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
+        if (!subItem._isHiddenFromView) changed = true;
         subItem._isHiddenFromView = true;
-        this._setSubItemsHidden(subItem);
+        changed = this._setSubItemsHidden(subItem) || changed;
       }
     }
+    return changed;
   }
 
 
@@ -678,13 +696,16 @@ export default class LhcFormData {
    * Update data by running the skip logic on the target item
    * @param item the target item where there is a skip logic
    * @param disabled if the parent item is already disabled
+   * @return {boolean} whether the item.value has changed
    */
   _updateItemSkipLogicStatus(item, disabled) {
+    var changed = false;
+    var isDisabled;
     // if one item is hidden all of its decedents should be hidden.
     // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
     if (disabled) {
-      this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_DISABLED);
-      var isDisabled = true;
+      changed = this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) || changed;
+      isDisabled = true;
     }
     // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
     else {
@@ -693,26 +714,28 @@ export default class LhcFormData {
 
         if (!item.skipLogic.action || item.skipLogic.action === CONSTANTS.SKIP_LOGIC.ACTION_ENABLE) {
           var newStatus = takeAction ? CONSTANTS.SKIP_LOGIC.STATUS_ENABLED : CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
-          this._setSkipLogicStatusValue(item, newStatus);
+          changed = this._setSkipLogicStatusValue(item, newStatus) || changed;
         }
         else if (item.skipLogic.action === CONSTANTS.SKIP_LOGIC.ACTION_DISABLE) {
           var newStatus = takeAction ? CONSTANTS.SKIP_LOGIC.STATUS_DISABLED : CONSTANTS.SKIP_LOGIC.STATUS_ENABLED;
-          this._setSkipLogicStatusValue(item, newStatus);
+          changed = this._setSkipLogicStatusValue(item, newStatus) || changed;
         }
       }
       // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
       else if (item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
-        this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_ENABLED);
+        changed = this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_ENABLED) || changed;
       }
-      var isDisabled = item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+      isDisabled = item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
     }
     // process the sub items
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
-        this._updateItemSkipLogicStatus(subItem, isDisabled);
+        changed = this._updateItemSkipLogicStatus(subItem, isDisabled) || changed;
       }
     }
+
+    return changed;
   }
 
 
@@ -742,9 +765,11 @@ export default class LhcFormData {
    * @param item an item
    * @param newStatus the new skip logic status
    * @param noLog optional, a flag that decides whether the action needs to be logged, default is false
+   * @return {boolean} whether the item.value has changed
    * @private
    */
   _setSkipLogicStatusValue(item, newStatus, noLog=false) {
+    var changed = false;
     if (item._skipLogicStatus !== newStatus) {
       if (item._skipLogicStatus) {
         var msg = newStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ? 'Hiding ' + item._text : 'Showing ' + item._text;
@@ -753,7 +778,9 @@ export default class LhcFormData {
       }
       item._preSkipLogicStatus = item._skipLogicStatus;
       item._skipLogicStatus = newStatus;
+      changed = true;
     }
+    return changed;
   }
 
 
@@ -2207,6 +2234,7 @@ export default class LhcFormData {
     var repetitionCountChanged = false;
     var repetitions;
     let messagesChanged = false;
+    let valueChanged = false;
     if (!CommonUtils.deepEqual(item._lastComputedMessages, messages)) {
       item._lastComputedRepeatingMessages = messages;
       messagesChanged = true;
@@ -2253,7 +2281,7 @@ export default class LhcFormData {
         }
         // Set values now that the right number of rows are present
         for (var i=0, len=vals.length; i<len; ++i) {
-          InternalUtil.assignValueToItem(repetitions[i], vals[i]);
+          valueChanged = InternalUtil.assignValueToItem(repetitions[i], vals[i]) || valueChanged;
           if (messagesChanged)
             InternalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
         }
@@ -2262,7 +2290,7 @@ export default class LhcFormData {
     // question does not repeat (might have repeating answers)
     else {
       if (!item._multipleAnswers) { // no repeating answers
-        InternalUtil.assignValueToItem(item, vals[0]);
+        valueChanged = InternalUtil.assignValueToItem(item, vals[0]) || valueChanged;
         if (vals.length > 1) {
           InternalUtil.addItemWarning(item, 'MultipleValuesForNonRepeat');
           console.log(JSON.stringify(vals));
@@ -2280,6 +2308,11 @@ export default class LhcFormData {
       this._resetInternalData();
     var readerMsg = 'Set values for ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
+
+    if (valueChanged) {
+      // run form controls
+      this.updateOnSourceItemChange(item);
+    }
     // Return the new last repetition
     return repetitionCountChanged ? repetitions[repetitions.length - 1] : undefined;
   }
@@ -2426,28 +2459,37 @@ export default class LhcFormData {
   /**
    * Update data by running the formula on the target item
    * @param item the target item where there is a formula
+   * @return {boolean} whether the item.value has changed
    */
   _processItemFormula(item) {
+    var changed = false;
     if (item.calculationMethod && item.calculationMethod.name) {
       let newValue = this.getFormulaResult(item);
       if (!CommonUtils.deepEqual(newValue, item.value)) {
         item.value = newValue;
+        changed = true;
       }
     }
+    return changed;
   }
 
 
   /**
    * Update data by running the data control on the target item
    * @param item the target item where there is a data control
+   * @return {boolean} whether the item.value has changed
    */
   _processItemDataControl(item) {
+    var changed = false;
     if (item.dataControl && Array.isArray(item.dataControl)) {
-      this._updateDataByDataControl(item);
+      changed = this._updateDataByDataControl(item);
       // Force a reset of answers
-      this._updateAutocompOptions(item);
-      this._updateUnitAutocompOptions(item);
+      if (changed) {
+        this._updateAutocompOptions(item);
+        this._updateUnitAutocompOptions(item);  
+      }
     }
+    return changed;
   }
 
 
@@ -2518,9 +2560,11 @@ export default class LhcFormData {
   /**
    * Update the data on the item by running through the data control functions defined on this item.
    * @param item an item in the form
+   * @return whether any data has changed on the item
    * @private
    */
   _updateDataByDataControl(item) {
+    var changed = false;
     for (var i= 0, iLen=item.dataControl.length; i<iLen; i++) {
       var source = item.dataControl[i].source,
           onAttribute = item.dataControl[i].onAttribute,
@@ -2564,12 +2608,15 @@ export default class LhcFormData {
             // set the data if it is different than the existing value
             if (!CommonUtils.deepEqual(item[onAttribute], newData)) {
               item[onAttribute] = CommonUtils.deepCopy(newData);
+              changed = true;
             }
           }
         }
         // "EXTERNAL" uses "url" and optional "urlOptions" (an array), TBD
       } // end if source
     } // end of the loop of the data control
+
+    return changed;
   }
 
 

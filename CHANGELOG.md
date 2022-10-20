@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.2.1] 2022-10-20
+### Fixed
+- Fixed a bug that enableWhen does not work on the values calculated from FHIRPath
+  expressions.
+
 ## [32.2.0] 2022-10-18
 ### Added
 - Added support the currenly published URI for the preferred terminology server
