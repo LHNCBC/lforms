@@ -2,10 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [32.1.1] 2022-10-02
+## [32.2.1] 2022-10-20
 ### Fixed
 - Fixed a bug that enableWhen does not work on the values calculated from FHIRPath
   expressions.
+
+## [32.2.0] 2022-10-18
+### Added
+- Added support the currenly published URI for the preferred terminology server
+  extension, though that URI will be changing
+  (https://jira.hl7.org/browse/FHIR-23977).
 
 ## [32.1.0] 2022-09-18
 ### Added
