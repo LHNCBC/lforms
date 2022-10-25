@@ -581,7 +581,7 @@ export default class LhcFormData {
       changed = false;
       for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
         var item = this.itemList[i];
-  
+
         // run formula
         if (item.calculationMethod) {
           changed = this._processItemFormula(item) || changed;
@@ -600,7 +600,7 @@ export default class LhcFormData {
           item._isHiddenFromView = true;
           changed = this._setSubItemsHidden(item) || changed;
         }
-      }  
+      }
     }
 
     // update internal status
@@ -924,7 +924,7 @@ export default class LhcFormData {
 
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
-     
+
       this.setMessageLevel(this.templateOptions.messageLevel);
     }
   }
@@ -1077,12 +1077,12 @@ export default class LhcFormData {
       this._setupInFieldPlaceholders(item);
 
       // convert date string to Date object
-      if (item.value && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
+      if (item.value && (item.dataType === CONSTANTS.DATA_TYPE.DT ||
           item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
         item.value = CommonUtils.stringToDate(item.value);
       }
       // internally all numeric values are of string type
-      if ((item.dataType === CONSTANTS.DATA_TYPE.INT || 
+      if ((item.dataType === CONSTANTS.DATA_TYPE.INT ||
         item.dataType === CONSTANTS.DATA_TYPE.REAL ||
         item.dataType === CONSTANTS.DATA_TYPE.QTY) &&
         typeof item.value === "number") {
@@ -1133,7 +1133,7 @@ export default class LhcFormData {
 
 
   /**
-   * Set up tool tip for an item. 
+   * Set up tool tip for an item.
    * Tool tips are usually displayed as in-field hints.
    * @param item an item
    */
@@ -1155,7 +1155,7 @@ export default class LhcFormData {
             break;
           case CONSTANTS.DATA_TYPE.TM:
             item._placeholder = "HH:MM:SS";
-            break;    
+            break;
           case CONSTANTS.DATA_TYPE.CNE:
             if (item.externallyDefined)
               item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
@@ -1512,7 +1512,7 @@ export default class LhcFormData {
       var item = items[i];
       var itemData:any = {};
       // for user typed data of a CWE item, it is in item.value as {text: "some other value", _notOnList: true}.
-      
+
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
       // or if the item is hidden and the flag is set to ignore hidden items
       if (noDisabledItem && item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ||
@@ -2486,7 +2486,7 @@ export default class LhcFormData {
       // Force a reset of answers
       if (changed) {
         this._updateAutocompOptions(item);
-        this._updateUnitAutocompOptions(item);  
+        this._updateUnitAutocompOptions(item);
       }
     }
     return changed;
@@ -2785,9 +2785,9 @@ export default class LhcFormData {
 
 
   /**
-   * Reset item.value to an answer object (or multiple answers) in item.answers, or 
+   * Reset item.value to an answer object (or multiple answers) in item.answers, or
    * to an object where _notOnList is set to true.
-   * 
+   *
    * @param item the item for which it has an item.value or item.defaultAnswers
    * @private
    */
@@ -2990,7 +2990,7 @@ export default class LhcFormData {
               return self._findValueSetIDAndSearch(item, fieldVal, count);
             else {
               var fhirClient =  LForms.fhirContext.client;
-              return fhirClient.request(self._buildURL(['ValueSet/$expand'],
+              return fhirClient.request(self._buildURL(['ValueSet', '$expand'],
                 {count: count, filter: fieldVal, url: item.answerValueSet}
               )).catch((errorData) => {
                 LForms.fhirCapabilities.urlExpandBroken = true;
