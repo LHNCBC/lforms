@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.2.2] 2022-10-25
+### Fixed
+- Fixed a bug in the construction of the URL for a FHIR ValueSet $expand
+  operation, though there was already a work-around in place, so the only result
+  was a single failed network call logged to the console (which then can cause a
+  problem for Cypress tests).
+### Updated
+- Cypress has been update to version 10.
+
 ## [32.2.1] 2022-10-20
 ### Fixed
 - Fixed a bug that enableWhen does not work on the values calculated from FHIRPath
