@@ -28,7 +28,7 @@
     "status": "final",
     "code": {"coding": [{"system": "http://loinc.org", "code": "54131-8"}], "text": "Gender"},
     "valueCodeableConcept": {
-      "coding": [{"system": "http://loinc.org", "code": "LA2-8", "display": "Male"}],
+      "coding": [{"code": "LA2-8", "display": "Male"}],
       "text": "Male"
     }
   }, {

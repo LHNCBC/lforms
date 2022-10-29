@@ -34,13 +34,16 @@ const CommonUtils = {
    * @param answer an answer item that could have part of the attributes set
    * @param completeAnswer an answer in the answer list that usually has more attributes set
    * @param item the lforms item that has the completeAnswer in the answer list
-   * @private
+   * @return {boolean} whether two answers are considered same.
    */
   areTwoAnswersSame: function(answer, completeAnswer, item) {
 
     let standardAnswerAttr = ['label', 'code', 'text', 'score', 'other'];
     //let standardAnswerAttr = ['label', 'code', '_displayText', 'score', 'other'];
 
+    if (typeof answer !== "object") {
+      return false;
+    }
     // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
     let completeAnswerCodeSystem = completeAnswer.system ? completeAnswer.system : item.answerCodeSystem;
 
@@ -347,7 +350,7 @@ const CommonUtils = {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
   
-        var displayText = answerData.text;
+        var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
         // label is a string
         if (answerData.label) {
           displayText = answerData.label + ". " + displayText;

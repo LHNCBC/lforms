@@ -61,11 +61,11 @@ Cypress.Commands.add(
   'byId',
   { prevSubject: 'optional' },
   (subject, idSelector) => {
-    const escapedSelector = idSelector.replace(/\//g,"\\/").replace(/\./g,"\\.");
+    const escapedSelector = idSelector.replace(/\//g,"\\/").replace(/\./g,"\\.").replace(/:/g,"\\:");
     const cySelector = escapedSelector[0] === "#" ? escapedSelector : "#" + escapedSelector;
     // escape the / in the id
     if (subject) {
-      return cy.wrap(subject).get(cySelector);
+      return cy.wrap(subject).find(cySelector);
     }
     else {
       return cy.get(cySelector);
@@ -80,7 +80,7 @@ Cypress.Commands.add(
   (subject, idSelector) => {
     // escape the / in the id
     if (subject) {
-      return cy.wrap(subject).get(idSelector.replace(/\//g,"\\/"));
+      return cy.wrap(subject).find(idSelector.replace(/\//g,"\\/"));
     }
     else {
       return cy.get(idSelector.replace(/\//g,"\\/"));

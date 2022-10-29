@@ -7,7 +7,7 @@
         [nzValue]="item.answers[i]" 
         [(ngModel)]="checkboxModels[i]"
         [nzDisabled]="item._readOnly"
-        [id]="item._elementId + answer.code">
+        [id]="item._elementId + (answer.code || answer.text)">
         {{answer._displayText}}
       </label>
     </div>

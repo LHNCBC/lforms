@@ -128,19 +128,10 @@ function addSDCImportFns(ns) {
       for(var i = 0; i < qItem.answerOption.length; i++) {
         var answer = {};
         var option = qItem.answerOption[i];
-        var label = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionPrefix);
-        if(label) {
-          answer.label = label.valueString;
-        }
-        var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
-        // Look for argonaut extension.
-        score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
-        if(score) {
-          answer.score = score.valueDecimal.toString();
-        }
+
         var optionKey = Object.keys(option).filter(function(key) {return (key.indexOf('value') === 0);});
         if(optionKey && optionKey.length > 0) {
-          if(optionKey[0] === 'valueCoding') { // Only one value[x] is expected
+          if(optionKey[0] === 'valueCoding') { // Only one kind of value[x] is expected
             if(option[optionKey[0]].code    !== undefined) answer.code = option[optionKey[0]].code;
             if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
             // TBD- Lforms has answer code system at item level, expects all options to have one code system!
@@ -148,11 +139,29 @@ function addSDCImportFns(ns) {
               answer.system = option[optionKey[0]].system;
             }
           }
-          else {
+          else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' || 
+              optionKey[0] === 'valueTime' ){
             answer.text = option[optionKey[0]].toString();
           }
-        }
+          else if (optionKey[0] === 'valueInteger') {
+            answer.text = parseInt(option[optionKey[0]])
+          }
+          else {
+            throw new Error('Unable to handle data type in answerOption: ' + optionKey[0]);
+          }
 
+          var label = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionPrefix);
+          if(label) {
+            answer.label = label.valueString;
+          }
+          var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
+          // Look for argonaut extension.
+          score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
+          if(score) {
+            answer.score = score.valueDecimal.toString();
+          }
+
+        }
         lfItem.answers.push(answer);
       }
     }
@@ -168,6 +177,62 @@ function addSDCImportFns(ns) {
   };
 
 
+  /**
+   * Parse questionnaire item for question cardinality and answer cardinality
+   *
+   * @param lfItem {object} - LForms item object to assign question cardinality
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processFHIRQuestionAndAnswerCardinality = function(lfItem, qItem) {
+    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
+    var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
+    var repeats = qItem.repeats;
+    var required = qItem.required;
+    var answerCardinality, questionCardinality;
+    // CNE/CWE, repeats handled by autocompleter with multiple answers in one question
+    if (lfItem.dataType === 'CNE' || lfItem.dataType === 'CWE' || 
+        qItem.answerOption && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' || 
+        lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
+      if (repeats) {
+        answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+      }
+      else {
+        answerCardinality = {max: "1"};
+      }
+      if (required) {
+        answerCardinality.min = min ? min.valueInteger.toString() : "1";
+      }
+      else {
+        answerCardinality.min = "0";
+      }
+    }
+    // no answerOptiopn, question repeats
+    else {
+      // repeats
+      if (repeats) {
+        questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+      }
+      else {
+        questionCardinality = {max: "1"};
+      }
+      // required
+      if (required) {
+        questionCardinality.min = min ? min.valueInteger.toString() : "1";
+        answerCardinality = {min: "1"};
+      }
+      else {
+        questionCardinality.min = "1";
+      }
+    }
+
+    if (questionCardinality)
+      lfItem.questionCardinality = questionCardinality;
+    if (answerCardinality)
+      lfItem.answerCardinality = answerCardinality;
+  };
+
+  
   /**
    * Parse questionnaire item for editable
    *
@@ -220,7 +285,7 @@ function addSDCImportFns(ns) {
     }
 
     // check item.initial
-    if (qItem.initial && vals.length === 0) {
+    if (qItem.initial) {
       qItem.initial.forEach(function(elem) {
         self._processDefaultAnswerValue(elem, vals)
       });

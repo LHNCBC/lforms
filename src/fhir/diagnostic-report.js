@@ -329,7 +329,7 @@ var dr = {
             itemValue = {
               "code": obx.valueCodeableConcept.coding[0].code,
               "text": obx.valueCodeableConcept.coding[0].display,
-              "codeSystem": obx.valueCodeableConcept.coding[0].system
+              "system": obx.valueCodeableConcept.coding[0].system
             };
           }
           else if (obx.valueString) {

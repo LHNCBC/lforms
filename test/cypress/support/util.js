@@ -35,6 +35,29 @@ export function addFormToPage(filePath, container, options) {
 
 
 /**
+ *  Calls LForms.Util.addFormToPage using a form definition data
+ * @param formDel a JSON format of a form definition data
+ * @param container the ID of the element into which the form should be placed.
+ *  Default: 'formContainer'
+ * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
+ *  & prepoulate)
+ */
+ export function addFormDataToPage(formDef, container, options) {
+  if (!container)
+    container = 'formContainer';
+  
+  cy.window().then((win) => {
+    win.document.getElementById(container).innerHTML = null;
+    return new Cypress.Promise((resolve) => {
+      win.LForms.Util.addFormToPage(formDef, container, options).then(()=>resolve(), ()=>resolve());
+    });
+  });
+  
+  cy.get('#'+container).find('.lhc-form-title').should('be.visible');
+};
+
+
+/**
  *  Returns the full path to a JSON form definition file in the test/data
  *  directory.
  * @param filepath the path to the form definition file, relative to

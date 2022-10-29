@@ -43,7 +43,6 @@
               "answer": [
                 {
                   "valueCoding": {
-                    "system": "http://loinc.org",
                     "code": "LA2-8",
                     "display": "Male"
                   }

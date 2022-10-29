@@ -144,9 +144,21 @@ export const InternalUtil = {
         && (warnings=msgsFromSource.warnings)) {
       delete warnings[messageID];
     }
-  }
+  },
 
+
+  /**
+   *  Check if the lforms item has an answer list
+   * @param {*} item 
+   * @returns 
+   */
+  hasAnswerOption: function(item) {
+    return item.dataType === "CNE" || item.dataType === "CWE" || item.answers &&
+      (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
+  }
+  
 }
+
 
 InternalUtil.errorMessages = ErrorMessages;
 // Set the default language for error messages.  Apps can call this with a

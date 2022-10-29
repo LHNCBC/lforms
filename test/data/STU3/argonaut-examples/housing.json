@@ -92,7 +92,7 @@
           "linkId": "g1.1",
           "prefix": "1",
           "text": "What is your housing situation today?",
-          "type": "choice",
+          "type": "string",
           "required": true,
           "repeats": false,
           "option": [
@@ -111,7 +111,7 @@
           "linkId": "g1.2",
           "prefix": "2",
           "text": "Think about the place you live. Do you have problems with any of the following? (check all that apply)",
-          "type": "choice",
+          "type": "string",
           "required": true,
           "repeats": true,
           "option": [

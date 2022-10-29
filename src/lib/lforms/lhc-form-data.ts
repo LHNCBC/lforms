@@ -270,7 +270,7 @@ export default class LhcFormData {
     this._fhir = LForms.FHIR[lfData.fhirVersion];
     this._expressionProcessor = new this._fhir.SDC.ExpressionProcessor(this);
     this._fhirVariables = {};
-    this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
+    this.extension = data.extension ? data.extension.slice(0) : null; // Shallow copy
 
     if (data.extension) {
       this._fhir.SDC.buildExtensionMap(this);
@@ -915,7 +915,7 @@ export default class LhcFormData {
     if(value === undefined || value === null || value === '') {
       return false;
     }
-    if((item.dataType === CONSTANTS.DATA_TYPE.DTM
+    if(!item._hasAnswerOption && (item.dataType === CONSTANTS.DATA_TYPE.DTM
         || item.dataType === CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
       value = CommonUtils.stringToDate(value);
       if(! value) { // LForms.Util.stringToDate returns null on invalid string
@@ -962,6 +962,20 @@ export default class LhcFormData {
           item.dataType = CONSTANTS.DATA_TYPE.ST; // default data type
       }
 
+      // reset answers if it is an answer list id
+      if (((typeof item.answers) === 'string' || (typeof item.answers) === 'number') &&
+          this.answerLists && Array.isArray(this.answerLists[item.answers])) {
+        item.answers = this.answerLists[item.answers];
+      }
+
+      // if a resource package is provided
+      if (this._packageStore) {
+        this._loadAnswerValueSetsFromPackage(item);
+      }
+
+      // check if the item has an answer list or a search url
+      item._hasAnswerOption = InternalUtil.hasAnswerOption(item);
+    
       // displayControl default values
       if (item.dataType === "SECTION") {
         if (!item.displayControl) {
@@ -976,7 +990,7 @@ export default class LhcFormData {
           item.displayControl.questionLayout = "vertical";
         }
       }
-      else if (item.dataType === "CWE" || item.dataType === "CNE") {
+      else if (item._hasAnswerOption) {
         if (!item.displayControl) {
           item.displayControl = CommonUtils.deepCopy(this.templateOptions.defaultAnswerLayout);
         }
@@ -997,18 +1011,6 @@ export default class LhcFormData {
 
       this._updateItemAttrs(item);
 
-      // reset answers if it is an answer list id
-      if (((typeof item.answers) === 'string' || (typeof item.answers) === 'number') &&
-          this.answerLists && Array.isArray(this.answerLists[item.answers])) {
-        item.answers = this.answerLists[item.answers];
-      }
-
-      // if a resource package is provided
-      if (this._packageStore) {
-        this._loadAnswerValueSetsFromPackage(item);
-      }
-
-
       // If there are answers for an answer list and there is a value, replace
       // the value objects with the corresponding objects from the answer list,
       // so that when they are displayed as radio buttons, angular will recognize the
@@ -1016,8 +1018,7 @@ export default class LhcFormData {
 //      this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
       // reset item.value with modified answers if the item has a value (or an array of values)
-      if (item.dataType === CONSTANTS.DATA_TYPE.CWE ||
-          item.dataType === CONSTANTS.DATA_TYPE.CNE) {
+      if (item._hasAnswerOption) {
         this._resetItemValueWithAnswers(item);
       }
       // if this is not a saved form with user data, and
@@ -1050,12 +1051,12 @@ export default class LhcFormData {
       this._setupInFieldPlaceholders(item);
 
       // convert date string to Date object
-      if (item.value && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
+      if (item.value && !item._hasAnswerOption && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
           item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
         item.value = CommonUtils.stringToDate(item.value);
       }
       // internally all numeric values are of string type
-      if ((item.dataType === CONSTANTS.DATA_TYPE.INT || 
+      if (!item._hasAnswerOption && (item.dataType === CONSTANTS.DATA_TYPE.INT || 
         item.dataType === CONSTANTS.DATA_TYPE.REAL ||
         item.dataType === CONSTANTS.DATA_TYPE.QTY) &&
         typeof item.value === "number") {
@@ -1067,10 +1068,10 @@ export default class LhcFormData {
           item.restrictions ||
           (item.dataType !== CONSTANTS.DATA_TYPE.ST &&
             item.dataType !== CONSTANTS.DATA_TYPE.TX &&
-            item.dataType !== CONSTANTS.DATA_TYPE.CWE &&
-            //item.dataType !== CONSTANTS.DATA_TYPE.CNE)) {
-            item.dataType !== CONSTANTS.DATA_TYPE.CNE &&
-            item.dataType !== CONSTANTS.DATA_TYPE.DTM)) { // datetime picker controls input.
+            item.dataType !== CONSTANTS.DATA_TYPE.DTM &&
+            item.dataType !== CONSTANTS.DATA_TYPE.DT &&
+            item.dataType !== CONSTANTS.DATA_TYPE.TM &&
+            !item._hasAnswerOption)) {
         item._hasValidation = true;
       }
 
@@ -1117,7 +1118,23 @@ export default class LhcFormData {
       if (item._entryFormat) {
         item._placeholder = item._entryFormat;
       }
-      // otherwise set up a default placeholder
+      // autocomplete
+      else if (item._hasAnswerOption) {
+        if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+          if (item.externallyDefined)
+            item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
+          else
+            item._placeholder = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+        }
+        // INT, ST, DT, TM and CNE
+        else {
+          if (item.externallyDefined)
+            item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
+          else
+            item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";          
+        }
+      }
+      // other types
       else {
         switch (item.dataType) {
           case CONSTANTS.DATA_TYPE.DT:
@@ -1129,18 +1146,6 @@ export default class LhcFormData {
           case CONSTANTS.DATA_TYPE.TM:
             item._placeholder = "HH:MM:SS";
             break;    
-          case CONSTANTS.DATA_TYPE.CNE:
-            if (item.externallyDefined)
-              item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
-            else
-              item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";
-            break;
-          case CONSTANTS.DATA_TYPE.CWE:
-            if (item.externallyDefined)
-              item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
-            else
-              item._placeholder = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
-            break;
           case "SECTION":
           case "TITLE":
           case "":
@@ -1206,7 +1211,8 @@ export default class LhcFormData {
     }
 
     // process the answer code system
-    if (Array.isArray(item.answers)) {
+    if (Array.isArray(item.answers) && (item.dataType === CONSTANTS.DATA_TYPE.CNE || 
+        item.dataType === CONSTANTS.DATA_TYPE.CNE)) {
       var answerCodeSystem = item.answerCodeSystem ? LhcFormUtils.getCodeSystem(item.answerCodeSystem) : null;
       for (var i=0, iLen = item.answers.length; i<iLen; i++) {
         var answer = item.answers[i];
@@ -1370,7 +1376,7 @@ export default class LhcFormData {
       templateOptions: CommonUtils.deepCopy(this.templateOptions)
     };
 
-    if (this.extension) {
+    if (this.extension && this.extension.length > 0) {
       defData.extension = this.extension;
     }
     if (hasSavedData) {
@@ -1498,21 +1504,21 @@ export default class LhcFormData {
         itemData.questionCode = item.questionCode;
         // not a group or title item
         if (item.dataType!==CONSTANTS.DATA_TYPE.SECTION && item.dataType!==CONSTANTS.DATA_TYPE.TITLE) {
-          if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType);
+          if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType, item._hasAnswerOption);
           if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
         }
       }
       // otherwise include form definition data
       else {
         // process extensions
-        if (item.extension) {
+        if (item.extension && item.extension.length > 0) {
           itemData.extension = item.extension;
         }
         // Process other fields
         for (var field in item) {
           // special handling for user input values
           if (field === "value") {
-            itemData[field] = this._getOriginalValue(item[field], item.dataType);
+            itemData[field] = this._getOriginalValue(item[field], item.dataType, item._hasAnswerOption);
           }
           else if (field === "unit") {
             itemData[field] = this._getOriginalValue(item[field]);
@@ -1652,23 +1658,35 @@ export default class LhcFormData {
    * (when getting the user data from the form)
    * @param value the data object of the selected answer
    * @param dataType optional, the data type of the value
+   * @param hasAnswerOption optional, a flag that indicates there is an answer list
    * @private
    */
-  _getOriginalValue(value, dataType=null) {
+  _getOriginalValue(value, dataType=null, hasAnswerOption=false) {
     var retValue;
     if (value !== undefined && value !== null) {
       // has a data type
       if (dataType) {
         switch (dataType) {
-          case CONSTANTS.DATA_TYPE.INT:
-            retValue = parseInt(value);
+          case CONSTANTS.DATA_TYPE.INT:   
+            if (hasAnswerOption) {
+              retValue = value; // value is an object or an array of {text: value, ...}
+            }
+            else {
+              retValue = Array.isArray(value) ? value.map(val=> parseInt(val)) : parseInt(value);
+            }
             break;
           case CONSTANTS.DATA_TYPE.REAL:
           case CONSTANTS.DATA_TYPE.QTY:
             retValue = parseFloat(value);
             break;
           case CONSTANTS.DATA_TYPE.DT:
-            retValue = CommonUtils.dateToDTStringISO(value);
+            if (hasAnswerOption) {
+              retValue = value; // value is an object or an array of {text: value, ...}
+            }
+            else {
+              retValue = Array.isArray(value) ? value.map(val=> CommonUtils.dateToDTStringISO(val)) : 
+                CommonUtils.dateToDTStringISO(value);
+            }
             break;
           case CONSTANTS.DATA_TYPE.DTM:
             retValue = CommonUtils.dateToDTMString(value);
@@ -1682,6 +1700,10 @@ export default class LhcFormData {
             break;
           case CONSTANTS.DATA_TYPE.BL:
             retValue = value ? true : false;
+            break;
+          case CONSTANTS.DATA_TYPE.ST:
+          case CONSTANTS.DATA_TYPE.TM:            
+            retValue = value; // value is an object or an array of {text: value} when hasAnswerOption is true
             break;
           default:
             retValue = value;
@@ -2640,8 +2662,7 @@ export default class LhcFormData {
   _setUpAnswerAndUnitAutoComp(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
-      if (item.dataType === CONSTANTS.DATA_TYPE.CWE ||
-          item.dataType === CONSTANTS.DATA_TYPE.CNE) {
+      if (item._hasAnswerOption) {
         this._updateAutocompOptions(item);
       }
       this._updateUnitAutocompOptions(item);
@@ -2664,8 +2685,7 @@ export default class LhcFormData {
    * @private
    */
   _updateUnitAutocompOptions(item) {
-    if (item.units && item.dataType !== CONSTANTS.DATA_TYPE.CNE &&
-        item.dataType !== CONSTANTS.DATA_TYPE.CWE) {
+    if (item.units && !item._hasAnswerOption) {
       // add _displayUnit for item.unit if there is a value
       if (item.unit) {
         this._setUnitDisplay(item.unit);
@@ -2746,6 +2766,23 @@ export default class LhcFormData {
    */
   _resetItemValueWithAnswers(item) {
 
+    // standardize answers (convert string/number to object)
+    // if (item._hasAnswerOption && item.answers) {
+    //   let objAnswers =[];
+
+    //   for (let i=0, iLen=item.answers.length; i<iLen; i++) {
+    //     let answer = item.answers[i];
+    //     if (typeof answer === 'string' || typeof answer === 'number') {
+    //       objAnswers.push({text: answer})
+    //     }
+    //     else if (typeof answer === 'object') {
+    //       objAnswers.push(answer);
+    //     }
+    //   }
+    //   item.answers = objAnswers;
+    // }
+
+
     // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
     // convert it to the internal format of {text: 'string value', _notOnList: true}
 
@@ -2759,13 +2796,13 @@ export default class LhcFormData {
       // could be an array of multiple default values or a single value
       var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
           answerValue : [answerValue];
-      if (item.dataType !== 'CWE') {
+      if (item.dataType !== CONSTANTS.DATA_TYPE.CWE) {
         modifiedValue = answerValueArray;
       }
       else {
         // go through each value, there could be multiple not-on-list values
         for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
-          // string value is allowed only if it is CWE
+          // string value is allowed if it is CWE
           if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
             modifiedValue.push({
               "text": answerValueArray[i],
@@ -2783,37 +2820,46 @@ export default class LhcFormData {
 
     if (modifiedValue) {
       var listVals = [];
-      for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
-        var userValue = modifiedValue[k];
-        var found = false;
-        // for search field, assume the user values are valid answers
-        if (item.externallyDefined) {
-          listVals = modifiedValue;
-        }
-        // for item has a answer list
-        else {
-          if (Array.isArray(item.answers)) {
-            for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
-              if (CommonUtils.areTwoAnswersSame(userValue, item.answers[j], item)) {
-                listVals.push(item.answers[j]);
-                found = true;
+      // CNE/CWE
+      if (item.dataType === CONSTANTS.DATA_TYPE.CNE || item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+        for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
+          var userValue = modifiedValue[k];
+          var found = false;
+          // for search field, assume the user values are valid answers
+          if (item.externallyDefined) {
+            listVals = modifiedValue;
+          }
+          // for item has a answer list
+          else {
+            if (Array.isArray(item.answers)) {
+              for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
+                if (CommonUtils.areTwoAnswersSame(userValue, item.answers[j], item)) {
+                  listVals.push(item.answers[j]);
+                  found = true;
+                }
               }
             }
-          }
-          else {
-            found = false;
-          }
-          // a saved value or a default value is not on the list (default answer must be one of the answer items).
-          // non-matching value objects are kept, (data control or others might use data on these objects)
-          if (userValue && !found) {
-            // need a new copy of the data to trigger a change in the data model in autocompleter component
-            // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
-            var userValueCopy = CommonUtils.deepCopy(userValue);
-            userValueCopy._notOnList = true;  // _notOnList might have been set already
-            listVals.push(userValueCopy);
+            else {
+              found = false;
+            }
+            // a saved value or a default value is not on the list (default answer must be one of the answer items).
+            // non-matching value objects are kept, (data control or others might use data on these objects)
+            if (!found && item.dataType === CONSTANTS.DATA_TYPE.CWE && userValue) {
+              // need a new copy of the data to trigger a change in the data model in autocompleter component
+              // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
+              var userValueCopy = CommonUtils.deepCopy(userValue);
+              userValueCopy._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
+              listVals.push(userValueCopy);
+            }
           }
         }
       }
+      // INT, ST, DT and TM
+      else {
+        //listVals = modifiedValue.map(val => ({"text": val}));
+        listVals = modifiedValue;
+      }
+      
       let newValue = item._multipleAnswers ? listVals : listVals[0];
       if (!CommonUtils.deepEqual(item.value, newValue)) {
         item.value = newValue;
@@ -2893,8 +2939,7 @@ export default class LhcFormData {
    */
   _updateAutocompOptions(item) {
     // for list only
-    if (item.dataType === CONSTANTS.DATA_TYPE.CNE ||
-      item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+    if (item._hasAnswerOption) {
 
       var maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
       if (maxSelect !== '*' && typeof maxSelect === 'string') {
@@ -2902,13 +2947,13 @@ export default class LhcFormData {
       }
 
       var options:any = {
-        matchListValue: item.dataType === CONSTANTS.DATA_TYPE.CNE,
+        matchListValue: item.dataType !== CONSTANTS.DATA_TYPE.CWE, // INT, ST, DT, TM and CNE should all match
         maxSelect: maxSelect,
         autoFill: false
       };
 
       // externallyDefined
-      var url = item.externallyDefined;
+      var url = item.externallyDefined; // item.dataType should be CNE or CWE
       if (url) {
         options.url = url;
         options.autocomp = true;

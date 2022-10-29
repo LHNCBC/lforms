@@ -1,3 +1,4 @@
+import { InternalUtil } from '../lib/lforms/internal-utils.js';
 import {importFHIRQuantity} from './import-common.js'
 
 // TBD import this path function from fhirpath.js.  When that is done, also
@@ -221,7 +222,7 @@ function addCommonSDCImportFns(ns) {
     // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
-    if(questionnaire.code) {
+    if(questionnaire.code && questionnaire.code.length > 0) {
       // Rename questionnaire code to codeList
       lfData.codeList = questionnaire.code;
     }
@@ -406,60 +407,73 @@ function addCommonSDCImportFns(ns) {
       var answer = undefined; // reset back to undefined each iteration
       let errors = {};
       let hasMessages = false;
-      if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
-        var codings = null;
-        if (fhirVal._type === 'CodeableConcept') {
-          codings = fhirVal.coding;
-        }
-        else if (fhirVal._type === 'Coding' || typeof fhirVal === 'object') {
-          codings = [fhirVal];
-        }
-        if (!codings) {
-          // the value or the default value could be a string for 'open-choice'/CWE
-          if (lfDataType === 'CWE') {
-            answer = fhirVal;
+      if (InternalUtil.hasAnswerOption(lfItem)) {
+        if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
+          var codings = null;
+          if (fhirVal._type === 'CodeableConcept') {
+            codings = fhirVal.coding;
           }
-        }
-        else {
-          // Pick a Coding that is appropriate for this list item.
-          // Note:  It could be an off list Coding.
-          if (lfItem.answers) {
-            var itemAnswers = lfItem.answers;
-            for (var k=0, kLen=codings.length; k<kLen && !answer; ++k) {
-              var coding = codings[k];
-              for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
-                var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.system ? LForms.Util.getCodeSystem(listAnswer.system) : null;
-                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) &&
-                    ((coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') &&
-                      coding.code===listAnswer.code) ||
-                     (coding.hasOwnProperty('display') && listAnswer.hasOwnProperty('text') &&
-                      coding.display === listAnswer.text))) {
-                  answer = itemAnswers[j]; // include label in answer text
+          else if (fhirVal._type === 'Coding' || typeof fhirVal === 'object') {
+            codings = [fhirVal];
+          }
+          if (!codings) {
+            // the value or the default value could be a string for 'open-choice'/CWE
+            if (lfDataType === 'CWE') {
+              answer = fhirVal;
+            }
+          }
+          else {
+            // Pick a Coding that is appropriate for this list item.
+            // Note:  It could be an off list Coding.
+            if (lfItem.answers) {
+              var itemAnswers = lfItem.answers;
+              for (var k=0, kLen=codings.length; k<kLen && !answer; ++k) {
+                var coding = codings[k];
+                for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
+                  var listAnswer = itemAnswers[j];
+                  var listAnswerSystem = listAnswer.system ? LForms.Util.getCodeSystem(listAnswer.system) : null;
+                  if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) &&
+                      ((coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') &&
+                        coding.code===listAnswer.code) ||
+                       (coding.hasOwnProperty('display') && listAnswer.hasOwnProperty('text') &&
+                        coding.display === listAnswer.text))) {
+                    answer = itemAnswers[j]; // include label in answer text
+                  }
                 }
               }
             }
+            if (!answer && lfDataType === 'CWE') { // no match in the list.
+              answer = self._processCWECNEValueInQR({valueCoding: fhirVal}, lfItem, true);
+            }
           }
-          if (!answer && lfDataType === 'CWE') { // no match in the list.
-            answer = self._processCWECNEValueInQR({valueCoding: fhirVal}, lfItem, true);
+        }
+        // answerOption is string, integer, data or time
+        else if (lfItem.answers) {
+          var itemAnswers = lfItem.answers;
+          for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
+            if (fhirVal === itemAnswers[j].text) {
+              answer = itemAnswers[j];
+            }
           }
         }
       }
-      else if((lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT') &&
-              (fhirVal._type === 'Quantity' || /Quantity$/.test(path(fhirVal)))) {
-        delete fhirVal.__path__;
-        fhirVal._type = 'Quantity';
-        [answer, errors] = this._convertFHIRQuantity(lfItem, fhirVal);
-        hasMessages = !!errors;
-      }
-      // For date types, convert them to date objects, but only for values.
-      // If we're setting defaultAnswer, leave them as strings.
-      else if (!forDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string')
-        answer = new Date(fhirVal);
-      else if (!forDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string')
-        answer = LForms.Util.stringToDTDateISO(fhirVal);
       else {
-        answer = fhirVal;
+        if((lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT') &&
+            (fhirVal._type === 'Quantity' || /Quantity$/.test(path(fhirVal)))) {
+          delete fhirVal.__path__;
+          fhirVal._type = 'Quantity';
+          [answer, errors] = this._convertFHIRQuantity(lfItem, fhirVal);
+          hasMessages = !!errors;
+        }
+        // For date types, convert them to date objects, but only for values.
+        // If we're setting defaultAnswer, leave them as strings.
+        else if (!forDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string')
+          answer = new Date(fhirVal);
+        else if (!forDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string')
+          answer = LForms.Util.stringToDTDateISO(fhirVal);
+        else {
+          answer = fhirVal;
+        }
       }
       answers.push(answer);
       messages.push(hasMessages ? {errors} : null);
@@ -666,60 +680,6 @@ function addCommonSDCImportFns(ns) {
     }
 
     lfItem.linkId = qItem.linkId;
-  };
-
-
-  /**
-   * Parse questionnaire item for question cardinality and answer cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign question cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processFHIRQuestionAndAnswerCardinality = function(lfItem, qItem) {
-    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
-    var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-    var repeats = qItem.repeats;
-    var required = qItem.required;
-    var answerCardinality, questionCardinality;
-    // CNE/CWE, repeats handled by autocompleter with multiple answers in one question
-    if (lfItem.dataType === 'CNE' || lfItem.dataType === 'CWE') {
-      if (repeats) {
-        answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
-      }
-      else {
-        answerCardinality = {max: "1"};
-      }
-      if (required) {
-        answerCardinality.min = min ? min.valueInteger.toString() : "1";
-      }
-      else {
-        answerCardinality.min = "0";
-      }
-    }
-    // not CNE/CWE, question repeats
-    else {
-      // repeats
-      if (repeats) {
-        questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
-      }
-      else {
-        questionCardinality = {max: "1"};
-      }
-      // required
-      if (required) {
-        questionCardinality.min = min ? min.valueInteger.toString() : "1";
-        answerCardinality = {min: "1"};
-      }
-      else {
-        questionCardinality.min = "1";
-      }
-    }
-
-    if (questionCardinality)
-      lfItem.questionCardinality = questionCardinality;
-    if (answerCardinality)
-      lfItem.answerCardinality = answerCardinality;
   };
 
 
@@ -984,8 +944,8 @@ function addCommonSDCImportFns(ns) {
 
   /**
    * Set value and units on a LForms item
-   * @param linkId an item's linkId
-   * @param answer value for the item
+   * @param linkId a QuestionnaireResponse item's linkId
+   * @param answer value for the item in QuestionnaireResponse
    * @param item a LForms item
    * @private
    */
@@ -1016,7 +976,15 @@ function addCommonSDCImportFns(ns) {
             }
           }
           else if (qrValue.valueInteger) {
-            item.value = qrValue.valueInteger;
+            // has an answer list
+            if (InternalUtil.hasAnswerOption(item)) {
+              // answer repeats (autocomplete or checkboxes)
+              ns._processOtherAnswerOptionValueInQR(answer, item)
+            }
+            // normal item
+            else {
+              item.value = qrValue.valueInteger;
+            }
           }
           break;
         case "REAL":
@@ -1031,7 +999,26 @@ function addCommonSDCImportFns(ns) {
           }
           break;
         case "DT":
-          item.value = qrValue.valueDate;
+          // has an answer list
+          if (InternalUtil.hasAnswerOption(item)) {
+            // answer repeats (autocomplete or checkboxes)
+            ns._processOtherAnswerOptionValueInQR(answer, item)
+          }
+          // normal item
+          else {
+            item.value = qrValue.valueDate;
+          }
+          break;
+        case "TM":
+          // has an answer list
+          if (InternalUtil.hasAnswerOption(item)) {
+            // answer repeats (autocomplete or checkboxes)
+            ns._processOtherAnswerOptionValueInQR(answer, item)
+          }
+          // normal item
+          else {
+            item.value = qrValue.valueTime;
+          }
           break;
         case "DTM":
           item.value = qrValue.valueDateTime;
@@ -1056,6 +1043,16 @@ function addCommonSDCImportFns(ns) {
           }
           break;
         case "ST":
+          // has an answer list
+          if (InternalUtil.hasAnswerOption(item)) {
+            // answer repeats (autocomplete or checkboxes)
+            ns._processOtherAnswerOptionValueInQR(answer, item)
+          }
+          // normal item
+          else {
+            item.value = qrValue.valueString;
+          }
+          break;
         case "TX":
           item.value = qrValue.valueString;
           break;
@@ -1386,7 +1383,7 @@ function addCommonSDCImportFns(ns) {
       if (c.display)
         retValue.text = c.display;
       if (c.system)
-        retValue.system = c.sysetm;
+        retValue.system = c.system;
 
       
       if (notOnList) {
@@ -1412,6 +1409,82 @@ function addCommonSDCImportFns(ns) {
       retValue = qrItemValue.valueString;
     }
     return retValue;
+  };
+
+
+  /**
+   * Handle the item.value in QuestionnaireResponse for ST/INT/DT/TM typed items
+   * that have an answer list.
+   * @param {*} answer an answer of an item in QuestionnaireResponse
+   * @param {*} lfItem an item in lforms
+   * @returns 
+   */
+  self._processOtherAnswerOptionValueInQR = function(answer, item) {
+
+    // has an answer list
+    if (InternalUtil.hasAnswerOption(item)) {
+      // answer repeats (autocomplete or checkboxes)
+      if (ns._answerRepeats(item)) {
+        var value = [];
+        for (var j=0,jLen=answer.length; j<jLen; j++) {
+          var val = ns._convertOtherAnswerOptionValueInQR(answer[j], item);
+          if (val) {
+            value.push(val);
+          }
+        }
+        item.value = value;
+      }
+      // answer not repeats, (autocomplete or radiobuttons)
+      else {
+        item.value = ns._convertOtherAnswerOptionValueInQR(answer[0], item);
+      }
+    }
+  }
+
+
+  /**
+   * Convert FHIR values in QuestionnaireResponse for ST/INT/DT/TM typed items
+   * that have an answer list, to lforms values
+   * @param {*} qrItemValue a value of item in QuestionnaireResponse
+   * @param {*} lfItem an item in lforms
+   * @returns 
+   */
+  self._convertOtherAnswerOptionValueInQR = function(qrItemValue, lfItem) {
+    let retValue;
+    let dataType = lfItem.dataType;
+
+    if (lfItem.answers && (dataType === "ST" || dataType === "INT" || 
+        dataType === "DT" || dataType === "TM")) {
+      let answerText;
+      switch (dataType) {
+        case "ST":
+          answerText = qrItemValue.valueString;
+          break;
+        case "INT":
+          answerText = qrItemValue.valueInteger;
+          break;
+        case "DT":
+          answerText = qrItemValue.valueDate;
+          break;
+        case "TM":
+          answerText = qrItemValue.valueTime;
+          break;
+      }
+      if (answerText) 
+        retValue = { text: answerText };
+    }
+
+    // compare retValue to the item.answers
+    var found = false;
+    for(var i=0, len=lfItem.answers.length; i<len; i++) {
+      if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {
+        found = true;
+        retValue = lfItem.answers[i];
+        break;
+      }
+    }
+
+    return retValue; // retValue might not be in the answers? R5 allows that.
   };
 
 

@@ -81,7 +81,7 @@ describe('ExpressionProcessor', function () {
       var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
       var map = {};
       exp._addToIDtoQRItemMap(lfItem, qrItem, map);
-      console.log(Object.keys(map))
+      //console.log(Object.keys(map))
       assert.deepEqual(map, {'/g1/1': qrItem, '/g1/g1A/1/1': qrItem.item[0],
         '/g1/g1A/q1/1/1/1': qrItem.item[0].item[0], '/g1/g1A/q1/1/1/3': qrItem.item[0].item[0]});
     });
