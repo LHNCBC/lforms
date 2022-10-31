@@ -1,7 +1,6 @@
 import * as util from '../support/util.js';
 
 // Tests of the support for calculatedExpression.
-// Most of this is currently tested by either karma or protractor.
 describe('calculatedExpression', () => {
   before(()=>{
     cy.visit('test/pages/addFormToPageTest.html');

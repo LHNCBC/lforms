@@ -195,18 +195,6 @@
             ]
           }
         },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "test/e2e/protractor.conf.js",
-            "devServerTarget": "lforms:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "lforms:serve:production"
-            }
-          }
-        },
         "cypress-run": {
           "builder": "@cypress/schematic:cypress",
           "options": {

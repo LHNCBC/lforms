@@ -15,7 +15,7 @@ module.exports = (on, config) => {
      */
     createTempFileAndCleanup({fileName, content}) {
       const tmpFolder = `${config.fileServerFolder}/tmp/test`;
-      fs.rmdirSync(tmpFolder, { recursive: true });
+      fs.rmSync(tmpFolder, { recursive: true, force: true });
       fs.mkdirSync(tmpFolder, { recursive: true });
       fs.writeFileSync(`${tmpFolder}/${fileName}`, content);
       return `tmp/test/${fileName}`;

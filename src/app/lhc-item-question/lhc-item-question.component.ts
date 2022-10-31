@@ -7,7 +7,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
   templateUrl: './lhc-item-question.component.html',
   styleUrls: ['./lhc-item-question.component.css']
 })
-export class LhcItemQuestionComponent {
+export class LhcItemQuestionComponent implements OnInit {
 
   @Input() item;
   @Input() options;
@@ -18,13 +18,18 @@ export class LhcItemQuestionComponent {
   constructor(
     private winService: WindowService,
     public lhcDataService: LhcDataService,
-  ) {     
-    winService.windowWidth.subscribe(updatedWidth => {
-      let viewMode = winService.getViewMode();
-      let viewModeClass = lhcDataService.getItemViewModeClass(this.item, viewMode)
+  ) {}
+  
+
+  /**
+   * Set up the window width observer when the component is initialized/reinitialized
+   */
+  ngOnInit(): void {
+    this.winService.windowWidth.subscribe(updatedWidth => {
+      let viewMode = this.winService.getViewMode();
+      let viewModeClass = this.lhcDataService.getItemViewModeClass(this.item, viewMode)
       this.eleStyle = viewModeClass === "lhc-item-view-lg" ? {"width": updatedWidth/2 + "px"} : null;
     });  
   }
-  
 }
 

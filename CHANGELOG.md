@@ -15,6 +15,26 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug in a custom cypress command.
 - Fixed a bug in importing a DiagnosticReport resource.
 
+## [32.2.2] 2022-10-25
+### Fixed
+- Fixed a bug in the construction of the URL for a FHIR ValueSet $expand
+  operation, though there was already a work-around in place, so the only result
+  was a single failed network call logged to the console (which then can cause a
+  problem for Cypress tests).
+### Updated
+- Cypress has been update to version 10.
+
+## [32.2.1] 2022-10-20
+### Fixed
+- Fixed a bug that enableWhen does not work on the values calculated from FHIRPath
+  expressions.
+
+## [32.2.0] 2022-10-18
+### Added
+- Added support the currenly published URI for the preferred terminology server
+  extension, though that URI will be changing
+  (https://jira.hl7.org/browse/FHIR-23977).
+
 ## [32.1.0] 2022-09-18
 ### Added
 - Added support the entryFormat extension

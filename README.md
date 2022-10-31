@@ -72,9 +72,8 @@ you don't accidentally add something that we are also working on.
 
 1. Run `npm run test:e2e:prepare` to copy necessary files in places for the tests and to update the web driver.
 
-1. Run `npm run test:e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). 
-   The e2e tests is configured to use Chrome. If Chrome has been updated, run `npm run update-webdriver` 
-   to update the Chrome web driver.
+1. Run `npm run test:e2e` to execute the end-to-end tests via [Cypress](https://www.cypress.io/). 
+   The e2e tests is configured to use Chrome. 
 
 ## <a id="using">Using the LHC-Forms Web Component</a>
 There are several script files to load.  If you are building this, these files will be

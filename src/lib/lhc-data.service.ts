@@ -70,14 +70,6 @@ export class LhcDataService {
     if (!item._visitedBefore) {
       item._showValidation = true;
 
-      // use $interval instead of $timeout so that protractor will not wait on $timeout
-      // var intervalCanceller = $interval(function() {
-      //   // not to show validation messages after 2 seconds
-      //   item._showValidation = false;
-      //   item._visitedBefore = true;
-      //   $interval.cancel(intervalCanceller);
-      // }, $scope.validationInitialShowTime);
-
       setTimeout(()=>{
         // not to show validation messages after 1.5 seconds
         item._showValidation = false;
