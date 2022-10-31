@@ -4,7 +4,7 @@ describe('formdata: ', () => {
   const tp: TestPage = new TestPage();
   const ff = tp.USSGFHTVertical;
 
-  describe('get form data', () => {
+  describe.only('get form data', () => {
     it('should get a form data with 3 optional parameters.', () => {
       tp.LoadForm.openUSSGFHTVertical();
 

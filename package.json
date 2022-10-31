@@ -9,9 +9,12 @@
   "main": "dist/index.js",
   "repository": "github:lhncbc/lforms",
   "license": "See LICENSE.md",
+  "config": {
+    "testPort": "4200"
+  },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --configuration=debugging",
     "start-public": "node bin/start-public.js",
     "start-dist-public": "node bin/start-public.js  --dist",
     "build:lforms-dev:update": "npm run build:lforms-dev && npm run build:prepare-zip && shx cp -rf dist/$npm_package_name-$npm_package_version/webcomponent dist/$npm_package_name && npm run copy-built-files",
@@ -34,12 +37,15 @@
     "test:fhir-unit": "karma start test/karma.conf.js",
     "test:ng-unit": "ng test --watch=false",
     "test:unit": "npm run test:fhir-unit && npm run test:ng-unit",
-    "test:e2e": "npm run cy:run",
+    "test:e2e": "start-server-and-test start http://localhost:${npm_package_config_testPort} cy:run",
     "test": "npm run test:unit && npm run test:e2e",
     "test-coverage": "ng test --no-watch --code-coverage",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "test-pages": "http-server -o /test/pages/lforms_testpage.html"
+    "test-pages": "http-server -o /test/pages/lforms_testpage.html",
+    "e2e": "ng e2e",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@angular/animations": "~12.2.16",
@@ -94,6 +100,7 @@
     "mocha": "^9.2.0",
     "ngx-build-plus": "^12.2.0",
     "shx": "^0.3.3",
+    "start-server-and-test": "^1.14.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~4.3.5",

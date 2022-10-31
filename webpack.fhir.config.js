@@ -14,7 +14,7 @@ function commonConfig() {
               comments: false,
             },
             sourceMap: true // Must be set to true if using source-maps in production
-          },          
+          },
           parallel: true
         }),
       ],
@@ -93,6 +93,9 @@ function makeConfigs(env) {
     allFHIRConfig.output.path = distFhirPath;
     allFHIRConfig.output.filename = 'lformsFHIRAll.min.js';
     allFHIRConfig.mode = debugging? 'none' : 'production';
+    if (debugging) {
+      allFHIRConfig.devServer = {port: 4201};
+    }
     allFHIRConfig.devtool = 'source-map';
     allFHIRConfig.externals = fhirExternals;
     configs.push(allFHIRConfig);
