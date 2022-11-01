@@ -50,10 +50,11 @@ function makeConfigs(env) {
 
   let configs = [];
   let fhirVersions = Object.keys(require('./src/fhir/versions'));
-  let versionedDist = 'lforms-'+require('./package.json').version;
+  //let versionedDist = 'lforms-'+require('./package.json').version; // no longer versioning during build except when zipping
+  let unversionedDist = 'lforms';
   let rootDirPath = require('path').resolve(__dirname);
-  let versionedDistPath = rootDirPath+'/dist/'+versionedDist;
-  let distFhirPath = versionedDistPath+'/fhir';
+  let unversionedDistPath = rootDirPath+'/dist/'+unversionedDist;
+  let distFhirPath = unversionedDistPath+'/fhir';
 
   // Builds for each FHIR version
   let fhirExternals = {
