@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.0.0] 2022-11-01
+### Updated
+- Updated angular from v12 to v14
+### Changed
+- Removed the support for IE 11.
+- Only ES2020 files (no ES5 files) are in the build files.
+  The concatnated js file name is now lhc-forms.js, not
+  lhc-forms.es5.js or lhc-forms.es2015.js
+
 ## [32.2.2] 2022-10-25
 ### Fixed
 - Fixed a bug in the construction of the URL for a FHIR ValueSet $expand

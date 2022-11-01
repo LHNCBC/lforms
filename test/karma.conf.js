@@ -38,9 +38,9 @@ module.exports = function(config) {
       {pattern: 'dist/webcomponent/*.js.map', included: false, served: true},
       'dist/webcomponent/assets/lib/zone.min.js',
       'dist/webcomponent/scripts.js',
-      'dist/webcomponent/runtime-es5.js',
-      'dist/webcomponent/polyfills-es5.js',
-      'dist/webcomponent/main-es5.js',
+      'dist/webcomponent/runtime.js',
+      'dist/webcomponent/polyfills.js',
+      'dist/webcomponent/main.js',
       'src/fhir/*/lformsFHIR.js',
       'test/karma/*.js'
     ],

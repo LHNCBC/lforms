@@ -2,24 +2,19 @@ const fs = require('fs-extra');
 const version = require("./package.json").version;
 (async function build() {
   const copiedFiles = [
-    'runtime-es5.js',
-    'runtime-es5.js.map',
-    'runtime-es2015.js',
-    'runtime-es2015.js.map',
-    'polyfills-es5.js',
-    'polyfills-es5.js.map',
-    'polyfills-es2015.js',
-    'polyfills-es2015.js.map',
-    'main-es5.js',
-    'main-es5.js.map',
-    'main-es2015.js',
-    'main-es2015.js.map',
-    'scripts.js',  
+    'runtime.js',
+    'runtime.js.map',
+    'polyfills.js',
+    'polyfills.js.map',
+    'main.js',
+    'main.js.map',
+    'scripts.js',
+    'scripts.js.map',  
     'styles.css',
+    'styles.css.map',
     'magnifying_glass.png',
     'down_arrow_gray_10_10.png',
-    `lhc-forms.es5.js`,
-    `lhc-forms.es2015.js`,
+    `lhc-forms.js`,
   ]
 
   await fs.ensureDir(`dist/lforms-${version}/webcomponent`)

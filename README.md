@@ -54,8 +54,8 @@ you don't accidentally add something that we are also working on.
   process. 
   
   The build also concatenates all the js files (except for zone.min.js and the
-  FHIR support files) into a single `lhc-forms.es5.js` and `lhc-forms.es2015.js`
-  file, and these work, but we don't currently recommend their use because the
+  FHIR support files) into a single `lhc-forms.js` file, and it works, 
+  but we don't currently recommend their use because the
   source maps don't work with these files.  Also, there is a dist/webcomponent
   directory that is created with a copy of the files in dist/lforms, but that
   is only needed for the tests.
