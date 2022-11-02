@@ -162,7 +162,7 @@
           let option = document.createElement("option");
           option.text = form.text;
           option.value = JSON.stringify({
-            url: "/test-data/form-data/" + form.name + ".json",
+            url: "/test/data/lforms/" + form.name + ".json",
             tempOptions: form.tempOptions,
             formOptions: form.formOptions})
           formList.add(option);
@@ -330,10 +330,10 @@
        */
       async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
 
-        let formUrl = '/src/test-data/form-data/' + questionnaireFileName;
+        let formUrl = '/test/data/form-data/' + questionnaireFileName;
         let formJson = await loadJsonFromUrl(formUrl);
 
-        let fhirResUrl = '/src/test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
+        let fhirResUrl = '/test/data/' + getFHIRVersion() + '/' + fhirFileName;
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
 
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(

@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 (async function build() {
+/*
   const copiedFiles = [
     'runtime-es5.js',
     'runtime-es5.js.map',
@@ -20,7 +21,6 @@ const fs = require('fs-extra');
     `lhc-forms.es5.js`,
     `lhc-forms.es2015.js`,
   ]
-
   await fs.ensureDir(`dist/lforms/webcomponent`)
   // js files
   copiedFiles.forEach(async (file) => {
@@ -28,6 +28,7 @@ const fs = require('fs-extra');
   })
   // zone.js
   await fs.copy('./dist/webcomponent/assets/', `dist/lforms/webcomponent/assets/` )
+*/
   // readme
   await fs.copyFile('./README.md', `dist/lforms/README.md` )
   // license

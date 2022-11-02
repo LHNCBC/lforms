@@ -163,7 +163,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   }
                   fhir.SDC._processFHIRValues(lfItem, fhirVals);
                   let expected = expectedOutput[n];
-                  
+
                   if (!multiselect)
                     expected = expected[0];
 

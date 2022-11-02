@@ -10,7 +10,7 @@ module.exports = function(config) {
 
     // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
     proxies: {
-      '/base/app/data/': '/base/src/test-data/form-data/',
+      '/base/app/data/': '/base/test/data/lforms/',
       '/test/data/': '/base/test/data/'
     },
 
@@ -33,8 +33,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       {pattern: 'test/data/**/*.json', included: false, served: true},
-      {pattern: 'src/test-data/**/*.json', included: false, served: true},
-      {pattern: 'src/test-data/**/*.js', included: true, served: true},
+      {pattern: 'test/data/**/*.js', included: true, served: true},
       {pattern: 'dist/webcomponent/*.js.map', included: false, served: true},
       'dist/webcomponent/assets/lib/zone.min.js',
       'dist/webcomponent/scripts.js',

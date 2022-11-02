@@ -14,7 +14,7 @@
           "builder": "ngx-build-plus:browser",
           "options": {
             "preserveSymlinks": true,
-            "outputPath": "dist/webcomponent",
+            "outputPath": "dist/lforms/webcomponent",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -91,16 +91,15 @@
               "assets": [
                 "src/favicon.ico",
                 "src/assets",
-                "src/test-data",
-                "src/test-data/form-data",
-                "src/test-data/fhir-data",
-                "src/test-data/e2e",
-                "src/test",
-                "src/test/lib/",
                 {
                   "glob": "*",
                   "input": "test/pages",
                   "output": "test/pages"
+                },
+                {
+                  "glob": "**",
+                  "input": "test/data",
+                  "output": "test/data"
                 },
                 {
                   "glob": "zone.min.js",
@@ -164,11 +163,6 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              "src/test-data",
-              "src/test",
-              "src/test/fhir",
-              "src/test/webcomponent",
               {
                 "glob": "zone.min.js",
                 "input": "node_modules/zone.js/dist/",
