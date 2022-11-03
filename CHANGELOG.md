@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [32.2.3] 2022-11-03
+### Fixed
+- When running e2e tests, webpack-dev-server now serves the files so that
+  changes to source files are more quickly recompiled and updated for the test
+  runner.
+
 ## [32.2.2] 2022-10-25
 ### Fixed
 - Fixed a bug in the construction of the URL for a FHIR ValueSet $expand

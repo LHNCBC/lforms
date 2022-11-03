@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "32.2.2",
+  "version": "32.2.3",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -28,7 +28,7 @@
     "build-dev": "npm run build:init && npm run build:fhir-dev && npm run build:lforms-dev && npm run build:prepare-zip && npm run build:zip",
     "build": "npm run build:init && npm run build:fhir && npm run build:lforms && npm run build:prepare-zip && npm run build:zip",
     "build:clean": "shx rm -rf dist src/test/lib",
-    "build:init": "npm run build:clean && shx mkdir -p dist/$npm_package_name && shx cp src/index.js dist",
+    "build:init": "npm run build:clean && shx mkdir -p dist/$npm_package_name && shx cp src/index.js dist && npm run build:version",
     "build:prepare-zip": "node prepare-zip.js",
     "build:zip": "cd dist;  shx mv $npm_package_name $npm_package_name-$npm_package_version; bestzip $npm_package_name-$npm_package_version.zip $npm_package_name-$npm_package_version/*; shx mv $npm_package_name-$npm_package_version $npm_package_name",
     "build:version": "node -e 'require(\"fs\").writeFileSync(\"src/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",
