@@ -330,7 +330,7 @@
        */
       async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
 
-        let formUrl = '/test/data/form-data/' + questionnaireFileName;
+        let formUrl = '/test/data/lforms/' + questionnaireFileName;
         let formJson = await loadJsonFromUrl(formUrl);
 
         let fhirResUrl = '/test/data/' + getFHIRVersion() + '/' + fhirFileName;

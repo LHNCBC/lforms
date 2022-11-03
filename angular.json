@@ -110,6 +110,11 @@
                   "glob": "**",
                   "input": "node_modules/jszip",
                   "output": "node_modules/jszip"
+                },
+                {
+                  "glob": "**",
+                  "input": "dist",
+                  "output": "dist"
                 }
               ],
               "optimization": false,

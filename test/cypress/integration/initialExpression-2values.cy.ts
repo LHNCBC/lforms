@@ -7,7 +7,7 @@ describe('initialExpression with mulitple values', () => {
         answerField = 'questionUsingParentQRAnswersAsList/1/1/1';
   const po = new AddFormToPageTestPage();
 
-  it.only('should add repeating items and set initial values', () => {
+  it('should add repeating items and set initial values', () => {
     po.openPage();
     // This uses a form that is based on a user's form
     util.addFormToPage('questionnaire-initialExpression-2values.json', 'formContainer', {fhirVersion: "R4"});
