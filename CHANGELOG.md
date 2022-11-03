@@ -15,7 +15,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   was a single failed network call logged to the console (which then can cause a
   problem for Cypress tests).
 ### Updated
-- Cypress has been update to version 10.
+- Cypress has been updated to version 10.
 
 ## [32.2.1] 2022-10-20
 ### Fixed
