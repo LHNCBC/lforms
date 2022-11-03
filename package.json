@@ -10,7 +10,8 @@
   "repository": "github:lhncbc/lforms",
   "license": "See LICENSE.md",
   "config": {
-    "testPort": "4200"
+    "testPort": "4200",
+    "testPortFhir": "4201"
   },
   "scripts": {
     "ng": "ng",
@@ -35,11 +36,11 @@
     "test:fhir-unit": "karma start test/karma.conf.js",
     "test:ng-unit": "ng test --watch=false",
     "test:unit": "npm run test:fhir-unit && npm run test:ng-unit",
-    "test:e2e:fhir-server": "start-server-and-test start:fhir-dev http://localhost:4201 test:e2e:lforms-server",
-    "test:e2e:lforms-server": "start-server-and-test start:lforms-dev http://localhost:4200 cy:run",
+    "test:e2e:fhir-server": "start-server-and-test start:fhir-dev http://localhost:$npm_package_config_testPortFhir test:e2e:lforms-server",
+    "test:e2e:lforms-server": "start-server-and-test start:lforms-dev http://localhost:$npm_package_config_testPort cy:run",
     "test:e2e": "npm run test:e2e:fhir-server",
-    "test:e2e:fhir-server:open": "start-server-and-test start:fhir-dev http://localhost:4201 test:e2e:lforms-server:open",
-    "test:e2e:lforms-server:open": "start-server-and-test start:lforms-dev http://localhost:4200 cy:open",
+    "test:e2e:fhir-server:open": "start-server-and-test start:fhir-dev http://localhost:$npm_package_config_testPortFhir test:e2e:lforms-server:open",
+    "test:e2e:lforms-server:open": "start-server-and-test start:lforms-dev http://localhost:$npm_package_config_testPort cy:open",
     "test:e2e:open": "npm run test:e2e:fhir-server:open",
     "test": "npm run test:unit && npm run test:e2e",
     "test-coverage": "ng test --no-watch --code-coverage",

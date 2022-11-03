@@ -95,7 +95,8 @@ function makeConfigs(env) {
     allFHIRConfig.output.filename = 'lformsFHIRAll.min.js';
     allFHIRConfig.mode = debugging? 'none' : 'production';
     if (debugging) {
-      allFHIRConfig.devServer = {port: 4201};
+      let serverPort = require('./package.json').config.testPortFhir;
+      allFHIRConfig.devServer = {port: serverPort};
     }
     allFHIRConfig.devtool = 'source-map';
     allFHIRConfig.externals = fhirExternals;
