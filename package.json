@@ -46,7 +46,7 @@
     "test-coverage": "ng test --no-watch --code-coverage",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "test-pages": "http-server -o /test/pages/lforms_testpage.html"
+    "test-pages": "http-server -o /test/pages/build_test_fhirpath.html"
   },
   "dependencies": {
     "@angular/animations": "~12.2.16",
