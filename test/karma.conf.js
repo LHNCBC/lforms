@@ -10,7 +10,6 @@ module.exports = function(config) {
 
     // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
     proxies: {
-      '/base/app/data/': '/base/test/data/lforms/',
       '/test/data/': '/base/test/data/'
     },
 

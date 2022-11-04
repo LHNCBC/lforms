@@ -757,7 +757,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert FHTData to Questionnaire', function (done) {
 
-            $.get('/base/app/data/FHTData.json', function(FHTData) {
+            $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, LForms.Util.deepCopy(FHTData));
               assert.equal(fhirQ.item[0].item[2].item.length, 1);
               assert.equal(fhirQ.item[0].item[2].item[0].text,
@@ -1121,7 +1121,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
 
           it('should convert FHTData to lforms', function (done) {
-            $.get('/base/app/data/FHTData.json', function (FHTData) {
+            $.get('/base/test/data/lforms/FHTData.json', function (FHTData) {
               var fhtClone = LForms.Util.deepCopy(FHTData);
               //createLinkId(fhtClone.items);
               var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, fhtClone);
@@ -1200,7 +1200,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(convertedLfData.items[0].items[6].units[0].name, fhtClone.items[0].items[6].units[0].name);
               assert.equal(convertedLfData.items[0].items[6].units[1].name, fhtClone.items[0].items[6].units[1].name);
 
-              $.get('/base/app/data/displayControlsDemo.json', function(displayControlsDemo) {
+              $.get('/base/test/data/lforms/displayControlsDemo.json', function(displayControlsDemo) {
                 // Display control
                 fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(displayControlsDemo)));
                 convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
@@ -1406,7 +1406,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert restrictions', function (done) {
-            $.get('/base/app/data/validationTestForm.json', function(validationTestForm) {
+            $.get('/base/test/data/lforms/validationTestForm.json', function(validationTestForm) {
               var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, LForms.Util.deepCopy(validationTestForm));
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
@@ -1431,7 +1431,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert externally defined', function (done) {
-            $.get('/base/app/data/validationTestForm.json', function(validationTestForm) {
+            $.get('/base/test/data/lforms/validationTestForm.json', function(validationTestForm) {
               const itemIndex = 27; // for the item with externally defined set
               var optionsRes = validationTestForm.items[itemIndex].externallyDefined;
               assert.equal(typeof optionsRes, 'string');
@@ -1463,7 +1463,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         describe('LForms data to Questionnaire conversion', function() {
 
           it('should convert to SDC Questionnaire with extensions', function(done) {
-            $.get('/base/app/data/FHTData.json', function(FHTData) {
+            $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)));
 
               assert.equal(fhirQ.meta.profile[0], fhir.SDC.QProfile);
@@ -1473,7 +1473,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert to standard Questionnaire without any extensions', function(done) {
-            $.get('/base/app/data/FHTData.json', function(FHTData) {
+            $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)), true);
 
               assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
@@ -1621,7 +1621,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         describe('LForms data to QuestionnaireResponse conversion', function() {
           describe('with extensions', function() {
             it('should convert to SDC Questionnaire with extensions', function(done) {
-              $.get('/base/app/data/FHTData.json', function(FHTData) {
+              $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
                 var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
                 assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
                 done();
@@ -1629,7 +1629,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
 
             it('should set the lformsVersion tag', function (done){
-              $.get('/base/app/data/FHTData.json', function(FHTData) {
+              $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
                 var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
                 var version = fhirQR.meta.tag[0].code;
                 assert.equal(typeof version, 'string');
@@ -1641,7 +1641,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert to standard QuestionnaireResponse without any extensions', function(done) {
 
-            $.get('/base/app/data/FHTData.json', function(FHTData) {
+            $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQR = LForms.Util.getFormFHIRData(
                   'QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData),
                   {noExtensions: true});
