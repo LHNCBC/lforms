@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const concat = require('concat');
 (async function build() {
 
-  // es2020 files from angular 14 build
+  // es2017 files from angular 14 build
   const jsFiles = [
     './dist/webcomponent/scripts.js',
     './dist/webcomponent/runtime.js',
