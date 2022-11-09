@@ -8,7 +8,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 })
 export class LhcItemTextComponent {
   @Input() item: any;
-  
+
   constructor(public lhcDataService: LhcDataService) { }
 
   onModelChange(value) {

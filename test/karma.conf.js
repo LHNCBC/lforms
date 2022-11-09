@@ -10,7 +10,6 @@ module.exports = function(config) {
 
     // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
     proxies: {
-      '/base/app/data/': '/base/src/test-data/form-data/',
       '/test/data/': '/base/test/data/'
     },
 
@@ -33,14 +32,13 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       {pattern: 'test/data/**/*.json', included: false, served: true},
-      {pattern: 'src/test-data/**/*.json', included: false, served: true},
-      {pattern: 'src/test-data/**/*.js', included: true, served: true},
-      {pattern: 'dist/webcomponent/*.js.map', included: false, served: true},
-      'dist/webcomponent/assets/lib/zone.min.js',
-      'dist/webcomponent/scripts.js',
-      'dist/webcomponent/runtime-es5.js',
-      'dist/webcomponent/polyfills-es5.js',
-      'dist/webcomponent/main-es5.js',
+      {pattern: 'test/data/**/*.js', included: true, served: true},
+      {pattern: 'dist/lforms/webcomponent/*.js.map', included: false, served: true},
+      'dist/lforms/webcomponent/assets/lib/zone.min.js',
+      'dist/lforms/webcomponent/scripts.js',
+      'dist/lforms/webcomponent/runtime-es5.js',
+      'dist/lforms/webcomponent/polyfills-es5.js',
+      'dist/lforms/webcomponent/main-es5.js',
       'src/fhir/*/lformsFHIR.js',
       'test/karma/*.js'
     ],

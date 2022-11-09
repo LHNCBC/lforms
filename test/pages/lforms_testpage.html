@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!-- compiled css file for the web comoponet of LHC-Forms -->
-  <link rel="stylesheet" href="/dist/lforms/webcomponent/styles.css">
+  <link rel="stylesheet" href="styles.css">
   <style>
     .btn {
       display: inline-block;
@@ -162,7 +162,7 @@
           let option = document.createElement("option");
           option.text = form.text;
           option.value = JSON.stringify({
-            url: "/src/test-data/form-data/" + form.name + ".json",
+            url: "/test/data/lforms/" + form.name + ".json",
             tempOptions: form.tempOptions,
             formOptions: form.formOptions})
           formList.add(option);
@@ -330,10 +330,10 @@
        */
       async function loadAndMergeFHIRDataFile (fhirFileName, questionnaireFileName, resType) {
 
-        let formUrl = '/src/test-data/form-data/' + questionnaireFileName;
+        let formUrl = '/test/data/lforms/' + questionnaireFileName;
         let formJson = await loadJsonFromUrl(formUrl);
 
-        let fhirResUrl = '/src/test-data/fhir-data/' + getFHIRVersion() + '/' + fhirFileName;
+        let fhirResUrl = '/test/data/' + getFHIRVersion() + '/' + fhirFileName;
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
 
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
@@ -533,11 +533,11 @@
     <!-- ES2015 files of the LHC-Forms web component -->
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/jszip/vendor/FileSaver.js"></script>
-    <script src="/dist/lforms/webcomponent/assets/lib/zone.min.js"></script>
-    <script src="/dist/lforms/webcomponent/runtime-es5.js"></script>
-    <script src="/dist/lforms/webcomponent/polyfills-es5.js"></script>
-    <script src="/dist/lforms/webcomponent/scripts.js"></script>
-    <script src="/dist/lforms/webcomponent/main-es5.js"></script>
+    <script src="/assets/lib/zone.min.js"></script>
+    <script src="/runtime.js"></script>
+    <script src="/polyfills.js"></script>
+    <script src="/scripts.js"></script>
+    <script src="/main.js"></script>
     <script src="/dist/lforms/fhir/lformsFHIRAll.min.js"></script>
 
   </body>

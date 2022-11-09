@@ -171,7 +171,7 @@ const fhirMock = {
 
 // Populate ValueSet expansions
 let vsID = 'language-preference-type';
-fhirMock.mockData.ValueSet[vsID] = require('../../../../src/test-data/e2e/R4/ValueSet/'+vsID+'.json');
+fhirMock.mockData.ValueSet[vsID] = require('../../../../test/data/R4/ValueSet/'+vsID+'.json');
 
 
 module.exports = fhirMock;
