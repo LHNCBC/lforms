@@ -19,8 +19,8 @@
       <ng-container [ngSwitch]="item.dataType">
 
         <ng-container *ngSwitchCase="'INT'">
-          <lhc-item-simple-type [item]="item" *ngIf="!item._hasAnswerOption"></lhc-item-simple-type>
-          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerOption"></lhc-item-choice>
+          <lhc-item-simple-type [item]="item" *ngIf="!item._hasAnswerList"></lhc-item-simple-type>
+          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerList"></lhc-item-choice>
         </ng-container>
         <ng-container *ngSwitchCase="'REAL'">
           <lhc-item-simple-type [item]="item"></lhc-item-simple-type>
@@ -35,22 +35,22 @@
           <lhc-item-choice [item]="item"></lhc-item-choice>
         </ng-container>
         <ng-container *ngSwitchCase="'DT'">
-          <lhc-item-date [item]="item" *ngIf="!item._hasAnswerOption"></lhc-item-date>
-          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerOption"></lhc-item-choice>
+          <lhc-item-date [item]="item" *ngIf="!item._hasAnswerList"></lhc-item-date>
+          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerList"></lhc-item-choice>
         </ng-container>
         <ng-container *ngSwitchCase="'DTM'">
           <lhc-item-datetime [item]="item"></lhc-item-datetime>
         </ng-container>
         <ng-container *ngSwitchCase="'TM'">
-          <lhc-item-time [item]="item" *ngIf="!item._hasAnswerOption"></lhc-item-time>
-          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerOption"></lhc-item-choice>
+          <lhc-item-time [item]="item" *ngIf="!item._hasAnswerList"></lhc-item-time>
+          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerList"></lhc-item-choice>
         </ng-container>
         <ng-container *ngSwitchCase="'BL'">
           <lhc-item-boolean [item]="item"></lhc-item-boolean>
         </ng-container>
         <ng-container *ngSwitchCase="'ST'">
-          <lhc-input [item]="item" *ngIf="!item._hasAnswerOption"></lhc-input>
-          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerOption"></lhc-item-choice>
+          <lhc-input [item]="item" *ngIf="!item._hasAnswerList"></lhc-input>
+          <lhc-item-choice [item]="item" *ngIf="item._hasAnswerList"></lhc-item-choice>
         </ng-container>
         <ng-container *ngSwitchCase="'TX'">
           <lhc-item-text [item]="item"></lhc-item-text>

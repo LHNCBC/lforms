@@ -942,7 +942,7 @@ export default class LhcFormData {
     if(value === undefined || value === null || value === '') {
       return false;
     }
-    if(!item._hasAnswerOption && (item.dataType === CONSTANTS.DATA_TYPE.DTM
+    if(!item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.DTM
         || item.dataType === CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
       value = CommonUtils.stringToDate(value);
       if(! value) { // LForms.Util.stringToDate returns null on invalid string
@@ -1001,7 +1001,7 @@ export default class LhcFormData {
       }
 
       // check if the item has an answer list or a search url
-      item._hasAnswerOption = InternalUtil.hasAnswerOption(item);
+      item._hasAnswerList = InternalUtil.hasAnswerList(item);
     
       // displayControl default values
       if (item.dataType === "SECTION") {
@@ -1017,7 +1017,7 @@ export default class LhcFormData {
           item.displayControl.questionLayout = "vertical";
         }
       }
-      else if (item._hasAnswerOption) {
+      else if (item._hasAnswerList) {
         if (!item.displayControl) {
           item.displayControl = CommonUtils.deepCopy(this.templateOptions.defaultAnswerLayout);
         }
@@ -1045,7 +1045,7 @@ export default class LhcFormData {
 //      this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
       // reset item.value with modified answers if the item has a value (or an array of values)
-      if (item._hasAnswerOption) {
+      if (item._hasAnswerList) {
         this._resetItemValueWithAnswers(item);
       }
       // if this is not a saved form with user data, and
@@ -1078,12 +1078,12 @@ export default class LhcFormData {
       this._setupInFieldPlaceholders(item);
 
       // convert date string to Date object
-      if (item.value && !item._hasAnswerOption && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
+      if (item.value && !item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
           item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
         item.value = CommonUtils.stringToDate(item.value);
       }
       // internally all numeric values are of string type
-      if (!item._hasAnswerOption && (item.dataType === CONSTANTS.DATA_TYPE.INT || 
+      if (!item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.INT || 
         item.dataType === CONSTANTS.DATA_TYPE.REAL ||
         item.dataType === CONSTANTS.DATA_TYPE.QTY) &&
         typeof item.value === "number") {
@@ -1098,7 +1098,7 @@ export default class LhcFormData {
             item.dataType !== CONSTANTS.DATA_TYPE.DTM &&
             item.dataType !== CONSTANTS.DATA_TYPE.DT &&
             item.dataType !== CONSTANTS.DATA_TYPE.TM &&
-            !item._hasAnswerOption)) {
+            !item._hasAnswerList)) {
         item._hasValidation = true;
       }
 
@@ -1146,7 +1146,7 @@ export default class LhcFormData {
         item._placeholder = item._entryFormat;
       }
       // autocomplete
-      else if (item._hasAnswerOption) {
+      else if (item._hasAnswerList) {
         if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
@@ -1543,7 +1543,7 @@ export default class LhcFormData {
         itemData.questionCode = item.questionCode;
         // not a group or title item
         if (item.dataType!==CONSTANTS.DATA_TYPE.SECTION && item.dataType!==CONSTANTS.DATA_TYPE.TITLE) {
-          if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType, item._hasAnswerOption);
+          if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType, item._hasAnswerList);
           if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
         }
       }
@@ -1557,7 +1557,7 @@ export default class LhcFormData {
         for (var field in item) {
           // special handling for user input values
           if (field === "value") {
-            itemData[field] = this._getOriginalValue(item[field], item.dataType, item._hasAnswerOption);
+            itemData[field] = this._getOriginalValue(item[field], item.dataType, item._hasAnswerList);
           }
           else if (field === "unit") {
             itemData[field] = this._getOriginalValue(item[field]);
@@ -1697,17 +1697,17 @@ export default class LhcFormData {
    * (when getting the user data from the form)
    * @param value the data object of the selected answer
    * @param dataType optional, the data type of the value
-   * @param hasAnswerOption optional, a flag that indicates there is an answer list
+   * @param hasAnswerList optional, a flag that indicates there is an answer list
    * @private
    */
-  _getOriginalValue(value, dataType=null, hasAnswerOption=false) {
+  _getOriginalValue(value, dataType=null, hasAnswerList=false) {
     var retValue;
     if (value !== undefined && value !== null) {
       // has a data type
       if (dataType) {
         switch (dataType) {
           case CONSTANTS.DATA_TYPE.INT:   
-            if (hasAnswerOption) {
+            if (hasAnswerList) {
               retValue = value; // value is an object or an array of {text: value, ...}
             }
             else {
@@ -1719,7 +1719,7 @@ export default class LhcFormData {
             retValue = parseFloat(value);
             break;
           case CONSTANTS.DATA_TYPE.DT:
-            if (hasAnswerOption) {
+            if (hasAnswerList) {
               retValue = value; // value is an object or an array of {text: value, ...}
             }
             else {
@@ -1742,7 +1742,7 @@ export default class LhcFormData {
             break;
           case CONSTANTS.DATA_TYPE.ST:
           case CONSTANTS.DATA_TYPE.TM:            
-            retValue = value; // value is an object or an array of {text: value} when hasAnswerOption is true
+            retValue = value; // value is an object or an array of {text: value} when hasAnswerList is true
             break;
           default:
             retValue = value;
@@ -2721,7 +2721,7 @@ export default class LhcFormData {
   _setUpAnswerAndUnitAutoComp(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
-      if (item._hasAnswerOption) {
+      if (item._hasAnswerList) {
         this._updateAutocompOptions(item);
       }
       this._updateUnitAutocompOptions(item);
@@ -2744,7 +2744,7 @@ export default class LhcFormData {
    * @private
    */
   _updateUnitAutocompOptions(item) {
-    if (item.units && !item._hasAnswerOption) {
+    if (item.units && !item._hasAnswerList) {
       // add _displayUnit for item.unit if there is a value
       if (item.unit) {
         this._setUnitDisplay(item.unit);
@@ -2824,23 +2824,6 @@ export default class LhcFormData {
    * @private
    */
   _resetItemValueWithAnswers(item) {
-
-    // standardize answers (convert string/number to object)
-    // if (item._hasAnswerOption && item.answers) {
-    //   let objAnswers =[];
-
-    //   for (let i=0, iLen=item.answers.length; i<iLen; i++) {
-    //     let answer = item.answers[i];
-    //     if (typeof answer === 'string' || typeof answer === 'number') {
-    //       objAnswers.push({text: answer})
-    //     }
-    //     else if (typeof answer === 'object') {
-    //       objAnswers.push(answer);
-    //     }
-    //   }
-    //   item.answers = objAnswers;
-    // }
-
 
     // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
     // convert it to the internal format of {text: 'string value', _notOnList: true}
@@ -2998,7 +2981,7 @@ export default class LhcFormData {
    */
   _updateAutocompOptions(item) {
     // for list only
-    if (item._hasAnswerOption) {
+    if (item._hasAnswerList) {
 
       var maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
       if (maxSelect !== '*' && typeof maxSelect === 'string') {

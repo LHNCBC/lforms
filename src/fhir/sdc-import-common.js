@@ -412,7 +412,7 @@ function addCommonSDCImportFns(ns) {
       var answer = undefined; // reset back to undefined each iteration
       let errors = {};
       let hasMessages = false;
-      if (InternalUtil.hasAnswerOption(lfItem)) {
+      if (InternalUtil.hasAnswerList(lfItem)) {
         if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
           var codings = null;
           if (fhirVal._type === 'CodeableConcept') {
@@ -982,7 +982,7 @@ function addCommonSDCImportFns(ns) {
           }
           else if (qrValue.valueInteger) {
             // has an answer list
-            if (InternalUtil.hasAnswerOption(item)) {
+            if (InternalUtil.hasAnswerList(item)) {
               // answer repeats (autocomplete or checkboxes)
               ns._processOtherAnswerOptionValueInQR(answer, item)
             }
@@ -1005,7 +1005,7 @@ function addCommonSDCImportFns(ns) {
           break;
         case "DT":
           // has an answer list
-          if (InternalUtil.hasAnswerOption(item)) {
+          if (InternalUtil.hasAnswerList(item)) {
             // answer repeats (autocomplete or checkboxes)
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
@@ -1016,7 +1016,7 @@ function addCommonSDCImportFns(ns) {
           break;
         case "TM":
           // has an answer list
-          if (InternalUtil.hasAnswerOption(item)) {
+          if (InternalUtil.hasAnswerList(item)) {
             // answer repeats (autocomplete or checkboxes)
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
@@ -1049,7 +1049,7 @@ function addCommonSDCImportFns(ns) {
           break;
         case "ST":
           // has an answer list
-          if (InternalUtil.hasAnswerOption(item)) {
+          if (InternalUtil.hasAnswerList(item)) {
             // answer repeats (autocomplete or checkboxes)
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
@@ -1427,7 +1427,7 @@ function addCommonSDCImportFns(ns) {
   self._processOtherAnswerOptionValueInQR = function(answer, item) {
 
     // has an answer list
-    if (InternalUtil.hasAnswerOption(item)) {
+    if (InternalUtil.hasAnswerList(item)) {
       // answer repeats (autocomplete or checkboxes)
       if (ns._answerRepeats(item)) {
         var value = [];
@@ -1480,10 +1480,8 @@ function addCommonSDCImportFns(ns) {
     }
 
     // compare retValue to the item.answers
-    var found = false;
     for(var i=0, len=lfItem.answers.length; i<len; i++) {
       if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {
-        found = true;
         retValue = lfItem.answers[i];
         break;
       }

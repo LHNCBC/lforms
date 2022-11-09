@@ -8,7 +8,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   and option (STU3), including the support for related extensions (optionPrefix, 
   ordinalValue, and itemControl) and the initial[x] values.
 ### Changed
-- Made item.dataType in lforms internal format required.
+- Made item.dataType in lforms internal format required (a breaking change).
 - Made initial[x] values and the initialSelected on answerOption both work 
   when the item.type is choice or open-choice.
 ### Fixed

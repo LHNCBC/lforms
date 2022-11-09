@@ -8,8 +8,6 @@ const po = new AddFormToPageTestPage();
 function testOneValueType(valueType, params, fhirVersion, fileName) {
   // valueString
   describe(fhirVersion + " - " + valueType, () => {
-          
-   
 
     it('should render a questionnaire with '+valueType+' in answerOption', function() {
       util.addFormToPage(fileName, null, {fhirVersion});
@@ -269,7 +267,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
           let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
           let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
           expect(mergedFormData.hasSavedData).to.equal(true)
-          util.addFormDataToPage(mergedFormData, null, {fhirVersion});
+          util.addFormToPage(mergedFormData, null, {fhirVersion});
           
           // user data sould be displayed
           // group 1
@@ -317,12 +315,6 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
           // group 5
           // autocomplete, non-repeats, initial
           if (valueType === "valueCoding.open-choice") {
-            
-          }
-          else {
-                      
-          }
-          if (valueType === "valueCoding.open-choice") {
             cy.byId(params.itemIds.g5item1)
               .should('have.value', "user typed value");
           }
@@ -361,13 +353,6 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
                 .should('have.text', '×' + params.itemValues.g1Answer2)
           }
 
-          if (valueType === "valueCoding.open-choice") {
-            
-          }
-          else {
-                      
-          }
-          
           // group 6
           // radiobutton, non-repeats, initial
           cy.byId(`${params.itemIds.g6item1ans1} input`)
@@ -387,7 +372,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
             cy.byId(`${params.itemIds.g6item1ans2} input`)
             .should('be.checked');
           }
-          
+
           // checkbox, repeats, initial
           cy.byId(`${params.itemIds.g6item2ans1} input`)
             .should('not.be.checked');

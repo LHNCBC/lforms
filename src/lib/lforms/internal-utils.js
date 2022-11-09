@@ -165,7 +165,7 @@ export const InternalUtil = {
    * @param {*} item 
    * @returns 
    */
-  hasAnswerOption: function(item) {
+  hasAnswerList: function(item) {
     return item.dataType === "CNE" || item.dataType === "CWE" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
   }

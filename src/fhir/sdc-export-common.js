@@ -871,7 +871,7 @@ function addCommonSDCExportFns(ns) {
       var itemValue = values[i];
       if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
         var answer = null;
-          // for Coding
+        // for Coding
         if (dataType === 'CWE' || dataType === 'CNE') {
           // for CWE, the value could be string if it is a user typed, not-on-list value
           if (dataType === 'CWE' && typeof itemValue === 'string') {
@@ -889,7 +889,7 @@ function addCommonSDCExportFns(ns) {
           answer = {[valueKey]: itemValue.text};
         }
         // for Quantity
-        else if (dataType === "QTY") {          
+        else if (dataType === "QTY") {
           // For now, handling only simple quantities without the comparators.
           // [{
           //   // from Element: extension

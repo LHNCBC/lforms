@@ -10,48 +10,38 @@ export function visitTestPage() {
 
 /**
  *  Calls LForms.Util.addFormToPage
- * @param filePath the path to the form definition relative to
- * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified.
+ * @param filePathOrFormDefData the path to the form definition (relative to
+ * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified), 
+ * or the form definition data.
  * @param container the ID of the element into which the form should be placed.
  *  Default: 'formContainer'
  * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
  *  & prepoulate)
  */
-export function addFormToPage(filePath, container, options) {
+export function addFormToPage(filePathOrFormDefData, container, options) {
   if (!container)
     container = 'formContainer';
-  filePath = options?.fhirVersion ? options.fhirVersion +'/'+filePath :
-     'lforms/'+filePath;
-  cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
+
+  if (typeof filePathOrFormDefData === "string") {
+    let filePath = options?.fhirVersion ? options.fhirVersion +'/'+filePathOrFormDefData :
+     'lforms/'+filePathOrFormDefData;
+    cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
+      cy.window().then((win) => {
+        win.document.getElementById(container).innerHTML = null;
+        return new Cypress.Promise((resolve) => {
+          win.LForms.Util.addFormToPage(formDef, container, options).then(()=>resolve(), ()=>resolve());
+        });
+      });
+    });
+  }
+  else if (typeof filePathOrFormDefData === "object") {
     cy.window().then((win) => {
       win.document.getElementById(container).innerHTML = null;
       return new Cypress.Promise((resolve) => {
-        win.LForms.Util.addFormToPage(formDef, container, options).then(()=>resolve(), ()=>resolve());
+        win.LForms.Util.addFormToPage(filePathOrFormDefData, container, options).then(()=>resolve(), ()=>resolve());
       });
     });
-  });
-  cy.get('#'+container).find('.lhc-form-title').should('be.visible');
-};
-
-
-/**
- *  Calls LForms.Util.addFormToPage using a form definition data
- * @param formDel a JSON format of a form definition data
- * @param container the ID of the element into which the form should be placed.
- *  Default: 'formContainer'
- * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
- *  & prepoulate)
- */
- export function addFormDataToPage(formDef, container, options) {
-  if (!container)
-    container = 'formContainer';
-  
-  cy.window().then((win) => {
-    win.document.getElementById(container).innerHTML = null;
-    return new Cypress.Promise((resolve) => {
-      win.LForms.Util.addFormToPage(formDef, container, options).then(()=>resolve(), ()=>resolve());
-    });
-  });
+  }
   
   cy.get('#'+container).find('.lhc-form-title').should('be.visible');
 };

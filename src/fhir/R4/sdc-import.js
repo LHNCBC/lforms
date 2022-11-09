@@ -131,7 +131,8 @@ function addSDCImportFns(ns) {
 
         var optionKey = Object.keys(option).filter(function(key) {return (key.indexOf('value') === 0);});
         if(optionKey && optionKey.length > 0) {
-          if(optionKey[0] === 'valueCoding') { // Only one kind of value[x] is expected
+          // For a given answerOption, only one value[x] is expectedOnly one kind of value[x] is expected
+          if(optionKey[0] === 'valueCoding') {
             if(option[optionKey[0]].code    !== undefined) answer.code = option[optionKey[0]].code;
             if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
             // TBD- Lforms has answer code system at item level, expects all options to have one code system!
@@ -141,7 +142,7 @@ function addSDCImportFns(ns) {
           }
           else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' || 
               optionKey[0] === 'valueTime' ){
-            answer.text = option[optionKey[0]].toString();
+            answer.text = option[optionKey[0]];
           }
           else if (optionKey[0] === 'valueInteger') {
             answer.text = parseInt(option[optionKey[0]])
@@ -232,7 +233,7 @@ function addSDCImportFns(ns) {
       lfItem.answerCardinality = answerCardinality;
   };
 
-  
+
   /**
    * Parse questionnaire item for editable
    *

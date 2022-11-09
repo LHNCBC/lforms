@@ -331,7 +331,7 @@ var self = {
 
       // for Coding, the default answer is partially handled in _handleAnswers(), where
       // initialSelected is set on the answer items.
-      // Only the not-on-list values (sring or coding) in item.defaultAnswer is processed here
+      // Only the not-on-list values (string or Coding) in item.defaultAnswer is processed here
       if (dataType === "CWE" || dataType === 'CNE') {
         // go through each default value and set the initialSelected on the matching answer item
         let onList = false;
