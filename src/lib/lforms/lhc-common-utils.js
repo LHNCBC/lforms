@@ -31,7 +31,8 @@ const CommonUtils = {
 
   /**
    * Check if two answers can be treated as same
-   * @param answer an answer item that could have part of the attributes set
+   * @param answer an answer item that could have part of the attributes set. It might be
+   * a simple data type, for which this function will return a false.
    * @param completeAnswer an answer in the answer list that usually has more attributes set
    * @param item the lforms item that has the completeAnswer in the answer list
    * @return {boolean} whether two answers are considered same.
