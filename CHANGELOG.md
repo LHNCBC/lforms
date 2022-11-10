@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [33.0.0] 2022-10-28
+## [33.0.0] 2022-11-09
 ### Added
 - Added support for string, date, time and integer values in answerOption (R4)
   and option (STU3), including the support for related extensions (optionPrefix, 
@@ -15,6 +15,12 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug in a custom cypress command.
 - Fixed a bug in importing a DiagnosticReport resource.
 
+## [32.2.3] 2022-11-03
+### Fixed
+- When running e2e tests, webpack-dev-server now serves the files so that
+  changes to source files are more quickly recompiled and updated for the test
+  runner.
+
 ## [32.2.2] 2022-10-25
 ### Fixed
 - Fixed a bug in the construction of the URL for a FHIR ValueSet $expand
@@ -22,7 +28,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   was a single failed network call logged to the console (which then can cause a
   problem for Cypress tests).
 ### Updated
-- Cypress has been update to version 10.
+- Cypress has been updated to version 10.
 
 ## [32.2.1] 2022-10-20
 ### Fixed

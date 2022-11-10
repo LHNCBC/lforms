@@ -1,4 +1,5 @@
-import { defineConfig } from 'cypress'
+import { defineConfig } from 'cypress';
+import { config } from './package.json';
 
 export default defineConfig({
   videosFolder: 'test/cypress/videos',
@@ -13,5 +14,6 @@ export default defineConfig({
     },
     specPattern: 'test/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'test/cypress/support/index.ts',
+    baseUrl: 'http://localhost:'+config.testPort
   },
-})
+});

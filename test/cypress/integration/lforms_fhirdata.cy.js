@@ -879,7 +879,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           cy.get(tp.Autocomp.searchResults).should('be.visible');
           dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
           dcTarget1.sendKeys(protractor.Key.ENTER);
-          
+
           expect(TestUtil.getAttribute(dcTarget1,'value')).toBe('1% Ointment');
           expect(TestUtil.getAttribute(dcTarget2,'value')).toBe('1% Ointment');
         });

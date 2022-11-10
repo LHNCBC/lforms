@@ -14,27 +14,12 @@
           "builder": "ngx-build-plus:browser",
           "options": {
             "preserveSymlinks": true,
-            "outputPath": "dist/webcomponent",
+            "outputPath": "dist/lforms/webcomponent",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              "src/test-data",
-              "src/test-data/form-data",
-              "src/test-data/fhir-data",
-              "src/test-data/e2e",
-              "src/test",
-              "src/test/lib/",
-              {
-                "glob": "zone.min.js",
-                "input": "node_modules/zone.js/dist/",
-                "output": "assets/lib"
-              }
-            ],
             "styles": [
               "src/styles.css",
               "src/lhc-form.css",
@@ -67,6 +52,15 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "assets": [
+                "src/favicon.ico",
+                "src/assets",
+                {
+                  "glob": "zone.min.js",
+                  "input": "node_modules/zone.js/dist/",
+                  "output": "assets/lib"
+                }
+              ],
               "optimization": true,
               "outputHashing": "none",
               "sourceMap": true,
@@ -92,6 +86,35 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "assets": [
+                "src/favicon.ico",
+                "src/assets",
+                {
+                  "glob": "*",
+                  "input": "test/pages",
+                  "output": "test/pages"
+                },
+                {
+                  "glob": "**",
+                  "input": "test/data",
+                  "output": "test/data"
+                },
+                {
+                  "glob": "zone.min.js",
+                  "input": "node_modules/zone.js/dist/",
+                  "output": "assets/lib"
+                },
+                {
+                  "glob": "**",
+                  "input": "node_modules/jszip",
+                  "output": "node_modules/jszip"
+                },
+                {
+                  "glob": "**",
+                  "input": "dist",
+                  "output": "dist"
                 }
               ],
               "optimization": false,
@@ -122,6 +145,9 @@
             "browserTarget": "lforms:build:debugging"
           },
           "configurations": {
+            "debugging": {
+              "proxyConfig": "./proxy.conf.json"
+            },
             "production": {
               "browserTarget": "lforms:build:debugging"
             }
@@ -142,14 +168,6 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              "src/test-data",
-              "src/test-data/form-data",
-              "src/test-data/fhir-data",
-              "src/test-data/e2e",
-              "src/test",
-              "src/test/fhir",
-              "src/test/webcomponent",
               {
                 "glob": "zone.min.js",
                 "input": "node_modules/zone.js/dist/",
@@ -187,7 +205,7 @@
             "tsConfig": [
               "tsconfig.app.json",
               "tsconfig.spec.json",
-              "e2e/tsconfig.json",
+              "cypress/tsconfig.json",
               "cypress/tsconfig.json"
             ],
             "exclude": [
@@ -211,6 +229,19 @@
           "options": {
             "watch": true,
             "headless": false
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "lforms:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "lforms:serve:production"
+            }
           }
         }
       }

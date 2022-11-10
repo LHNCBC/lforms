@@ -34,7 +34,7 @@ describe('enableWhen on calculatedExpression', () => {
     cy.byId("posResultInterpretation/1").should('have.value', 'positive.')
     cy.byId("negResultInterpretation/1").should('not.exist')
 
-    // select another "No", there are 3 "Yes" remaining, 
+    // select another "No", there are 3 "Yes" remaining,
     // the postive result item is replaced by a negative result item
     cy.byId("Q2berries/1LA32-8").find('input').click();
     cy.byId("fruitScore/1").should('have.value', "3");

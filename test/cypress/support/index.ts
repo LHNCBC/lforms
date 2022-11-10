@@ -17,3 +17,14 @@ import 'cypress-plugin-tab';
 
 // When a command from ./commands is ready to use, import with `import './commands'` syntax
 import './commands';
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // For some reason, only when Cypress is running, we get uncaught exceptions
+  // about self.postMessage, which causes several tests to
+  // sometimes fail.  Ignore those errors.
+  if (err.message.includes('self.postMessage is not a function')) {
+    return false
+  }
+  // we still want to ensure there are no other unexpected
+  // errors, so we let them fail the test
+})

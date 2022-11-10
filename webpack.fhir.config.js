@@ -14,7 +14,7 @@ function commonConfig() {
               comments: false,
             },
             sourceMap: true // Must be set to true if using source-maps in production
-          },          
+          },
           parallel: true
         }),
       ],
@@ -50,10 +50,11 @@ function makeConfigs(env) {
 
   let configs = [];
   let fhirVersions = Object.keys(require('./src/fhir/versions'));
-  let versionedDist = 'lforms-'+require('./package.json').version;
+  //let versionedDist = 'lforms-'+require('./package.json').version; // no longer versioning during build except when zipping
+  let unversionedDist = 'lforms';
   let rootDirPath = require('path').resolve(__dirname);
-  let versionedDistPath = rootDirPath+'/dist/'+versionedDist;
-  let distFhirPath = versionedDistPath+'/fhir';
+  let unversionedDistPath = rootDirPath+'/dist/'+unversionedDist;
+  let distFhirPath = unversionedDistPath+'/fhir';
 
   // Builds for each FHIR version
   let fhirExternals = {
@@ -93,6 +94,10 @@ function makeConfigs(env) {
     allFHIRConfig.output.path = distFhirPath;
     allFHIRConfig.output.filename = 'lformsFHIRAll.min.js';
     allFHIRConfig.mode = debugging? 'none' : 'production';
+    if (debugging) {
+      let serverPort = require('./package.json').config.testPortFhir;
+      allFHIRConfig.devServer = {port: serverPort};
+    }
     allFHIRConfig.devtool = 'source-map';
     allFHIRConfig.externals = fhirExternals;
     configs.push(allFHIRConfig);
