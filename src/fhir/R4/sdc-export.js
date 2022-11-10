@@ -244,7 +244,7 @@ var self = {
       var option = {};
 
       
-      // option's values are Coding
+      // when option's values are Coding
       if (item.dataType === "CNE" || item.dataType === "CWE") {
 
         option.valueCoding = {};
@@ -269,7 +269,7 @@ var self = {
         }
 
       }
-      // option's values are string, integer, date or time
+      // when option's values are string, integer, date or time
       else if(item.dataType === "ST" || item.dataType === "INT" || 
           item.dataType === "DT" || item.dataType === "TM") {
         var valueKey = this._getValueKeyByDataType("value", item);
@@ -296,7 +296,7 @@ var self = {
           option.extension = ext;
         }
       }
-      
+
       optionArray.push(option);
     }
     return optionArray;
@@ -333,7 +333,7 @@ var self = {
       // initialSelected is set on the answer items.
       // Only the not-on-list values (string or Coding) in item.defaultAnswer is processed here
       if (dataType === "CWE" || dataType === 'CNE') {
-        // go through each default value and set the initialSelected on the matching answer item
+        // go through each default value and to see if it is one of answers in the answers list
         let onList = false;
         if (item.answers) {
           for(var j=0, jLen=item.answers.length; j<jLen; j++ ) {

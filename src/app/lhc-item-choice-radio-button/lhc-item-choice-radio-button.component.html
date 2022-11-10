@@ -14,7 +14,7 @@
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="item.answers[i]" 
       [(ngModel)]="radioModels[i]" 
-      [id]="item._elementId + (answer.code || answer.text)">
+      [id]="lhcDataService.getItemAnswerId(item, answer)">
       {{answer._displayText}}
     </label>
 

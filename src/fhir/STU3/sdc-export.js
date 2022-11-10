@@ -236,7 +236,7 @@ var self = {
       var answer = item.answers[i];
       var option = {};
 
-      // option's values are Coding
+      // when option's values are Coding
       if (item.dataType === "CNE" || item.dataType === "CWE") {
 
         // option's value supports integer, date, time, string and Coding
@@ -249,7 +249,7 @@ var self = {
           option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
         }
       }
-      // option's values are string, integer, date or time
+      // when option's values are string, integer, date or time
       else if(item.dataType === "ST" || item.dataType === "INT" || 
           item.dataType === "DT" || item.dataType === "TM") {
         var valueKey = this._getValueKeyByDataType("value", item);
