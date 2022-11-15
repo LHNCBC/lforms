@@ -26,24 +26,33 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
     let filePath = options?.fhirVersion ? options.fhirVersion +'/'+filePathOrFormDefData :
      'lforms/'+filePathOrFormDefData;
     cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
-      cy.window().then((win) => {
-        win.document.getElementById(container).innerHTML = null;
-        return new Cypress.Promise((resolve) => {
-          win.LForms.Util.addFormToPage(formDef, container, options).then(()=>resolve(), ()=>resolve());
-        });
-      });
+      this.addFormDataToPage(formDef, container, options);
     });
   }
   else if (typeof filePathOrFormDefData === "object") {
-    cy.window().then((win) => {
-      win.document.getElementById(container).innerHTML = null;
-      return new Cypress.Promise((resolve) => {
-        win.LForms.Util.addFormToPage(filePathOrFormDefData, container, options).then(()=>resolve(), ()=>resolve());
-      });
-    });
+    this.addFormDataToPage(filePathOrFormDefData, container, options);
   }
   
   cy.get('#'+container).find('.lhc-form-title').should('be.visible');
+};
+
+
+/**
+ *  Calls LForms.Util.addFormToPage using a form definition data
+ * @param formDelData a JSON format of a form definition data
+ * @param container the ID of the element into which the form should be placed.
+ * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
+ *  & prepoulate)
+ */
+export function addFormDataToPage(formDefData, container, options) {
+  
+  cy.window().then((win) => {
+    win.document.getElementById(container).innerHTML = null;
+    return new Cypress.Promise((resolve) => {
+      win.LForms.Util.addFormToPage(formDefData, container, options).then(()=>resolve(), ()=>resolve());
+    });
+  });
+  
 };
 
 
