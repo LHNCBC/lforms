@@ -9,7 +9,7 @@ export function visitTestPage() {
 
 
 /**
- *  Calls LForms.Util.addFormToPage
+ *  Add a form to the test page
  * @param filePathOrFormDefData the path to the form definition (relative to
  * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified), 
  * or the form definition data.
@@ -39,7 +39,7 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
 
 /**
  *  Calls LForms.Util.addFormToPage using a form definition data
- * @param formDelData a JSON format of a form definition data
+ * @param formDefData a JSON format of a form definition data
  * @param container the ID of the element into which the form should be placed.
  * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
  *  & prepoulate)
