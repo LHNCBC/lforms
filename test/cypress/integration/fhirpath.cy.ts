@@ -78,7 +78,7 @@ describe('answerExpression', () => {
     questionnaires.forEach(q => {
       tp.openBaseTestPage();
       TestUtil.waitForFHIRLibsLoaded();
-   
+
       // Load the RxTerms test form and get a QuestionnaireResponse.
       tp.loadFromTestData(q, 'R4');
       cy.byId('medication/1/1').click().typeAndWait('ar');
@@ -127,7 +127,7 @@ describe('answerExpression', () => {
                     showQQR(q, qr, 'formContainer', win2);
                     cy.byId('strength/1/1').should('be.visible');
                     checkSavedDataPresent();
-  
+
                     cy.then(() => {
                       // Test with multiple values in the strength
                       q = JSON.parse(JSON.stringify(qOrig));
@@ -202,7 +202,7 @@ describe('answerExpression', () => {
             });
           });
         });
-      });  
+      });
     })
   });
 

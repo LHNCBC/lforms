@@ -327,8 +327,8 @@ import deepEqual from "deep-equal";
                               var vChanged = self._updateItemVariable(item, varName,
                                 newVal);
                             }
-                            
-                            if (item._answerListReset) item._answerListReset =false; 
+
+                            if (item._answerListReset) item._answerListReset =false;
 
                             return {fields: fChanged, variables: vChanged};
                           }));
@@ -351,7 +351,7 @@ import deepEqual from "deep-equal";
               }
             }
 
-            if (item._answerListReset) item._answerListReset =false; 
+            if (item._answerListReset) item._answerListReset =false;
 
             rtn = {fields: fieldChanged, variables: item._varChanged};
           }
@@ -671,8 +671,8 @@ import deepEqual from "deep-equal";
       if (changed) {
         // reset the answer list
         item.answers = newList;
-        // reset item.value 
-        // 1) when there are user saved data from QuestionnaireResponse and 
+        // reset item.value
+        // 1) when there are user saved data from QuestionnaireResponse and
         //    the initial loading (and fhirpath expressions) have run once
         // 2) when there are no user saved data.
         if (this._lfData.hasSavedData && this._firstExpressionRunComplete || !this._lfData.hasSavedData) {
@@ -685,7 +685,7 @@ import deepEqual from "deep-equal";
         }
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithAnswers(item);
-        
+
         item._answerListReset = true;
       }
       return changed;
@@ -755,7 +755,7 @@ import deepEqual from "deep-equal";
 
 
     /**
-     * Check if two answers or two arrays of answers have the same value, 
+     * Check if two answers or two arrays of answers have the same value,
      * ignoring any fields starting with "_"
      * @param {*} answer1 an array of answer values/objects
      * @param {*} answer2 an array of answer values/objects
@@ -767,12 +767,12 @@ import deepEqual from "deep-equal";
       // answer1 is an array
       if (Array.isArray(ans1)) {
         ans1.forEach(answer => { this._filterAnswerFields(answer) })
-      }          
+      }
 
       // answer2 is an array
       if (Array.isArray(ans2)) {
         ans2.forEach(answer => { this._filterAnswerFields(answer) })
-      }          
+      }
 
       let rtn = deepEqual(ans1, ans2)
       return rtn;
@@ -789,7 +789,7 @@ import deepEqual from "deep-equal";
           if (key && key[0]==="_") {
             delete answer[key]
           }
-        })  
+        })
       }
     }
 

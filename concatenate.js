@@ -1,15 +1,14 @@
-const fs = require('fs-extra');
 const concat = require('concat');
 (async function build() {
 
   // es2017 files from angular 14 build
   const jsFiles = [
-    './dist/webcomponent/scripts.js',
-    './dist/webcomponent/runtime.js',
-    './dist/webcomponent/polyfills.js',
-    './dist/webcomponent/main.js',
+    './dist/lforms/webcomponent/scripts.js',
+    './dist/lforms/webcomponent/runtime.js',
+    './dist/lforms/webcomponent/polyfills.js',
+    './dist/lforms/webcomponent/main.js',
   ]
  
-  await concat(jsFiles, 'dist/webcomponent/lhc-forms.js');
+  await concat(jsFiles, 'dist/lforms/webcomponent/lhc-forms.js');
 
 })()

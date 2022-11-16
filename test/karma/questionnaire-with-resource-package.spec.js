@@ -34,9 +34,9 @@ describe('questionnaire with items that have answerValueSet', function () {
       var formData = LForms.Util.convertFHIRQuestionnaireToLForms(qData, 'R4')
       $.get(packageFile, function(package) {
         var lfData = new LForms.LFormsData(formData, package);
-        console.log("*** files loaded ***")
-        console.log(lfData.items[0].answerValueSet)
-        console.log(lfData.items[0].answers)
+        // console.log("*** files loaded ***")
+        // console.log(lfData.items[0].answerValueSet)
+        // console.log(lfData.items[0].answers)
         assert.equal(lfData.items[0].answerValueSet, "http://hl7.org/fhir/ValueSet/example-expansion|20150622")
         assert.deepEqual(lfData.items[0].answers, answers);
         assert.equal(lfData.items[1].answerValueSet, "http://hl7.org/fhir/ValueSet/example-expansion")

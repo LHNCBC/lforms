@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [33.0.0] 2022-11-01
+## [33.0.0] 2022-11-15
 ### Updated
 - Updated angular from v12 to v14
 ### Changed
@@ -10,6 +10,22 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Only ES2017 files (no ES5 files) are in the build files.
   The concatnated js file name is now lhc-forms.js, not
   lhc-forms.es5.js or lhc-forms.es2015.js
+- Made item.dataType in lforms internal format required (a breaking change).
+- Made initial[x] values and the initialSelected on answerOption both work 
+  when the item.type is choice or open-choice.
+### Added
+- Added support for string, date, time and integer values in answerOption (R4)
+  and option (STU3), including the support for related extensions (optionPrefix, 
+  ordinalValue, and itemControl) and the initial[x] values.
+### Fixed
+- Fixed a bug in a custom cypress command.
+- Fixed a bug in importing a DiagnosticReport resource.
+
+## [32.2.3] 2022-11-03
+### Fixed
+- When running e2e tests, webpack-dev-server now serves the files so that
+  changes to source files are more quickly recompiled and updated for the test
+  runner.
 
 ## [32.2.2] 2022-10-25
 ### Fixed
@@ -18,7 +34,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   was a single failed network call logged to the console (which then can cause a
   problem for Cypress tests).
 ### Updated
-- Cypress has been update to version 10.
+- Cypress has been updated to version 10.
 
 ## [32.2.1] 2022-10-20
 ### Fixed

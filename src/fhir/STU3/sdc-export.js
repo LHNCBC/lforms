@@ -236,6 +236,26 @@ var self = {
       var answer = item.answers[i];
       var option = {};
 
+      // when option's values are Coding
+      if (item.dataType === "CNE" || item.dataType === "CWE") {
+
+        // option's value supports integer, date, time, string and Coding
+        // for LForms, all answers are Coding
+        option.valueCoding = {};
+        if (answer.code) option.valueCoding.code = answer.code;
+        if (answer.text) option.valueCoding.display = answer.text;
+
+        if (answer.system) {
+          option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
+        }
+      }
+      // when option's values are string, integer, date or time
+      else if(item.dataType === "ST" || item.dataType === "INT" || 
+          item.dataType === "DT" || item.dataType === "TM") {
+        var valueKey = this._getValueKeyByDataType("value", item);
+        option[valueKey] = answer.text;
+      }
+
       // needs an extension for label
       if (!noExtensions) {
         var ext = [];
@@ -256,18 +276,10 @@ var self = {
           option.extension = ext;
         }
       }
-      // option's value supports integer, date, time, string and Coding
-      // for LForms, all answers are Coding
-      option.valueCoding = {};
-      if (answer.code) option.valueCoding.code = answer.code;
-      if (answer.text) option.valueCoding.display = answer.text;
-
-      if (answer.system) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
-      }
 
       optionArray.push(option);
     }
+    
     return optionArray;
   },
 
@@ -315,6 +327,16 @@ var self = {
         else if (typeof defaultAnswer === 'string') {
           targetItem["initialString"] = defaultAnswer
         }
+      }
+      // answerOption is date, time, integer or string
+      else if (item.answers && (dataType === 'ST' || dataType === 'INT' ||
+          dataType === 'DT' || dataType === 'TM')) {
+
+        // item.defaultAnswer could be an array of multiple default values or a single value.
+        // in STU3 'initial[x]' is a single value. pick the first one if defaultAnswer is an array.
+        var defaultAnswer = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+            item.defaultAnswer[0] : item.defaultAnswer;
+          targetItem[valueKey] = defaultAnswer.text
       }
       // for Quantity,
       // [{
