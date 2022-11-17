@@ -377,7 +377,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ]
             }
             var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
-            console.log(lfData.items[0])
+            //console.log(lfData.items[0])
             assert.equal(lfData.items[0].restrictions['minInclusive'], 0);
             assert.equal(lfData.items[0].restrictions['maxInclusive'], 1);
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
@@ -1129,7 +1129,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               convertedLfData = new LForms.LFormsData(convertedLfData);
               var reConvertedFhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, convertedLfData);
               // reConvertedFhirQ has an "extension": [], when it is converted form a questionnaire.
-              assert.equal(reConvertedFhirQ.extension.length, 0)
+              assert.equal(reConvertedFhirQ.extension, undefined)
               delete reConvertedFhirQ.extension;
               assert.deepEqual(reConvertedFhirQ, fhirQ);
               assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
@@ -1507,7 +1507,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   assert.equal(convertedQ.item[0].item[2].option.length, json.item[0].item[2].option.length);
 
                   // valueString is changed to valueCoding.display
-                  assert.equal(convertedQ.item[0].item[1].option[0].valueCoding.display, json.item[0].item[1].option[0].valueString);
+                  assert.equal(convertedQ.item[0].item[1].option[0].valueString, json.item[0].item[1].option[0].valueString);
                   done()
                 }).fail(function (err) {
                   done(err);

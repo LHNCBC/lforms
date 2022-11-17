@@ -9,28 +9,50 @@ export function visitTestPage() {
 
 
 /**
- *  Calls LForms.Util.addFormToPage
- * @param filePath the path to the form definition relative to
- * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified.
+ *  Add a form to the test page
+ * @param filePathOrFormDefData the path to the form definition (relative to
+ * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified), 
+ * or the form definition data.
  * @param container the ID of the element into which the form should be placed.
  *  Default: 'formContainer'
  * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
  *  & prepoulate)
  */
-export function addFormToPage(filePath, container, options) {
+export function addFormToPage(filePathOrFormDefData, container, options) {
   if (!container)
     container = 'formContainer';
-  filePath = options?.fhirVersion ? options.fhirVersion +'/'+filePath :
-     'lforms/'+filePath;
-  cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
-    cy.window().then((win) => {
-      win.document.getElementById(container).innerHTML = null;
-      return new Cypress.Promise((resolve) => {
-        win.LForms.Util.addFormToPage(formDef, container, options).then(()=>resolve(), ()=>resolve());
-      });
+
+  if (typeof filePathOrFormDefData === "string") {
+    let filePath = options?.fhirVersion ? options.fhirVersion +'/'+filePathOrFormDefData :
+     'lforms/'+filePathOrFormDefData;
+    cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
+      this.addFormDataToPage(formDef, container, options);
+    });
+  }
+  else if (typeof filePathOrFormDefData === "object") {
+    this.addFormDataToPage(filePathOrFormDefData, container, options);
+  }
+  
+  cy.get('#'+container).find('.lhc-form-title').should('be.visible');
+};
+
+
+/**
+ *  Calls LForms.Util.addFormToPage using a form definition data
+ * @param formDefData a JSON format of a form definition data
+ * @param container the ID of the element into which the form should be placed.
+ * @param options the options argument to LForms.Util.addFormToPage (fhirVersion
+ *  & prepoulate)
+ */
+export function addFormDataToPage(formDefData, container, options) {
+  
+  cy.window().then((win) => {
+    win.document.getElementById(container).innerHTML = null;
+    return new Cypress.Promise((resolve) => {
+      win.LForms.Util.addFormToPage(formDefData, container, options).then(()=>resolve(), ()=>resolve());
     });
   });
-  cy.get('#'+container).find('.lhc-form-title').should('be.visible');
+  
 };
 
 

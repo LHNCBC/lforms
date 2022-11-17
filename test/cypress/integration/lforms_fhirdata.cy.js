@@ -1062,7 +1062,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[7].answerOption[1].initialSelected).toEqual(true)
               expect(fhirData.item[7].initial).toEqual(undefined);
               // open-choice
-              expect(fhirData.item[8].initial).toEqual(undefined);
+              expect(fhirData.item[8].initial).toEqual([
+                {valueString: 'User typed answer'}
+              ]);
 
               // choice, multiple selection
               expect(fhirData.item[9].answerOption[0].initialSelected).toEqual(true)
@@ -1072,7 +1074,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               // open-choice, multiple selection
               expect(fhirData.item[10].answerOption[0].initialSelected).toEqual(true)
               expect(fhirData.item[10].answerOption[2].initialSelected).toEqual(true)
-              expect(fhirData.item[10].initial).toEqual(undefined);
+              expect(fhirData.item[10].initial).toEqual([
+                {valueString: 'User typed answer a'},
+                {valueString: 'User typed answer b'}
+              ]);
 
             });
           }

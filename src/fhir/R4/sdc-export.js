@@ -241,6 +241,39 @@ var self = {
       var answer = item.answers[i];
       var option = {};
 
+      
+      // when option's values are Coding
+      if (item.dataType === "CNE" || item.dataType === "CWE") {
+
+        option.valueCoding = {};
+        if (answer.code) option.valueCoding.code = answer.code;
+        if (answer.text) option.valueCoding.display = answer.text;
+  
+        if (answer.system) {
+          option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
+        }
+  
+        // check default answers, coding only for now
+        if (item.defaultAnswer && (item.dataType === 'CWE' || item.dataType === 'CNE')) {
+          var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+          item.defaultAnswer : [item.defaultAnswer];
+      
+          // go through each default value and set the initialSelected on the matching answer item
+          for(var j=0, jLen=defaultAnswers.length; j<jLen; j++ ) {
+            if (LForms.Util.areTwoAnswersSame(defaultAnswers[j], answer, item)) {
+              option.initialSelected = true;
+            }
+          }
+        }
+
+      }
+      // when option's values are string, integer, date or time
+      else if(item.dataType === "ST" || item.dataType === "INT" || 
+          item.dataType === "DT" || item.dataType === "TM") {
+        var valueKey = this._getValueKeyByDataType("value", item);
+        option[valueKey] = answer.text;
+      }
+
       // needs an extension for label
       if (!noExtensions) {
         var ext = [];
@@ -259,28 +292,6 @@ var self = {
         }
         if(ext.length > 0) {
           option.extension = ext;
-        }
-      }
-      // option's value supports integer, date, time, string and Coding
-      // for LForms, all answers are Coding
-      option.valueCoding = {};
-      if (answer.code) option.valueCoding.code = answer.code;
-      if (answer.text) option.valueCoding.display = answer.text;
-
-      if (answer.system) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
-      }
-
-      // check default answers, coding only for now
-      if (item.defaultAnswer && (item.dataType === 'CWE' || item.dataType === 'CNE')) {
-        var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
-        item.defaultAnswer : [item.defaultAnswer];
-    
-        // go through each default value and set the initialSelected on the matching answer item
-        for(var j=0, jLen=defaultAnswers.length; j<jLen; j++ ) {
-          if (LForms.Util.areTwoAnswersSame(defaultAnswers[j], answer, item)) {
-            option.initialSelected = true;
-          }        
         }
       }
 
@@ -302,11 +313,6 @@ var self = {
     }
 
     var dataType = this._getAssumedDataTypeForExport(item);
-    // for Coding, the default answer is handled in _handleAnswers(), where
-    // initialSelected is set on the answer items.
-    if (dataType === "CWE" || dataType === 'CNE') {
-      return;
-    }
 
     // item.defaultAnswer could be an array of multiple default values or a single value
     var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
@@ -314,48 +320,82 @@ var self = {
 
     var valueKey = this._getValueKeyByDataType("value", item);
     var answer = null;
-    targetItem.initial = [];
+    let initialValues = []
 
     // go through each default value and handle it based on the data type.
     for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
-      // dataType:
-      // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-      // Attachment, Coding, Quantity, Reference(Resource)
 
+      let defaultAnswer = defaultAnswers[i];
+
+      // for Coding, the default answer is partially handled in _handleAnswers(), where
+      // initialSelected is set on the answer items.
+      // Only the not-on-list values (string or Coding) in item.defaultAnswer is processed here
+      if (dataType === "CWE" || dataType === 'CNE') {
+        // go through each default value and to see if it is one of answers in the answers list
+        let onList = false;
+        if (item.answers) {
+          for(var j=0, jLen=item.answers.length; j<jLen; j++ ) {
+            if (LForms.Util.areTwoAnswersSame(defaultAnswer, item.answers[j], item)) {
+              onList = true;
+              break;
+            }
+          }
+        }
+        if (!onList) {
+          // valueString, free text
+          if (typeof defaultAnswer === "string") {
+            initialValues.push({"valueString": defaultAnswer});
+          }
+          // valueCoding, off list coding // TODO: not fully supported yet
+          else if (typeof defaultAnswer === "object") {
+            let valCoding = LForms.Util.deepCopy(defaultAnswer);
+            if (valCoding.text) {
+              valCoding.display = valCoding.text;
+              delete valCoding.text;
+            }
+            if (valCoding.system) {
+              valCoding.system = LForms.Util.getCodeSystem(valCoding.system);
+            }
+            initialValues.push(valCoding);
+          }
+        }         
+
+      }
       // for Quantity,
-      // [{
-      //   // from Element: extension
-      //   "value" : <decimal>, // Numerical value (with implicit precision)
-      //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-      //   "unit" : "<string>", // Unit representation
-      //   "system" : "<uri>", // Code System that defines coded unit form
-      //   "code" : "<code>" // Coded form of the unit
-      // }]
-      if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
+      else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
         answer = {};
-        answer[valueKey] = this._makeQuantity(defaultAnswers[i], item.units);
-        targetItem.initial.push(answer);
+        answer[valueKey] = this._makeQuantity(defaultAnswer, item.units);
+        initialValues.push(answer);
+      }
+      // answerOption is date, time, integer or string
+      else if (item.answers && (dataType === 'ST' || dataType === 'INT' ||
+          dataType === 'DT' || dataType === 'TM')) {
+        initialValues.push({[valueKey]: defaultAnswer.text});
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
       else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" ||
         dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
         answer = {};
-        answer[valueKey] = defaultAnswers[i];
-        targetItem.initial.push(answer);
+        answer[valueKey] = defaultAnswer;
+        initialValues.push(answer);
       }
       else if (dataType === "DT" || dataType === "DTM") { // transform to FHIR date/datetime format.
-        var dateValue = LForms.Util.stringToDate(defaultAnswers[i]);
+        var dateValue = LForms.Util.stringToDate(defaultAnswer);
         if(dateValue) {
           dateValue = dataType === "DTM"?
             LForms.Util.dateToDTMString(dateValue): LForms.Util.dateToDTStringISO(dateValue);
-          targetItem.initial.push({[valueKey]: dateValue});
+          initialValues.push({[valueKey]: dateValue});
         }
         else { // LForms.Util.stringToDate returns null on invalid string
           // TODO: should save the errors or emitting events.
-          console.error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+          console.error(defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
       // no support for reference
+    }
+
+    if (initialValues.length > 0) {
+      targetItem.initial = initialValues;
     }
   },
 

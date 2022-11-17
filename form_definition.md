@@ -26,7 +26,7 @@ about the meaning of each key:
           min: "0" or "1",
           max: "1" or "*"
         },
-        "answers": string or [{
+        "answers": [{
           "text": string,
           "code": string,
           "label": string,
@@ -180,7 +180,7 @@ about the meaning of each key:
       its lists, so see the documentation for its [url
       parameter](http://lhncbc.github.io/autocomplete-lhc/docs.html#url) if you
       are setting up your own list.
-    * dataType - The data type of the answer for the question. This determines
+    * dataType - (required) The data type of the answer for the question. This determines
       what sort of field control is provided.  Supported types are:
         * CWE - an answer list where the user is permitted to enter something
           not on the list.

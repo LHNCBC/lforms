@@ -25,16 +25,7 @@ function commonConfig() {
           test: /\.m?js$/,
           // exclude: /(node_modules|bower_components)/,
           use: {
-            loader: 'babel-loader',
-            options: {
-              presets: [['@babel/preset-env',
-                {
-                  "targets": {
-                    "browsers": "ie >= 11"
-                  }
-                }
-              ]]
-            }
+            loader: 'babel-loader'
           }
         }
       ]
@@ -96,7 +87,12 @@ function makeConfigs(env) {
     allFHIRConfig.mode = debugging? 'none' : 'production';
     if (debugging) {
       let serverPort = require('./package.json').config.testPortFhir;
-      allFHIRConfig.devServer = {port: serverPort};
+      allFHIRConfig.devServer = {
+        port: serverPort,
+        static: {
+          directory: __dirname,
+        },
+      };
     }
     allFHIRConfig.devtool = 'source-map';
     allFHIRConfig.externals = fhirExternals;
