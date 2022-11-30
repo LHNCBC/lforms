@@ -661,7 +661,7 @@ import deepEqual from "deep-equal";
               }
               else
                 newEntry.text = '' + entry;
-                
+
               if (!changed) {
                 changed = (!hasCurrentList ||
                   !this._lfData._objectEqual(newEntry, currentList[i]));
@@ -707,8 +707,6 @@ import deepEqual from "deep-equal";
           item._userModifiedCalculatedValue = false;
         }
         item._hasAnswerList = true;
-        // item._hasAnswerList = item.dataType === "CNE" || item.dataType === "CWE" || item.answers &&
-        //     (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithAnswers(item);
 
