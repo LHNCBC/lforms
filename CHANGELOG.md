@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.1.0] 2022-11-30
+### Added
+- Added support for answerExpression on items whose types are string, integer,
+ date and time.
+### Fixed
+- Fixed a configuration issue in webpack dev server that FHIR js files
+  were failed to load through a proxy in dev mode.
+
 ## [33.0.0] 2022-11-15
 ### Updated
 - Updated angular from v12 to v14

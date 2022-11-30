@@ -637,33 +637,56 @@ import deepEqual from "deep-equal";
         // list should be an array of any item type, including Coding.
         // (In R5, FHIR will start suppoing lists of types other than Coding.)
         for (let i=0, len=list.length; i<len; ++i) {
-          // Assume type "object" means a coding, and that otherwise what we have
-          // is something useable as display text. It is probably necessary to
-          // convert them to strings in that case, which means that in the future
-          // (R5), we might have to save/re-create the original data type and value.
-          // Work will need to be done to autocomplete-lhc to support data objects
-          // associated with list values.
-          let entry = list[i], newEntry = (newList[i] = {});
-          if (typeof entry === 'object') {
-            let code = entry.code;
-            if (code !== undefined)
-              newEntry.code = code;
-            let display = entry.display;
-            if (display !== undefined)
-              newEntry.text = display;
-            let system = entry.system;
-            if (system !== undefined)
-              newEntry.system = system;
-            // A Coding can have the extension for scores
-            let scoreExt = item._fhirExt && item._fhirExt[scoreURI];
-            if (scoreExt)
-              newEntry.score = scoreExt[0].valueDecimal;
-          }
-          else
-            newEntry.text = '' + entry;
-          if (!changed) {
-            changed = (!hasCurrentList ||
-              !this._lfData._objectEqual(newEntry, currentList[i]));
+          let entry = list[i];
+          let newEntry = (newList[i] = {});
+          switch (item.dataType) {
+            case "CNE":
+            case "CWE":
+              // Assume type "object" means a coding, and that otherwise what we have
+              // is something useable as display text.
+              if (typeof entry === 'object') {
+                let code = entry.code;
+                if (code !== undefined)
+                  newEntry.code = code;
+                let display = entry.display;
+                if (display !== undefined)
+                  newEntry.text = display;
+                let system = entry.system;
+                if (system !== undefined)
+                  newEntry.system = system;
+                // A Coding can have the extension for scores
+                let scoreExt = item._fhirExt && item._fhirExt[scoreURI];
+                if (scoreExt)
+                  newEntry.score = scoreExt[0].valueDecimal;
+              }
+              else
+                newEntry.text = '' + entry;
+                
+              if (!changed) {
+                changed = (!hasCurrentList ||
+                  !this._lfData._objectEqual(newEntry, currentList[i]));
+              }
+              break;
+            case "ST":
+            case "DT":
+            case "TM":
+              if (typeof entry === 'string') {
+                newEntry.text = entry;
+                if (!changed) {
+                  changed = (!hasCurrentList ||
+                  !this._lfData._objectEqual(newEntry, currentList[i]));
+                }
+              } 
+              break;
+            case "INT":
+              if (typeof entry === 'number' || typeof entry === 'string') {
+                newEntry.text = parseInt(entry);
+                if (!changed) {
+                  changed = (!hasCurrentList ||
+                  !this._lfData._objectEqual(newEntry, currentList[i]));
+                }
+              } 
+              break;
           }
         }
       }
@@ -683,6 +706,9 @@ import deepEqual from "deep-equal";
           // user selected/typed value will be reset when the answer list has changed
           item._userModifiedCalculatedValue = false;
         }
+        item._hasAnswerList = true;
+        // item._hasAnswerList = item.dataType === "CNE" || item.dataType === "CWE" || item.answers &&
+        //     (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithAnswers(item);
 
