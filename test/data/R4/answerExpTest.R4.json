@@ -81,7 +81,7 @@
         "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
         "valueExpression" : {
           "language" : "text/fhirpath",
-          "expression" : "'2022-11-12' | '2022-12-01' | '2022-12-25' "
+          "expression" : "@2022-11-12 | @2022-12-01 | @2022-12-25"
         }
       }]
     },
@@ -94,7 +94,7 @@
         "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
         "valueExpression" : {
           "language" : "text/fhirpath",
-          "expression" : "'17:03:07' | '20:10:29' | '23:59:59' "
+          "expression" : "@T17:03:07 | @T20:10:29 | @T23:59:59 "
         }
       }]
     }
