@@ -100,7 +100,7 @@ function addSDCImportFns(ns) {
   /**
    * Parse questionnaire item for "hidden" extension
    *
-   * @param lfItem {object} - LForms item object to be assigned the _isHiddenInDef flag if the item is to be hidden.
+   * @param lfItem {object} - LForms item object to be assigned the isHiddenInDef flag if the item is to be hidden.
    * @param qItem {object} - Questionnaire item object
    * @private
    * @return true if the item is hidden or if its ancestor is hidden, false otherwise
@@ -108,9 +108,9 @@ function addSDCImportFns(ns) {
   self._processHiddenItem = function(lfItem, qItem) {
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
     if(ci) {
-      lfItem._isHiddenInDef = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
+      lfItem.isHiddenInDef = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
     }
-    return lfItem._isHiddenInDef;
+    return lfItem.isHiddenInDef;
   };
 
 
