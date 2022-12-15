@@ -732,7 +732,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             element(by.id("merge-qr-cwe")).click();
 
-            var bl1 = element(by.css('#/type1/1 button')), bl2 = element(by.css('#/type1b/1 button'));
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
             // CNE field with a default value
@@ -744,8 +743,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(TestUtil.getAttribute(cne,'value')).toBe('');
             expect(TestUtil.getAttribute(st,'value')).toBe('');
 
-            bl1.getCyElem().should('have.class', 'ant-switch-checked');
-            bl2.getCyElem().should('not.have.class', 'ant-switch-checked');
+            cy.byCss('#/type1/1true input').should('be.checked')
+            cy.byCss('#/type1b/1false input').should('be.checked')
 
             expect(TestUtil.getAttribute(cwe,'value')).toBe("user typed value");
 
@@ -795,21 +794,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should have functioning skiplogic when codes are not present', function() {
             let packungenField = element(by.id('1.5.4/1/1/1'));
             TestUtil.waitForElementNotPresent(packungenField);
-            let raucherField = element(by.id('1.5.1/1/1/1'));
-            raucherField.click();
+            let raucherFieldTrue = element(by.id('1.5.1/1/1/1true'));
+            let raucherFieldFalse = element(by.id('1.5.1/1/1/1false'));
+            raucherFieldTrue.click();
             TestUtil.waitForElementPresent(packungenField);
-            raucherField.click();
+            raucherFieldFalse.click();
             TestUtil.waitForElementNotPresent(packungenField);
             //TestUtil.waitForElementNotPresent(raucherField); // was this in protractor, which looks incorrect
           });
 
           it('should have functioning skiplogic when the codes are present', function() {
-            let progressField = element(by.id('4.3.3.1/1/1/1/1'));
+            let progressFieldTrue = element(by.id('4.3.3.1/1/1/1/1true'));
+            let progressFieldFalse = element(by.id('4.3.3.1/1/1/1/1false'));
             let zeitpunktField = element(by.id('4.3.3.2/1/1/1/1'));
             TestUtil.waitForElementNotPresent(zeitpunktField);
-            progressField.click();
+            progressFieldTrue.click();
             TestUtil.waitForElementPresent(zeitpunktField);
-            progressField.click();
+            progressFieldFalse.click();
             TestUtil.waitForElementNotPresent(zeitpunktField);
           });
         });
@@ -892,8 +893,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         it('should display initial[x] values correctly', function() {
-          var typeBoolean = element(by.id('/type-boolean/1 button')),
-              typeInteger = element(by.id('/type-integer/1')),
+          var typeInteger = element(by.id('/type-integer/1')),
               typeDecimal = element(by.id('/type-decimal/1')),
               typeString = element(by.id('/type-string/1')),
               typeDate = element(by.id('/type-date/1')).element(by.css('input')),
@@ -905,7 +905,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
 
           // NEXT: new boolean implementation
-          typeBoolean.getCyElem().should('have.class', 'ant-switch-checked');
+          cy.byCss('#/type-boolean/1true input').should('be.checked')
 
           if (fhirVersion === "R4") {
 

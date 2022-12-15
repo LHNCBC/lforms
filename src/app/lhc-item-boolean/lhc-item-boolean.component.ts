@@ -1,37 +1,26 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {OnChanges, Component, Input } from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
-import {NzSwitchComponent} from "ng-zorro-antd/switch";
-import { LiveAnnouncer } from '@angular/cdk/a11y';
-import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
   selector: 'lhc-item-boolean',
   templateUrl: './lhc-item-boolean.component.html',
   styleUrls: ['./lhc-item-boolean.component.css']
 })
-export class LhcItemBooleanComponent implements AfterViewInit {
+export class LhcItemBooleanComponent implements OnChanges {
   @Input() item: any;
+  booleanModels:  boolean[] = new Array(3);
 
-  @ViewChild('nzSwitchComponent') nzSwitchComponent: NzSwitchComponent;
+  constructor(public lhcDataService: LhcDataService) {}
 
-  constructor(public lhcDataService: LhcDataService,
-              private elRef:ElementRef,
-              private liveAnnouncer: LiveAnnouncer,
-              private commonUtilsService: CommonUtilsService) { }
-
-
-  ngAfterViewInit() {
-    // Set aria-label attribute of the actual <button> element.
-    const button = this.elRef.nativeElement.querySelector('button[nz-wave]');
-    if (button) {
-      button.setAttribute('aria-label', this.commonUtilsService.getAriaLabel(this.item));
-      button.addEventListener('focus', () => {
-        const currentValue = this.item.value || false;
-        this.liveAnnouncer.announce(currentValue.toString());
-      });
-    }
+  /**
+   * Invokded when the properties change
+   * @param changes changes.prop contains the old and the new value...
+   */
+   ngOnChanges(changes) {
+    // changes.prop contains the old and the new value...
+    // reset initial status
+    this.setInitialValue();
   }
-
 
   /**
    * onModelChange handler
@@ -41,8 +30,25 @@ export class LhcItemBooleanComponent implements AfterViewInit {
     let prevValue = this.item.value;
     this.item.value = value;
     this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue)
-    
-    this.liveAnnouncer.announce(value);
+  }
+
+
+  /**
+   * Set initial status
+   */
+  setInitialValue(): void {
+    if (this.item) {
+      let booleanValue = this.item.value;
+      if (booleanValue === true) {
+        this.booleanModels[0] = true;
+      }
+      else if (booleanValue === false) {
+        this.booleanModels[1] = true;
+      }
+      else if (booleanValue === undefined || booleanValue === null) {
+        this.booleanModels[2] = true;
+      }
+    }
   }
 
 }

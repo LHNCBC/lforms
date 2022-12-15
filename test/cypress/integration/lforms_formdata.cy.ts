@@ -84,9 +84,9 @@ describe('formdata: ', () => {
       }
 
       checkBoolFieldVal(undefined);
-      cy.byId(tp.FullFeaturedForm.booleanField).click();
+      cy.byId(tp.FullFeaturedForm.booleanField + "true").click();
       checkBoolFieldVal(true);
-      cy.byId(tp.FullFeaturedForm.booleanField).click();
+      cy.byId(tp.FullFeaturedForm.booleanField + "false").click();
       checkBoolFieldVal(false);
     });
 
@@ -176,8 +176,8 @@ describe('formdata: ', () => {
   describe('defaultAnswer', () => {
     it('should work for various data types', () => {
       tp.LoadForm.openDefaultAnswerForm();
-      cy.byId('/blField/1').should('be.visible')
-        .find('button').should('have.class', 'ant-switch-checked');
+      cy.byId('/blField/1true').should('be.visible')
+        .find('input').should('be.checked');
 
       cy.byId('/intField/1').should('have.value', '24');
       cy.byId('/decField/1').should('have.value', '3.14159');

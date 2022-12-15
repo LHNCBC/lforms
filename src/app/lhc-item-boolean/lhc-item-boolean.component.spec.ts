@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LhcItemBooleanComponent } from './lhc-item-boolean.component';
 import { LhcDataService} from '../../lib/lhc-data.service';
-import {NzSwitchModule} from "ng-zorro-antd/switch";
+import { NzRadioModule } from 'ng-zorro-antd/radio'
 import { FormsModule } from '@angular/forms';
 
 describe('LhcItemBooleanComponent', () => {
@@ -11,7 +11,7 @@ describe('LhcItemBooleanComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ LhcItemBooleanComponent ],
-      imports: [NzSwitchModule, FormsModule],
+      imports: [NzRadioModule, FormsModule],
       providers: [LhcDataService]
     })
     .compileComponents();

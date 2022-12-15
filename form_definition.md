@@ -136,8 +136,7 @@ about the meaning of each key:
     * linkId - (required) An ID identifying the question or section.
       This code needs to be unique across the form.      
     * questionCode - (optional) A code for the question or section.
-    * questionCodeSystem - (optional) the code system for the question code. The default value
-      is "LOINC" when the form's **type** is "LOINC".
+    * questionCodeSystem - (optional) the code system for the question code.
     * questionCardinality - This controls whether the there is a button for
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).

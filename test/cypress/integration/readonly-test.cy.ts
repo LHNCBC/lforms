@@ -13,8 +13,10 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
 
     // without values
     cy.byId("st/1/1").should("be.disabled");
-    cy.byId("g2/bl/1/1 button").should("have.class","ant-switch-disabled")
-    cy.byId("bl/1/1 button").should("be.disabled");
+    cy.byId("g2/bl/1/1true input").should("be.disabled")
+    cy.byId("g2/bl/1/1false input").should("be.disabled")
+    cy.byId("bl/1/1true input").should("be.disabled");
+    cy.byId("bl/1/1false input").should("be.disabled");
     cy.byId("int/1/1").should("be.disabled");
     cy.byId("real/1/1").should("be.disabled");
     cy.byId("dt/1/1").should("have.class", "ant-picker-disabled");
@@ -41,8 +43,8 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
 
     // with values
     cy.byId("g2/st/1/1").should("be.disabled");
-    cy.byId("g2/bl/1/1 button").should("have.class","ant-switch-disabled")
-    cy.byId("g2/bl/1/1 button").should("be.disabled");
+    cy.byId("g2/bl/1/1true input").should("be.disabled")
+    cy.byId("g2/bl/1/1false input").should("be.disabled")
     cy.byId("g2/int/1/1").should("be.disabled");
     cy.byId("g2/real/1/1").should("be.disabled");
     cy.byId("g2/dt/1/1").should("have.class", "ant-picker-disabled");
