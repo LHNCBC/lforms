@@ -23,8 +23,8 @@
     {
       "type": "choice",
       "required": false,
-      "linkId": "q1List",
-      "text": "q1List",
+      "linkId": "q1ListChoice",
+      "text": "q1List Choice",
       "extension": [{
         "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
         "valueExpression" : {
@@ -34,30 +34,69 @@
       }]
     },
     {
-      "type": "choice",
+      "type": "string",
       "required": false,
-      "linkId": "q2",
-      "text": "q2",
-      "answerOption": [{
-          "valueString": "one"
-        },
-        {
-          "valueString": "two"
+      "linkId": "q1ListString",
+      "text": "q1List String",
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+        "valueExpression" : {
+          "language" : "text/fhirpath",
+          "expression" : "%resource.item.where(linkId='q1').answer.value"
         }
-      ]
+      }]
     },
     {
-      "type": "choice",
+      "type": "string",
       "required": false,
-      "linkId": "q3",
-      "text": "q3",
-      "answerOption": [{
-          "valueCoding": {"display": "one"}
-        },
-        {
-          "valueCoding": {"display": "two"}
+      "linkId": "q2String",
+      "text": "q2 String",
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+        "valueExpression" : {
+          "language" : "text/fhirpath",
+          "expression" : "'one' | 'two' | 'three' "
         }
-      ]
+      }]
+    },
+    {
+      "type": "integer",
+      "required": false,
+      "linkId": "q3Integer",
+      "text": "q3 Integer",
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+        "valueExpression" : {
+          "language" : "text/fhirpath",
+          "expression" : "12 | 34 | 56 "
+        }
+      }]
+    },
+    {
+      "type": "date",
+      "required": false,
+      "linkId": "q4Date",
+      "text": "q4 Date",
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+        "valueExpression" : {
+          "language" : "text/fhirpath",
+          "expression" : "@2022-11-12 | @2022-12-01 | @2022-12-25"
+        }
+      }]
+    },
+    {
+      "type": "time",
+      "required": false,
+      "linkId": "q5Time",
+      "text": "q5 Time",
+      "extension": [{
+        "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+        "valueExpression" : {
+          "language" : "text/fhirpath",
+          "expression" : "@T17:03:07 | @T20:10:29 | @T23:59:59 "
+        }
+      }]
     }
   ]
 }
