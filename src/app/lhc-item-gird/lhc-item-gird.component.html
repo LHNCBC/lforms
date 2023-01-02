@@ -13,11 +13,9 @@
 
       <tr class="lhc-matrix-table-header-row">
         <th class="lf-question lf-form-table-header"></th>
-        <th *ngFor="let answer of item.items[1].items; index as i;"
+        <th *ngFor="let header of uniqueGridHeaders; index as i;"
             class="lf-form-matrix-cell lf-form-table-header"
-            id="answer-{{index}}">{{answer.question}}</th>
-        <th class="lf-form-matrix-cell-other lf-form-table-header" *ngIf="item.items[0].dataType ==='CWE'"
-         id="otherAnswer">Other</th>
+            id="answer-{{index}}">{{header}}</th>
       </tr>
       </thead>
       <tbody>
