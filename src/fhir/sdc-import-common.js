@@ -801,13 +801,19 @@ function addCommonSDCImportFns(ns) {
           break;
         case 'Table': // backward-compatibility with old export
         case 'gtable':  // Not in STU3, but we'll accept it
-          if(lfItem.dataType === 'SECTION') {
+          if (lfItem.dataType === 'SECTION') {
             displayControl.questionLayout = "horizontal";
+          }
+          break;
+
+        case 'grid':  // Not in STU3, but we'll accept it
+          if (lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "grid";
           }
           break;
         case 'Matrix': // backward-compatibility with old export
         case 'table':
-          if(lfItem.dataType === 'SECTION') {
+          if (lfItem.dataType === 'SECTION') {
             displayControl.questionLayout = "matrix";
           }
           break;

@@ -1,56 +1,37 @@
-<ng-container *ngIf="item">
-    <div class="lhc-layout-horizontal lf-table-item {{lhcDataService.getSiblingStatus(item)}} "
-      *ngIf="item._horizontalTableHeader && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId]">
-      <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
-          ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
-          class="lhc-form-horizontal-table-title" *ngIf="!formLevel">
-        <lhc-item-question-text [item]="item" ></lhc-item-question-text>
-      </div>
-  
-      <table class="lhc-form-horizontal-table">
-        <colgroup>
-          <col class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
-          <ng-container *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId">
-            <col *ngIf="!col.item._isHiddenFromView" [ngStyle]="lhcDataService.getTableColumnStyle(col)">
-          </ng-container>
-        </colgroup>
-        <thead>
-        <tr>
-          <th class="lhc-form-horizontal-table-header" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1"></th>
-          <ng-container *ngFor="let col of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].columnHeaders; trackBy lhcDataService.trackByColumnHeaderId">
-            <th *ngIf="!col.item._isHiddenFromView" class="lhc-form-horizontal-table-header" id="{{col.id}}">
-              <lhc-item-question-text [item]="col.item" ></lhc-item-question-text>
-            </th>
-          </ng-container>
-        </tr>
-        </thead>
-        <tbody id="" class="">
-        <tr *ngFor="let row of lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows; trackBy: lhcDataService.trackByRowHeaderElementId"
-            class="lhc-data-row has-ng-animate">
-          <td class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
-            <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" type="button"
-                    id="del-{{row.header._elementId}}"
-                    class="lhc-float-button lhc-button" (click)="lhcDataService.removeOneRepeatingItem(row.header)"
-                    title='Remove this row of "{{ row.header.question }}"'>-</button>
+<div *ngIf="item" class="lhc-layout-matrix lf-table-item {{lhcDataService.getSiblingStatus(item)}}">
+  <div class="lf-form-matrix-table-title" *ngIf="!formLevel">
+    <lhc-item-question-text [item]="item" ></lhc-item-question-text>
+  </div>
+
+  <table class="lf-form-matrix-table lf-form-table">
+      <colgroup>
+        <col class="lf-question">
+        <col *ngFor="let answer of item.items[0].answers">
+        <col class="other-answer" *ngIf="item.items[0].dataType ==='CWE'">
+      </colgroup>
+      <thead>
+
+      <tr class="lhc-matrix-table-header-row">
+        <th class="lf-question lf-form-table-header"></th>
+        <th *ngFor="let answer of item.items[1].items; index as i;"
+            class="lf-form-matrix-cell lf-form-table-header"
+            id="answer-{{index}}">{{answer.question}}</th>
+        <th class="lf-form-matrix-cell-other lf-form-table-header" *ngIf="item.items[0].dataType ==='CWE'"
+         id="otherAnswer">Other</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let subItem of item.items; trackBy: lhcDataService.trackByElementId">
+        <tr *ngIf="!subItem._isHiddenFromView" role="radiogroup"
+            aria-labeledby="label-{{subItem._elementId }}"
+            aria-describedby="help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}">
+          <td class="lf-question">
+            <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
+            <lhc-item-messages [item]="subItem" ></lhc-item-messages>
           </td>
-  
-          <ng-container *ngFor="let cell of row.cells; trackBy: lhcDataService.trackByElementId">
-            <td *ngIf="!cell._isHiddenFromView"
-                class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
-              <div class="lf-form-item-data tooltipContainer">
-                <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
-              </div>
-            </td>
-          </ng-container>
         </tr>
-        </tbody>
-      </table>
-  
-      <!-- a button at the end of each repeating section -->
-      <div *ngIf="item._questionRepeatable && lhcDataService.targetShown(item) && !item._isHiddenFromView" class="lhc-button-padding {{lhcDataService.getSkipLogicClass(item)}}">
-        <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ Add another row of "{{item._text}}"' [append]="true"></lhc-button-popover>
-      </div>
-    </div>
-  
-  </ng-container>
-  
+      </ng-container>
+      </tbody>
+    </table>
+
+</div>
