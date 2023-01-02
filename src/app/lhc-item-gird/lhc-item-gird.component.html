@@ -27,6 +27,16 @@
             <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
             <lhc-item-messages [item]="subItem" ></lhc-item-messages>
           </td>
+
+          <ng-container *ngFor="let cell of subItem.items; trackBy: lhcDataService.trackByElementId">
+            <td *ngIf="!cell._isHiddenFromView"
+                class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
+              <div class="lf-form-item-data tooltipContainer">
+                <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
+              </div>
+            </td>
+          </ng-container>
+
         </tr>
       </ng-container>
       </tbody>
