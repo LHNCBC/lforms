@@ -232,6 +232,10 @@
 .lhc-form.lf-template-table .lhc-layout-matrix {
   padding-right: 6px;
 }
+/*** grid layout ***/
+.lhc-form.lf-template-table .lhc-layout-grid {
+  padding-right: 6px;
+}
 
 /* not to show title when the entire form is in horizontal or matrix layout */
 .lf-top-section .lhc-layout-horizontal .lhc-form-horizontal-table-title,
