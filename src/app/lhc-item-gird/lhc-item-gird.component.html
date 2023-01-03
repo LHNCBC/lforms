@@ -28,18 +28,13 @@
             <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
             <lhc-item-messages [item]="subItem" ></lhc-item-messages>
           </td>
-
-          <td class="lf-form-matrix-cell-other" *ngIf="subItem.dataType ==='BL'"
-            aria-labeledby=otherAnswer>
-            <span class="lf-form-matrix-answer">
-              <label>
-                <input type="radio" id="{{subItem._elementId + '_other'}}" [(ngModel)]="subItem._otherValueChecked"
-                        [value]="'true'" name="{{subItem._elementId}}">
-              </label>
-            </span>
-          </td> 
           
-          <!-- <td></td> -->
+          <td>
+            <div class="lf-form-item-data tooltipContainer">
+              <lhc-item-question [item]="subItem" [options]="{hideQuestionText: true}" class="lhc-de"></lhc-item-question>
+            </div>
+          </td> 
+
           <ng-container *ngFor="let cell of subItem.items; trackBy: lhcDataService.trackByElementId">
             <td *ngIf="!cell._isHiddenFromView"
                 class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
