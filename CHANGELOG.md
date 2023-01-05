@@ -5,7 +5,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [33.2.0] 2022-12-15
 ### Changed
 - Changed the design of the boolean component. It's now rendered as 3 radio buttons
-  to the support the concept of "no answer".
+  to support the concept of "no answer".
 ### Added
 - Added the support of enableWhen on string, integer, date and time typed items that
   have an answer list.

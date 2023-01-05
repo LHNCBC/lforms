@@ -1,34 +1,12 @@
 {
   "resourceType": "Questionnaire",
-  "id": "enable-when-tests",
   "meta": {
-    "versionId": "13",
-    "lastUpdated": "2022-06-08T19:33:57.9970931+00:00",
     "profile": [
       "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
     ]
   },
-  "text": {
-    "status": "generated"
-  },
-  "url": "http://sqlonfhir-r4.azurewebsites.net/fhir/Questionnaire/enable-when-tests",
-  "version": "1.0",
-  "title": "Enable When Tests",
+  "title": "Questionnaire for enableWhen Tests",
   "status": "draft",
-  "publisher": "DEMO: Telstra Health",
-  "useContext": {
-    "code": {
-      "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
-      "code": "user",
-      "display": "User Type"
-    },
-    "valueCodeableConcept": {
-      "coding": {
-        "code": "demo",
-        "display": "Demonstration"
-      }
-    }
-  },
   "item": [
     {
       "linkId": "g1",
