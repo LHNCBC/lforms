@@ -1,0 +1,85 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "id": "calculatedExpressionResponse",
+  "questionnaire": "Questionnaire/calculatedExpression",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 33.0.0"
+      }
+    ]
+  },
+  "status": "completed",
+  "authored": "2022-12-03T16:01:06.719Z",
+  "item": [
+    {
+      "linkId": "CE-HIDDEN",
+      "text": "CE-HIDDEN",
+      "answer": [
+        {
+          "valueDecimal": 2
+        }
+      ]
+    },
+    {
+      "linkId": "CE-VISIBLE",
+      "text": "CE-VISIBLE",
+      "answer": [
+        {
+          "valueDecimal": 2
+        }
+      ]
+    },
+    {
+      "linkId": "ITEM-VISIBLE",
+      "text": "ITEM-VISIBLE: Type one number:",
+      "answer": [
+        {
+          "valueDecimal": 2
+        }
+      ]
+    },
+    {
+      "linkId": "GROUP-VISIBLE",
+      "text": "GROUP-VISIBLE: group that contains a hidden item",
+      "item": [
+        {
+          "linkId": "GROUP-VISIBLE/CE-VISIBLE",
+          "text": "GROUP-VISIBLE/CE-VISIBLE/1/1",
+          "answer": [
+            {
+              "valueDecimal": 2
+            }
+          ]
+        },
+        {
+          "linkId": "GROUP-VISIBLE/CE-HIDDEN",
+          "text": "GROUP-VISIBLE/CE-HIDDEN/1/1",
+          "answer": [
+            {
+              "valueDecimal": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "GROUP-HIDDEN",
+      "text": "hidden group",
+      "item": [
+        {
+          "linkId": "GROUP-HIDDEN/CE-HIDDEN",
+          "text": "GROUP-HIDDEN/CE-HIDDEN/1/1",
+          "answer": [
+            {
+              "valueDecimal": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

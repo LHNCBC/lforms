@@ -2,13 +2,18 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [33.2.0] 2022-12-15
+## [33.2.0] 2023-01-05
 ### Changed
 - Changed the design of the boolean component. It's now rendered as 3 radio buttons
   to support the concept of "no answer".
 ### Added
 - Added the support of enableWhen on string, integer, date and time typed items that
   have an answer list.
+  
+## [33.1.1] 2022-12-13
+### Fixed
+- Fixed a bug that hidden items in a questionnaire are displayed when 
+  a questionnaire response is loaded/merged into the questionnaire.
 
 ## [33.1.0] 2022-11-30
 ### Added
