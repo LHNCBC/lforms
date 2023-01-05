@@ -594,8 +594,8 @@ export default class LhcFormData {
         if (item.skipLogic) {
           changed = this._updateItemSkipLogicStatus(item, null) || changed;
         }
-        // Hide the sub items if _isHiddenInDef flag is true.
-        if (item._isHiddenInDef) {
+        // Hide the sub items if isHiddenInDef flag is true.
+        if (item.isHiddenInDef) {
           if (!item._isHiddenFromView) changed = true;
           item._isHiddenFromView = true;
           changed = this._setSubItemsHidden(item) || changed;

@@ -1,3 +1,4 @@
+import * as util from "../support/util";
 // The project root directory is the root for the cypress server
 describe('"questionnaire-hidden" extension Test', () => {
   it('should hide all kinds of items that have the questionnnaire-hidden extension', () => {
@@ -67,6 +68,32 @@ describe('"questionnaire-hidden" extension Test', () => {
 
   });
 
+  it('should load a QuetionnaireResponse with values on hidden items and keep the hidden items hidden', () => {
+    cy.visit('/test/pages/lforms_testpage.html');
 
+    cy.window().then((win) => {
+      cy.readFile('test/data/R4/hidden-item-questionnaire.R4.json').then((q) => {  
+        let fhirVersion = "R4";
+        let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+
+        cy.readFile('test/data/R4/hidden-item-questionnaire-response.R4.json').then((qr) => {
+          let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+          util.addFormToPage(mergedFormData, null, {fhirVersion});
+        
+          // 4 items visible
+          cy.byId('CE-VISIBLE/1').should('be.visible').should('have.value', '2');
+          cy.byId('ITEM-VISIBLE/1').should('be.visible').should('have.value', '2');
+          cy.byId('label-GROUP-VISIBLE/1').should('be.visible');
+          cy.byId('GROUP-VISIBLE/CE-VISIBLE/1/1').should('be.visible').should('have.value', '2');
+  
+          // others are hidden
+          cy.byId('CE-HIDDEN/1').should('not.exist');
+          cy.byId('GROUP-VISIBLE/CE-HIDDEN/1/1').should('not.exist');
+          cy.byId('label-GROUP-HIDDEN/1').should('not.exist');
+          cy.byId('GROUP-HIDDEN/CE-HIDDEN/1/1').should('not.exist');
+        });
+      });
+    });
+  });
 
 });

@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.1.1] 2022-12-13
+### Fixed
+- Fixed a bug that hidden items in a questionnaire are displayed when 
+  a questionnaire response is loaded/merged into the questionnaire.
+
 ## [33.1.0] 2022-11-30
 ### Added
 - Added support for answerExpression on items whose types are string, integer,
