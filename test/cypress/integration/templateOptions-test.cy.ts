@@ -40,7 +40,7 @@ describe('templateOptions', function () {
     });
   });
 
-  it('should display hide scores with answer text when displayScoreWithAnswerText is set to false after the form is loaded', function () {
+  it('should hide scores with answer text when displayScoreWithAnswerText is set to false after the form is loaded', function () {
     const file = 'test/data/lforms/glasgow.json';
     cy.readFile(file).then((data) => {
       cy.window().then(win=>{
