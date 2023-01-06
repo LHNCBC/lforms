@@ -91,7 +91,9 @@ export default class LhcFormData {
     // whether to hide indentation before each item
     hideIndentation: false,
     // whether to hide repetition numbers next to the item's text
-    hideRepetitionNumber: false
+    hideRepetitionNumber: false,
+    // whether to display score along with text when there scores in answers
+    displayScoreWithAnswerText: true
   };
 
   // other instance level variables that were not previously listed
@@ -922,8 +924,21 @@ export default class LhcFormData {
       if (!existingOptions)
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
 
+      // check if displayScoreWithAnswerText is changed
+      let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined && 
+          newOptions.displayScoreWithAnswerText !== existingOptions.displayScoreWithAnswerText;
+
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
+
+      // recreate the answerOption to add or remove the scores from display texts
+      if (scoreFlagChanged) {
+        for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+          let item = this.itemList[i];
+          if (!!item._hasAnswerList && item._hasScoreInAnswer)
+            this._updateAutocompOptions(item);
+        }
+      }
 
       this.setMessageLevel(this.templateOptions.messageLevel);
     }
@@ -1042,7 +1057,6 @@ export default class LhcFormData {
       // the value objects with the corresponding objects from the answer list,
       // so that when they are displayed as radio buttons, angular will recognize the
       // one or more answer options as equal to the values.
-//      this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
       // reset item.value with modified answers if the item has a value (or an array of values)
       if (item._hasAnswerList) {
@@ -2654,8 +2668,6 @@ export default class LhcFormData {
   }
 
 
-
-
   /**
    * Get data from a source item object following the nested attribute path
    * Examples:
@@ -3056,7 +3068,7 @@ export default class LhcFormData {
       // answers
       else {
         [options.listItems, options.addSeqNum] =
-          CommonUtils.getAnswerDisplayTextWithLabelAndScore(item.answers); //item._modifiedAnswers;
+          this._getAnswerDisplayTextWithLabelAndScore(item.answers, this.templateOptions.displayScoreWithAnswerText, item); 
         options.display = '_displayText';
         // use the original answers as the models (used in the autocomplete component)
         options.listItemsForModel = item.answers;
@@ -3088,6 +3100,55 @@ export default class LhcFormData {
         item._autocompOptions = options;
       }
     } // end of list
+  }
+
+
+  /**
+   * Changes the answer's display text when there is a label and/or a score
+   * @param {*} answers the answers on an item
+   * @param addScoreToText a flag indicating whether to add the score to the display text
+   * if there is a score in answers.
+   * @param item an item in the form
+   * @returns answers with a modified display text on each answer item, and
+   *          a flag whether to add sequence number for the each answer's displayed text.
+   */
+  _getAnswerDisplayTextWithLabelAndScore(answers, addScoreToText, item) {
+    // reset the modified answers (for the display text)
+    var modifiedAnswers = [];
+    var hasOneAnswerLabel = false;
+    var hasOneNumericAnswer = false;
+    if (answers && Array.isArray(answers)) {
+      for (var i = 0, iLen = answers.length; i < iLen; i++) {
+        var answerData = CommonUtils.deepCopy(answers[i]);
+  
+        var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
+        // label is a string
+        if (answerData.label) {
+          displayText = answerData.label + ". " + displayText;
+          hasOneAnswerLabel = true;
+        }
+        // check if one of the values is numeric
+        else {
+          if (!hasOneNumericAnswer && !isNaN(answerData.text)) {
+            hasOneNumericAnswer = true;
+          }
+        }
+
+        if (answerData.score !== undefined && answerData.score !== null) {
+          item._hasScoreInAnswer = true;
+          if (addScoreToText)
+            displayText = displayText + " - " + answerData.score;
+        }
+
+        // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
+        answerData._displayText = displayText;
+        modifiedAnswers.push(answerData);
+      }  
+    }
+    // add seq num when there is no labels and no numeric values as answer
+    var acAddSeq = !hasOneAnswerLabel && !hasOneNumericAnswer;
+    
+    return [modifiedAnswers, acAddSeq];
   }
 
 
