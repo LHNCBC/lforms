@@ -253,13 +253,11 @@ export class LhcAutocompleteComponent implements OnChanges {
    */
   ngAfterViewInit() {
     // initial setup with default/initial value or values from QR
-    if (this.item) {
-      let oldDataModel = CommonUtils.deepCopy(this.dataModel);
-      this.setupAutocomplete();
-      if (!CommonUtils.deepEqual(oldDataModel, this.dataModel)) {
-        this.dataModelChange.emit(this.dataModel);
-        this.lhcDataService.onItemValueChange(this.item, null, null, true)
-      }
+    let oldDataModel = CommonUtils.deepCopy(this.dataModel);
+    this.setupAutocomplete();
+    if (!CommonUtils.deepEqual(oldDataModel, this.dataModel)) {
+      this.dataModelChange.emit(this.dataModel);
+      this.lhcDataService.onItemValueChange(this.item, null, null, true)
     }
     this.viewInitialized = true;
   }
