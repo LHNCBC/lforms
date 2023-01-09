@@ -1,0 +1,122 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "active",
+  "name": "calculatedExpression",
+  "id":"calculatedExpression",
+  "description": "Test re-rendering calculatedExpression",
+  "title":"Test re-rendering calculatedExpression",
+  "subjectType": [
+    "Patient"
+  ],
+  "code": [
+    {
+      "display": "Clinico"
+    }
+  ],
+  "item": [
+    {
+      "linkId": "CE-HIDDEN",
+      "type": "decimal",
+      "text": "CE-HIDDEN",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+                 "expression": "%resource.item.where(linkId='ITEM-VISIBLE').answer.value"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+          "valueBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "CE-VISIBLE",
+      "type": "decimal",
+      "text": "CE-VISIBLE",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+                 "expression": "%resource.item.where(linkId='ITEM-VISIBLE').answer.value"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "ITEM-VISIBLE",
+      "text": "ITEM-VISIBLE: Type one number:",
+      "type": "decimal",
+      "required": true
+    },
+    {
+      "linkId": "GROUP-VISIBLE",
+      "type": "group",
+      "text": "GROUP-VISIBLE: group that contains a hidden item",
+      "item": [
+        {
+          "linkId": "GROUP-VISIBLE/CE-HIDDEN",
+          "type": "decimal",
+          "text": "GROUP-VISIBLE/CE-HIDDEN/1/1",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+              "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='ITEM-VISIBLE').answer.value"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+              "valueBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "GROUP-VISIBLE/CE-VISIBLE",
+          "type": "decimal",
+          "text": "GROUP-VISIBLE/CE-VISIBLE/1/1",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+              "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='ITEM-VISIBLE').answer.value"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "GROUP-HIDDEN",
+      "type": "group",
+      "text": "hidden group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+          "valueBoolean": true
+        }
+      ],
+      "item": [
+        {
+          "linkId": "GROUP-HIDDEN/CE-HIDDEN",
+          "type": "decimal",
+          "text": "GROUP-HIDDEN/CE-HIDDEN/1/1",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+              "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='ITEM-VISIBLE').answer.value"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

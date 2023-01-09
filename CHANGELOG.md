@@ -2,13 +2,18 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [33.1.1] 2022-12-23
+## [33.1.2] 2022-12-23
 ### Fixed
 - FHIR Expressions were being run on form load once per item with an
   autocompletion list.  It now will only run an extra time (on form load) once
   for each item of type quantity which has a unit list, which is still more
   often that should be needed, but this fix by itself should help speed up the
   loading of many forms.
+
+## [33.1.1] 2022-12-13
+### Fixed
+- Fixed a bug that hidden items in a questionnaire are displayed when
+  a questionnaire response is loaded/merged into the questionnaire.
 
 ## [33.1.0] 2022-11-30
 ### Added
