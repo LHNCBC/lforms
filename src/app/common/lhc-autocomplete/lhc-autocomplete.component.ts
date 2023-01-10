@@ -48,7 +48,7 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @param changes changes.prop contains the old and the new value
    */
   ngOnChanges(changes) {
-    
+
     if (this.viewInitialized) {
       let dataChanged:boolean;
       // answer list and data model both change, both the answer list and values are changed by fhirpath expressions or data controls.
@@ -73,7 +73,7 @@ export class LhcAutocompleteComponent implements OnChanges {
 
       // run the change function
       if (dataChanged) {
-        this.dataModelChange.emit(this.dataModel);  
+        this.dataModelChange.emit(this.dataModel);
         this.lhcDataService.onItemValueChange(this.item, null, null, true)
       }
     }
@@ -83,7 +83,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   /**
    *  Decides whether the data model should be preserved when reconstructing the autocomplete-lhc widget.
    * @param changes the changes object passed to ngOnChanges
-   * @return {boolean, boolean} two flags, one indicates whether the data model should be kept, 
+   * @return {boolean, boolean} two flags, one indicates whether the data model should be kept,
    * the other indicates whether the data model has changed.
    */
    keepDataModel(changes) {
@@ -100,11 +100,11 @@ export class LhcAutocompleteComponent implements OnChanges {
     // isFormReady.currentValue is true.  In that case we need to keep the data
     // model.
 
-    // let isFormReady = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true;  
+    // let isFormReady = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true;
     let isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
       this.isFormReady ;
     // if we are in the situation described above when form first loads.
-    
+
     if (isFormReady) {
       // The form is ready.  Check whether the list has changed.
       var prevOpts = changes?.options?.previousValue?.acOptions || {};
@@ -130,14 +130,14 @@ export class LhcAutocompleteComponent implements OnChanges {
       // special case for maxSelect
       if (prevOpts.maxSelect !== currentOpts.maxSelect) {
         // if only maxSelect (repeats) changes, keep the current data model
-        // multiple selection changes to single selection        
-        if ((prevOpts.maxSelect === "*" ||  parseInt(prevOpts.maxSelect)> 1) && 
+        // multiple selection changes to single selection
+        if ((prevOpts.maxSelect === "*" ||  parseInt(prevOpts.maxSelect)> 1) &&
             parseInt(currentOpts.maxSelect) === 1) {
           this.dataModel = this.dataModel[0];
           dataModelChanged = true;
         }
         // single selection changes to mulitple selection
-        else if (parseInt(prevOpts.maxSelect) === 1 && 
+        else if (parseInt(prevOpts.maxSelect) === 1 &&
           (currentOpts.maxSelect === "*" ||  parseInt(currentOpts.maxSelect)> 1)) {
           this.dataModel = [this.dataModel];
           dataModelChanged = true;
@@ -194,7 +194,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   getDisplayValue(answer) {
 
     let displayValue = null;
-    
+
     if (typeof answer === 'string') {
       displayValue = answer;
     }
@@ -220,7 +220,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       else if (answer._notOnList) {
         displayValue = answer.text;
       }
-    } 
+    }
     // search
     else {
       displayValue = answer[this.displayProp];
@@ -253,9 +253,12 @@ export class LhcAutocompleteComponent implements OnChanges {
    */
   ngAfterViewInit() {
     // initial setup with default/initial value or values from QR
+    let oldDataModel = CommonUtils.deepCopy(this.dataModel);
     this.setupAutocomplete();
-    this.dataModelChange.emit(this.dataModel);  
-    this.lhcDataService.onItemValueChange(this.item, null, null, true)
+    if (!CommonUtils.deepEqual(oldDataModel, this.dataModel)) {
+      this.dataModelChange.emit(this.dataModel);
+      this.lhcDataService.onItemValueChange(this.item, null, null, true)
+    }
     this.viewInitialized = true;
   }
 
@@ -410,9 +413,9 @@ export class LhcAutocompleteComponent implements OnChanges {
     if (changed) {
       // run the change function
       this.dataModelChange.emit(this.dataModel);
-      this.lhcDataService.onItemValueChange(this.item, null, null, true)      
+      this.lhcDataService.onItemValueChange(this.item, null, null, true)
     }
-    
+
   }
 
 
@@ -462,7 +465,7 @@ export class LhcAutocompleteComponent implements OnChanges {
 
     return CommonUtils.deepEqual(currentValue, this.dataModel) ? false: true;
   }
- 
+
 
   /**
    * Get the selected answer object from a 'search' autocompleter
