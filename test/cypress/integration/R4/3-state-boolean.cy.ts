@@ -2,7 +2,7 @@ import { AddFormToPageTestPage } from "../../support/addFormToPageTest.po";
 import * as util from "../../support/util";
 const po = new AddFormToPageTestPage();
 
-// Tests of the support for answerExpression on choice, open-choice, and
+// Tests of the support for enableWhenExpression on choice, open-choice, and
 // string, date, time and integer
 describe('3 states boolean type', () => {
   beforeEach(()=>{
