@@ -10,9 +10,17 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added the support of enableWhen on string, integer, date and time typed items that
   have an answer list.
   
+## [33.1.2] 2022-12-23
+### Fixed
+- FHIR Expressions were being run on form load once per item with an
+  autocompletion list.  It now will only run an extra time (on form load) once
+  for each item of type quantity which has a unit list, which is still more
+  often that should be needed, but this fix by itself should help speed up the
+  loading of many forms.
+
 ## [33.1.1] 2022-12-13
 ### Fixed
-- Fixed a bug that hidden items in a questionnaire are displayed when 
+- Fixed a bug that hidden items in a questionnaire are displayed when
   a questionnaire response is loaded/merged into the questionnaire.
 
 ## [33.1.0] 2022-11-30
@@ -32,11 +40,11 @@ This project follows [Semantic Versioning](http://semver.org/).
   The concatnated js file name is now lhc-forms.js, not
   lhc-forms.es5.js or lhc-forms.es2015.js
 - Made item.dataType in lforms internal format required (a breaking change).
-- Made initial[x] values and the initialSelected on answerOption both work 
+- Made initial[x] values and the initialSelected on answerOption both work
   when the item.type is choice or open-choice.
 ### Added
 - Added support for string, date, time and integer values in answerOption (R4)
-  and option (STU3), including the support for related extensions (optionPrefix, 
+  and option (STU3), including the support for related extensions (optionPrefix,
   ordinalValue, and itemControl) and the initial[x] values.
 ### Fixed
 - Fixed a bug in a custom cypress command.
