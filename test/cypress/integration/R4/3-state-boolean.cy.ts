@@ -57,7 +57,7 @@ describe('3 states boolean type', () => {
       let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
       let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
 
-      // merged qr where boolean item has no value
+      // merged qr where boolean item has a value of true
       let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
       win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
       cy.get('.lhc-form-title').contains('Questionnaire for enableWhen Tests');
@@ -73,7 +73,7 @@ describe('3 states boolean type', () => {
       let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
       let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
 
-      // merged qr where boolean item has no value
+      // merged qr where boolean item has a value of false
       let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
       win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
       cy.get('.lhc-form-title').contains('Questionnaire for enableWhen Tests');

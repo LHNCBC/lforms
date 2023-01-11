@@ -3,6 +3,7 @@
     [ngModel]="radioValue" 
     (ngModelChange)="onModelChange($event)"
     [nzDisabled]="item._readOnly"
+    role="radiogroup"
     (click)="lhcDataService.setActiveRow(item)">
     <label 
       nz-radio 
