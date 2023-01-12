@@ -12,15 +12,15 @@
     <thead>
 
       <tr class="lhc-grid-table-header-row">
-        <th class="lf-question lf-form-table-header"></th>
-        <th>{{item.question}}</th>
-        <th *ngFor="let header of uniqueGridHeaders; index as i;" class="lf-form-grid-cell lf-form-table-header"
+        <th class="lhc-form-horizontal-table-header"></th>
+        <th class="lhc-form-horizontal-table-header">{{item.question}}</th>
+        <th *ngFor="let header of uniqueGridHeaders; index as i;" class="lhc-form-horizontal-table-header"
           id="answer-{{index}}">{{header}}</th>
       </tr>
     </thead>
     <tbody>
       <ng-container *ngFor="let subItem of item.items; trackBy: lhcDataService.trackByElementId">
-        <tr *ngIf="!subItem._isHiddenFromView" role="radiogroup" aria-labeledby="label-{{subItem._elementId }}"
+        <tr *ngIf="subItem && lhcDataService.targetShown(subItem) && !subItem._isHiddenFromView" role="radiogroup" aria-labeledby="label-{{subItem._elementId }}"
           aria-describedby="help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}">
           <td class="lf-question">
             <lhc-item-question-text [item]="subItem"></lhc-item-question-text>
@@ -35,7 +35,7 @@
           </td>
 
           <ng-container *ngFor="let cell of subItem.items; trackBy: lhcDataService.trackByElementId">
-            <td
+            <td *ngIf="cell && lhcDataService.targetShown(cell) && !cell._isHiddenFromView"
               class="{{lhcDataService.getRowClass(cell)}} {{lhcDataService.getSkipLogicClass(cell)}} {{lhcDataService.getActiveRowClass(cell)}}">
               <div class="lf-form-item-data tooltipContainer">
                 <lhc-item-question [item]="cell" [options]="{hideQuestionText: true}" class="lhc-de">

@@ -23,7 +23,7 @@ export class LhcItemGirdComponent  {
   createCustomHeaders(item): void{
     _.forEach(item.items, (questionItems, key) => {
       _.forEach(questionItems.items, (subItems,key) => {  
-        if(!_.includes(this.uniqueGridHeaders, subItems.question)){
+        if(!_.includes(this.uniqueGridHeaders, subItems.question) && subItems.skipLogic?.conditions[0]?.trigger?.value != 'alwaysHide'){
           this.uniqueGridHeaders.push(subItems.question);
         }
       });
