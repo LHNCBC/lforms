@@ -21,14 +21,12 @@ describe('test displayScoreWithAnswerText in template options', function() {
     $.get('test/data/lforms/glasgow.json', function(glasgow) {
       var lfData = new LForms.LFormsData(glasgow);
       lfData.setTemplateOptions({displayScoreWithAnswerText: false}) 
-      setTimeout(()=>{ // without setTimeout, _displayText is still having the exitsting values
-        assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously");
-      }, 10)
-      done();
+      assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously");
+      done()
     });
   });
 
@@ -37,13 +35,11 @@ describe('test displayScoreWithAnswerText in template options', function() {
     $.get('test/data/lforms/glasgow.json', function(glasgow) {
       var lfData = new LForms.LFormsData(glasgow);
       lfData.setTemplateOptions({'displayScoreWithAnswerText': true})
-      setTimeout(()=>{ // without setTimeout, _displayText is still having the exitsting values
-        assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening - 1");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain - 2");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command - 3");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously - 4");
-      }, 10)
+      assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening - 1");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain - 2");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command - 3");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously - 4");
       done();
     });
   });
@@ -53,22 +49,18 @@ describe('test displayScoreWithAnswerText in template options', function() {
     $.get('test/data/lforms/glasgow.json', function(glasgow) {
       var lfData = new LForms.LFormsData(glasgow);
       lfData.setTemplateOptions({'displayScoreWithAnswerText': true})
-      setTimeout(()=>{ // without setTimeout, _displayText is still having the exitsting values
-        assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening - 1");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain - 2");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command - 3");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously - 4");
-      }, 10)
-
+      assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening - 1");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain - 2");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command - 3");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously - 4");
+  
       lfData.setTemplateOptions({displayScoreWithAnswerText: false})
-      setTimeout(()=>{ // without setTimeout, _displayText is still having the exitsting values
-        assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command");
-        assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously");
-      }, 10)
+      assert.equal(lfData.name, "Glasgow coma scale (with score rules)");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[0]._displayText, "1. No eye opening");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[1]._displayText, "2. Eye opening to pain");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[2]._displayText, "3. Eye opening to verbal command");
+      assert.equal(lfData.items[0]._autocompOptions.listItems[3]._displayText, "4. Eyes open spontaneously");
       done();
     });
   });
