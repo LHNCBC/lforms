@@ -3068,7 +3068,7 @@ export default class LhcFormData {
       // answers
       else {
         [options.listItems, options.addSeqNum] =
-          this._getAnswerDisplayTextWithLabelAndScore(item.answers, this.templateOptions.displayScoreWithAnswerText, item); 
+          this._getAnswerDisplayTextWithLabelAndScore(this.templateOptions.displayScoreWithAnswerText, item); 
         options.display = '_displayText';
         // use the original answers as the models (used in the autocomplete component)
         options.listItemsForModel = item.answers;
@@ -3105,18 +3105,18 @@ export default class LhcFormData {
 
   /**
    * Changes the answer's display text when there is a label and/or a score
-   * @param {*} answers the answers on an item
    * @param addScoreToText a flag indicating whether to add the score to the display text
    * if there is a score in answers.
    * @param item an item in the form
    * @returns answers with a modified display text on each answer item, and
    *          a flag whether to add sequence number for the each answer's displayed text.
    */
-  _getAnswerDisplayTextWithLabelAndScore(answers, addScoreToText, item) {
+  _getAnswerDisplayTextWithLabelAndScore(addScoreToText, item) {
     // reset the modified answers (for the display text)
     var modifiedAnswers = [];
     var hasOneAnswerLabel = false;
     var hasOneNumericAnswer = false;
+    let answers = item.answers;
     if (answers && Array.isArray(answers)) {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
