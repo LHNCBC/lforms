@@ -38,7 +38,7 @@ you don't accidentally add something that we are also working on.
 
 ## Development server
 
-* Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. 
+* Run `npm run start:lforms-dev` for a dev server. Navigate to `http://localhost:4200/`. 
    The app will automatically reload if you change any of the source files.
 
 * Run `npm run start-public` if you need to access to the dev server from a different machine. 
@@ -98,3 +98,7 @@ There is an example of an app using these files at
 https://lhcforms.nlm.nih.gov/lforms-fhir-app/.
 For details about how to work with this library, and for information about an
 announcements list, see the [documentation](https://lhncbc.github.io/lforms/).
+
+## <a id="npm-package">lforms npm package</a>
+A complete npm package that you can use to import lforms into your projects is not ready yet.
+The current lforms npm package only contains built files in `/dist/lforms` directory. You can use those files as described in above section [Using the LHC-Forms Web Component](#using).
