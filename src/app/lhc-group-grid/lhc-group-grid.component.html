@@ -1,11 +1,11 @@
 <div *ngIf="item" class="lhc-layout-grid lf-table-item {{lhcDataService.getSiblingStatus(item)}}">
-  <div class="lf-form-grid-table-title" *ngIf="!formLevel">
+  <div class="lhc-form-grid-table-title" *ngIf="!formLevel">
     <lhc-item-question-text [item]="item"></lhc-item-question-text>
   </div>
 
-  <table class="lf-form-grid-table lf-form-table">
+  <table class="lhc-form-grid-table lf-form-table">
     <colgroup>
-      <col class="lf-question">
+      <col class="lhc-question">
       <col *ngFor="let answer of item.items[0].answers">
       <col class="other-answer" *ngIf="item.items[0].dataType ==='CWE'">
     </colgroup>
@@ -22,7 +22,7 @@
       <ng-container *ngFor="let subItem of item.items; trackBy: lhcDataService.trackByElementId">
         <tr *ngIf="subItem && lhcDataService.targetShown(subItem) && !subItem._isHiddenFromView" role="radiogroup" aria-labeledby="label-{{subItem._elementId }}"
           aria-describedby="help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}">
-          <td class="lf-question">
+          <td class="lhc-question">
             <lhc-item-question-text [item]="subItem"></lhc-item-question-text>
             <lhc-item-messages [item]="subItem"></lhc-item-messages>
           </td>

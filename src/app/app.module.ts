@@ -54,7 +54,7 @@ import { SafeHtmlPipe } from './safe-html.pipe';
 import { LhcButtonPopoverComponent } from './lhc-button-popover/lhc-button-popover.component';
 import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
 import { LhcItemMessagesComponent } from './lhc-item-messages/lhc-item-messages.component';
-import { LhcItemGirdComponent } from './lhc-item-gird/lhc-item-gird.component';
+import { LhcGroupGridComponent } from './lhc-group-grid/lhc-group-grid.component';
 
 
 registerLocaleData(en);
@@ -89,7 +89,7 @@ registerLocaleData(en);
     LhcButtonPopoverComponent,
     LhcItemAttachmentComponent,
     LhcItemMessagesComponent,
-    LhcItemGirdComponent
+    LhcGroupGridComponent
   ],
   imports: [
     BrowserModule,
