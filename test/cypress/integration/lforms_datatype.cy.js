@@ -21,13 +21,10 @@ describe('Data Type', function() {
   it('DTM datetime picker should work', function () {
     var minMax = [TestUtil.getCurrentDTMString(-60000), TestUtil.getCurrentDTMString(+60000)]; // -/+ a minute
     tp.LoadForm.openFullFeaturedForm();
-    let dtmInput = element(by.id('/type7/1')).element(by.css("input"));
-    let nowButton = element(by.css(".ant-picker-now-btn"));
-    let okButton = element(by.css(".ant-picker-ok")).element(by.css("button"))
-    dtmInput.click()
-    nowButton.click()
-    okButton.click()
-    dtmInput.getCyElem().invoke('val').then((value)=>{
+    cy.get('#\\/type7\\/1 input').as('dtmInput').click();
+    element(by.css(".ant-picker-now-btn")).click(); // nowButton
+    element(by.css(".ant-picker-ok")).element(by.css("button")).click()
+    cy.get('@dtmInput').invoke('val').then((value)=>{
       expect(value >= minMax[0]);
       expect(value <= minMax[1]);
     });
