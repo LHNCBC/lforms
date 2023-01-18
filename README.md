@@ -74,9 +74,6 @@ you don't accidentally add something that we are also working on.
 
 ## Running end-to-end tests
 
-1. Run `npm run test:e2e:prepare` to copy necessary files in places for the 
-   tests and to update the web driver.
-
 1. Run `npm run test:e2e` to execute the end-to-end tests via 
    [Cypress](https://www.cypress.io/). The e2e tests is configured to use Chrome.
 
