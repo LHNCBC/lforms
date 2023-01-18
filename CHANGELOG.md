@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.2.0] 2022-01-06
+### Added
+- Added a template option to control whether to display scores along 
+  with texts for answers that have scores.
+
 ## [33.1.2] 2022-12-23
 ### Fixed
 - FHIR Expressions were being run on form load once per item with an

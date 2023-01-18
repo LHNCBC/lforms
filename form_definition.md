@@ -125,6 +125,8 @@ about the meaning of each key:
       Note that if this is set true, tree line style will not apply regardless of "hideTreeLine" setting.
     * hideRepetitionNumber - a boolean that controls whether to hide repetition numbers next to the
       item's text. The default is false.
+    * displayScoreWithAnswerText  - a boolean that controls whether to display scores along 
+      with answer texts for answers that have scores. The default is true.
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own

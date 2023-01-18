@@ -333,50 +333,7 @@ const CommonUtils = {
       msg = 'The question "'+item.text+'" produced the following warning:  '+msg;
     console.log(msg);
     // TBD: add a warning visible on the page.
-  },
-  
-
-  /**
-   * Changes the answer's display text when there is a label and/or a score
-   * @param {*} answers the answers on an item
-   * @returns answers with a modified display text on each answer item, and
-   *          a flag whether to add sequence number for the each answer's displayed text.
-   */
-  getAnswerDisplayTextWithLabelAndScore: function(answers) {
-    // reset the modified answers (for the display text)
-    var modifiedAnswers = [];
-    var hasOneAnswerLabel = false;
-    var hasOneNumericAnswer = false;
-    if (answers && Array.isArray(answers)) {
-      for (var i = 0, iLen = answers.length; i < iLen; i++) {
-        var answerData = CommonUtils.deepCopy(answers[i]);
-  
-        var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
-        // label is a string
-        if (answerData.label) {
-          displayText = answerData.label + ". " + displayText;
-          hasOneAnswerLabel = true;
-        }
-        // check if one of the values is numeric
-        else {
-          if (!hasOneNumericAnswer && !isNaN(answerData.text)) {
-            hasOneNumericAnswer = true;
-          }
-        }
-  
-        if (answerData.score !== undefined && answerData.score !== null)
-          displayText = displayText + " - " + answerData.score;
-        // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
-        answerData._displayText = displayText;
-        modifiedAnswers.push(answerData);
-      }  
-    }
-    // add seq num when there is no labels and no numeric values as answer
-    var acAddSeq = !hasOneAnswerLabel && !hasOneNumericAnswer;
-    
-    return [modifiedAnswers, acAddSeq];
   }
-
   
 };
 
