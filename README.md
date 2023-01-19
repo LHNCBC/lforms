@@ -112,3 +112,10 @@ A complete npm package that you can use with import/require statements in your
 code is not ready yet. The current lforms npm package only contains built files
 in `/dist/lforms` directory. You can use those files as described in above
 section [Using the LHC-Forms Web Component](#using).
+
+## <a id="docs">Related Documents</a>
+- `form_definition.md` The internal data format of the LHC-Forms widget.
+- `changed-features.md` The list of features that changes between the new 
+version (v30.0.0) and previous versions.
+- `r4-support.md` The FHIR R4 features supported by LHC-Forms widget. 
+- `sdc-support.md` The FHIR SDC features supported by LHC-Forms widget.

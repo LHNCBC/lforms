@@ -74,3 +74,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# no index.js yet
+/dist/index.js
