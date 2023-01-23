@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [33.2.0] 2023-01-05
+## [33.3.0] 2023-01-23
 ### Changed
 - Changed the design of the boolean component. It's now rendered as 3 radio buttons
   to support the concept of "no answer".
@@ -10,6 +10,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added the support of enableWhen on string, integer, date and time typed items that
   have an answer list.
   
+## [33.2.0] 2022-01-06
+### Added
+- Added a template option to control whether to display scores along 
+  with texts for answers that have scores.
+
 ## [33.1.2] 2022-12-23
 ### Fixed
 - FHIR Expressions were being run on form load once per item with an
