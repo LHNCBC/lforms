@@ -60,7 +60,8 @@ describe('horizontal table', () => {
     const drugNameField = rxtermsForm.drugName;
     cy.byId(drugNameField).click().type('aspercreme');
     cy.byId(tp.Autocomp.searchResults).should('be.visible');
-    cy.byId(drugNameField).type('{downArrow}').tab();
+    cy.byId(drugNameField).type('{downArrow}');
+    cy.realPress("Tab");
     cy.byId(rxtermsForm.strengthAndForm).should('have.focus');
   });
 
@@ -70,7 +71,8 @@ describe('horizontal table', () => {
     // Continuing from the previous test...
     cy.byId(tp.Autocomp.searchResults).should('be.visible');
     const strengthField = rxtermsForm.strengthAndForm;
-    cy.byId(strengthField).type('{downArrow}').tab();
+    cy.byId(strengthField).type('{downArrow}');
+    cy.realPress("Tab");
     cy.byId(strengthField).should('have.value', '10% Cream');
     cy.byId(rxtermsForm.rxcui).should('have.value', '1101827');
   });

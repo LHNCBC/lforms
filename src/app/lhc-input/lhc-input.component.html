@@ -4,7 +4,7 @@
          [ngModel]="item.value"
          (ngModelChange)="onModelChange($event)"
          placeholder="{{item._placeholder}}"
-         attr.aria-describedby="help-{{ item._elementId }}"
+         attr.aria-labelledby="label-{{ item._elementId }}" 
          attr.aria-required="{{ item._answerRequired }}"
          type="text"
          (blur)="lhcDataService.activeRowOnBlur(item)"

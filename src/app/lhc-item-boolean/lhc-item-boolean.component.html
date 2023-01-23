@@ -4,6 +4,8 @@
     (ngModelChange)="onModelChange($event)"
     [nzDisabled]="item._readOnly"
     role="radiogroup"
+    [nzName]="'radiogroup_' + item._elementId"
+    attr.aria-labelledby="label-{{ item._elementId }}"
     (click)="lhcDataService.setActiveRow(item)">
     <label 
       nz-radio 

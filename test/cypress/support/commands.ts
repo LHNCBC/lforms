@@ -88,17 +88,6 @@ Cypress.Commands.add(
   }
 );
 
-// typing tab key is not support in cypress
-// this solution is not reliable https://github.com/cypress-io/cypress/issues/299
-Cypress.Commands.add('typeTab', (shiftKey, ctrlKey) => {
-  cy.focused().trigger('keydown', {
-      keyCode: 9,
-      which: 9,
-      shiftKey: shiftKey,
-      ctrlKey: ctrlKey
-  });
-});
-
 // Type in a search box and wait until search queries are finished.
 Cypress.Commands.add(
   'typeAndWait',

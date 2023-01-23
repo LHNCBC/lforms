@@ -3,6 +3,7 @@
     <div *ngFor="let answer of acOptions.listItems; index as i">
       <label 
         nz-checkbox 
+        attr.aria-label="Checkbox {{answer._displayText}} for {{item.question}}"
         (click)="lhcDataService.setActiveRow(item)"
         [nzValue]="item.answers[i]" 
         [(ngModel)]="checkboxModels[i]"
@@ -14,6 +15,7 @@
     <div *ngIf="item.dataType=== 'CWE'">
       <label 
         nz-checkbox 
+        attr.aria-label="Checkbox Other for {{item.question}}"
         (click)="lhcDataService.setActiveRow(item)"
         [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
         [nzDisabled]="item._readOnly"

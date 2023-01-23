@@ -157,4 +157,68 @@ describe('Visual effect tests', () => {
         .and('include', 'width: 50%;');
     });
   });
+
+  describe('radio buttons in a radio group', () => {
+    it('should get to the first radio button in a radiobutton group using tab key and get to rest using arrow keys', () => {
+      tp.LoadForm.openFullFeaturedForm();
+      cy.byId('/type0/1')
+        .should('exist')
+        .click();
+      cy.realPress("Tab"); // focus is on the help button
+      // move to radio 'Not Answered'
+      cy.realPress("Tab");
+      cy.focused()
+        .should('have.attr', 'name', 'radiogroup_/type1/1')
+        .parent()
+        .parent()
+        .should('have.attr', 'id', '/type1/1null')
+      // move to radio 'No'
+      cy.realPress('{leftarrow}');
+      cy.focused()
+        .should('have.attr', 'name', 'radiogroup_/type1/1')
+        .parent()
+        .parent()
+        .should('have.attr', 'id', '/type1/1false')
+      // move to radio 'Yes'
+      cy.realPress('{leftarrow}');
+      cy.focused()
+        .should('have.attr', 'name', 'radiogroup_/type1/1')
+        .parent()
+        .parent()
+        .should('have.attr', 'id', '/type1/1true')
+      // back to radio 'No'
+      cy.realPress('{rightarrow}');
+      cy.focused()
+        .should('have.attr', 'name', 'radiogroup_/type1/1')
+        .parent()
+        .parent()
+        .should('have.attr', 'id', '/type1/1false');
+
+      // go to next question
+      cy.byId('/type1/1false')
+      // move to radio 'Not Answered'
+      cy.realPress("Tab");
+      cy.focused()
+        .should('have.attr', 'name', 'radiogroup_/type1b/1')
+        .parent()
+        .parent()
+        .should('have.attr', 'id', '/type1b/1null');
+      // move to radio 'No'
+      cy.realPress('{leftarrow}');
+      cy.focused()
+        .should('have.attr', 'name', 'radiogroup_/type1b/1')
+        .parent()
+        .parent()
+        .should('have.attr', 'id', '/type1b/1false');
+
+      // go to next question
+      cy.byId('/type1b/1false')
+      cy.realPress("Tab");
+      cy.realPress("Tab");
+      cy.realPress("Tab");
+      cy.focused()
+        .should('have.attr', 'id', '/type2/1')
+    });
+  });
+
 });
