@@ -189,11 +189,14 @@ This project follows [Semantic Versioning](http://semver.org/).
   on the answers of another field.
 
 ## [30.0.0] 2020-03-08
+Official release of the new Web Component version of lforms. See a list of changed 
+features in changed-features.md.
 ### Fixed
 - Fixed a minor style issue
 ### Changed
 - Code refactoring and clean up.
 - Made most commands in package.json work on Windows.
+
 
 ## [30.0.0-beta.9] 2022-02-24
 ### Fixed

@@ -6,7 +6,6 @@
     "Questionnaire",
     "SDC"
   ],
-  "main": "dist/index.js",
   "repository": "github:lhncbc/lforms",
   "license": "See LICENSE.md",
   "config": {

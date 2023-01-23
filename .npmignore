@@ -25,6 +25,7 @@
 /*.js
 /*.json
 /.gitattributes
+/cypress.config.ts
 
 # temp files
 /.tmp
@@ -68,7 +69,11 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+.angular
 
 # System Files
 .DS_Store
 Thumbs.db
+
+# no index.js yet
+/dist/index.js
