@@ -15,7 +15,7 @@
   "extension": [{
     "url": "http://hl7.org/fhir/StructureDefinition/variable",
     "valueExpression" : {
-      "name": "n1_exists",
+      "name": "n1Exists",
       "language": "text/fhirpath",
       "expression": "%resource.item.where(linkId='n1').answer.value.exists()"
     }
@@ -23,7 +23,7 @@
   {
     "url": "http://hl7.org/fhir/StructureDefinition/variable",
     "valueExpression" : {
-      "name": "n2_exists",
+      "name": "n2Exists",
       "language": "text/fhirpath",
       "expression": "%resource.item.where(linkId='n2').answer.value.exists()"
     }
@@ -31,7 +31,7 @@
   {
     "url": "http://hl7.org/fhir/StructureDefinition/variable",
     "valueExpression" : {
-      "name": "n3_exists",
+      "name": "n3Exists",
       "language": "text/fhirpath",
       "expression": "%resource.item.where(linkId='n3').answer.value.exists()"
     }
@@ -39,25 +39,25 @@
   {
     "url": "http://hl7.org/fhir/StructureDefinition/variable",
     "valueExpression" : {
-      "name": "n1_val",
+      "name": "n1Val",
       "language": "text/fhirpath",
-      "expression": "iif(%n1_exists, %resource.item.where(linkId='n1').answer.value, 0)"
+      "expression": "iif(%n1Exists, %resource.item.where(linkId='n1').answer.value, 0)"
     }
   },
   {
     "url": "http://hl7.org/fhir/StructureDefinition/variable",
     "valueExpression" : {
-      "name": "n2_val",
+      "name": "n2Val",
       "language": "text/fhirpath",
-      "expression": "iif(%n2_exists, %resource.item.where(linkId='n2').answer.value, 0)"
+      "expression": "iif(%n2Exists, %resource.item.where(linkId='n2').answer.value, 0)"
     }
   },
   {
     "url": "http://hl7.org/fhir/StructureDefinition/variable",
     "valueExpression" : {
-      "name": "n3_val",
+      "name": "n3Val",
       "language": "text/fhirpath",
-      "expression": "iif(%n3_exists, %resource.item.where(linkId='n3').answer.value, 0)"
+      "expression": "iif(%n3Exists, %resource.item.where(linkId='n3').answer.value, 0)"
     }
   }],
   "item": [
@@ -93,7 +93,7 @@
         "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
         "valueExpression" : {
           "language": "text/fhirpath",
-          "expression": "%n1_val + %n2_val + %n3_val >= 5"
+          "expression": "%n1Val + %n2Val + %n3Val >= 5"
         }
       }]
     }
