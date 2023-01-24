@@ -1,15 +1,29 @@
 <ng-container *ngIf="item">
-  <nz-switch #nzSwitchComponent
-    [nzDisabled]="item._readOnly"
-    id="{{item._elementId}}"
-    [ngModel]="item.value"
+  <nz-radio-group 
+    [ngModel]="radioValue" 
     (ngModelChange)="onModelChange($event)"
-    [nzCheckedChildren]="checkedTemplate"
-    [nzUnCheckedChildren]="unCheckedTemplate"
-    (focus)="lhcDataService.setActiveRow(item)"
-    
-  >
-  </nz-switch>
+    [nzDisabled]="item._readOnly"
+    role="radiogroup"
+    [nzName]="'radiogroup_' + item._elementId"
+    attr.aria-labelledby="label-{{ item._elementId }}"
+    (click)="lhcDataService.setActiveRow(item)">
+    <label 
+      nz-radio 
+      [nzValue]="true"
+      [(ngModel)]="booleanModels[0]" 
+      [id]="item._elementId + 'true'"
+      >Yes</label>
+    <label
+      nz-radio 
+      [nzValue]="false"
+      [(ngModel)]="booleanModels[1]" 
+      [id]="item._elementId + 'false'"
+      >No</label>
+    <label
+      nz-radio 
+      [nzValue]="null"
+      [(ngModel)]="booleanModels[2]" 
+      [id]="item._elementId + 'null'"
+      >Not Answered</label>
+  </nz-radio-group>
 </ng-container>
-<ng-template #checkedTemplate><i nz-icon nzType="check"></i></ng-template>
-<ng-template #unCheckedTemplate><i nz-icon nzType="close"></i></ng-template>

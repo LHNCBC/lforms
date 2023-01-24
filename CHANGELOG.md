@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.3.0] 2023-01-23
+### Changed
+- Changed the design of the boolean component. It's now rendered as 3 radio buttons
+  to support the concept of "no answer".
+### Added
+- Added the support of enableWhen on string, integer, date and time typed items that
+  have an answer list.
+  
 ## [33.2.0] 2022-01-06
 ### Added
 - Added a template option to control whether to display scores along 

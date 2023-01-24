@@ -73,7 +73,7 @@ describe('Form with extract observation extension', ()=>{
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
     
-    cy.byId('blItem1/1').click();
+    cy.byId('blItem1/1false').click();
     cy.window().then((win)=> {
       let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
       expect(bundle.length).to.equal(3);

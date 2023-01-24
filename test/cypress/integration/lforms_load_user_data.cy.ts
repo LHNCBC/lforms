@@ -9,7 +9,7 @@ describe('load saved user data', () => {
   });
 
   it('should load BL, ST, DT, DTM, INT, answer lists', () => {
-    cy.byId(ff.q0).find('button').should('have.class', 'ant-switch-checked');
+    cy.byId(ff.q0+ "true").find('input').should('be.checked');
     cy.byId(ff.q1).should('have.value', 'no data type');
     cy.byId(ff.q2).should('have.value', '100');
     cy.byId(ff.q3).should('have.value', 'user input value');

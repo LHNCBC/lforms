@@ -1,0 +1,1019 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ]
+  },
+  "title": "Questionnaire for enableWhen Tests",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "g1",
+      "text": "Boolean EnableWhen",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q1",
+          "text": "Q1 Boolean field",
+          "type": "boolean"
+        },
+        {
+          "linkId": "Q1-exists",
+          "text": "conditional field - Q1-exists (Q1 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q1",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q1-not-exists",
+          "text": "conditional field - Q1-not-exists (Q1 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q1",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q1-true",
+          "text": "conditional field - Q1-true (Q1 = true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q1-false",
+          "text": "conditional field - Q1-false (Q1 = false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q1",
+              "operator": "=",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q1-not-true",
+          "text": "conditional field - Q1-not-true (Q1 != true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q1",
+              "operator": "!=",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+
+    {
+      "linkId": "g2",
+      "text": "2. Decimal EnableWhen",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q2",
+          "text": "Q2 Decimal field",
+          "type": "decimal"
+        },
+        {
+          "linkId": "Q2-exists",
+          "text": "conditional field - Q2-exists (Q2 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q2",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q2-not-exists",
+          "text": "conditional field - Q2-not-exists (Q2 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q2",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q2-equal",
+          "text": "conditional field - Q2-equal (Q2 = 5.6)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q2",
+              "operator": "=",
+              "answerDecimal": 5.6
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q2-ge",
+          "text": "conditional field - Q2-ge (Q2 >= 4.8)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q2",
+              "operator": ">=",
+              "answerDecimal": 4.8
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g3",
+      "text": "3. Integer EnableWhen",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q3",
+          "text": "Q3 Integer field",
+          "type": "integer"
+        },
+        {
+          "linkId": "Q3-exists",
+          "text": "conditional field - Q3-exists (Q3 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q3",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q3-not-exists",
+          "text": "conditional field - Q3-not-exists (Q3 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q3",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q3-equal",
+          "text": "conditional field - Q3-equal (Q3 = 5)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q3",
+              "operator": "=",
+              "answerInteger": 5
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q3-ge",
+          "text": "conditional field - Q3-ge (Q3 >= 4)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q3",
+              "operator": ">=",
+              "answerInteger": 4
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g4",
+      "text": "4. Date EnableWhen",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q4",
+          "text": "Q4 Date field",
+          "type": "date"
+        },
+        {
+          "linkId": "Q4-exists",
+          "text": "conditional field - Q4-exists (Q4 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q4",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q4-not-exists",
+          "text": "conditional field - Q4-not-exists (Q4 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q4",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q4-equal",
+          "text": "conditional field - Q4-equal (Q4 = 2020-05-01)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q4",
+              "operator": "=",
+              "answerDate": "2020-05-01"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q4-ge",
+          "text": "conditional field - Q4-ge (Q4 >= 2020-05-01)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q4",
+              "operator": ">=",
+              "answerDate": "2020-05-01"
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g5",
+      "text": "5. DateTime EnableWhen",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q5",
+          "text": "Q5 DateTime field",
+          "type": "dateTime"
+        },
+        {
+          "linkId": "Q5-exists",
+          "text": "conditional field - Q5-exists (Q5 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q5",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q5-not-exists",
+          "text": "conditional field - Q5-not-exists (Q5 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q5",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g6",
+      "text": "6. Time EnableWhen",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q6",
+          "text": "Q6 Time field",
+          "type": "time"
+        },
+        {
+          "linkId": "Q6-exists",
+          "text": "conditional field - Q6-exists (Q6 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q6",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q6-not-exists",
+          "text": "conditional field - Q6-not-exists (Q6 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q6",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g7",
+      "text": "7. String EnableWhen",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q7",
+          "text": "Q7 String field",
+          "type": "string"
+        },
+        {
+          "linkId": "Q7-exists",
+          "text": "conditional field - Q7-exists (Q7 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-not-exists",
+          "text": "conditional field - Q7-not-exists (Q7 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-equals",
+          "text": "conditional field - Q7-equals (Q7 = test)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": "=",
+              "answerString": "test"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-notequals",
+          "text": "conditional field - Q7-notequals (Q7 != test)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": "!=",
+              "answerString": "test"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-gt",
+          "text": "conditional field - Q7-gt (Q7 > tes)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": ">",
+              "answerString": "tes"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-ge",
+          "text": "conditional field - Q7-ge (Q7 >= test)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": ">=",
+              "answerString": "test"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-ge2",
+          "text": "conditional field - Q7-ge2 (Q7 >= tes)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": ">=",
+              "answerString": "tes"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-lt",
+          "text": "conditional field - Q7-lt (Q7 > testing)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": ">",
+              "answerString": "testing"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-le",
+          "text": "conditional field - Q7-le (Q7 < test)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": "<",
+              "answerString": "test"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q7-le2",
+          "text": "conditional field - Q7-le2 (Q7 <= testing)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q7",
+              "operator": "<=",
+              "answerString": "testing"
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g8",
+      "text": "8. Choice EnableWhen, multiple",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q8",
+          "text": "Q8 Mult-select choice",
+          "type": "choice",
+          "repeats": "true",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "test-coding",
+                "code": "A",
+                "display": "A"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "test-coding",
+                "code": "B",
+                "display": "B"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "test-coding",
+                "code": "C",
+                "display": "C"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "Q8-exists",
+          "text": "conditional field - Q8-exists (Q8 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q8",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q8-not-exists",
+          "text": "conditional field - Q8-not-exists (Q8 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q8",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q8-eq-B",
+          "text": "conditional field - Q8-equal (Q8 = B)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q8",
+              "operator": "=",
+              "answerCoding": {
+                "system": "test-coding",
+                "code": "B",
+                "display": "B"
+              }
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q8-eq-B-and-C",
+          "text": "conditional field - Q8-equal (Q8 = B and C)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q8",
+              "operator": "=",
+              "answerCoding": {
+                "system": "test-coding",
+                "code": "B",
+                "display": "B"
+              }
+            },
+            {
+              "question": "Q8",
+              "operator": "=",
+              "answerCoding": {
+                "system": "test-coding",
+                "code": "C",
+                "display": "C"
+              }
+            }
+          ],
+          "enableBehavior": "all"
+        }
+      ]
+    },
+    {
+      "linkId": "g9",
+      "text": "9. Choice EnableWhen, single",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q9",
+          "text": "Q9 simple choice",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "test-coding",
+                "code": "A",
+                "display": "A"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "test-coding",
+                "code": "B",
+                "display": "B"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "test-coding",
+                "code": "C",
+                "display": "C"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "Q9-exists",
+          "text": "conditional field - Q9-exists (Q9 exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9-not-exists",
+          "text": "conditional field - Q9-not-exists (Q9 exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9-eq-B",
+          "text": "conditional field - Q9-equal (Q9 = B)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9",
+              "operator": "=",
+              "answerCoding": {
+                "system": "test-coding",
+                "code": "B",
+                "display": "B"
+              }
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9-noteq-B",
+          "text": "conditional field - Q9-not-equal (Q9 != B)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9",
+              "operator": "!=",
+              "answerCoding": {
+                "system": "test-coding",
+                "code": "B",
+                "display": "B"
+              }
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g9a",
+      "text": "9a. answerOption of String EnableWhen, single",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q9a",
+          "text": "Q9a string choice",
+          "type": "string",
+          "answerOption": [
+            { "valueString": "A" },
+            { "valueString": "B" },
+            { "valueString": "C" }
+          ]
+        },
+        {
+          "linkId": "Q9a-exists",
+          "text": "conditional field - Q9a-exists (Q9a exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9a",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9a-not-exists",
+          "text": "conditional field - Q9a-not-exists (Q9a exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9a",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9a-eq-B",
+          "text": "conditional field - Q9a-equal (Q9a = B)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9a",
+              "operator": "=",
+              "answerString": "B"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9a-noteq-B",
+          "text": "conditional field - Q9a-not-equal (Q9a != B)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9a",
+              "operator": "!=",
+              "answerString": "B"
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g9b",
+      "text": "9b. answerOption of Integer EnableWhen, single",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q9b",
+          "text": "Q9b integer choice",
+          "type": "integer",
+          "answerOption": [
+            { "valueInteger": 12 },
+            { "valueInteger": 34 },
+            { "valueInteger": 56 }
+          ]
+        },
+        {
+          "linkId": "Q9b-exists",
+          "text": "conditional field - Q9b-exists (Q9b exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9b",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9b-not-exists",
+          "text": "conditional field - Q9b-not-exists (Q9b exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9b",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9b-eq-B",
+          "text": "conditional field - Q9b-equal (Q9b = 34)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9b",
+              "operator": "=",
+              "answerInteger": 34
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9b-noteq-B",
+          "text": "conditional field - Q9b-not-equal (Q9b != 34)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9b",
+              "operator": "!=",
+              "answerInteger": 34
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g9c",
+      "text": "9c. answerOption of Date EnableWhen, single",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q9c",
+          "text": "Q9c date choice",
+          "type": "date",
+          "answerOption": [
+            {
+                "valueDate": "2022"
+            },
+            {
+                "valueDate": "2022-09"
+            },
+            {
+                "valueDate": "2022-09-20"
+            }
+          ]
+        },
+        {
+          "linkId": "Q9c-exists",
+          "text": "conditional field - Q9c-exists (Q9c exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9c",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9c-not-exists",
+          "text": "conditional field - Q9c-not-exists (Q9c exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9c",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9c-eq-B",
+          "text": "conditional field - Q9c-equal (Q9c = '2022-09')",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9c",
+              "operator": "=",
+              "answerInteger": "2022-09"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9c-noteq-B",
+          "text": "conditional field - Q9c-not-equal (Q9c != '2022-09')",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9c",
+              "operator": "!=",
+              "answerInteger": "2022-09"
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g9d",
+      "text": "9d. answerOption of Time EnableWhen, single",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q9d",
+          "text": "Q9d time choice",
+          "type": "time",
+          "answerOption": [
+            {
+                "valueTime": "10:30:00"
+            },
+            {
+                "valueTime": "13:30:00"
+            },
+            {
+                "valueTime": "23:59:59"
+            }
+          ]
+        },
+        {
+          "linkId": "Q9d-exists",
+          "text": "conditional field - Q9d-exists (Q9d exists true)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9d",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9d-not-exists",
+          "text": "conditional field - Q9d-not-exists (Q9d exists false)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9d",
+              "operator": "exists",
+              "answerBoolean": false
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9d-eq-B",
+          "text": "conditional field - Q9d-equal (Q9d = '13:30:00')",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9d",
+              "operator": "=",
+              "answerInteger": "13:30:00"
+            }
+          ],
+          "enableBehavior": "any"
+        },
+        {
+          "linkId": "Q9d-noteq-B",
+          "text": "conditional field - Q9d-not-equal (Q9d != '13:30:00')",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "Q9d",
+              "operator": "!=",
+              "answerInteger": "13:30:00"
+            }
+          ],
+          "enableBehavior": "any"
+        }
+      ]
+    },
+    {
+      "linkId": "g10",
+      "text": "10. EnableWhenExpression",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Q10",
+          "text": "Q10 string test field",
+          "type": "string"
+        },
+        {
+          "linkId": "Q10b",
+          "text": "Q10b string test field",
+          "type": "string"
+        },
+        {
+          "extension": [
+            {
+              "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%resource.item.item.where(linkId='Q10').answer.value & %resource.item.item.where(linkId='Q10b').answer.value = 'chicken'"
+              },
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression"
+            }
+          ],
+          "linkId": "Q10-ewe",
+          "text": "conditional field - (Q10 + Q10b) = 'chicken'",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

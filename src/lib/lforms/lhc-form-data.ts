@@ -3369,79 +3369,101 @@ export default class LhcFormData {
     }
     else if (hasAnswer) {
       var currentValue = item.value;
-      switch (item.dataType) {
-        // answer lists: {"code", "LA-83"}, {"label","A"} and etc.
-        // the key is one of the keys in the answers.
-        case CONSTANTS.DATA_TYPE.CNE:
-        case CONSTANTS.DATA_TYPE.CWE:
-          var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.notEqual : null;
-          var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
-          var isEqual = false;
-          for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
-            let answerValue = answerValues[m];
-            if(item.answerCodeSystem) {
-              answerValue = Object.assign({system: item.answerCodeSystem}, answerValue);
+
+      // if the item has an answer list (of coding, string, integer, date or time)
+      if (item._hasAnswerList) {
+        switch (item.dataType) {
+          // answer lists: {"code", "LA-83"}, {"label","A"} and etc.
+          // the key is one of the keys in the answers.
+          case CONSTANTS.DATA_TYPE.CNE:
+          case CONSTANTS.DATA_TYPE.CWE:
+          case CONSTANTS.DATA_TYPE.INT:
+          case CONSTANTS.DATA_TYPE.ST:
+          case CONSTANTS.DATA_TYPE.DT:
+          case CONSTANTS.DATA_TYPE.TM:
+            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.notEqual : null;
+            var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
+            var isEqual = false;
+            for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
+              let answerValue = answerValues[m];
+              if (item.dataType === CONSTANTS.DATA_TYPE.CNE || item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+                if(item.answerCodeSystem) {
+                  answerValue = Object.assign({system: item.answerCodeSystem}, answerValue);
+                }
+                if(this._codingsEqual(triggerValue, answerValue)) {
+                  isEqual = true;
+                  break;
+                }
+              }
+              // ST, INT, DT, TM
+              else {
+                if(triggerValue === answerValue.text) {
+                  isEqual = true;
+                  break;
+                }
+              }
             }
-            if(this._codingsEqual(triggerValue, answerValue)) {
-              isEqual = true;
-              break;
+            if (trigger.hasOwnProperty('value')) {
+              if (isEqual) {
+                action = true;
+              }
             }
-          }
-          if (trigger.hasOwnProperty('value')) {
-            if (isEqual) {
-              action = true;
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (!isEqual) {
+                action = true;
+              }
             }
-          }
-          else if (trigger.hasOwnProperty('notEqual')) {
-            if (!isEqual) {
-              action = true;
+            break;
+        } // end case
+      }
+      // no answer list
+      else {
+        switch (item.dataType) {
+          // numbers: {"value: 3}, {"minInclusive": 3, "maxInclusive":10} and etc.
+          // available keys: (1) "value", (2) "not" or (3) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
+          case CONSTANTS.DATA_TYPE.INT:
+          case CONSTANTS.DATA_TYPE.REAL:
+          case CONSTANTS.DATA_TYPE.QTY:
+            var numCurrentValue = parseFloat(currentValue);
+            // the skip logic rule has a "value" key
+            if (trigger.hasOwnProperty("value")) {
+              if (trigger["value"] === numCurrentValue) {
+                action = true;
+              }
             }
-          }
-          break;
-        // numbers: {"value: 3}, {"minInclusive": 3, "maxInclusive":10} and etc.
-        // available keys: (1) "value", (2) "not" or (3) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
-        case CONSTANTS.DATA_TYPE.INT:
-        case CONSTANTS.DATA_TYPE.REAL:
-        case CONSTANTS.DATA_TYPE.QTY:
-          var numCurrentValue = parseFloat(currentValue);
-          // the skip logic rule has a "value" key
-          if (trigger.hasOwnProperty("value")) {
-            if (trigger["value"] === numCurrentValue) {
-              action = true;
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != numCurrentValue) {
+                action = true;
+              }
             }
-          }
-          else if (trigger.hasOwnProperty('notEqual')) {
-            if (trigger["notEqual"] != numCurrentValue) {
-              action = true;
+            // the skip logic rule has a range
+            else {
+              // if within the range
+              if (this._inRange(trigger, numCurrentValue)) {
+                action = true;
+              }
             }
-          }
-          // the skip logic rule has a range
-          else {
-            // if within the range
-            if (this._inRange(trigger, numCurrentValue)) {
-              action = true;
+            break;
+          // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
+          // the only key is "value", for now
+          case CONSTANTS.DATA_TYPE.ST:
+          case CONSTANTS.DATA_TYPE.TX:
+          // boolean: {"value": true}, {"value": false}
+          // the only key is "value"
+          case CONSTANTS.DATA_TYPE.BL:
+            if (trigger.hasOwnProperty("value")) {
+              if (trigger["value"] === currentValue ) {
+                action = true;
+              }
             }
-          }
-          break;
-        // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
-        // the only key is "value", for now
-        case CONSTANTS.DATA_TYPE.ST:
-        case CONSTANTS.DATA_TYPE.TX:
-        // boolean: {"value": true}, {"value": false}
-        // the only key is "value"
-        case CONSTANTS.DATA_TYPE.BL:
-          if (trigger.hasOwnProperty("value")) {
-            if (trigger["value"] === currentValue ) {
-              action = true;
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != currentValue) {
+                action = true;
+              }
             }
-          }
-          else if (trigger.hasOwnProperty('notEqual')) {
-            if (trigger["notEqual"] != currentValue) {
-              action = true;
-            }
-          }
-          break;
-      } // end case
+            break;
+        } // end case
+      }     
     }
     // no answer and 'notEqual' has a value
     else if (trigger.hasOwnProperty('notEqual') &&

@@ -1,7 +1,5 @@
 <ng-container *ngIf="item">
   <div id="{{item._elementId}}">
-  <!--     aria-describedby="help-{{ item._elementId }}"-->
-  <!--     aria-labelledby="{{labelledBy}}">-->
     <div *ngIf="!item.value">
       <input [name]="item._text" type="file" class="lhc-attachment-upload"
              #fileInput
