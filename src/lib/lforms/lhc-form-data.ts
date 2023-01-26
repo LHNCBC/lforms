@@ -546,9 +546,11 @@ export default class LhcFormData {
     // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
       let self = this;
-        setTimeout(function(){
-          self._expressionProcessor.runCalculations(false).then(()=>{});
+      setTimeout(function(){
+        self._expressionProcessor.runCalculations(false).then(()=>{            
+          self._checkFormControls();
         });
+      });
     }
   }
 

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.3.1] 2023-01-24
+### Fixed
+- Fixed a bug that changes from FHIRPath expressions did not update treeline status.
+
 ## [33.3.0] 2023-01-23
 ### Changed
 - Changed the design of the boolean component. It's now rendered as 3 radio buttons
