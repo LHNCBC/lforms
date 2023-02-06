@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.3.2] 2023-02-06
+### Fixed
+- Fixed a bug that initial values were not displayed in the matrix layout ("Vertical 
+  Answer Table"/"table" in itemControl, http://hl7.org/fhir/questionnaire-item-control).
+- Fixed a 508 compliance issue related to the matrix layout.
+
 ## [33.3.1] 2023-01-24
 ### Fixed
 - Fixed a bug that changes from FHIRPath expressions did not update treeline status.
