@@ -8,6 +8,10 @@ This project follows [Semantic Versioning](http://semver.org/).
   replaced them with type 'CODING' and an 'answerConstraint' attribute.
   The existing form data files in lforms data format with 'CNE' and 'CWE' data types
   are backward compatible.
+  
+## [33.3.1] 2023-01-24
+### Fixed
+- Fixed a bug that changes from FHIRPath expressions did not update treeline status.
 
 ## [33.3.0] 2023-01-23
 ### Changed

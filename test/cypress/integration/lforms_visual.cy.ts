@@ -221,4 +221,32 @@ describe('Visual effect tests', () => {
     });
   });
 
+  describe('tree lines', () => {
+    it('should reset treeline after enableWhenExpression is run', () => {
+      tp.openBaseTestPage();
+      tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
+  
+      const n1 = 'n1/1';
+      const n2 = 'n2/1';
+      const n3 = 'n3/1';
+      const q4 = 'q4/1'; // present when n1+n2+n3 >= 5;
+  
+      cy.byId(n1).should('be.visible');
+      cy.byId(q4).should('not.exist');
+      cy.byId(n1).click().type('1');
+      cy.byId(n2).click().type('2');
+      cy.byId(n3).click().type('3');
+      cy.byId(q4).should('be.visible');
+
+      cy.byId("item-n3/1")
+        .should('have.class', 'lhc-tree-line')
+        .should('not.have.class', 'lhc-last-item');
+      cy.byId("item-q4/1")
+        .should('have.class', 'lhc-tree-line')
+        .should('have.class', 'lhc-last-item');
+
+    });
+  });
+ 
+
 });
