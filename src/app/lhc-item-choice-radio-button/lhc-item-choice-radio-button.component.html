@@ -22,7 +22,7 @@
     </label>
 
     <label 
-      *ngIf="item.dataType === 'CWE'" 
+      *ngIf="item.dataType === 'CODING' && item.answerConstraint === 'optionsOrString'" 
       nz-radio
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="{'text': otherValue, '_notOnList': true}"

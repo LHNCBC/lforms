@@ -2,6 +2,7 @@
 // by application code.
 import {ErrorMessages} from "./error-messages.js";
 import CommonUtils from "../lforms/lhc-common-utils.js";
+import CONSTANTS from "./lhc-form-datatypes.js";
 /**
  *  A default message source identifier (for when the messageSource parameter
  *  below is optional and not provided.
@@ -166,10 +167,42 @@ export const InternalUtil = {
    * @returns 
    */
   hasAnswerList: function(item) {
-    return item.dataType === "CNE" || item.dataType === "CWE" || item.answers &&
+    return item.dataType === "CODING" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
-  }
+  },
   
+
+  preprocessCNECWE: function(formData) {
+    for (let i=0, iLen=formData.items.length; i<iLen; i++) {
+      let item = formData.items[i];
+
+      // convert CNE to Coding
+      if (item.dataType === CONSTANTS.DATA_TYPE.CNE) {
+        item.dataType = CONSTANTS.DATA_TYPE.CODING;
+        //item.answerConstraint = "optionsOnly";
+      }
+      // convert CWE to Coding
+      else if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+        item.dataType = CONSTANTS.DATA_TYPE.CODING;
+        item.answerConstraint = "optionsOrString";
+      }
+      // process sub items
+      if (item.items && item.items.length > 0) {
+        this.preprocessCNECWE(item);
+      }
+    }
+  },
+
+
+  wasCNE: function(item) {
+    return item && item.dataType === CONSTANTS.DATA_TYPE.CODING &&
+        (!item.answerConstraint || item.answerConstraint === "optionsOnly");
+  },
+
+  wasCWE: function(item) {
+    return item && item.dataType === CONSTANTS.DATA_TYPE.CODING &&
+        item.answerConstraint === "optionsOrString";
+  }
 }
 
 

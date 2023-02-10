@@ -56,8 +56,7 @@ var self = {
           val: item.value
         }];
         break;
-      case "CNE":
-      case "CWE":
+      case "CODING":
         var max = item.answerCardinality.max;
         // multiple values, each value creates a separate Observation resource
         var itemValues;

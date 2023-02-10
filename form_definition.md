@@ -183,18 +183,18 @@ about the meaning of each key:
       are setting up your own list.
     * dataType - (required) The data type of the answer for the question. This determines
       what sort of field control is provided.  Supported types are:
-        * CWE - an answer list where the user is permitted to enter something
-          not on the list.
-        * CNE - an answer list where the user is **not** permitted to enter something
-          not on the list.
-        * REAL - a number which might not be an integer
+        * BL - a boolean (or yes/no) value
+        * CODING - an answer value, generally from a list of possible values from 
+                  <a href="#answers">answers</a>
+        * REAL - a real/demical number
+        * INT - an integer
         * QTY - a type which has both a REAL value and unit object (see "units" below for
           the structure).
-        * INT - an integer
         * DT - a date (displayed with a calendar widget)
         * DTM - a string with date and time 
         * TM - a string in the time format
-        * ST - a normal free-text string
+        * ST - a short free-text string
+        * TX - a long free-text string
         * YEAR - a string in the format of one to four digits that represents a year
         * MONTH - a string in the format of one or two digits that represents a month
         * DAY - a string in the format of one or two digits that represents a day
@@ -207,6 +207,11 @@ about the meaning of each key:
                     <a href="#items">items</a> field
         * TITLE - a special type for separators that display some text.
         * attachment - a control to upload and download attachment files.
+    * answerConstraint - Codes that describe the types of constraints possible 
+      on a question item that has a list of permitted answers. Supported codes are:
+        * optionsOnly - only vlaues listed in answers are permitted
+        * optionsOrString - in addition to the values listed in answers, free text
+                            strings are permitted.
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  If the data type is INT or REAL, units
       should only have one unit; otherwise the data type will be converted to

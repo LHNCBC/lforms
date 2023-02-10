@@ -102,7 +102,7 @@ function addSDCImportFns(ns) {
         }
         else {
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-          if(dataType === 'CWE' || dataType === 'CNE') {
+          if(dataType === 'CODING') {
             condition.trigger = {value: self._copyTriggerCoding(answer, null, false)};
           }
           else if(dataType === 'QTY') {
@@ -195,8 +195,8 @@ function addSDCImportFns(ns) {
     var repeats = qItem.repeats;
     var required = qItem.required;
     var answerCardinality, questionCardinality;
-    // CNE/CWE, repeats handled by autocompleter with multiple answers in one question
-    if (lfItem.dataType === 'CNE' || lfItem.dataType === 'CWE' || 
+    // CODING, repeats handled by autocompleter with multiple answers in one question
+    if (lfItem.dataType === 'CODING' || 
         qItem.option && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' || 
         lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
       if (repeats) {
@@ -307,6 +307,10 @@ function addSDCImportFns(ns) {
    */
   self._processDataType = function (lfItem, qItem) {
     var type = self._getDataType(qItem);
+    // open-choice special handling
+    if (qItem.type === "open-choice") {
+      lfItem.answerConstraint = "optionsOrString";
+    }
     if(type === 'SECTION' || type === 'TITLE') {
       lfItem.header = true;
     }

@@ -19,7 +19,7 @@ describe('Visual effect tests', () => {
         });
     });
 
-    const dataTypes = ['BL', 'INT', 'REAL', 'ST', 'BIN', 'DT', 'DTM', 'TM', 'CNE', 'CWE',
+    const dataTypes = ['BL', 'INT', 'REAL', 'ST', 'BIN', 'DT', 'DTM', 'TM', 'CODING',
       'RTO', 'QTY', 'YEAR', 'MONTH', 'DAY', 'URL', 'EMAIL', 'PHONE', 'TX'];
 
     for (let i = 0, len = dataTypes.length; i < len; ++i) {

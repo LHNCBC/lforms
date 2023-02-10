@@ -25,8 +25,9 @@ function addCommonSDCFns(ns) {
     "TM": 'time',
     "TX": 'text',
     "URL": 'url',
-    "CNE": 'choice',
-    "CWE": 'open-choice',
+    //"CNE": 'choice',  // deprecated
+    //"CWE": 'open-choice', // deprecated
+    "CODING": "coding",
     "QTY": 'quantity',
     "attachment": 'attachment'
   };
@@ -44,8 +45,9 @@ function addCommonSDCFns(ns) {
     "TX": 'String',
     "BL": 'Boolean',
     "URL": 'Url',
-    "CNE": 'Coding',
-    "CWE": 'Coding',
+    //"CNE": 'Coding',  // deprecated
+    //"CWE": 'Coding',  // deprecated
+    "CODING": 'Coding',
     "QTY": 'Quantity'
   };
 

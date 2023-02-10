@@ -113,7 +113,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   for (let type of [undefined, 'Coding', 'CodeableConcept']) {
                     it('should set a '+(multiselect ? 'multiselect ' : 'single-select ')+
                        dataType+' value with '+Object.keys(fhirVal)+', and _type='+type, function() {
-                      let lfItem = {dataType, answers};
+                      let lfItem = dataType === "CWE" ?  {'dataType': 'CODING', 'answers': answers, 'answerConstraint':'optionsOrString'} : 
+                          {'dataType': 'CODING', 'answers': answers};
                       let fhirVals = [JSON.parse(JSON.stringify(fhirVal))];
                       if (multiselect) {
                         fhirVals.push(JSON.parse(JSON.stringify(fhirVal2)));
@@ -154,7 +155,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               for (let multiselect of [false, true]) {
                 it('should handle off-list answers for '+
                    (multiselect ? 'multiselect' : 'single-select')+' lists', function() {
-                  let lfItem = {dataType: 'CWE', answers};
+                  let lfItem = {'dataType': 'CODING', 'answers': answers, 'answerConstraint':'optionsOrString'};
                   let fhirVals = [caseN[0]];
                   if (multiselect) {
                     fhirVals.push(caseN[1]);
@@ -180,7 +181,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             for (let multiselect of [false, true]) {
               it('should handle off-list answers for '+
                  (multiselect ? 'multiselect' : 'single-select')+' lists', function() {
-                let lfItem = {dataType: 'CWE', answers};
+                let lfItem = {'dataType': 'CODING', 'answers': answers, 'answerConstraint':'optionsOrString'};
                 let fhirVals = ['four'];
                 if (multiselect) {
                   fhirVals.push('five');
@@ -559,7 +560,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
-              "dataType": "CNE",
+              "dataType": "CODING",
               "answerCardinality": {
                 "min": "0",
                 "max": "*"
@@ -607,7 +608,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 row",
-              "dataType": "CNE",
+              "dataType": "CODING",
               "answerCardinality": {
                 "min": "0",
                 "max": "*"
@@ -656,7 +657,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 column",
-              "dataType": "CNE",
+              "dataType": "CODING",
               "answerCardinality": {
                 "min": "0",
                 "max": "*"
@@ -1166,7 +1167,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(convertedLfData.items[0].items[1].answers[2].code, "LA46-8");
               // TODO - other not supported
               //assert.equal(convertedLfData.items[0].items[1].answers[2].other, "Please Specify");
-              assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
+              assert.equal(convertedLfData.items[0].items[1].dataType, "CODING");
 
               // TODO - skip logic triggers for min/max inclusive/exclusive are not supported.
               // Only skip logic 'value' works in STU3
@@ -1765,7 +1766,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should properly convert to LForms answers', function () {
             var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q2');
             assert.equal(item.questionCode, '44255-8');
-            assert.equal(item.dataType, 'CNE');
+            assert.equal(item.dataType, 'CODING');
             assert.equal(item.answers[1].code, 'LA6569-3');
             assert.equal(item.answers[1].text, 'Several days');
             assert.equal(item.answers[1].score, 1);
@@ -1774,7 +1775,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should work when using url reference for contained ValueSet', function () {
             var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q9');
             assert.equal(item.questionCode, '44260-8');
-            assert.equal(item.dataType, 'CNE');
+            assert.equal(item.dataType, 'CODING');
             assert.equal(item.answers[1].code, 'LA6569-3');
             assert.equal(item.answers[1].text, 'Several days');
             assert.equal(item.answers[1].score, 1);

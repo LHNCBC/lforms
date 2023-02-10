@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.0.0] 2023-02-10
+### Changed
+- Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
+  replaced them with type 'CODING' and an 'answerConstraint' attribute.
+  The existing form data files in lforms data format with 'CNE' and 'CWE' data types
+  are backward compatible.
+
 ## [33.3.0] 2023-01-23
 ### Changed
 - Changed the design of the boolean component. It's now rendered as 3 radio buttons

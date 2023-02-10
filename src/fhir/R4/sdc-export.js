@@ -243,7 +243,7 @@ var self = {
 
       
       // when option's values are Coding
-      if (item.dataType === "CNE" || item.dataType === "CWE") {
+      if (item.dataType === "CODING") {
 
         option.valueCoding = {};
         if (answer.code) option.valueCoding.code = answer.code;
@@ -254,7 +254,7 @@ var self = {
         }
   
         // check default answers, coding only for now
-        if (item.defaultAnswer && (item.dataType === 'CWE' || item.dataType === 'CNE')) {
+        if (item.defaultAnswer && (item.dataType === 'CODING')) {
           var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
           item.defaultAnswer : [item.defaultAnswer];
       
@@ -330,7 +330,7 @@ var self = {
       // for Coding, the default answer is partially handled in _handleAnswers(), where
       // initialSelected is set on the answer items.
       // Only the not-on-list values (string or Coding) in item.defaultAnswer is processed here
-      if (dataType === "CWE" || dataType === 'CNE') {
+      if (dataType === "CODING") {
         // go through each default value and to see if it is one of answers in the answers list
         let onList = false;
         if (item.answers) {

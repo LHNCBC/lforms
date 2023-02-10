@@ -237,7 +237,7 @@ var self = {
       var option = {};
 
       // when option's values are Coding
-      if (item.dataType === "CNE" || item.dataType === "CWE") {
+      if (item.dataType === "CODING") {
 
         // option's value supports integer, date, time, string and Coding
         // for LForms, all answers are Coding
@@ -302,7 +302,7 @@ var self = {
       // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
-      if (dataType === 'CWE' || dataType === 'CNE' ) {
+      if (dataType === 'CODING' ) {
         var codeSystem = null, coding = null;
 
         // item.defaultAnswer could be an array of multiple default values or a single value.
@@ -447,7 +447,7 @@ var self = {
         // for Coding
         // multiple selections, item.value is an array
         // NO support of multiple selections in FHIR SDC, just pick one
-        else if (dataType === 'CWE' || dataType === 'CNE' ) {
+        else if (dataType === 'CODING' ) {
           let answerCoding = self._copyTriggerCoding(condition.trigger.value, null, true);
           if (answerCoding) {
             enableWhenRule[valueKey] = answerCoding;

@@ -34,8 +34,9 @@ const Validation = {
     "DT",      // complex type
     "DTM",     // complex type, not supported yet
     "TM",      // complex type
-    "CNE",     // complex type
-    "CWE",     // complex type
+    //"CNE",     // complex type, deprecated
+    //"CWE",     // complex type, deprecated
+    "CODING",
     "RTO",     // complex type, not supported yet
     "QTY",     // complex type
     "NR",      // complex type
@@ -58,8 +59,8 @@ const Validation = {
     "DT": "must be a date value.",        // not used, handled by lf-date directive
     "DTM": "must be a date and time value.",  // not supported
     "TM": "must be a time value.",
-    "CNE": "must be a value from the answer list.",  // not used, handled by the autocomplete-lhc directive
-    "CWE": "must be a value from the answer list or a user supplied value.", // not used, handled by the autocomplete-lhc directive
+    //"CNE": "must be a value from the answer list.",  // not used, handled by the autocomplete-lhc directive
+    //"CWE": "must be a value from the answer list or a user supplied value.", // not used, handled by the autocomplete-lhc directive
     "RTO": "must be a ratio value.",          // not supported
     "QTY": "must be a decimal number",
     "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
@@ -154,8 +155,7 @@ const Validation = {
         case "ST":  // not needed
         case "DTM": // dataTime, handled by the datetime directive (datetime picker)
         case "RTO": // TBD
-        case "CNE": // answers list with no exception, handled by autocomplete directive
-        case "CWE": // answers list with exception, handled by autocomplete directive
+        case "CODING": // answers list, handled by autocomplete directive
         default :
           valid = true;
       }

@@ -7,7 +7,7 @@
       <colgroup>
         <col class="lf-question">
         <col *ngFor="let answer of item.items[0].answers">
-        <col class="other-answer" *ngIf="item.items[0].dataType ==='CWE'">
+        <col class="other-answer" *ngIf="item.items[0].dataType ==='CODING' && item.items[0].answerConstraint === 'optionsOrString'">
       </colgroup>
       <thead>
       <tr class="lhc-matrix-table-header-row">
@@ -15,7 +15,7 @@
         <th *ngFor="let answer of item.items[0].answers; index as i;"
             class="lf-form-matrix-cell lf-form-table-header"
             id="answer-{{index}}">{{answer.text}}</th>
-        <th class="lf-form-matrix-cell-other lf-form-table-header" *ngIf="item.items[0].dataType ==='CWE'"
+        <th class="lf-form-matrix-cell-other lf-form-table-header" *ngIf="item.items[0].dataType === 'CODING' && item.items[0].answerConstraint === 'optionsOrString'"
          id="otherAnswer">Other</th>
       </tr>
       </thead>
@@ -42,7 +42,7 @@
               </label>
             </span>
           </td>
-          <td class="lf-form-matrix-cell-other" *ngIf="subItem.dataType ==='CWE'"
+          <td class="lf-form-matrix-cell-other" *ngIf="subItem.dataType === 'CODING' && subItem.answerConstraint === 'optionsOrString'"
             aria-labeledby=otherAnswer>
             <!--for multiple answers-->
             <span *ngIf="subItem._multipleAnswers" class="lf-form-matrix-answer">

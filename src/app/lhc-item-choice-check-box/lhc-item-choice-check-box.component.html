@@ -12,7 +12,7 @@
         {{answer._displayText}}
       </label>
     </div>
-    <div *ngIf="item.dataType=== 'CWE'">
+    <div *ngIf="item.dataType === 'CODING' && item.answerConstraint === 'optionsOrString'">
       <label 
         nz-checkbox 
         attr.aria-label="Checkbox Other for {{item.question}}"

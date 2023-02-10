@@ -319,8 +319,7 @@ var dr = {
         case "DTM":
           item.value = LForms.Util.stringToDate(obx.valueDateTime);
           break;
-        case "CNE":
-        case "CWE":
+        case "CODING":
           // get the value from Observation resource.
           // for multiple-selected answers/values in LForms, each selected answer is exported as
           // a separated Observation resource
@@ -483,7 +482,7 @@ var dr = {
       for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
         var subItem = parentItem.items[i];
         if (itemCode === subItem.questionCode) {
-          if ((subItem.dataType === "CNE" || subItem.dataType === "CWE") &&
+          if ((subItem.dataType === "CODING") &&
               subItem.answerCardinality && (subItem.answerCardinality.max ==="*" || parseInt(subItem.answerCardinality.max)>1) ) {
             item = subItem;
             break;
@@ -520,9 +519,8 @@ var dr = {
           break;
         }
       }
-      // insert new items unless it is a CNE/CWE and has multiple answers.
-      if (item && !((item.dataType === "CNE" || item.dataType ==="CWE") &&
-          item.answerCardinality &&
+      // insert new items unless it is a CODING and has multiple answers.
+      if (item && !((item.dataType === "CODING") && item.answerCardinality &&
           (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1))) {
         while(total > 1) {
           var newItem = LForms.Util.deepCopy(item);

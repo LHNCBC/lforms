@@ -18,14 +18,14 @@ var defaultAnswers = [
   {
     question: 'should convert single default - coding type',
     questionCode: 'defAns',
-    dataType: 'CNE',
+    dataType: 'CODING',
     answers: [{code: 'ac1'}, {code: 'ac2', text: 'AC2'}, {code: 'ac3'}],
     defaultAnswer: {code: 'ac2', text: 'AC2'}
   },
   {
     question: 'should convert multiple defaults - coding type',
     questionCode: 'defAns',
-    dataType: 'CNE',
+    dataType: 'CODING',
     answerCardinality: {
       min: '0',
       max: '*'

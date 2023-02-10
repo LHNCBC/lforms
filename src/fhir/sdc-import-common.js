@@ -413,7 +413,7 @@ function addCommonSDCImportFns(ns) {
       let errors = {};
       let hasMessages = false;
       if (InternalUtil.hasAnswerList(lfItem)) {
-        if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
+        if (lfDataType === "CODING" ) {
           var codings = null;
           if (fhirVal._type === 'CodeableConcept') {
             codings = fhirVal.coding;
@@ -422,8 +422,8 @@ function addCommonSDCImportFns(ns) {
             codings = [fhirVal];
           }
           if (!codings) {
-            // the value or the default value could be a string for 'open-choice'/CWE
-            if (lfDataType === 'CWE') {
+            // the value or the default value could be a string for optionsOrString
+            if (lfItem.answerConstraint === 'optionsOrString') {
               answer = fhirVal;
             }
           }
@@ -447,8 +447,8 @@ function addCommonSDCImportFns(ns) {
                 }
               }
             }
-            if (!answer && lfDataType === 'CWE') { // no match in the list.
-              answer = self._processCWECNEValueInQR({valueCoding: fhirVal}, lfItem, true);
+            if (!answer && lfItem.answerConstraint === 'optionsOrString') { // no match in the list.
+              answer = self._processCODINGValueInQR({valueCoding: fhirVal}, lfItem, true);
             }
           }
         }
@@ -945,7 +945,7 @@ function addCommonSDCImportFns(ns) {
             this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
             // process item.answer.item, if applicable
             if(qrItemInfo.qrAnswersItemsInfo) {
-              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CNE/CWE
+              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CODING
               // moreover, each answer has already got its own item above if question repeats
               if(qrItemInfo.qrAnswersItemsInfo.length > 1) {
                 throw new Error('item.answer.item with item.answer.length > 1 is not yet supported');
@@ -1045,12 +1045,11 @@ function addCommonSDCImportFns(ns) {
         case "DTM":
           item.value = qrValue.valueDateTime;
           break;
-        case "CNE":
-        case "CWE":
+        case "CODING":
           if (ns._answerRepeats(item)) {
             var value = [];
             for (var j=0,jLen=answer.length; j<jLen; j++) {
-              var val = ns._processCWECNEValueInQR(answer[j], item);
+              var val = ns._processCODINGValueInQR(answer[j], item);
               if (val) {
                 value.push(val);
               }
@@ -1058,7 +1057,7 @@ function addCommonSDCImportFns(ns) {
             item.value = value;
           }
           else {
-            var val = ns._processCWECNEValueInQR(qrValue, item);
+            var val = ns._processCODINGValueInQR(qrValue, item);
             if (val) {
               item.value = val;
             }
@@ -1101,7 +1100,6 @@ function addCommonSDCImportFns(ns) {
    */
   self._getDataType = function (qItem) {
     var type = 'string';
-
     switch (qItem.type) {
       case 'string':
         type = 'ST';
@@ -1110,10 +1108,10 @@ function addCommonSDCImportFns(ns) {
         type = 'SECTION';
         break;
       case "choice":
-        type = 'CNE';
+        type = 'CODING';
         break;
       case "open-choice":
-        type = 'CWE';
+        type = 'CODING';
         break;
       case 'integer':
         type = 'INT';
@@ -1386,7 +1384,7 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
+   * Handle the item.value in QuestionnaireResponse for CODING typed items
    * @param qrItemValue a value of item in QuestionnaireResponse
    * @param lfItem an item in lforms
    * @param notOnList a flag indicates if the item's value is known to be not any of the answers
@@ -1394,7 +1392,7 @@ function addCommonSDCImportFns(ns) {
    * @returns {{code: *, text: *}}
    * @private
    */
-  self._processCWECNEValueInQR = function(qrItemValue, lfItem, notOnList) {
+  self._processCODINGValueInQR = function(qrItemValue, lfItem, notOnList) {
     var retValue;
     // a valueCoding, which is one of the answers
     if (qrItemValue.valueCoding) {
@@ -1413,7 +1411,7 @@ function addCommonSDCImportFns(ns) {
       }
       // compare retValue to the item.answers
       // if not same, add "_notOnList: true" to retValue
-      else if (lfItem.dataType === 'CWE' && lfItem.answers) {
+      else if (lfItem.answerConstraint === 'optionsOrString' && lfItem.answers) {
         var found = false;
         for(var i=0, len=lfItem.answers.length; i<len; i++) {
           if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {

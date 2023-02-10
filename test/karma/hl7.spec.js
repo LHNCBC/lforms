@@ -5,7 +5,7 @@ describe('HL7 library', function() {
     it('should use LOINC as the default code system', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
-        'value': {'text': 'United States', 'code': 'USA'}, 'dataType': 'CWE',
+        'value': {'text': 'United States', 'code': 'USA'}, 'dataType': 'CODING', 'answerConstraint':'optionsOrString',
         '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -18,7 +18,7 @@ describe('HL7 library', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
-        'value': {'text': 'United States', 'code': 'USA', 'system': 'AA'}, 'dataType': 'CWE',
+        'value': {'text': 'United States', 'code': 'USA', 'system': 'AA'}, 'dataType': 'CODING', 'answerConstraint':'optionsOrString',
         '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -31,7 +31,7 @@ describe('HL7 library', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
-        'value': {'text': 'United States', "system": "AA"}, 'dataType': 'CWE',
+        'value': {'text': 'United States', "system": "AA"}, 'dataType': 'CODING', 'answerConstraint':'optionsOrString',
         '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -42,7 +42,7 @@ describe('HL7 library', function() {
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
         'value': [{'text': 'Canada'}, {'text': 'United States', 'code': 'USA', 'system': 'AA'}],
-        'dataType': 'CWE', '_obx4': ''};
+        'dataType': 'CODING', 'answerConstraint':'optionsOrString', '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
           'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+
@@ -59,7 +59,7 @@ describe('HL7 library', function() {
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
         'value': [{'text': 'Canada', 'code': 'CA', 'system': 'AA'}, {'text': 'United States', 'code': 'USA', 'system': 'AA'}],
-        'dataType': 'CWE', '_obx4': '2'};
+        'dataType': 'CODING', 'answerConstraint':'optionsOrString', '_obx4': '2'};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
           'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+

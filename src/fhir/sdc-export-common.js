@@ -403,7 +403,7 @@ function addCommonSDCExportFns(ns) {
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
       // for answers 
-      if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE" || 
+      if (item.displayControl.answerLayout && (item.dataType ==="CODING" || 
           item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" 
           || item.dataType === "TM"))) {
         // search field
@@ -512,6 +512,14 @@ function addCommonSDCExportFns(ns) {
 
     var dataType = this._getAssumedDataTypeForExport(item);
     var type = this._lformsTypesToFHIRTypes[dataType];
+    if (type === 'coding') {
+      if (!item.answerConstraint || item.answerConstraint === "optionsOnly") {
+        type = 'choice';
+      }
+      else if (item.answerConstraint === "optionsOrString") {
+        type = 'open-choice'
+      }
+    }
     // default is string
     if (!type) {
       type = 'string';
@@ -676,7 +684,7 @@ function addCommonSDCExportFns(ns) {
   };
 
 
-  // known source data types (besides CNE/CWE) in skip logic export handling,
+  // known source data types (besides CODING) in skip logic export handling,
   // see _createEnableWhenRulesForSkipLogicCondition below
   self._skipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"]
     .reduce((map, type) => {map[type] = type; return map;}, {});
@@ -712,10 +720,10 @@ function addCommonSDCExportFns(ns) {
       // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
-      else if ( sourceDataType === 'CWE' || sourceDataType === 'CNE' ) {
+      else if ( sourceDataType === 'CODING' ) {
         let answerCoding = self._copyTriggerCoding(triggerValue, null, true);
         if (! answerCoding) {
-          throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
+          throw new Error('Invalid CODING trigger, key=' + key + '; value=' + triggerValue);
         }
         rule = { answerCoding: answerCoding };
       }
@@ -850,7 +858,7 @@ function addCommonSDCExportFns(ns) {
    * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, attachment, and url,
    *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
    *   an empty string.
-   * - For CNE and CWE, a valueCoding entry is created IF at least one of the item value's code, text, or system
+   * - For CODING, a valueCoding entry is created IF at least one of the item value's code, text, or system
    *   is available
    * - No answer entry will be created in all other cases, e.g., for types reference, title, section, etc.
    * @param item the item whose value is to be converted
@@ -872,9 +880,9 @@ function addCommonSDCExportFns(ns) {
       if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
         var answer = null;
         // for Coding
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          // for CWE, the value could be string if it is a user typed, not-on-list value
-          if (dataType === 'CWE' && typeof itemValue === 'string') {
+        if (dataType === 'CODING') {
+          // for optionsOrString, the value could be string if it is a user typed, not-on-list value
+          if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
             answer = { "valueString" : itemValue };
           }
           else if (!jQuery.isEmptyObject(itemValue)) {

@@ -640,8 +640,7 @@ import deepEqual from "deep-equal";
           let entry = list[i];
           let newEntry = (newList[i] = {});
           switch (item.dataType) {
-            case "CNE":
-            case "CWE":
+            case "CODING":
               // Assume type "object" means a coding, and that otherwise what we have
               // is something useable as display text.
               if (typeof entry === 'object') {
