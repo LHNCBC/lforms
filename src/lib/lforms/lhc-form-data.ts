@@ -2917,9 +2917,8 @@ export default class LhcFormData {
       }
       
       let newValue = item._multipleAnswers ? listVals : listVals[0];
-      if (!CommonUtils.deepEqual(item.value, newValue)) {
-        item.value = newValue;
-      }
+      // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
+      item.value = newValue;
     }
   }
 

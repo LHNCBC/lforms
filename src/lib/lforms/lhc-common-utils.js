@@ -358,7 +358,7 @@ const CommonUtils = {
           }
         }
         // comparison from obj2 to obj1
-        // is not necessary once the lengths have benn checked.
+        // is not necessary once the lengths have been checked.
       }
     }
     return ret;

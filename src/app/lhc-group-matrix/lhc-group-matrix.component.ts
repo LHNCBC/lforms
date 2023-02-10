@@ -12,14 +12,14 @@ export class LhcGroupMatrixComponent {
   @Input() item;
   @Input() formLevel: boolean = false;
   
-  multipleChoice: boolean = false;
+  isCheckbox: boolean = false;
 
   constructor(
     public lhcDataService: LhcDataService) {
   }
 
   /**
-   * Invokded when the properties change
+   * Invoked when the properties change
    * @param changes changes.prop contains the old and the new value...
    */
   ngOnChanges(changes) {
@@ -32,9 +32,8 @@ export class LhcGroupMatrixComponent {
    * Updates the value for an item whose answers are displayed as a list of checkboxes,
    * one of which has just been selected or deselected
    * @param item a form item that has an answer list and supports multiple selections
-   * @param answer an answer object in the answer list
    */
-  updateCheckboxListValue(item, answer): void {
+  updateCheckboxListValue(item): void {
     
     let newValues = [];
     for (let i=0, iLen= item._checkboxModels.length; i<iLen; i++) {
@@ -86,14 +85,14 @@ export class LhcGroupMatrixComponent {
 
 
   /**
-   * Set initial status
+   * Set initial status for each row in the matrix
    */
   setInitialValue(): void {
     
-    this.multipleChoice = this.item.items[0]?._multipleAnswers;
+    this.isCheckbox = this.item.items[0]?._multipleAnswers;
 
     this.item.items.forEach((subItem) => {
-      if (this.multipleChoice) {
+      if (this.isCheckbox) {
         this.setCheckboxInitialValue(subItem);
       }
       else {
@@ -117,16 +116,6 @@ export class LhcGroupMatrixComponent {
         subItem._answerOtherChecked = true;
         subItem._answerOther = subItem.value.text;
       }
-      // saved value is on the answer list
-      else {
-        for(let i=0, iLen = subItem.answers.length; i < iLen; i++ ) {
-          let answer = subItem.answers[i];
-          if (deepEqual(answer, subItem.value)) {
-            subItem.value = answer; // radio button is checked when 'value' is same as 'ngModel'
-            break;
-          }
-        }
-      }
     }
     // reset status
     else {
@@ -144,7 +133,7 @@ export class LhcGroupMatrixComponent {
    */
   _getCheckboxModels(initialValues, answers): boolean[] {
     let checkboxModels = new Array(answers.length).fill(false);
-    let otherCheckboxModel
+  
     for (let i=0, iLen=initialValues.length; i<iLen; i++) {
       for (let j=0, jLen=answers.length; j<jLen; j++) {
         if (deepEqual(initialValues[i], answers[j])) {
