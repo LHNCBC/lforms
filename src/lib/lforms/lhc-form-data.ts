@@ -989,7 +989,7 @@ export default class LhcFormData {
       // convert CNE to Coding
       if (item.dataType === CONSTANTS.DATA_TYPE.CNE) {
         item.dataType = CONSTANTS.DATA_TYPE.CODING;
-        //item.answerConstraint = "optionsOnly";
+        // the default value for item.answerConstraint is "optionsOnly";
       }
       // convert CWE to Coding
       else if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
@@ -1174,7 +1174,7 @@ export default class LhcFormData {
       }
       // autocomplete
       else if (item._hasAnswerList) {
-        if (InternalUtil.wasCWE(item)) {
+        if (item.answerConstraint === "optionsOrString") {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
           else
@@ -1201,13 +1201,13 @@ export default class LhcFormData {
             item._placeholder = "HH:MM:SS";
             break;
           case CONSTANTS.DATA_TYPE.CODING:
-            if (InternalUtil.wasCNE(item)) {
+            if (!item.answerConstaint || item.answerConstraint === 'optionsOnly' ) {
               if (item.externallyDefined)
               item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
             else
               item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";
             }
-            else if (InternalUtil.wasCWE(item)) {
+            else if (item.answerConstraint === 'optionsOrString') {
               if (item.externallyDefined)
               item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
             else
@@ -1761,10 +1761,10 @@ export default class LhcFormData {
             retValue = CommonUtils.dateToDTMString(value);
             break;
           case CONSTANTS.DATA_TYPE.CODING:
-            if (InternalUtil.wasCNE(item))
+            if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
               retValue = this._getObjectValue(value);
             // for 'optionsOrString', it should handle the case where 'OTHER' is selected
-            else if (InternalUtil.wasCWE(item))
+            else if (item.answerConstraint === 'optionsOrString')
               retValue = this._getObjectValue(value, true);
             break;
           case CONSTANTS.DATA_TYPE.BL:
@@ -2867,7 +2867,7 @@ export default class LhcFormData {
       // could be an array of multiple default values or a single value
       var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
           answerValue : [answerValue];
-      if (!InternalUtil.wasCWE(item)) {
+      if (item.answerConstraint !== "optionsOrString") {
         modifiedValue = answerValueArray;
       }
       else {
@@ -2915,7 +2915,7 @@ export default class LhcFormData {
             }
             // a saved value or a default value is not on the list (default answer must be one of the answer items).
             // non-matching value objects are kept, (data control or others might use data on these objects)
-            if (!found && InternalUtil.wasCWE(item) && userValue) {
+            if (!found && item.answerConstraint === "optionsOrString" && userValue) {
               // need a new copy of the data to trigger a change in the data model in autocompleter component
               // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
               var userValueCopy = CommonUtils.deepCopy(userValue);
@@ -3018,7 +3018,7 @@ export default class LhcFormData {
       }
 
       var options:any = {
-        matchListValue: !InternalUtil.wasCWE(item), // INT, ST, DT, TM and CODING (answerConstaint == 'optionsOnly') should all match
+        matchListValue: item.answerConstraint !== "optionsOrString", // INT, ST, DT, TM and CODING (answerConstaint == 'optionsOnly') should all match
         maxSelect: maxSelect,
         autoFill: false
       };

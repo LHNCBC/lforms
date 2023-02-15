@@ -169,32 +169,8 @@ export const InternalUtil = {
   hasAnswerList: function(item) {
     return item.dataType === "CODING" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
-  },
-
-
-  /**
-   * Check if the item is same as the previous CNE type
-   * NOTE: Its name will changes in next task.
-   * @param {*} item an item in lforms
-   * @returns 
-   */
-  wasCNE: function(item) {
-    return item && item.dataType === CONSTANTS.DATA_TYPE.CODING &&
-        (!item.answerConstraint || item.answerConstraint === "optionsOnly");
-  },
-
-
-  /**
-   * Check if the item is same as the previous CWE type
-   * NOTE: Its name will changes in next task.
-   * @param {*} item an item in lforms
-   * @returns 
-   */
-  wasCWE: function(item) {
-    return item && item.dataType === CONSTANTS.DATA_TYPE.CODING &&
-        item.answerConstraint === "optionsOrString";
   }
-  
+
 }
 
 
