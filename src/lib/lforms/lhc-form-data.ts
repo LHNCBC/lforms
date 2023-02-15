@@ -411,9 +411,6 @@ export default class LhcFormData {
   _initializeInternalData() {
     //TODO, validate form data
 
-    // convert deprecated CNE and CWE types in old lforms data to CODING
-    InternalUtil.preprocessCNECWE(this);
-
     // set default values of certain form definition fields
     this._setDefaultValues();
 
@@ -989,6 +986,17 @@ export default class LhcFormData {
     for (var i=0; i<iLen; i++) {
       var item = items[i];
 
+      // convert CNE to Coding
+      if (item.dataType === CONSTANTS.DATA_TYPE.CNE) {
+        item.dataType = CONSTANTS.DATA_TYPE.CODING;
+        //item.answerConstraint = "optionsOnly";
+      }
+      // convert CWE to Coding
+      else if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+        item.dataType = CONSTANTS.DATA_TYPE.CODING;
+        item.answerConstraint = "optionsOrString";
+      }
+
       LhcFormUtils.initializeCodes(item);
 
       // set display text for the item
@@ -1166,7 +1174,7 @@ export default class LhcFormData {
       }
       // autocomplete
       else if (item._hasAnswerList) {
-        if (item._wasCWE) {
+        if (InternalUtil.wasCWE(item)) {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
           else
@@ -3010,7 +3018,7 @@ export default class LhcFormData {
       }
 
       var options:any = {
-        matchListValue: !item._wasCWE, // INT, ST, DT, TM and CODING (answerConstaint == 'optionsOnly') should all match
+        matchListValue: !InternalUtil.wasCWE(item), // INT, ST, DT, TM and CODING (answerConstaint == 'optionsOnly') should all match
         maxSelect: maxSelect,
         autoFill: false
       };

@@ -717,14 +717,6 @@ export class LhcDataService {
     }
   };
 
-  wasCNE(item) {
-    return InternalUtil.wasCNE(item);
-  };
-
-  wasCWE(item) {
-    return InternalUtil/this.wasCWE(item);
-  };
-
 }
 
 

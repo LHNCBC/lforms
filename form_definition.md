@@ -186,7 +186,7 @@ about the meaning of each key:
         * BL - a boolean (or yes/no) value
         * CODING - an answer value, generally from a list of possible values from 
                   <a href="#answers">answers</a>
-        * REAL - a real/demical number
+        * REAL - a real/decimal number
         * INT - an integer
         * QTY - a type which has both a REAL value and unit object (see "units" below for
           the structure).
@@ -209,7 +209,7 @@ about the meaning of each key:
         * attachment - a control to upload and download attachment files.
     * answerConstraint - Codes that describe the types of constraints possible 
       on a question item that has a list of permitted answers. Supported codes are:
-        * optionsOnly - only vlaues listed in answers are permitted
+        * optionsOnly - only values listed in answers are permitted
         * optionsOrString - in addition to the values listed in answers, free text
                             strings are permitted.
     * units - For numeric answer fields, this is an optional list for the units
