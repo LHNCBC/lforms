@@ -2880,7 +2880,7 @@ export default class LhcFormData {
               "_notOnList" : true});
             // for radio button/checkbox display, where only one "Other" option is displayed
             item._answerOther = answerValueArray[i];
-            item._otherValueChecked = true;
+            item._answerOtherChecked = true;
           }
           else {
             modifiedValue.push(answerValueArray[i]);
@@ -2932,9 +2932,8 @@ export default class LhcFormData {
       }
       
       let newValue = item._multipleAnswers ? listVals : listVals[0];
-      if (!CommonUtils.deepEqual(item.value, newValue)) {
-        item.value = newValue;
-      }
+      // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
+      item.value = newValue;
     }
   }
 
@@ -3233,38 +3232,7 @@ export default class LhcFormData {
    * @private
    */
   _objectEqual(obj1, obj2) {
-    var ret = true;
-
-    // different type
-    if (typeof obj1 !== typeof obj2 ) {
-      ret = false;
-    }
-    // not object
-    else if (typeof obj1 !== "object") {
-      if (obj1 !== obj2) {
-        ret = false;
-      }
-    }
-    // object
-    else {
-      var keys1 = Object.keys(obj1);
-      var keys2 = Object.keys(obj2);
-      if (keys1.length !== keys2.length ) {
-        ret = false;
-      }
-      else {
-        // comparison from obj1 to obj2
-        for (var i= 0, iLen=keys1.length; i<iLen; i++) {
-          if (obj1[keys1[i]] !== obj2[keys1[i]]) {
-            ret = false;
-            break;
-          }
-        }
-        // comparison from obj2 to obj1
-        // is not necessary once the lengths have benn checked.
-      }
-    }
-    return ret;
+    return CommonUtils.shallowEqual(obj1, obj2);
   }
 
 
