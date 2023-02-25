@@ -1738,7 +1738,11 @@ export default class LhcFormData {
         switch (dataType) {
           case CONSTANTS.DATA_TYPE.INT:   
             if (hasAnswerList) {
-              retValue = value; // value is an object or an array of {text: value, ...}
+              if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
+                retValue = this._getObjectValue(value);
+              // for 'optionsOrString', it should handle the case where 'OTHER' is selected
+              else if (item.answerConstraint === 'optionsOrString')
+                retValue = this._getObjectValue(value, true);
             }
             else {
               retValue = Array.isArray(value) ? value.map(val=> parseInt(val)) : parseInt(value);
@@ -1750,7 +1754,11 @@ export default class LhcFormData {
             break;
           case CONSTANTS.DATA_TYPE.DT:
             if (hasAnswerList) {
-              retValue = value; // value is an object or an array of {text: value, ...}
+              if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
+                retValue = this._getObjectValue(value);
+              // for 'optionsOrString', it should handle the case where 'OTHER' is selected
+              else if (item.answerConstraint === 'optionsOrString')
+                retValue = this._getObjectValue(value, true);
             }
             else {
               retValue = Array.isArray(value) ? value.map(val=> CommonUtils.dateToDTStringISO(val)) : 
@@ -1771,8 +1779,17 @@ export default class LhcFormData {
             retValue = value ? true : false;
             break;
           case CONSTANTS.DATA_TYPE.ST:
-          case CONSTANTS.DATA_TYPE.TM:            
-            retValue = value; // value is an object or an array of {text: value} when hasAnswerList is true
+          case CONSTANTS.DATA_TYPE.TM:
+            if (hasAnswerList) {
+              if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
+                retValue = this._getObjectValue(value);
+              // for 'optionsOrString', it should handle the case where 'OTHER' is selected
+              else if (item.answerConstraint === 'optionsOrString')
+                retValue = this._getObjectValue(value, true);
+            }
+            else {
+              retValue = value; 
+            }
             break;
           default:
             retValue = value;
@@ -2853,46 +2870,44 @@ export default class LhcFormData {
    */
   _resetItemValueWithAnswers(item) {
 
-    // default answer and item.value could be a string value, if it is a not-on-list value for CODING item,
+    // default answer and item.value could be a string value, if it is a not-on-list value for the item
     // whose answerConstraint is 'optionsOrString',
     // convert it to the internal format of {text: 'string value', _notOnList: true}
-
-    var modifiedValue = null;
-    // item.value has the priority over item.defaultAnswer
-    // if this is a saved form with user data, default answers are not to be used.
-    // (item.value could be a coding that is no on the answer list, in R5)
-    var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
-    if (answerValue) {
-      modifiedValue = [];
-      // could be an array of multiple default values or a single value
-      var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
-          answerValue : [answerValue];
-      if (item.answerConstraint !== "optionsOrString") {
-        modifiedValue = answerValueArray;
-      }
-      else {
-        // go through each value, there could be multiple not-on-list values
-        for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
-          // string value is allowed if it is CODING and answerConstraint is 'optionsOrString'
-          if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
-            modifiedValue.push({
-              "text": answerValueArray[i],
-              "_notOnList" : true});
-            // for radio button/checkbox display, where only one "Other" option is displayed
-            item._answerOther = answerValueArray[i];
-            item._answerOtherChecked = true;
-          }
-          else {
-            modifiedValue.push(answerValueArray[i]);
+    if (item._hasAnswerList) {
+      var modifiedValue = null;
+      // item.value has the priority over item.defaultAnswer
+      // if this is a saved form with user data, default answers are not to be used.
+      // (item.value could be a coding that is no on the answer list, in R5)
+      var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
+      if (answerValue) {
+        modifiedValue = [];
+        // could be an array of multiple default values or a single value
+        var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
+            answerValue : [answerValue];
+        if (item.answerConstraint !== "optionsOrString") {
+          modifiedValue = answerValueArray;
+        }
+        else {
+          // go through each value, there could be multiple not-on-list values
+          for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
+            // string value is allowed if it is CODING and answerConstraint is 'optionsOrString'
+            if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
+              modifiedValue.push({
+                "text": answerValueArray[i],
+                "_notOnList" : true});
+              // for radio button/checkbox display, where only one "Other" option is displayed
+              item._answerOther = answerValueArray[i];
+              item._answerOtherChecked = true;
+            }
+            else {
+              modifiedValue.push(answerValueArray[i]);
+            }
           }
         }
       }
-    }
-
-    if (modifiedValue) {
-      var listVals = [];
-      // CODING
-      if (item.dataType === CONSTANTS.DATA_TYPE.CODING) {
+  
+      if (modifiedValue) {
+        var listVals = [];
         for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
           var userValue = modifiedValue[k];
           var found = false;
@@ -2924,17 +2939,13 @@ export default class LhcFormData {
             }
           }
         }
+  
+        let newValue = item._multipleAnswers ? listVals : listVals[0];
+        // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
+        item.value = newValue;
       }
-      // INT, ST, DT and TM
-      else {
-        //listVals = modifiedValue.map(val => ({"text": val}));
-        listVals = modifiedValue;
-      }
-      
-      let newValue = item._multipleAnswers ? listVals : listVals[0];
-      // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
-      item.value = newValue;
     }
+    
   }
 
 

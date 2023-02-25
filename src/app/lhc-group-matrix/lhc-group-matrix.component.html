@@ -7,7 +7,7 @@
       <colgroup>
         <col class="lhc-question">
         <col *ngFor="let answer of item.items[0].answers">
-        <col class="other-answer" *ngIf="item.items[0].dataType ==='CODING' && item.items[0].answerConstraint === 'optionsOrString'">
+        <col class="other-answer" *ngIf="item.items[0].answerConstraint === 'optionsOrString'">
       </colgroup>
       <thead>
       <tr class="lhc-matrix-table-header-row">
@@ -15,7 +15,7 @@
         <th *ngFor="let answer of item.items[0].answers; index as i;"
             class="lhc-form-matrix-cell"
             id="answer-{{index}}">{{answer.text}}</th>
-        <th class="lf-form-matrix-cell-other lf-form-table-header" *ngIf="item.items[0].dataType === 'CODING' && item.items[0].answerConstraint === 'optionsOrString'"
+        <th class="lhc-form-matrix-cell-other" *ngIf="item.items[0].answerConstraint === 'optionsOrString'"
          id="otherAnswer">Other</th>
       </tr>
       </thead>
@@ -51,7 +51,7 @@
               </label>
             </span>
           </td>
-          <td class="lf-form-matrix-cell-other" *ngIf="subItem.dataType === 'CODING' && subItem.answerConstraint === 'optionsOrString'"
+          <td class="lhc-form-matrix-cell-other" *ngIf="subItem.answerConstraint === 'optionsOrString'"
             aria-labeledby=otherAnswer>
             <!--for multiple answers-->
             <span *ngIf="isCheckbox" class="lhc-form-matrix-answer">

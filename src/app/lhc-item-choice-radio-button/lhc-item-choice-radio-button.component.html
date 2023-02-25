@@ -4,7 +4,7 @@
     [ngModel]="radioValue" 
     (ngModelChange)="onRadioModelChange($event)"
     [nzDisabled]="item._readOnly" 
-    [nzName]="radiogroup + item._elementId"
+    [nzName]="'radiogroup_' + item._elementId"
     attr.aria-labelledby="label-{{ item._elementId }}"
     role="radiogroup"
     nz-row 
@@ -22,7 +22,7 @@
     </label>
 
     <label 
-      *ngIf="item.dataType === 'CODING' && item.answerConstraint === 'optionsOrString'" 
+      *ngIf="item.answerConstraint === 'optionsOrString'" 
       nz-radio
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="{'text': otherValue, '_notOnList': true}"
