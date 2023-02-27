@@ -2,7 +2,7 @@
   <!-- label -->
   <div class="lhc-de-label" (focus)="lhcDataService.setActiveRow(item)">
     <span *ngIf="item._questionRepeatable && !item._horizontalTableHeader && !lhcDataService.isHideRepetitionNumber()" class="lf-sn">{{lhcDataService.getRepeatingSN(item) }}</span>
-    <span class="lf-question">
+    <span class="lhc-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
         <!-- prefix -->
         <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>

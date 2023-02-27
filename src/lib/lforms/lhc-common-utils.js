@@ -323,6 +323,49 @@ const CommonUtils = {
 
 
   /**
+   * Shallowly compares two JavaScript objects to see if their keys and values are equal.
+   * @param obj1
+   * @param obj2
+   * @returns {boolean}
+   * @private
+   */
+  shallowEqual: function(obj1, obj2) {
+    var ret = true;
+
+    // different type
+    if (typeof obj1 !== typeof obj2 ) {
+      ret = false;
+    }
+    // not object
+    else if (typeof obj1 !== "object") {
+      if (obj1 !== obj2) {
+        ret = false;
+      }
+    }
+    // object
+    else {
+      var keys1 = Object.keys(obj1);
+      var keys2 = Object.keys(obj2);
+      if (keys1.length !== keys2.length ) {
+        ret = false;
+      }
+      else {
+        // comparison from obj1 to obj2
+        for (var i= 0, iLen=keys1.length; i<iLen; i++) {
+          if (obj1[keys1[i]] !== obj2[keys1[i]]) {
+            ret = false;
+            break;
+          }
+        }
+        // comparison from obj2 to obj1
+        // is not necessary once the lengths have been checked.
+      }
+    }
+    return ret;
+  },
+
+
+  /**
    *  Shows a warning message, typically about some problem with the form
    *  definition.
    * @param msg the message to show
