@@ -1,0 +1,262 @@
+{
+  "code": [
+    {
+      "code": "matrix-layout2",
+      "display": "Another form with matrix layout, single selection"
+    }
+  ],
+  "title": "Another form with matrix layout, single selection",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 33.3.1"
+      }
+    ]
+  },
+  "item": [
+    {
+      "lindId": "g1",
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "open-choice",
+          "code": [
+            {
+              "code": "g1m1",
+              "display": "Question #1"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/g1m1",
+          "text": "Question #1",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer a"
+              },
+              "initialSelected": true
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer b"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer c"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c4",
+                "display": "Answer d"
+              }
+            }
+          ]
+        },
+        {
+          "type": "open-choice",
+          "code": [
+            {
+              "code": "g1m2",
+              "display": "Question #2"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/g1m2",
+          "text": "Question #2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer a"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer b"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer c"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c4",
+                "display": "Answer d"
+              }
+            }
+          ],
+          "initial": [
+            {
+              "valueString": "User typed string"
+            }
+          ]
+        },
+        {
+          "type": "open-choice",
+          "code": [
+            {
+              "code": "g1m3",
+              "display": "Question #3"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/g1m3",
+          "text": "Question #3",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer a"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer b"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer c"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c4",
+                "display": "Answer d"
+              }
+            }
+          ]
+        },
+        {
+          "type": "open-choice",
+          "code": [
+            {
+              "code": "g1m4",
+              "display": "Question #4"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "required": false,
+          "linkId": "/g1m4",
+          "text": "Question #4",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer a"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer b"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer c"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c4",
+                "display": "Answer d"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
