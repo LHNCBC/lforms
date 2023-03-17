@@ -24,6 +24,7 @@ function createLinkId(lfItems, codeList) {
 
 // Tests for FHIR SDC library
 var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
+//const fhirVersions = ["R4", "STU3"];
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     var fhir = LForms.FHIR[fhirVersion];
@@ -582,7 +583,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }]
               };
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
-            assert.equal(out.type, "choice");
+            if (fhirVersion === "R5") {
+              assert.equal(out.type, "coding");
+            }
+            // R4, STU3
+            else {
+              assert.equal(out.type, "choice");
+            }
+
             assert.deepEqual(out.extension, [
               {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -630,7 +638,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }]
               };
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
-            assert.equal(out.type, "choice");
+            if (fhirVersion === "R5") {
+              assert.equal(out.type, "coding");
+            }
+            // R4, STU3
+            else {
+              assert.equal(out.type, "choice");
+            }
             assert.deepEqual(out.extension, [
               {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -679,7 +693,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }]
               };
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
-            assert.equal(out.type, "choice");
+            if (fhirVersion === "R5") {
+              assert.equal(out.type, "coding");
+            }
+            // R4, STU3
+            else {
+              assert.equal(out.type, "choice");
+            }
             assert.deepEqual(out.extension, [
               {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -1378,10 +1398,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 type: 'quantity'
               }]
             };
-            if(fhirVersion === 'R4') {
+            if(fhirVersion === 'R4' || fhirVersion === 'R5') {
               fhirData.item[0].initial = [{valueQuantity: {value: 222}}];
             }
-            else { // STU3
+            else if(fhirVersion === 'STU3') { // STU3
               fhirData.item[0].initialQuantity = {value: 222};
             }
 

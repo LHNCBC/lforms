@@ -54,7 +54,7 @@ var self = {
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
     for (var i=0, len=lfData.itemList.length; i<len; ++i) {
       var item = lfData.itemList[i];
-      if (self._getExtractValue(item) && self._hasItemValue(item)) {
+      if (this._getExtractValue(item) && this._hasItemValue(item)) {
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
@@ -389,7 +389,7 @@ var self = {
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
           // Datatype with multiple units is quantity. There is only one unit here.
-          "valueCoding" : self._createFhirUnitCoding(item.units[0])
+          "valueCoding" : this._createFhirUnitCoding(item.units[0])
         });
       }
       else if(dataType === 'QTY') {
@@ -399,13 +399,13 @@ var self = {
           if (!targetItem.initialQuantity) {
             targetItem.initialQuantity = {};
           }
-          self._setUnitAttributesToFhirQuantity(targetItem.initialQuantity, defUnit);
+          this._setUnitAttributesToFhirQuantity(targetItem.initialQuantity, defUnit);
         }
         for (var i=0, iLen=item.units.length; i<iLen; i++) {
           var unit = item.units[i];
           var fhirUnitExt = {
             "url": this.fhirExtUrlUnitOption,
-            "valueCoding": self._createFhirUnitCoding(unit)
+            "valueCoding": this._createFhirUnitCoding(unit)
           };
           targetItem.extension.push(fhirUnitExt);
         }
@@ -448,7 +448,7 @@ var self = {
         // multiple selections, item.value is an array
         // NO support of multiple selections in FHIR SDC, just pick one
         else if (dataType === 'CODING' ) {
-          let answerCoding = self._copyTriggerCoding(condition.trigger.value, null, true);
+          let answerCoding = this._copyTriggerCoding(condition.trigger.value, null, true);
           if (answerCoding) {
             enableWhenRule[valueKey] = answerCoding;
           }

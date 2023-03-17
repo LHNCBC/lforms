@@ -54,7 +54,7 @@ var self = {
     var rtn = [qr];
     for (var i=0, len=lfData.itemList.length; i<len; ++i) {
       var item = lfData.itemList[i];
-      if (self._getExtractValue(item) && self._hasItemValue(item)) {
+      if (this._getExtractValue(item) && this._hasItemValue(item)) {
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
@@ -427,14 +427,14 @@ var self = {
             targetItem.initial = [];
           }
           var qty = {};
-          self._setUnitAttributesToFhirQuantity(qty, defUnit);
+          this._setUnitAttributesToFhirQuantity(qty, defUnit);
           targetItem.initial.push({valueQuantity: qty});
         }
         for (var i=0, iLen=item.units.length; i<iLen; i++) {
           var unit = item.units[i];
           var fhirUnitExt = {
             "url": this.fhirExtUrlUnitOption,
-            "valueCoding": self._createFhirUnitCoding(unit)
+            "valueCoding": this._createFhirUnitCoding(unit)
           };
           targetItem.extension.push(fhirUnitExt);
         }
@@ -461,7 +461,7 @@ var self = {
       for (var i=0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
         var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
-        let enableWhenRules = self._createEnableWhenRulesForSkipLogicCondition(condition, sourceItem);
+        let enableWhenRules = this._createEnableWhenRulesForSkipLogicCondition(condition, sourceItem);
 
         if(enableWhenRules.length > 1) {
           rangeFound = true;

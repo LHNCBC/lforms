@@ -1,0 +1,233 @@
+/**
+ * Additional functions to convert LForms to FHIR R5 Questionnaire/QuestionnaireResponse
+ */
+function addR5ExportFns(ns) {
+  "use strict";
+  
+  var self = ns;
+
+  /**
+   * Convert LForms data type to FHIR SDC data type
+   * @param item an item in the LForms form object
+   * @returns {string}
+   * @private
+   */
+  self._getFhirDataType = function(item) {
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+    var type = this._lformsTypesToFHIRTypes[dataType];
+    // default is string
+    if (!type) {
+      type = 'string';
+    }
+    return type;
+  };
+
+
+  /**
+   * Process answerConstraint
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+  self._handleAnswerConstraint = function(targetItem, item) {
+    if (item.answerConstraint) {
+      targetItem.answerConstraint = item.answerConstraint;
+    }
+  };
+
+
+  /**
+   * Process default values
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+  self._handleInitialValues = function(targetItem, item) {
+    if(item.defaultAnswer === null || item.defaultAnswer === undefined || item.defaultAnswer === '') {
+      return;
+    }
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+
+    // item.defaultAnswer could be an array of multiple default values or a single value
+    var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+      item.defaultAnswer : [item.defaultAnswer];
+
+    var valueKey = this._getValueKeyByDataType("value", item);
+    var answer = null;
+    let initialValues = []
+
+    // go through each default value and handle it based on the data type.
+    for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
+
+      let defaultAnswer = defaultAnswers[i];
+
+      // for Coding, the default answer is partially handled in _handleAnswers(), where
+      // initialSelected is set on the answer items.
+      // Only the not-on-list values (string or Coding) in item.defaultAnswer is processed here
+      if (dataType === "CODING") {
+        // go through each default value and to see if it is one of answers in the answers list
+        let onList = false;
+        if (item.answers) {
+          for(var j=0, jLen=item.answers.length; j<jLen; j++ ) {
+            if (LForms.Util.areTwoAnswersSame(defaultAnswer, item.answers[j], item)) {
+              onList = true;
+              break;
+            }
+          }
+        }
+        if (!onList) {
+          // valueString, free text
+          if (typeof defaultAnswer === "string") {
+            initialValues.push({"valueString": defaultAnswer});
+          }
+          // valueCoding, off list coding // TODO: not fully supported yet
+          else if (typeof defaultAnswer === "object") {
+            let valCoding = LForms.Util.deepCopy(defaultAnswer);
+            if (valCoding.text) {
+              valCoding.display = valCoding.text;
+              delete valCoding.text;
+            }
+            if (valCoding.system) {
+              valCoding.system = LForms.Util.getCodeSystem(valCoding.system);
+            }
+            initialValues.push(valCoding);
+          }
+        }         
+
+      }
+      // for Quantity,
+      else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
+        answer = {};
+        answer[valueKey] = this._makeQuantity(defaultAnswer, item.units);
+        initialValues.push(answer);
+      }
+      // answerOption is date, time, integer or string
+      else if (item.answers && (dataType === 'ST' || dataType === 'INT' ||
+          dataType === 'DT' || dataType === 'TM')) {
+        if (typeof defaultAnswer === "string") {
+          initialValues.push({"valueString": defaultAnswer});
+        }
+        else {
+          initialValues.push({[valueKey]: defaultAnswer.text});
+        }
+        
+      }
+      // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+      else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" ||
+        dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        answer = {};
+        answer[valueKey] = defaultAnswer;
+        initialValues.push(answer);
+      }
+      else if (dataType === "DT" || dataType === "DTM") { // transform to FHIR date/datetime format.
+        var dateValue = LForms.Util.stringToDate(defaultAnswer);
+        if(dateValue) {
+          dateValue = dataType === "DTM"?
+            LForms.Util.dateToDTMString(dateValue): LForms.Util.dateToDTStringISO(dateValue);
+          initialValues.push({[valueKey]: dateValue});
+        }
+        else { // LForms.Util.stringToDate returns null on invalid string
+          // TODO: should save the errors or emitting events.
+          console.error(defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+        }
+      }
+      // no support for reference
+    }
+
+    if (initialValues.length > 0) {
+      targetItem.initial = initialValues;
+    }
+  };
+
+
+   /**
+   * Converting the given item's value to FHIR QuestionaireResponse.answer (an array).
+   * This is almost straightly refactored out of the original function self._handleAnswerValues.
+   * This function only looks at the item value itself and not its sub-items, if any.
+   * Here are the details for a single value's conversion (to an element in the returned answer array)
+   * - For item data type quantity (QTY), a valueQuantity answer element will be created IF
+   *   either (or both) item value or item unit is available.
+   * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, attachment, and url,
+   *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
+   *   an empty string.
+   * - For CODING, a valueCoding entry is created IF at least one of the item value's code, text, or system
+   *   is available
+   * - No answer entry will be created in all other cases, e.g., for types reference, title, section, etc.
+   * @param item the item whose value is to be converted
+   * @return the converted FHIR QuestionnaireResponse answer (an array), or null if the value is not converted -
+   *         see the function description above for more details.
+   * @private
+   */
+   self._lfItemValueToFhirAnswer = function(item) {
+
+    // item could have an empty value if its sub-item has a value
+    if (item.value === undefined || item.value === null || item.value === '')
+       return null;
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+    var values = this._answerRepeats(item)? item.value: [item.value];
+    var answers = [];
+    for(var i=0; i < values.length; ++i) {
+      var itemValue = values[i];
+      if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
+        var answer = null;
+        // with an answer list
+        if (item.answers) {
+          if (dataType === 'CODING' || dataType === 'ST' || dataType === 'INT' ||
+              dataType === 'DT' || dataType === 'TM') {
+            // for optionsOrString, the value could be string if it is a user typed, not-on-list value
+            if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
+              answer = { "valueString" : itemValue };
+            }
+            // optionsOnly
+            else if (!jQuery.isEmptyObject(itemValue)) {
+              // for Coding
+              if (dataType === 'CODING') {
+                var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
+                answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+                answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+                answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+              }
+              // for INT, ST, DT, TM
+              else if (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM') {
+                var valueKey = this._getValueKeyByDataType("value", item);
+                answer = {[valueKey]: itemValue.text};
+              }
+            }
+          }          
+        }
+        // without an answer list
+        // for Quantity
+        else if (dataType === "QTY") {
+          // For now, handling only simple quantities without the comparators.
+          // [{
+          //   // from Element: extension
+          //   "value" : <decimal>, // Numerical value (with implicit precision)
+          //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+          //   "unit" : "<string>", // Unit representation
+          //   "system" : "<uri>", // Code System that defines coded unit form
+          //   "code" : "<code>" // Coded form of the unit
+          // }]
+          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
+        }
+        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment, coding
+        else if (this._lformsTypesToFHIRFields[dataType]) {
+          var valueKey = this._getValueKeyByDataType("value", item);
+          answer = {[valueKey]: itemValue};
+        }
+      }
+      
+      if(answer !== null) {
+        answers.push(answer);
+      }
+      
+    }
+
+    return answers.length === 0? null: answers;
+  };
+
+}
+
+export default addR5ExportFns;

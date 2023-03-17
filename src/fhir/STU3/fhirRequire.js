@@ -20,12 +20,12 @@ fhir.SDC = fhir_sdc;
 fhir.SDC._commonExport = commonExport;
 import addCommonSDCExportFns from '../sdc-export-common.js'
 addCommonSDCExportFns(fhir.SDC);
+import addCommonSDCImportFns from '../sdc-import-common.js';
+addCommonSDCImportFns(fhir.SDC);
 import addSDCImportFns from './sdc-import.js';
 addSDCImportFns(fhir.SDC);
 import addCommonSDCFns from '../sdc-common.js';
 addCommonSDCFns(fhir.SDC);
-import addCommonSDCImportFns from '../sdc-import-common.js';
-addCommonSDCImportFns(fhir.SDC);
 import { addCommonRuntimeFns } from '../runtime-common.js';
 addCommonRuntimeFns(fhir.SDC);
 import { ExpressionProcessor } from '../expression-processor.js';

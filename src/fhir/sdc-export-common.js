@@ -92,6 +92,11 @@ function addCommonSDCExportFns(ns) {
     // type
     targetItem.type = this._getFhirDataType(item);
 
+    // answerConstraint
+    if (this._handleAnswerConstraint) {
+      this._handleAnswerConstraint(targetItem, item)
+    }
+
     // id (empty for new record)
 
     // code
@@ -879,23 +884,30 @@ function addCommonSDCExportFns(ns) {
       var itemValue = values[i];
       if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
         var answer = null;
-        // for Coding
-        if (dataType === 'CODING') {
-          // for optionsOrString, the value could be string if it is a user typed, not-on-list value
-          if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
-            answer = { "valueString" : itemValue };
+        // with an answer list
+        if (dataType === 'CODING' || item.answers && 
+            (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM')) {
+          // for Coding
+          if (dataType === 'CODING') {
+            // for optionsOrString, the value could be string if it is a user typed, not-on-list value
+            if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
+              answer = { "valueString" : itemValue };
+            }
+            else if (!jQuery.isEmptyObject(itemValue)) {
+              var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
+              answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+              answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+              answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+            }
           }
-          else if (!jQuery.isEmptyObject(itemValue)) {
-            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
-            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
-            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
-            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+          // for INT, ST, DT, TM
+          else if ((dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM') &&
+              typeof itemValue !== 'string') { //R4 dos not allow off list string
+            var valueKey = this._getValueKeyByDataType("value", item);
+            answer = {[valueKey]: itemValue.text};
           }
         }
-        else if (item.answers && (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM')) {
-          var valueKey = this._getValueKeyByDataType("value", item);
-          answer = {[valueKey]: itemValue.text};
-        }
+        // without an answer list
         // for Quantity
         else if (dataType === "QTY") {
           // For now, handling only simple quantities without the comparators.
@@ -909,7 +921,7 @@ function addCommonSDCExportFns(ns) {
           // }]
           answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
         }
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment
+        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment, (no coding)
         else if (this._lformsTypesToFHIRFields[dataType]) {
           var valueKey = this._getValueKeyByDataType("value", item);
           answer = {[valueKey]: itemValue};

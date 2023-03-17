@@ -67,7 +67,8 @@ export const TestUtil = {
   waitForFHIRLibsLoaded() {
     cy.window().then(win => {
       let LForms = win.LForms;
-      expect(typeof(LForms.FHIR) === "object" && typeof(LForms.FHIR.R4) === "object" && typeof(LForms.FHIR.STU3) === "object").to.be.true;
+      expect(typeof(LForms.FHIR) === "object" && typeof(LForms.FHIR.R4) === "object" && 
+          typeof(LForms.FHIR.STU3) === "object" && typeof(LForms.FHIR.R5) === "object").to.be.true;
     });
   },
 

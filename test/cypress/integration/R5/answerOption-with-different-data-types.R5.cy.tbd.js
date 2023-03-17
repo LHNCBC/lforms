@@ -1,10 +1,10 @@
-import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
-import * as util from "../support/util";
+import { AddFormToPageTestPage } from "../../support/addFormToPageTest.po";
+import * as util from "../../support/util";
 
-let fhirVersions = ["R4", "STU3"];
+let fhirVersions = ["R5"];
 const po = new AddFormToPageTestPage();
 
-function testOneValueType(valueType, params, fhirVersion, fileName) {
+function testOneValueType(valueType, params, fhirVersion, fileName, answerConstraint) {
   // valueString
   describe(fhirVersion + " - " + valueType, () => {
 
@@ -416,7 +416,7 @@ describe('AnswerOption with different types', () => {
   for (var i=0, len=fhirVersions.length; i<len; ++i) {
     (function (fhirVersion) {
 
-      let valueTypes = ["valueString", "valueInteger", "valueDate", "valueTime", "valueCoding.choice", "valueCoding.open-choice"];
+      let valueTypes = ["valueString", "valueInteger", "valueDate", "valueTime", "valueCoding"];
 
       let itemValues = {
         'valueString': {
@@ -451,18 +451,7 @@ describe('AnswerOption with different types', () => {
           g3Answer2 : 'B. 13:30:00 - 2',
           g3Answer3 : 'C. 23:59:59 - 3'
         },
-        'valueCoding.choice': {
-          g1Answer1 : 'Answer 1',
-          g1Answer2 : 'Answer 2',
-          g1Answer3 : 'Answer 3',
-          g1Code1: 'c1',
-          g1Code2: 'c2',
-          g1Code3: 'c3',
-          g3Answer1 : 'A. Answer 1 - 1',
-          g3Answer2 : 'B. Answer 2 - 2',
-          g3Answer3 : 'C. Answer 3 - 3'
-        },
-        'valueCoding.open-choice': {
+        'valueCoding': {
           g1Answer1 : 'Answer 1',
           g1Answer2 : 'Answer 2',
           g1Answer3 : 'Answer 3',
@@ -498,12 +487,7 @@ describe('AnswerOption with different types', () => {
           g1Answer2 : {'valueTime' : '13:30:00'},
           g1Answer3 : {'valueTime' : '23:59:59'},
         },
-        'valueCoding.choice': {
-          g1Answer1 : {"valueCoding": {"code": "c1", "display": "Answer 1"}},
-          g1Answer2 : {"valueCoding": {"code": "c2", "display": "Answer 2"}},
-          g1Answer3 : {"valueCoding": {"code": "c3", "display": "Answer 3"}}
-        },
-        'valueCoding.open-choice': {
+        'valueCoding': {
           g1Answer1 : {"valueCoding": {"code": "c1", "display": "Answer 1"}},
           g1Answer2 : {"valueCoding": {"code": "c2", "display": "Answer 2"}},
           g1Answer3 : {"valueCoding": {"code": "c3", "display": "Answer 3"}}
@@ -535,7 +519,7 @@ describe('AnswerOption with different types', () => {
       });
 
       // run tests for 6 different cases
-      valueTypes.map(valueType => {
+      valueTypes.forEach(valueType => {
         let values = itemValues[valueType];
         let ids = itemIds(valueType, values);
         let params = {
@@ -543,10 +527,12 @@ describe('AnswerOption with different types', () => {
           itemValues: values,
           qrItemValues: qrItemValues[valueType]
         }
-       
-        let fileName = `answerOption/answerOption-${valueType}.${fhirVersion}.json`;
+        ["optionsOnly", "optionsOrString"].forEach(answerConstraint => {
+          let fileName = `answerOption/answerOption-${valueType}.${answerConstraint}.${fhirVersion}.json`;
         
-        testOneValueType(valueType, params, fhirVersion, fileName);
+          testOneValueType(valueType, params, fhirVersion, fileName, answerConstraint);
+        })
+        
       });
 
     })(fhirVersions[i]);

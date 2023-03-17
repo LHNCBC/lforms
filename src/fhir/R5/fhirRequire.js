@@ -1,5 +1,5 @@
 // Initializes the FHIR structure for R4
-let fhirVersion = 'R4';
+let fhirVersion = 'R5';
 if (!LForms.FHIR)
   LForms.FHIR = {};
 import {LOINC_URI} from '../fhir-common';
@@ -16,7 +16,7 @@ fhir.DiagnosticReport = drCopy;
 import commonExport from '../R4R5-common/export.js';
 fhir.DiagnosticReport._commonExport = commonExport;
 import fhir_sdc from '../R4R5-common/sdc-export.js';
-// need a copy of the object, to separate from R5
+// need a copy of the object, to separate from R4
 const fhirSdc = Object.assign({}, fhir_sdc);
 fhir.SDC = fhirSdc;
 fhir.SDC._commonExport = commonExport;
@@ -26,10 +26,12 @@ import addCommonSDCImportFns from '../sdc-import-common.js';
 addCommonSDCImportFns(fhir.SDC);
 import addSDCImportFns from '../R4R5-common/sdc-import.js';
 addSDCImportFns(fhir.SDC);
+import addR5ExportFns from './sdc-export.js';
+addR5ExportFns(fhir.SDC);
 import addCommonSDCFns from '../sdc-common.js';
 addCommonSDCFns(fhir.SDC);
-import addR4ImportFns from './sdc-import.js';
-addR4ImportFns(fhir.SDC)
+import addR5ImportFns from './sdc-import.js';
+addR5ImportFns(fhir.SDC);
 import { addCommonRuntimeFns } from '../runtime-common.js';
 addCommonRuntimeFns(fhir.SDC);
 import { ExpressionProcessor } from '../expression-processor.js';

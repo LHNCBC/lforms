@@ -254,6 +254,7 @@ function addCommonSDCImportFns(ns) {
     //A lot of parsing depends on data type. Extract it first.
     self._processExtensions(targetItem, qItem);
     self._processDataType(targetItem, qItem);
+    if (self._processAnswerConstraint) self._processAnswerConstraint(targetItem, qItem);
     self._processTextAndPrefix(targetItem, qItem);
     self._processCodeAndLinkId(targetItem, qItem);
     self._processDisplayItemCode(targetItem, qItem);
@@ -454,12 +455,7 @@ function addCommonSDCImportFns(ns) {
         }
         // answerOption is string, integer, data or time
         else if (lfItem.answers) {
-          var itemAnswers = lfItem.answers;
-          for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
-            if (fhirVal === itemAnswers[j].text) {
-              answer = itemAnswers[j];
-            }
-          }
+          answer = self._processNonCodingAnswerValueInQR(fhirVal, lfItem, forDefault);
         }
       }
       else {
@@ -480,7 +476,8 @@ function addCommonSDCImportFns(ns) {
           answer = fhirVal;
         }
       }
-      answers.push(answer);
+      if (answer !== undefined || answer !== null) 
+          answers.push(answer);
       messages.push(hasMessages ? {errors} : null);
     }
     return [answers, messages];
@@ -492,6 +489,8 @@ function addCommonSDCImportFns(ns) {
    *  its units as necessary, and sets error messages.
    * @param lfItem the LForms item to for which these are new values
    * @param quantity the FHIR Quantity value for the item
+   * @param forDefault if true, the intented target of the values is the item's
+   *  default value instead of the item value.
    * @return an array of two elements:  the processed/converted value (possibly
    *  null if there were an error), and an error/warning/info messages object
    *  (see _convertFHIRValues for the format) if there were messages.  In the
@@ -865,7 +864,7 @@ function addCommonSDCImportFns(ns) {
 
   // ---------------- QuestionnaireResponse Import ---------------
 
-  var qrImport = self._mergeQR;
+  var qrImport = self._mergeQR = {};
 
   /**
    * Merge a QuestionnaireResponse instance into an LForms form object
@@ -1126,7 +1125,6 @@ function addCommonSDCImportFns(ns) {
         type = 'BL';
         break;
       case "date":
-        //dataType = 'date';
         type = 'DT';
         break;
       case "dateTime":
@@ -1146,6 +1144,9 @@ function addCommonSDCImportFns(ns) {
         break;
       case "attachment":
         type = 'attachment';
+        break;
+      case "coding":
+        type = 'CODING';
         break;
     }
     return type;
@@ -1380,6 +1381,29 @@ function addCommonSDCImportFns(ns) {
       }
     }
     return pendingPromises;
+  };
+
+
+  /**
+   * Handle the item.value in QuestionnaireResponse for non-CODING typed items
+   * @param {*} fhirValue a value of item in QuestionnaireResponse, without the 'valueX' key
+   * @param {*} lfItem an item in lforms
+   * @param {*} forDefault if true, the intented target of the values is the item's
+   *  default value instead of the item value.
+   * @returns the answer
+   */
+  self._processNonCodingAnswerValueInQR = function(fhirValue, lfItem, forDefault=false) {
+    let answer;
+    if (lfItem.dataType === "ST" || lfItem.dataType === "INT" || 
+        lfItem.dataType === "DT" || lfItem.dataType === "TM") {
+      var itemAnswers = lfItem.answers;
+      for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
+        if (fhirValue === itemAnswers[j].text) {
+          answer = itemAnswers[j]; 
+        }
+      }
+    }
+    return answer;
   };
 
 
