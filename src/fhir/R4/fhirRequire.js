@@ -17,8 +17,7 @@ import commonExport from '../R4R5-common/export.js';
 fhir.DiagnosticReport._commonExport = commonExport;
 import fhir_sdc from '../R4R5-common/sdc-export.js';
 // need a copy of the object, to separate from R5
-const fhirSdc = Object.assign({}, fhir_sdc);
-fhir.SDC = fhirSdc;
+fhir.SDC = Object.assign({}, fhir_sdc);
 fhir.SDC._commonExport = commonExport;
 import addCommonSDCExportFns from '../sdc-export-common.js';
 addCommonSDCExportFns(fhir.SDC);
@@ -26,6 +25,8 @@ import addCommonSDCImportFns from '../sdc-import-common.js';
 addCommonSDCImportFns(fhir.SDC);
 import addSDCImportFns from '../R4R5-common/sdc-import.js';
 addSDCImportFns(fhir.SDC);
+import addR4ExportFns from './sdc-export.js';
+addR4ExportFns(fhir.SDC);
 import addCommonSDCFns from '../sdc-common.js';
 addCommonSDCFns(fhir.SDC);
 import addR4ImportFns from './sdc-import.js';

@@ -884,25 +884,22 @@ function addCommonSDCExportFns(ns) {
       var itemValue = values[i];
       if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
         var answer = null;
-        // with an answer list
-        if (dataType === 'CODING' || item.answers && 
-            (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM')) {
-          // for Coding
-          if (dataType === 'CODING') {
-            // for optionsOrString, the value could be string if it is a user typed, not-on-list value
-            if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
-              answer = { "valueString" : itemValue };
-            }
-            else if (!jQuery.isEmptyObject(itemValue)) {
-              var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
-              answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
-              answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
-              answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
-            }
+        // with an answer list of Coding
+        if (dataType === 'CODING') {
+          // for optionsOrString, the value could be string if it is a user typed, not-on-list value
+          if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
+            answer = { "valueString" : itemValue };
           }
-          // for INT, ST, DT, TM
-          else if ((dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM') &&
-              typeof itemValue !== 'string') { //R4 dos not allow off list string
+          else if (!jQuery.isEmptyObject(itemValue)) {
+            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
+            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+          }
+        }
+        // with an answer list of INT, ST, DT, or TM
+        else if (item.answers && (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM')) {
+          if (typeof itemValue !== 'string') { //R4 does not allow off list string
             var valueKey = this._getValueKeyByDataType("value", item);
             answer = {[valueKey]: itemValue.text};
           }

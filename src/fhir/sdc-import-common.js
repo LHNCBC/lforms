@@ -453,7 +453,7 @@ function addCommonSDCImportFns(ns) {
             }
           }
         }
-        // answerOption is string, integer, data or time
+        // answerOption is string, integer, date or time
         else if (lfItem.answers) {
           answer = self._processNonCodingAnswerValueInQR(fhirVal, lfItem, forDefault);
         }
@@ -1388,11 +1388,9 @@ function addCommonSDCImportFns(ns) {
    * Handle the item.value in QuestionnaireResponse for non-CODING typed items
    * @param {*} fhirValue a value of item in QuestionnaireResponse, without the 'valueX' key
    * @param {*} lfItem an item in lforms
-   * @param {*} forDefault if true, the intented target of the values is the item's
-   *  default value instead of the item value.
    * @returns the answer
    */
-  self._processNonCodingAnswerValueInQR = function(fhirValue, lfItem, forDefault=false) {
+  self._processNonCodingAnswerValueInQR = function(fhirValue, lfItem) {
     let answer;
     if (lfItem.dataType === "ST" || lfItem.dataType === "INT" || 
         lfItem.dataType === "DT" || lfItem.dataType === "TM") {

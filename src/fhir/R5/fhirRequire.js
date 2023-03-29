@@ -11,14 +11,12 @@ fhir.fhirpathModel = require('fhirpath/fhir-context/r4');
 import dr from '../diagnostic-report.js';
 // Because we are assigning ./export.js to dr below, we need our own copy of the
 // dr object.
-const drCopy = Object.assign({}, dr);
-fhir.DiagnosticReport = drCopy;
+fhir.DiagnosticReport = Object.assign({}, dr);
 import commonExport from '../R4R5-common/export.js';
 fhir.DiagnosticReport._commonExport = commonExport;
 import fhir_sdc from '../R4R5-common/sdc-export.js';
 // need a copy of the object, to separate from R4
-const fhirSdc = Object.assign({}, fhir_sdc);
-fhir.SDC = fhirSdc;
+fhir.SDC = Object.assign({}, fhir_sdc);
 fhir.SDC._commonExport = commonExport;
 import addCommonSDCExportFns from '../sdc-export-common.js';
 addCommonSDCExportFns(fhir.SDC);
