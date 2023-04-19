@@ -383,6 +383,153 @@ describe('Util library', function() {
     });
   });
 
+  describe('Questionnaire.meta.profile', () => {
+    const defaultProfiles = {
+      sdc: {
+        R4: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7',
+        STU3: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0'
+      },
+      std: {
+        R4: 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire',
+        STU3: 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'
+      }
+    }
+    const questionnairesSamples = {
+      sdc: {R4: {
+          resourceType: 'Questionnaire', name: 'SDCR4', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.5"]}
+        },
+        STU3: {
+          resourceType: 'Questionnaire', name: 'SDCSTU3', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0"]}
+        }},
+      std: {R4: {
+          resourceType: 'Questionnaire', name: 'STDR4', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire"]}
+        },
+        STU3: {
+          resourceType: 'Questionnaire', name: 'STDSTU3', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire"]}
+        }}
+    };
+    let modifiedQ;
+
+    const convertQ = (q, targetVersion, withStandardProfile) => {
+      if(withStandardProfile === undefined || withStandardProfile === null) {
+        withStandardProfile = false;
+      }
+      return LForms.Util.getFormFHIRData(q.resourceType, targetVersion,
+        LForms.Util.convertFHIRQuestionnaireToLForms(q), {noExtensions: withStandardProfile});
+    };
+
+    it('should detect profile types', () => {
+      assert.equal(LForms.Util.detectProfileType(['http://hl7.org/fhir/StructureDefinition/Questionnaire']),
+        null);
+      assert.equal(LForms.Util.detectProfileType(['http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire']),
+        'FHIR');
+      assert.equal(LForms.Util.detectProfileType(['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.5']),
+        'SDC');
+    });
+
+    it('should convert meta.profiles', () => {
+      // Conversion to Standard/STU3
+      // Same version and same profile type, should leave it unchanged.
+      const qPart = {meta: {profile: ['http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire']}}
+      LForms.FHIR.STU3.SDC._handleMeta(qPart, true);
+      assert.equal(qPart.meta.profile[0], 'http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire');
+
+      // Different version, should set default STU3.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire';
+      LForms.FHIR.STU3.SDC._handleMeta(qPart, true);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.std.STU3);
+
+      // Different profile type, should set default STU3.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0';
+      LForms.FHIR.STU3.SDC._handleMeta(qPart, true);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.std.STU3);
+
+      // Convertion to SDC/STU3
+      // Same version and same profile type, should leave it unchanged.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0';
+      LForms.FHIR.STU3.SDC._handleMeta(qPart);
+      assert.equal(qPart.meta.profile[0], 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0');
+
+      // Different version, should set default STU3.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.1';
+      LForms.FHIR.STU3.SDC._handleMeta(qPart);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.sdc.STU3);
+
+      // Different profile type, should set default STU3.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire';
+      LForms.FHIR.STU3.SDC._handleMeta(qPart);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.sdc.STU3);
+
+      // Conversion to Standard/R4
+      // Same version and same profile type, should leave it unchanged.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire';
+      LForms.FHIR.R4.SDC._handleMeta(qPart, true);
+      assert.equal(qPart.meta.profile[0], 'http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire');
+
+      // Different version, should set default R4.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire';
+      LForms.FHIR.R4.SDC._handleMeta(qPart, true);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.std.R4);
+
+      // Different profile type, should set default R4.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.7';
+      LForms.FHIR.R4.SDC._handleMeta(qPart, true);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.std.R4);
+
+      // Conversion to SDC/R4
+      // Same version and same profile type, should leave it unchanged.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.5';
+      LForms.FHIR.R4.SDC._handleMeta(qPart);
+      assert.equal(qPart.meta.profile[0], 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.5');
+
+      // Different version, should set default R4.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0';
+      LForms.FHIR.R4.SDC._handleMeta(qPart);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.sdc.R4);
+
+      // Different profile type, should set default R4.
+      qPart.meta.profile[0] = 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire';
+      LForms.FHIR.R4.SDC._handleMeta(qPart);
+      assert.equal(qPart.meta.profile[0], defaultProfiles.sdc.R4);
+    });
+
+
+    it('should convert to STU3/SDC profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.sdc.STU3, 'STU3');
+      assert.equal(modifiedQ.meta.profile[0], questionnairesSamples.sdc.STU3.meta.profile[0]); // Same version => Unchanged.
+
+      modifiedQ = convertQ(questionnairesSamples.sdc.R4, 'STU3');
+      assert.equal(modifiedQ.meta.profile[0], defaultProfiles.sdc.STU3); // Different versions, set default
+    });
+
+    it('should convert to R4/SDC profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.sdc.R4, 'R4');
+      assert.equal(modifiedQ.meta.profile[0], questionnairesSamples.sdc.R4.meta.profile[0]); // Same version => Unchanged.
+
+      modifiedQ = convertQ(questionnairesSamples.sdc.STU3, 'R4');
+      assert.equal(modifiedQ.meta.profile[0], defaultProfiles.sdc.R4); // Different versions, set default
+    });
+
+    it('should convert to R4/standard profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.std.R4, 'R4', true);
+      assert.equal(modifiedQ.meta.profile[0], questionnairesSamples.std.R4.meta.profile[0]); // Same version => Unchanged.
+
+      modifiedQ = convertQ(questionnairesSamples.std.STU3, 'R4', true);
+      assert.equal(modifiedQ.meta.profile[0], defaultProfiles.std.R4); // Different versions, set default
+    });
+
+    it('should convert to STU3/standard profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.std.STU3, 'STU3', true);
+      assert.equal(modifiedQ.meta.profile[0], questionnairesSamples.std.STU3.meta.profile[0]); // Same version => Unchanged.
+
+      modifiedQ = convertQ(questionnairesSamples.std.R4, 'STU3', true);
+      assert.equal(modifiedQ.meta.profile[0], defaultProfiles.std.STU3); // Different versions, set default
+    });
+  });
 
   describe('_testValues', function() {
     it('should handle nested structures', function () {

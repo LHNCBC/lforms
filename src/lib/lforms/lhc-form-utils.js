@@ -5,6 +5,11 @@
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
 
+const _questionnairePattern =
+  new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
+const _sdcPattern =
+  new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
+
 const FormUtils = {
   // TODO: need an udpate
   /**
@@ -467,21 +472,17 @@ const FormUtils = {
     if (fhirData.meta && fhirData.meta.profile) {
       var profiles = fhirData.meta.profile;
       // See http://build.fhir.org/versioning.html#mp-version
-      var questionnairePattern =
-        new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
-      var sdcPattern =
-        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
       for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
-        var match = profiles[i].match(questionnairePattern);
+        var match = profiles[i].match(_questionnairePattern);
         if (match)
           fhirVersion = match[1];
         else {
-          match = profiles[i].match(sdcPattern);
+          match = profiles[i].match(_sdcPattern);
           if (match) {
             fhirVersion = match[1];
             // See http://www.hl7.org/fhir/uv/sdc/history.cfml
             // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
-            if (fhirVersion == '2.0') {
+            if (fhirVersion === '2.0') {
               fhirVersion = '3.0';
             }
             // use FHIR 4.0 for SDC version >= 2.1
@@ -497,6 +498,21 @@ const FormUtils = {
     return fhirVersion;
   },
 
+  /**
+   * Detect if it is a standard FHIR type or SDC type.
+   * @param profiles - Questionnaire.meta.profile field, which is an array.
+   * @returns {null} - Return 'FHIR' | 'SDC'
+   */
+  detectProfileType: function(profiles) {
+    if(!profiles) {
+      return null;
+    }
+    let ret = null;
+    for(let i = 0; i < profiles.length && !ret; i++) {
+      ret = _sdcPattern.test(profiles[i]) ? 'SDC' : _questionnairePattern.test(profiles[i]) ? 'FHIR' : null;
+    }
+    return ret;
+  },
 
   /**
    *  Looks at the structure of the given FHIR resource to determine the version

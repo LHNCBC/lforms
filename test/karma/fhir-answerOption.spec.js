@@ -6,7 +6,7 @@ function testImportAnswerOption(params) {
     (function (fhirVersion) {
       let fhir = LForms.FHIR[fhirVersion];
       describe(fhirVersion, function() {
-        
+
         it('should import ' + params.valueType + ' as answerOption, ' + fhirVersion, function (done) {
 
           let displayControlRadioCheckboxVertical = {"answerLayout": { "type": "RADIO_CHECKBOX", "columns": "1" }},
@@ -37,7 +37,7 @@ function testImportAnswerOption(params) {
               //answerOption - prefix- score
               assert.deepEqual(lfData.items[2].items[0].answers, params.answersWithPrefixScore)
               assert.deepEqual(lfData.items[2].items[0].displayControl, displayControlCombo)
-              assert.deepEqual(lfData.items[2].items[0].answerCardinality, answerCardinalityNonRepeats)              
+              assert.deepEqual(lfData.items[2].items[0].answerCardinality, answerCardinalityNonRepeats)
               assert.deepEqual(lfData.items[2].items[1].answers, params.answersWithPrefixScore)
               assert.deepEqual(lfData.items[2].items[1].displayControl, displayControlCombo)
               assert.deepEqual(lfData.items[2].items[1].answerCardinality, answerCardinalityRepeats)
@@ -71,7 +71,7 @@ function testImportAnswerOption(params) {
             done(err);
           });
         });
-        
+
         it('should export ' + params.valueType + ' as answerOption, ' + fhirVersion, function (done) {
 
           let file = `test/data/${fhirVersion}/answerOption/answerOption-${params.valueType}.${fhirVersion}.json`;
@@ -80,14 +80,10 @@ function testImportAnswerOption(params) {
               let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
               //answerOption - autocomplete
               let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, lfData);
-
-              assert.deepEqual(q.item[0].item, fhirQ.item[0].item)
-              assert.deepEqual(q.item[1].item, fhirQ.item[1].item)
-              assert.deepEqual(q.item[2].item, fhirQ.item[2].item)
-              assert.deepEqual(q.item[3].item, fhirQ.item[3].item)
-              assert.deepEqual(q.item[4].item, fhirQ.item[4].item)
-              assert.deepEqual(q.item[5].item, fhirQ.item[5].item)
-              assert.deepEqual(q, fhirQ)
+              // Meta.tag is updated for every version. Compare everything else.
+              delete q.meta.tag;
+              delete fhirQ.meta.tag;
+              assert.deepEqual(q, fhirQ);
             }
             catch(err) {
               done(err)
@@ -101,14 +97,14 @@ function testImportAnswerOption(params) {
         });
       });
     })(fhirVers[i]);
-  
+
   }
 }
 
 
 
 describe('FHIR SDC functions on answerOption', function() {
-  // 1) answerOption is valueString 
+  // 1) answerOption is valueString
   let params = {
     valueType: "valueString",
     answers : [{ "text": "a" }, { "text": "b" }, { "text": "c" }],
@@ -123,7 +119,7 @@ describe('FHIR SDC functions on answerOption', function() {
   }
   testImportAnswerOption(params)
 
-  // 2) answerOption is valueInteger 
+  // 2) answerOption is valueInteger
   params = {
     valueType: "valueInteger",
     answers : [{ "text": 12 }, { "text": 34 }, { "text": 56 }],
@@ -138,7 +134,7 @@ describe('FHIR SDC functions on answerOption', function() {
   }
   testImportAnswerOption(params)
 
-  // 3) answerOption is valueDate 
+  // 3) answerOption is valueDate
   params = {
     valueType: "valueDate",
     answers : [{ "text": "2022" }, { "text": "2022-09" }, { "text": "2022-09-20" }],
@@ -153,7 +149,7 @@ describe('FHIR SDC functions on answerOption', function() {
   }
   testImportAnswerOption(params)
 
-  // 4) answerOption is valueTime 
+  // 4) answerOption is valueTime
   params = {
     valueType: "valueTime",
     answers : [{ "text": "10:30:00" }, { "text": "13:30:00" }, { "text": "23:59:59" }],

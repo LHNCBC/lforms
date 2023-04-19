@@ -1,3 +1,5 @@
+import LhcFormUtils from "../lib/lforms/lhc-form-utils";
+
 /**
  *  Defines SDC export functions that are the same across the different FHIR
  *  versions.  The function takes the SDC namespace object defined in the sdc export
@@ -59,7 +61,7 @@ function addCommonSDCExportFns(ns) {
         source = new LForms.LFormsData(source);
       }
       this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, lfData, noExtensions);
+      this._setFormLevelFields(target, source, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -98,7 +100,7 @@ function addCommonSDCExportFns(ns) {
     if (item.codeList && item.codeList.length > 0) {
       targetItem.code = item.codeList;
     }
-      
+
     // extension
     targetItem.extension = item.extension || []; // later we delete if empty
 
@@ -382,10 +384,32 @@ function addCommonSDCExportFns(ns) {
     target.status = target.status ? target.status : "draft";
 
     // meta
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+    this._handleMeta(target, noExtensions);
+  };
 
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+
+  /**
+   * Handle Questionnaire.meta field
+   *
+   * @param targetFhirQ - The target questionnaire to export.
+   * @param isStandardProfile - Flag to use standard profile vs SDC profile.
+   * @private
+   */
+  self._handleMeta = function (targetFhirQ, isStandardProfile) {
+    targetFhirQ.meta = targetFhirQ.meta ? targetFhirQ.meta : {};
+    // Handle profile
+    const profile = isStandardProfile ? this.stdQProfile : this.QProfile;
+    let isSameRelease = false;
+    if(targetFhirQ.meta.profile) {
+      isSameRelease = (LhcFormUtils.detectFHIRVersion(targetFhirQ) ===
+        LhcFormUtils.detectFHIRVersion({meta: {profile: [profile]}}));
+    }
+
+    if(!isSameRelease ||
+      (LhcFormUtils.detectProfileType(targetFhirQ.meta.profile) !==
+        LhcFormUtils.detectProfileType([profile]))) {
+      targetFhirQ.meta.profile = [profile];
+    }
   };
 
 
@@ -402,9 +426,9 @@ function addCommonSDCExportFns(ns) {
     // Fly-over, Table, Checkbox, Combo-box, Lookup
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
-      // for answers 
-      if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE" || 
-          item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" 
+      // for answers
+      if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE" ||
+          item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT"
           || item.dataType === "TM"))) {
         // search field
         if (item.externallyDefined || (item.answerValueSet && item.isSearchAutocomplete)) {
@@ -907,11 +931,11 @@ function addCommonSDCExportFns(ns) {
           answer = {[valueKey]: itemValue};
         }
       }
-      
+
       if(answer !== null) {
         answers.push(answer);
       }
-      
+
     }
 
     return answers.length === 0? null: answers;

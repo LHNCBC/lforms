@@ -938,9 +938,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               name: 'test name',
               version: '0.0.1',
               resourceType: 'Questionnaire',
-              "meta": {
-                "profile": [
-                  "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+              meta: {
+                profile: [
+                  "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
                 ]
               },
               status: 'draft',
@@ -972,6 +972,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             // console.log( JSON.stringify(convertedFhirData))
             // console.log( JSON.stringify(fhirData))
+
+            // Ignore meta for comparison.
+            delete convertedFhirData.meta;
+            delete fhirData.meta;
+
             assert.deepEqual(fhirData, convertedFhirData);
 
           });
