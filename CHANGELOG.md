@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.3.3] 2023-04-19
+### Fixed
+- Fixed a bug in updating meta.profile in exported questionnaire based on it version 
+  such as STU3, R4 etc.
+ 
 ## [33.3.2] 2023-02-06
 ### Fixed
 - Fixed a bug that initial values were not displayed in the matrix layout ("Vertical 
