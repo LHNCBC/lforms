@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.3.3] 2023-04-24
+- Fixed a bug that when a QuestionnaireResponse with saved values from an answerValueSet
+  is loaded back into the Questionnaire, the saved values are not restored.
+  
 ## [33.3.2] 2023-02-06
 ### Fixed
 - Fixed a bug that initial values were not displayed in the matrix layout ("Vertical 

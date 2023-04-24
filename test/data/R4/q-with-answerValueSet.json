@@ -1,0 +1,13 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire to load saved value from answerValueSet",
+  "status": "draft",
+  "item": [
+    {
+      "type": "choice",
+      "linkId": "yesno",
+      "text": "Yes-No Question",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+    }
+  ]
+}

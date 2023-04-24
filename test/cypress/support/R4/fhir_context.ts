@@ -29,10 +29,17 @@ const fhirMock = {
 
       request: function(relativeURL) {
         let rtnData, md;
+        relativeURL = decodeURIComponent(relativeURL);
         if (relativeURL.startsWith('ValueSet')) {
+          // id
           if (md = relativeURL.match(/ValueSet\/([^/]+)\/\$expand/)) {
             let vsID = md[1];
             rtnData = resources.ValueSet[vsID];
+          }
+          // url
+          else if (md = relativeURL.match(/ValueSet\/\$expand\?url=http\:\/\/hl7\.org\/fhir\/ValueSet\/(.+)/)
+          ) {
+            rtnData = resources.ValueSet[md[1]]
           }
         }
         return new Promise((resolve, reject)=>{
@@ -172,6 +179,7 @@ const fhirMock = {
 // Populate ValueSet expansions
 let vsID = 'language-preference-type';
 fhirMock.mockData.ValueSet[vsID] = require('../../../../test/data/R4/ValueSet/'+vsID+'.json');
-
+let vsURL = 'yesnodontknow';
+fhirMock.mockData.ValueSet[vsURL] = require('../../../../test/data/R4/ValueSet/'+vsURL+'.json');
 
 module.exports = fhirMock;
