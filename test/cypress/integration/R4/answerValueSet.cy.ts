@@ -14,7 +14,10 @@ describe('FHIR variables', () => {
   });
 
   describe('answerValueSet with FHIR context', () => {
-    const answerField = 'yesno/1',
+    const answerField1 = 'yesno1/1', // choice
+          answerField2 = 'yesno2/1', // choice
+          answerField3 = 'yesno3/1', // open-choice
+          answerField4 = 'yesno4/1', // open-choice
           searchResults = 'searchResults';
 
     before(() => {
@@ -26,12 +29,14 @@ describe('FHIR variables', () => {
 
     it('should have expected answer list when the Questionnaire is loaded', () => {
       util.addFormToPage('q-with-answerValueSet.json', null, {fhirVersion});
-      cy.byId(answerField).click();
-      cy.byId(searchResults).should('be.visible');
-      cy.byCss("#searchResults li").its('length').should('eq', 3);
-      cy.byCss("#searchResults li").eq(0).contains('No');
-      cy.byCss("#searchResults li").eq(1).contains('Yes');
-      cy.byCss("#searchResults li").eq(2).contains("Don't know");
+      [answerField1, answerField2, answerField3, answerField4].forEach(answerField => {
+        cy.byId(answerField).click();
+        cy.byId(searchResults).should('be.visible');
+        cy.byCss("#searchResults li").its('length').should('eq', 3);
+        cy.byCss("#searchResults li").eq(0).contains('No');
+        cy.byCss("#searchResults li").eq(1).contains('Yes');
+        cy.byCss("#searchResults li").eq(2).contains("Don't know");  
+      });
     });
 
     it('should have expected answer list and saved value when the QuestionnaireReponse is merged to the Questionnaire', () => {
@@ -42,7 +47,20 @@ describe('FHIR variables', () => {
             let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
             win.LForms.Util.addFormToPage(mergedFormData, "formContainer", {fhirVersion});
 
-            cy.byId(answerField).should('have.value', 'Yes');
+            // check saved values
+            cy.byId(answerField1).should('have.value', 'Yes');
+            cy.byId(answerField2).should('have.value', 'No');
+            cy.byId(answerField3).should('have.value', 'Yes');
+            cy.byId(answerField4).should('have.value', 'No');
+            // check answer list
+            [answerField1, answerField2, answerField3, answerField4].forEach(answerField => {
+              cy.byId(answerField).click();
+              cy.byId(searchResults).should('be.visible');
+              cy.byCss("#searchResults li").its('length').should('eq', 3);
+              cy.byCss("#searchResults li").eq(0).contains('No');
+              cy.byCss("#searchResults li").eq(1).contains('Yes');
+              cy.byCss("#searchResults li").eq(2).contains("Don't know");  
+            });
           });
 
         });
@@ -53,11 +71,29 @@ describe('FHIR variables', () => {
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
         let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
-        expect(qr.item[0].linkId).to.equal('yesno');
+        expect(qr.item[0].linkId).to.equal('yesno1');
         expect(qr.item[0].answer[0].valueCoding).to.eql({
           "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
           "code": "Y",
           "display": "Yes"
+        });
+        expect(qr.item[1].linkId).to.equal('yesno2');
+        expect(qr.item[1].answer[0].valueCoding).to.eql({
+          "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
+          "code": "N",
+          "display": "No"
+        });
+        expect(qr.item[2].linkId).to.equal('yesno3');
+        expect(qr.item[2].answer[0].valueCoding).to.eql({
+          "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
+          "code": "Y",
+          "display": "Yes"
+        });
+        expect(qr.item[3].linkId).to.equal('yesno4');
+        expect(qr.item[3].answer[0].valueCoding).to.eql({
+          "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
+          "code": "N",
+          "display": "No"
         });
       })
     })
