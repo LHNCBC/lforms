@@ -46,11 +46,7 @@
       "text": "Yes-No Question 4, open-choice",
       "answer": [
         {
-          "valueCoding": {
-            "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
-            "code": "N",
-            "display": "No"
-          }
+          "valueString": "offlist answer"
         }
       ]
     }

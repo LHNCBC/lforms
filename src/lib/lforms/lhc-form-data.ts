@@ -2900,17 +2900,17 @@ export default class LhcFormData {
               found = false;
             }
             if (!found && userValue) {
-              // a saved value or a default value is not on the list (default answer must be one of the answer items).
-              // non-matching value objects are kept, (data control or others might use data on these objects)
+              // A saved value or a default value is not on the list (default answer must be one of the answer items).
+              // Non-matching value objects are kept (data control or others might use data on these objects).
               if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
-                // need a new copy of the data to trigger a change in the data model in autocompleter component
-                // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
+                // Need a new copy of the data to trigger a change in the data model in autocompleter component,
+                // where if the dataModel is in the changes its value will be preserved when recreating the autocompleter.
                 var userValueCopy = CommonUtils.deepCopy(userValue);
-                userValueCopy._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
+                userValueCopy._notOnList = true;  // _notOnList might have been set above when the orginal value is a string.
                 listVals.push(userValueCopy);
               }
-              // while FHIR Resources are still being loaded, keep the original values
-              // the value will be reset once the the answers are loaded from answerValueSet
+              // While FHIR Resources are still being loaded, keep the original values.
+              // The value will be reset once the the answers are loaded from answerValueSet.
               else if (!this._fhirResourceLoaded) {
                 listVals.push(userValue);
               }

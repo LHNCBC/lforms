@@ -51,7 +51,7 @@ describe('FHIR variables', () => {
             cy.byId(answerField1).should('have.value', 'Yes');
             cy.byId(answerField2).should('have.value', 'No');
             cy.byId(answerField3).should('have.value', 'Yes');
-            cy.byId(answerField4).should('have.value', 'No');
+            cy.byId(answerField4).should('have.value', 'offlist answer');
             // check answer list
             [answerField1, answerField2, answerField3, answerField4].forEach(answerField => {
               cy.byId(answerField).click();
@@ -90,10 +90,8 @@ describe('FHIR variables', () => {
           "display": "Yes"
         });
         expect(qr.item[3].linkId).to.equal('yesno4');
-        expect(qr.item[3].answer[0].valueCoding).to.eql({
-          "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
-          "code": "N",
-          "display": "No"
+        expect(qr.item[3].answer[0]).to.eql({
+          "valueString": "offlist answer"
         });
       })
     })
