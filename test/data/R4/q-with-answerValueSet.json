@@ -11,6 +11,7 @@
     },
     {
       "type": "choice",
+      "repeats": true,
       "linkId": "yesno2",
       "text": "Yes-No Question 2, choice",
       "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
@@ -25,6 +26,13 @@
       "type": "open-choice",
       "linkId": "yesno4",
       "text": "Yes-No Question 4, open-choice",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "yesno5",
+      "text": "Yes-No Question 5, open-choice",
       "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
     }
   ]
