@@ -415,15 +415,6 @@ describe('Util library', function() {
         LForms.Util.convertFHIRQuestionnaireToLForms(q));
     };
 
-    it('should detect profile types', () => {
-      assert.equal(LForms.Util.detectProfileType(['http://hl7.org/fhir/StructureDefinition/Questionnaire']),
-        null);
-      assert.equal(LForms.Util.detectProfileType(['http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire']),
-        'FHIR');
-      assert.equal(LForms.Util.detectProfileType(['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.5']),
-        'SDC');
-    });
-
     it('should convert meta.profiles', () => {
       // Conversion to STU3
       // A recognized profile, same version and same profile type, should leave it unchanged and add standard profile.

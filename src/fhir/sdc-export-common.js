@@ -1,5 +1,3 @@
-import LhcFormUtils from "../lib/lforms/lhc-form-utils";
-
 /**
  *  Defines SDC export functions that are the same across the different FHIR
  *  versions.  The function takes the SDC namespace object defined in the sdc export
@@ -396,12 +394,12 @@ function addCommonSDCExportFns(ns) {
   self._handleMeta = function (targetFhirQ) {
     targetFhirQ.meta = targetFhirQ.meta ? targetFhirQ.meta : {};
     // Handle profile
-    const thisVersion = LhcFormUtils.detectFHIRVersion({meta: {profile: [this.stdQProfile]}});
+    const thisVersion = LForms.Util.detectFHIRVersion({meta: {profile: [this.stdQProfile]}});
 
     if(!targetFhirQ.meta.profile) {
       targetFhirQ.meta.profile = [];
     }
-    const sortedProfiles = LhcFormUtils._sortProfiles(targetFhirQ.meta.profile);
+    const sortedProfiles = LForms.Util._sortProfiles(targetFhirQ.meta.profile);
     if(sortedProfiles?.size > 0) {
       const retainedProfiles = [];
       const iter = sortedProfiles.keys();

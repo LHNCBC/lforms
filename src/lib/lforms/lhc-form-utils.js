@@ -570,22 +570,6 @@ const FormUtils = {
   },
 
   /**
-   * Detect if it is a standard FHIR type or SDC type.
-   * @param profiles - Questionnaire.meta.profile field, which is an array.
-   * @returns {null} - Return 'FHIR' | 'SDC'
-   */
-  detectProfileType: function(profiles) {
-    if(!profiles) {
-      return null;
-    }
-    let ret = null;
-    for(let i = 0; i < profiles.length && !ret; i++) {
-      ret = _sdcPattern.test(profiles[i]) ? 'SDC' : _questionnairePattern.test(profiles[i]) ? 'FHIR' : null;
-    }
-    return ret;
-  },
-
-  /**
    *  Looks at the structure of the given FHIR resource to determine the version
    *  of FHIR, if possible.
    * @param fhirData a FHIR resource.  Supported resource types are currently
