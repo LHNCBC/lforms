@@ -61,7 +61,7 @@ function addCommonSDCExportFns(ns) {
         source = new LForms.LFormsData(source);
       }
       this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, source, noExtensions);
+      this._setFormLevelFields(target, source);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -362,11 +362,9 @@ function addCommonSDCExportFns(ns) {
    * Set form level attributes
    * @param target a Questionnaire object
    * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @private
    */
-  self._setFormLevelFields = function(target, source, noExtensions) {
+  self._setFormLevelFields = function(target, source) {
     this.copyFields(source, target, this.formLevelFields);
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
@@ -384,7 +382,7 @@ function addCommonSDCExportFns(ns) {
     target.status = target.status ? target.status : "draft";
 
     // meta
-    this._handleMeta(target, noExtensions);
+    this._handleMeta(target);
   };
 
 
@@ -395,20 +393,30 @@ function addCommonSDCExportFns(ns) {
    * @param isStandardProfile - Flag to use standard profile vs SDC profile.
    * @private
    */
-  self._handleMeta = function (targetFhirQ, isStandardProfile) {
+  self._handleMeta = function (targetFhirQ) {
     targetFhirQ.meta = targetFhirQ.meta ? targetFhirQ.meta : {};
     // Handle profile
-    const profile = isStandardProfile ? this.stdQProfile : this.QProfile;
-    let isSameRelease = false;
-    if(targetFhirQ.meta.profile) {
-      isSameRelease = (LhcFormUtils.detectFHIRVersion(targetFhirQ) ===
-        LhcFormUtils.detectFHIRVersion({meta: {profile: [profile]}}));
-    }
+    const thisVersion = LhcFormUtils.detectFHIRVersion({meta: {profile: [this.stdQProfile]}});
 
-    if(!isSameRelease ||
-      (LhcFormUtils.detectProfileType(targetFhirQ.meta.profile) !==
-        LhcFormUtils.detectProfileType([profile]))) {
-      targetFhirQ.meta.profile = [profile];
+    if(!targetFhirQ.meta.profile) {
+      targetFhirQ.meta.profile = [];
+    }
+    const sortedProfiles = LhcFormUtils._sortProfiles(targetFhirQ.meta.profile);
+    if(sortedProfiles?.size > 0) {
+      const retainedProfiles = [];
+      const iter = sortedProfiles.keys();
+      for(const ver of iter) {
+        if (ver === thisVersion || ver === 'unknown') {
+          // Keep profiles of this version and unknown.
+          sortedProfiles.get(ver).forEach(obj => {
+            retainedProfiles.push(obj.profile);
+          });
+        }
+      }
+      retainedProfiles.push(this.stdQProfile);
+      targetFhirQ.meta.profile = [...new Set(retainedProfiles)]; // Remove any duplicates?
+    } else {
+      targetFhirQ.meta.profile = [this.stdQProfile];
     }
   };
 

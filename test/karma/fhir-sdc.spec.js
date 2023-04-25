@@ -1471,7 +1471,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)));
 
-              assert.equal(fhirQ.meta.profile[0], fhir.SDC.QProfile);
+              assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
               assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
               done();
             });

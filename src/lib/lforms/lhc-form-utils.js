@@ -9,6 +9,11 @@ const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
 const _sdcPattern =
   new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
+const VersionRanks = {
+  STU3: 1,
+  R4: 2,
+  R5: 3
+};
 
 const FormUtils = {
   // TODO: need an udpate
@@ -461,19 +466,34 @@ const FormUtils = {
 
 
   /**
+   * [04/21/2023 2:21 PM] Lynch, Paul (NIH/NLM/LHC) [E]
+   *
+   * 1) For new questionnaires, we just export with the standard profile
+   *
+   * 2) When we import and questionnaire which had meta.profile set, look for the highest version of FHIR listed in meta.profile
+   *
+   * 3) User will (optionally) be able to say which version of FHIR they want when uploading a file (or using the lforms API)
+   *
+   * 4) When we export a questionnaire that we imported and which had meta.profile set,
+   * we will set the standard profile for that FHIR version, and remove known conflicting profile URIs.
+   *
+   *******************************************************************************************
    *  Attempts to detect the version of FHIR specified in the given resource.
+   *  In case of multiple profiles, pick the highest ranked version from the array.
+   *
    * @param fhirData a FHIR resource.  Supported resource types are currently
    *  just Questionnaire and QuestionnaireResponse.
    * @return the FHIR version, or null if the FHIR version was not explicity
    *  specified in the resource.
    */
   detectFHIRVersion: function(fhirData) {
-    var fhirVersion;
+    let version = null; // STU3 | R4 | R5
     if (fhirData.meta && fhirData.meta.profile) {
       var profiles = fhirData.meta.profile;
       // See http://build.fhir.org/versioning.html#mp-version
-      for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
+      for (var i=0, len=profiles.length; i<len; ++i) {
         var match = profiles[i].match(_questionnairePattern);
+        let fhirVersion; // x.x
         if (match)
           fhirVersion = match[1];
         else {
@@ -491,11 +511,62 @@ const FormUtils = {
             }
           }
         }
+        if(fhirVersion) {
+          const v = this._fhirVersionToRelease(fhirVersion);
+          if(!version || VersionRanks[v] > VersionRanks[version]) {
+            version = v;
+          }
+        }
       }
     }
-    if (fhirVersion)
-      fhirVersion = this._fhirVersionToRelease(fhirVersion);
-    return fhirVersion;
+    return version;
+  },
+
+  /**
+   * Sort profiles into a hash map associating version to profile and its index.
+   *
+   * @param profiles Array of profiles from Questionnaire.meta.profile.
+   * @returns {Map<string, {profile, index}[]>|null} - Map with fhirVersion as keys and array of objects with profiles
+   *   and their index in profiles array.
+   * @private
+   */
+  _sortProfiles: function(profiles) {
+    if(!profiles || !profiles.length) {
+      return null;
+    }
+
+    const ret = new Map();
+    profiles.reduce((acc, current, index) => {
+      let fhirVersion = 'unknown';
+      let match = current.match(_questionnairePattern);
+      if (match)
+        fhirVersion = match[1];
+      else {
+        match = current.match(_sdcPattern);
+        if (match) {
+          fhirVersion = match[1];
+          // See http://www.hl7.org/fhir/uv/sdc/history.cfml
+          // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+          if (fhirVersion === '2.0') {
+            fhirVersion = '3.0';
+          }
+          // use FHIR 4.0 for SDC version >= 2.1
+          else if (parseFloat(fhirVersion) >= 2.1) {
+            fhirVersion = '4.0';
+          }
+        }
+      }
+      if(fhirVersion !== 'unknown') {
+        fhirVersion = this._fhirVersionToRelease(fhirVersion);
+      }
+      let arr = ret.get(fhirVersion);
+      if(!arr) {
+        arr = [];
+        ret.set(fhirVersion, arr);
+      }
+      arr.push({profile: current, index});
+    }, ret);
+    return ret;
   },
 
   /**

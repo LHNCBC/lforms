@@ -80,9 +80,9 @@ function testImportAnswerOption(params) {
               let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
               //answerOption - autocomplete
               let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, lfData);
-              // Meta.tag is updated for every version. Compare everything else.
-              delete q.meta.tag;
-              delete fhirQ.meta.tag;
+              // Ignore meta changes, compare everything else.
+              delete q.meta;
+              delete fhirQ.meta;
               assert.deepEqual(q, fhirQ);
             }
             catch(err) {
