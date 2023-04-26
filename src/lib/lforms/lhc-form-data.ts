@@ -124,7 +124,7 @@ export default class LhcFormData {
   _showErrors;
   _showWarnings;
   _showInfo;
-  _fhirResourceLoaded;
+  _fhirResourcesLoaded;
 
   /**
    * Constructor
@@ -2911,7 +2911,7 @@ export default class LhcFormData {
               }
               // While FHIR Resources are still being loaded, keep the original values.
               // The value will be reset once the the answers are loaded from answerValueSet.
-              else if (!this._fhirResourceLoaded) {
+              else if (!this._fhirResourcesLoaded) {
                 listVals.push(userValue);
               }
             }
