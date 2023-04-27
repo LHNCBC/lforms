@@ -386,35 +386,49 @@ function addCommonSDCExportFns(ns) {
 
   /**
    * Handle Questionnaire.meta field
+   */
+  self._handleMeta = function(targetFhirQ) {
+    targetFhirQ.meta = targetFhirQ.meta ? targetFhirQ.meta : {};
+    // Handle profiles
+    this._handleMetaProfile(targetFhirQ.meta);
+  };
+
+  /**
+   * Handle Questionnaire.meta field
    *
-   * @param targetFhirQ - The target questionnaire to export.
-   * @param isStandardProfile - Flag to use standard profile vs SDC profile.
+   * Follows these rules:
+   * -------------
+   * 1) For new questionnaires, we just export with the standard profile
+   * 2) When we import and questionnaire which had meta.profile set, look for the highest version of
+   *      FHIR listed in meta.profile.
+   * 3) User will (optionally) be able to say which version of FHIR they want when uploading a file
+   *      (or using the lforms API)
+   * 4) When we export a questionnaire that we imported and which had meta.profile set,
+   *      we will set the standard profile for that FHIR version, and remove known conflicting profile URIs.
+   *  ------------
+   * @param meta - The target questionnaire.meta to export.
    * @private
    */
-  self._handleMeta = function (targetFhirQ) {
-    targetFhirQ.meta = targetFhirQ.meta ? targetFhirQ.meta : {};
-    // Handle profile
-    const thisVersion = LForms.Util.detectFHIRVersion({meta: {profile: [this.stdQProfile]}});
+  self._handleMetaProfile = function (meta) {
+    const thisVersion = LForms.Util.detectFHIRVersionFromProfiles([this.stdQProfile]);
 
-    if(!targetFhirQ.meta.profile) {
-      targetFhirQ.meta.profile = [];
+    if(!meta.profile) {
+      meta.profile = [];
     }
-    const sortedProfiles = LForms.Util._sortProfiles(targetFhirQ.meta.profile);
-    if(sortedProfiles?.size > 0) {
+
+    if(meta.profile.length > 0) {
       const retainedProfiles = [];
-      const iter = sortedProfiles.keys();
-      for(const ver of iter) {
-        if (ver === thisVersion || ver === 'unknown') {
-          // Keep profiles of this version and unknown.
-          sortedProfiles.get(ver).forEach(obj => {
-            retainedProfiles.push(obj.profile);
-          });
+      for(let i = 0; i < meta.profile; i++) {
+        const ver = LForms.Util.detectFHIRVersionFromProfiles([meta.profile[i]]);
+        if (!ver || ver === thisVersion) {
+          // Keep profiles of this version and unknown. Others are conflicting, discard them.
+          retainedProfiles.push(meta.profile[i]);
         }
       }
       retainedProfiles.push(this.stdQProfile);
-      targetFhirQ.meta.profile = [...new Set(retainedProfiles)]; // Remove any duplicates?
+      meta.profile = [...new Set(retainedProfiles)]; // Remove any duplicates?
     } else {
-      targetFhirQ.meta.profile = [this.stdQProfile];
+      meta.profile = [this.stdQProfile];
     }
   };
 

@@ -385,10 +385,8 @@ describe('Util library', function() {
 
   describe('Questionnaire.meta.profile', () => {
     const defaultProfiles = {
-      std: {
-        R4: 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire',
-        STU3: 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'
-      }
+      R4: 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire',
+      STU3: 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'
     }
     const questionnairesSamples = {
       sdc: {R4: {
@@ -420,80 +418,80 @@ describe('Util library', function() {
       // A recognized profile, same version and same profile type, should leave it unchanged and add standard profile.
       const qPart = {meta: {profile: ['http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire']}}
       LForms.FHIR.STU3.SDC._handleMeta(qPart);
-      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire', defaultProfiles.std.STU3]);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire', defaultProfiles.STU3]);
 
       // Unrecognized profile. Keep it and add STU3 standard profile.
       qPart.meta.profile = ['ftp://a.b.c'];
       LForms.FHIR.STU3.SDC._handleMeta(qPart);
-      assert.deepEqual(qPart.meta.profile, ['ftp://a.b.c', defaultProfiles.std.STU3]);
+      assert.deepEqual(qPart.meta.profile, ['ftp://a.b.c', defaultProfiles.STU3]);
 
       // Different version, should remove it and set default STU3.
       qPart.meta.profile = ['http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire'];
       LForms.FHIR.STU3.SDC._handleMeta(qPart);
-      assert.deepEqual(qPart.meta.profile, [defaultProfiles.std.STU3]);
+      assert.deepEqual(qPart.meta.profile, [defaultProfiles.STU3]);
 
       // A recognized SDC profile with same version, should append default STU3.
       qPart.meta.profile = ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0'];
       LForms.FHIR.STU3.SDC._handleMeta(qPart);
-      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0', defaultProfiles.std.STU3]);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0', defaultProfiles.STU3]);
 
       // Conversion to R4
       // A recognized profile, same version and same profile type, should leave it unchanged and add standard profile.
       qPart.meta.profile = ['http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire'];
       LForms.FHIR.R4.SDC._handleMeta(qPart);
-      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire', defaultProfiles.std.R4]);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire', defaultProfiles.R4]);
 
       // Different version, Replace with default R4.
       qPart.meta.profile = ['http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'];
       LForms.FHIR.R4.SDC._handleMeta(qPart, true);
-      assert.deepEqual(qPart.meta.profile, [defaultProfiles.std.R4]);
+      assert.deepEqual(qPart.meta.profile, [defaultProfiles.R4]);
 
       // Different profile type, should set default R4.
       qPart.meta.profile = ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7'];
       LForms.FHIR.R4.SDC._handleMeta(qPart, true);
-      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7', defaultProfiles.std.R4]);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7', defaultProfiles.R4]);
 
     });
 
 
-    it('should convert to STU3 appending standard profile to questionnaire having STU3/SDC profile', () => {
+    it('should append STU3 default profile to questionnaire with STU3/SDC profile', () => {
       modifiedQ = convertQ(questionnairesSamples.sdc.STU3, 'STU3');
-      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.sdc.STU3.meta.profile[0], defaultProfiles.std.STU3]);
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.sdc.STU3.meta.profile[0], defaultProfiles.STU3]);
     });
 
-    it('should convert to STU3 appending standard profile to questionnaire having STU3/Standard profile', () => {
+    it('should append STU3 default profile to questionnaire having STU3/Standard but not matching default profile.', () => {
       modifiedQ = convertQ(questionnairesSamples.std.STU3, 'STU3');
-      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.std.STU3.meta.profile[0], defaultProfiles.std.STU3]);
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.std.STU3.meta.profile[0], defaultProfiles.STU3]);
     });
 
-    it('should convert to STU3 replacing with standard profile to questionnaire having R4/SDC profile', () => {
+    it('should convert to STU3 replacing with default STU3 profile to questionnaire with R4/SDC profile', () => {
       modifiedQ = convertQ(questionnairesSamples.sdc.R4, 'STU3');
-      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.std.STU3]); // Different version, replace
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.STU3]); // Different version, replace
     });
 
-    it('should convert to STU3 replacing with standard profile to questionnaire having R4/Standard profile', () => {
+    it('should convert to STU3 replacing with default STU3 profile to questionnaire with R4/Standard profile', () => {
       modifiedQ = convertQ(questionnairesSamples.std.R4, 'STU3');
-      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.std.STU3]); // Different version, replace
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.STU3]); // Different version, replace
     });
 
-    it('should convert to R4 replacing with standard profile to questionnaire having STU3/SDC profile', () => {
+    it('should convert to R4 replacing with default R4 profile to questionnaire having STU3/SDC profile', () => {
       modifiedQ = convertQ(questionnairesSamples.sdc.STU3, 'R4');
-      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.std.R4]);
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.R4]);
     });
 
-    it('should convert to R4 replacing with standard profile to questionnaire having STU3/Standard profile', () => {
+    it('should convert to R4 replacing with default R4 profile to questionnaire having STU3/Standard profile', () => {
       modifiedQ = convertQ(questionnairesSamples.std.STU3, 'R4');
-      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.std.R4]);
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.R4]);
     });
 
-    it('should convert to R4 appending with standard profile to questionnaire having R4/SDC profile', () => {
+    it('should append R4 default profile to questionnaire having R4/SDC profile', () => {
       modifiedQ = convertQ(questionnairesSamples.sdc.R4, 'R4');
-      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.sdc.R4.meta.profile[0], defaultProfiles.std.R4]); // Different version, replace
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.sdc.R4.meta.profile[0], defaultProfiles.R4]);
     });
 
-    it('should convert to R4 appending with standard profile to questionnaire having R4/Standard profile', () => {
+    it('should append R4 default profile to questionnaire having R4/Standard but not matching default profile', () => {
       modifiedQ = convertQ(questionnairesSamples.std.R4, 'R4');
-      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.std.R4.meta.profile[0], defaultProfiles.std.R4]); // Different version, replace
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.std.R4.meta.profile[0], defaultProfiles.R4]);
     });
   });
 
