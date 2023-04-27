@@ -485,7 +485,7 @@ const FormUtils = {
   /**
    * Detect the version of FHIR specified in the given Questionnaire.meta.profile.
    * In case of multiple profiles, pick the highest ranked version from the array.
-   * * @param profiles - Array from meta.profile
+   * @param profiles - Array from meta.profile
    * @returns {STU3|R4|R5|null} - String constants representing FHIR versions.
    */
   detectFHIRVersionFromProfiles(profiles) {

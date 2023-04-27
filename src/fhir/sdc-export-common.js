@@ -406,30 +406,24 @@ function addCommonSDCExportFns(ns) {
    * 4) When we export a questionnaire that we imported and which had meta.profile set,
    *      we will set the standard profile for that FHIR version, and remove known conflicting profile URIs.
    *  ------------
-   * @param meta - The target questionnaire.meta to export.
+   * @param meta - The target questionnaire.meta to update.
    * @private
    */
   self._handleMetaProfile = function (meta) {
     const thisVersion = LForms.Util.detectFHIRVersionFromProfiles([this.stdQProfile]);
+    const retainedProfiles = [];
 
-    if(!meta.profile) {
-      meta.profile = [];
-    }
-
-    if(meta.profile.length > 0) {
-      const retainedProfiles = [];
-      for(let i = 0; i < meta.profile; i++) {
+    if(meta.profile?.length > 0) {
+      for(let i = 0; i < meta.profile.length; i++) {
         const ver = LForms.Util.detectFHIRVersionFromProfiles([meta.profile[i]]);
-        if (!ver || ver === thisVersion) {
+        if (!ver || (ver === thisVersion && meta.profile[i] !== this.stdQProfile)) {
           // Keep profiles of this version and unknown. Others are conflicting, discard them.
           retainedProfiles.push(meta.profile[i]);
         }
       }
-      retainedProfiles.push(this.stdQProfile);
-      meta.profile = [...new Set(retainedProfiles)]; // Remove any duplicates?
-    } else {
-      meta.profile = [this.stdQProfile];
     }
+    retainedProfiles.push(this.stdQProfile);
+    meta.profile = retainedProfiles;
   };
 
 
