@@ -9,7 +9,7 @@ const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
 const _sdcPattern =
   new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
-const VersionRanks = {
+const _versionRanks = {
   STU3: 1,
   R4: 2,
   R5: 3
@@ -516,7 +516,7 @@ const FormUtils = {
       }
       if (fhirVersion) {
         const v = this._fhirVersionToRelease(fhirVersion);
-        if (!version || VersionRanks[v] > VersionRanks[version]) {
+        if (!version || _versionRanks[v] > _versionRanks[version]) {
           version = v;
         }
       }
