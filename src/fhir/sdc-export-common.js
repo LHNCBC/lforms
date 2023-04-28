@@ -59,7 +59,7 @@ function addCommonSDCExportFns(ns) {
         source = new LForms.LFormsData(source);
       }
       this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, lfData, noExtensions);
+      this._setFormLevelFields(target, source);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -98,7 +98,7 @@ function addCommonSDCExportFns(ns) {
     if (item.codeList && item.codeList.length > 0) {
       targetItem.code = item.codeList;
     }
-      
+
     // extension
     targetItem.extension = item.extension || []; // later we delete if empty
 
@@ -360,11 +360,9 @@ function addCommonSDCExportFns(ns) {
    * Set form level attributes
    * @param target a Questionnaire object
    * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @private
    */
-  self._setFormLevelFields = function(target, source, noExtensions) {
+  self._setFormLevelFields = function(target, source) {
     this.copyFields(source, target, this.formLevelFields);
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
@@ -382,10 +380,50 @@ function addCommonSDCExportFns(ns) {
     target.status = target.status ? target.status : "draft";
 
     // meta
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+    this._handleMeta(target);
+  };
 
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+
+  /**
+   * Handle Questionnaire.meta field
+   */
+  self._handleMeta = function(targetFhirQ) {
+    targetFhirQ.meta = targetFhirQ.meta ? targetFhirQ.meta : {};
+    // Handle profiles
+    this._handleMetaProfile(targetFhirQ.meta);
+  };
+
+  /**
+   * Handle Questionnaire.meta field
+   *
+   * Follows these rules:
+   * -------------
+   * 1) For new questionnaires, we just export with the standard profile
+   * 2) When we import and questionnaire which had meta.profile set, look for the highest version of
+   *      FHIR listed in meta.profile.
+   * 3) User will (optionally) be able to say which version of FHIR they want when uploading a file
+   *      (or using the lforms API)
+   * 4) When we export a questionnaire that we imported and which had meta.profile set,
+   *      we will set the standard profile for that FHIR version, and remove known conflicting profile URIs.
+   *  ------------
+   * @param meta - The target questionnaire.meta to update.
+   * @private
+   */
+  self._handleMetaProfile = function (meta) {
+    const thisVersion = LForms.Util.detectFHIRVersionFromProfiles([this.stdQProfile]);
+    const retainedProfiles = [];
+
+    if(meta.profile?.length > 0) {
+      for(let i = 0; i < meta.profile.length; i++) {
+        const ver = LForms.Util.detectFHIRVersionFromProfiles([meta.profile[i]]);
+        if (!ver || (ver === thisVersion && meta.profile[i] !== this.stdQProfile)) {
+          // Keep profiles of this version and unknown. Others are conflicting, discard them.
+          retainedProfiles.push(meta.profile[i]);
+        }
+      }
+    }
+    retainedProfiles.push(this.stdQProfile);
+    meta.profile = retainedProfiles;
   };
 
 
@@ -402,9 +440,9 @@ function addCommonSDCExportFns(ns) {
     // Fly-over, Table, Checkbox, Combo-box, Lookup
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
-      // for answers 
-      if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE" || 
-          item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" 
+      // for answers
+      if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE" ||
+          item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT"
           || item.dataType === "TM"))) {
         // search field
         if (item.externallyDefined || (item.answerValueSet && item.isSearchAutocomplete)) {
@@ -907,11 +945,11 @@ function addCommonSDCExportFns(ns) {
           answer = {[valueKey]: itemValue};
         }
       }
-      
+
       if(answer !== null) {
         answers.push(answer);
       }
-      
+
     }
 
     return answers.length === 0? null: answers;
