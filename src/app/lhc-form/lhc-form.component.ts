@@ -130,7 +130,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
             if (LForms.FHIR && self.lhcFormData.fhirVersion) {
               self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
-                self.lhcFormData._fhirResourcesLoaded = true;
                 // when a new form is loaded, run all FHIR Expressions including the initial expressions
                 // self.lhcFormData sometimes is set to null to clear the page
                 if (self.lhcFormData && (self.lhcFormData._hasResponsiveExpr || self.lhcFormData._hasInitialExpr)) {

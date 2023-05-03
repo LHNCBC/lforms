@@ -1,6 +1,6 @@
 {
   "resourceType": "Questionnaire",
-  "title": "Test Questionnaire to load saved value from answerValueSet",
+  "title": "Test Questionnaire to load saved value from answerValueSet, autocomplete",
   "status": "draft",
   "item": [
     {
@@ -13,7 +13,7 @@
       "type": "choice",
       "repeats": true,
       "linkId": "yesno2",
-      "text": "Yes-No Question 2, choice",
+      "text": "Yes-No Question 2, choice, repeats",
       "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
     },
     {
@@ -32,7 +32,14 @@
       "type": "open-choice",
       "repeats": true,
       "linkId": "yesno5",
-      "text": "Yes-No Question 5, open-choice",
+      "text": "Yes-No Question 5, open-choice, repeats",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "yesno6",
+      "text": "Yes-No Question 6, open-choice, repeats",
       "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
     }
   ]
