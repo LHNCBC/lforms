@@ -86,7 +86,8 @@ describe('FHIR answerValueSet', () => {
         });
       });
     });
-
+    
+    // using the already loaded questionnaire to get the questionnaire response
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
         let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
@@ -264,6 +265,7 @@ describe('FHIR answerValueSet', () => {
       });
     });
 
+    // using the already loaded questionnaire to get the questionnaire response
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
         let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
@@ -421,6 +423,7 @@ describe('FHIR answerValueSet', () => {
       });
     });
 
+    // using the already loaded questionnaire to get the questionnaire response
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
         let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
