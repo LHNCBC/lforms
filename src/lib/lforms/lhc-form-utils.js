@@ -5,6 +5,16 @@
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
 
+const _questionnairePattern =
+  new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
+const _sdcPattern =
+  new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
+const _versionRanks = {
+  STU3: 1,
+  R4: 2,
+  R5: 3
+};
+
 const FormUtils = {
   // TODO: need an udpate
   /**
@@ -373,12 +383,12 @@ const FormUtils = {
    *  version string cannot be mapped to a release ID.
    */
   _fhirVersionToRelease: function(versionStr) {
-    var releaseID = versionStr; // default
-    var matchData = versionStr.match(/^\d+(\.\d+)/);
+    let releaseID = versionStr; // default
+    let matchData = versionStr.match(/^\d+(\.\d+)/);
     if (matchData) {
-      var versionNum = parseFloat(matchData[0]);
+      const versionNum = parseFloat(matchData[0]);
       // Following http://www.hl7.org/fhir/directory.cfml
-      var releaseID = versionNum > 3.0 && versionNum <= 4.0 ?
+      releaseID = versionNum > 3.0 && versionNum <= 4.0 ?
         'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 'STU3' : versionStr;
     }
     return releaseID;
@@ -457,46 +467,62 @@ const FormUtils = {
 
   /**
    *  Attempts to detect the version of FHIR specified in the given resource.
+   *  In case of multiple profiles, pick the highest ranked version from the array.
+   *
    * @param fhirData a FHIR resource.  Supported resource types are currently
    *  just Questionnaire and QuestionnaireResponse.
    * @return the FHIR version, or null if the FHIR version was not explicity
    *  specified in the resource.
    */
   detectFHIRVersion: function(fhirData) {
-    var fhirVersion;
+    let version = null;
     if (fhirData.meta && fhirData.meta.profile) {
-      var profiles = fhirData.meta.profile;
-      // See http://build.fhir.org/versioning.html#mp-version
-      var questionnairePattern =
-        new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
-      var sdcPattern =
-        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
-      for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
-        var match = profiles[i].match(questionnairePattern);
-        if (match)
+      version = this.detectFHIRVersionFromProfiles(fhirData.meta.profile);
+    }
+    return version;
+  },
+
+  /**
+   * Detect the version of FHIR specified in the given Questionnaire.meta.profile.
+   * In case of multiple profiles, pick the highest ranked version from the array.
+   * @param profiles - Array from meta.profile
+   * @returns {STU3|R4|R5|null} - String constants representing FHIR versions.
+   */
+  detectFHIRVersionFromProfiles(profiles) {
+    if(!profiles || !profiles.length) {
+      return null;
+    }
+    let version = null; // STU3 | R4 | R5 etc.
+    // See http://build.fhir.org/versioning.html#mp-version
+    for (let i=0; i < profiles.length; i++) {
+      var match = profiles[i].match(_questionnairePattern);
+      let fhirVersion; // x.x
+      if (match)
+        fhirVersion = match[1];
+      else {
+        match = profiles[i].match(_sdcPattern);
+        if (match) {
           fhirVersion = match[1];
-        else {
-          match = profiles[i].match(sdcPattern);
-          if (match) {
-            fhirVersion = match[1];
-            // See http://www.hl7.org/fhir/uv/sdc/history.cfml
-            // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
-            if (fhirVersion == '2.0') {
-              fhirVersion = '3.0';
-            }
-            // use FHIR 4.0 for SDC version >= 2.1
-            else if (parseFloat(fhirVersion) >= 2.1) {
-              fhirVersion = '4.0';
-            }
+          // See http://www.hl7.org/fhir/uv/sdc/history.cfml
+          // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+          if (fhirVersion === '2.0') {
+            fhirVersion = '3.0';
+          }
+          // use FHIR 4.0 for SDC version >= 2.1
+          else if (parseFloat(fhirVersion) >= 2.1) {
+            fhirVersion = '4.0';
           }
         }
       }
+      if (fhirVersion) {
+        const v = this._fhirVersionToRelease(fhirVersion);
+        if (!version || _versionRanks[v] > _versionRanks[version]) {
+          version = v;
+        }
+      }
     }
-    if (fhirVersion)
-      fhirVersion = this._fhirVersionToRelease(fhirVersion);
-    return fhirVersion;
+    return version;
   },
-
 
   /**
    *  Looks at the structure of the given FHIR resource to determine the version
