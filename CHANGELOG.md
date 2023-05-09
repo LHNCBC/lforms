@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.3.4] 2023-05-03
+- Fixed a bug that when a QuestionnaireResponse with saved values from an answerValueSet
+  is loaded back into the Questionnaire, the saved values are not restored.
+  
 ## [33.3.3] 2023-04-19
 ### Fixed
 - Fixed a bug in updating meta.profile in exported questionnaire based on it version 

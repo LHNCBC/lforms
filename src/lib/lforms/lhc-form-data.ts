@@ -2833,7 +2833,7 @@ export default class LhcFormData {
   /**
    * Reset item.value to an answer object (or multiple answers) in item.answers, or
    * to an object where _notOnList is set to true.
-   *
+   * In the cases that answers is not loaded yet, keep the item.value as is.
    * @param item the item for which it has an item.value or item.defaultAnswers
    * @private
    */
@@ -2841,7 +2841,6 @@ export default class LhcFormData {
 
     // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
     // convert it to the internal format of {text: 'string value', _notOnList: true}
-
     var modifiedValue = null;
     // item.value has the priority over item.defaultAnswer
     // if this is a saved form with user data, default answers are not to be used.
@@ -2887,6 +2886,7 @@ export default class LhcFormData {
           }
           // for item has a answer list
           else {
+            // item.answers has a list or the answers have been loaded.
             if (Array.isArray(item.answers)) {
               for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
                 if (CommonUtils.areTwoAnswersSame(userValue, item.answers[j], item)) {
@@ -2894,25 +2894,21 @@ export default class LhcFormData {
                   found = true;
                 }
               }
+              // value is not on the answer list and it is a CWE (so that user saved values that are not on the list will be kept)
+              if (!found && item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+                userValue._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
+                listVals.push(userValue);
+              }
             }
+            // item.answers have not been loaded yet (by loadFHIRResources or by FHIR PATH expressions.)
             else {
-              found = false;
-            }
-            // a saved value or a default value is not on the list (default answer must be one of the answer items).
-            // non-matching value objects are kept, (data control or others might use data on these objects)
-            if (!found && item.dataType === CONSTANTS.DATA_TYPE.CWE && userValue) {
-              // need a new copy of the data to trigger a change in the data model in autocompleter component
-              // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
-              var userValueCopy = CommonUtils.deepCopy(userValue);
-              userValueCopy._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
-              listVals.push(userValueCopy);
+              listVals.push(userValue);
             }
           }
         }
       }
       // INT, ST, DT and TM
       else {
-        //listVals = modifiedValue.map(val => ({"text": val}));
         listVals = modifiedValue;
       }
       

@@ -1,0 +1,136 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire to load saved value from answerValueSet, radio buttons and checkboxes",
+  "status": "draft",
+  "item": [
+    {
+      "type": "choice",
+      "linkId": "yesno1",
+      "text": "Yes-No Question 1, choice, radio buttons",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "repeats": true,
+      "linkId": "yesno2",
+      "text": "Yes-No Question 2, choice, checkboxes",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow",
+      "extension": [
+        {
+            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "check-box",
+                        "display": "Check-box"
+                    }
+                ],
+                "text": "Check-box"
+            }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "linkId": "yesno3",
+      "text": "Yes-No Question 3, open-choice, radio buttons",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "yesno4",
+      "text": "Yes-No Question 4, open-choice, checkboxes",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow",
+      "extension": [
+        {
+            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "check-box",
+                        "display": "Check-box"
+                    }
+                ],
+                "text": "Check-box"
+            }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "linkId": "yesno5",
+      "text": "Yes-No Question 5, open-choice, radio buttons",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "yesno6",
+      "text": "Yes-No Question 6, open-choice, checkboxes",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow",
+      "extension": [
+        {
+            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "check-box",
+                        "display": "Check-box"
+                    }
+                ],
+                "text": "Check-box"
+            }
+        }
+      ]
+    }
+  ]
+}

@@ -1338,6 +1338,7 @@ function addCommonSDCImportFns(ns) {
         if (answers) {
           item.answers = answers;
           lfData._updateAutocompOptions(item);
+          lfData._resetItemValueWithAnswers(item);
         }
         else { // if not already loaded
           if (expURL) {
@@ -1356,6 +1357,7 @@ function addCommonSDCImportFns(ns) {
                   LForms._valueSetAnswerCache[expURL] = answers;
                   item.answers = answers;
                   lfData._updateAutocompOptions(item);
+                  lfData._resetItemValueWithAnswers(item);
                 }
               }
             }).catch(function(error) {
@@ -1373,6 +1375,7 @@ function addCommonSDCImportFns(ns) {
                 LForms._valueSetAnswerCache[vsKey] = answers;
                 item.answers = answers;
                 lfData._updateAutocompOptions(item);
+                lfData._resetItemValueWithAnswers(item);
               }
             }).catch(function(error) {
               throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
