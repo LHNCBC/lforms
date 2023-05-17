@@ -44,6 +44,9 @@ var self = {
    */
    convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {
     var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+    if (!qr) {
+      return null;
+    }
     if (!qr.id) {
       qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code ||
         qr.identifier || 'QR')

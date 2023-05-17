@@ -376,6 +376,28 @@ const CommonUtils = {
       msg = 'The question "'+item.text+'" produced the following warning:  '+msg;
     console.log(msg);
     // TBD: add a warning visible on the page.
+  },
+
+
+  /**
+   * Check if a string can be correctly converted to a valid integer number
+   * @param {*} strValue a string value
+   * @returns {boolean} 
+   */
+  isInteger(strValue) {
+    let regex = /^\s*(\+|-)?\d+\s*$/;
+    return regex.test(strValue);
+  },
+
+
+  /**
+   * Check if a string can be correctly converted to a valid float number
+   * @param {*} strValue a string value
+   * @returns {boolean} 
+   */
+  isDecimal(strValue) {
+    let regex = /^\s*(\+|-)?(\d*\.)?\d*\s*$/;
+    return regex.test(strValue);
   }
   
 };

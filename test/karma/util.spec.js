@@ -509,5 +509,53 @@ describe('Util library', function() {
       assert(!rtn);
     });
   });
+
+  describe('check numeric values', function() {
+    it('should check inteters', function() {
+      assert.equal(LForms.Util.isInteger('123'), true);
+      assert.equal(LForms.Util.isInteger(' 123'), true);
+      assert.equal(LForms.Util.isInteger('123 '), true);
+      assert.equal(LForms.Util.isInteger('+123'), true);
+      assert.equal(LForms.Util.isInteger('-123'), true);
+
+      assert.equal(LForms.Util.isInteger('123abc'), false);
+      assert.equal(LForms.Util.isInteger('abc123'), false);
+      assert.equal(LForms.Util.isInteger('123.45'), false);
+      assert.equal(LForms.Util.isInteger('+ 123'), false);
+      assert.equal(LForms.Util.isInteger('- 123'), false);
+      assert.equal(LForms.Util.isInteger('.123'), false);
+      assert.equal(LForms.Util.isInteger('123.'), false);
+    });
+  });
+
+  it('should check decimals', function() {
+    assert.equal(LForms.Util.isDecimal('123'), true);
+    assert.equal(LForms.Util.isDecimal(' 123'), true);
+    assert.equal(LForms.Util.isDecimal('123 '), true);
+    assert.equal(LForms.Util.isDecimal('+123'), true);
+    assert.equal(LForms.Util.isDecimal('-123'), true);
+    assert.equal(LForms.Util.isDecimal('.123'), true);
+    assert.equal(LForms.Util.isDecimal('123.'), true);
+
+    assert.equal(LForms.Util.isDecimal('123.45'), true);
+    assert.equal(LForms.Util.isDecimal(' 123.45'), true);
+    assert.equal(LForms.Util.isDecimal('123.45 '), true);
+    assert.equal(LForms.Util.isDecimal(' .123'), true);
+    assert.equal(LForms.Util.isDecimal('.123 '), true);
+    assert.equal(LForms.Util.isDecimal(' 123.'), true);
+    assert.equal(LForms.Util.isDecimal('123. '), true);
+    assert.equal(LForms.Util.isDecimal('.'), true);
+
+    assert.equal(LForms.Util.isDecimal('123abc'), false);
+    assert.equal(LForms.Util.isDecimal('abc123'), false);
+    assert.equal(LForms.Util.isDecimal('123.45abc'), false);
+    assert.equal(LForms.Util.isDecimal('abc123.45'), false);
+    assert.equal(LForms.Util.isDecimal('+ 123'), false);
+    assert.equal(LForms.Util.isDecimal('- 123'), false);
+    assert.equal(LForms.Util.isDecimal('+ 123.45'), false);
+    assert.equal(LForms.Util.isDecimal('- 123.45'), false);
+    assert.equal(LForms.Util.isDecimal('1.1.2'), false);
+  });
+
 });
 
