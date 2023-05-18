@@ -108,13 +108,11 @@ const Validation = {
           }
           break;
         case "INT":
-          var regex = /^\s*(\+|-)?\d+\s*$/;
-          valid = regex.test(value);
+          valid = CommonUtils.isInteger(value);
           break;
         case "REAL":
         case "QTY":
-          var regex = /^\s*[\+-]?\d+\.?\d*((\+|-)?[eE]?\d+)?\s*$/;
-          valid = regex.test(value);
+          valid = CommonUtils.isDecimal(value);
           break;
         case "PHONE":
           var regex = /(((^\s*(\d\d){0,1}\s*(-?|\.)\s*(\(?\d\d\d\)?\s*(-?|\.?)){0,1}\s*\d\d\d\s*(-?|\.?)\s*\d{4}\b)|(^\s*\+\(?(\d{1,4}\)?(-?|\.?))(\s*\(?\d{2,}\)?\s*(-?|\.?)\s*\d{2,}\s*(-?|\.?)(\s*\d*\s*(-|\.?)){0,3})))(\s*(x|ext|X)\s*\d+){0,1}$)/;

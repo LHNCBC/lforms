@@ -39,7 +39,7 @@ var self = {
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
    * @returns an array of QuestionnaireResponse and Observations, or null if there is 
-   *  no valid QuestionnaieResponse. The caller may wish to put all of the returned 
+   *  no valid QuestionnaireResponse. The caller may wish to put all of the returned 
    *  resources into a transaction Bundle for creating them on a FHIR server.
    */
    convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {

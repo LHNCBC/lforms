@@ -16,7 +16,7 @@ function addCommonSDCExportFns(ns) {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns {{}} a QuestionnaireResponse, or null if there is no valid QuestionnaieResponse.
+   * @returns {{}} a QuestionnaireResponse, or null if there is no valid QuestionnaireResponse.
    */
   self.convertLFormsToQuestionnaireResponse = function(lfData, noExtensions, subject) {
     var target = null;
