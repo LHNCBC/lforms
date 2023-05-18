@@ -534,17 +534,13 @@ describe('Util library', function() {
     assert.equal(LForms.Util.isDecimal('123 '), true);
     assert.equal(LForms.Util.isDecimal('+123'), true);
     assert.equal(LForms.Util.isDecimal('-123'), true);
-    assert.equal(LForms.Util.isDecimal('.123'), true);
     assert.equal(LForms.Util.isDecimal('123.'), true);
 
     assert.equal(LForms.Util.isDecimal('123.45'), true);
     assert.equal(LForms.Util.isDecimal(' 123.45'), true);
     assert.equal(LForms.Util.isDecimal('123.45 '), true);
-    assert.equal(LForms.Util.isDecimal(' .123'), true);
-    assert.equal(LForms.Util.isDecimal('.123 '), true);
     assert.equal(LForms.Util.isDecimal(' 123.'), true);
     assert.equal(LForms.Util.isDecimal('123. '), true);
-    assert.equal(LForms.Util.isDecimal('.'), true);
 
     assert.equal(LForms.Util.isDecimal('123e10'), true);
     assert.equal(LForms.Util.isDecimal('123+e10'), true);
@@ -577,6 +573,10 @@ describe('Util library', function() {
     assert.equal(LForms.Util.isDecimal('+ 123.45'), false);
     assert.equal(LForms.Util.isDecimal('- 123.45'), false);
     assert.equal(LForms.Util.isDecimal('1.1.2'), false);
+    assert.equal(LForms.Util.isDecimal('.123'), false);
+    assert.equal(LForms.Util.isDecimal(' .123'), false);
+    assert.equal(LForms.Util.isDecimal('.123 '), false);
+    assert.equal(LForms.Util.isDecimal('.'), false);
 
     assert.equal(LForms.Util.isDecimal('123e 10'), false);
     assert.equal(LForms.Util.isDecimal('123 e10'), false);

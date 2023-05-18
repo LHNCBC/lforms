@@ -31,7 +31,7 @@ const CommonUtils = {
 
   intRegex: /^\s*(\+|-)?\d+\s*$/,
 
-  decRegex: /^\s*[\+-]?\d*\.?\d*((\+|-)?[eE]?\d+)?\s*$/,
+  decRegex: /^\s*[\+-]?\d+\.?\d*((\+|-)?[eE]?\d+)?\s*$/,
 
   /**
    * Check if two answers can be treated as same
