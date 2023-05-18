@@ -29,6 +29,10 @@ const CommonUtils = {
     'M-D HH:mm',
   ],
 
+  intRegex: /^\s*(\+|-)?\d+\s*$/,
+
+  decRegex: /^\s*[\+-]?\d*\.?\d*((\+|-)?[eE]?\d+)?\s*$/,
+
   /**
    * Check if two answers can be treated as same
    * @param answer an answer item that could have part of the attributes set. 
@@ -385,8 +389,7 @@ const CommonUtils = {
    * @returns {boolean} 
    */
   isInteger(strValue) {
-    let regex = /^\s*(\+|-)?\d+\s*$/;
-    return regex.test(strValue);
+    return this.intRegex.test(strValue);
   },
 
 
@@ -396,8 +399,7 @@ const CommonUtils = {
    * @returns {boolean} 
    */
   isDecimal(strValue) {
-    let regex = /^\s*(\+|-)?(\d*\.)?\d*\s*$/;
-    return regex.test(strValue);
+    return this.decRegex.test(strValue);
   }
   
 };
