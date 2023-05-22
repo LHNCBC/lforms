@@ -31,7 +31,7 @@ const CommonUtils = {
 
   intRegex: /^\s*(\+|-)?\d+\s*$/,
 
-  decRegex: /^\s*[\+-]?([\+-]?\d+\.?\d*([\+|-]?[eE]?\d+)?|[\+-]?\d*\.?\d+([\+|-]?[eE]?\d+)?)\s*$/,
+  decRegex: /^\s*[\+-]?([\+-]?\d+\.?\d*([eE]?[\+|-]?\d+)?|[\+-]?\d*\.?\d+[eE]?([\+|-]?\d+)?)\s*$/,
   
   /**
    * Check if two answers can be treated as same
@@ -384,24 +384,23 @@ const CommonUtils = {
 
 
   /**
-   * Check if a string can be correctly converted to a valid integer number
-   * @param {*} strValue a string value
+   * Check if a value is an integer or if it can be correctly converted to a valid float number
+   * @param {*} Value a string or numeric value to be tested
    * @returns {boolean} 
    */
-  isInteger(strValue) {
-    return this.intRegex.test(strValue);
+  isInteger(value) {
+    return Number.isInteger(value) ? true: typeof value === "number" ? false : this.intRegex.test(value);
   },
 
 
   /**
-   * Check if a string can be correctly converted to a valid float number
-   * @param {*} strValue a string value
+   * Check if a value is a number or if it can be correctly converted to a valid float number
+   * @param {*} value a string or numeric value to be tested
    * @returns {boolean} 
    */
-  isDecimal(strValue) {
-    return this.decRegex.test(strValue);
+  isDecimal(value) {
+    return typeof value === "number" ? true : this.decRegex.test(value);
   }
-  
 };
 
 export default CommonUtils;
