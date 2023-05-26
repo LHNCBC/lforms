@@ -61,7 +61,7 @@ function makeConfigs(env) {
     allFHIREntryFiles.push(entryFile);
     let nonMinConfig = commonConfig();
     nonMinConfig.entry = entryFile;
-    nonMinConfig.output.path = rootDirPath+'/src/fhir/'+version;
+    nonMinConfig.output.path = rootDirPath+'/dist/fhir/'+version;
     nonMinConfig.output.filename = 'lformsFHIR.js';
     nonMinConfig.mode = 'none';
     nonMinConfig.externals = fhirExternals;

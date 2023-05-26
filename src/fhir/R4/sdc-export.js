@@ -1,5 +1,5 @@
 /**
- * Additional functions to convert LForms to FHIR R5 Questionnaire/QuestionnaireResponse
+ * Additional functions to convert LForms to FHIR R4 Questionnaire/QuestionnaireResponse
  */
 function addR4ExportFns(ns) {
   "use strict";

@@ -9,11 +9,6 @@
       "questionnaire": {
         "reference": "Questionnaire/{{questionnaireId}}"
       },
-      "meta": {
-        "profile": [
-          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse"
-        ]
-      },
       "item": [
         {
           "linkId": "/54126-8",

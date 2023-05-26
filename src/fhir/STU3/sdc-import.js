@@ -58,6 +58,8 @@ function addSDCImportFns(ns) {
 
   /**
    * Parse questionnaire object for answer cardinality
+   * 
+   * NOT USED!!
    *
    * @param lfItem {object} - LForms item object to assign answer cardinality
    * @param qItem {object} - Questionnaire item object
@@ -441,10 +443,10 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Find a matching repeating item by item code and the index in the items array
+   * Find a matching repeating item by item code and the index in the repeating item array
    * @param parentItem a parent item
    * @param linkId linkId of a repeating (or non-repeating) item
-   * @param index index of the item in the sub item array of the parent item
+   * @param index index of the repeating item
    * @returns {{}} a matching item
    * @private
    */

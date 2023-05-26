@@ -245,7 +245,7 @@ function addSDCImportFns(ns) {
     if (qItem.answerOption) {
       qItem.answerOption.forEach(function(elem) {
         if (elem.initialSelected) {
-          self._processDefaultAnswerValue(elem, vals, qItem.type)
+          self._processDefaultAnswerValue(elem, vals, qItem)
         }
       })
     }
@@ -253,7 +253,7 @@ function addSDCImportFns(ns) {
     // check item.initial
     if (qItem.initial) {
       qItem.initial.forEach(function(elem) {
-        self._processDefaultAnswerValue(elem, vals, qItem.type)
+        self._processDefaultAnswerValue(elem, vals, qItem)
       });
     }
 
@@ -411,10 +411,10 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Find a matching repeating item by item code and the index in the items array
+   * Find a matching repeating item by item code and the index in the repeating item array
    * @param parentItem a parent item
    * @param linkId linkId of a repeating (or non-repeating) item
-   * @param index index of the item in the sub item array of the parent item
+   * @param index index of the repeating item
    * @returns {{}} a matching item
    * @private
    */

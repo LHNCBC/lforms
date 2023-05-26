@@ -24,7 +24,6 @@ function createLinkId(lfItems, codeList) {
 
 // Tests for FHIR SDC library
 var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
-//const fhirVersions = ["R4", "STU3"];
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     var fhir = LForms.FHIR[fhirVersion];

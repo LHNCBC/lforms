@@ -30,9 +30,9 @@ function addR4ImportFns(ns) {
    * Process answer value
    * @param {*} answer an entry in item.answerOption or in item.initial
    * @param {*} vals an array that contains all default answers
-   * @param {string} itemType questionnaire item's type
+   * @param {*} item a questionnaire item
    */
-  self._processDefaultAnswerValue = function (answer, vals, itemType) {
+  self._processDefaultAnswerValue = function (answer, vals, item) {
     answer = LForms.Util.deepCopy(answer); // Use a clone to avoid changing the original
     var val = answer.valueCoding;
     if (val)

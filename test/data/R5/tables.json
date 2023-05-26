@@ -9,11 +9,6 @@
     "title": "displayControls (answerLayout and questionLayout)",
     "resourceType": "Questionnaire",
     "status": "draft",
-    "meta": {
-        "profile": [
-            "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
-        ]
-    },
     "item": [
         {
             "type": "group",

@@ -39,7 +39,7 @@ module.exports = function(config) {
       'dist/lforms/webcomponent/runtime.js',
       'dist/lforms/webcomponent/polyfills.js',
       'dist/lforms/webcomponent/main.js',
-      'src/fhir/*/lformsFHIR.js',
+      'dist/fhir/*/lformsFHIR.js',
       'test/karma/*.js'
     ],
 

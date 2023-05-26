@@ -1,4 +1,4 @@
-import { InternalUtil } from '../lib/lforms/internal-utils.js';
+import { InternalUtil } from '../../lib/lforms/internal-utils.js';
 import {importFHIRQuantity} from './import-common.js'
 
 // TBD import this path function from fhirpath.js.  When that is done, also
@@ -1381,27 +1381,6 @@ function addCommonSDCImportFns(ns) {
       }
     }
     return pendingPromises;
-  };
-
-
-  /**
-   * Handle the item.value in QuestionnaireResponse for non-CODING typed items
-   * @param {*} fhirValue a value of item in QuestionnaireResponse, without the 'valueX' key
-   * @param {*} lfItem an item in lforms
-   * @returns the answer
-   */
-  self._processNonCodingAnswerValueInQR = function(fhirValue, lfItem) {
-    let answer;
-    if (lfItem.dataType === "ST" || lfItem.dataType === "INT" || 
-        lfItem.dataType === "DT" || lfItem.dataType === "TM") {
-      var itemAnswers = lfItem.answers;
-      for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
-        if (fhirValue === itemAnswers[j].text) {
-          answer = itemAnswers[j]; 
-        }
-      }
-    }
-    return answer;
   };
 
 

@@ -1,10 +1,5 @@
 {
   "resourceType": "QuestionnaireResponse",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|2.7"
-    ]
-  },
   "status": "completed",
   "authored": "2019-08-30T19:36:11.138Z",
   "item": [

@@ -196,7 +196,7 @@ function addR5ExportFns(ns) {
                 answer = {[valueKey]: itemValue.text};
               }
             }
-          }          
+          }
         }
         // without an answer list
         // for Quantity
