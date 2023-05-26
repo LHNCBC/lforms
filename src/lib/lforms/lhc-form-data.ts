@@ -41,6 +41,10 @@ export default class LhcFormData {
   // whether the form data contains saved user data
   hasSavedData = false;
 
+  // whether the form data is valid 
+  // (it only checks on INT/REAL types when getUserData() is called.)
+  _invalidData = false;
+
   // repeatable question items derived from items
   _repeatableItems = {};
 
@@ -1456,6 +1460,7 @@ export default class LhcFormData {
    */
   getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
     var ret:any = {};
+    this._invalidData = false;
     // check the value on each item and its subtree
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
@@ -1727,11 +1732,27 @@ export default class LhcFormData {
               retValue = value; // value is an object or an array of {text: value, ...}
             }
             else {
-              retValue = Array.isArray(value) ? value.map(val=> parseInt(val)) : parseInt(value);
+              if (Array.isArray(value)) {
+                retValue = value.map(val => {
+                  if (!CommonUtils.isInteger(val)) {
+                    this._invalidData = true;
+                  }
+                  return parseInt(val)
+                });
+              }
+              else {
+                if (!CommonUtils.isInteger(value)) {
+                  this._invalidData = true;
+                }
+                retValue = parseInt(value);
+              }
             }
             break;
           case CONSTANTS.DATA_TYPE.REAL:
           case CONSTANTS.DATA_TYPE.QTY:
+            if (!CommonUtils.isDecimal(value)) {
+              this._invalidData = true;
+            }
             retValue = parseFloat(value);
             break;
           case CONSTANTS.DATA_TYPE.DT:

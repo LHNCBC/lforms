@@ -32,19 +32,22 @@ var self = {
    *  extension).
    *
    * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *  The default is false.
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without 
+   *  any extensions. The default is false.
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations.  Observations
-   *  will have derivedFrom set to a temporary reference created for the returned
-   *  QuestionnaireResponse (the first element of the array). The caller may
-   *  wish to put all of the returned resources into a transaction Bundle for
-   *  creating them on a FHIR server.
+   * @returns an array of QuestionnaireResponse and Observations, or null if there is 
+   *  no valid QuestionnaireResponse. Observations will have derivedFrom set to a 
+   *  temporary reference created for the returned QuestionnaireResponse 
+   *  (the first element of the array). The caller may wish to put all of the 
+   *  returned resources into a transaction Bundle for creating them on a FHIR server.
    */
   convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {
     var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+    if (!qr) {
+      return null;
+    }
     if (!qr.id) {
       qr.id = this._commonExport._getUniqueId(
         qr.identifier && qr.identifier.value || 'QR')

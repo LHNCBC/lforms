@@ -28,6 +28,24 @@ for (let i = 0, len = fhirVersions.length; i < len; ++i) {
             tp.openBuildTestFHIRPath();
             testBMIFormula();
           });
+
+          it('should not stop running fhirpath expression when a valid QuestionnaireResponse is not available', () => {
+            TestUtil.waitForFHIRLibsLoaded();
+            tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
+            cy.byId('/29463-7/1').click().type('123abc');
+            cy.byId('/8302-2/1').click().type('60');
+            cy.byId('/39156-5/1').should('have.value', '');
+
+            cy.byId('/29463-7/1').click().clear().type('70');
+            cy.byId('/39156-5/1').should('have.value', 30.1);
+
+            cy.byId('/29463-7/1').click().clear().type('123abc');
+            if (fhirVersion === "R4")
+              cy.byId('/39156-5/1').should('have.value', 53); // the calculated bmi value when '123' was typed. 
+            else if (fhirVersion === "STU3")
+              cy.byId('/39156-5/1').should('have.value', 52.9); // the calculated bmi value when '123' was typed. 
+            
+          })
         });
       });
 

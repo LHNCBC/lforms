@@ -16,29 +16,31 @@ function addCommonSDCExportFns(ns) {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns {{}}
+   * @returns {{}} a QuestionnaireResponse, or null if there is no valid QuestionnaireResponse.
    */
   self.convertLFormsToQuestionnaireResponse = function(lfData, noExtensions, subject) {
-    var target = {};
+    var target = null;
     if (lfData) {
       var source = lfData.getFormData(true,true,true);
-      this._processRepeatingItemValues(source);
-      this._setResponseFormLevelFields(target, source, noExtensions);
-
-      if (source.items && Array.isArray(source.items)) {
-        var tmp = this._processResponseItem(source, true);
-        if(tmp && tmp.item && tmp.item.length) {
-          target.item = tmp.item;
+      if (!lfData._invalidData) {
+        target = {};
+        this._processRepeatingItemValues(source);
+        this._setResponseFormLevelFields(target, source, noExtensions);
+  
+        if (source.items && Array.isArray(source.items)) {
+          var tmp = this._processResponseItem(source, true);
+          if(tmp && tmp.item && tmp.item.length) {
+            target.item = tmp.item;
+          }
         }
+
+        // FHIR doesn't allow null values, strip them out.
+        LForms.Util.pruneNulls(target);
+        if (subject)
+          target["subject"] = LForms.Util.createLocalFHIRReference(subject);
+        this._commonExport._setVersionTag(target);
       }
     }
-    // FHIR doesn't allow null values, strip them out.
-    LForms.Util.pruneNulls(target);
-
-    if (subject)
-      target["subject"] = LForms.Util.createLocalFHIRReference(subject);
-
-    this._commonExport._setVersionTag(target);
     return target;
   };
 
