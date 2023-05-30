@@ -245,7 +245,7 @@ function addSDCImportFns(ns) {
     if (qItem.answerOption) {
       qItem.answerOption.forEach(function(elem) {
         if (elem.initialSelected) {
-          self._processDefaultAnswerValue(elem, vals, qItem)
+          self._processDefaultAnswerValue(elem, vals, qItem.type)
         }
       })
     }
@@ -253,7 +253,7 @@ function addSDCImportFns(ns) {
     // check item.initial
     if (qItem.initial) {
       qItem.initial.forEach(function(elem) {
-        self._processDefaultAnswerValue(elem, vals, qItem)
+        self._processDefaultAnswerValue(elem, vals, qItem.type)
       });
     }
 

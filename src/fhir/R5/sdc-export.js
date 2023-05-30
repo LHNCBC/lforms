@@ -3,7 +3,8 @@
  */
 function addR5ExportFns(ns) {
   "use strict";
-  
+
+  const _isAnswerOptionType = {'CODING':true, 'ST':true, 'INT':true, 'DT':true, 'TM':true};
   var self = ns;
 
   /**
@@ -175,8 +176,7 @@ function addR5ExportFns(ns) {
         var answer = null;
         // with an answer list
         if (item.answers) {
-          if (dataType === 'CODING' || dataType === 'ST' || dataType === 'INT' ||
-              dataType === 'DT' || dataType === 'TM') {
+          if (_isAnswerOptionType[dataType]) {
             // for optionsOrString, the value could be string if it is a user typed, not-on-list value
             if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
               answer = { "valueString" : itemValue };
