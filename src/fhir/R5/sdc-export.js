@@ -191,7 +191,7 @@ function addR5ExportFns(ns) {
                 answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
               }
               // for INT, ST, DT, TM
-              else if (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM') {
+              else {
                 var valueKey = this._getValueKeyByDataType("value", item);
                 answer = {[valueKey]: itemValue.text};
               }
