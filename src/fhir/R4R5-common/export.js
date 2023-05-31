@@ -1,4 +1,4 @@
-// R4-specific export code common to DiagnosticReport and SDC.
+// R4/R5-specific export code common to DiagnosticReport and SDC.
 
 import commonExport from '../common/export-common.js';
 

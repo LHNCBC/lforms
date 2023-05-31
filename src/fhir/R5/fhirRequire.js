@@ -1,4 +1,4 @@
-// Initializes the FHIR structure for R4
+// Initializes the FHIR structure for R5
 let fhirVersion = 'R5';
 if (!LForms.FHIR)
   LForms.FHIR = {};

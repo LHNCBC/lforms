@@ -1,5 +1,5 @@
 /**
- * A package to handle FHIR Questionnaire and SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
+ * A package to handle FHIR Questionnaire and SDC Questionnaire and QuestionnaireResponse for LForms
  *
  * FHIR Questionnaire:
  * https://www.hl7.org/fhir/questionnaire.html

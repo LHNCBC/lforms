@@ -1,5 +1,5 @@
 /**
- * Additional functions to convert FHIR R5 Questionnaire/QuestionnaireResponse to LForms
+ * Additional functions to convert FHIR STU3/R4 Questionnaire/QuestionnaireResponse to LForms
  */
 function addSTU3R4ImportFns(ns) {
   "use strict";
