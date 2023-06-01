@@ -502,7 +502,15 @@ export class LhcAutocompleteComponent implements OnChanges {
     if (this.acType === 'search') {
       // single selection
       if (!this.multipleSelections) {
-        this.selectedItems = this.getSearchItemModelData(itemText, onList);
+        let newItem = this.getSearchItemModelData(itemText, onList);
+        // For answerValueSet, when 'questionnaire-itemControl' is set to be 'autocomplete',
+        // it is a search field in lforms. 
+        // The 'system' value is returned in 'code_system' from the autocompleter.
+        if (newItem && newItem.code_system && !newItem.system) {
+          newItem.system = newItem.code_system;
+          delete newItem.code_system;
+        }
+        this.selectedItems = newItem;
       }
       // multiple selection
       else {
@@ -515,9 +523,16 @@ export class LhcAutocompleteComponent implements OnChanges {
         else {
           let newItem = this.getSearchItemModelData(itemText, onList);
           if (newItem) {
-              // add the new item
-              // (create a new array so that change detection is triggered)
-              this.selectedItems = [...this.selectedItems, newItem];
+            // For answerValueSet, when 'questionnaire-itemControl' is set to be 'autocomplete',
+            // it is a search field in lforms. 
+            // The 'system' value is returned in 'code_system' from the autocompleter.
+            if (newItem.code_system && !newItem.system) {
+              newItem.system = newItem.code_system;
+              delete newItem.code_system;
+            }
+            // add the new item
+            // (create a new array so that change detection is triggered)
+            this.selectedItems = [...this.selectedItems, newItem];
           }
         }
       }

@@ -1,0 +1,160 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire to load saved value from answerValueSet, autocomplete, searchfield",
+  "status": "draft",
+  "item": [
+    {
+      "type": "choice",
+      "linkId": "yesno1",
+      "text": "Yes-No Question 1, choice,",
+      "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "autocomplete",
+                "display": "Auto-complete"
+              }
+            ],
+            "text": "Auto-complete"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "repeats": true,
+      "linkId": "yesno2",
+      "text": "Yes-No Question 2, choice, repeats",
+      "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "autocomplete",
+                "display": "Auto-complete"
+              }
+            ],
+            "text": "Auto-complete"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "linkId": "yesno3",
+      "text": "Yes-No Question 3, open-choice",
+      "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "autocomplete",
+                "display": "Auto-complete"
+              }
+            ],
+            "text": "Auto-complete"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "linkId": "yesno4",
+      "text": "Yes-No Question 4, open-choice",
+      "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "autocomplete",
+                "display": "Auto-complete"
+              }
+            ],
+            "text": "Auto-complete"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "yesno5",
+      "text": "Yes-No Question 5, open-choice, repeats",
+      "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "autocomplete",
+                "display": "Auto-complete"
+              }
+            ],
+            "text": "Auto-complete"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }
+      ]
+    },
+    {
+      "type": "open-choice",
+      "repeats": true,
+      "linkId": "yesno6",
+      "text": "Yes-No Question 6, open-choice, repeats",
+      "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "autocomplete",
+                "display": "Auto-complete"
+              }
+            ],
+            "text": "Auto-complete"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }
+      ]
+    }
+  ]
+}
