@@ -5,7 +5,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [33.3.6] 2023-06-01
 ### Fixed
 - Fixed a bug that the 'system' value is missing in QuestionnaireResponse when
-  an item has an answerValueSet and it also has a questionnaire-item-contontrol
+  an item has an answerValueSet and it also has a questionnaire-item-control
   extension that is 'autocomplete' (search field).
 
 ## [33.3.5] 2023-05-17
