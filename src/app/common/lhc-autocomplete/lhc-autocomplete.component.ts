@@ -471,12 +471,13 @@ export class LhcAutocompleteComponent implements OnChanges {
    * Get the selected answer object from a 'search' autocompleter
    * @param itemText answer's text
    * @param onList whether the answer's text matches the answers texts on the list
+   * @returns {{}} an answer object where 'code_system' is renamed to 'system' if 
+   *               there is a 'code_system'
    */
+
   getSearchItemModelData(itemText, onList) {
-    var rtn;
-    if (itemText === '')
-      rtn = null;
-    else {
+    var rtn =null;
+    if (itemText !== '') {
       let item = this.acInstance.getItemData(itemText);
       if (onList) {
         rtn = item;
