@@ -471,12 +471,14 @@ export class LhcAutocompleteComponent implements OnChanges {
    * Get the selected answer object from a 'search' autocompleter
    * @param itemText answer's text
    * @param onList whether the answer's text matches the answers texts on the list
+   * @returns {{}} an answer object with where 'code_system' is renamed to 'system' if 
+   *               there is a 'code_system', along with 'text', 'code' and 
+   *               an optional 'data'.
    */
+
   getSearchItemModelData(itemText, onList) {
-    var rtn;
-    if (itemText === '')
-      rtn = null;
-    else {
+    var rtn =null;
+    if (itemText !== '') {
       let item = this.acInstance.getItemData(itemText);
       if (onList) {
         rtn = item;
@@ -484,6 +486,14 @@ export class LhcAutocompleteComponent implements OnChanges {
       else if (!onList && this.allowNotOnList) {
         rtn = item;
         rtn._notOnList = true;
+      }
+      // For answerValueSet, when 'questionnaire-itemControl' is set to be 'autocomplete',
+      // it is a search field in lforms. 
+      // The 'system' value is returned in 'code_system' from the autocompleter.
+      // Convert code_system to system
+      if (rtn && rtn.code_system && !rtn.system) {
+        rtn.system = rtn.code_system;
+        delete rtn.code_system;
       }
     }
     return rtn;
@@ -515,9 +525,9 @@ export class LhcAutocompleteComponent implements OnChanges {
         else {
           let newItem = this.getSearchItemModelData(itemText, onList);
           if (newItem) {
-              // add the new item
-              // (create a new array so that change detection is triggered)
-              this.selectedItems = [...this.selectedItems, newItem];
+            // add the new item
+            // (create a new array so that change detection is triggered)
+            this.selectedItems = [...this.selectedItems, newItem];
           }
         }
       }
