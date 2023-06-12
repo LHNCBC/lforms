@@ -1140,6 +1140,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
               assert.equal(convertedLfData.code, '54127-6N');
               assert.equal(convertedLfData.codeSystem, 'LOINC');
+              assert.equal(convertedLfData.copyrightNotice, 'A Copyright notice of the form', "LHCFormData.copyrightNotice should be copied from Questionnaire.copyright property");
               assert.equal(convertedLfData.codeList.length, 1);
               assert.equal(convertedLfData.codeList[0].code, '54127-6N');
               assert.equal(convertedLfData.codeList[0].system, 'http://loinc.org');
@@ -1499,6 +1500,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var out = fhir.SDC._processItem(item, {});
             assert.equal(out.prefix, "A:");
             assert.equal(out.text, "fill in weight");
+          });
+
+          it('should convert copyrightNotice to copyright', function(done) {
+            $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
+              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)));
+              assert.equal(fhirQ.copyright, FHTData.copyrightNotice, "copyright should be populated with lForms copyrightText value");
+              assert.equal(fhirQ.copryrightNotice, undefined, "copyrightText property should not exist on questionnaire");
+              done();
+            });
           });
 
           if(fhirVersion === 'STU3') {

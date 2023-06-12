@@ -26,7 +26,7 @@ function addCommonSDCExportFns(ns) {
         target = {};
         this._processRepeatingItemValues(source);
         this._setResponseFormLevelFields(target, source, noExtensions);
-  
+
         if (source.items && Array.isArray(source.items)) {
           var tmp = this._processResponseItem(source, true);
           if(tmp && tmp.item && tmp.item.length) {
@@ -380,6 +380,11 @@ function addCommonSDCExportFns(ns) {
     // resourceType
     target.resourceType = "Questionnaire";
     target.status = target.status ? target.status : "draft";
+
+    // handle lforms copyright
+    if (source.copyrightNotice) {
+      target.copyright = source.copyrightNotice;
+    }
 
     // meta
     this._handleMeta(target);

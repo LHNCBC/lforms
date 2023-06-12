@@ -3,6 +3,7 @@
   "code": "54127-6N",
   "name": "USSG-FHT, (with mock-up items for skip logic demo)",
   "template": "table",
+  "copyrightNotice": "A Copyright notice of the form",
   "items": [
     {
       "questionCode": "54126-8",
