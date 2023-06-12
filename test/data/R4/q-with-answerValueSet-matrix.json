@@ -1,0 +1,173 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire to load saved value from answerValueSet, matrix",
+  "status": "draft",
+  "item": [
+    {
+      "lindId": "g1",
+      "type": "group",
+      "text": "Matrix with checkboxes (table, choice)",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "choice",
+          "linkId": "/g1m1",
+          "text": "Question #1",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "choice",
+          "linkId": "/g1m2",
+          "text": "Question #2",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "choice",
+          "linkId": "/g1m3",
+          "text": "Question #3",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        }
+      ]
+    },
+    {
+      "lindId": "g2",
+      "type": "group",
+      "text": "Matrix with checkboxes (table, choice, repeats)",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "choice",
+          "repeats": true,
+          "linkId": "/g2m1",
+          "text": "Question #1",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "choice",
+          "repeats": true,
+          "linkId": "/g2m2",
+          "text": "Question #2",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "choice",
+          "repeats": true,
+          "linkId": "/g2m3",
+          "text": "Question #3",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        }
+      ]
+    },
+    {
+      "lindId": "g3",
+      "type": "group",
+      "text": "Matrix with raido buttons (table, open-choice)",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "open-choice",
+          "linkId": "/g3m1",
+          "text": "Question #1",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "open-choice",
+          "linkId": "/g3m2",
+          "text": "Question #2",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "open-choice",
+          "linkId": "/g3m3",
+          "text": "Question #3",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        }
+      ]
+    },
+    {
+      "lindId": "g4",
+      "type": "group",
+      "text": "Matrix with checkboxes (table, open-choice, repeats)",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "open-choice",
+          "repeats": true,
+          "linkId": "/g4m1",
+          "text": "Question #1",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "open-choice",
+          "repeats": true,
+          "linkId": "/g4m2",
+          "text": "Question #2",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        },
+        {
+          "type": "open-choice",
+          "repeats": true,
+          "linkId": "/g4m3",
+          "text": "Question #3",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+        }
+      ]
+    }
+  ]
+}

@@ -958,9 +958,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               name: 'test name',
               version: '0.0.1',
               resourceType: 'Questionnaire',
-              "meta": {
-                "profile": [
-                  "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+              meta: {
+                profile: [
+                  "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
                 ]
               },
               status: 'draft',
@@ -992,6 +992,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             // console.log( JSON.stringify(convertedFhirData))
             // console.log( JSON.stringify(fhirData))
+
+            // Ignore meta for comparison.
+            delete convertedFhirData.meta;
+            delete fhirData.meta;
+
             assert.deepEqual(fhirData, convertedFhirData);
 
           });
@@ -1486,24 +1491,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)));
 
-              assert.equal(fhirQ.meta.profile[0], fhir.SDC.QProfile);
+              assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
               assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
               done();
             });
           });
 
-          it('should convert to standard Questionnaire without any extensions', function(done) {
-            $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
-              var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)), true);
-
-              assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
-              assert.equal(fhirQ.item[0].item[1].extension, undefined);
-
-              assert.equal(fhirQ.toString().match(/extension/), undefined);
-              done();
-            });
-          });
-
+          
           it('should convert a prefix of an item', function () {
             var item = {
               "questionCode": "12345",
@@ -1643,7 +1637,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             it('should convert to SDC Questionnaire with extensions', function(done) {
               $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
                 var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
-                assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
+                assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
                 done();
               });
             });
@@ -1663,8 +1657,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQR = LForms.Util.getFormFHIRData(
-                  'QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData),
-                  {noExtensions: true});
+                  'QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
               assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
               assert.equal(fhirQR.toString().match(/extension/), undefined);
               done();

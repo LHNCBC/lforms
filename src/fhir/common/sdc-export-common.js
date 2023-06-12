@@ -11,34 +11,34 @@ function addCommonSDCExportFns(ns) {
   /**
    * Convert LForms captured data to FHIR SDC QuestionnaireResponse
    * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *  The default is false.
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns {{}}
+   * @returns {{}} a QuestionnaireResponse, or null if there is no valid QuestionnaireResponse.
    */
-  self.convertLFormsToQuestionnaireResponse = function(lfData, noExtensions, subject) {
-    var target = {};
+  self.convertLFormsToQuestionnaireResponse = function(lfData, subject) {
+    var target = null;
     if (lfData) {
       var source = lfData.getFormData(true,true,true);
-      this._processRepeatingItemValues(source);
-      this._setResponseFormLevelFields(target, source, noExtensions);
-
-      if (source.items && Array.isArray(source.items)) {
-        var tmp = this._processResponseItem(source, true);
-        if(tmp && tmp.item && tmp.item.length) {
-          target.item = tmp.item;
+      if (!lfData._invalidData) {
+        target = {};
+        this._processRepeatingItemValues(source);
+        this._setResponseFormLevelFields(target, source);
+  
+        if (source.items && Array.isArray(source.items)) {
+          var tmp = this._processResponseItem(source, true);
+          if(tmp && tmp.item && tmp.item.length) {
+            target.item = tmp.item;
+          }
         }
+
+        // FHIR doesn't allow null values, strip them out.
+        LForms.Util.pruneNulls(target);
+        if (subject)
+          target["subject"] = LForms.Util.createLocalFHIRReference(subject);
+        this._commonExport._setVersionTag(target);
       }
     }
-    // FHIR doesn't allow null values, strip them out.
-    LForms.Util.pruneNulls(target);
-
-    if (subject)
-      target["subject"] = LForms.Util.createLocalFHIRReference(subject);
-
-    this._commonExport._setVersionTag(target);
     return target;
   };
 
@@ -46,11 +46,9 @@ function addCommonSDCExportFns(ns) {
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @returns {{}}
    */
-  self.convertLFormsToQuestionnaire = function(lfData, noExtensions) {
+  self.convertLFormsToQuestionnaire = function(lfData) {
     var target = {};
 
     if (lfData) {
@@ -59,12 +57,12 @@ function addCommonSDCExportFns(ns) {
         source = new LForms.LFormsData(source);
       }
       this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, lfData, noExtensions);
+      this._setFormLevelFields(target, source);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
         for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          var newItem = this._processItem(source.items[i], source, noExtensions);
+          var newItem = this._processItem(source.items[i], source);
           target.item.push(newItem);
         }
       }
@@ -81,12 +79,10 @@ function addCommonSDCExportFns(ns) {
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @returns {{}}
    * @private
    */
-  self._processItem = function(item, source, noExtensions) {
+  self._processItem = function(item, source) {
     var targetItem = {};
 
     // type
@@ -103,7 +99,7 @@ function addCommonSDCExportFns(ns) {
     if (item.codeList && item.codeList.length > 0) {
       targetItem.code = item.codeList;
     }
-      
+
     // extension
     targetItem.extension = item.extension || []; // later we delete if empty
 
@@ -169,7 +165,7 @@ function addCommonSDCExportFns(ns) {
       targetItem.readOnly = true;
     }
 
-    this._handleChoiceField(targetItem, item, noExtensions);
+    this._handleChoiceField(targetItem, item);
     this._handleTerminologyServer(targetItem, item);
 
     // initialValue, for default values
@@ -184,7 +180,7 @@ function addCommonSDCExportFns(ns) {
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var newItem = this._processItem(item.items[i], source, noExtensions);
+        var newItem = this._processItem(item.items[i], source);
         targetItem.item.push(newItem);
       }
     }
@@ -247,8 +243,8 @@ function addCommonSDCExportFns(ns) {
     // handle special constraints for "display" item
     this._handleSpecialConstraints(targetItem, item);
 
-    // if no extensions are allowed or there is no extension, remove it
-    if (noExtensions || targetItem.extension.length === 0)
+    // if there is no extension, remove it
+    if (targetItem.extension.length === 0)
       delete targetItem.extension;
 
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
@@ -365,11 +361,9 @@ function addCommonSDCExportFns(ns) {
    * Set form level attributes
    * @param target a Questionnaire object
    * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @private
    */
-  self._setFormLevelFields = function(target, source, noExtensions) {
+  self._setFormLevelFields = function(target, source) {
     this.copyFields(source, target, this.formLevelFields);
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
@@ -387,10 +381,50 @@ function addCommonSDCExportFns(ns) {
     target.status = target.status ? target.status : "draft";
 
     // meta
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+    this._handleMeta(target);
+  };
 
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+
+  /**
+   * Handle Questionnaire.meta field
+   */
+  self._handleMeta = function(targetFhirQ) {
+    targetFhirQ.meta = targetFhirQ.meta ? targetFhirQ.meta : {};
+    // Handle profiles
+    this._handleMetaProfile(targetFhirQ.meta);
+  };
+
+  /**
+   * Handle Questionnaire.meta field
+   *
+   * Follows these rules:
+   * -------------
+   * 1) For new questionnaires, we just export with the standard profile
+   * 2) When we import and questionnaire which had meta.profile set, look for the highest version of
+   *      FHIR listed in meta.profile.
+   * 3) User will (optionally) be able to say which version of FHIR they want when uploading a file
+   *      (or using the lforms API)
+   * 4) When we export a questionnaire that we imported and which had meta.profile set,
+   *      we will set the standard profile for that FHIR version, and remove known conflicting profile URIs.
+   *  ------------
+   * @param meta - The target questionnaire.meta to update.
+   * @private
+   */
+  self._handleMetaProfile = function (meta) {
+    const thisVersion = LForms.Util.detectFHIRVersionFromProfiles([this.stdQProfile]);
+    const retainedProfiles = [];
+
+    if(meta.profile?.length > 0) {
+      for(let i = 0; i < meta.profile.length; i++) {
+        const ver = LForms.Util.detectFHIRVersionFromProfiles([meta.profile[i]]);
+        if (!ver || (ver === thisVersion && meta.profile[i] !== this.stdQProfile)) {
+          // Keep profiles of this version and unknown. Others are conflicting, discard them.
+          retainedProfiles.push(meta.profile[i]);
+        }
+      }
+    }
+    retainedProfiles.push(this.stdQProfile);
+    meta.profile = retainedProfiles;
   };
 
 
@@ -733,21 +767,18 @@ function addCommonSDCExportFns(ns) {
   /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @param source a LForms form object
 
    * @private
    */
-  self._setResponseFormLevelFields = function(target, source, noExtensions) {
+  self._setResponseFormLevelFields = function(target, source) {
 
     // resourceType
     target.resourceType = "QuestionnaireResponse";
 
     // meta
-    var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+    target.meta.profile = target.meta.profile ? target.meta.profile : [this.stdQRProfile];
 
     // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
     //target.identifier = {

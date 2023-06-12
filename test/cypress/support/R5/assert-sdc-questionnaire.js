@@ -3,7 +3,7 @@ import {facadeExpect as expect, protractor, by, element} from "../protractorFaca
 function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.resourceType).toBe("Questionnaire");
   expect(fhirData.title).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
-  expect(fhirData.meta.profile[0]).toBe("http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7");
+  expect(fhirData.meta.profile[0]).toBe("http://hl7.org/fhir/5.0/StructureDefinition/Questionnaire");
   // No URL conversion for now. -Ajay
   //expect(fhirData.url).toBe("http://hl7.org/fhir/us/sdc/Questionnaire/54127-6N");
   expect(fhirData.code[0].code).toBe("54127-6N");

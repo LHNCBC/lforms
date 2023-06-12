@@ -6,6 +6,8 @@ function addR4ExportFns(ns) {
   
   var self = ns;
 
+  self.stdQProfile = 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire';
+  self.stdQRProfile = 'http://hl7.org/fhir/4.0/StructureDefinition/QuestionnaireResponse';
   /**
    * Process default values
    * @param targetItem an item in FHIR SDC Questionnaire object

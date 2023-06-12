@@ -383,6 +383,117 @@ describe('Util library', function() {
     });
   });
 
+  describe('Questionnaire.meta.profile', () => {
+    const defaultProfiles = {
+      R4: 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire',
+      STU3: 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'
+    }
+    const questionnairesSamples = {
+      sdc: {R4: {
+          resourceType: 'Questionnaire', name: 'SDCR4', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.5"]}
+        },
+        STU3: {
+          resourceType: 'Questionnaire', name: 'SDCSTU3', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0"]}
+        }},
+      std: {R4: {
+          resourceType: 'Questionnaire', name: 'STDR4', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire"]}
+        },
+        STU3: {
+          resourceType: 'Questionnaire', name: 'STDSTU3', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire"]}
+        }}
+    };
+    let modifiedQ;
+
+    const convertQ = (q, targetVersion) => {
+      return LForms.Util.getFormFHIRData(q.resourceType, targetVersion,
+        LForms.Util.convertFHIRQuestionnaireToLForms(q));
+    };
+
+    it('should convert meta.profiles', () => {
+      // Conversion to STU3
+      // A recognized profile, same version and same profile type, should leave it unchanged and add standard profile.
+      const qPart = {meta: {profile: ['http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire']}}
+      LForms.FHIR.STU3.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/2.9/StructureDefinition/Questionnaire', defaultProfiles.STU3]);
+
+      // Unrecognized profile. Keep it and add STU3 standard profile.
+      qPart.meta.profile = ['ftp://a.b.c'];
+      LForms.FHIR.STU3.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, ['ftp://a.b.c', defaultProfiles.STU3]);
+
+      // Different version, should remove it and set default STU3.
+      qPart.meta.profile = ['http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire'];
+      LForms.FHIR.STU3.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, [defaultProfiles.STU3]);
+
+      // A recognized SDC profile with same version, should append default STU3.
+      qPart.meta.profile = ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0'];
+      LForms.FHIR.STU3.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.0', defaultProfiles.STU3]);
+
+      // Conversion to R4
+      // A recognized profile, same version and same profile type, should leave it unchanged and add standard profile.
+      qPart.meta.profile = ['http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire'];
+      LForms.FHIR.R4.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire', defaultProfiles.R4]);
+
+      // Different version, Replace with default R4.
+      qPart.meta.profile = ['http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'];
+      LForms.FHIR.R4.SDC._handleMeta(qPart, true);
+      assert.deepEqual(qPart.meta.profile, [defaultProfiles.R4]);
+
+      // Different profile type, should set default R4.
+      qPart.meta.profile = ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7'];
+      LForms.FHIR.R4.SDC._handleMeta(qPart, true);
+      assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7', defaultProfiles.R4]);
+
+    });
+
+
+    it('should append STU3 default profile to questionnaire with STU3/SDC profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.sdc.STU3, 'STU3');
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.sdc.STU3.meta.profile[0], defaultProfiles.STU3]);
+    });
+
+    it('should append STU3 default profile to questionnaire having STU3/Standard but not matching default profile.', () => {
+      modifiedQ = convertQ(questionnairesSamples.std.STU3, 'STU3');
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.std.STU3.meta.profile[0], defaultProfiles.STU3]);
+    });
+
+    it('should convert to STU3 replacing with default STU3 profile to questionnaire with R4/SDC profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.sdc.R4, 'STU3');
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.STU3]); // Different version, replace
+    });
+
+    it('should convert to STU3 replacing with default STU3 profile to questionnaire with R4/Standard profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.std.R4, 'STU3');
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.STU3]); // Different version, replace
+    });
+
+    it('should convert to R4 replacing with default R4 profile to questionnaire having STU3/SDC profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.sdc.STU3, 'R4');
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.R4]);
+    });
+
+    it('should convert to R4 replacing with default R4 profile to questionnaire having STU3/Standard profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.std.STU3, 'R4');
+      assert.deepEqual(modifiedQ.meta.profile, [defaultProfiles.R4]);
+    });
+
+    it('should append R4 default profile to questionnaire having R4/SDC profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.sdc.R4, 'R4');
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.sdc.R4.meta.profile[0], defaultProfiles.R4]);
+    });
+
+    it('should append R4 default profile to questionnaire having R4/Standard but not matching default profile', () => {
+      modifiedQ = convertQ(questionnairesSamples.std.R4, 'R4');
+      assert.deepEqual(modifiedQ.meta.profile, [questionnairesSamples.std.R4.meta.profile[0], defaultProfiles.R4]);
+    });
+  });
 
   describe('_testValues', function() {
     it('should handle nested structures', function () {
@@ -398,5 +509,115 @@ describe('Util library', function() {
       assert(!rtn);
     });
   });
+
+  describe('check numeric values', function() {
+    it('should check inteters', function() {
+      assert.equal(LForms.Util.isInteger('123'), true);
+      assert.equal(LForms.Util.isInteger(' 123'), true);
+      assert.equal(LForms.Util.isInteger('123 '), true);
+      assert.equal(LForms.Util.isInteger(' 123 '), true);
+      assert.equal(LForms.Util.isInteger('+123'), true);
+      assert.equal(LForms.Util.isInteger('-123'), true);
+      assert.equal(LForms.Util.isInteger(123), true);
+      assert.equal(LForms.Util.isInteger(123e2), true);
+      assert.equal(LForms.Util.isInteger(123.45e10), true);
+
+      assert.equal(LForms.Util.isInteger(123e-10), false);
+      assert.equal(LForms.Util.isInteger(123.45e-10), false);
+      assert.equal(LForms.Util.isInteger('123abc'), false);
+      assert.equal(LForms.Util.isInteger('abc123'), false);
+      assert.equal(LForms.Util.isInteger('123.45'), false);
+      assert.equal(LForms.Util.isInteger('+ 123'), false);
+      assert.equal(LForms.Util.isInteger('- 123'), false);
+      assert.equal(LForms.Util.isInteger('.123'), false);
+      assert.equal(LForms.Util.isInteger('123.'), false);
+      assert.equal(LForms.Util.isInteger(123.45), false);
+    });
+  });
+
+  it('should check decimals', function() {
+    assert.equal(LForms.Util.isDecimal(123), true);
+    assert.equal(LForms.Util.isDecimal(123.45), true);
+    assert.equal(LForms.Util.isDecimal(123.45e10), true);
+    assert.equal(LForms.Util.isDecimal(123.45e-10), true);
+    assert.equal(LForms.Util.isDecimal(+123.45e10), true);
+    assert.equal(LForms.Util.isDecimal(-123.45e-10), true);
+    assert.equal(LForms.Util.isDecimal(123.45E10), true);
+    assert.equal(LForms.Util.isDecimal(123.45E-10), true);
+    assert.equal(LForms.Util.isDecimal(+123.45E10), true);
+    assert.equal(LForms.Util.isDecimal(-123.45E-10), true);
+
+    assert.equal(LForms.Util.isDecimal('123'), true);
+    assert.equal(LForms.Util.isDecimal(' 123'), true);
+    assert.equal(LForms.Util.isDecimal('123 '), true);
+    assert.equal(LForms.Util.isDecimal(' 123 '), true);
+    assert.equal(LForms.Util.isDecimal('+123'), true);
+    assert.equal(LForms.Util.isDecimal('-123'), true);
+    assert.equal(LForms.Util.isDecimal('123.'), true);
+    assert.equal(LForms.Util.isDecimal('.123'), true);
+
+    assert.equal(LForms.Util.isDecimal('123.45'), true);
+    assert.equal(LForms.Util.isDecimal(' 123.45'), true);
+    assert.equal(LForms.Util.isDecimal('123.45 '), true);
+    assert.equal(LForms.Util.isDecimal(' 123.'), true);
+    assert.equal(LForms.Util.isDecimal(' .123'), true);
+    assert.equal(LForms.Util.isDecimal('123. '), true);
+    assert.equal(LForms.Util.isDecimal('.123 '), true);
+
+    assert.equal(LForms.Util.isDecimal('123e10'), true);
+    assert.equal(LForms.Util.isDecimal('123e+10'), true);
+    assert.equal(LForms.Util.isDecimal('123e-10'), true);
+    assert.equal(LForms.Util.isDecimal('123.12e10'), true);
+    assert.equal(LForms.Util.isDecimal('123.12e+10'), true);
+    assert.equal(LForms.Util.isDecimal('123.12e-10'), true);
+    assert.equal(LForms.Util.isDecimal('-1234.12e+10'), true);
+    assert.equal(LForms.Util.isDecimal('-123.12e-10'), true);
+    assert.equal(LForms.Util.isDecimal(' 123.12e-10'), true);
+    assert.equal(LForms.Util.isDecimal('-1234.12e+10 '), true);
+
+    assert.equal(LForms.Util.isDecimal('123E10'), true);
+    assert.equal(LForms.Util.isDecimal('123E+10'), true);
+    assert.equal(LForms.Util.isDecimal('123E-10'), true);
+    assert.equal(LForms.Util.isDecimal('123.12E10'), true);
+    assert.equal(LForms.Util.isDecimal('1234.12E+10'), true);
+    assert.equal(LForms.Util.isDecimal('123.12E-10'), true);
+    assert.equal(LForms.Util.isDecimal('-123.12E+10'), true);
+    assert.equal(LForms.Util.isDecimal('-123.12E-10'), true);
+    assert.equal(LForms.Util.isDecimal(' 123.12E-10'), true);
+    assert.equal(LForms.Util.isDecimal('-123.12E+10 '), true);
+
+    assert.equal(LForms.Util.isDecimal('123abc'), false);
+    assert.equal(LForms.Util.isDecimal('abc123'), false);
+    assert.equal(LForms.Util.isDecimal('123.45abc'), false);
+    assert.equal(LForms.Util.isDecimal('abc123.45'), false);
+    assert.equal(LForms.Util.isDecimal('+ 123'), false);
+    assert.equal(LForms.Util.isDecimal('- 123'), false);
+    assert.equal(LForms.Util.isDecimal('+ 123.45'), false);
+    assert.equal(LForms.Util.isDecimal('- 123.45'), false);
+    assert.equal(LForms.Util.isDecimal('1.1.2'), false);
+    assert.equal(LForms.Util.isDecimal('.'), false);
+
+    assert.equal(LForms.Util.isDecimal('123e 10'), false);
+    assert.equal(LForms.Util.isDecimal('123 e10'), false);
+    assert.equal(LForms.Util.isDecimal('123e +10'), false);
+    assert.equal(LForms.Util.isDecimal('123e -10'), false);
+    assert.equal(LForms.Util.isDecimal('123+e10'), false);
+    assert.equal(LForms.Util.isDecimal('123-e10'), false);
+    assert.equal(LForms.Util.isDecimal('123.12e10.1'), false);
+    assert.equal(LForms.Util.isDecimal('123.12e+.'), false);
+    assert.equal(LForms.Util.isDecimal('123.12f-10'), false);
+
+    assert.equal(LForms.Util.isDecimal('123E 10'), false);
+    assert.equal(LForms.Util.isDecimal('123 E10'), false);
+    assert.equal(LForms.Util.isDecimal('123E +10'), false);
+    assert.equal(LForms.Util.isDecimal('123E -10'), false);
+    assert.equal(LForms.Util.isDecimal('123+E10'), false);
+    assert.equal(LForms.Util.isDecimal('123-E10'), false);
+    assert.equal(LForms.Util.isDecimal('123.12E10.1'), false);
+    assert.equal(LForms.Util.isDecimal('123.12+E+.'), false);
+    assert.equal(LForms.Util.isDecimal('123.12F-10'), false);
+
+  });
+
 });
 

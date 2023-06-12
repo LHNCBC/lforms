@@ -7,6 +7,9 @@ function addR5ExportFns(ns) {
   const _isAnswerOptionType = {'CODING':true, 'ST':true, 'INT':true, 'DT':true, 'TM':true};
   var self = ns;
 
+  self.stdQProfile = 'http://hl7.org/fhir/5.0/StructureDefinition/Questionnaire';
+  self.stdQRProfile = 'http://hl7.org/fhir/5.0/StructureDefinition/QuestionnaireResponse';
+
   /**
    * Convert LForms data type to FHIR SDC data type
    * @param item an item in the LForms form object

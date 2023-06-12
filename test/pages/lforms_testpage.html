@@ -67,7 +67,6 @@
         <button id="get-fhir-bundle1" class="btn btn-primary" onclick="showDiagnosticReportBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle[&#10004;]</button>
         <button id="get-fhir-bundle2" class="btn btn-primary" onclick="showDiagnosticReportBundle2()">Show FHIR DiagnosticReport in "collection" Bundle[&#10004;]</button>
         <button id="get-sdc-questionnaire" class="btn btn-primary" onclick="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire[&#10004;]</button>
-        <button id="get-questionnaire" class="btn btn-primary" onclick="showFHIRQuestionnaire()">Show FHIR Questionnaire[&#10004;]</button>
         <button id="get-sdc-response" class="btn btn-primary" onclick="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response[&#10004;]</button>
         <button id="change-columns" class="btn btn-primary" onclick="changeObxObr()">Change OBR/OBX Options</button>
         <button id="merge-dr" class="btn btn-primary" onclick="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)[&#10004;]</button>
@@ -265,17 +264,6 @@
         if (testForm.questionnaire) {
           var fhir = getFHIR();
           var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.questionnaire);
-          var fhirString = JSON.stringify(sdc, null, 4);
-          console.log(fhirString);
-        }
-      }
-
-      /**
-       * Get 'Questionnaire' data from the form and display it in console
-       */
-      function showFHIRQuestionnaire() {
-        if (testForm.questionnaire) {
-          var sdc = getFHIR().SDC.convertLFormsToQuestionnaire(testForm.questionnaire, true);
           var fhirString = JSON.stringify(sdc, null, 4);
           console.log(fhirString);
         }

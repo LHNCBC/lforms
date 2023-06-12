@@ -8,7 +8,27 @@ This project follows [Semantic Versioning](http://semver.org/).
   replaced them with type 'CODING' and an 'answerConstraint' attribute.
   The existing form data files in lforms data format with 'CNE' and 'CWE' data types
   are backward compatible.
+### Added
+- Added the support of 'answerContraint' in R5.  Only 'optionsOnly' and 
+  'optionsOrString are supported. 'OptionsOrType' is not supported yet.
+- Added the support of item.type changes R5. Added 'coding' and removed
+  'choice' and 'open-choice'.
+
+## [33.3.5] 2023-05-17
+### Fixed
+- Fixed a bug that FHIRPath expressions could run on a QuestionnaireResponse where
+  the data are invalid. It now throws an error.
   
+## [33.3.4] 2023-05-03
+### Fixed
+- Fixed a bug that when a QuestionnaireResponse with saved values from an answerValueSet
+  is loaded back into the Questionnaire, the saved values are not restored.
+  
+## [33.3.3] 2023-04-19
+### Fixed
+- Fixed a bug in updating meta.profile in exported questionnaire based on it version 
+  such as STU3, R4 etc.
+ 
 ## [33.3.2] 2023-02-06
 ### Fixed
 - Fixed a bug that initial values were not displayed in the matrix layout ("Vertical 

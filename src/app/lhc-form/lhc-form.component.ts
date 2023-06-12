@@ -120,7 +120,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                 q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q);
               }
             }
-            self.lhcFormData = new LhcFormData(q)
+            self.lhcFormData = new LhcFormData(q);
             // and options change
             if (changes.options && self.options) {
               // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));

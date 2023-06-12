@@ -14,14 +14,10 @@
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
-var sdcVersion = '2.0';
 var fhirVersionNum = '3.0';
 
 var self = {
 
-  SDCVersion: sdcVersion,
-  QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|'+sdcVersion,
-  QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|'+sdcVersion,
   stdQProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/Questionnaire',
   stdQRProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/QuestionnaireResponse',
 
@@ -33,17 +29,18 @@ var self = {
    *  extension).
    *
    * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *  The default is false.
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations.  The caller may
-   *  wish to put all of the returned resources into a transaction Bundle for
-   *  creating them on a FHIR server.
+   * @returns an array of QuestionnaireResponse and Observations, or null if there is 
+   *  no valid QuestionnaireResponse. The caller may wish to put all of the returned 
+   *  resources into a transaction Bundle for creating them on a FHIR server.
    */
-   convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {
-    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+   convertLFormsToQRAndExtracFHIRData: function(lfData, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, subject);
+    if (!qr) {
+      return null;
+    }
     if (!qr.id) {
       qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code ||
         qr.identifier || 'QR')
@@ -203,10 +200,8 @@ var self = {
    *  Processes settings for a list field with choices.
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    */
-  _handleChoiceField: function(targetItem, item, noExtensions) {
+  _handleChoiceField: function(targetItem, item) {
     // an extension for the search url of the auto-complete field.
     if(item.externallyDefined) {
       this._handleExternallyDefined(targetItem, item);
@@ -215,7 +210,7 @@ var self = {
     else if (item.answers && !item.answerValueSet) {
       // Make sure the answers did not come from answerExpression.
       if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp])
-        targetItem.option = this._handleAnswers(item, noExtensions);
+        targetItem.option = this._handleAnswers(item);
     }
     else if (item.answerValueSet)
       targetItem.options = item.answerValueSet;
@@ -225,12 +220,10 @@ var self = {
   /**
    * Process an item's answer list
    * @param item an item in the LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @returns {Array}
    * @private
    */
-  _handleAnswers: function(item, noExtensions) {
+  _handleAnswers: function(item) {
     var optionArray = [];
     for (var i=0, iLen=item.answers.length; i<iLen; i++) {
       var answer = item.answers[i];
@@ -256,25 +249,23 @@ var self = {
         option[valueKey] = answer.text;
       }
 
-      // needs an extension for label
-      if (!noExtensions) {
-        var ext = [];
-        if(answer.label) {
-          ext.push({
-            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
-            "valueString" : answer.label
-          });
-        }
+      // label
+      var ext = [];
+      if(answer.label) {
+        ext.push({
+          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+          "valueString" : answer.label
+        });
+      }
 
-        if (answer.score !== null && answer.score !== undefined) {
-          ext.push({
-            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
-            "valueDecimal" : parseFloat(answer.score)
-          });
-        }
-        if(ext.length > 0) {
-          option.extension = ext;
-        }
+      if (answer.score !== null && answer.score !== undefined) {
+        ext.push({
+          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+          "valueDecimal" : parseFloat(answer.score)
+        });
+      }
+      if(ext.length > 0) {
+        option.extension = ext;
       }
 
       optionArray.push(option);

@@ -29,6 +29,10 @@ const CommonUtils = {
     'M-D HH:mm',
   ],
 
+  intRegex: /^\s*(\+|-)?\d+\s*$/,
+
+  decRegex: /^\s*[\+-]?([\+-]?\d+\.?\d*([eE]?[\+|-]?\d+)?|[\+-]?\d*\.?\d+[eE]?([\+|-]?\d+)?)\s*$/,
+  
   /**
    * Check if two answers can be treated as same
    * @param answer an answer item that could have part of the attributes set. 
@@ -376,8 +380,27 @@ const CommonUtils = {
       msg = 'The question "'+item.text+'" produced the following warning:  '+msg;
     console.log(msg);
     // TBD: add a warning visible on the page.
+  },
+
+
+  /**
+   * Check if a value is an integer or if it can be correctly converted to a valid float number
+   * @param {*} Value a string or numeric value to be tested
+   * @returns {boolean} 
+   */
+  isInteger(value) {
+    return Number.isInteger(value) ? true: typeof value === "number" ? false : this.intRegex.test(value);
+  },
+
+
+  /**
+   * Check if a value is a number or if it can be correctly converted to a valid float number
+   * @param {*} value a string or numeric value to be tested
+   * @returns {boolean} 
+   */
+  isDecimal(value) {
+    return typeof value === "number" ? true : this.decRegex.test(value);
   }
-  
 };
 
 export default CommonUtils;

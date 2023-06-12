@@ -41,6 +41,10 @@ export default class LhcFormData {
   // whether the form data contains saved user data
   hasSavedData = false;
 
+  // whether the form data is valid 
+  // (it only checks on INT/REAL types when getUserData() is called.)
+  _invalidData = false;
+
   // repeatable question items derived from items
   _repeatableItems = {};
 
@@ -1468,6 +1472,7 @@ export default class LhcFormData {
    */
   getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
     var ret:any = {};
+    this._invalidData = false;
     // check the value on each item and its subtree
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
@@ -1745,11 +1750,27 @@ export default class LhcFormData {
                 retValue = this._getObjectValue(value, true);
             }
             else {
-              retValue = Array.isArray(value) ? value.map(val=> parseInt(val)) : parseInt(value);
+              if (Array.isArray(value)) {
+                retValue = value.map(val => {
+                  if (!CommonUtils.isInteger(val)) {
+                    this._invalidData = true;
+                  }
+                  return parseInt(val)
+                });
+              }
+              else {
+                if (!CommonUtils.isInteger(value)) {
+                  this._invalidData = true;
+                }
+                retValue = parseInt(value);
+              }
             }
             break;
           case CONSTANTS.DATA_TYPE.REAL:
           case CONSTANTS.DATA_TYPE.QTY:
+            if (!CommonUtils.isDecimal(value)) {
+              this._invalidData = true;
+            }
             retValue = parseFloat(value);
             break;
           case CONSTANTS.DATA_TYPE.DT:
@@ -2864,7 +2885,7 @@ export default class LhcFormData {
   /**
    * Reset item.value to an answer object (or multiple answers) in item.answers, or
    * to an object where _notOnList is set to true.
-   *
+   * In the cases that answers is not loaded yet, keep the item.value as is.
    * @param item the item for which it has an item.value or item.defaultAnswers
    * @private
    */
@@ -2917,6 +2938,7 @@ export default class LhcFormData {
           }
           // for item has a answer list
           else {
+            // item.answers has a list or the answers have been loaded.
             if (Array.isArray(item.answers)) {
               for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
                 if (CommonUtils.areTwoAnswersSame(userValue, item.answers[j], item)) {
@@ -2924,18 +2946,16 @@ export default class LhcFormData {
                   found = true;
                 }
               }
+              // value is not on the answer list and it is optionsOrString 
+              // (so that user saved values that are not on the list will be kept)
+              if (!found && item.answerConstraint === "optionsOrString" && userValue) {
+                userValue._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
+                listVals.push(userValue);
+              }
             }
+            // item.answers have not been loaded yet (by loadFHIRResources or by FHIR PATH expressions.)
             else {
-              found = false;
-            }
-            // a saved value or a default value is not on the list (default answer must be one of the answer items).
-            // non-matching value objects are kept, (data control or others might use data on these objects)
-            if (!found && item.answerConstraint === "optionsOrString" && userValue) {
-              // need a new copy of the data to trigger a change in the data model in autocompleter component
-              // where if the dataModel is in the changes, its value will be preserved when recreating the autocompleter
-              var userValueCopy = CommonUtils.deepCopy(userValue);
-              userValueCopy._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
-              listVals.push(userValueCopy);
+              listVals.push(userValue);
             }
           }
         }

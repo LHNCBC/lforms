@@ -383,6 +383,9 @@ import deepEqual from "deep-equal";
      */
     _regenerateQuestionnaireResp: function() {
       var questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+      if (!questResp) {
+        throw new Error("Invalid data. Cannot generate a QuestionnaireResponse resource.");
+      }
       this._lfData._fhirVariables.resource = questResp;
       this._elemIDToQRItem = this._createIDtoQRItemMap(questResp);
     },
