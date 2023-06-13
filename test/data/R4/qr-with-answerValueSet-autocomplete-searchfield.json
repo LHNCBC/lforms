@@ -1,0 +1,115 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "meta": {
+      "profile": [
+          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|2.7"
+      ],
+      "tag": [
+          {
+              "code": "lformsVersion: 33.3.5"
+          }
+      ]
+  },
+  "status": "completed",
+  "authored": "2023-06-01T21:15:29.686Z",
+  "item": [
+      {
+          "linkId": "yesno1",
+          "text": "Yes-No Question 1, choice,",
+          "answer": [
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "3982",
+                      "display": "Abdominal pain"
+                  }
+              }
+          ]
+      },
+      {
+          "linkId": "yesno2",
+          "text": "Yes-No Question 2, choice, repeats",
+          "answer": [
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "3982",
+                      "display": "Abdominal pain"
+                  }
+              },
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "4351",
+                      "display": "Arteriovenous fistula"
+                  }
+              }
+          ]
+      },
+      {
+          "linkId": "yesno3",
+          "text": "Yes-No Question 3, open-choice",
+          "answer": [
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "3982",
+                      "display": "Abdominal pain"
+                  }
+              }
+          ]
+      },
+      {
+          "linkId": "yesno4",
+          "text": "Yes-No Question 4, open-choice",
+          "answer": [
+              {
+                  "valueString": "aaa"
+              }
+          ]
+      },
+      {
+          "linkId": "yesno5",
+          "text": "Yes-No Question 5, open-choice, repeats",
+          "answer": [
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "3982",
+                      "display": "Abdominal pain"
+                  }
+              },
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "4351",
+                      "display": "Arteriovenous fistula"
+                  }
+              }
+          ]
+      },
+      {
+          "linkId": "yesno6",
+          "text": "Yes-No Question 6, open-choice, repeats",
+          "answer": [
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "3982",
+                      "display": "Abdominal pain"
+                  }
+              },
+              {
+                  "valueCoding": {
+                      "system": "http://clinicaltables.nlm.nih.gov/fhir/CodeSystem/conditions",
+                      "code": "4351",
+                      "display": "Arteriovenous fistula"
+                  }
+              },
+              {
+                  "valueString": "aaa"
+              }
+          ]
+      }
+  ]
+}

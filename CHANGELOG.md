@@ -13,6 +13,11 @@ This project follows [Semantic Versioning](http://semver.org/).
   'optionsOrString are supported. 'OptionsOrType' is not supported yet.
 - Added the support of item.type changes R5. Added 'coding' and removed
   'choice' and 'open-choice'.
+## [33.3.6] 2023-06-01
+### Fixed
+- Fixed a bug that the 'system' value is missing in QuestionnaireResponse when
+  an item has an answerValueSet and it also has a questionnaire-item-control
+  extension that is 'autocomplete' (search field).
 
 ## [33.3.5] 2023-05-17
 ### Fixed
