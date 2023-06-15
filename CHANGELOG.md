@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [33.3.7] 2023-06-14
 ### Fixed
--- Fixed a bug that copyright is not handled in import and export functions.
+- Fixed a bug that copyright is not handled in import and export functions.
 
 ## [33.3.6] 2023-06-01
 ### Fixed
