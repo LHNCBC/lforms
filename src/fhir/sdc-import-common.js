@@ -164,7 +164,6 @@ function addCommonSDCImportFns(ns) {
     'useContext',
     'jurisdiction',
     'purpose',
-    'copyright',
     'approvalDate',
     'reviewDate',
     'effectivePeriod',
@@ -231,6 +230,12 @@ function addCommonSDCImportFns(ns) {
       // Rename questionnaire code to codeList
       lfData.codeList = questionnaire.code;
     }
+
+    // copy over the copyright
+    if (questionnaire.copyright) {
+      lfData.copyrightNotice = questionnaire.copyright;
+    }
+
     var codeAndSystemObj = self._getCode(questionnaire);
     if(codeAndSystemObj) {
       lfData.code = codeAndSystemObj.code;
@@ -1442,7 +1447,7 @@ function addCommonSDCImportFns(ns) {
    * that have an answer list.
    * @param {*} answer an answer of an item in QuestionnaireResponse
    * @param {*} lfItem an item in lforms
-   * @returns 
+   * @returns
    */
   self._processOtherAnswerOptionValueInQR = function(answer, item) {
 
@@ -1472,13 +1477,13 @@ function addCommonSDCImportFns(ns) {
    * that have an answer list, to lforms values
    * @param {*} qrItemValue a value of item in QuestionnaireResponse
    * @param {*} lfItem an item in lforms
-   * @returns 
+   * @returns
    */
   self._convertOtherAnswerOptionValueInQR = function(qrItemValue, lfItem) {
     let retValue;
     let dataType = lfItem.dataType;
 
-    if (lfItem.answers && (dataType === "ST" || dataType === "INT" || 
+    if (lfItem.answers && (dataType === "ST" || dataType === "INT" ||
         dataType === "DT" || dataType === "TM")) {
       let answerText;
       switch (dataType) {
@@ -1495,7 +1500,7 @@ function addCommonSDCImportFns(ns) {
           answerText = qrItemValue.valueTime;
           break;
       }
-      if (answerText) 
+      if (answerText)
         retValue = { text: answerText };
     }
 
