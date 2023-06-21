@@ -35,8 +35,8 @@ fields.
 * maxLength
 * minLength
 * regex
-* minValue
-* maxValue
+* minValue (types integer and decimal only)
+* maxValue (types integer and decimal only)
 * mimeType
 * maxSize
 * answerOption
@@ -93,6 +93,8 @@ fields.
 ### Form Behavior
 See https://build.fhir.org/ig/HL7/sdc/behavior.html for descriptions of these
 fields.
+* minValue (for types other than integer and decimal)
+* maxValue (for types other than integer and decimal)
 * minQuantity
 * maxQuantity
 * maxDecimalPlaces
