@@ -380,6 +380,11 @@ function addCommonSDCExportFns(ns) {
     target.resourceType = "Questionnaire";
     target.status = target.status ? target.status : "draft";
 
+    // handle lforms copyright
+    if (source.copyrightNotice) {
+      target.copyright = source.copyrightNotice;
+    }
+
     // meta
     this._handleMeta(target);
   };
