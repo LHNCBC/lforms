@@ -42,10 +42,10 @@ For "status", if it was not previously set at import, it will be set to "draft" 
 
 ### Extensions
 * maxSize
-* maxValue
+* maxValue (types integer and decimal only)
 * mimeType
 * minLength
-* minValue
+* minValue (types integer and decimal only)
 * ordinalValue
 * choiceOrientation
 * hidden
@@ -86,9 +86,8 @@ from LHC-Forms, the extensions will still be present.
 * answerValueSet:  "contained" ValueSets without expansions are unsupported
 
 ### Extensions
-Note that non-supported extensions are simply ignored, but are also retained on
+Note that completely unsupported extensions are simply ignored, but are also retained on
 a re-export to Questionnaire.
-* maxDecimalPlaces
 * constraint
 * displayCategory
 * itemControl:  See above for supported types.  Unsupported:  htable, header,
@@ -96,6 +95,9 @@ a re-export to Questionnaire.
   unsupported, but is also unnecessary with LHC-Forms if "questionnaire-unit" is
   used.  Type "prompt" is also unsupported but is being removed in
   R5 (https://jira.hl7.org/browse/FHIR-21023).
+* maxDecimalPlaces
+* maxValue (for types other than integer and decimal)
+* minValue (for types other than integer and decimal)
 * unitValueSet
 * usageMode
 
