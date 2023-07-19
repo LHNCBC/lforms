@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.4.1] 2023-07-19
+### Fixed
+- The URI for the "preferred terminology server" FHIR extension, which was
+  previously updated too soon to an new URI that has not gotten into the
+  published documentation yet.  Either will still work on import; this change
+  affects what is exported.
+
 ## [33.4.0] 2023-07-17
 ### Added
 - Support for %qitem in FHIRPath expressions.
