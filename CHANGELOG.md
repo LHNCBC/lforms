@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.4.0] 2023-07-17
+### Added
+- Support for %qitem in FHIRPath expressions.
+
 ## [33.3.7] 2023-06-14
 ### Fixed
 - Fixed a bug that copyright is not handled in import and export functions.
@@ -16,20 +20,20 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed a bug that FHIRPath expressions could run on a QuestionnaireResponse where
   the data are invalid. It now throws an error.
-  
+
 ## [33.3.4] 2023-05-03
 ### Fixed
 - Fixed a bug that when a QuestionnaireResponse with saved values from an answerValueSet
   is loaded back into the Questionnaire, the saved values are not restored.
-  
+
 ## [33.3.3] 2023-04-19
 ### Fixed
-- Fixed a bug in updating meta.profile in exported questionnaire based on it version 
+- Fixed a bug in updating meta.profile in exported questionnaire based on it version
   such as STU3, R4 etc.
- 
+
 ## [33.3.2] 2023-02-06
 ### Fixed
-- Fixed a bug that initial values were not displayed in the matrix layout ("Vertical 
+- Fixed a bug that initial values were not displayed in the matrix layout ("Vertical
   Answer Table"/"table" in itemControl, http://hl7.org/fhir/questionnaire-item-control).
 - Fixed a 508 compliance issue related to the matrix layout.
 
@@ -44,10 +48,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added the support of enableWhen on string, integer, date and time typed items that
   have an answer list.
-  
+
 ## [33.2.0] 2022-01-06
 ### Added
-- Added a template option to control whether to display scores along 
+- Added a template option to control whether to display scores along
   with texts for answers that have scores.
 
 ## [33.1.2] 2022-12-23
@@ -232,7 +236,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   on the answers of another field.
 
 ## [30.0.0] 2020-03-08
-Official release of the new Web Component version of lforms. See a list of changed 
+Official release of the new Web Component version of lforms. See a list of changed
 features in changed-features.md.
 ### Fixed
 - Fixed a minor style issue
