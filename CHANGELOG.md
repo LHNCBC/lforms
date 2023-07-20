@@ -5,7 +5,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [33.4.1] 2023-07-19
 ### Fixed
 - The URI for the "preferred terminology server" FHIR extension, which was
-  previously updated too soon to an new URI that has not gotten into the
+  previously updated too soon to a new URI that has not gotten into the
   published documentation yet.  Either will still work on import; this change
   affects what is exported.
 - Updated autocomplete-lhc to 18.6.1, to get a fix for a bug with the list
