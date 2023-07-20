@@ -42,7 +42,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlExternallyDefined = "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
-  self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
+  self.fhirExtTerminologyServer = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer";
   self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
   self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
   self.fhirExtInitialExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression";
@@ -109,8 +109,10 @@ function addCommonSDCImportFns(ns) {
     return true; // add extension to LForms item
   };
   self.extensionHandlers[
-    "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer"] = function(extension, item) {
-    // Update the URI to the current one.
+    "http://hl7.org/fhir/StructureDefinition/terminology-server"] = function(extension, item) {
+    // Note: The above URI will be the new one, and it is pending the
+    // application of an approved change request (see jira.hl7.org), but for now
+    // we need to use the old one because that is what is published.
     extension.url = self.fhirExtTerminologyServer;
   };
   self.extensionHandlers[self.fhirExtUnitOpen] = function(extension, item) {
