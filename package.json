@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "33.4.1",
+  "version": "33.4.2",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -81,6 +81,7 @@
     "bestzip": "^2.2.0",
     "chai": "^4.3.6",
     "concat": "^1.0.3",
+    "concat-with-sourcemaps": "^1.1.0",
     "cypress": "^10.10.0",
     "cypress-real-events": "^1.7.6",
     "fs-extra": "^10.1.0",
