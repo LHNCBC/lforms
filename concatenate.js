@@ -1,4 +1,4 @@
-// const concat = require('concat');
+// Concatenates several source files to produce lhc-forms.js and its source map.
 const ConcatWithSourceMaps = require('concat-with-sourcemaps');
 const concat = new ConcatWithSourceMaps(true, 'all.js', '\n');
 const fs = require('fs');
