@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.4.2] 2023-07-25
+### Fixed
+- The sourcemap file for lhc-forms.js now works.
+
 ## [33.4.1] 2023-07-19
 ### Fixed
 - The URI for the "preferred terminology server" FHIR extension, which was
