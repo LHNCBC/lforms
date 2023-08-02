@@ -818,6 +818,11 @@ function addCommonSDCImportFns(ns) {
             displayControl.questionLayout = "matrix";
           }
           break;
+        case 'grid':
+          if (lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "grid";
+          }
+          break;
         default:
           displayControl = null;
       }
