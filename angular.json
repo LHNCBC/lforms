@@ -14,7 +14,7 @@
           "builder": "ngx-build-plus:browser",
           "options": {
             "preserveSymlinks": true,
-            "outputPath": "dist/lforms/webcomponent",
+            "outputPath": "dist/@elimuinformatics/lforms/webcomponent",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -252,6 +252,6 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "2dd7e28a-0a93-462c-98c6-ab025ae37c4d"
   }
 }
