@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { LhcDataService} from '../../lib/lhc-data.service';
+import { LhcDataService } from '../../lib/lhc-data.service';
 import deepEqual from "deep-equal";
 
 @Component({
@@ -17,14 +17,14 @@ export class LhcGroupGridComponent {
   ngOnInit(): void {
     this.createCustomHeaders(this.item);
   }
- 
-  createCustomHeaders(item):void{
+
+  createCustomHeaders(item): void {
     item.items.forEach(questionItems => {
       questionItems.items.forEach(subItems => {
-        if(!this.uniqueGridHeaders.includes(subItems.question)  && subItems.skipLogic?.conditions[0]?.trigger?.value.text != 'alwaysHide' &&  subItems.skipLogic?.conditions[0]?.trigger?.value.text != 'Never'){
+        if (!this.uniqueGridHeaders.includes(subItems.question) && subItems.skipLogic?.conditions[0]?.trigger?.value.text != 'alwaysHide' && subItems.skipLogic?.conditions[0]?.trigger?.value.text != 'Never') {
           this.uniqueGridHeaders.push(subItems.question);
-        }   
-    });
+        }
+      });
     });
   }
 }
