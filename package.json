@@ -1,13 +1,16 @@
 {
-  "name": "lforms",
-  "version": "33.4.2",
+  "name": "@elimuinformatics/lforms",
+  "version": "2.0.0",
   "keywords": [
     "fhir",
     "Questionnaire",
     "SDC"
   ],
-  "repository": "github:lhncbc/lforms",
-  "license": "See LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lhncbc/lforms.git"
+  },
+  "license": "MIT",
   "config": {
     "testPort": "4200",
     "testPortFhir": "4201"
@@ -105,5 +108,18 @@
     "tslint": "~6.1.3",
     "typescript": "~4.8.4",
     "webpack-cli": "^4.10.0"
-  }
+  },
+  "description": "[LForms](http://lhncbc.github.io/lforms/), a.k.a. LHC-Forms, is a feature-rich, open-source Web Component that creates input forms, based on definition files,  for Web-based applications. In addition to its native form-definition format,  it partially supports the HL7 FHIR Questionnaire standard (SDC profile), and work is in progress to expand that support.his is an fork of the lasted  Lforms version 29.3.1, We have added the grid extesion to the library. its work with the angular app",
+  "bugs": {
+    "url": "https://github.com/lhncbc/lforms/issues"
+  },
+  "homepage": "https://github.com/lhncbc/lforms#readme",
+  "main": "concatenate.js",
+  "bin": {
+    "lforms": "bin/start-public.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "author": "Elimu"
 }
