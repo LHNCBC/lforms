@@ -7,7 +7,7 @@ const path = require('path');
 (async function build() {
 
   // es2017 files from angular 14 build
-  const jsFileDir = './dist/lforms/webcomponent';
+  const jsFileDir = './dist/@elimuinformatics/lforms/webcomponent';
   const jsFiles = ['scripts.js', 'runtime.js', 'polyfills.js', 'main.js'
     ].map(f=>path.join(jsFileDir, f));
 
