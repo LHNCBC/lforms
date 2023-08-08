@@ -885,14 +885,23 @@ function addCommonSDCImportFns(ns) {
    * @param qr a QuestionnaireResponse instance
    * @returns {{}} an updated LForms form definition, with answer data
    */
+  let mismatchItem = [];
+
   qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
     let itemsInBoth = qr.item[0].item.filter((obj1) => {
-      return formData.items[0].items.some((obj2) => {
+      let matched = formData.items[0].items.some((obj2) => {
         return obj1.linkId === obj2.linkId;
       });
+
+      if (!matched) {
+        mismatchItem.push(obj1.linkId);
+      }
+      return matched;
       //Handle the missmatch between questionnaire and questionnaireResponse 
       //Keep only those item in qr whoes present in  formData
     });
+
+    console.log('Mismatched items linkId:', mismatchItem);
     qr.item[0].item = itemsInBoth;
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
