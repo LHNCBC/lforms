@@ -885,7 +885,6 @@ function addCommonSDCImportFns(ns) {
    * @param qr a QuestionnaireResponse instance
    * @returns {{}} an updated LForms form definition, with answer data
    */
-
   qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
     let mismatchItem = [];
     let itemsInBoth = qr.item[0].item.filter((obj1) => {
