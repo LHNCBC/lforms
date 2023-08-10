@@ -21,6 +21,7 @@ function createLinkId(lfItems, codeList) {
   });
 }
 
+var $ = LForms.jQuery;
 
 // Tests for FHIR SDC library
 var fhirVersions = Object.keys(LForms.Util.FHIRSupport);

@@ -1,4 +1,6 @@
 // Tests the LForm.Util functions for detecting FHIR versions of resources.
+var $ = LForms.jQuery;
+
 describe('guessFHIRVersion', function() {
   it('should recognize an STU3 Questionnaire with "option"', function(done) {
     $.get('/test/data/STU3/weightHeightQuestionnaire.json', function z(whQ) {

@@ -112,17 +112,17 @@
               console.error(e);
               document.getElementById("loadMsg").innerHTML = e;
             })
-            $('#formContainer wc-lhc-form')[0].addEventListener('onFormReady', ()=>{
+            LForms.jQuery('#formContainer wc-lhc-form')[0].addEventListener('onFormReady', ()=>{
               // Cause the event to bubble, since this element was just created.
-              $('#formContainer')[0].dispatchEvent(new Event('onFormReady'));
+              LForms.jQuery('#formContainer')[0].dispatchEvent(new Event('onFormReady'));
             });
-            $('#formContainer wc-lhc-form')[0].addEventListener('onError', (e)=>{
+            LForms.jQuery('#formContainer wc-lhc-form')[0].addEventListener('onError', (e)=>{
               // Cause the event to bubble, since this element was just created.
-              $('#formContainer')[0].dispatchEvent(new Event('onError', e));
+              LForms.jQuery('#formContainer')[0].dispatchEvent(new Event('onError', e));
             });
             // The prepopulateFHIR variable below is a hack for the test code to signal
             // prepopulation is desired.
-            var formContainer = $('#formContainer wc-lhc-form')[0];
+            var formContainer = LForms.jQuery('#formContainer wc-lhc-form')[0];
             formContainer.prepop = window.prepopulateFHIR;
           }
           catch(e) {

@@ -8,7 +8,8 @@ const path = require('path');
 
   // es2017 files from angular 14 build
   const jsFileDir = './dist/lforms/webcomponent';
-  const jsFiles = ['scripts.js', 'runtime.js', 'polyfills.js', 'main.js'
+  //const jsFiles = ['scripts.js', 'runtime.js', 'polyfills.js', 'main.js'
+  const jsFiles = ['runtime.js', 'polyfills.js', 'main.js'
     ].map(f=>path.join(jsFileDir, f));
 
   jsFiles.forEach(f=>{

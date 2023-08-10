@@ -16,7 +16,7 @@ function testImportAnswerOption(params) {
               answerCardinalityNonRepeats = { "max": "1", "min": "0" };
 
           let file = `test/data/${fhirVersion}/answerOption/answerOption-${params.valueType}.${fhirVersion}.json`;
-          $.get(file, function (fhirQ) {
+          LForms.jQuery.get(file, function (fhirQ) {
             try {
               let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
@@ -75,7 +75,7 @@ function testImportAnswerOption(params) {
         it('should export ' + params.valueType + ' as answerOption, ' + fhirVersion, function (done) {
 
           let file = `test/data/${fhirVersion}/answerOption/answerOption-${params.valueType}.${fhirVersion}.json`;
-          $.get(file, function (fhirQ) {
+          LForms.jQuery.get(file, function (fhirQ) {
             try {
               let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
               //answerOption - autocomplete
