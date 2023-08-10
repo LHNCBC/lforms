@@ -1,6 +1,6 @@
 <form *ngIf="lhcFormData" class="lhc-form lf-template-table novalidate {{viewModeClass}}" autocomplete="off" #lhcFormContainer>
 
-    <div class="lhc-form-title" role="heading" aria-level=1>
+    <div class="lhc-form-title" role="heading" aria-level=1  *ngIf="lhcFormData?.items[0]?.displayControl?.questionLayout !== 'grid'">
       <span id="label-{{ lhcFormData.code }}" class="lhc-question" [style]="lhcFormData._obj_titleCSS"
         >{{lhcFormData.name || lhcFormData.shortName}}</span>
       <!-- code -->
@@ -20,7 +20,7 @@
     </div>
 
     <!--form body-->
-    <div class="lhc-form-body">
+    <div [class.lhc-form-body]="lhcFormData?.items[0]?.displayControl?.questionLayout !== 'grid'">
       <!--check form level questionLayout for matrix and horizontal layouts-->
       <ng-container *ngIf="lhcFormData.templateOptions.displayControl" [ngSwitch]="lhcFormData.templateOptions.displayControl.questionLayout">
         <ng-container *ngSwitchCase="'horizontal'">
