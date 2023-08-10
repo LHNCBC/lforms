@@ -255,17 +255,17 @@ export class LhcDataService {
    * Get CSS classes for the tree line
    * @returns {string}
    */
-  getTreeLineClass() {
+  getTreeLineClass(item) {
     const templateOptions = this.getLhcFormData().templateOptions;
-    return templateOptions.hideTreeLine || templateOptions.hideIndentation ? '' : 'lhc-tree-line';
+    return templateOptions.hideTreeLine || templateOptions.hideIndentation || item.displayControl.questionLayout === 'grid' ? '' : 'lhc-tree-line';
   }
 
   /**
    * Get CSS classes for the indentation
    * @returns {string}
    */
-  getIndentationClass() {
-    return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
+  getIndentationClass(item) {
+    return this.getLhcFormData().templateOptions.hideIndentation || item.displayControl.questionLayout === 'grid' ? '' : 'lhc-indentation';
   }
 
   /**
@@ -277,8 +277,8 @@ export class LhcDataService {
     const classList = [
       'lhc-item',
       this.getItemViewModeClass(item, viewMode),
-      this.getTreeLineClass(),
-      this.getIndentationClass(),
+      this.getTreeLineClass(item),
+      this.getIndentationClass(item),
       this.getSiblingStatus(item),
       this.getRowClass(item),
       this.getActiveRowClass(item)
