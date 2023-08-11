@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.5.3] 2023-08-25
+### Fixed
+- jQuery is no longer leaked to the containing app.
+
 ## [33.4.2] 2023-07-25
 ### Fixed
 - The sourcemap file for lhc-forms.js now works.
