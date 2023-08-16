@@ -445,7 +445,7 @@ function addCommonSDCExportFns(ns) {
     var itemControlType = "";
     var itemControlDisplay, answerChoiceOrientation;
     // Fly-over, Table, Checkbox, Combo-box, Lookup
-    if (!jQuery.isEmptyObject(item.displayControl)) {
+    if (!LForms.jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
       // for answers
       if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE" ||
@@ -922,7 +922,7 @@ function addCommonSDCExportFns(ns) {
           if (dataType === 'CWE' && typeof itemValue === 'string') {
             answer = { "valueString" : itemValue };
           }
-          else if (!jQuery.isEmptyObject(itemValue)) {
+          else if (!LForms.jQuery.isEmptyObject(itemValue)) {
             var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
             answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
             answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);

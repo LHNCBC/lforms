@@ -78,7 +78,7 @@ describe('Visual effect tests', () => {
 
       // break points, 600
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(601);
+        win.LForms.jQuery("wc-lhc-form").width(601);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 601);
       cy.get('.lhc-form.lhc-view-lg').should('exist');
@@ -93,7 +93,7 @@ describe('Visual effect tests', () => {
       cy.get('.lhc-item.lhc-item-view-sm').eq(1).should('not.exist');
 
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(598);
+        win.LForms.jQuery("wc-lhc-form").width(598);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 598);
       cy.get('.lhc-form.lhc-view-lg').should('not.exist');
@@ -109,7 +109,7 @@ describe('Visual effect tests', () => {
 
       // break points, 400 //480
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(398);
+        win.LForms.jQuery("wc-lhc-form").width(398);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 398);
       cy.get('.lhc-form.lhc-view-lg').should('not.exist');
@@ -124,7 +124,7 @@ describe('Visual effect tests', () => {
       cy.get('.lhc-item.lhc-item-view-md').eq(1).find('#\\/q_auto\\/1').should('not.exist');
 
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(401);
+        win.LForms.jQuery("wc-lhc-form").width(401);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 401);
       cy.get('.lhc-form.lhc-view-lg').should('not.exist');
@@ -225,12 +225,12 @@ describe('Visual effect tests', () => {
     it('should reset treeline after enableWhenExpression is run', () => {
       tp.openBaseTestPage();
       tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
-  
+
       const n1 = 'n1/1';
       const n2 = 'n2/1';
       const n3 = 'n3/1';
       const q4 = 'q4/1'; // present when n1+n2+n3 >= 5;
-  
+
       cy.byId(n1).should('be.visible');
       cy.byId(q4).should('not.exist');
       cy.byId(n1).click().type('1');
@@ -247,6 +247,6 @@ describe('Visual effect tests', () => {
 
     });
   });
- 
+
 
 });
