@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [33.4.3] 2023-08-15
+### Fixed
+- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension 
+  set to 'optionsOrString', a user typed unit would be cleared in the UI 
+  even it is still available in the QuestionnaireResonse.
+  
 ## [33.4.2] 2023-07-25
 ### Fixed
 - The sourcemap file for lhc-forms.js now works.
