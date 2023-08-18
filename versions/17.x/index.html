@@ -8,6 +8,18 @@
     })(window,document,'script','dataLayer','GTM-59GQ6JK');</script>
     <!-- End Google Tag Manager -->
 
+    <style id="antiClickjack">
+      body{display:none !important;}
+    </style>
+    <script type="text/javascript">
+      if (self === top) {
+        var antiClickjack = document.getElementById("antiClickjack");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+      } else {
+        top.location = self.location;
+      }
+    </script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>LHC-Forms: A Form-Rendering Widget</title>
@@ -65,7 +77,7 @@
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-59GQ6JK"
+    <noscript><iframe sandbox src="https://www.googletagmanager.com/ns.html?id=GTM-59GQ6JK"
     height="0" width="0" style="display:none;visibility:hidden" title="googletagmanager"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
@@ -73,7 +85,8 @@
       <div id=versionList>
         <p>Documentation by version:</p>
         <ul>
-          <li><a href="../../index.html">Current (>=30.x)</a></li>
+          <li><a href="../../index.html">Current (>=34.x)</a></li>
+          <li><a href="../30.x/index.html">30-33</a></li>
           <li><a href="../27.x/index.html">27-29</a></li>
           <li>17-26 (this version)</a></li>
           <li><a href="../13.x/index.html">13-16</a></li>
