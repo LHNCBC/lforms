@@ -55,7 +55,7 @@ import { LhcButtonPopoverComponent } from './lhc-button-popover/lhc-button-popov
 import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
 import { LhcItemMessagesComponent } from './lhc-item-messages/lhc-item-messages.component';
 import { LhcGroupGridComponent } from './lhc-group-grid/lhc-group-grid.component';
-
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 registerLocaleData(en);
 
@@ -104,7 +104,8 @@ registerLocaleData(en);
     NzGridModule,
     NzPopoverModule,
     NzIconModule.forRoot(icons),
-    NzSwitchModule
+    NzSwitchModule,
+    NzToolTipModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }
