@@ -7,9 +7,8 @@
         <!-- prefix -->
         <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
         <!-- question text -->
-        <span class="question" [style]="item._obj_textCSS">{{item.question}}
-          <!-- required -->
-          <span *ngIf="item._answerRequired" class="lhc-required" title="Required">*</span>
+        <span class="question" [style]="item._obj_textCSS">
+          {{ item.question }}&nbsp;<span *ngIf="item._answerRequired" class="lhc-required" title="Required">*</span>
         </span>
       </label>
     </span>
