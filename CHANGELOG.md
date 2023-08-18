@@ -2,12 +2,22 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [33.4.3] 2023-08-15
+## [34.0.1] 2023-08-18
 ### Fixed
 - Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension 
   set to 'optionsOrString', a user typed unit would be cleared in the UI 
   even it is still available in the QuestionnaireResonse.
   
+## [34.0.0] 2023-08-15
+### Fixed
+- jQuery is no longer leaked to the containing app.  This might be a breaking
+  change for users who were relying on jQuery being defined as a result of
+  loading the lforms package.  Apps can either load jQuery themselves or use
+  LForms.jQuery (which is where the lforms jQuery moved to) but note that we
+  would like to remove the jQuery dependency in the future if possible.  If we
+  do that, it will be another major-version increment to signal the
+  breaking change.
+
 ## [33.4.2] 2023-07-25
 ### Fixed
 - The sourcemap file for lhc-forms.js now works.

@@ -186,7 +186,7 @@ describe('ExpressionProcessor', function () {
     let testQ, testLFData, bmiItem, weightItem, heightItem;
     before(function(done) {
       var file = 'test/data/R4/weightHeightQuestionnaire.json';
-      $.get(file, function (parsedJson) {
+      LForms.jQuery.get(file, function (parsedJson) {
         testQ = parsedJson;
         done();
       });

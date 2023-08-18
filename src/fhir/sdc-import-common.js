@@ -822,7 +822,7 @@ function addCommonSDCImportFns(ns) {
           displayControl = null;
       }
 
-      if(displayControl && !jQuery.isEmptyObject(displayControl)) {
+      if(displayControl && !LForms.jQuery.isEmptyObject(displayControl)) {
         lfItem.displayControl = displayControl;
       }
     }
@@ -1692,7 +1692,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
 
-    if(!jQuery.isEmptyObject(restrictions)) {
+    if(!LForms.jQuery.isEmptyObject(restrictions)) {
       lfItem.restrictions = restrictions;
     }
   };
