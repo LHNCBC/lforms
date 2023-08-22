@@ -92,6 +92,8 @@
       </div>
     </div>
 
+    <button onclick="getInternalData()">Debug: Get internal data</button>
+    
     <br><br>
     <wc-lhc-form id='test-form'></wc-lhc-form>
     <div id="formContainer"></div>
@@ -191,6 +193,11 @@
           testForm.options = jsonForm.tempOptions;
         }
 
+      }
+
+      function getInternalData() {
+        let lfData = testForm.lhcFormData;
+        console.log(lfData)
       }
 
       /**

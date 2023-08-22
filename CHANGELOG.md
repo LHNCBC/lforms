@@ -2,7 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [34.0.0] 2023-08-25
+## [34.0.1] 2023-08-18
+### Fixed
+- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension 
+  set to 'optionsOrString', a user typed unit would be cleared in the UI 
+  even it is still available in the QuestionnaireResonse.
+  
+## [34.0.0] 2023-08-15
 ### Fixed
 - jQuery is no longer leaked to the containing app.  This might be a breaking
   change for users who were relying on jQuery being defined as a result of

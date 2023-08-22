@@ -56,7 +56,7 @@ export const InternalUtil = {
    * @return an object suitable for item.unit.
    */
   modelForOffListUnit: function(text) {
-    return text ? {name: text} : undefined;
+    return text ? {"name": text, "_displayUnit": text} : undefined;
   },
 
 
