@@ -46,6 +46,23 @@
 }
 /* end of tree lines */
 
+/*no tree lines for form level horizontal and grid layouts */
+.lf-top-section .lhc-layout-grid.lhc-item,
+.lf-top-section .lhc-layout-grid.lhc-item {
+  padding: 0 4px 0 3px;
+}
+.lf-top-section .lhc-layout-horizontal.lhc-item::before,
+.lf-top-section .lhc-layout-grid.lhc-item::before {
+  border: 0;
+}
+.lf-top-section .lhc-layout-horizontal.lhc-item::after,
+.lf-top-section .lhc-layout-grid.lhc-item::after {
+  border: 0;
+}
+/* end of tree lines */
+
+
+
 /* bar style */
 /* no horizontal bar */
 .lf-indentation-bar .lhc-item::before {

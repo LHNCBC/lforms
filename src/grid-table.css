@@ -1,0 +1,61 @@
+/*** grid layout ***/
+.lhc-form .lhc-layout-grid.lhc-item  {
+    padding-bottom: 2px;
+  }
+  .lhc-form .lhc-form-grid-table {
+    border-collapse: separate;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin: 2px 4px 0 1px;
+    text-align: left;
+    border: 1px solid #ced5d9;
+  }
+  .lhc-form .lhc-form-grid-table .lhc-grid-table-header-row {
+    background: #E8E8E8;
+  }
+  
+  .lhc-form-grid-table-header {
+    overflow: hidden;
+    vertical-align: top;
+    background: none repeat scroll 0 0 #E8E8E8;
+    padding: 4px 2px;
+    text-align: left ;
+    color: #666666;
+    font-weight: 400;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+  }
+  
+  .lhc-form .lhc-form-grid-table-title {
+    background: #e6f1ff; /*#E8E8E8;*/
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0 0 0 1px;
+    text-align: left;
+  
+    border-width: 0;
+    border-top: 2px solid white; /* leave space between headers */
+    padding: 4px 2px 4px 2px;
+  }
+  .lhc-form .lhc-form-grid-table .lhc-question {
+    width: 25%;
+  }
+  .lhc-form .lhc-form-grid-answer {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  .lhc-form .lhc-form-grid-cell-other {
+    text-align: center;
+  }
+  .lhc-form .lhc-form-grid-table th {
+    padding: 4px;
+  }
+  .lhc-form .lhc-form-grid-table td {
+    padding: 4px;
+    border-top: 1px solid #ced5d9;
+  }
+  /*** end of grid layout ***/
