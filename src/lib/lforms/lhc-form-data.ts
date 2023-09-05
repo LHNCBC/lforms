@@ -19,7 +19,6 @@ import Validation from "./lhc-form-validation.js"
 declare var LForms: any;
 
 import {Units, Formulas} from "./lhc-form-units.js";
-import { runInThisContext } from "vm";
 
 export default class LhcFormData {
 
