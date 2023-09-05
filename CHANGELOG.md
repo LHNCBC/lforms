@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.1.0] 2023-09-05
+### Added
+- Support for the exporting of QuestionnnaireResponse.questionnaire.
+
 ## [34.0.1] 2023-08-18
 ### Fixed
 - Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension 

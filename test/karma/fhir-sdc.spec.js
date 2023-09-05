@@ -58,6 +58,34 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           assert.equal(lfItem.unit.system, quantity.system);
         });
 
+        describe('Questionnaire.url and QuestionnaireResponse.questionnaire', function() {
+          let fhirQ = {
+            "status": "draft",
+            "title": "A Questionnaire with a url",
+            "resourceType": "Questionnaire",
+            "url": "a_conanical_url_of_the_questionnaire",
+            "item": [
+              {
+                "type": "string",
+                "linkId": "a",
+                "text": "A string"
+              }
+            ]
+          };
+
+          it('should handle the import and export of the url', function() {
+            let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            assert.equal(formData.url, "a_conanical_url_of_the_questionnaire");
+
+            let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, formData);
+            assert.equal(q.url, "a_conanical_url_of_the_questionnaire");
+
+            let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, formData);
+            assert.equal(qr.questionnaire, "a_conanical_url_of_the_questionnaire");
+
+          });
+        });
+
         describe('entryFormat extension', function() {
           let fhirQ = {
             "resouceType": "Questionnaire",

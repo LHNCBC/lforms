@@ -19,6 +19,7 @@ import Validation from "./lhc-form-validation.js"
 declare var LForms: any;
 
 import {Units, Formulas} from "./lhc-form-units.js";
+import { runInThisContext } from "vm";
 
 export default class LhcFormData {
 
@@ -124,6 +125,7 @@ export default class LhcFormData {
   _fhirVariables;
   _hasResponsiveExpr;
   copyrightNotice;
+  url;
   type;
   _showErrors;
   _showWarnings;
@@ -1431,6 +1433,7 @@ export default class LhcFormData {
       type: this.type,
       template: this.template,
       copyrightNotice: this.copyrightNotice,
+      url: this.url,
       items: formData.itemsData,
       templateOptions: CommonUtils.deepCopy(this.templateOptions)
     };

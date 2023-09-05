@@ -821,6 +821,11 @@ function addCommonSDCExportFns(ns) {
     // authored, required
     target.authored = LForms.Util.dateToDTMString(new Date());
 
+    // url, required in R5, optional in earlier versions
+    if (source.url) {
+      target.questionnaire = source.url;
+    }
+
     // questionnaire , required
     // We do not have the ID at this point, so leave it unset for now.  Note
     // that the fomat has also changed from Reference to canonical in R4.
