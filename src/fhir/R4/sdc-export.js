@@ -487,6 +487,18 @@ var self = {
         targetItem.enableBehavior = 'any';
       }
     }
+  },
+
+  
+  /**
+   * 
+   * @param {*} target 
+   * @param {*} source 
+   */
+  _processQRQuestionnaire(target, source) {
+    if (source.url) {
+      target.questionnaire = source.url;
+    }
   }
 };
 

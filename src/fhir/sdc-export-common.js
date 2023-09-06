@@ -26,7 +26,9 @@ function addCommonSDCExportFns(ns) {
         target = {};
         this._processRepeatingItemValues(source);
         this._setResponseFormLevelFields(target, source, noExtensions);
-
+        if (this._processQRQuestionnaire) {
+          this._processQRQuestionnaire(target, source);
+        }
         if (source.items && Array.isArray(source.items)) {
           var tmp = this._processResponseItem(source, true);
           if(tmp && tmp.item && tmp.item.length) {
@@ -820,11 +822,6 @@ function addCommonSDCExportFns(ns) {
 
     // authored, required
     target.authored = LForms.Util.dateToDTMString(new Date());
-
-    // url, required in R5, optional in earlier versions
-    if (source.url) {
-      target.questionnaire = source.url;
-    }
 
     // questionnaire , required
     // We do not have the ID at this point, so leave it unset for now.  Note

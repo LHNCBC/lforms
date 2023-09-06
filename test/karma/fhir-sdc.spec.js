@@ -81,7 +81,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(q.url, "a_conanical_url_of_the_questionnaire");
 
             let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, formData);
-            assert.equal(qr.questionnaire, "a_conanical_url_of_the_questionnaire");
+            if (fhirVersion === "R4") {
+              assert.equal(qr.questionnaire, "a_conanical_url_of_the_questionnaire");
+            }
+            else if (fhirVersion === "STU3") {
+              assert.equal(qr.questionnaire, undefined);
+            }
 
           });
         });
