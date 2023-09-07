@@ -63,7 +63,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             "status": "draft",
             "title": "A Questionnaire with a url",
             "resourceType": "Questionnaire",
-            "url": "a_conanical_url_of_the_questionnaire",
+            "url": "a_canonical_url_of_the_questionnaire",
             "item": [
               {
                 "type": "string",
@@ -75,14 +75,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should handle the import and export of the url', function() {
             let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
-            assert.equal(formData.url, "a_conanical_url_of_the_questionnaire");
+            assert.equal(formData.url, "a_canonical_url_of_the_questionnaire");
 
             let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, formData);
-            assert.equal(q.url, "a_conanical_url_of_the_questionnaire");
+            assert.equal(q.url, "a_canonical_url_of_the_questionnaire");
 
             let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, formData);
             if (fhirVersion === "R4") {
-              assert.equal(qr.questionnaire, "a_conanical_url_of_the_questionnaire");
+              assert.equal(qr.questionnaire, "a_canonical_url_of_the_questionnaire");
             }
             else if (fhirVersion === "STU3") {
               assert.equal(qr.questionnaire, undefined);
