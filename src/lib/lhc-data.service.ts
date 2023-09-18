@@ -257,7 +257,7 @@ export class LhcDataService {
    */
   getTreeLineClass(item) {
     const templateOptions = this.getLhcFormData().templateOptions;
-    return templateOptions.hideTreeLine || templateOptions.hideIndentation || item.displayControl.questionLayout === 'grid' ? '' : 'lhc-tree-line';
+    return templateOptions.hideTreeLine || templateOptions.hideIndentation || item?.displayControl?.questionLayout === 'grid' ? '' : 'lhc-tree-line';
   }
 
   /**
@@ -265,7 +265,7 @@ export class LhcDataService {
    * @returns {string}
    */
   getIndentationClass(item) {
-    return this.getLhcFormData().templateOptions.hideIndentation || item.displayControl.questionLayout === 'grid' ? '' : 'lhc-indentation';
+    return this.getLhcFormData().templateOptions.hideIndentation || item?.displayControl?.questionLayout === 'grid' ? '' : 'lhc-indentation';
   }
 
   /**
