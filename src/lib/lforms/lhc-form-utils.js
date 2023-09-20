@@ -538,7 +538,20 @@ const FormUtils = {
       // See if any items have a property deleted from R4.
       var items = [];
       var foundSTU3 = this._testValues(fhirData, 'item', function(item) {
-        return !!(item.option || item.options ||
+        return !!(
+          item.option ||
+          item.options ||
+          item.initialBoolean ||
+          item.initialDecimal ||
+          item.initialInteger ||
+          item.initialDate ||
+          item.initialDateTime ||
+          item.initialTime ||
+          item.initialString ||
+          item.initialUri ||
+          item.initialAttachment ||
+          item.initialQuantity ||
+          item.initialReference ||
           (item.enableWhen && 'hasAnswer' in item.enableWhen));
       });
       version = foundSTU3 ? 'STU3' : 'R4';

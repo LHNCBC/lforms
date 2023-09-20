@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.0.2] 2023-09-20
+### Fixed
+- Fixed a bug in LForms.Util.guessFHIRVersion() to detect STU3 when initial
+  fields are specified.
+
 ## [34.0.1] 2023-08-18
 ### Fixed
 - Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension 

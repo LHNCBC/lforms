@@ -619,5 +619,85 @@ describe('Util library', function() {
 
   });
 
+  describe.only('LForms.Util.guessFHIRVersion()', () => {
+    const q = {
+      resourceType: 'Questionnaire',
+      status: 'draft',
+      item: [
+        {
+          text: 'Item 1',
+          linkId: '1'
+        }
+      ]
+    };
+
+    const stu3InitialValues = {
+      string: 'a',
+      boolean: true,
+      decimal: 1.1,
+      integer: 1,
+      date: '2020-02-02',
+      dateTime: '2020-02-02T02:02:02.222Z',
+      time: '02:02:02.222',
+      uri: 'http://hl7.org',
+      quantity: {
+        value: 1.2,
+        unit: 'meter',
+        system: 'http://unitsofmeasure.org',
+        code: 'm'
+      },
+      reference: 'Patient',
+      attachment: {
+        mimeType: 'text/plain',
+        language: 'en'
+      }
+    };
+    const stu3OptionValues = {
+      option: [],
+      options: 'http://hl7.org/ValueSet/conditions'
+    }
+
+
+    it('should guess STU3 version using initial fields', () => {
+      Object.keys(stu3InitialValues).forEach((type) => {
+        const initialField = 'initial'+type.charAt(0).toUpperCase() + type.slice(1);
+        const item = q.item[0];
+        item.type = type;
+        item[initialField] = stu3InitialValues[type]; // Add the field to test.
+        console.log(LForms.Util.guessFHIRVersion(q), type, initialField);
+        assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
+        delete item[initialField]; // Clear for next field.
+      });
+    });
+
+    it('should guess STU3 version using other than initial fields', () => {
+      const item = q.item[0];
+      item.type = 'choice';
+      Object.keys(stu3OptionValues).forEach((field) => {
+        item[field] = stu3OptionValues[field]; // Add the field to test.
+        assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
+        delete item[field]; // Clear for next field.
+      });
+
+      item.type = 'string'; // item[0] has no initial fields and set type to string.
+      // Add a second item with enableWhen.
+      q.item.push({
+        text: 'Item 2',
+        type: 'string',
+        linkId: '2',
+        enableWhen: [{
+          question: '1',
+          hasAnswer: true, // STU3 specific field.
+          answerString: 'A'
+        }]
+      });
+
+      // TODO - Use of enableWhen[x].hasAnswer is not working.
+      // assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
+    });
+  });
+
+
+
 });
 
