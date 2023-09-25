@@ -619,7 +619,7 @@ describe('Util library', function() {
 
   });
 
-  describe.only('LForms.Util.guessFHIRVersion()', () => {
+  describe('LForms.Util.guessFHIRVersion()', () => {
     const q = {
       resourceType: 'Questionnaire',
       status: 'draft',
@@ -664,7 +664,6 @@ describe('Util library', function() {
         const item = q.item[0];
         item.type = type;
         item[initialField] = stu3InitialValues[type]; // Add the field to test.
-        console.log(LForms.Util.guessFHIRVersion(q), type, initialField);
         assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
         delete item[initialField]; // Clear for next field.
       });
@@ -687,13 +686,12 @@ describe('Util library', function() {
         linkId: '2',
         enableWhen: [{
           question: '1',
-          hasAnswer: true, // STU3 specific field.
+          hasAnswer: false, // STU3 specific field.
           answerString: 'A'
         }]
       });
 
-      // TODO - Use of enableWhen[x].hasAnswer is not working.
-      // assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
+      assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
     });
   });
 

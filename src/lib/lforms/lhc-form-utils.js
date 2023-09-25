@@ -538,7 +538,7 @@ const FormUtils = {
       // See if any items have a property deleted from R4.
       var items = [];
       var foundSTU3 = this._testValues(fhirData, 'item', function(item) {
-        return !!(
+        let ret = !!(
           item.option ||
           item.options ||
           item.initialBoolean ||
@@ -551,8 +551,15 @@ const FormUtils = {
           item.initialUri ||
           item.initialAttachment ||
           item.initialQuantity ||
-          item.initialReference ||
-          (item.enableWhen && 'hasAnswer' in item.enableWhen));
+          item.initialReference);
+
+        // Check for item.enableWhen[x].hasAnswer
+        if(!ret && item.enableWhen?.length) {
+          ret = item.enableWhen.some((e) => {
+            return 'hasAnswer' in e;
+          });
+        }
+        return ret;
       });
       version = foundSTU3 ? 'STU3' : 'R4';
     }
