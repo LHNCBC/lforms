@@ -998,13 +998,13 @@ function addCommonSDCImportFns(ns) {
           }
           break;
         case "INT":
-          if (qrValue.valueQuantity) {
+          if ('valueQuantity' in qrValue) {
             item.value = qrValue.valueQuantity.value;
             if(qrValue.valueQuantity.code) {
               item.unit = {name: qrValue.valueQuantity.code};
             }
           }
-          else if (qrValue.valueInteger) {
+          else if ('valueInteger' in qrValue) {
             // has an answer list
             if (InternalUtil.hasAnswerList(item)) {
               // answer repeats (autocomplete or checkboxes)
@@ -1018,12 +1018,12 @@ function addCommonSDCImportFns(ns) {
           break;
         case "REAL":
         case "QTY":
-          if (qrValue.valueQuantity) {
+          if ('valueQuantity' in qrValue) {
             var quantity = qrValue.valueQuantity;
             var lformsQuantity = importFHIRQuantity(quantity);
             LForms.Util._internalUtil.assignValueToItem(item, lformsQuantity, 'Quantity');
           }
-          else if (qrValue.valueDecimal) {
+          else if ('valueDecimal' in qrValue) {
             item.value = qrValue.valueDecimal;
           }
           break;
