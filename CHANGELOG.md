@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.0.3] 2023-09-28
+### Fixed
+- Fiex a bug that number 0 in QuestionnaireResponse is not imported when 
+  the QuestionnaireResponse is loaded into the corresponding Questionnaire.
+  
 ## [34.0.2] 2023-09-20
 ### Fixed
 - Fixed a bug in LForms.Util.guessFHIRVersion() to detect STU3 when initial
