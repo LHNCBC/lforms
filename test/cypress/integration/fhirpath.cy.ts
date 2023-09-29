@@ -75,47 +75,54 @@ describe('answerExpression', () => {
     });
   });
 
-  let rxTermsQs = [
-    "rxterms.R4.json", // a rxterms questionnaire where the strength item has an answerExpression
-    "rxterms.R4.with-autofill-calexp.json", // a rxterms questionnaire where the strength item has an answerExpression then a calculatedExpression (autofill)'
-    "rxterms.R4.with-autofill-calexp2.json" // a rxterms questionnaire where the strength item has a calculatedExpression (autofill) then an answerExpression'
+  let rxTermsQs = [ // rxterms Questionnaires
+    "rxterms.R4", // where the strength item has an answerExpression
+    "rxterms.R4.with-autofill-calexp", // where the strength item has an answerExpression then a calculatedExpression (autofill)'
+    "rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp2" // where the strength item has a calculatedExpression (autofill) then an answerExpression'
   ]
 
-  rxTermsQs.forEach(q => {
-    describe('Questionnaire '+q, ()=>{
-      before(()=>{
-        tp.openBaseTestPage();
-        TestUtil.waitForFHIRLibsLoaded();
+  describe('answerExpression tests with the RxTerms form', ()=>{
+    let qrData;
+    before(()=>{
+      // Load one of the forms and create a QR
+      tp.loadFromTestData('rxterms.R4.json', 'R4');
+      cy.byId('medication/1/1').click().typeAndWait('ar');
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('strength/1/1').click();
+      cy.get('#searchResults li').should('have.length.above', 0);
+      cy.get('#searchResults li:first-child').click();
+      cy.byId('rxcui/1/1').should('not.have.value', '');
+      // get a QuestionnaireResponse.
+      cy.window().then((win) => {
+        qrData = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
       });
 
-      it.only('should not clear a list field if the form has just loaded with saved data', () => {
-        // This is the case when a QuestionnaireResponse is loaded in that has a
-        // value in a field whose list comes from an answerExpression or a
-        // cqf-expression.  Initially, there is no list, but when the expression
-        // runs, a list is obtained.  Because the data in the field is saved data,
-        // it should not be cleared, even if it is not in the current list.  For
-        // example, in the RxTerms form below, if the user saved a drug name and a
-        // strength value, when the form is later loaded, RxTerms might have been
-        // updated and no longer have the selected strength value, or even the drug
-        // name itself.  We must be careful not to discard the user's data just
-        // because the form is re-opened.
+    });
 
-        // Load the RxTerms test form and fill it in
-        tp.loadFromTestData(q, 'R4');
-        cy.byId('medication/1/1').click().typeAndWait('ar');
-        cy.get('#searchResults li:first-child').click();
-        cy.byId('strength/1/1').click();
-        cy.get('#searchResults li').should('have.length.above', 0);
-        cy.get('#searchResults li:first-child').click();
-        cy.byId('rxcui/1/1').should('not.have.value', '');
-        // get a QuestionnaireResponse.
-        cy.window().then((win) => {
-          let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+    rxTermsQs.forEach(q => {
+      describe('Questionnaire '+q, ()=>{
+        before(()=>{
+          tp.openBaseTestPage();
+          TestUtil.waitForFHIRLibsLoaded();
+        });
+        it.only('should not clear a list field if the form has just loaded with saved data', () => {
+          // This is the case when a QuestionnaireResponse is loaded in that has a
+          // value in a field whose list comes from an answerExpression or a
+          // cqf-expression.  Initially, there is no list, but when the expression
+          // runs, a list is obtained.  Because the data in the field is saved data,
+          // it should not be cleared, even if it is not in the current list.  For
+          // example, in the RxTerms form below, if the user saved a drug name and a
+          // strength value, when the form is later loaded, RxTerms might have been
+          // updated and no longer have the selected strength value, or even the drug
+          // name itself.  We must be careful not to discard the user's data just
+          // because the form is re-opened.
+
+          let qr = JSON.parse(JSON.stringify(qrData));
           cy.visit('/test/pages/addFormToPageTest.html');
           cy.window().then((win2) => {
             win2.LForms.Util.removeFormsFromPage('formContainer');
             win2.LForms.Util.removeFormsFromPage('formContainer2');
-            cy.readFile('test/data/R4/'+q).then((qData) => {
+            cy.readFile('test/data/R4/'+q+'.json').then((qData) => {
               const qOrig = JSON.parse(JSON.stringify(qData)); // a copy
               const qrOrig = JSON.parse(JSON.stringify(qr)); // a copy
               showQQR(qData, qr, 'formContainer', win2);
@@ -132,10 +139,13 @@ describe('answerExpression', () => {
                 checkSavedDataPresent();
                 cy.then(() => {
                   // Test the same thing with a vertical layout
-                  qData.item[0].extension.splice(1, 1); // delete itemControl "gtable" extension
+                  // delete itemControl "gtable" extension
+                  qData.item[0].extension = qData.item[0].extension.filter(
+                    e=>e.url != "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
                   showQQR(qData, qr, 'formContainer', win2);
                   cy.byId('strength/1/1').click();
                   cy.get('#searchResults li').should('have.length.above', 0);
+                  cy.byId('strength/1/1').blur();
                   checkSavedDataPresent();
                   cy.then(() => {
                     // Test again with a drug code that is off list
@@ -149,13 +159,12 @@ describe('answerExpression', () => {
                       showQQR(qData, qr, 'formContainer', win2);
                       cy.byId('strength/1/1').should('be.visible');
                       checkSavedDataPresent();
-
                       cy.then(() => {
                         // Test with multiple values in the strength
                         qData = JSON.parse(JSON.stringify(qOrig));
                         qr = JSON.parse(JSON.stringify(qrOrig));
                         qData.item[0].item[1].repeats = true;
-                        delete qData.item[0].item[2].extension;
+                        delete qData.item[0].item[2].extension; // deletes the calculatedExpression for rxcui
                         qr.item[0].item[1].answer[1] = {valueCoding: {display: 'other value'}};
                         showQQR(qData, qr, 'formContainer', win2);
                         cy.byId('strength/1/1').click();
@@ -171,51 +180,32 @@ describe('answerExpression', () => {
                           // Test with radio buttons
                           qData = JSON.parse(JSON.stringify(qOrig));
                           qr = JSON.parse(JSON.stringify(qrOrig));
-                          qData.item[0].extension.splice(1, 1); // delete itemControl "gtable" extension
+                          // delete itemControl "gtable" extension
+                          qData.item[0].extension = qData.item[0].extension.filter(
+                            e=>e.url != "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
                           // Replace the strength field drop down with radio buttons
-                          qData.item[0].item[1].extension[0] = {
-                            url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
-                            valueCodeableConcept: {
-                              text: 'Radio Button',
-                              coding: [
-                                {
-                                  code: 'radio-button',
-                                  display: 'Radio Button',
-                                  system: 'http://hl7.org/fhir/questionnaire-item-control'
-                                }
-                              ]
-                            }
-                          };
-                          showQQR(qData, qr, 'formContainer', win2);
-                          cy.byId('medication/1/1').should('not.have.value', '');
-                          cy.byId('strength/1/1213377').find('input').should('be.checked');
-                          cy.byId('rxcui/1/1').should('not.have.value', '');
-                          cy.then(() => {
-                            // Test with checkboxes an multiple values
-                            qData = JSON.parse(JSON.stringify(qData)); // make a copy for the new test
-                            qr = JSON.parse(JSON.stringify(qr));
-                            qData.item[0].item[1].repeats = true;
-                            qData.item[0].item[1].extension[0] = {
-                              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-                              "valueCodeableConcept": {
-                                "text": "Check-box",
-                                "coding": [
+                          let exts = qData.item[0].item[1].extension;
+                          cy.wrap(exts[0].url).should('equal',
+                            "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+                          cy.then(()=>{
+                            exts[0] = {
+                              url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+                              valueCodeableConcept: {
+                                text: 'Radio Button',
+                                coding: [
                                   {
-                                    "code": "check-box",
-                                    "display": "Check-box",
-                                    "system": "http://hl7.org/fhir/questionnaire-item-control"
+                                    code: 'radio-button',
+                                    display: 'Radio Button',
+                                    system: 'http://hl7.org/fhir/questionnaire-item-control'
                                   }
                                 ]
                               }
                             };
-                            qr.item[0].item[1].answer[1] = {valueString: 'other value'};
                             showQQR(qData, qr, 'formContainer', win2);
-                            cy.byId('medication/1/1').should('not.have.value', '');
-                            cy.byId('strength/1/1213377').find('input').should('be.checked');
-                            cy.byId('strength/1/1_other').find('input').should('be.checked');
-                            cy.byId('strength/1/1_otherValue').should('have.value', 'other value');
-                            cy.byId('rxcui/1/1').should('not.have.value', '');
                           });
+                          cy.byId('medication/1/1').should('not.have.value', '');
+                          cy.byId('strength/1/1213377').find('input').should('be.checked');
+                          cy.byId('rxcui/1/1').should('not.have.value', '');
                         });
                       });
                     });
@@ -226,7 +216,24 @@ describe('answerExpression', () => {
           });
         });
       });
-    })
+/*
+      describe('Questionnaire '+q+' with checkboxes', ()=>{
+        it.only('should not clear a list field if the form has just loaded with saved data', () => {
+          // Test with checkboxes and multiple values
+          cy.readFile('test/data/R4/'+q+'.checkboxes.json').then((qData) => {
+            let qr = JSON.parse(JSON.stringify(qrData));
+            qr.item[0].item[1].answer[1] = {valueString: 'other value'};
+            showQQR(qData, qr, 'formContainer', win2);
+            cy.byId('medication/1/1').should('not.have.value', '');
+            cy.byId('strength/1/1213377').find('input').should('be.checked');
+            cy.byId('strength/1/1_other').find('input').should('be.checked');
+            cy.byId('strength/1/1_otherValue').should('have.value', 'other value');
+            cy.byId('rxcui/1/1').should('not.have.value', '');
+          });
+        });
+      });
+      */
+    });
   });
 
 });

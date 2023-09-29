@@ -214,6 +214,7 @@ function addCommonSDCImportFns(ns) {
    */
   self._processFormLevelFields = function(lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
+    self._processTerminologyServer(lfData, questionnaire);
 
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
@@ -1263,8 +1264,9 @@ function addCommonSDCImportFns(ns) {
   /**
    *  Processes the terminology server setting, if any.
    *
-   * @param lfItem - LForms item object to assign externallyDefined
-   * @param qItem - Questionnaire item object
+   * @param lfItem - LForms form or item object to receive the terminology
+   *  server setting.
+   * @param qItem - Questionnaire or Questionnaire item object
    * @private
    */
   self._processTerminologyServer = function (lfItem, qItem) {
