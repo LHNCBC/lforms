@@ -77,7 +77,7 @@ describe('answerExpression', () => {
 
   let rxTermsQs = [ // rxterms Questionnaires
     "rxterms.R4", // where the strength item has an answerExpression
-    "rxterms.R4.with-autofill-calexp", // where the strength item has an answerExpression then a calculatedExpression (autofill)'
+    "rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp", // where the strength item has an answerExpression then a calculatedExpression (autofill)'
     "rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp2" // where the strength item has a calculatedExpression (autofill) then an answerExpression'
   ]
 
@@ -96,7 +96,6 @@ describe('answerExpression', () => {
       cy.window().then((win) => {
         qrData = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
       });
-
     });
 
     rxTermsQs.forEach(q => {
@@ -105,7 +104,7 @@ describe('answerExpression', () => {
           tp.openBaseTestPage();
           TestUtil.waitForFHIRLibsLoaded();
         });
-        it.only('should not clear a list field if the form has just loaded with saved data', () => {
+        it('should not clear a list field if the form has just loaded with saved data', () => {
           // This is the case when a QuestionnaireResponse is loaded in that has a
           // value in a field whose list comes from an answerExpression or a
           // cqf-expression.  Initially, there is no list, but when the expression
@@ -142,6 +141,7 @@ describe('answerExpression', () => {
                   // delete itemControl "gtable" extension
                   qData.item[0].extension = qData.item[0].extension.filter(
                     e=>e.url != "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+
                   showQQR(qData, qr, 'formContainer', win2);
                   cy.byId('strength/1/1').click();
                   cy.get('#searchResults li').should('have.length.above', 0);
@@ -183,6 +183,7 @@ describe('answerExpression', () => {
                           // delete itemControl "gtable" extension
                           qData.item[0].extension = qData.item[0].extension.filter(
                             e=>e.url != "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+
                           // Replace the strength field drop down with radio buttons
                           let exts = qData.item[0].item[1].extension;
                           cy.wrap(exts[0].url).should('equal',
@@ -216,23 +217,25 @@ describe('answerExpression', () => {
           });
         });
       });
-/*
+
       describe('Questionnaire '+q+' with checkboxes', ()=>{
-        it.only('should not clear a list field if the form has just loaded with saved data', () => {
+        it('should not clear a list field if the form has just loaded with saved data', () => {
           // Test with checkboxes and multiple values
-          cy.readFile('test/data/R4/'+q+'.checkboxes.json').then((qData) => {
+          const qFile = q == 'rxterms.R4' ? 'rxtermsAnswerExpTests/' + q : q;
+          cy.readFile('test/data/R4/'+qFile+'.checkboxes.json').then((qData) => {
             let qr = JSON.parse(JSON.stringify(qrData));
             qr.item[0].item[1].answer[1] = {valueString: 'other value'};
-            showQQR(qData, qr, 'formContainer', win2);
-            cy.byId('medication/1/1').should('not.have.value', '');
-            cy.byId('strength/1/1213377').find('input').should('be.checked');
-            cy.byId('strength/1/1_other').find('input').should('be.checked');
-            cy.byId('strength/1/1_otherValue').should('have.value', 'other value');
-            cy.byId('rxcui/1/1').should('not.have.value', '');
+            cy.window().then((win) => {
+              showQQR(qData, qr, 'formContainer', win);
+              cy.byId('medication/1/1').should('not.have.value', '');
+              cy.byId('strength/1/1213377').find('input').should('be.checked');
+              cy.byId('strength/1/1_other').find('input').should('be.checked');
+              cy.byId('strength/1/1_otherValue').should('have.value', 'other value');
+              cy.byId('rxcui/1/1').should('not.have.value', '');
+            });
           });
         });
       });
-      */
     });
   });
 
