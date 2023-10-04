@@ -2,12 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.0.2] 2023-10-04
+### Fixed
+- The FHIR extension for setting the preferred terminology server now works on
+  the root of the Questionnaire as well as on items.
+
 ## [34.0.1] 2023-08-18
 ### Fixed
-- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension 
-  set to 'optionsOrString', a user typed unit would be cleared in the UI 
+- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension
+  set to 'optionsOrString', a user typed unit would be cleared in the UI
   even it is still available in the QuestionnaireResonse.
-  
+
 ## [34.0.0] 2023-08-15
 ### Fixed
 - jQuery is no longer leaked to the containing app.  This might be a breaking
