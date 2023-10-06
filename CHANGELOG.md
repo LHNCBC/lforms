@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.1.0] 2023-10-03
+### Added
+- Added support for FHIR verison R4B.
+
 ## [34.0.3] 2023-09-28
 ### Fixed
 - Fiex a bug that number 0 in QuestionnaireResponse is not imported when 

@@ -5,7 +5,7 @@ delete FHIRSupport.default;
 let fhirVersions = Object.keys(FHIRSupport);
 const po = new AddFormToPageTestPage();
 
-function testOneValueType(valueType, params, fhirVersion, fileName) {
+function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionInFile) {
   // valueString
   describe(fhirVersion + " - " + valueType, () => {
 
@@ -80,7 +80,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
       // autocomplete, repeats, initial
       cy.byId(params.itemIds.g5item2)
         .should('be.visible');
-      if (fhirVersion === 'R4') {
+      if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
         cy.byId(`item-${params.itemIds.g5item2}`)
           .byCss('span.autocomp_selected li')
           .should('have.length', 2)
@@ -143,7 +143,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
       cy.byId(params.itemIds.g6item2ans3)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer3);
-      if (fhirVersion === 'R4') {
+      if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
         if (valueType === "valueCoding.open-choice") {
           cy.byId(`${params.itemIds.g6item2ans3} input`)
             .should('not.be.checked');
@@ -230,7 +230,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
           expect(qr.item[4].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         }
         
-        if (fhirVersion === 'R4') {
+        if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
           if (valueType === "valueCoding.open-choice") {
             expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
           }
@@ -248,7 +248,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
           expect(qr.item[5].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])          
         }
         
-        if (fhirVersion === 'R4') {
+        if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
           if (valueType === "valueCoding.open-choice") {
             expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
           }
@@ -262,7 +262,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
 
 
         // merge the QuestionnaireResonse back to the Questionnaire
-        cy.readFile(`test/data/${fhirVersion}/${fileName}`).then((q) => {  // readFile will parse the JSON
+        cy.readFile(`test/data/${fhirVersionInFile}/${fileName}`).then((q) => {  // readFile will parse the JSON
 
           let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
           let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
@@ -323,7 +323,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
               .should('have.value', params.itemValues.g1Answer2);
           }
           // autocomplete, repeats, initial
-          if (fhirVersion === 'R4') {
+          if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
             cy.byId(`item-${params.itemIds.g5item2}`)
               .byCss('span.autocomp_selected li')
               .should('have.length', 2)
@@ -378,7 +378,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName) {
             .should('not.be.checked');
           cy.byId(`${params.itemIds.g6item2ans2} input`)
             .should('be.checked');
-          if (fhirVersion === 'R4') {
+          if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
             if (valueType === "valueCoding.open-choice") {
               cy.byId(`${params.itemIds.g6item2ans3} input`)
                 .should('not.be.checked');
@@ -544,10 +544,11 @@ describe('AnswerOption with different types', () => {
           itemValues: values,
           qrItemValues: qrItemValues[valueType]
         }
-       
-        let fileName = `answerOption/answerOption-${valueType}.${fhirVersion}.json`;
-        
-        testOneValueType(valueType, params, fhirVersion, fileName);
+
+        let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+        let fileName = `answerOption/answerOption-${valueType}.${fhirVersionInFile}.json`;
+
+        testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionInFile);
       });
 
     })(fhirVersions[i]);

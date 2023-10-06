@@ -439,8 +439,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
-              var assertFHTQuestionnaire = require('../support/'+fhirVersion+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
-              assertFHTQuestionnaire(fhirData);
+              let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+              var assertFHTQuestionnaire = require('../support/'+fhirVersionInFile+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
+              assertFHTQuestionnaire(fhirData, fhirVersion);
             });
           });
 
@@ -629,7 +630,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr")).click();
-            //browser.waitForAngular();
 
             expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
@@ -911,7 +911,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           // NEXT: new boolean implementation
           cy.byCss('#/type-boolean/1true input').should('be.checked')
 
-          if (fhirVersion === "R4") {
+          if (fhirVersion === "R4" || fhirVersion === "R4B") {
 
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
 
@@ -1011,7 +1011,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         it('should keep the initial[x] values when converted back to Questionnaire', function() {
-          if (fhirVersion === "R4") {
+          if (fhirVersion === "R4" || fhirVersion === "R4B") {
             getFHIRResource("Questionnaire", fhirVersion).
             then(function(callbackData) {
               let [error, fhirData] = callbackData;
@@ -1121,7 +1121,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
       describe('QuestionnaireResponse special case', function () {
 
-        if (fhirVersion === 'R4') {
+        if (fhirVersion === 'R4' || fhirVersion === "R4B") {
           it('should get answers from a question that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
             util.setFHIRVersion(fhirVersion);
