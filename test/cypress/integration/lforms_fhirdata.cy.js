@@ -694,7 +694,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
 
           it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {
-            tp.LoadForm.openUSSGFHTVertical();
+            tp.openBaseTestPage();
             util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-qr")).click();
@@ -727,11 +727,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should merge FHIR SDC QuestionnaireResponse with User Data on CWE fields back into the form', function() {
-            tp.LoadForm.openFullFeaturedForm();
+            tp.openBaseTestPage();
             util.setFHIRVersion(fhirVersion);
-
             element(by.id("merge-qr-cwe")).click();
-
+            
+            // 0 and non-0 numbers
+            cy.byId('/type2/1').should('have.value', '0');
+            cy.byId('/type3/1').should('have.value', '-1.1');
+            
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
             // CNE field with a default value
@@ -757,20 +760,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               return win.LForms.Util.getUserData(null, false, true);
             }).then(function (formData) {
 
-              expect(formData.itemsData.length).toBe(7);
+              expect(formData.itemsData.length).toBe(9);
               expect(formData.itemsData[0].value).toBe(true);
               expect(formData.itemsData[1].value).toBe(false);
-              expect(formData.itemsData[2].value).toBe("user typed value");
-              expect(formData.itemsData[3].value.length).toBe(4);
-              expect(formData.itemsData[3].value[0].code).toEqual('c1');
-              expect(formData.itemsData[3].value[0].text).toEqual('Answer 1');
-              expect(formData.itemsData[3].value[0].system).toEqual(undefined);
-              expect(formData.itemsData[3].value[1].code).toEqual('c2');
-              expect(formData.itemsData[3].value[1].text).toEqual('Answer 2');
-              expect(formData.itemsData[3].value[1].system).toEqual(undefined);
-              expect(formData.itemsData[3].value[2]).toEqual('user value1');
-              expect(formData.itemsData[3].value[3]).toEqual('user value2');
-
+              expect(formData.itemsData[2].value).toBe(0);
+              expect(formData.itemsData[3].value).toBe(-1.1);
+              expect(formData.itemsData[4].value).toBe("user typed value");
+              expect(formData.itemsData[5].value.length).toBe(4);
+              expect(formData.itemsData[5].value[0].code).toEqual('c1');
+              expect(formData.itemsData[5].value[0].text).toEqual('Answer 1');
+              expect(formData.itemsData[5].value[0].system).toEqual(undefined);
+              expect(formData.itemsData[5].value[1].code).toEqual('c2');
+              expect(formData.itemsData[5].value[1].text).toEqual('Answer 2');
+              expect(formData.itemsData[5].value[1].system).toEqual(undefined);
+              expect(formData.itemsData[5].value[2]).toEqual('user value1');
+              expect(formData.itemsData[5].value[3]).toEqual('user value2');
             })
 
           });

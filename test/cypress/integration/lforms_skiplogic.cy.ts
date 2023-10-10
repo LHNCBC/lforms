@@ -200,27 +200,25 @@ describe('skip logic', () => {
     });
 
     for (let i = 0; i < fhirVersions.length; i++) {
-      if (fhirVersions[i] !== 'STU3') {
-        it('should work with = and != operators - ' + fhirVersions[i], () => {
-          tp.loadFromTestData('test-enablewhen.json', fhirVersions[1]);
-          const source = '4.1/1';
-          const targetEqual = '4.2/1';
-          const targetNotEqual = '4.3/1';
+      it('should work with = and != operators - ' + fhirVersions[i], () => {
+        tp.loadFromTestData('test-enablewhen.json', fhirVersions[1]);
+        const source = '4.1/1';
+        const targetEqual = '4.2/1';
+        const targetNotEqual = '4.3/1';
 
-          cy.byId(source).should('be.visible');
-          cy.byId(targetEqual).should('not.exist');
-          cy.byId(targetNotEqual).should('be.visible');
+        cy.byId(source).should('be.visible');
+        cy.byId(targetEqual).should('not.exist');
+        cy.byId(targetNotEqual).should('be.visible');
 
-          cy.byId(source).click().type('{downArrow}').type('{enter}');
-          cy.byId(targetEqual).should('be.visible');
-          // It looks like below line was not supposed to be here:
-          // TestUtil.waitForElementNotPresent(targetEqual)
+        cy.byId(source).click().type('{downArrow}').type('{enter}');
+        cy.byId(targetEqual).should('be.visible');
+        // It looks like below line was not supposed to be here:
+        // TestUtil.waitForElementNotPresent(targetEqual)
 
-          cy.byId(source).click().type('{downArrow}').type('{downArrow}').type('{enter}');
-          cy.byId(targetEqual).should('not.exist');
-          cy.byId(targetNotEqual).should('be.visible');
-        });
-      }
+        cy.byId(source).click().type('{downArrow}').type('{downArrow}').type('{enter}');
+        cy.byId(targetEqual).should('not.exist');
+        cy.byId(targetNotEqual).should('be.visible');
+      });
 
       it('should work with skip logic source that itself is a skip logic target - ' + fhirVersions[i], () => {
         tp.loadFromTestData('test-enablewhen.json', fhirVersions[i]);
