@@ -2,9 +2,21 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [34.1.0] 2023-09-05
+## [34.1.0] 2023-10-10
 ### Added
 - Support for the exporting of QuestionnnaireResponse.questionnaire.
+### Fixed
+- Fixed a bug that copyright is not displayed when there is no code. 
+
+## [34.0.3] 2023-09-28
+### Fixed
+- Fiex a bug that number 0 in QuestionnaireResponse is not imported when 
+  the QuestionnaireResponse is loaded into the corresponding Questionnaire.
+  
+## [34.0.2] 2023-09-20
+### Fixed
+- Fixed a bug in LForms.Util.guessFHIRVersion() to detect STU3 when initial
+  fields are specified.
 
 ## [34.0.1] 2023-08-18
 ### Fixed
