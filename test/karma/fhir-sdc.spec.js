@@ -1524,6 +1524,30 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          it('should keep Questionaire.url in questionnaireResponse.questionnaire in R4+', function() {
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              resourceType: 'Questionnaire',
+              url: 'http://test-questionnaire-url',
+              status: 'draft',
+              item: [{
+                text: 'item a',
+                linkId: '1',
+                type: 'string',
+              }]
+            };
+            var lfdata = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfdata.url, 'http://test-questionnaire-url');            
+            let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, lfdata);
+            if (fhirVersion === 'STU3') {
+              assert.equal(qr.questionnaire, undefined)
+            }
+            else {
+              assert.equal(qr.questionnaire, 'http://test-questionnaire-url')
+            }
+          });
+
           it('should convert a prefix of an item', function () {
             var item = {
               "questionCode": "12345",
