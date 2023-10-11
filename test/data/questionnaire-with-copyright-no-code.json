@@ -1,0 +1,14 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "name": "Test Questionnaire with a copyright and no code",
+  "copyright": "A copyright notice",
+  "item": [
+    {
+      "required": false,
+      "linkId": "/q1",
+      "text": "item a",
+      "type": "string"
+    }
+  ]
+}
