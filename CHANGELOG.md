@@ -2,11 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.0.4] 2023-10-04
+### Fixed
+- The FHIR extension for setting the preferred terminology server now works on
+  the root of the Questionnaire as well as on items.
+
 ## [34.0.3] 2023-09-28
 ### Fixed
-- Fiex a bug that number 0 in QuestionnaireResponse is not imported when 
+- Fiex a bug that number 0 in QuestionnaireResponse is not imported when
   the QuestionnaireResponse is loaded into the corresponding Questionnaire.
-  
+
 ## [34.0.2] 2023-09-20
 ### Fixed
 - Fixed a bug in LForms.Util.guessFHIRVersion() to detect STU3 when initial
@@ -14,10 +19,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [34.0.1] 2023-08-18
 ### Fixed
-- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension 
-  set to 'optionsOrString', a user typed unit would be cleared in the UI 
+- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension
+  set to 'optionsOrString', a user typed unit would be cleared in the UI
   even it is still available in the QuestionnaireResonse.
-  
+
 ## [34.0.0] 2023-08-15
 ### Fixed
 - jQuery is no longer leaked to the containing app.  This might be a breaking

@@ -84,14 +84,14 @@
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
               "valueCodeableConcept": {
+                "text": "Check-box",
                 "coding": [
                   {
-                    "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "drop-down",
-                    "display": "Drop down"
+                    "code": "check-box",
+                    "display": "Check-box",
+                    "system": "http://hl7.org/fhir/questionnaire-item-control"
                   }
-                ],
-                "text": "Drop down"
+                ]
               }
             },
             {
@@ -103,6 +103,7 @@
             }
           ],
           "required": false,
+          "repeats": true,
           "text": "Strength",
           "linkId": "strength"
         },

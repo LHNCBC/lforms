@@ -1,5 +1,5 @@
 {
-  "/dist/lforms/fhir": {
+  "/lforms/fhir": {
     "target": "http://localhost:4201",
     "secure": false,
     "logLevel": "debug"
