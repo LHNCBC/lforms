@@ -1,5 +1,5 @@
 let fhirVersion = 'R4', 
-    sdcVersion = '2.7', 
+    sdcVersion = '3.0', 
     fhirVersionNum = '4.0';
 
 export default {

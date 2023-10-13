@@ -9,6 +9,8 @@ const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
 const _sdcPattern =
   new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
+// The order of FHIR versions to check when detecting a Resource's FHIR version.
+// The version with a larger number has a higher priority.
 const _versionRanks = {
   STU3: 1,
   R4: 2,

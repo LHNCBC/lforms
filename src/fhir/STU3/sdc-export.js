@@ -14,17 +14,8 @@
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
-// var sdcVersion = '2.0';
-// var fhirVersionNum = '3.0';
 
 var self = {
-
-  // SDCVersion: sdcVersion,
-  // QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|'+sdcVersion,
-  // QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|'+sdcVersion,
-  // stdQProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/Questionnaire',
-  // stdQRProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/QuestionnaireResponse',
-
 
   /**
    *  Convert LForms captured data to a bundle consisting of a FHIR SDC
