@@ -112,6 +112,11 @@
                 },
                 {
                   "glob": "**",
+                  "input": "lforms",
+                  "output": "lforms"
+                },
+                {
+                  "glob": "**",
                   "input": "dist",
                   "output": "dist"
                 }
