@@ -2,6 +2,9 @@ import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
 delete FHIRSupport.default; 
+// R4B is same as R4 for Questionnaire and QuestionnaireResponse. 
+// No need to test R4B in this test file.
+delete FHIRSupport.R4B;
 let fhirVersions = Object.keys(FHIRSupport);
 const po = new AddFormToPageTestPage();
 

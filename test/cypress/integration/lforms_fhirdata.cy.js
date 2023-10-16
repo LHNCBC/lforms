@@ -2,6 +2,9 @@
 import { RxTerms } from "../support/rxterms.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
+// R4B is same as R4 for Questionnaire and QuestionnaireResponse. 
+// Only need to test R4B in the test for profile.
+delete FHIRSupport.R4B;
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 import {TestUtil} from "../support/testUtilFacade.js";
 import {TestPage} from '../support/lforms_testpage.po.js';
@@ -428,20 +431,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.entry[16].resource.related.length).toBe(11);
 
               });
-            });
-          });
-
-          it('should get a SDC Questionnaire data from a form', function() {
-
-            tp.LoadForm.openUSSGFHTVertical();
-            getFHIRResource("Questionnaire", fhirVersion,
-                ).then(function(callbackData) {
-              let [error, fhirData] = callbackData;
-
-              expect(error).toBeNull();
-              let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
-              var assertFHTQuestionnaire = require('../support/'+fhirVersionInFile+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
-              assertFHTQuestionnaire(fhirData, fhirVersion);
             });
           });
 
@@ -1176,3 +1165,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     });
   })(fhirVersions[i]);
 }
+
+['R4', 'R4B'].forEach(function(fhirVersion){
+  describe("Test R4 and R4B difference in meta.profile", function() {
+    it('should get a SDC Questionnaire data from a form', function() {
+      tp.LoadForm.openUSSGFHTVertical();
+      getFHIRResource("Questionnaire", fhirVersion,
+          ).then(function(callbackData) {
+        let [error, fhirData] = callbackData;
+
+        expect(error).toBeNull();
+        let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+        var assertFHTQuestionnaire = require('../support/'+fhirVersionInFile+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
+        assertFHTQuestionnaire(fhirData, fhirVersion);
+      });
+    });
+  })
+});
