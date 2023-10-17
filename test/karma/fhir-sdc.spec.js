@@ -63,7 +63,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             "status": "draft",
             "title": "A Questionnaire with a url",
             "resourceType": "Questionnaire",
-            "url": "a_canonical_url_of_the_questionnaire|a_version",
+            "url": "a_canonical_url_of_the_questionnaire",
+            "version": "a_version",
             "item": [
               {
                 "type": "string",
@@ -75,10 +76,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should handle the import and export of the url', function() {
             let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
-            assert.equal(formData.url, "a_canonical_url_of_the_questionnaire|a_version");
+            assert.equal(formData.url, "a_canonical_url_of_the_questionnaire");
+            assert.equal(formData.version, "a_version");
 
             let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, formData);
-            assert.equal(q.url, "a_canonical_url_of_the_questionnaire|a_version");
+            assert.equal(q.url, "a_canonical_url_of_the_questionnaire");
+            assert.equal(q.version, "a_version");
 
             let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, formData);
             if (fhirVersion === "R4") {
@@ -1529,7 +1532,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               title: 'test title',
               name: 'test name',
               resourceType: 'Questionnaire',
-              url: 'http://test-questionnaire-url|version',
+              url: 'http://test-questionnaire-url',
+              version: 'version',
               status: 'draft',
               item: [{
                 text: 'item a',
@@ -1538,7 +1542,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               }]
             };
             var lfdata = fhir.SDC.convertQuestionnaireToLForms(fhirData);
-            assert.equal(lfdata.url, 'http://test-questionnaire-url|version');            
+            assert.equal(lfdata.url, 'http://test-questionnaire-url'); 
             let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, lfdata);
             if (fhirVersion === 'STU3') {
               assert.equal(qr.questionnaire, undefined)

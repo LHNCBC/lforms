@@ -125,6 +125,7 @@ export default class LhcFormData {
   _hasResponsiveExpr;
   copyrightNotice;
   url;
+  version;
   type;
   _showErrors;
   _showWarnings;
@@ -1433,6 +1434,7 @@ export default class LhcFormData {
       template: this.template,
       copyrightNotice: this.copyrightNotice,
       url: this.url,
+      version: this.version,
       items: formData.itemsData,
       templateOptions: CommonUtils.deepCopy(this.templateOptions)
     };

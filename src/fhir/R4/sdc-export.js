@@ -189,7 +189,7 @@ var self = {
               targetItem.maxLength = parseInt(value);
             }
             break;
-          // http://hl7.org/fhir/StructureDefinition/regex
+          // x
           case "pattern":
             if (dataType === "ST" || dataType === "TX" ) {
               extValue = {
@@ -491,13 +491,14 @@ var self = {
 
   
   /**
-   * 
-   * @param {*} target 
-   * @param {*} source 
+   * Process the qr.questionnaire
+   * @param {*} target an item in FHIR SDC Questionnaire object
+   * @param {*} source a LForms form object
    */
   _processQRQuestionnaire(target, source) {
     if (source.url) {
-      target.questionnaire = source.url;
+      target.questionnaire = source.version ? source.url + "|" + source.version : 
+          source.url;
     }
   }
 };
