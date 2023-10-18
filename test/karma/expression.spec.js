@@ -16,8 +16,7 @@ describe('ExpressionProcessor', function () {
           }]
         }]
       }]});
-      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
-      exp.runCalculations().then(() => {
+      lfData._expressionProcessor.runCalculations().then(() => {
         assert.equal(lfData.items[0].items[0].linkId, '/q2');
         assert.equal(lfData.items[0].items[0].value, 'string');
         done();

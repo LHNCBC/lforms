@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.1.0] 2023-10-13
+### Added
+- Added support for FHIR verison R4B.
+
 ## [34.0.4] 2023-10-04
 ### Fixed
 - The FHIR extension for setting the preferred terminology server now works on

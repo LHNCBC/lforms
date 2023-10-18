@@ -6,7 +6,7 @@ function testImportAnswerOption(params) {
     (function (fhirVersion) {
       let fhir = LForms.FHIR[fhirVersion];
       describe(fhirVersion, function() {
-
+        let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
         it('should import ' + params.valueType + ' as answerOption, ' + fhirVersion, function (done) {
 
           let displayControlRadioCheckboxVertical = {"answerLayout": { "type": "RADIO_CHECKBOX", "columns": "1" }},
@@ -15,7 +15,7 @@ function testImportAnswerOption(params) {
               answerCardinalityRepeats = { "max": "*", "min": "0" },
               answerCardinalityNonRepeats = { "max": "1", "min": "0" };
 
-          let file = `test/data/${fhirVersion}/answerOption/answerOption-${params.valueType}.${fhirVersion}.json`;
+          let file = `test/data/${fhirVersionInFile}/answerOption/answerOption-${params.valueType}.${fhirVersionInFile}.json`;
           LForms.jQuery.get(file, function (fhirQ) {
             try {
               let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -50,13 +50,13 @@ function testImportAnswerOption(params) {
               assert.deepEqual(lfData.items[3].items[1].answerCardinality, answerCardinalityRepeats)
               //answerOption - autocomplete - initial
               assert.deepEqual(lfData.items[4].items[0].defaultAnswer, params.defaultSingle)
-              if (fhirVersion === "R4")
+              if (fhirVersion === "R4" || fhirVersion === "R4B")
                 assert.deepEqual(lfData.items[4].items[1].defaultAnswer, params.defaultRepeatsR4)
               else
                 assert.deepEqual(lfData.items[4].items[1].defaultAnswer, params.defaultRepeatsSTU3)
               //answerOption - radiocheckbox - initial
               assert.deepEqual(lfData.items[5].items[0].defaultAnswer, params.defaultSingle)
-              if (fhirVersion === "R4")
+              if (fhirVersion === "R4" || fhirVersion === "R4B")
                 assert.deepEqual(lfData.items[5].items[1].defaultAnswer, params.defaultRepeatsR4)
               else
                 assert.deepEqual(lfData.items[5].items[1].defaultAnswer, params.defaultRepeatsSTU3)
@@ -74,7 +74,7 @@ function testImportAnswerOption(params) {
 
         it('should export ' + params.valueType + ' as answerOption, ' + fhirVersion, function (done) {
 
-          let file = `test/data/${fhirVersion}/answerOption/answerOption-${params.valueType}.${fhirVersion}.json`;
+          let file = `test/data/${fhirVersionInFile}/answerOption/answerOption-${params.valueType}.${fhirVersionInFile}.json`;
           LForms.jQuery.get(file, function (fhirQ) {
             try {
               let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);

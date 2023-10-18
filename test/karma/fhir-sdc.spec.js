@@ -28,6 +28,7 @@ var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     var fhir = LForms.FHIR[fhirVersion];
+    var fhirVerisonInData = fhirVersion === 'R4B' ? 'R4' : fhirVersion; 
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
         it('should import initial.valueQuantity', ()=>{
@@ -699,13 +700,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert an item with CNE data type without answerCodeSystem', function () {
-            var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
+            var cneFixture = window[fhirVerisonInData+'_'+'cneDataTypeFixture'];
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(cneFixture.input), {});
             assert.deepEqual(out, cneFixture.output);
           });
 
           it('should convert an item with answerCodeSystem', function () {
-            var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
+            var alFixture = window[fhirVerisonInData+'_'+'alWithCodeSystemFixture'];
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(alFixture.input), {});
             assert.deepEqual(out, alFixture.output);
           });
@@ -766,7 +767,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(fhirQ.item[0].item[2].item[0].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
               assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].code, "help");
               assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].system, "http://hl7.org/fhir/questionnaire-item-control");
-              if (fhirVersion === "R4") {
+              if (fhirVersion === "R4" || fhirVersion === "R4B") {
                 assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].url,
                     "http://hl7.org/fhir/StructureDefinition/rendering-xhtml")
                 assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].valueString,
@@ -783,7 +784,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             for (var i = 0; i < fixtures.length; i++) {
               var fixture = LForms.Util.deepCopy(fixtures[i]);
               // STU3 does not support multiple default answers.
-              if (!Array.isArray(fixture.defaultAnswer) || fhirVersion === 'R4') {
+              if (!Array.isArray(fixture.defaultAnswer) || fhirVersion === 'R4' || fhirVersion === 'R4B') {
                 var qItem = {};
 
                 qItem.type = LForms.FHIR[fhirVersion].SDC._getFhirDataType(fixture);
@@ -1344,7 +1345,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               assert.isNotOk(unitOption);
               if(fhirVersion === 'STU3') assert.isUndefined(fhirQ.item[0].initialQuantity);
-              if(fhirVersion === 'R4') assert.isUndefined(fhirQ.item[0].initial);
+              if(fhirVersion === 'R4' || fhirVersion === 'R4B') assert.isUndefined(fhirQ.item[0].initial);
 
               var qUnit = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnit);
 
@@ -1384,7 +1385,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 type: 'quantity'
               }]
             };
-            if(fhirVersion === 'R4') {
+            if(fhirVersion === 'R4' || fhirVersion === 'R4B') {
               fhirData.item[0].initial = [{valueQuantity: {value: 222}}];
             }
             else { // STU3
@@ -1552,8 +1553,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           }
         });
 
-        if (fhirVersion === 'R4') {
-          describe('Conversion between R4 SDC Questionnaire and LForms', function () {
+        if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
+          describe('Conversion between R4/R4B SDC Questionnaire and LForms', function () {
             it('should convert score value between R4 SDC Questionnaire and LForm format', function (done) {
 
               var file = 'test/data/R4/phq9.json';
@@ -1607,7 +1608,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   assert.equal(lfData.items[0].items[1].codingInstructionsFormat, "text");
                   assert.equal(lfData.items[0].items[1].codingInstructionsPlain, "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
 
-                  var qData = LForms.Util.getFormFHIRData("Questionnaire", "R4", lfData);
+                  var qData = LForms.Util.getFormFHIRData("Questionnaire", fhirVersion, lfData);
                   // name
                   assert.equal(qData.item[0].item[0].item[0].text, "A plain text instruction on Name");
                   assert.equal(qData.item[0].item[0].item[0].type, "display");
@@ -1768,7 +1769,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         describe('Questionnaire contained ValueSet', function() {
           var qnForm;
           before(function(done) {
-            var qFile = 'test/data/' + fhirVersion + '/argonaut-phq9-ish.json';
+            var qFile = 'test/data/' + fhirVerisonInData + '/argonaut-phq9-ish.json';
             $.get(qFile, function(fhirQnData) { // load the questionnaire json
               qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
               qnForm = new LForms.LFormsData(qnForm);
