@@ -9,10 +9,13 @@ const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
 const _sdcPattern =
   new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
+// The order of FHIR versions to check when detecting a Resource's FHIR version.
+// The version with a larger number has a higher priority.
 const _versionRanks = {
   STU3: 1,
   R4: 2,
-  R5: 3
+  R4B: 3,
+  R5: 4
 };
 
 const FormUtils = {
@@ -34,7 +37,7 @@ const FormUtils = {
    *  the form was an imported FHIR Questionnaire).
    * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
    *  Questionnaire. options are: `R4` or `STU3`. If not provided an attempt will be made to determine
-   *  the version from the Questionnaire content.
+   *  the version from the Questionnaire content. 'R4B' is treated as 'R4'.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
    *  Questionnaire).
@@ -388,8 +391,10 @@ const FormUtils = {
     if (matchData) {
       const versionNum = parseFloat(matchData[0]);
       // Following http://www.hl7.org/fhir/directory.cfml
-      releaseID = versionNum > 3.0 && versionNum <= 4.0 ?
-        'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 'STU3' : versionStr;
+      releaseID = versionNum > 4.0 && versionNum <= 4.3 ? 
+          'R4B' : versionNum > 3.0 && versionNum <= 4.0 ? 
+          'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 
+          'STU3' : versionStr;
     }
     return releaseID;
   },

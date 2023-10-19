@@ -385,6 +385,7 @@ describe('Util library', function() {
 
   describe('Questionnaire.meta.profile', () => {
     const defaultProfiles = {
+      R4B: 'http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire',
       R4: 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire',
       STU3: 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'
     }
@@ -397,7 +398,12 @@ describe('Util library', function() {
           resourceType: 'Questionnaire', name: 'SDCSTU3', status: 'draft', item: [],
           meta: {profile: ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0"]}
         }},
-      std: {R4: {
+      std: {
+         R4B: {
+          resourceType: 'Questionnaire', name: 'STDR4B', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire"]}
+        },
+        R4: {
           resourceType: 'Questionnaire', name: 'STDR4', status: 'draft', item: [],
           meta: {profile: ["http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire"]}
         },
@@ -450,6 +456,15 @@ describe('Util library', function() {
       qPart.meta.profile = ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7'];
       LForms.FHIR.R4.SDC._handleMeta(qPart, true);
       assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7', defaultProfiles.R4]);
+      
+      // Conversion to R4B
+      qPart.meta.profile = ['http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire'];
+      LForms.FHIR.R4B.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, [ defaultProfiles.R4B]);
+
+      qPart.meta.profile = ['http://hl7.org/fhir/4.1/StructureDefinition/Questionnaire'];
+      LForms.FHIR.R4B.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, [ 'http://hl7.org/fhir/4.1/StructureDefinition/Questionnaire', defaultProfiles.R4B]);
 
     });
 

@@ -23633,7 +23633,7 @@ var self = {
             }
 
             break;
-          // http://hl7.org/fhir/StructureDefinition/regex
+          // x
 
           case "pattern":
             if (dataType === "ST" || dataType === "TX") {
@@ -23930,7 +23930,19 @@ var self = {
         targetItem.enableBehavior = 'any';
       }
     }
+  },
+
+  /**
+   * Process the qr.questionnaire
+   * @param {*} target an item in FHIR SDC Questionnaire object
+   * @param {*} source a LForms form object
+   */
+  _processQRQuestionnaire(target, source) {
+    if (source.url) {
+      target.questionnaire = source.version ? source.url + "|" + source.version : source.url;
+    }
   }
+
 };
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
@@ -23972,6 +23984,10 @@ function addCommonSDCExportFns(ns) {
         this._processRepeatingItemValues(source);
 
         this._setResponseFormLevelFields(target, source, noExtensions);
+
+        if (this._processQRQuestionnaire) {
+          this._processQRQuestionnaire(target, source);
+        }
 
         if (source.items && Array.isArray(source.items)) {
           var tmp = this._processResponseItem(source, true);

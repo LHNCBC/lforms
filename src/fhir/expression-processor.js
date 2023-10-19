@@ -91,6 +91,8 @@ import deepEqual from "deep-equal";
         if (!lfData._fhirVariables.questionnaire) {
           lfData._fhirVariables.questionnaire =
             this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
+        }
+        if (!this._linkIdToQItem) {
           this._linkIdToQItem = {};
           this._addToLinkIdToQItemMap(lfData._fhirVariables.questionnaire.item,
             this._linkIdToQItem);

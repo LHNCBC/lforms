@@ -1,9 +1,13 @@
 import {facadeExpect as expect, protractor, by, element} from "../protractorFacade.js";
 
-function assertFHTQuestionnaire(fhirData) {
+function assertFHTQuestionnaire(fhirData, fhirVersion='R4') {
   expect(fhirData.resourceType).toBe("Questionnaire");
   expect(fhirData.title).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
-  expect(fhirData.meta.profile).toEqual(['http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire']);
+  if (fhirVersion === 'R4B')
+    expect(fhirData.meta.profile).toEqual(['http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire']);
+  else 
+    expect(fhirData.meta.profile).toEqual(['http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire']);
+  
   // No URL conversion for now. -Ajay
   //expect(fhirData.url).toBe("http://hl7.org/fhir/us/sdc/Questionnaire/54127-6N");
   expect(fhirData.code[0].code).toBe("54127-6N");
