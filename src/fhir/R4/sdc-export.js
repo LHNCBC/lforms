@@ -181,7 +181,7 @@ var self = {
               targetItem.maxLength = parseInt(value);
             }
             break;
-          // x
+          // http://hl7.org/fhir/StructureDefinition/regex
           case "pattern":
             if (dataType === "ST" || dataType === "TX" ) {
               extValue = {
@@ -483,8 +483,8 @@ var self = {
 
   
   /**
-   * Process the qr.questionnaire
-   * @param {*} target an item in FHIR SDC Questionnaire object
+   * Set the qr.questionnaire
+   * @param {*} target a FHIR QuestionnaireResponse object
    * @param {*} source a LForms form object
    */
   _processQRQuestionnaire(target, source) {
