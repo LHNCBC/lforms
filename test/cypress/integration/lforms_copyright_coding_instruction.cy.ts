@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import * as util from "../support/util";
 
 let tp: TestPage;
 
@@ -21,6 +22,14 @@ describe('popover buttons', () => {
       cy.byId('copyright-content-all-in-one').should('not.exist');
       cy.byId('copyright-button-/type0/1').click();
       cy.byId('copyright-content-/type0/1').should('be.visible').should('have.text', 'A Copyright notice of the item');
+    });
+
+    it('should show a copyright popover message on the form title when there is no codes', () => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      cy.get('#fileAnchor').uploadFile('test/data/questionnaire-with-copyright-no-code.json');
+      cy.byId('copyright-button-Test-Questionnaire-with-a-copyright-and-no-code').should('be.visible');
+      cy.byId('copyright-button-Test-Questionnaire-with-a-copyright-and-no-code').click();
+      cy.byId('copyright-content-Test-Questionnaire-with-a-copyright-and-no-code').should('be.visible').should('have.text', 'A copyright notice');
     });
   });
 

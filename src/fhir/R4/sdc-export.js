@@ -479,6 +479,19 @@ var self = {
         targetItem.enableBehavior = 'any';
       }
     }
+  },
+
+  
+  /**
+   * Set the qr.questionnaire
+   * @param {*} target a FHIR QuestionnaireResponse object
+   * @param {*} source a LForms form object
+   */
+  _processQRQuestionnaire(target, source) {
+    if (source.url) {
+      target.questionnaire = source.version ? source.url + "|" + source.version : 
+          source.url;
+    }
   }
 };
 

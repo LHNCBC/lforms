@@ -59,6 +59,42 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           assert.equal(lfItem.unit.system, quantity.system);
         });
 
+        describe('Questionnaire.url and QuestionnaireResponse.questionnaire', function() {
+          let fhirQ = {
+            "status": "draft",
+            "title": "A Questionnaire with a url",
+            "resourceType": "Questionnaire",
+            "url": "a_canonical_url_of_the_questionnaire",
+            "version": "a_version",
+            "item": [
+              {
+                "type": "string",
+                "linkId": "a",
+                "text": "A string"
+              }
+            ]
+          };
+
+          it('should handle the import and export of the url', function() {
+            let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            assert.equal(formData.url, "a_canonical_url_of_the_questionnaire");
+            assert.equal(formData.version, "a_version");
+
+            let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, formData);
+            assert.equal(q.url, "a_canonical_url_of_the_questionnaire");
+            assert.equal(q.version, "a_version");
+
+            let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, formData);
+            if (fhirVersion === "R4") {
+              assert.equal(qr.questionnaire, "a_canonical_url_of_the_questionnaire|a_version");
+            }
+            else if (fhirVersion === "STU3") {
+              assert.equal(qr.questionnaire, undefined);
+            }
+
+          });
+        });
+
         describe('entryFormat extension', function() {
           let fhirQ = {
             "resouceType": "Questionnaire",
@@ -1490,6 +1526,31 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(fhirQ.toString().match(/extension/), undefined);
               done();
             });
+          });
+
+          it('should keep Questionaire.url in questionnaireResponse.questionnaire in R4+', function() {
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              resourceType: 'Questionnaire',
+              url: 'http://test-questionnaire-url',
+              version: 'version',
+              status: 'draft',
+              item: [{
+                text: 'item a',
+                linkId: '1',
+                type: 'string',
+              }]
+            };
+            var lfdata = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfdata.url, 'http://test-questionnaire-url'); 
+            let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, lfdata);
+            if (fhirVersion === 'STU3') {
+              assert.equal(qr.questionnaire, undefined)
+            }
+            else {
+              assert.equal(qr.questionnaire, 'http://test-questionnaire-url|version')
+            }
           });
 
           it('should convert a prefix of an item', function () {

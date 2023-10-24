@@ -26,7 +26,9 @@ function addCommonSDCExportFns(ns) {
         target = {};
         this._processRepeatingItemValues(source);
         this._setResponseFormLevelFields(target, source, noExtensions);
-
+        if (this._processQRQuestionnaire) {
+          this._processQRQuestionnaire(target, source);
+        }
         if (source.items && Array.isArray(source.items)) {
           var tmp = this._processResponseItem(source, true);
           if(tmp && tmp.item && tmp.item.length) {

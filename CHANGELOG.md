@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.2.0] 2023-10-18
+### Added
+- Support for the exporting of QuestionnnaireResponse.questionnaire.
+
+### Fixed
+- Fixed a bug that copyright is not displayed when there is no code. 
 ## [34.1.0] 2023-10-13
 ### Added
 - Added support for FHIR verison R4B.
