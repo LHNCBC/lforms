@@ -55,6 +55,7 @@ describe('Validations', () => {
     inta = '/INTA/1',
     reala = '/REALA/1',
     sta = '/STA/1',
+    sta2 = '/STA2/1',
     stb = '/STB/1',
 
     st0 = '/ST0/1',
@@ -85,6 +86,7 @@ describe('Validations', () => {
     lblinta = 'label[for=\'/INTA/1\']',
     lblreala = 'label[for=\'/REALA/1\']',
     lblsta = 'label[for=\'/STA/1\']',
+    lblsta2 = 'label[for=\'/STA2/1\']',
     lblstb = 'label[for=\'/STB/1\']',
     // lblsta = element(by.id("label-/STA/1",
     // lblstb = element(by.id("label-/STB/1",
@@ -226,8 +228,12 @@ describe('Validations', () => {
       testOneType(st3, lblst2, errorContainer, errorMaxLength, '12345678901', '1234567890');
     });
 
-    it('should validate pattern', () => {
+    it('should validate pattern, with /', () => {
       testOneType(sta, lblst3, errorContainer, errorPattern, 'AAAAA', 'aaaaa');
+    });
+
+    it('should validate pattern, wihtout /', () => {
+      testOneType(sta2, lblst3, errorContainer, errorPattern, 'AAAAA', 'aaaaa');
     });
 
     it('should validate pattern, with "/" and flags (i, ignore cases)', () => {

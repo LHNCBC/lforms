@@ -251,12 +251,19 @@ const Validation = {
             }
             break;
           case "pattern":
-            // the "\" in the pattern string should have been escaped
+            // support regex strings with and without '/' 
+            // the "/" in the regex string should have been escaped
             var indexOfFirst = keyValue.indexOf("/");
             var indexOfLast = keyValue.lastIndexOf("/");
             // get the pattern and the flag
-            var pattern = keyValue.slice(indexOfFirst+1, indexOfLast);
-            var flags = keyValue.slice(indexOfLast+1);
+            var pattern = '', flags;
+            if (indexOfFirst === 0 && indexOfLast > 0) {
+              pattern = keyValue.slice(indexOfFirst+1, indexOfLast);
+              flags = keyValue.slice(indexOfLast+1);
+            }
+            else {
+              pattern = keyValue;
+            }
             var regex = new RegExp(pattern, flags);
             if (regex.test(value)) {
               valid = true;

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.2.1] 2023-10-25
+### Added
+- Added support for regex strings without '/' in validations
+
 ## [34.2.0] 2023-10-18
 ### Added
 - Support for the exporting of QuestionnnaireResponse.questionnaire.
