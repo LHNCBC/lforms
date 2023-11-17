@@ -6,6 +6,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Changed the option, showQuestionCode, to control the display of all of the
   codes of an item, not just the first code.
+- Updated styles to display newlines and spaces in coding instructions.
 
 ## [34.2.0] 2023-10-18
 ### Added

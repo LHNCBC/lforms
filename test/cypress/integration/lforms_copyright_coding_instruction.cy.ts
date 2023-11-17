@@ -168,7 +168,7 @@ describe('popover buttons', () => {
         const genderHelpButton = 'help-button-/54126-8/54131-8/1/1';
         const gender = '/54126-8/54131-8/1/1';
         const popoverHTMLLink = 'a[href="http://google.com"]';
-        const popover = '.help-class-54126-8-54125-0-1-1 .ant-popover-inner-content';
+        const popover = '.lhc-help-class-54126-8-54125-0-1-1 .ant-popover-inner-content';
 
         cy.byId(nameHelpButton).should('be.visible');
         cy.byId(genderHelpButton).should('be.visible');
@@ -183,7 +183,7 @@ describe('popover buttons', () => {
 
         // Text coding instructions
         cy.byId(genderHelpButton).click();
-        cy.get('.help-class-54126-8-54131-8-1-1 .ant-popover-content').should('be.visible');
+        cy.get('.lhc-help-class-54126-8-54131-8-1-1 .ant-popover-content').should('be.visible');
         cy.get(popoverHTMLLink).should('not.exist');
       });
     });
@@ -199,11 +199,11 @@ describe('popover buttons', () => {
           helpButton_2 = 'help-button-/type2/1';
           helpButton_3 = 'help-button-/type3/1';
           copyrightButton0 = 'copyright-button-/type0/1';
-          popover0 = '.help-class-type0-1 .ant-popover-inner-content';
-          popover1 = '.help-class-type1-1 .ant-popover-inner-content';
-          popover2 = '.help-class-type2-1 .ant-popover-inner-content';
-          popover3 = '.help-class-type3-1 .ant-popover-inner-content';
-          copyPopover0 = '.copyright-class-type0-1 .ant-popover-inner-content';
+          popover0 = '.lhc-help-class-type0-1 .ant-popover-inner-content';
+          popover1 = '.lhc-help-class-type1-1 .ant-popover-inner-content';
+          popover2 = '.lhc-help-class-type2-1 .ant-popover-inner-content';
+          popover3 = '.lhc-help-class-type3-1 .ant-popover-inner-content';
+          copyPopover0 = '.lhc-copyright-class-type0-1 .ant-popover-inner-content';
           break;
         case 'horizontal':
           helpButton_0 = 'help-button-/horizontalTable/type0/1/1';
@@ -211,11 +211,11 @@ describe('popover buttons', () => {
           helpButton_2 = 'help-button-/horizontalTable/type2/1/1';
           helpButton_3 = 'help-button-/horizontalTable/type3/1/1';
           copyrightButton0 = 'copyright-button-/horizontalTable/type0/1/1';
-          popover0 = '.help-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
-          popover1 = '.help-class-horizontalTable-type1-1-1 .ant-popover-inner-content';
-          popover2 = '.help-class-horizontalTable-type2-1-1 .ant-popover-inner-content';
-          popover3 = '.help-class-horizontalTable-type3-1-1 .ant-popover-inner-content';
-          copyPopover0 = '.copyright-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
+          popover0 = '.lhc-help-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
+          popover1 = '.lhc-help-class-horizontalTable-type1-1-1 .ant-popover-inner-content';
+          popover2 = '.lhc-help-class-horizontalTable-type2-1-1 .ant-popover-inner-content';
+          popover3 = '.lhc-help-class-horizontalTable-type3-1-1 .ant-popover-inner-content';
+          copyPopover0 = '.lhc-copyright-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
           break;
         case 'matrix':
           helpButton_0 = 'help-button-/matrixTable/type0/1/1';
@@ -223,11 +223,11 @@ describe('popover buttons', () => {
           helpButton_2 = 'help-button-/matrixTable/type2/1/1';
           helpButton_3 = 'help-button-/matrixTable/type3/1/1';
           copyrightButton0 = 'copyright-button-/matrixTable/type0/1/1';
-          popover0 = '.help-class-matrixTable-type0-1-1 .ant-popover-inner-content';
-          popover1 = '.help-class-matrixTable-type1-1-1 .ant-popover-inner-content';
-          popover2 = '.help-class-matrixTable-type2-1-1 .ant-popover-inner-content';
-          popover3 = '.help-class-matrixTable-type3-1-1 .ant-popover-inner-content';
-          copyPopover0 = '.copyright-class-matrixTable-type0-1-1 .ant-popover-inner-content';
+          popover0 = '.lhc-help-class-matrixTable-type0-1-1 .ant-popover-inner-content';
+          popover1 = '.lhc-help-class-matrixTable-type1-1-1 .ant-popover-inner-content';
+          popover2 = '.lhc-help-class-matrixTable-type2-1-1 .ant-popover-inner-content';
+          popover3 = '.lhc-help-class-matrixTable-type3-1-1 .ant-popover-inner-content';
+          copyPopover0 = '.lhc-copyright-class-matrixTable-type0-1-1 .ant-popover-inner-content';
           break;
       }
 

@@ -18,27 +18,27 @@
       *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode && item.codeList && item.codeList.length>0">
       <span *ngFor="let code of item.codeList">
         <a *ngIf="code.system == 'http://loinc.org'" href="{{ 'https://loinc.org/' + code.code}}"
-          class="lf-item-code" target="_blank" rel="noopener noreferrer">
+          class="lhc-item-code" target="_blank" rel="noopener noreferrer">
           [{{ code.code }}]
         </a>
-        <span *ngIf="code.system != 'http://loinc.org'" class="lf-item-code">[{{ code.code }}]</span>
+        <span *ngIf="code.system != 'http://loinc.org'" class="lhc-item-code">[{{ code.code }}]</span>
       </span>
     </span>
     <!-- coding instructions / helps -->
     <span [ngSwitch]="lhcDataService.getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
-      <span *ngSwitchCase="'inline-escaped'"
+      <div *ngSwitchCase="'inline-escaped'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt"
+            class="lhc-inline-help"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
-       >{{item.codingInstructions}}</span>
-      <span *ngSwitchCase="'inline-html'"
+       >{{item.codingInstructions}}</div>
+      <div *ngSwitchCase="'inline-html'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt"
+            class="lhc-inline-help"
             [innerHTML]="item.codingInstructions | safeHtml"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
-       ></span>
+       ></div>
       <ng-container *ngSwitchCase="'popover-escaped'">
         <lhc-button-popover [item]="item" [popoverType]="'help-string'"></lhc-button-popover>
        </ng-container>
