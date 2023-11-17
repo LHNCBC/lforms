@@ -107,7 +107,6 @@ export default class LhcFormData {
   _codePath = "";
   _idPath = "";
   _displayLevel = 0;
-  _linkToDef = null;
   _formReady;
   _horizontalTableInfo = {};
   itemList;
@@ -875,11 +874,6 @@ export default class LhcFormData {
     this._displayLevel = 0;
     this._activeItem = null;
 
-    // add a link to external site for item's definition
-    if (this.codeSystem === "LOINC") {
-      this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
-    }
-
     // template
     if (!this.template || this.template.length == 0 ||
         this.template === "form-view-a" || this.template === "form-view-b") {
@@ -1122,11 +1116,6 @@ export default class LhcFormData {
             item.dataType !== CONSTANTS.DATA_TYPE.TM &&
             !item._hasAnswerList)) {
         item._hasValidation = true;
-      }
-
-      // add a link to external site for item's definition
-      if (item.questionCodeSystem === "LOINC" || (this.codeSystem === "LOINC" && !item.questionCodeSystem)) {
-        item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
       }
 
       // process the sub items

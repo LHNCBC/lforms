@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import * as util from "../support/util";
 
 describe('Visual effect tests', () => {
   const tp: TestPage = new TestPage();
@@ -248,5 +249,54 @@ describe('Visual effect tests', () => {
     });
   });
 
+  describe("Questionnaire.code and item.code", ()=> {
+    beforeEach(function() {
+      cy.visit('test/pages/addFormToPageTest.html');
+    });
 
+    it("should not display any code when showQuestionCode is false", ()=>{
+      util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4", "showQuestionCode": false });
+      cy.byCss('.lf-item-code').should("have.length", 0)
+    })
+
+    it("should not display any code when showQuestionCode is not present", ()=>{
+      util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4" });
+      cy.byCss('.lf-item-code').should("have.length", 0)
+    })
+
+    it("should not display all codes when showQuestionCode is true", ()=>{
+      util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4", "showQuestionCode": true });
+      
+      cy.byCss('.lf-item-code').eq(0).contains("[example]")
+        .invoke('attr', 'href')
+        .should('eq', undefined);
+      cy.byCss('.lf-item-code').eq(1).contains("[85353-1]")
+        .invoke('attr', 'href')
+        .should('eq', 'https://loinc.org/85353-1')
+        .then(href => {
+          cy.request(href)
+            .its('status')
+            .should('eq', 200);
+
+        });
+      cy.byCss('.lf-item-code').eq(2).contains("[example]")
+        .invoke('attr', 'href')
+        .should('eq', undefined);
+      cy.byCss('.lf-item-code').eq(3).contains("[29463-7]")
+        .invoke('attr', 'href')
+        .should('eq', 'https://loinc.org/29463-7')
+        .then(href => {
+          cy.request(href)
+            .its('status')
+            .should('eq', 200);
+
+        });
+      cy.byCss('.lf-item-code').eq(4).contains("[example]");
+      cy.byCss('.lf-item-code').eq(5).contains("[29463-7]");
+      cy.byCss('.lf-item-code').eq(6).contains("[example]");
+      cy.byCss('.lf-item-code').eq(7).contains("[29463-7]");
+    })
+
+
+  } )
 });

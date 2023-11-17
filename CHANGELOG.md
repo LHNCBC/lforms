@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.3.0] 2023-11-16
+### Changed
+- Changed the option, showQuestionCode, to control the display of all of the
+  codes of an item, not just the first code.
+
 ## [34.2.0] 2023-10-18
 ### Added
 - Support for the exporting of QuestionnnaireResponse.questionnaire.
