@@ -17,11 +17,13 @@
     <span
       *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode && item.codeList && item.codeList.length>0">
       <span *ngFor="let code of item.codeList">
-        <a *ngIf="code.system == 'http://loinc.org'" href="{{ 'https://loinc.org/' + code.code}}"
-          class="lhc-item-code" target="_blank" rel="noopener noreferrer">
-          [{{ code.code }}]
-        </a>
-        <span *ngIf="code.system != 'http://loinc.org'" class="lhc-item-code">[{{ code.code }}]</span>
+        <span *ngIf="code.code">
+          <a *ngIf="code.system == 'http://loinc.org'" href="{{ 'https://loinc.org/' + code.code}}" class="lhc-item-code"
+            target="_blank" rel="noopener noreferrer">
+            [{{ code.code }}]
+          </a>
+          <span *ngIf="code.system != 'http://loinc.org'" class="lhc-item-code">[{{ code.code }}]</span>
+        </span>
       </span>
     </span>
     <!-- coding instructions / helps -->

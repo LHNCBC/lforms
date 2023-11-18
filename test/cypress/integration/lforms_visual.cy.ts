@@ -264,7 +264,7 @@ describe('Visual effect tests', () => {
       cy.byCss('.lhc-item-code').should("have.length", 0)
     })
 
-    it("should not display all codes when showQuestionCode is true", ()=>{
+    it("should display all codes when showQuestionCode is true", ()=>{
       util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4", "showQuestionCode": true });
       
       cy.byCss('.lhc-item-code').eq(0).contains("[example]")

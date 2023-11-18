@@ -5,12 +5,14 @@
         >{{lhcFormData.name || lhcFormData.shortName}}</span>
       <!-- code -->
       <span *ngIf="lhcFormData.templateOptions.showQuestionCode && lhcFormData.codeList && lhcFormData.codeList.length>0">
-        <span *ngFor ="let code of lhcFormData.codeList">
-          <a *ngIf="code.system == 'http://loinc.org'" href="{{ 'https://loinc.org/' + code.code}}" 
-            target="_blank" rel="noopener noreferrer" class="lhc-item-code">
-            [{{ code.code }}]
-          </a>
-          <span *ngIf="code.system != 'http://loinc.org'" class="lhc-item-code">[{{ code.code }}]</span>
+        <span *ngFor="let code of lhcFormData.codeList">
+          <span *ngIf="code.code">
+            <a *ngIf="code.system == 'http://loinc.org'" href="{{ 'https://loinc.org/' + code.code}}" target="_blank"
+              rel="noopener noreferrer" class="lhc-item-code">
+              [{{ code.code }}]
+            </a>
+            <span *ngIf="code.system != 'http://loinc.org'" class="lhc-item-code">[{{ code.code }}]</span>
+          </span>
         </span>
       </span>
       <!-- copyright -->
