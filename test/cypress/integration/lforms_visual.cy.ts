@@ -272,25 +272,13 @@ describe('Visual effect tests', () => {
         .should('eq', undefined);
       cy.byCss('.lhc-item-code').eq(1).contains("[85353-1]")
         .invoke('attr', 'href')
-        .should('eq', 'https://loinc.org/85353-1')
-        .then(href => {
-          cy.request(href)
-            .its('status')
-            .should('eq', 200);
-
-        });
+        .should('eq', 'https://loinc.org/85353-1');
       cy.byCss('.lhc-item-code').eq(2).contains("[example]")
         .invoke('attr', 'href')
         .should('eq', undefined);
       cy.byCss('.lhc-item-code').eq(3).contains("[29463-7]")
         .invoke('attr', 'href')
-        .should('eq', 'https://loinc.org/29463-7')
-        .then(href => {
-          cy.request(href)
-            .its('status')
-            .should('eq', 200);
-
-        });
+        .should('eq', 'https://loinc.org/29463-7');
       cy.byCss('.lhc-item-code').eq(4).contains("[example]");
       cy.byCss('.lhc-item-code').eq(5).contains("[29463-7]");
       cy.byCss('.lhc-item-code').eq(6).contains("[example]");
