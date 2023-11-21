@@ -13,26 +13,34 @@
         </span>
       </label>
     </span>
-    <!-- question code -->
-    <span class="lf-item-code" *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode">
-      <a *ngIf="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
-      <span *ngIf="!item._linkToDef">[{{ item.questionCode }}]</span>
+    <!-- code -->
+    <span
+      *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode && item.codeList && item.codeList.length>0">
+      <span *ngFor="let code of item.codeList">
+        <span *ngIf="code.code">
+          <a *ngIf="code.system == 'http://loinc.org'" href="{{ 'https://loinc.org/' + code.code}}" class="lhc-item-code"
+            target="_blank" rel="noopener noreferrer">
+            [{{ code.code }}]
+          </a>
+          <span *ngIf="code.system != 'http://loinc.org'" class="lhc-item-code">[{{ code.code }}]</span>
+        </span>
+      </span>
     </span>
     <!-- coding instructions / helps -->
     <span [ngSwitch]="lhcDataService.getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
-      <span *ngSwitchCase="'inline-escaped'"
+      <div *ngSwitchCase="'inline-escaped'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt"
+            class="lhc-inline-help"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
-       >{{item.codingInstructions}}</span>
-      <span *ngSwitchCase="'inline-html'"
+       >{{item.codingInstructions}}</div>
+      <div *ngSwitchCase="'inline-html'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt"
+            class="lhc-inline-help"
             [innerHTML]="item.codingInstructions | safeHtml"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
-       ></span>
+       ></div>
       <ng-container *ngSwitchCase="'popover-escaped'">
         <lhc-button-popover [item]="item" [popoverType]="'help-string'"></lhc-button-popover>
        </ng-container>

@@ -39,8 +39,6 @@
 * **templateOptions** - The following options within templateOptions are not supported:
   * showColumnHeaders - a boolean that controls whether to show the header row
       with the "Name", "Value", and "Unit" column labels.  The default is true.
-  * showQuestionCode - a boolean that controls whether to show question codes.
-      The default is false.
   * tabOnInputFieldsOnly - a boolean that controls whether to control TAB keys
       to stop on the input fields only (neither buttons, nor units fields).
       The default is false.
