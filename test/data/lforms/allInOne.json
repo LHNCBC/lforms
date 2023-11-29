@@ -37,6 +37,7 @@
       "questionCode": "q_md",
       "question": "'md' view mode",
       "dataType": "QTY",
+      "codingInstructions": "The 1st line\n   The 2nd line with spaces before and afer and an empty line after.   \n\nThe 3rd line.",
       "displayControl": {
         "viewMode": "md"
       },
