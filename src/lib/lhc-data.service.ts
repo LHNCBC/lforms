@@ -176,13 +176,53 @@ export class LhcDataService {
     if (item.codingInstructions && item.codingInstructions.length > 0) {
       var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
       if (this.lhcFormData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
-        var format = "html";
+        var format = "html";        
       }
       else {
         format = "escaped";
       }
       ret = position + "-" + format;
     }
+    return ret;
+  }
+
+  /**
+   * Get the coding instruction, replacing local ids in the 'src' attributes of 
+   * the 'img' tags if the local ids are in the 'contained' with image data, 
+   * and if codingInstructionsFormat is 'html'.
+   * @param item an item in lforms
+   * @returns {string} the coding instruction
+   */
+  getCodingInstructionsWithContainedImages(item) {
+    let ret = item.codingInstructions;
+
+    if (this.lhcFormData.contained &&
+        item.codingInstructions && 
+        item.codingInstructions.length > 0 && 
+        this.lhcFormData.templateOptions.allowHTMLInInstructions && 
+        item.codingInstructionsFormat === "html" &&
+        item.codingInstructions.match(/img/) && 
+        item.codingInstructions.match(/src/)) {
+
+      // go though each image in the html string and replace local ids in image source
+      // with contained data
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(item.codingInstructions, "text/html");
+
+      let imgs = doc.getElementsByTagName("img");
+      for (let i = 0; i < imgs.length; i++) { 
+        let urlValue = imgs[i].getAttribute("src"); 
+        if (urlValue && urlValue.match(/#/)) {
+          let localId = urlValue.substring(1);
+          let imageData = this.lhcFormData.contained[localId];
+          if (imageData) { 
+            imgs[i].setAttribute("src", imageData);
+          }
+        }
+      }
+      ret = doc.body.innerHTML;
+    }
+
     return ret;
   }
 

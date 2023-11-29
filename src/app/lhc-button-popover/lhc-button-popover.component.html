@@ -90,7 +90,7 @@
         attr.aria-label="Instruction for {{item.question}}"
         attr.aria-describedby="help-content-{{item._elementId}}"
         id="help-content-{{item._elementId}}"
-        [innerHTML]="item.codingInstructions | safeHtml"
+        [innerHTML]="lhcDataService.getCodingInstructionsWithContainedImages(item) | safeHtml"
   ></span>
 </ng-template>
 

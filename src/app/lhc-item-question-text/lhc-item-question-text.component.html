@@ -29,7 +29,7 @@
       <span *ngSwitchCase="'inline-html'"
             id="help-{{ item._elementId }}"
             class="lf-prompt"
-            [innerHTML]="item.codingInstructions | safeHtml"
+            [innerHTML]="lhcDataService.getCodingInstructionsWithContainedImages(item) | safeHtml"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
        ></span>
