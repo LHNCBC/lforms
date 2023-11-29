@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.4.0] 2023-11-29
+### Added
+- Added the support for using image data in the 'contained' when a local ID
+  is used in the 'src' attribute of a 'img' in the value of the 'renders-xhtml'
+  extension for coding instructions.
+
 ## [34.3.0] 2023-11-16
 ### Changed
 - Changed the option, showQuestionCode, to control the display of all of the
