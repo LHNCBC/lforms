@@ -244,6 +244,18 @@
       "linkId": "/STA"
     },
     {
+      "questionCode": "STA2",
+      "dataType": "ST",
+      "restrictions": {
+        "maxLength": 10,
+        "minLength": 5,
+        "pattern": "^[a-z]+$"
+      },
+      "answerCardinality": null,
+      "question": "ST with maxLength, minLength, pattern without /",
+      "linkId": "/STA2"
+    },
+    {
       "questionCode": "STB",
       "dataType": "ST",
       "restrictions": {

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.3.1] 2023-12-01
+### Added
+- Added support for regex strings without '/' in validations
+
 ## [34.3.0] 2023-11-16
 ### Changed
 - Changed the option, showQuestionCode, to control the display of all of the

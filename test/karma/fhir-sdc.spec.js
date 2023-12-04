@@ -1454,7 +1454,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, LForms.Util.deepCopy(validationTestForm));
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
-              assert.equal(convertedLfData.items.length, 34);
+              assert.equal(convertedLfData.items.length, 35);
               // TODO - min/max exclusive is not supported
               assert.equal(convertedLfData.items[12].restrictions.minInclusive, 5);
               assert.equal(convertedLfData.items[14].restrictions.maxInclusive, 10);
@@ -1476,14 +1476,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should convert externally defined', function (done) {
             $.get('/base/test/data/lforms/validationTestForm.json', function(validationTestForm) {
-              const itemIndex = 27; // for the item with externally defined set
+              const itemIndex = 28; // for the item with externally defined set
               var optionsRes = validationTestForm.items[itemIndex].externallyDefined;
               assert.equal(typeof optionsRes, 'string');
               // Display control
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(validationTestForm)));
               var convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
 
-              assert.equal(convertedLfData.items.length, 34);
+              assert.equal(convertedLfData.items.length, 35);
               assert.equal(convertedLfData.items[itemIndex].externallyDefined, optionsRes);
 
               // Also check that it an handle the old URL for backward
@@ -1493,7 +1493,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(ext.url, fhir.SDC.fhirExtUrlExternallyDefined);
               ext.url = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
               convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
-              assert.equal(convertedLfData.items.length, 34);
+              assert.equal(convertedLfData.items.length, 35);
               assert.equal(convertedLfData.items[itemIndex].externallyDefined, optionsRes);
 
               done();
