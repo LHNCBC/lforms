@@ -16,6 +16,18 @@
       "valueBoolean": true
     }
   ],
+  "code": [
+    {
+      "system": "http://example.org",
+      "code": "example",
+      "display": "Example"
+    },
+    {
+      "system": "http://loinc.org",
+      "code": "85353-1",
+      "display": "Vital signs, weight, height, head circumference, oxygen saturation and BMI panel"
+    }
+  ],
   "item": [
     {
       "extension": [
