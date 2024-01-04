@@ -129,7 +129,7 @@ export default class LhcFormData {
   _showErrors;
   _showWarnings;
   _showInfo;
-
+  contained;
   /**
    * Constructor
    * @param data the lforms form definition data
@@ -1258,6 +1258,17 @@ export default class LhcFormData {
 
     if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
       item.answers = this.answerLists[item.answers];
+    }
+
+    // special handling of the help text when it contains images in the 'contained' field.
+    if (this.contained &&
+        item.codingInstructions && 
+        item.codingInstructions.length > 0 && 
+        this.templateOptions.allowHTMLInInstructions && 
+        item.codingInstructionsFormat === "html" &&
+        item.codingInstructions.match(/img/) && 
+        item.codingInstructions.match(/src/)) {
+      this._setCodingInstructionsWithContainedImages(item);
     }
 
     // process the answer code system
@@ -3547,5 +3558,47 @@ export default class LhcFormData {
     return ret;
   }
 
+
+  /**
+   * Get the coding instruction, replacing local ids in the 'src' attributes of 
+   * the 'img' tags if the local ids are in the 'contained' with image data, 
+   * and if codingInstructionsFormat is 'html'.
+   * @param item an item in lforms
+   * @returns {string} the coding instruction
+   */
+  _setCodingInstructionsWithContainedImages(item) {
+    const validImageMimeTypes = ["image/bmp", "image/jpeg", "image/x-png", 
+        "image/png", "image/gif"];
+
+    if (this.contained &&
+        item.codingInstructions && 
+        item.codingInstructions.length > 0 && 
+        this.templateOptions.allowHTMLInInstructions && 
+        item.codingInstructionsFormat === "html" &&
+        item.codingInstructions.match(/img/) && 
+        item.codingInstructions.match(/src/)) {
+
+      // go though each image in the html string and replace local ids in image source
+      // with contained data
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(item.codingInstructions, "text/html");
+      
+      let imgs = doc.getElementsByTagName("img");
+      for (let i = 0; i < imgs.length; i++) { 
+        let urlValue = imgs[i].getAttribute("src"); 
+        if (urlValue && urlValue.match(/^#/)) {
+          let localId = urlValue.substring(1);
+          let imageBinary = this.contained[localId];
+          if (imageBinary.contentType && imageBinary.data &&
+              validImageMimeTypes.includes(imageBinary.contentType)) {
+            let imageData = "data:" + imageBinary.contentType + ";base64," + imageBinary.data;
+            imgs[i].setAttribute("src", imageData);
+          }
+        }
+      }
+      item._codingInstructionsWithContainedImages = doc.body.innerHTML;
+    }
+
+  }
 
 };
