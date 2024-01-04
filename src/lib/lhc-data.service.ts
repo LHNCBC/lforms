@@ -194,6 +194,8 @@ export class LhcDataService {
    * @returns {string} the coding instruction
    */
   getCodingInstructionsWithContainedImages(item) {
+    const validImageMimeTypes = ["image/bmp", "image/jpeg", "image/x-png", 
+        "image/png", "image/gif"];
     let ret = item.codingInstructions;
 
     if (this.lhcFormData.contained &&
@@ -208,14 +210,16 @@ export class LhcDataService {
       // with contained data
       let parser = new DOMParser();
       let doc = parser.parseFromString(item.codingInstructions, "text/html");
-
+      
       let imgs = doc.getElementsByTagName("img");
       for (let i = 0; i < imgs.length; i++) { 
         let urlValue = imgs[i].getAttribute("src"); 
-        if (urlValue && urlValue.match(/#/)) {
+        if (urlValue && urlValue.match(/^#/)) {
           let localId = urlValue.substring(1);
-          let imageData = this.lhcFormData.contained[localId];
-          if (imageData) { 
+          let imageBinary = this.lhcFormData.contained[localId];
+          if (imageBinary.contentType && imageBinary.data &&
+              validImageMimeTypes.includes(imageBinary.contentType)) {
+            let imageData = "data:" + imageBinary.contentType + ";base64," + imageBinary.data;
             imgs[i].setAttribute("src", imageData);
           }
         }
