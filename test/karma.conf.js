@@ -94,7 +94,7 @@ module.exports = function(config) {
         flags: ['--password-store=basic']
       },
       Chrome_without_password_security: {
-        base: 'ChromeHeadless',
+        base: 'Chrome',
         flags: ['--password-store=basic']
       },
     },
