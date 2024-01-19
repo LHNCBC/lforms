@@ -173,7 +173,7 @@ export default class LhcFormData {
 
     // process images in 'contained'
     if (data.contained) 
-      this._processContainedImages(data);
+      this._containedImages = this._fhir.SDC.buildContainedImageMap(data)
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
@@ -293,34 +293,6 @@ export default class LhcFormData {
     }
 
     this._fhir.SDC.processExtensions(lfData, 'obj_title');
-  }
-
-
-  /**
-   * Process image data from the "contained" in FHIR questionnaire
-   * @param lfData - LForms object to assign the extracted fields
-   * @private
-   */
-  _processContainedImages(lfData) {
-    
-    let images = {}, hasImage;
-    if (lfData.contained && Array.isArray(lfData.contained)) {
-      const validImageMimeTypes = ["image/bmp", "image/jpeg", "image/x-png", 
-        "image/png", "image/gif"];
-
-      lfData.contained.forEach(resource => {
-        if (resource.resourceType === "Binary" &&
-            resource.id &&
-            validImageMimeTypes.includes(resource.contentType)) {
-          images[resource.id] = "data:" + resource.contentType + ";base64," + resource.data;       
-          hasImage = true;       
-        }
-      })
-    }
-
-    if (hasImage) {
-      this._containedImages = images;
-    }
   }
 
 
