@@ -6,9 +6,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - QuestionnaireResponse no longer contains answers to child questions of
   unanswered parent questions.  See https://jira.hl7.org/browse/FHIR-32665.
-  Althouh the change of the cardinality of item.answer.value to 1..1 was an R5
-  change, it was the intention all along, so we have make the change for R4 &
-  STU3 as well.  Although this we regard this as a fix, it could be a breaking
+  Although the change of the cardinality of item.answer.value to 1..1 was an R5
+  change, it was the intention all along, so we have made the change for R4 &
+  STU3 as well.  Although we regard this as a fix, it could be a breaking
   change for some, which is the reason for the major version increment.
 
 ## [34.3.1] 2023-12-01
