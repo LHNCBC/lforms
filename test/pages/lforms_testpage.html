@@ -418,7 +418,15 @@
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.
           testForm.prepop = window.prepopulateFHIR;
-          testForm.options = {'messageLevel': 'info', 'allowHTMLInInstructions' : allowHTMLInInstructions };
+          var options = { 'messageLevel': 'info' };
+          // Set the options values when the option checkboxes have non-default values.
+          // Do not set the options with the default values, which will overwrite the 
+          // options values within the lform data file (not affecting Questionnaires as options
+          // are not included in Questionnaires).
+          if(allowHTMLInInstructions) {
+            options["allowHTMLInInstructions"] = true; 
+          }
+          testForm.options = options
 
         };
         reader.readAsText(event.target.files[0]);
