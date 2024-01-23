@@ -297,3 +297,84 @@ describe('popover buttons', () => {
     });
   });
 });
+
+describe('images in coding instructions', () => {
+  describe('coding instrcutions with images shown inline', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-contained-image.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "allowHTMLInInstructions": true,
+          "showCodingInstruction": true });
+    });
+
+    it("should show an image with a url in the 'src' attribute", ()=>{
+      cy.byCss("#help-a/1 img").eq(0)
+        .should("be.visible")
+        .should('have.attr', 'src', '/test/data/a-picture.png');
+    })
+
+    it("should show an image with a local id in the 'src' attribute", ()=>{
+      cy.byCss("#help-b/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+    })
+
+    it("should show an image with a local id without quotes in the 'src' attribute", ()=>{
+      cy.byCss("#help-c/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+    })
+  });
+
+  describe('coding instrcutions with images shown in popover', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-contained-image.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "allowHTMLInInstructions": true });
+    });
+
+    it("should show an image with a url in the 'src' attribute", ()=>{
+      cy.byId("help-button-a/1").click()
+
+      cy.byCss("#help-content-a/1 img").eq(0)
+        .should("be.visible")
+        .should('have.attr', 'src', '/test/data/a-picture.png');
+
+      //make the popover disappear
+      cy.byCss(".lhc-form-title .lhc-question").eq(0).click({force: true});
+      cy.byCss("#help-content-a/1").should("not.exist");
+
+    })
+
+    it("should show an image with a local id in the 'src' attribute", ()=>{
+      cy.byId("help-button-b/1").click()
+
+      cy.byCss("#help-content-b/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+
+      //make the popover disappear
+      cy.byCss(".lhc-form-title .lhc-question").eq(0).click({force: true});
+      cy.byCss("#help-content-b/1").should("not.exist");
+    })
+
+    it("should show an image with a local id without quotes in the 'src' attribute", ()=>{
+      cy.byId("help-button-c/1").click()
+
+      cy.byCss("#help-content-c/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+
+      //make the popover disappear
+      cy.byCss(".lhc-form-title .lhc-question").eq(0).click({force: true});
+      cy.byCss("#help-content-c/1").should("not.exist");
+    })
+  });
+
+})
