@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.5.0]
+### Added
+- Added the support for checking and filtering invalid html tags and attributes
+  in the html version of the help text.
+
 ## [34.4.0] 2023-12-05
 ### Added
 - Added the support for using image data in the 'contained' when a local ID
