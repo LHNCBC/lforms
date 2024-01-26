@@ -14,6 +14,8 @@ import version from '../../version.json';
 
 import Validation from "./lhc-form-validation.js"
 
+var errorMessages = InternalUtil.errorMessages;
+
 //import LForms from "./lforms";
 // const LForms = (window as any).LForms;
 declare var LForms: any;
@@ -97,7 +99,12 @@ export default class LhcFormData {
     // whether to hide repetition numbers next to the item's text
     hideRepetitionNumber: false,
     // whether to display score along with text when there scores in answers
-    displayScoreWithAnswerText: true
+    displayScoreWithAnswerText: true,
+    // whether to show the filtered html content from the rendering-xhtml extension 
+    // if it contains invalid tags or attributes. The default value is false, which
+    // means if the HTML content is not valid, the text content will be used/displayed 
+    // (even if the text is empty).
+    displayInvalidHTML: false
   };
 
   // other instance level variables that were not previously listed
@@ -953,10 +960,30 @@ export default class LhcFormData {
           let item = this.itemList[i];
           if (item.codingInstructions && 
               item.codingInstructions.length > 0 &&
-              item.codingInstructionsFormat === "html" && 
-              item.codingInstructions.match(/img/) && 
-              item.codingInstructions.match(/src/)) {
-            this._setCodingInstructionsWithContainedImages(item);
+              item.codingInstructionsFormat === "html") {
+            // process contained images
+            if (item.codingInstructions.match(/img/) && 
+                item.codingInstructions.match(/src/)) {
+              this._setCodingInstructionsWithContainedImages(item);
+            }
+            let errors, messages;  
+            // check if html string contains invalid html tags, when the html version needs to be displayed
+            let [cleanHTML, removedTags] = LForms.Util._checkForInvalidHtmlTags(item._codingInstructionsWithContainedImages || item.codingInstructions);
+            if (removedTags && removedTags.length>0) {
+              item.codingInstructionsHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
+              messages = [{errors}];
+              // print detailed errors messages in console
+              console.log("Invalid tags/attributes found in help text:")
+              removedTags.forEach(ele => {
+                if (ele.element)
+                  console.log("  - Element: " + ele.element.nodeName);
+                else if (ele.attribute)
+                  console.log("  - Attribute: " + ele.attribute.nodeName +" in " + ele.from.nodeName);
+              });
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
+            }
           }
         }
       }
@@ -3605,7 +3632,6 @@ export default class LhcFormData {
       }
       item._codingInstructionsWithContainedImages = doc.body.innerHTML;
     }
-
   }
 
 };

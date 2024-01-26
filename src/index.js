@@ -6,7 +6,6 @@
 
 // Note that zone.min.js should only be included if you don't have it already.
 import './lforms/webcomponent/assets/lib/zone.min.js';
-import './lforms/webcomponent/scripts.js';
 import './lforms/webcomponent/runtime.js';
 import './lforms/webcomponent/polyfills.js';
 import './lforms/webcomponent/main.js';

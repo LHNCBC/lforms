@@ -39,6 +39,19 @@
           attr.aria-describedby="help-button-{{ item._elementId }}">
     <i nz-icon nzType="question-circle" nzTheme="fill"></i>
   </button>
+  <button *ngSwitchCase="'help-plain'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"
+          nz-popover 
+          [nzPopoverContent]="helpPlainTemplate" 
+          nzPopoverTrigger="click" 
+          nzPopoverPlacement="right"
+          nzPopoverTitle="Instruction"
+          nzPopoverOverlayClassName="lhc-popover-help lhc-help{{ item._elementId.replaceAll('/','-') }}"
+          (click)="onShowingPopver(item)" 
+          attr.aria-controls="help-content-{{item._elementId}}"
+          attr.aria-label="Help button for {{item.question}}" 
+          attr.aria-describedby="help-button-{{ item._elementId }}">
+    <i nz-icon nzType="question-circle" nzTheme="fill"></i>
+  </button>
   <ng-container *ngSwitchCase="'copyright-string'">
     <button *ngIf="!formLevel" id="copyright-button-{{item._elementId}}" type="button" class="lhc-copyright-button" 
             nz-popover            
@@ -93,7 +106,15 @@
         [innerHTML]="item._codingInstructionsWithContainedImages || item.codingInstructions | safeHtml"
   ></span>
 </ng-template>
-
+<!-- help popover template with plain text-->
+<ng-template #helpPlainTemplate>
+  <span attr.aria-labelledby="help-button-{{item._elementId}}" 
+        role="region"
+        attr.aria-label="Instruction for {{item.question}}" 
+        attr.aria-describedby="help-content-{{item._elementId}}"
+        id="help-content-{{item._elementId}}"
+  >{{item.codingInstructionsPlain}}</span>
+</ng-template>
 <!-- help popover template -->
 <ng-template #helpStrTemplate>
   <span attr.aria-labelledby="help-button-{{item._elementId}}"

@@ -78,16 +78,19 @@
         <button id="test" class="btn btn-primary" onclick="testSearchOnFHIRServer()">Search on FHIR Server</button>
 
         <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
-        
         <input type="file" id="convZipFileAnchor" onchange="loadConvertAndSaveZippedForms(event)" class="hide" />
         <button id="convBtn" type="button" class="btn btn-success" onclick="document.querySelector('#convZipFileAnchor').click()">Convert Between LHC-Forms/FHIR (zip file)</button>
-        <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
         <div id="tempOptionList">
           <p>LHC-Forms options (for uploaded files through the "Load From File" button)</p>
           <ul style="list-style: none;">
             <li><label><input type="checkbox" id="allowHTMLInInstructions" /> allowHTMLInInstructions</label></li>
+            <li><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></li>
+            <li><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></li>
           </ul>          
         </div>
+        <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load
+          From File</button>
+
         <div id="formConvStarted" style="display:none; margin:100px; font-size:150%; color:darkred">
           Converting your forms... this may take a while.
           The resulting zip file will be downloaded automatically to your browser's default downloads folder.
@@ -99,7 +102,7 @@
         </div>
       </div>
     </div>
-
+    <br>
     <button onclick="getInternalData()">Debug: Get internal data</button>
 
     <br><br>
@@ -407,8 +410,10 @@
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
         var questionnaire;
-        var optionCheckbox = document.querySelector('#allowHTMLInInstructions');
-        var allowHTMLInInstructions = optionCheckbox.checked;
+        var allowHTMLInInstructions = document.querySelector('#allowHTMLInInstructions').checked,
+            displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
+            showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+        
         reader.onload = function() {
           var questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
@@ -426,6 +431,13 @@
           if(allowHTMLInInstructions) {
             options["allowHTMLInInstructions"] = true; 
           }
+          if (displayInvalidHTML) {
+            options["displayInvalidHTML"] = true;
+          }
+          if (showCodingInstruction) {
+            options["showCodingInstruction"] = true;
+          }
+          
           testForm.options = options
 
         };
@@ -562,7 +574,6 @@
     <script src="/assets/lib/zone.min.js"></script>
     <script src="/runtime.js"></script>
     <script src="/polyfills.js"></script>
-    <!--script src="/scripts.js"></script-->
     <script src="/main.js"></script>
     <script src="/lforms/fhir/lformsFHIRAll.min.js"></script>
 

@@ -4,7 +4,7 @@
  */
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
-
+import DOMPurify from 'dompurify';
 const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
 const _sdcPattern =
@@ -1029,6 +1029,72 @@ const FormUtils = {
     // definition.
     return item.answerCardinality && item.answerCardinality.max &&
       (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+  },
+
+
+  /**
+   * Returns true if the HTML version of the help text contains any of the not allowed tags.
+   * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
+   * https://hl7.org/fhir/R4/narrative.html for allowed subset of the HTML tags.
+   * @param {*} htmlNarrative 
+   * @return [{string}, {array}]
+   */
+  _checkForInvalidHtmlTags: function(htmlNarrative) {
+    // start tags is <tagname without any space after '<'
+
+    // 1. no head, body: <head, <body
+    // 2. no external stylesheet references: <link ref='stylesheet' href='styles.css'>
+    // 3. no scripts: <script
+    // 4. no forms: <form
+    // 5. no base/link/xlink
+    // 6. no frames, iframes: <frame, <iframe
+    // 7. no objects: <object
+    // 8. no events
+    // 9. no images with external src (image could use a data url wit embedded data)
+    let notAllowedTags = ['head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'frame', 'iframe', 'object',]
+    // 
+    // Deprecated HTML elements. See:
+    // https://www.w3.org/TR/html4/index/elements.html
+    // https://www.w3docs.com/learn-html/deprecated-html-tags.html
+    let deprecatedTags = [
+      'acronym',
+      'applet',
+      'basefont',
+      'big',
+      'blink',
+      'center',
+      'dir',
+      'embed',
+      'font',
+      'frame',
+      'frameset',
+      'isindex',
+      'noframes',
+      'marquee',
+      'menu',
+      'plaintext',
+      's',
+      'strike',
+      'tt',
+      'u',
+    ]
+    // URI allows embedded data ('data:...'), contained local id('#...'), and 
+    // local URL('/...'). 
+    const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i; 
+    const NOT_ALLOWED_TAGS = notAllowedTags.concat(deprecatedTags);
+    const config = {
+            //ALLOWED_TAGS: ALLOWED_TAGS,
+            ALLOWED_URI_REGEXP: ALLOWED_URI_REGEXP,
+            NOT_ALLOWED_TAGS: NOT_ALLOWED_TAGS,
+            FORBID_ATTR: ['style'],
+        };
+   
+  
+    let cleanHTML = DOMPurify.sanitize(htmlNarrative, config);
+    let removedTags = DOMPurify.removed;
+
+    return [cleanHTML, removedTags]
+
   }
 
 };

@@ -378,3 +378,110 @@ describe('images in coding instructions', () => {
   });
 
 })
+
+describe('invalid html tags/attributes in coding instructions', () => {
+  describe('regular text shown inline', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "messageLevel": "error",
+          "allowHTMLInInstructions": true,
+          "displayInvalidHTML": false,
+          "showCodingInstruction": true });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the regular help text", ()=>{
+      cy.byCss("#help-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "A plain text instruction.");
+    })
+
+  });
+
+  describe('escaped invalid html shown in inline', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4",
+          "messageLevel": "error", 
+          "allowHTMLInInstructions": true,
+          "displayInvalidHTML": true,
+          "showCodingInstruction": true });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the escaped html", ()=>{
+      cy.byCss("#help-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
+    })
+
+  });
+
+  describe('regular text shown popover', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "messageLevel": "error",
+          "allowHTMLInInstructions": true,
+           "displayInvalidHTML": false,
+          "showCodingInstruction": false });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the regular help text", ()=>{
+      cy.byId("help-button-item1/1").click()
+
+      cy.byCss("#help-content-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "A plain text instruction.");
+    })
+
+   
+  });
+
+  describe('escaped invalid html shown in popover', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "messageLevel": "error",
+          "allowHTMLInInstructions": true,
+           "displayInvalidHTML": true,
+          "showCodingInstruction": false });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the escaped html", ()=>{
+      cy.byId("help-button-item1/1").click()
+
+      cy.byCss("#help-content-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
+    })
+  });
+
+})

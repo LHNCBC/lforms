@@ -91,11 +91,10 @@ You need to include the following files in your project:
 1. `webcomponent/styles.css`
 2. `webcomponent/assets/lib/zone.min.js` (unless you already have zone.min.js 
    on the page)
-3. `webcomponent/scripts.js`
-4. `webcomponent/runtime.js`
-5. `webcomponent/polyfills.js`
-6. `webcomponent/main.js`
-7. _One_ of the FHIR support library files, assuming you are planning to use
+3. `webcomponent/runtime.js`
+4. `webcomponent/polyfills.js`
+5. `webcomponent/main.js`
+6. _One_ of the FHIR support library files, assuming you are planning to use
    FHIR Questionnaires:
    - `fhir/lformsFHIRAll.min.js`
    - `fhir/R4/lformsFHIR.min.js`

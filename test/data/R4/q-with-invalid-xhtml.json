@@ -1,0 +1,46 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  
+  "title": "Invalid HTML tags/attributes in help text",
+  
+  
+  "item": [
+        {
+          "linkId": "item1",
+          
+          "text": "Name with invalid help text",
+          "type": "string",
+          "item": [
+            {
+              "text": "A plain text instruction.",
+              "type": "display",
+              "linkId": "item1-help",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "text": "Help-Button",
+                    "coding": [
+                      {
+                        "code": "help",
+                        "display": "Help-Button",
+                        "system": "http://hl7.org/fhir/questionnaire-item-control"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "_text": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+  ]
+}
