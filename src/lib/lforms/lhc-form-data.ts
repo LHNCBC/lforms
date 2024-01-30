@@ -41,7 +41,7 @@ export default class LhcFormData {
   // whether the form data contains saved user data
   hasSavedData = false;
 
-  // whether the form data is valid 
+  // whether the form data is valid
   // (it only checks on INT/REAL types when getUserData() is called.)
   _invalidData = false;
 
@@ -131,7 +131,7 @@ export default class LhcFormData {
   _showInfo;
   contained;
   _containedImages;
-  
+
   /**
    * Constructor
    * @param data the lforms form definition data
@@ -172,7 +172,7 @@ export default class LhcFormData {
     }
 
     // process images in 'contained'
-    if (data.contained) 
+    if (data.contained)
       this._containedImages = this._fhir.SDC.buildContainedImageMap(data)
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
@@ -557,7 +557,7 @@ export default class LhcFormData {
     if (LForms.FHIR && this._hasResponsiveExpr) {
       let self = this;
       setTimeout(function(){
-        self._expressionProcessor.runCalculations(false).then(()=>{            
+        self._expressionProcessor.runCalculations(false).then(()=>{
           self._checkFormControls();
         });
       });
@@ -932,7 +932,7 @@ export default class LhcFormData {
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
 
       // check if displayScoreWithAnswerText is changed
-      let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined && 
+      let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined &&
           newOptions.displayScoreWithAnswerText !== existingOptions.displayScoreWithAnswerText;
 
       // merge the options
@@ -951,10 +951,10 @@ export default class LhcFormData {
           this.templateOptions.allowHTMLInInstructions) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          if (item.codingInstructions && 
+          if (item.codingInstructions &&
               item.codingInstructions.length > 0 &&
-              item.codingInstructionsFormat === "html" && 
-              item.codingInstructions.match(/img/) && 
+              item.codingInstructionsFormat === "html" &&
+              item.codingInstructions.match(/img/) &&
               item.codingInstructions.match(/src/)) {
             this._setCodingInstructionsWithContainedImages(item);
           }
@@ -1038,7 +1038,7 @@ export default class LhcFormData {
 
       // check if the item has an answer list or a search url
       item._hasAnswerList = InternalUtil.hasAnswerList(item);
-    
+
       // displayControl default values
       if (item.dataType === "SECTION") {
         if (!item.displayControl) {
@@ -1113,12 +1113,12 @@ export default class LhcFormData {
       this._setupInFieldPlaceholders(item);
 
       // convert date string to Date object
-      if (item.value && !item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
+      if (item.value && !item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.DT ||
           item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
         item.value = CommonUtils.stringToDate(item.value);
       }
       // internally all numeric values are of string type
-      if (!item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.INT || 
+      if (!item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.INT ||
         item.dataType === CONSTANTS.DATA_TYPE.REAL ||
         item.dataType === CONSTANTS.DATA_TYPE.QTY) &&
         typeof item.value === "number") {
@@ -1188,7 +1188,7 @@ export default class LhcFormData {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
           else
-            item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";          
+            item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";
         }
       }
       // other types
@@ -1281,17 +1281,17 @@ export default class LhcFormData {
 
     // special handling of the help text when it contains images in the 'contained' field.
     if (this._containedImages &&
-        item.codingInstructions && 
-        item.codingInstructions.length > 0 && 
-        this.templateOptions.allowHTMLInInstructions && 
+        item.codingInstructions &&
+        item.codingInstructions.length > 0 &&
+        this.templateOptions.allowHTMLInInstructions &&
         item.codingInstructionsFormat === "html" &&
-        item.codingInstructions.match(/img/) && 
+        item.codingInstructions.match(/img/) &&
         item.codingInstructions.match(/src/)) {
       this._setCodingInstructionsWithContainedImages(item);
     }
 
     // process the answer code system
-    if (Array.isArray(item.answers) && (item.dataType === CONSTANTS.DATA_TYPE.CNE || 
+    if (Array.isArray(item.answers) && (item.dataType === CONSTANTS.DATA_TYPE.CNE ||
         item.dataType === CONSTANTS.DATA_TYPE.CNE)) {
       var answerCodeSystem = item.answerCodeSystem ? LhcFormUtils.getCodeSystem(item.answerCodeSystem) : null;
       for (var i=0, iLen = item.answers.length; i<iLen; i++) {
@@ -1750,7 +1750,7 @@ export default class LhcFormData {
       // has a data type
       if (dataType) {
         switch (dataType) {
-          case CONSTANTS.DATA_TYPE.INT:   
+          case CONSTANTS.DATA_TYPE.INT:
             if (hasAnswerList) {
               retValue = value; // value is an object or an array of {text: value, ...}
             }
@@ -1783,7 +1783,7 @@ export default class LhcFormData {
               retValue = value; // value is an object or an array of {text: value, ...}
             }
             else {
-              retValue = Array.isArray(value) ? value.map(val=> CommonUtils.dateToDTStringISO(val)) : 
+              retValue = Array.isArray(value) ? value.map(val=> CommonUtils.dateToDTStringISO(val)) :
                 CommonUtils.dateToDTStringISO(value);
             }
             break;
@@ -1801,7 +1801,7 @@ export default class LhcFormData {
             retValue = value ? true : false;
             break;
           case CONSTANTS.DATA_TYPE.ST:
-          case CONSTANTS.DATA_TYPE.TM:            
+          case CONSTANTS.DATA_TYPE.TM:
             retValue = value; // value is an object or an array of {text: value} when hasAnswerList is true
             break;
           default:
@@ -2043,7 +2043,20 @@ export default class LhcFormData {
   addRepeatingItems(item) {
 
     var maxRecId = this.getRepeatingItemMaxId(item);
-    var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
+    var repeatItem = this._repeatableItems[item.linkId];
+    // For a repeating group with answerValueSet items, make sure the "answers"
+    // property on items are copied to the repeating group. The radio-button
+    // layout of the newly added repeating item was not rendering correctly,
+    // since this._repeatableItems was set earlier before the "answers"
+    // property was set on items. See LF-2864.
+    if (item.items && Array.isArray(item.items) && item.items.length > 0) {
+      for (var i = 0; i < item.items.length; i++) {
+        if (!repeatItem.items[i].answers && item.items[i].answers) {
+          repeatItem.items[i].answers = item.items[i].answers;
+        }
+      }
+    }
+    var newItem = CommonUtils.deepCopy(repeatItem);
     newItem._id = maxRecId + 1;
 
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
@@ -2955,7 +2968,7 @@ export default class LhcFormData {
       else {
         listVals = modifiedValue;
       }
-      
+
       let newValue = item._multipleAnswers ? listVals : listVals[0];
       // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
       item.value = newValue;
@@ -3109,7 +3122,7 @@ export default class LhcFormData {
       // answers
       else {
         [options.listItems, options.addSeqNum] =
-          this._getAnswerDisplayTextWithLabelAndScore(this.templateOptions.displayScoreWithAnswerText, item); 
+          this._getAnswerDisplayTextWithLabelAndScore(this.templateOptions.displayScoreWithAnswerText, item);
         options.display = '_displayText';
         // use the original answers as the models (used in the autocomplete component)
         options.listItemsForModel = item.answers;
@@ -3161,7 +3174,7 @@ export default class LhcFormData {
     if (answers && Array.isArray(answers)) {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
-  
+
         var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
         // label is a string
         if (answerData.label) {
@@ -3184,11 +3197,11 @@ export default class LhcFormData {
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
         modifiedAnswers.push(answerData);
-      }  
+      }
     }
     // add seq num when there is no labels and no numeric values as answer
     var acAddSeq = !hasOneAnswerLabel && !hasOneNumericAnswer;
-    
+
     return [modifiedAnswers, acAddSeq];
   }
 
@@ -3473,7 +3486,7 @@ export default class LhcFormData {
             }
             break;
         } // end case
-      }     
+      }
     }
     // no answer and 'notEqual' has a value
     else if (trigger.hasOwnProperty('notEqual') &&
@@ -3579,8 +3592,8 @@ export default class LhcFormData {
 
 
   /**
-   * Get the coding instruction, replacing local ids in the 'src' attributes of 
-   * the 'img' tags if the local ids are in the 'contained' with image data, 
+   * Get the coding instruction, replacing local ids in the 'src' attributes of
+   * the 'img' tags if the local ids are in the 'contained' with image data,
    * and if codingInstructionsFormat is 'html'.
    * @param item an item in lforms
    */
@@ -3591,10 +3604,10 @@ export default class LhcFormData {
       // with contained data
       let parser = new DOMParser();
       let doc = parser.parseFromString(item.codingInstructions, "text/html");
-      
+
       let imgs = doc.getElementsByTagName("img");
-      for (let i = 0; i < imgs.length; i++) { 
-        let urlValue = imgs[i].getAttribute("src"); 
+      for (let i = 0; i < imgs.length; i++) {
+        let urlValue = imgs[i].getAttribute("src");
         if (urlValue && urlValue.match(/^#/)) {
           let localId = urlValue.substring(1);
           let imageData = this._containedImages[localId];
