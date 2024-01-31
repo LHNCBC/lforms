@@ -2049,12 +2049,15 @@ export default class LhcFormData {
     // layout of the newly added repeating item was not rendering correctly,
     // since this._repeatableItems was set earlier before the "answers"
     // property was set on items. See LF-2864.
-    if (item.items && Array.isArray(item.items) && item.items.length > 0) {
-      for (var i = 0; i < item.items.length; i++) {
-        if (!repeatItem.items[i].answers && item.items[i].answers) {
-          repeatItem.items[i].answers = item.items[i].answers;
+    if (repeatItem.items && Array.isArray(repeatItem.items) && repeatItem.items.length > 0) {
+      repeatItem.items.forEach((x) => {
+        if (!x.answers) {
+          var matchingItem = item.items.find((y) => y.linkId === x.linkId);
+          if (matchingItem && matchingItem.answers) {
+            x.answers = matchingItem.answers;
+          }
         }
-      }
+      });
     }
     var newItem = CommonUtils.deepCopy(repeatItem);
     newItem._id = maxRecId + 1;
