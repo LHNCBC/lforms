@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [34.4.1] 2024-02-01
+### Fixed
+- answerValueSet items in repeated groups was not rendered properly.
+
 ## [34.4.0] 2023-12-05
 ### Added
 - Added the support for using image data in the 'contained' when a local ID
