@@ -1551,19 +1551,19 @@ function addCommonSDCImportFns(ns) {
         };
         // check if html string contains invalid html tags, when the html version needs to be displayed
         if (self._widgetOptions?.allowHTMLInInstructions) {
-          let [cleanHTML, removedTags] = LForms.Util._checkForInvalidHtmlTags(xhtmlFormat.valueString);
-          if (removedTags && removedTags.length>0) {
+          let invalidTagsAttributes = LForms.Util._checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             helps.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};
             errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
             messages = [{errors}];
             // print detailed errors messages in console
-            console.log("Invalid tags/attributes found in help text:")
-            removedTags.forEach(ele => {
-              if (ele.element)
-                console.log("  - Element: " + ele.element.nodeName);
-              else if (ele.attribute)
-                console.log("  - Attribute: " + ele.attribute.nodeName +" in " + ele.from.nodeName);
+            console.log("Possible invalid HTML tags/attributes found in help text:")
+            invalidTagsAttributes.forEach(ele => {
+              if (ele.attribute)
+                console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
+              else if (ele.tag)
+                console.log("  - Element: " + ele.tag);
             });
           }
         }

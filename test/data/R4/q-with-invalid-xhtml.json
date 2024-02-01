@@ -41,6 +41,11 @@
               }
             }
           ]
+        },
+        {
+          "linkId": "item2",
+          "text": "Name",
+          "type": "string"
         }
   ]
 }

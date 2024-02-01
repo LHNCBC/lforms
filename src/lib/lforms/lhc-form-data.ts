@@ -104,7 +104,13 @@ export default class LhcFormData {
     // if it contains invalid tags or attributes. The default value is false, which
     // means if the HTML content is not valid, the text content will be used/displayed 
     // (even if the text is empty).
-    displayInvalidHTML: false
+    displayInvalidHTML: false,
+    // This option decides the minimum level of the messages to be displayed underneath the item.
+    // The allowed values are 'info', 'warning' and 'error'. Selecting the 'info' level will
+    // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
+    // 'warning' and 'error' messages. The default value is null, which means no messages will be
+    // displayed.
+    messageLevel: null
   };
 
   // other instance level variables that were not previously listed
@@ -968,19 +974,20 @@ export default class LhcFormData {
             }
             let errors, messages;  
             // check if html string contains invalid html tags, when the html version needs to be displayed
-            let [cleanHTML, removedTags] = LForms.Util._checkForInvalidHtmlTags(item._codingInstructionsWithContainedImages || item.codingInstructions);
-            if (removedTags && removedTags.length>0) {
+            let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
+            let invalidTagsAttributes = LForms.Util._checkForInvalidHtmlTags(helpHTML);
+              if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};
               errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
               messages = [{errors}];
               // print detailed errors messages in console
-              console.log("Invalid tags/attributes found in help text:")
-              removedTags.forEach(ele => {
-                if (ele.element)
-                  console.log("  - Element: " + ele.element.nodeName);
-                else if (ele.attribute)
-                  console.log("  - Attribute: " + ele.attribute.nodeName +" in " + ele.from.nodeName);
+              console.log("Possible invalid HTML tags/attributes found in help text:")
+              invalidTagsAttributes.forEach(ele => {
+                if (ele.attribute)
+                  console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
+                else if (ele.tag)
+                  console.log("  - Element: " + ele.tag);
               });
               InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
             }
