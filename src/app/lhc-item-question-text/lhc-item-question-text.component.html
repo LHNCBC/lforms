@@ -37,7 +37,7 @@
       <div *ngSwitchCase="'inline-html'"
             id="help-{{ item._elementId }}"
             class="lhc-inline-help"
-            [innerHTML]="item.codingInstructions | safeHtml"
+            [innerHTML]="item._codingInstructionsWithContainedImages || item.codingInstructions | safeHtml"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
        ></div>

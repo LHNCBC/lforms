@@ -129,7 +129,9 @@ export default class LhcFormData {
   _showErrors;
   _showWarnings;
   _showInfo;
-
+  contained;
+  _containedImages;
+  
   /**
    * Constructor
    * @param data the lforms form definition data
@@ -159,7 +161,6 @@ export default class LhcFormData {
       }
     }
     else {
-      //jQuery.extend(this, data);
       Object.assign(this, data);
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
@@ -169,6 +170,10 @@ export default class LhcFormData {
     if (LForms.FHIR && data.fhirVersion) {
       this._initializeFormFHIRData(data);
     }
+
+    // process images in 'contained'
+    if (data.contained) 
+      this._containedImages = this._fhir.SDC.buildContainedImageMap(data)
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
@@ -941,6 +946,20 @@ export default class LhcFormData {
             this._updateAutocompOptions(item);
         }
       }
+      // update html version of help text with contained images when needed
+      if (this._containedImages &&
+          this.templateOptions.allowHTMLInInstructions) {
+        for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+          let item = this.itemList[i];
+          if (item.codingInstructions && 
+              item.codingInstructions.length > 0 &&
+              item.codingInstructionsFormat === "html" && 
+              item.codingInstructions.match(/img/) && 
+              item.codingInstructions.match(/src/)) {
+            this._setCodingInstructionsWithContainedImages(item);
+          }
+        }
+      }
 
       this.setMessageLevel(this.templateOptions.messageLevel);
     }
@@ -1258,6 +1277,17 @@ export default class LhcFormData {
 
     if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
       item.answers = this.answerLists[item.answers];
+    }
+
+    // special handling of the help text when it contains images in the 'contained' field.
+    if (this._containedImages &&
+        item.codingInstructions && 
+        item.codingInstructions.length > 0 && 
+        this.templateOptions.allowHTMLInInstructions && 
+        item.codingInstructionsFormat === "html" &&
+        item.codingInstructions.match(/img/) && 
+        item.codingInstructions.match(/src/)) {
+      this._setCodingInstructionsWithContainedImages(item);
     }
 
     // process the answer code system
@@ -3547,5 +3577,35 @@ export default class LhcFormData {
     return ret;
   }
 
+
+  /**
+   * Get the coding instruction, replacing local ids in the 'src' attributes of 
+   * the 'img' tags if the local ids are in the 'contained' with image data, 
+   * and if codingInstructionsFormat is 'html'.
+   * @param item an item in lforms
+   */
+  _setCodingInstructionsWithContainedImages(item) {
+
+    if (this._containedImages) {
+      // go though each image in the html string and replace local ids in image source
+      // with contained data
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(item.codingInstructions, "text/html");
+      
+      let imgs = doc.getElementsByTagName("img");
+      for (let i = 0; i < imgs.length; i++) { 
+        let urlValue = imgs[i].getAttribute("src"); 
+        if (urlValue && urlValue.match(/^#/)) {
+          let localId = urlValue.substring(1);
+          let imageData = this._containedImages[localId];
+          if (imageData) {
+            imgs[i].setAttribute("src", imageData);
+          }
+        }
+      }
+      item._codingInstructionsWithContainedImages = doc.body.innerHTML;
+    }
+
+  }
 
 };

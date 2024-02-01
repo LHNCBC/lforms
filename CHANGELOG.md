@@ -11,6 +11,12 @@ This project follows [Semantic Versioning](http://semver.org/).
   STU3 as well.  Although we regard this as a fix, it could be a breaking
   change for some, which is the reason for the major version increment.
 
+## [34.4.0] 2023-12-05
+### Added
+- Added the support for using image data in the 'contained' when a local ID
+  is used in the 'src' attribute of a 'img' in the value of the 'rendering-xhtml'
+  extension for help text.
+
 ## [34.3.1] 2023-12-01
 ### Added
 - Added support for regex strings without '/' in validations
