@@ -1,5 +1,6 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
 import * as util from "../support/util";
+import {TestUtil} from "../support/testUtilFacade";
 
 describe('Visual effect tests', () => {
   const tp: TestPage = new TestPage();
@@ -266,7 +267,7 @@ describe('Visual effect tests', () => {
 
     it("should display all codes when showQuestionCode is true", ()=>{
       util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4", "showQuestionCode": true });
-      
+
       cy.byCss('.lhc-item-code').eq(0).contains("[example]")
         .invoke('attr', 'href')
         .should('eq', undefined);
@@ -287,4 +288,19 @@ describe('Visual effect tests', () => {
 
 
   } )
+
+  describe('repeating group with answerValueSet items', () => {
+    it('should render radio button layout properly after adding a repeating group', () => {
+      tp.openBaseTestPage();
+      TestUtil.waitForFHIRLibsLoaded();
+      tp.loadFromTestData('repeating-group-that-contain-an-item-with-answerValueSet.R4.json', 'R4');
+      // The form has a question with 7 radio button options.
+      cy.get('.ant-radio-input').should('have.length', 7);
+      cy.get('.ant-radio-input').eq(0).click();
+      // Add a repeating group.
+      cy.contains('Add another "repeating group"').click();
+      // The 7 radio button inputs in the repeating group should be rendered.
+      cy.get('.ant-radio-input').should('have.length', 14);
+    });
+  });
 });
