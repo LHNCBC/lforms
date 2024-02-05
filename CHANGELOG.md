@@ -2,10 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [34.5.0]
+## [35.1.0] 2034-02-05
 ### Added
 - Added the support for checking and filtering invalid html tags and attributes
   in the html version of the help text.
+
+## [35.0.0] 2023-12-21
+### Fixed
+- QuestionnaireResponse no longer contains answers to child questions of
+  unanswered parent questions.  See https://jira.hl7.org/browse/FHIR-32665.
+  Although the change of the cardinality of item.answer.value to 1..1 was an R5
+  change, it was the intention all along, so we have made the change for R4 &
+  STU3 as well.  Although we regard this as a fix, it could be a breaking
+  change for some, which is the reason for the major version increment.
 
 ## [34.4.0] 2023-12-05
 ### Added
@@ -28,7 +37,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Support for the exporting of QuestionnnaireResponse.questionnaire.
 
 ### Fixed
-- Fixed a bug that copyright is not displayed when there is no code. 
+- Fixed a bug that copyright is not displayed when there is no code.
 ## [34.1.0] 2023-10-13
 ### Added
 - Added support for FHIR verison R4B.

@@ -30,7 +30,13 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['ChromeHeadless'],
+    browsers: ['ChromeHeadless_without_password_security'],
+    customLaunchers: {
+      ChromeHeadless_without_password_security: {
+        base: 'ChromeHeadless',
+        flags: ['--password-store=basic']
+      },
+    },
     singleRun: true,
     listenAddress: 'localhost', // binds the test server to localhost
     restartOnFileChange: true

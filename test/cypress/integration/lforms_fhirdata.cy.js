@@ -2,7 +2,7 @@
 import { RxTerms } from "../support/rxterms.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
-// R4B is same as R4 for Questionnaire and QuestionnaireResponse. 
+// R4B is same as R4 for Questionnaire and QuestionnaireResponse.
 // Only need to test R4B in the test for profile.
 delete FHIRSupport.R4B;
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
@@ -719,11 +719,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             tp.openBaseTestPage();
             util.setFHIRVersion(fhirVersion);
             element(by.id("merge-qr-cwe")).click();
-            
+
             // 0 and non-0 numbers
             cy.byId('/type2/1').should('have.value', '0');
             cy.byId('/type3/1').should('have.value', '-1.1');
-            
+
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
             // CNE field with a default value
@@ -1111,7 +1111,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('QuestionnaireResponse special case', function () {
 
         if (fhirVersion === 'R4' || fhirVersion === "R4B") {
-          it('should get answers from a question that is under a question that has no answer values', function() {
+          it('should NOT get answers from a question that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
             util.setFHIRVersion(fhirVersion);
             util.addFormToPage('question-under-question.R4.json', null, {fhirVersion});
@@ -1131,12 +1131,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
-              expect(fhirData.item[0].answer[0].item[0].answer[0].valueString).toBe('123');
+              expect(fhirData.item).toBe(undefined);
             });
 
           });
 
-          it('should get answers from a question in a group that is under a question that has no answer values', function() {
+          it('should NOT get answers from a question in a group that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
             util.setFHIRVersion(fhirVersion);
             util.addFormToPage('group-under-question.R4.json', null, {fhirVersion});
@@ -1157,7 +1157,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
-              expect(fhirData.item[0].answer[0].item[0].item[0].answer[0].valueString).toBe('123');
+              expect(fhirData.item).toBe(undefined);
             });
           });
         }

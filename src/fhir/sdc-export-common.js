@@ -982,70 +982,85 @@ function addCommonSDCExportFns(ns) {
    * If the lforms item is repeatable, this function handles one particular occurrence of the item.
    * @param lfItem an item in LForms form object, or the form object itself
    * @param isForm optional, default false. If true, the given item is the form object itself.
-   * @returns {{}} the converted FHIR item
+   * @returns {{}} the converted FHIR item, or null if the QuestionnaireResponse should not contain
+   *  a corresponding item.
    * @private
    */
   self._processResponseItem = function(lfItem, isForm) {
     if(isForm && (typeof isForm) !== 'boolean') { // just in case some are invoking it the old way.
       throw new Error('_processResponseItem function signature has been changed, please check/fix.');
     }
-    var targetItem = (isForm || lfItem.dataType === 'TITLE')? {}: {
-        linkId: lfItem.linkId,
-        text: lfItem.question
-      };
+
+    let targetItem = null;
 
     // just handle/convert the current item's value, no-recursion to sub-items at this step.
+    let isUnansweredQuestion = false;
     if (!isForm && lfItem.dataType !== 'TITLE' && lfItem.dataType !== 'SECTION') {
-      this._setIfHasValue(targetItem, 'answer', this._lfItemValueToFhirAnswer(lfItem));
+      targetItem = this._setIfHasValue(targetItem, 'answer', this._lfItemValueToFhirAnswer(lfItem));
+      isUnansweredQuestion = !targetItem?.answer;
     }
 
-    if(this._lfHasSubItems(lfItem)) {
-      var fhirItems = [];
-      for (var i=0; i < lfItem.items.length; ++i) {
-        var lfSubItem = lfItem.items[i];
-        if(! lfSubItem._isProcessed) {
-          var linkId = lfSubItem.linkId;
-          var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
-          if(repeats) {      // Can only be questions here per _processRepeatingItemValues
-            let fhirItem = { // one FHIR item for all repeats with the same linkId
-              linkId: linkId,
-              text: lfSubItem.question,
-              answer: []
-            };
-            for(var rpt=0; rpt < repeats.length; ++rpt) {
-              var rptItem = repeats[rpt];
-              var tmpFhirItem = this._processResponseItem(rptItem);
-              if(tmpFhirItem.answer) {
-                // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
-                // For now, just put all the answers from question and answer repeats into the answer (array).
-                Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
-              }
-              rptItem._isProcessed = true;
-            }
-            fhirItems.push(fhirItem);
-            delete lfItem._repeatingItems[linkId]; // cleanup, no longer needed
-          }
-          else {
-            let fhirItem = this._processResponseItem(lfSubItem);
-            fhirItems.push(fhirItem);
-          }
-        }
+    if (!isUnansweredQuestion) {
+      if (!targetItem)
+        targetItem = {};
 
-        if(lfSubItem._isProcessed) {
-          delete lfSubItem._isProcessed; // cleanup, no longer needed
-        }
+      if (!isForm && lfItem.dataType != 'TITLE') {
+        targetItem.linkId = lfItem.linkId,
+        targetItem.text = lfItem.question
       }
 
-      if(fhirItems.length > 0) {
-        if(! isForm && lfItem.dataType !== 'SECTION') {
-          // Question repeat is handled at the "parent level"; TODO: not sure how to handle answer repeat here,
-          // assuming it isn't possible for an item to have answer repeat and sub-items at the same time.
-          targetItem.answer = targetItem.answer || [];
-          targetItem.answer[0] = targetItem.answer[0] || {};
-          targetItem.answer[0].item = fhirItems;
+      // Process sub-items
+      if(this._lfHasSubItems(lfItem)) {
+        var fhirItems = [];
+        for (var i=0; i < lfItem.items.length; ++i) {
+          var lfSubItem = lfItem.items[i];
+          if(! lfSubItem._isProcessed) {
+            var linkId = lfSubItem.linkId;
+            var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
+            if(repeats) {      // Can only be questions here per _processRepeatingItemValues
+              let fhirItem = { // one FHIR item for all repeats with the same linkId
+                linkId: linkId,
+                text: lfSubItem.question,
+                answer: []
+              };
+              for(var rpt=0; rpt < repeats.length; ++rpt) {
+                var rptItem = repeats[rpt];
+                var tmpFhirItem = this._processResponseItem(rptItem);
+                if(tmpFhirItem?.answer) {
+                  // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
+                  // For now, just put all the answers from question and answer repeats into the answer (array).
+                  Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
+                }
+                rptItem._isProcessed = true;
+              }
+              if (fhirItem.answer.length > 0)
+                fhirItems.push(fhirItem);
+              delete lfItem._repeatingItems[linkId]; // cleanup, no longer needed
+            }
+            else {
+              let fhirItem = this._processResponseItem(lfSubItem);
+              if (fhirItem)
+                fhirItems.push(fhirItem);
+            }
+          }
+
+          if(lfSubItem._isProcessed) {
+            delete lfSubItem._isProcessed; // cleanup, no longer needed
+          }
         }
-        else {
-          targetItem.item = fhirItems;
+
+        if(fhirItems.length > 0) {
+          if(! isForm && lfItem.dataType !== 'SECTION') {
+            // Question repeat is handled at the "parent level"; TODO: not sure how to handle answer repeat here,
+            // assuming it isn't possible for an item to have answer repeat and sub-items at the same time.
+            // (TODO:  The above is an incorrect assumption.)
+            targetItem.answer = targetItem.answer || [];
+            targetItem.answer[0] = targetItem.answer[0] || {};
+            targetItem.answer[0].item = fhirItems;
+          }
+          else {
+            targetItem.item = fhirItems;
+          }
         }
       }
     }
