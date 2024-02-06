@@ -1,0 +1,66 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Reference loop in enableWhen",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "item1",
+      "text": "Item 1 -- enableWhen depending on Item 3",
+      "type": "boolean",
+      "enableWhen": [
+        {
+          "question": "item3",
+          "operator": "!=",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "all",
+      "initial": [
+        {
+          "valueBoolean": false
+        }
+      ]
+    },
+    {
+      "linkId": "item2",
+      "text": "Item 2 -- enableWhen depending on Item 3",
+      "type": "boolean",
+      "enableWhen": [
+        {
+          "question": "item3",
+          "operator": "!=",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "all",
+      "initial": [
+        {
+          "valueBoolean": false
+        }
+      ]
+    },
+    {
+      "linkId": "item3",
+      "text": "Item 3 -- enableWhen depending on Item 1 and Item 2",
+      "type": "boolean",
+      "enableWhen": [
+        {
+          "question": "item1",
+          "operator": "!=",
+          "answerBoolean": true
+        },
+        {
+          "question": "item2",
+          "operator": "!=",
+          "answerBoolean": true
+        }
+      ],
+      "enableBehavior": "all",
+      "initial": [
+        {
+          "valueBoolean": false
+        }
+      ]
+    }
+  ]
+}
