@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.0.1] 2024-02-06
+### Fixed
+- Fixed a bug that enableWhen breaks when there is a loop of references to 
+  the items in enableWhen.question.
+  
 ## [35.0.0] 2023-12-21
 ### Fixed
 - QuestionnaireResponse no longer contains answers to child questions of
