@@ -2049,16 +2049,7 @@ export default class LhcFormData {
     // layout of the newly added repeating item was not rendering correctly,
     // since this._repeatableItems was set earlier before the "answers"
     // property was set on items. See LF-2864.
-    if (repeatItem.items && Array.isArray(repeatItem.items) && repeatItem.items.length > 0) {
-      repeatItem.items.forEach((x) => {
-        if (!x.answers) {
-          var matchingItem = item.items.find((y) => y.linkId === x.linkId);
-          if (matchingItem && matchingItem.answers) {
-            x.answers = matchingItem.answers;
-          }
-        }
-      });
-    }
+    this._fillAnswersInRepeatItem(repeatItem, item);
     var newItem = CommonUtils.deepCopy(repeatItem);
     newItem._id = maxRecId + 1;
 
@@ -2089,6 +2080,24 @@ export default class LhcFormData {
     }
 
     return newItem;
+  }
+
+
+  /**
+   * Recursively fill the 'answers' property on repeated items and nested child items, if missing.
+   */
+  _fillAnswersInRepeatItem(repeatItem, item) {
+    if (repeatItem.items && Array.isArray(repeatItem.items) && repeatItem.items.length > 0) {
+      repeatItem.items.forEach((x) => {
+        var matchingItem = item.items.find((y) => y.linkId === x.linkId);
+        if (matchingItem) {
+          if (!x.answers && matchingItem.answers) {
+            x.answers = matchingItem.answers;
+          }
+          this._fillAnswersInRepeatItem(x, matchingItem);
+        }
+      });
+    }
   }
 
 

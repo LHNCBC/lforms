@@ -1,0 +1,64 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test nested repeating groups that contain an item with answerValueSet",
+  "status": "draft",
+  "item": [
+    {
+      "item": [
+        {
+          "item": [
+            {
+              "type": "choice",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "radio-button",
+                        "display": "Radio Button"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+                  "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+                }
+              ],
+              "linkId": "2834300786105",
+              "code": [
+                {
+                  "code": "a",
+                  "display": "aaa"
+                },
+                {
+                  "code": "b",
+                  "display": "bbb"
+                }
+              ],
+              "text": "Answer Value Set Question",
+              "required": false,
+              "repeats": false,
+              "readOnly": false,
+              "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions"
+            }
+          ],
+          "type": "string",
+          "linkId": "4429300181219",
+          "text": "Inner Group",
+          "required": false,
+          "repeats": false,
+          "readOnly": false
+        }
+      ],
+      "type": "string",
+      "linkId": "9744363809788",
+      "text": "Outer group",
+      "required": false,
+      "repeats": true,
+      "readOnly": false
+    }
+  ]
+}
