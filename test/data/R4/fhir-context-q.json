@@ -159,7 +159,7 @@
           ],
           "item": [
             {
-              "text": "<code>Text</code> instructions, with a <button class='testButton'>button</button>An plain text instruction on Gender. HTML should be escaped.",
+              "text": "<code>Text</code> instructions, with a <button class='testButton'>button</button>A plain text instruction on Gender. HTML should be escaped.",
               "type": "display",
               "linkId": "/54126-8/54131-8-help",
               "extension": [
