@@ -1551,7 +1551,7 @@ function addCommonSDCImportFns(ns) {
         };
         // check if html string contains invalid html tags, when the html version needs to be displayed
         if (self._widgetOptions?.allowHTMLInInstructions) {
-          let invalidTagsAttributes = LForms.Util._checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             helps.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};

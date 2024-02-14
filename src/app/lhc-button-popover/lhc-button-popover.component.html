@@ -20,7 +20,7 @@
           nzPopoverPlacement="right"  
           nzPopoverTitle="Instruction"
           nzPopoverOverlayClassName="lhc-popover-help lhc-help{{ item._elementId.replaceAll('/','-') }}"
-          (click)="onShowingPopver(item)"
+          (click)="onShowingPopover(item)"
           attr.aria-controls="help-content-{{item._elementId}}"
           attr.aria-label="Help button for {{item.question}}"
           attr.aria-describedby="help-button-{{ item._elementId }}">              
@@ -33,7 +33,7 @@
           nzPopoverPlacement="right"  
           nzPopoverTitle="Instruction"
           nzPopoverOverlayClassName="lhc-popover-help lhc-help{{ item._elementId.replaceAll('/','-') }}"
-          (click)="onShowingPopver(item)"
+          (click)="onShowingPopover(item)"
           attr.aria-controls="help-content-{{item._elementId}}"
           attr.aria-label="Help button for {{item.question}}"
           attr.aria-describedby="help-button-{{ item._elementId }}">
@@ -46,7 +46,7 @@
           nzPopoverPlacement="right"
           nzPopoverTitle="Instruction"
           nzPopoverOverlayClassName="lhc-popover-help lhc-help{{ item._elementId.replaceAll('/','-') }}"
-          (click)="onShowingPopver(item)" 
+          (click)="onShowingPopover(item)" 
           attr.aria-controls="help-content-{{item._elementId}}"
           attr.aria-label="Help button for {{item.question}}" 
           attr.aria-describedby="help-button-{{ item._elementId }}">
@@ -60,7 +60,7 @@
             nzPopoverPlacement="right"
             nzPopoverTitle="Copyright"
             nzPopoverOverlayClassName="lhc-popover-copyright lhc-copyright-class{{ item._elementId.replaceAll('/','-') }}"
-            (click)="onShowingPopver(item)"
+            (click)="onShowingPopover(item)"
             attr.aria-controls="copyright-content-{{item._elementId}}"
             attr.aria-label="Copyright button for {{item.question}}" 
             attr.aria-describedby="copyright-button-{{ item._elementId }}">
@@ -76,7 +76,7 @@
             nzPopoverPlacement="right"
             nzPopoverTitle="Copyright"
             nzPopoverOverlayClassName="lhc-popover-copyright lhc-copyright-class{{popoverIdentifier}}"        
-            (click)="onShowingPopver(item)"    
+            (click)="onShowingPopover(item)"    
             attr.aria-controls="copyright-content-{{popoverIdentifier}}"
             attr.aria-label="Copyright button for {{item.name || item.shortName}}" 
             attr.aria-describedby="copyright-button-{{popoverIdentifier}}">

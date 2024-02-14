@@ -36,7 +36,9 @@
       background-color: #337ab7;
       border-color: #2e6da4;
     }
-
+    .option-checkbox {
+      margin: 2px 8px;
+    }
     .hide {
       display: none;
     }
@@ -82,11 +84,11 @@
         <button id="convBtn" type="button" class="btn btn-success" onclick="document.querySelector('#convZipFileAnchor').click()">Convert Between LHC-Forms/FHIR (zip file)</button>
         <div id="tempOptionList">
           <p>LHC-Forms options (for uploaded files through the "Load From File" button)</p>
-          <ul style="list-style: none;">
-            <li><label><input type="checkbox" id="allowHTMLInInstructions" /> allowHTMLInInstructions</label></li>
-            <li><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></li>
-            <li><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></li>
-          </ul>          
+          <div>
+            <span class="option-checkbox"><label><input type="checkbox" id="allowHTMLInInstructions" /> allowHTMLInInstructions</label></span>
+            <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
+            <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
+          </div>          
         </div>
         <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load
           From File</button>

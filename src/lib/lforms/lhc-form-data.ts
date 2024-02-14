@@ -951,31 +951,33 @@ export default class LhcFormData {
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
 
-      // recreate the answerOption to add or remove the scores from display texts
-      if (scoreFlagChanged) {
+      // recreate the answerOption to add or remove the scores from display texts,
+      // when the lhcFormData instance has been initialized.
+      if (scoreFlagChanged && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
           if (!!item._hasAnswerList && item._hasScoreInAnswer)
             this._updateAutocompOptions(item);
         }
       }
-      // update html version of help text with contained images when needed
-      if (this._containedImages &&
-          this.templateOptions.allowHTMLInInstructions) {
+      // update and check the html version of help text, 
+      // when the lhcFormData instance has been initialized.
+      if (this.templateOptions.allowHTMLInInstructions && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
           if (item.codingInstructions && 
               item.codingInstructions.length > 0 &&
               item.codingInstructionsFormat === "html") {
             // process contained images
-            if (item.codingInstructions.match(/img/) && 
+            if (this._containedImages &&
+                item.codingInstructions.match(/img/) && 
                 item.codingInstructions.match(/src/)) {
-              this._setCodingInstructionsWithContainedImages(item);
+              this._setCodingInstructionsWithContainedImages(item);            
             }
             let errors, messages;  
             // check if html string contains invalid html tags, when the html version needs to be displayed
             let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
-            let invalidTagsAttributes = LForms.Util._checkForInvalidHtmlTags(helpHTML);
+            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(helpHTML);
               if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};

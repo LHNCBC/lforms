@@ -1040,7 +1040,7 @@ const FormUtils = {
    * @param {*} htmlNarrative 
    * @return [{array}] an array of invalid tags and attibutes
    */
-  _checkForInvalidHtmlTags: function(htmlNarrative) {
+  checkForInvalidHtmlTags: function(htmlNarrative) {
     let invalidTagsAttributes=[];
     let notAllowedTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
     let deprecatedTags = ['acronym', 'applet', 'basefont', 'big', 'blink', 'center', 'dir', 'embed', 'font', 
