@@ -101,7 +101,7 @@
               "_text": {
                 "extension": [{
                   "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-                  "valueString": "<code>HTML</code> instructions, with a <button class='testButton'>button</button>An html instruction on Name"
+                  "valueString": "<code>HTML</code> instructions, with a <button class='testButton'>button</button>. An html instruction on Name"
                 }]
               }
             }
