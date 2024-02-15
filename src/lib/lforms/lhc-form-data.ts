@@ -2085,8 +2085,8 @@ export default class LhcFormData {
 
   /**
    * Recursively fill the 'answers' property on repeated items and nested child items, if missing.
-   * @param repeatItem matching item in this._repeatableItems or one of its child
-   * @param item a repeating group item or one of its child
+   * @param repeatItem matching item in this._repeatableItems or one of its children
+   * @param item a repeating group item or one of its children
    */
   _fillAnswersInRepeatItem(repeatItem, item) {
     if (repeatItem.items && Array.isArray(repeatItem.items) && repeatItem.items.length > 0) {
