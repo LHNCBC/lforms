@@ -511,7 +511,10 @@ export default class LhcFormData {
       for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
         var targetItem = sourceItem._skipLogicTargets[i];
         changed = this._updateItemSkipLogicStatus(targetItem, null) || changed;
-        changed = this.updateSkipLogicControlledItems(targetItem, processItem) || changed;
+        // check the controlled items in the next level when the skiplogic status changes
+        if (changed) {
+          this.updateSkipLogicControlledItems(targetItem, processItem);
+        }
       }
     }
     changed = processItem(sourceItem) || changed;
