@@ -266,7 +266,7 @@ describe('Visual effect tests', () => {
 
     it("should display all codes when showQuestionCode is true", ()=>{
       util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4", "showQuestionCode": true });
-      
+
       cy.byCss('.lhc-item-code').eq(0).contains("[example]")
         .invoke('attr', 'href')
         .should('eq', undefined);

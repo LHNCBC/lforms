@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.0.2] 2024-02-16
+### Fixed
+- answerValueSet items in repeated groups was not rendered properly.
+
 ## [35.0.1] 2024-02-06
 ### Fixed
 - Fixed a bug that enableWhen breaks when there is a loop of references to 
