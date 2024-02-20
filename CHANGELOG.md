@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.0.3] 2024-02-20
+### Updated
+- autocomplete-lhc version.
+
 ## [35.0.2] 2024-02-16
 ### Fixed
 - answerValueSet items in repeated groups was not rendered properly.
