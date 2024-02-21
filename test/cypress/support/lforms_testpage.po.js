@@ -454,7 +454,8 @@ export class TestPage {
       el[0].addEventListener('onError', formFinishedListener);
     });
 
-    cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/${filepath}`);
+    let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+    cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersionInFile}/${filepath}`);
 
     // Wait for the form to appear and be "ready" (or error out)
     cy.get('.lhc-form-title').should('be.visible').then(

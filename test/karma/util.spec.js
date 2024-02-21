@@ -385,6 +385,7 @@ describe('Util library', function() {
 
   describe('Questionnaire.meta.profile', () => {
     const defaultProfiles = {
+      R4B: 'http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire',
       R4: 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire',
       STU3: 'http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'
     }
@@ -397,7 +398,12 @@ describe('Util library', function() {
           resourceType: 'Questionnaire', name: 'SDCSTU3', status: 'draft', item: [],
           meta: {profile: ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0"]}
         }},
-      std: {R4: {
+      std: {
+         R4B: {
+          resourceType: 'Questionnaire', name: 'STDR4B', status: 'draft', item: [],
+          meta: {profile: ["http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire"]}
+        },
+        R4: {
           resourceType: 'Questionnaire', name: 'STDR4', status: 'draft', item: [],
           meta: {profile: ["http://hl7.org/fhir/3.1/StructureDefinition/Questionnaire"]}
         },
@@ -450,6 +456,15 @@ describe('Util library', function() {
       qPart.meta.profile = ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7'];
       LForms.FHIR.R4.SDC._handleMeta(qPart, true);
       assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7', defaultProfiles.R4]);
+      
+      // Conversion to R4B
+      qPart.meta.profile = ['http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire'];
+      LForms.FHIR.R4B.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, [ defaultProfiles.R4B]);
+
+      qPart.meta.profile = ['http://hl7.org/fhir/4.1/StructureDefinition/Questionnaire'];
+      LForms.FHIR.R4B.SDC._handleMeta(qPart);
+      assert.deepEqual(qPart.meta.profile, [ 'http://hl7.org/fhir/4.1/StructureDefinition/Questionnaire', defaultProfiles.R4B]);
 
     });
 
@@ -618,6 +633,84 @@ describe('Util library', function() {
     assert.equal(LForms.Util.isDecimal('123.12F-10'), false);
 
   });
+
+  describe('LForms.Util.guessFHIRVersion()', () => {
+    const q = {
+      resourceType: 'Questionnaire',
+      status: 'draft',
+      item: [
+        {
+          text: 'Item 1',
+          linkId: '1'
+        }
+      ]
+    };
+
+    const stu3InitialValues = {
+      string: 'a',
+      boolean: true,
+      decimal: 1.1,
+      integer: 1,
+      date: '2020-02-02',
+      dateTime: '2020-02-02T02:02:02.222Z',
+      time: '02:02:02.222',
+      uri: 'http://hl7.org',
+      quantity: {
+        value: 1.2,
+        unit: 'meter',
+        system: 'http://unitsofmeasure.org',
+        code: 'm'
+      },
+      reference: 'Patient',
+      attachment: {
+        mimeType: 'text/plain',
+        language: 'en'
+      }
+    };
+    const stu3OptionValues = {
+      option: [],
+      options: 'http://hl7.org/ValueSet/conditions'
+    }
+
+
+    it('should guess STU3 version using initial fields', () => {
+      Object.keys(stu3InitialValues).forEach((type) => {
+        const initialField = 'initial'+type.charAt(0).toUpperCase() + type.slice(1);
+        const item = q.item[0];
+        item.type = type;
+        item[initialField] = stu3InitialValues[type]; // Add the field to test.
+        assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
+        delete item[initialField]; // Clear for next field.
+      });
+    });
+
+    it('should guess STU3 version using other than initial fields', () => {
+      const item = q.item[0];
+      item.type = 'choice';
+      Object.keys(stu3OptionValues).forEach((field) => {
+        item[field] = stu3OptionValues[field]; // Add the field to test.
+        assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
+        delete item[field]; // Clear for next field.
+      });
+
+      item.type = 'string'; // item[0] has no initial fields and set type to string.
+      // Add a second item with enableWhen.
+      q.item.push({
+        text: 'Item 2',
+        type: 'string',
+        linkId: '2',
+        enableWhen: [{
+          question: '1',
+          hasAnswer: false, // STU3 specific field.
+          answerString: 'A'
+        }]
+      });
+
+      assert.equal(LForms.Util.guessFHIRVersion(q), 'STU3');
+    });
+  });
+
+
 
 });
 

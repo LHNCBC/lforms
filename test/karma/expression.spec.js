@@ -1,5 +1,29 @@
 // Tests for ExpressionProcessor
 describe('ExpressionProcessor', function () {
+  describe('%qitem', function() {
+    it('should be supported', function(done) {
+      // Test by checking that QR.item.answer.value works to return a value (as
+      // opposed to "valueString", which is what it would be without model information).
+      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
+        linkId: '/q1', dataType: 'ST', value: "green",  items: [{
+          linkId: '/q2', dataType: 'ST',
+          extension: [{
+            "url": LForms.FHIR.R4.SDC.fhirExtCalculatedExp,
+            "valueExpression": {
+              "language": "text/fhirpath",
+              "expression": "%qitem.type"
+            }
+          }]
+        }]
+      }]});
+      lfData._expressionProcessor.runCalculations().then(() => {
+        assert.equal(lfData.items[0].items[0].linkId, '/q2');
+        assert.equal(lfData.items[0].items[0].value, 'string');
+        done();
+      });
+    });
+  }),
+
   describe('_evaluateFHIRPath', function() {
     it('should use the FHIR model', function(done) {
       // Test by checking that QR.item.answer.value works to return a value (as
@@ -18,7 +42,6 @@ describe('ExpressionProcessor', function () {
       }]});
       var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
       exp.runCalculations().then(() => {
-        assert.equal(lfData.items[1].value, lfData.items[0].value);
         assert.equal(lfData.items[1].value, lfData.items[0].value);
         done();
       });
@@ -162,7 +185,7 @@ describe('ExpressionProcessor', function () {
     let testQ, testLFData, bmiItem, weightItem, heightItem;
     before(function(done) {
       var file = 'test/data/R4/weightHeightQuestionnaire.json';
-      $.get(file, function (parsedJson) {
+      LForms.jQuery.get(file, function (parsedJson) {
         testQ = parsedJson;
         done();
       });

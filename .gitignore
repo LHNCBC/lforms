@@ -3,6 +3,7 @@
 # compiled output
 /dist
 /src/fhir/R5/lformsFHIR.js
+/src/fhir/R4B/lformsFHIR.js
 /src/fhir/R4/lformsFHIR.js
 /src/fhir/STU3/lformsFHIR.js
 /tmp

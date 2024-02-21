@@ -1,3 +1,4 @@
+var $ = LForms.jQuery;
 describe('questionnaire with items that have answerValueSet', function () {
   it('should load value sets from a provided package file', function (done) {
     var packageFile = 'test/data/vs-package.json';

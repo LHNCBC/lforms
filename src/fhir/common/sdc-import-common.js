@@ -42,7 +42,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlExternallyDefined = "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
-  self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
+  self.fhirExtTerminologyServer = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer";
   self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
   self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
   self.fhirExtInitialExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression";
@@ -109,8 +109,10 @@ function addCommonSDCImportFns(ns) {
     return true; // add extension to LForms item
   };
   self.extensionHandlers[
-    "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer"] = function(extension, item) {
-    // Update the URI to the current one.
+    "http://hl7.org/fhir/StructureDefinition/terminology-server"] = function(extension, item) {
+    // Note: The above URI will be the new one, and it is pending the
+    // application of an approved change request (see jira.hl7.org), but for now
+    // we need to use the old one because that is what is published.
     extension.url = self.fhirExtTerminologyServer;
   };
   self.extensionHandlers[self.fhirExtUnitOpen] = function(extension, item) {
@@ -212,6 +214,7 @@ function addCommonSDCImportFns(ns) {
    */
   self._processFormLevelFields = function(lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
+    self._processTerminologyServer(lfData, questionnaire);
 
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
@@ -819,7 +822,7 @@ function addCommonSDCImportFns(ns) {
           displayControl = null;
       }
 
-      if(displayControl && !jQuery.isEmptyObject(displayControl)) {
+      if(displayControl && !LForms.jQuery.isEmptyObject(displayControl)) {
         lfItem.displayControl = displayControl;
       }
     }
@@ -995,13 +998,13 @@ function addCommonSDCImportFns(ns) {
           }
           break;
         case "INT":
-          if (qrValue.valueQuantity) {
+          if (qrValue.hasOwnProperty('valueQuantity')) {
             item.value = qrValue.valueQuantity.value;
             if(qrValue.valueQuantity.code) {
               item.unit = {name: qrValue.valueQuantity.code};
             }
           }
-          else if (qrValue.valueInteger) {
+          else if (qrValue.hasOwnProperty('valueInteger')) {
             // has an answer list
             if (InternalUtil.hasAnswerList(item)) {
               // answer repeats (autocomplete or checkboxes)
@@ -1015,12 +1018,12 @@ function addCommonSDCImportFns(ns) {
           break;
         case "REAL":
         case "QTY":
-          if (qrValue.valueQuantity) {
+          if (qrValue.hasOwnProperty('valueQuantity')) {
             var quantity = qrValue.valueQuantity;
             var lformsQuantity = importFHIRQuantity(quantity);
             LForms.Util._internalUtil.assignValueToItem(item, lformsQuantity, 'Quantity');
           }
-          else if (qrValue.valueDecimal) {
+          else if (qrValue.hasOwnProperty('valueDecimal')) {
             item.value = qrValue.valueDecimal;
           }
           break;
@@ -1260,8 +1263,9 @@ function addCommonSDCImportFns(ns) {
   /**
    *  Processes the terminology server setting, if any.
    *
-   * @param lfItem - LForms item object to assign externallyDefined
-   * @param qItem - Questionnaire item object
+   * @param lfItem - LForms form or item object to receive the terminology
+   *  server setting.
+   * @param qItem - Questionnaire or Questionnaire item object
    * @private
    */
   self._processTerminologyServer = function (lfItem, qItem) {
@@ -1689,7 +1693,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
 
-    if(!jQuery.isEmptyObject(restrictions)) {
+    if(!LForms.jQuery.isEmptyObject(restrictions)) {
       lfItem.restrictions = restrictions;
     }
   };

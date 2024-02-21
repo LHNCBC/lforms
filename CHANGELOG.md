@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [34.0.0] 2023-02-10
+## [36.0.0] 2024-02-19
 ### Changed
 - Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
   replaced them with type 'CODING' and an 'answerConstraint' attribute.
@@ -13,6 +13,94 @@ This project follows [Semantic Versioning](http://semver.org/).
   'optionsOrString are supported. 'OptionsOrType' is not supported yet.
 - Added the support of item.type changes R5. Added 'coding' and removed
   'choice' and 'open-choice'.
+
+## [35.0.1] 2024-02-06
+### Fixed
+- Fixed a bug that enableWhen breaks when there is a loop of references to 
+  the items in enableWhen.question.
+  
+## [35.0.0] 2023-12-21
+### Fixed
+- QuestionnaireResponse no longer contains answers to child questions of
+  unanswered parent questions.  See https://jira.hl7.org/browse/FHIR-32665.
+  Although the change of the cardinality of item.answer.value to 1..1 was an R5
+  change, it was the intention all along, so we have made the change for R4 &
+  STU3 as well.  Although we regard this as a fix, it could be a breaking
+  change for some, which is the reason for the major version increment.
+
+## [34.4.0] 2023-12-05
+### Added
+- Added the support for using image data in the 'contained' when a local ID
+  is used in the 'src' attribute of a 'img' in the value of the 'rendering-xhtml'
+  extension for help text.
+
+## [34.3.1] 2023-12-01
+### Added
+- Added support for regex strings without '/' in validations
+
+## [34.3.0] 2023-11-16
+### Changed
+- Changed the option, showQuestionCode, to control the display of all of the
+  codes of an item, not just the first code.
+- Updated styles to display newlines and spaces in coding instructions.
+
+## [34.2.0] 2023-10-18
+### Added
+- Support for the exporting of QuestionnnaireResponse.questionnaire.
+
+### Fixed
+- Fixed a bug that copyright is not displayed when there is no code.
+## [34.1.0] 2023-10-13
+### Added
+- Added support for FHIR verison R4B.
+
+## [34.0.4] 2023-10-04
+### Fixed
+- The FHIR extension for setting the preferred terminology server now works on
+  the root of the Questionnaire as well as on items.
+
+## [34.0.3] 2023-09-28
+### Fixed
+- Fiex a bug that number 0 in QuestionnaireResponse is not imported when
+  the QuestionnaireResponse is loaded into the corresponding Questionnaire.
+
+## [34.0.2] 2023-09-20
+### Fixed
+- Fixed a bug in LForms.Util.guessFHIRVersion() to detect STU3 when initial
+  fields are specified.
+
+## [34.0.1] 2023-08-18
+### Fixed
+- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension
+  set to 'optionsOrString', a user typed unit would be cleared in the UI
+  even it is still available in the QuestionnaireResonse.
+
+## [34.0.0] 2023-08-15
+### Fixed
+- jQuery is no longer leaked to the containing app.  This might be a breaking
+  change for users who were relying on jQuery being defined as a result of
+  loading the lforms package.  Apps can either load jQuery themselves or use
+  LForms.jQuery (which is where the lforms jQuery moved to) but note that we
+  would like to remove the jQuery dependency in the future if possible.  If we
+  do that, it will be another major-version increment to signal the
+  breaking change.
+
+## [33.4.2] 2023-07-25
+### Fixed
+- The sourcemap file for lhc-forms.js now works.
+
+## [33.4.1] 2023-07-19
+### Fixed
+- The URI for the "preferred terminology server" FHIR extension, which was
+  previously updated too soon to a new URI that has not gotten into the
+  published documentation yet.  Either will still work on import; this change
+  affects what is exported.
+- Updated autocomplete-lhc to 18.6.1, to get a fix for a bug with the list
+  positioning which could happen if lforms was inside a dialog box.
+
+## [33.4.0] 2023-07-17
+### Added
+- Support for %qitem in FHIRPath expressions.
 
 ## [33.3.7] 2023-06-14
 ### Fixed
@@ -28,20 +116,20 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed a bug that FHIRPath expressions could run on a QuestionnaireResponse where
   the data are invalid. It now throws an error.
-  
+
 ## [33.3.4] 2023-05-03
 ### Fixed
 - Fixed a bug that when a QuestionnaireResponse with saved values from an answerValueSet
   is loaded back into the Questionnaire, the saved values are not restored.
-  
+
 ## [33.3.3] 2023-04-19
 ### Fixed
-- Fixed a bug in updating meta.profile in exported questionnaire based on it version 
+- Fixed a bug in updating meta.profile in exported questionnaire based on it version
   such as STU3, R4 etc.
- 
+
 ## [33.3.2] 2023-02-06
 ### Fixed
-- Fixed a bug that initial values were not displayed in the matrix layout ("Vertical 
+- Fixed a bug that initial values were not displayed in the matrix layout ("Vertical
   Answer Table"/"table" in itemControl, http://hl7.org/fhir/questionnaire-item-control).
 - Fixed a 508 compliance issue related to the matrix layout.
 
@@ -56,10 +144,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added the support of enableWhen on string, integer, date and time typed items that
   have an answer list.
-  
+
 ## [33.2.0] 2022-01-06
 ### Added
-- Added a template option to control whether to display scores along 
+- Added a template option to control whether to display scores along
   with texts for answers that have scores.
 
 ## [33.1.2] 2022-12-23
@@ -244,7 +332,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   on the answers of another field.
 
 ## [30.0.0] 2020-03-08
-Official release of the new Web Component version of lforms. See a list of changed 
+Official release of the new Web Component version of lforms. See a list of changed
 features in changed-features.md.
 ### Fixed
 - Fixed a minor style issue

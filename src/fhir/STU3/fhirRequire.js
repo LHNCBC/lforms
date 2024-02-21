@@ -1,9 +1,10 @@
+import copy from "fast-copy"
 // Initializes the FHIR structure for STU3
-let fhirVersion = 'STU3';
+import versions from './fhirVersions.js';
 if (!LForms.FHIR)
   LForms.FHIR = {};
-import {LOINC_URI} from '../common/fhir-common';
-var fhir = LForms.FHIR[fhirVersion] = {
+import {LOINC_URI} from '../common/fhir-common.js';
+var fhir = LForms.FHIR[versions.fhirVersion] = {
   LOINC_URI: LOINC_URI
 }
 fhir.fhirpath = require('fhirpath');
@@ -33,7 +34,7 @@ import { addCommonRuntimeFns } from '../common/runtime-common.js';
 addCommonRuntimeFns(fhir.SDC);
 import { ExpressionProcessor } from '../expression-processor.js';
 fhir.SDC.ExpressionProcessor = ExpressionProcessor;
-fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
+Object.assign(fhir.SDC, versions);
 
 fhir.reservedVarNames = {};
 ['context', 'resource'].forEach(function(name) {

@@ -22,8 +22,10 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
   if (!container)
     container = 'formContainer';
 
+  
   if (typeof filePathOrFormDefData === "string") {
-    let filePath = options?.fhirVersion ? options.fhirVersion +'/'+filePathOrFormDefData :
+    let fhirVersionInFile = options?.fhirVersion && options?.fhirVersion === 'R4B' ? 'R4' : options?.fhirVersion;
+    let filePath = fhirVersionInFile ? fhirVersionInFile +'/'+filePathOrFormDefData :
      'lforms/'+filePathOrFormDefData;
     cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
       this.addFormDataToPage(formDef, container, options);

@@ -4,8 +4,6 @@
 
 // Note: code after "//// TODO" are temparorily commented out
 
-// jQuery is added in angular.json
-//import jQuery from "jquery"; // not to use, otherwise two copies of the lib will be used.
 import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
@@ -41,7 +39,7 @@ export default class LhcFormData {
   // whether the form data contains saved user data
   hasSavedData = false;
 
-  // whether the form data is valid 
+  // whether the form data is valid
   // (it only checks on INT/REAL types when getUserData() is called.)
   _invalidData = false;
 
@@ -71,7 +69,7 @@ export default class LhcFormData {
     displayControl: {
       // controls the question layout of the form. default value for questionLayout is "vertical".
       // available value could be "horizontal" when all the items in the form are on the same level,
-      // or "matrix" when all the item are on the same level and all are CODING/INT/TM/DT/ST types items 
+      // or "matrix" when all the item are on the same level and all are CODING/INT/TM/DT/ST types items
       // and all have the same list of answers. not changeable on a rendered form.
       "questionLayout": "vertical"
     },
@@ -107,7 +105,6 @@ export default class LhcFormData {
   _codePath = "";
   _idPath = "";
   _displayLevel = 0;
-  _linkToDef = null;
   _formReady;
   _horizontalTableInfo = {};
   itemList;
@@ -124,10 +121,14 @@ export default class LhcFormData {
   _fhirVariables;
   _hasResponsiveExpr;
   copyrightNotice;
+  url;
+  version;
   type;
   _showErrors;
   _showWarnings;
   _showInfo;
+  contained;
+  _containedImages;
 
   /**
    * Constructor
@@ -158,7 +159,6 @@ export default class LhcFormData {
       }
     }
     else {
-      //jQuery.extend(this, data);
       Object.assign(this, data);
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
@@ -168,6 +168,10 @@ export default class LhcFormData {
     if (LForms.FHIR && data.fhirVersion) {
       this._initializeFormFHIRData(data);
     }
+
+    // process images in 'contained'
+    if (data.contained)
+      this._containedImages = this._fhir.SDC.buildContainedImageMap(data)
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
@@ -505,7 +509,10 @@ export default class LhcFormData {
       for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
         var targetItem = sourceItem._skipLogicTargets[i];
         changed = this._updateItemSkipLogicStatus(targetItem, null) || changed;
-        changed = this.updateSkipLogicControlledItems(targetItem, processItem) || changed;
+        // check the controlled items in the next level when the skiplogic status changes
+        if (changed) {
+          this.updateSkipLogicControlledItems(targetItem, processItem);
+        }
       }
     }
     changed = processItem(sourceItem) || changed;
@@ -551,7 +558,7 @@ export default class LhcFormData {
     if (LForms.FHIR && this._hasResponsiveExpr) {
       let self = this;
       setTimeout(function(){
-        self._expressionProcessor.runCalculations(false).then(()=>{            
+        self._expressionProcessor.runCalculations(false).then(()=>{
           self._checkFormControls();
         });
       });
@@ -873,11 +880,6 @@ export default class LhcFormData {
     this._displayLevel = 0;
     this._activeItem = null;
 
-    // add a link to external site for item's definition
-    if (this.codeSystem === "LOINC") {
-      this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
-    }
-
     // template
     if (!this.template || this.template.length == 0 ||
         this.template === "form-view-a" || this.template === "form-view-b") {
@@ -931,7 +933,7 @@ export default class LhcFormData {
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
 
       // check if displayScoreWithAnswerText is changed
-      let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined && 
+      let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined &&
           newOptions.displayScoreWithAnswerText !== existingOptions.displayScoreWithAnswerText;
 
       // merge the options
@@ -943,6 +945,20 @@ export default class LhcFormData {
           let item = this.itemList[i];
           if (!!item._hasAnswerList && item._hasScoreInAnswer)
             this._updateAutocompOptions(item);
+        }
+      }
+      // update html version of help text with contained images when needed
+      if (this._containedImages &&
+          this.templateOptions.allowHTMLInInstructions) {
+        for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+          let item = this.itemList[i];
+          if (item.codingInstructions &&
+              item.codingInstructions.length > 0 &&
+              item.codingInstructionsFormat === "html" &&
+              item.codingInstructions.match(/img/) &&
+              item.codingInstructions.match(/src/)) {
+            this._setCodingInstructionsWithContainedImages(item);
+          }
         }
       }
 
@@ -1034,7 +1050,7 @@ export default class LhcFormData {
 
       // check if the item has an answer list or a search url
       item._hasAnswerList = InternalUtil.hasAnswerList(item);
-    
+
       // displayControl default values
       if (item.dataType === "SECTION") {
         if (!item.displayControl) {
@@ -1109,12 +1125,12 @@ export default class LhcFormData {
       this._setupInFieldPlaceholders(item);
 
       // convert date string to Date object
-      if (item.value && !item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.DT || 
+      if (item.value && !item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.DT ||
           item.dataType === CONSTANTS.DATA_TYPE.DTM)) {
         item.value = CommonUtils.stringToDate(item.value);
       }
       // internally all numeric values are of string type
-      if (!item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.INT || 
+      if (!item._hasAnswerList && (item.dataType === CONSTANTS.DATA_TYPE.INT ||
         item.dataType === CONSTANTS.DATA_TYPE.REAL ||
         item.dataType === CONSTANTS.DATA_TYPE.QTY) &&
         typeof item.value === "number") {
@@ -1131,11 +1147,6 @@ export default class LhcFormData {
             item.dataType !== CONSTANTS.DATA_TYPE.TM &&
             !item._hasAnswerList)) {
         item._hasValidation = true;
-      }
-
-      // add a link to external site for item's definition
-      if (item.questionCodeSystem === "LOINC" || (this.codeSystem === "LOINC" && !item.questionCodeSystem)) {
-        item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
       }
 
       // process the sub items
@@ -1189,7 +1200,7 @@ export default class LhcFormData {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
           else
-            item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";          
+            item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";
         }
       }
       // other types
@@ -1280,6 +1291,17 @@ export default class LhcFormData {
 
     if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
       item.answers = this.answerLists[item.answers];
+    }
+
+    // special handling of the help text when it contains images in the 'contained' field.
+    if (this._containedImages &&
+        item.codingInstructions &&
+        item.codingInstructions.length > 0 &&
+        this.templateOptions.allowHTMLInInstructions &&
+        item.codingInstructionsFormat === "html" &&
+        item.codingInstructions.match(/img/) &&
+        item.codingInstructions.match(/src/)) {
+      this._setCodingInstructionsWithContainedImages(item);
     }
 
     // process the answer code system
@@ -1443,6 +1465,8 @@ export default class LhcFormData {
       type: this.type,
       template: this.template,
       copyrightNotice: this.copyrightNotice,
+      url: this.url,
+      version: this.version,
       items: formData.itemsData,
       templateOptions: CommonUtils.deepCopy(this.templateOptions)
     };
@@ -1562,7 +1586,7 @@ export default class LhcFormData {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       var itemData:any = {};
-      // for user typed data of an item whose answerConstraint is 'optionsOrString', 
+      // for user typed data of an item whose answerConstraint is 'optionsOrString',
       // it is in item.value as {text: "some other value", _notOnList: true}.
 
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
@@ -1625,7 +1649,7 @@ export default class LhcFormData {
    * Process values for a user selected/typed answer or unit.
    * Also remove internal data whose field/key names start with _.
    * @param obj either an answer object or a unit object
-   * @param withOffListValue optional, a flag indicates the value could be an off-list value, 
+   * @param withOffListValue optional, a flag indicates the value could be an off-list value,
    * where data is handled by autocomplete-lhc or radio buttons/checkboxes. default is false.
    * @returns {{}}  a new object with the internal attributes removed.
    * @private
@@ -1695,7 +1719,7 @@ export default class LhcFormData {
    * Process value where it is an object or an array of objects
    * (when getting the user data from the form)
    * @param value the captured value
-   * @param withOffListValue optional, a flag indicates the value could be an off-list value, 
+   * @param withOffListValue optional, a flag indicates the value could be an off-list value,
    * where data is handled by autocomplete-lhc or radio buttons/checkboxes. default is false.
    * @returns {*}
    * @private
@@ -1741,7 +1765,7 @@ export default class LhcFormData {
       // has a data type
       if (dataType) {
         switch (dataType) {
-          case CONSTANTS.DATA_TYPE.INT:   
+          case CONSTANTS.DATA_TYPE.INT:
             if (hasAnswerList) {
               if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
                 retValue = this._getObjectValue(value);
@@ -1782,7 +1806,7 @@ export default class LhcFormData {
                 retValue = this._getObjectValue(value, true);
             }
             else {
-              retValue = Array.isArray(value) ? value.map(val=> CommonUtils.dateToDTStringISO(val)) : 
+              retValue = Array.isArray(value) ? value.map(val=> CommonUtils.dateToDTStringISO(val)) :
                 CommonUtils.dateToDTStringISO(value);
             }
             break;
@@ -1809,7 +1833,7 @@ export default class LhcFormData {
                 retValue = this._getObjectValue(value, true);
             }
             else {
-              retValue = value; 
+              retValue = value;
             }
             break;
           default:
@@ -2926,7 +2950,7 @@ export default class LhcFormData {
           }
         }
       }
-  
+
       if (modifiedValue) {
         var listVals = [];
         for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
@@ -2946,7 +2970,7 @@ export default class LhcFormData {
                   found = true;
                 }
               }
-              // value is not on the answer list and it is optionsOrString 
+              // value is not on the answer list and it is optionsOrString
               // (so that user saved values that are not on the list will be kept)
               if (!found && item.answerConstraint === "optionsOrString" && userValue) {
                 userValue._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
@@ -2959,13 +2983,13 @@ export default class LhcFormData {
             }
           }
         }
-  
+
         let newValue = item._multipleAnswers ? listVals : listVals[0];
         // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
         item.value = newValue;
       }
     }
-    
+
   }
 
 
@@ -3115,7 +3139,7 @@ export default class LhcFormData {
       // answers
       else {
         [options.listItems, options.addSeqNum] =
-          this._getAnswerDisplayTextWithLabelAndScore(this.templateOptions.displayScoreWithAnswerText, item); 
+          this._getAnswerDisplayTextWithLabelAndScore(this.templateOptions.displayScoreWithAnswerText, item);
         options.display = '_displayText';
         // use the original answers as the models (used in the autocomplete component)
         options.listItemsForModel = item.answers;
@@ -3167,7 +3191,7 @@ export default class LhcFormData {
     if (answers && Array.isArray(answers)) {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
-  
+
         var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
         // label is a string
         if (answerData.label) {
@@ -3190,11 +3214,11 @@ export default class LhcFormData {
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
         modifiedAnswers.push(answerData);
-      }  
+      }
     }
     // add seq num when there is no labels and no numeric values as answer
     var acAddSeq = !hasOneAnswerLabel && !hasOneNumericAnswer;
-    
+
     return [modifiedAnswers, acAddSeq];
   }
 
@@ -3478,7 +3502,7 @@ export default class LhcFormData {
             }
             break;
         } // end case
-      }     
+      }
     }
     // no answer and 'notEqual' has a value
     else if (trigger.hasOwnProperty('notEqual') &&
@@ -3582,5 +3606,35 @@ export default class LhcFormData {
     return ret;
   }
 
+
+  /**
+   * Get the coding instruction, replacing local ids in the 'src' attributes of
+   * the 'img' tags if the local ids are in the 'contained' with image data,
+   * and if codingInstructionsFormat is 'html'.
+   * @param item an item in lforms
+   */
+  _setCodingInstructionsWithContainedImages(item) {
+
+    if (this._containedImages) {
+      // go though each image in the html string and replace local ids in image source
+      // with contained data
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(item.codingInstructions, "text/html");
+
+      let imgs = doc.getElementsByTagName("img");
+      for (let i = 0; i < imgs.length; i++) {
+        let urlValue = imgs[i].getAttribute("src");
+        if (urlValue && urlValue.match(/^#/)) {
+          let localId = urlValue.substring(1);
+          let imageData = this._containedImages[localId];
+          if (imageData) {
+            imgs[i].setAttribute("src", imageData);
+          }
+        }
+      }
+      item._codingInstructionsWithContainedImages = doc.body.innerHTML;
+    }
+
+  }
 
 };

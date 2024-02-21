@@ -16,7 +16,6 @@
  */
 
 var self = {
-
   /**
    *  Convert LForms captured data to a bundle consisting of a FHIR SDC
    *  QuestionnaireResponse and any extractable resources. (Currently this means
@@ -33,71 +32,62 @@ var self = {
    *  wish to put all of the returned resources into a transaction Bundle for
    *  creating them on a FHIR server.
    */
-  convertLFormsToQRAndExtracFHIRData: function(lfData, subject) {
+  convertLFormsToQRAndExtracFHIRData: function (lfData, subject) {
     var qr = this.convertLFormsToQuestionnaireResponse(lfData, subject);
     if (!qr.id) {
       qr.id = this._commonExport._getUniqueId(
-        qr.identifier && qr.identifier.value || 'QR')
+        (qr.identifier && qr.identifier.value) || "QR"
+      );
     }
 
-    var qrRef = 'QuestionnaireResponse/'+qr.id;
+    var qrRef = "QuestionnaireResponse/" + qr.id;
     var rtn = [qr];
-    for (var i=0, len=lfData.itemList.length; i<len; ++i) {
+    for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
       var item = lfData.itemList[i];
       if (this._getExtractValue(item) && this._hasItemValue(item)) {
         var obs = this._commonExport._createObservation(item);
-        for (var j=0, jLen=obs.length; j<jLen; j++) {
+        for (var j = 0, jLen = obs.length; j < jLen; j++) {
           // Following
           // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
-          if (qr.basedOn)
-            obs[j].basedOn = qr.basedOn;
-          if (qr.partOf)
-            obs[j].partOf = qr.partOf;
-          if (qr.subject)
-            obs[j].subject = qr.subject;
-          if (qr.encounter)
-            obs[j].encounter = qr.encounter;
+          if (qr.basedOn) obs[j].basedOn = qr.basedOn;
+          if (qr.partOf) obs[j].partOf = qr.partOf;
+          if (qr.subject) obs[j].subject = qr.subject;
+          if (qr.encounter) obs[j].encounter = qr.encounter;
           if (qr.authored) {
             obs[j].effectiveDateTime = qr.authored;
             obs[j].issued = qr.authored;
           }
-          if (qr.author)
-            obs[j].performer = qr.author;
-          obs[j].derivedFrom = [{reference: qrRef}];
+          if (qr.author) obs[j].performer = qr.author;
+          obs[j].derivedFrom = [{ reference: qrRef }];
 
           rtn.push(obs[j]);
-
         }
       }
     }
     return rtn;
   },
 
-
   /**
    *  Proceses the LForms questionCardinality into FHIR.
    * @param targetItem an item in Questionnaire
    * @param item a LForms item
    */
-  _processQuestionCardinality: function(targetItem, item) {
+  _processQuestionCardinality: function (targetItem, item) {
     if (item.questionCardinality) {
       if (item.questionCardinality.max === "*") {
         targetItem.repeats = true;
-      }
-      else if (parseInt(item.questionCardinality.max) > 1) {
+      } else if (parseInt(item.questionCardinality.max) > 1) {
         targetItem.repeats = true;
         targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
-          "valueInteger": parseInt(item.questionCardinality.max)
+          url: "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          valueInteger: parseInt(item.questionCardinality.max),
         });
       }
-    }
-    else {
+    } else {
       // No default in R4
       // targetItem.repeats = false;
     }
   },
-
 
   /**
    * Handle special requirements for 'display' items
@@ -105,7 +95,7 @@ var self = {
    * @param item a LForms item
    * @private
    */
-  _handleSpecialConstraints: function(targetItem, item) {
+  _handleSpecialConstraints: function (targetItem, item) {
     //Display items cannot have a "code" asserted
     //Required and repeat aren't permitted for display items
     //Read-only can't be specified for "display" items
@@ -117,14 +107,13 @@ var self = {
     }
   },
 
-
   /**
    * Process various restriction settings
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
    * @private
    */
-  _handleRestrictions: function(targetItem, item) {
+  _handleRestrictions: function (targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/minLength
     // http://hl7.org/fhir/StructureDefinition/regex
     // http://hl7.org/fhir/StructureDefinition/minValue
@@ -161,30 +150,38 @@ var self = {
             break;
           // http://hl7.org/fhir/StructureDefinition/minLength
           case "minLength":
-            if (dataType === "ST" || dataType === "TX" || dataType === "URL" ||
-                dataType === "QTY") {
+            if (
+              dataType === "ST" ||
+              dataType === "TX" ||
+              dataType === "URL" ||
+              dataType === "QTY"
+            ) {
               extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/minLength",
-                "valueInteger": parseInt(value)
+                url: "http://hl7.org/fhir/StructureDefinition/minLength",
+                valueInteger: parseInt(value),
               };
             }
             break;
           // maxLength, not an extension, directly on item
           case "maxLength":
-            if (dataType === "ST" || dataType === "TX" || dataType === "URL" ||
-                dataType === "QTY") {
+            if (
+              dataType === "ST" ||
+              dataType === "TX" ||
+              dataType === "URL" ||
+              dataType === "QTY"
+            ) {
               targetItem.maxLength = parseInt(value);
             }
             break;
           // http://hl7.org/fhir/StructureDefinition/regex
           case "pattern":
-            if (dataType === "ST" || dataType === "TX" ) {
+            if (dataType === "ST" || dataType === "TX") {
               extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/regex",
-                "valueString": value
+                url: "http://hl7.org/fhir/StructureDefinition/regex",
+                valueString: value,
               };
             }
-            break
+            break;
         }
         if (extValue) {
           targetItem.extension.push(extValue);
@@ -193,15 +190,14 @@ var self = {
     }
   },
 
-
   /**
    *  Processes settings for a list field with choices.
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
    */
-  _handleChoiceField: function(targetItem, item) {
+  _handleChoiceField: function (targetItem, item) {
     // an extension for the search url of the auto-complete field.
-    if(item.externallyDefined) {
+    if (item.externallyDefined) {
       this._handleExternallyDefined(targetItem, item);
     }
     // option, for answer list
@@ -209,11 +205,9 @@ var self = {
       // Make sure the answers did not come from answerExpression.
       if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp])
         targetItem.answerOption = this._handleAnswers(item);
-    }
-    else if (item.answerValueSet)
+    } else if (item.answerValueSet)
       targetItem.answerValueSet = item.answerValueSet;
   },
-
 
   /**
    * Process an item's answer list
@@ -221,61 +215,66 @@ var self = {
    * @returns {Array}
    * @private
    */
-  _handleAnswers: function(item) {
+  _handleAnswers: function (item) {
     var optionArray = [];
-    for (var i=0, iLen=item.answers.length; i<iLen; i++) {
+    for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
       var answer = item.answers[i];
       var option = {};
 
-      
       // when option's values are Coding
       if (item.dataType === "CODING") {
-
         option.valueCoding = {};
         if (answer.code) option.valueCoding.code = answer.code;
         if (answer.text) option.valueCoding.display = answer.text;
-  
+
         if (answer.system) {
           option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
         }
-  
+
         // check default answers, coding only for now
-        if (item.defaultAnswer && (item.dataType === 'CODING')) {
-          var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
-          item.defaultAnswer : [item.defaultAnswer];
-      
+        if (item.defaultAnswer && item.dataType === "CODING") {
+          var defaultAnswers =
+            this._answerRepeats(item) && Array.isArray(item.defaultAnswer)
+              ? item.defaultAnswer
+              : [item.defaultAnswer];
+
           // go through each default value and set the initialSelected on the matching answer item
-          for(var j=0, jLen=defaultAnswers.length; j<jLen; j++ ) {
-            if (LForms.Util.areTwoAnswersSame(defaultAnswers[j], answer, item)) {
+          for (var j = 0, jLen = defaultAnswers.length; j < jLen; j++) {
+            if (
+              LForms.Util.areTwoAnswersSame(defaultAnswers[j], answer, item)
+            ) {
               option.initialSelected = true;
             }
           }
         }
-
       }
       // when option's values are string, integer, date or time
-      else if(item.dataType === "ST" || item.dataType === "INT" || 
-          item.dataType === "DT" || item.dataType === "TM") {
+      else if (
+        item.dataType === "ST" ||
+        item.dataType === "INT" ||
+        item.dataType === "DT" ||
+        item.dataType === "TM"
+      ) {
         var valueKey = this._getValueKeyByDataType("value", item);
         option[valueKey] = answer.text;
       }
 
       // label
       var ext = [];
-      if(answer.label) {
+      if (answer.label) {
         ext.push({
-          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
-          "valueString" : answer.label
+          url: "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+          valueString: answer.label,
         });
       }
 
       if (answer.score !== null && answer.score !== undefined) {
         ext.push({
-          "url" : "http://hl7.org/fhir/StructureDefinition/ordinalValue",
-          "valueDecimal" : parseFloat(answer.score)
+          url: "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+          valueDecimal: parseFloat(answer.score),
         });
       }
-      if(ext.length > 0) {
+      if (ext.length > 0) {
         option.extension = ext;
       }
 
@@ -284,49 +283,48 @@ var self = {
     return optionArray;
   },
 
-
   /**
    * Process units list
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
    * @private
    */
-  _handleLFormsUnits: function(targetItem, item) {
-
+  _handleLFormsUnits: function (targetItem, item) {
     if (item.units && item.units.length > 0) {
       var dataType = this._getAssumedDataTypeForExport(item);
-      if(dataType === "REAL" || dataType === "INT") {
-
+      if (dataType === "REAL" || dataType === "INT") {
         targetItem.extension.push({
-          "url": this.fhirExtUrlUnit,
+          url: this.fhirExtUrlUnit,
           // Datatype with multiple units is quantity. There is only one unit here.
-          "valueCoding" : this._createFhirUnitCoding(item.units[0])
+          valueCoding: this._createFhirUnitCoding(item.units[0]),
         });
-      }
-      else if(dataType === 'QTY') {
+      } else if (dataType === "QTY") {
         var defUnit = this._getDefaultUnit(item.units);
         // Skip if units are already set in default answer conversion.
-        if ((defUnit && defUnit.default) && !(targetItem.initial && targetItem.initial.length > 0)) {
+        if (
+          defUnit &&
+          defUnit.default &&
+          !(targetItem.initial && targetItem.initial.length > 0)
+        ) {
           // Use initial[].valueQuantity.unit to export the default unit.
           if (!targetItem.initial) {
             targetItem.initial = [];
           }
           var qty = {};
           this._setUnitAttributesToFhirQuantity(qty, defUnit);
-          targetItem.initial.push({valueQuantity: qty});
+          targetItem.initial.push({ valueQuantity: qty });
         }
-        for (var i=0, iLen=item.units.length; i<iLen; i++) {
+        for (var i = 0, iLen = item.units.length; i < iLen; i++) {
           var unit = item.units[i];
           var fhirUnitExt = {
-            "url": this.fhirExtUrlUnitOption,
-            "valueCoding": this._createFhirUnitCoding(unit)
+            url: this.fhirExtUrlUnitOption,
+            valueCoding: this._createFhirUnitCoding(unit),
           };
           targetItem.extension.push(fhirUnitExt);
         }
       }
     }
   },
-
 
   /**
    * Process skip logic
@@ -335,7 +333,7 @@ var self = {
    * @param source a LForms form object
    * @private
    */
-  _handleSkipLogic: function(targetItem, item, source) {
+  _handleSkipLogic: function (targetItem, item, source) {
     if (item.skipLogic) {
       var enableWhen = [];
       var rangeFound = false;
@@ -343,31 +341,49 @@ var self = {
       // ignore "ANY", "ALL" on item.skipLogic.logic
       // ignore "show" on item.skipLogic.action
 
-      for (var i=0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
+      for (var i = 0, iLen = item.skipLogic.conditions.length; i < iLen; i++) {
         var condition = item.skipLogic.conditions[i];
-        var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
-        let enableWhenRules = this._createEnableWhenRulesForSkipLogicCondition(condition, sourceItem);
+        var sourceItem = source._getSkipLogicSourceItem(item, condition.source);
+        let enableWhenRules = this._createEnableWhenRulesForSkipLogicCondition(
+          condition,
+          sourceItem
+        );
 
-        if(enableWhenRules.length > 1) {
+        if (enableWhenRules.length > 1) {
           rangeFound = true;
         }
         enableWhen = enableWhen.concat(enableWhenRules);
       }
 
-      if(rangeFound && item.skipLogic.conditions.length > 1) {
+      if (rangeFound && item.skipLogic.conditions.length > 1) {
         // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
         // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
         // available yet. Revisit after implementation of variables, %resource etc. in fhirpath.
-        throw new Error('Multiple skip logic conditons included with range specification is not supported yet.');
+        throw new Error(
+          "Multiple skip logic conditons included with range specification is not supported yet."
+        );
       }
 
       targetItem.enableWhen = enableWhen;
-      if(item.skipLogic.logic === 'ALL' || rangeFound) {
-        targetItem.enableBehavior = 'all';
+      if (item.skipLogic.logic === "ALL" || rangeFound) {
+        targetItem.enableBehavior = "all";
+      } else if (enableWhen.length > 1) {
+        targetItem.enableBehavior = "any";
       }
-      else if(enableWhen.length > 1) {
-        targetItem.enableBehavior = 'any';
-      }
+    }
+  },
+
+
+  /**
+   * Set the qr.questionnaire
+   * @param {*} target a FHIR QuestionnaireResponse object
+   * @param {*} source a LForms form object
+   */
+  _processQRQuestionnaire: function(target, source) {
+    if (source.url) {
+      target.questionnaire = source.version
+        ? source.url + "|" + source.version
+        : source.url;
     }
   }
 };

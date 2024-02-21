@@ -2,7 +2,7 @@
 let fhirVersion = 'R5';
 if (!LForms.FHIR)
   LForms.FHIR = {};
-import {LOINC_URI} from '../common/fhir-common';
+import {LOINC_URI} from '../common/fhir-common.js';
 var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: LOINC_URI
 };

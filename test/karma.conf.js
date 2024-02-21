@@ -35,7 +35,6 @@ module.exports = function(config) {
       {pattern: 'test/data/**/*.js', included: true, served: true},
       {pattern: 'dist/lforms/webcomponent/*.js.map', included: false, served: true},
       'dist/lforms/webcomponent/assets/lib/zone.min.js',
-      'dist/lforms/webcomponent/scripts.js',
       'dist/lforms/webcomponent/runtime.js',
       'dist/lforms/webcomponent/polyfills.js',
       'dist/lforms/webcomponent/main.js',
@@ -86,7 +85,18 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromeHeadless'],
+//    browsers: ['Chrome_without_password_security'],
+    browsers: ['ChromeHeadless_without_password_security'],
+    customLaunchers: {
+      ChromeHeadless_without_password_security: {
+        base: 'ChromeHeadless',
+        flags: ['--password-store=basic']
+      },
+      Chrome_without_password_security: {
+        base: 'Chrome',
+        flags: ['--password-store=basic']
+      },
+    },
 
 
     // Continuous Integration mode

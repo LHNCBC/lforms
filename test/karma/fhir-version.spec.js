@@ -1,4 +1,6 @@
 // Tests the LForm.Util functions for detecting FHIR versions of resources.
+var $ = LForms.jQuery;
+
 describe('guessFHIRVersion', function() {
   it('should recognize an STU3 Questionnaire with "option"', function(done) {
     $.get('/test/data/STU3/weightHeightQuestionnaire.json', function z(whQ) {
@@ -32,7 +34,9 @@ describe('_fhirVersionToRelease', function() {
     assert.equal(LForms.Util._fhirVersionToRelease('4.0.0'), 'R4');
     assert.equal(LForms.Util._fhirVersionToRelease('4.0.1'), 'R4');
     assert.equal(LForms.Util._fhirVersionToRelease('4.0'), 'R4');
-
+    assert.equal(LForms.Util._fhirVersionToRelease('4.3'), 'R4B');
+    assert.equal(LForms.Util._fhirVersionToRelease('4.3.0'), 'R4B');
+    assert.equal(LForms.Util._fhirVersionToRelease('4.1.0'), 'R4B');
   });
 
   it('should return the argument if the version number cannot be mapped', function () {

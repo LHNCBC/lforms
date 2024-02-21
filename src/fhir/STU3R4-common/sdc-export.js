@@ -3,7 +3,7 @@
  */
 function addSTU3R4ExportFns(ns) {
   "use strict";
-  
+
   var self = ns;
 
   /**
@@ -55,7 +55,7 @@ function addSTU3R4ExportFns(ns) {
       // item could have an empty value if its sub-item has a value
       if (item.value === undefined || item.value === null || item.value === '')
          return null;
-  
+
       var dataType = this._getAssumedDataTypeForExport(item);
       var values = this._answerRepeats(item)? item.value: [item.value];
       var answers = [];
@@ -69,7 +69,7 @@ function addSTU3R4ExportFns(ns) {
             if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
               answer = { "valueString" : itemValue };
             }
-            else if (!jQuery.isEmptyObject(itemValue)) {
+            else if (!LForms.jQuery.isEmptyObject(itemValue)) {
               var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
               answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
               answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
@@ -103,16 +103,16 @@ function addSTU3R4ExportFns(ns) {
             answer = {[valueKey]: itemValue};
           }
         }
-        
+
         if(answer !== null) {
           answers.push(answer);
         }
-        
+
       }
-  
+
       return answers.length === 0? null: answers;
     };
-  
+
 }
 
 export default addSTU3R4ExportFns;

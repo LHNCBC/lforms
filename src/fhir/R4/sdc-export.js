@@ -3,7 +3,7 @@
  */
 function addR4ExportFns(ns) {
   "use strict";
-  
+
   var self = ns;
 
   self.stdQProfile = 'http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire';
@@ -65,7 +65,7 @@ function addR4ExportFns(ns) {
             }
             initialValues.push(valCoding);
           }
-        }         
+        }
 
       }
       // for Quantity,

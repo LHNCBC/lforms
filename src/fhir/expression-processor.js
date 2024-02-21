@@ -92,6 +92,11 @@ import deepEqual from "deep-equal";
           lfData._fhirVariables.questionnaire =
             this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
         }
+        if (!this._linkIdToQItem) {
+          this._linkIdToQItem = {};
+          this._addToLinkIdToQItemMap(lfData._fhirVariables.questionnaire.item,
+            this._linkIdToQItem);
+        }
         this._regenerateQuestionnaireResp();
         self = this;
         this._currentRunPromise =
@@ -509,6 +514,7 @@ import deepEqual from "deep-equal";
           contextNode = this._elemIDToQRItem[item._elementId];
           contextNode ||= {}; // the item might not be present in the QR if there is no value
           base = 'QuestionnaireResponse.item';
+          fVars['qitem'] = this._linkIdToQItem[item.linkId];
         }
         else {
           contextNode = this._lfData._fhirVariables.resource;
@@ -528,6 +534,25 @@ import deepEqual from "deep-equal";
         console.log(e);
       }
       return fhirPathVal;
+    },
+
+
+    /**
+     *  Recursively adds items to a hash from the linkId of each item to the
+     *  corresponding Questionnaire item.
+     * @param qItems the items to be added the map
+     * @param map the map to which entries will be added.
+     */
+    _addToLinkIdToQItemMap: function(qItems, map) {
+      var qItem;
+      if (qItems) {
+        for (var i=0, len=qItems.length; i<len; ++i) {
+          qItem=qItems[i];
+          map[qItem.linkId] = qItem;
+          if (qItem.item)
+            this._addToLinkIdToQItemMap(qItem.item, map);
+        }
+      }
     },
 
 
@@ -678,7 +703,7 @@ import deepEqual from "deep-equal";
                   changed = (!hasCurrentList ||
                   !this._lfData._objectEqual(newEntry, currentList[i]));
                 }
-              } 
+              }
               break;
             case "INT":
               if (typeof entry === 'number' || typeof entry === 'string') {
@@ -687,7 +712,7 @@ import deepEqual from "deep-equal";
                   changed = (!hasCurrentList ||
                   !this._lfData._objectEqual(newEntry, currentList[i]));
                 }
-              } 
+              }
               break;
           }
         }

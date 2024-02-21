@@ -24,7 +24,9 @@ function addCommonSDCExportFns(ns) {
         target = {};
         this._processRepeatingItemValues(source);
         this._setResponseFormLevelFields(target, source);
-  
+        if (this._processQRQuestionnaire) {
+          this._processQRQuestionnaire(target, source);
+        }
         if (source.items && Array.isArray(source.items)) {
           var tmp = this._processResponseItem(source, true);
           if(tmp && tmp.item && tmp.item.length) {
@@ -444,11 +446,11 @@ function addCommonSDCExportFns(ns) {
     var itemControlType = "";
     var itemControlDisplay, answerChoiceOrientation;
     // Fly-over, Table, Checkbox, Combo-box, Lookup
-    if (!jQuery.isEmptyObject(item.displayControl)) {
+    if (!LForms.jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
-      // for answers 
-      if (item.displayControl.answerLayout && (item.dataType ==="CODING" || 
-          item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" 
+      // for answers
+      if (item.displayControl.answerLayout && (item.dataType ==="CODING" ||
+          item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT"
           || item.dataType === "TM"))) {
         // search field
         if (item.externallyDefined || (item.answerValueSet && item.isSearchAutocomplete)) {
@@ -863,6 +865,84 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
+   * Converting the given item's value to FHIR QuestionaireResponse.answer (an array).
+   * This is almost straightly refactored out of the original function self._handleAnswerValues.
+   * This function only looks at the item value itself and not its sub-items, if any.
+   * Here are the details for a single value's conversion (to an element in the returned answer array)
+   * - For item data type quantity (QTY), a valueQuantity answer element will be created IF
+   *   either (or both) item value or item unit is available.
+   * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, attachment, and url,
+   *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
+   *   an empty string.
+   * - For CNE and CWE, a valueCoding entry is created IF at least one of the item value's code, text, or system
+   *   is available
+   * - No answer entry will be created in all other cases, e.g., for types reference, title, section, etc.
+   * @param item the item whose value is to be converted
+   * @return the converted FHIR QuestionnaireResponse answer (an array), or null if the value is not converted -
+   *         see the function description above for more details.
+   * @private
+   */
+  self._lfItemValueToFhirAnswer = function(item) {
+
+    // item could have an empty value if its sub-item has a value
+    if (item.value === undefined || item.value === null || item.value === '')
+       return null;
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+    var values = this._answerRepeats(item)? item.value: [item.value];
+    var answers = [];
+    for(var i=0; i < values.length; ++i) {
+      var itemValue = values[i];
+      if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
+        var answer = null;
+        // for Coding
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof itemValue === 'string') {
+            answer = { "valueString" : itemValue };
+          }
+          else if (!LForms.jQuery.isEmptyObject(itemValue)) {
+            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
+            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+          }
+        }
+        else if (item.answers && (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM')) {
+          var valueKey = this._getValueKeyByDataType("value", item);
+          answer = {[valueKey]: itemValue.text};
+        }
+        // for Quantity
+        else if (dataType === "QTY") {
+          // For now, handling only simple quantities without the comparators.
+          // [{
+          //   // from Element: extension
+          //   "value" : <decimal>, // Numerical value (with implicit precision)
+          //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+          //   "unit" : "<string>", // Unit representation
+          //   "system" : "<uri>", // Code System that defines coded unit form
+          //   "code" : "<code>" // Coded form of the unit
+          // }]
+          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
+        }
+        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment
+        else if (this._lformsTypesToFHIRFields[dataType]) {
+          var valueKey = this._getValueKeyByDataType("value", item);
+          answer = {[valueKey]: itemValue};
+        }
+      }
+
+      if(answer !== null) {
+        answers.push(answer);
+      }
+
+    }
+
+    return answers.length === 0? null: answers;
+  };
+
+
+  /**
    * Check if an lform item has sub-items, that is, having an "items" field whose value is an array with non-zero length.
    * @param item the item to be checked for the presense of sub-items.
    * @return {*|boolean} true if the item has sub-items, false otherwise.
@@ -879,70 +959,85 @@ function addCommonSDCExportFns(ns) {
    * If the lforms item is repeatable, this function handles one particular occurrence of the item.
    * @param lfItem an item in LForms form object, or the form object itself
    * @param isForm optional, default false. If true, the given item is the form object itself.
-   * @returns {{}} the converted FHIR item
+   * @returns {{}} the converted FHIR item, or null if the QuestionnaireResponse should not contain
+   *  a corresponding item.
    * @private
    */
   self._processResponseItem = function(lfItem, isForm) {
     if(isForm && (typeof isForm) !== 'boolean') { // just in case some are invoking it the old way.
       throw new Error('_processResponseItem function signature has been changed, please check/fix.');
     }
-    var targetItem = (isForm || lfItem.dataType === 'TITLE')? {}: {
-        linkId: lfItem.linkId,
-        text: lfItem.question
-      };
+
+    let targetItem = null;
 
     // just handle/convert the current item's value, no-recursion to sub-items at this step.
+    let isUnansweredQuestion = false;
     if (!isForm && lfItem.dataType !== 'TITLE' && lfItem.dataType !== 'SECTION') {
-      this._setIfHasValue(targetItem, 'answer', this._lfItemValueToFhirAnswer(lfItem));
+      targetItem = this._setIfHasValue(targetItem, 'answer', this._lfItemValueToFhirAnswer(lfItem));
+      isUnansweredQuestion = !targetItem?.answer;
     }
 
-    if(this._lfHasSubItems(lfItem)) {
-      var fhirItems = [];
-      for (var i=0; i < lfItem.items.length; ++i) {
-        var lfSubItem = lfItem.items[i];
-        if(! lfSubItem._isProcessed) {
-          var linkId = lfSubItem.linkId;
-          var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
-          if(repeats) {      // Can only be questions here per _processRepeatingItemValues
-            let fhirItem = { // one FHIR item for all repeats with the same linkId
-              linkId: linkId,
-              text: lfSubItem.question,
-              answer: []
-            };
-            for(var rpt=0; rpt < repeats.length; ++rpt) {
-              var rptItem = repeats[rpt];
-              var tmpFhirItem = this._processResponseItem(rptItem);
-              if(tmpFhirItem.answer) {
-                // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
-                // For now, just put all the answers from question and answer repeats into the answer (array).
-                Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
-              }
-              rptItem._isProcessed = true;
-            }
-            fhirItems.push(fhirItem);
-            delete lfItem._repeatingItems[linkId]; // cleanup, no longer needed
-          }
-          else {
-            let fhirItem = this._processResponseItem(lfSubItem);
-            fhirItems.push(fhirItem);
-          }
-        }
+    if (!isUnansweredQuestion) {
+      if (!targetItem)
+        targetItem = {};
 
-        if(lfSubItem._isProcessed) {
-          delete lfSubItem._isProcessed; // cleanup, no longer needed
-        }
+      if (!isForm && lfItem.dataType != 'TITLE') {
+        targetItem.linkId = lfItem.linkId,
+        targetItem.text = lfItem.question
       }
 
-      if(fhirItems.length > 0) {
-        if(! isForm && lfItem.dataType !== 'SECTION') {
-          // Question repeat is handled at the "parent level"; TODO: not sure how to handle answer repeat here,
-          // assuming it isn't possible for an item to have answer repeat and sub-items at the same time.
-          targetItem.answer = targetItem.answer || [];
-          targetItem.answer[0] = targetItem.answer[0] || {};
-          targetItem.answer[0].item = fhirItems;
+      // Process sub-items
+      if(this._lfHasSubItems(lfItem)) {
+        var fhirItems = [];
+        for (var i=0; i < lfItem.items.length; ++i) {
+          var lfSubItem = lfItem.items[i];
+          if(! lfSubItem._isProcessed) {
+            var linkId = lfSubItem.linkId;
+            var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
+            if(repeats) {      // Can only be questions here per _processRepeatingItemValues
+              let fhirItem = { // one FHIR item for all repeats with the same linkId
+                linkId: linkId,
+                text: lfSubItem.question,
+                answer: []
+              };
+              for(var rpt=0; rpt < repeats.length; ++rpt) {
+                var rptItem = repeats[rpt];
+                var tmpFhirItem = this._processResponseItem(rptItem);
+                if(tmpFhirItem?.answer) {
+                  // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
+                  // For now, just put all the answers from question and answer repeats into the answer (array).
+                  Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
+                }
+                rptItem._isProcessed = true;
+              }
+              if (fhirItem.answer.length > 0)
+                fhirItems.push(fhirItem);
+              delete lfItem._repeatingItems[linkId]; // cleanup, no longer needed
+            }
+            else {
+              let fhirItem = this._processResponseItem(lfSubItem);
+              if (fhirItem)
+                fhirItems.push(fhirItem);
+            }
+          }
+
+          if(lfSubItem._isProcessed) {
+            delete lfSubItem._isProcessed; // cleanup, no longer needed
+          }
         }
-        else {
-          targetItem.item = fhirItems;
+
+        if(fhirItems.length > 0) {
+          if(! isForm && lfItem.dataType !== 'SECTION') {
+            // Question repeat is handled at the "parent level"; TODO: not sure how to handle answer repeat here,
+            // assuming it isn't possible for an item to have answer repeat and sub-items at the same time.
+            // (TODO:  The above is an incorrect assumption.)
+            targetItem.answer = targetItem.answer || [];
+            targetItem.answer[0] = targetItem.answer[0] || {};
+            targetItem.answer[0].item = fhirItems;
+          }
+          else {
+            targetItem.item = fhirItems;
+          }
         }
       }
     }

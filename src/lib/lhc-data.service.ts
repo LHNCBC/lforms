@@ -176,7 +176,7 @@ export class LhcDataService {
     if (item.codingInstructions && item.codingInstructions.length > 0) {
       var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
       if (this.lhcFormData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
-        var format = "html";
+        var format = "html";        
       }
       else {
         format = "escaped";

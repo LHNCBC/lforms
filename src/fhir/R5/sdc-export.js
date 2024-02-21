@@ -98,7 +98,7 @@ function addR5ExportFns(ns) {
             }
             initialValues.push(valCoding);
           }
-        }         
+        }
 
       }
       // for Quantity,
@@ -116,7 +116,7 @@ function addR5ExportFns(ns) {
         else {
           initialValues.push({[valueKey]: defaultAnswer.text});
         }
-        
+
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
       else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" ||
@@ -185,7 +185,7 @@ function addR5ExportFns(ns) {
               answer = { "valueString" : itemValue };
             }
             // optionsOnly
-            else if (!jQuery.isEmptyObject(itemValue)) {
+            else if (!LForms.jQuery.isEmptyObject(itemValue)) {
               // for Coding
               if (dataType === 'CODING') {
                 var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
@@ -221,11 +221,11 @@ function addR5ExportFns(ns) {
           answer = {[valueKey]: itemValue};
         }
       }
-      
+
       if(answer !== null) {
         answers.push(answer);
       }
-      
+
     }
 
     return answers.length === 0? null: answers;

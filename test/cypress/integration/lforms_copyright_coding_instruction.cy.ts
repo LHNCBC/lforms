@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import * as util from "../support/util";
 
 let tp: TestPage;
 
@@ -21,6 +22,14 @@ describe('popover buttons', () => {
       cy.byId('copyright-content-all-in-one').should('not.exist');
       cy.byId('copyright-button-/type0/1').click();
       cy.byId('copyright-content-/type0/1').should('be.visible').should('have.text', 'A Copyright notice of the item');
+    });
+
+    it('should show a copyright popover message on the form title when there is no codes', () => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      cy.get('#fileAnchor').uploadFile('test/data/questionnaire-with-copyright-no-code.json');
+      cy.byId('copyright-button-Test-Questionnaire-with-a-copyright-and-no-code').should('be.visible');
+      cy.byId('copyright-button-Test-Questionnaire-with-a-copyright-and-no-code').click();
+      cy.byId('copyright-content-Test-Questionnaire-with-a-copyright-and-no-code').should('be.visible').should('have.text', 'A copyright notice');
     });
   });
 
@@ -159,7 +168,7 @@ describe('popover buttons', () => {
         const genderHelpButton = 'help-button-/54126-8/54131-8/1/1';
         const gender = '/54126-8/54131-8/1/1';
         const popoverHTMLLink = 'a[href="http://google.com"]';
-        const popover = '.help-class-54126-8-54125-0-1-1 .ant-popover-inner-content';
+        const popover = '.lhc-help-54126-8-54125-0-1-1 .ant-popover-inner-content';
 
         cy.byId(nameHelpButton).should('be.visible');
         cy.byId(genderHelpButton).should('be.visible');
@@ -174,7 +183,7 @@ describe('popover buttons', () => {
 
         // Text coding instructions
         cy.byId(genderHelpButton).click();
-        cy.get('.help-class-54126-8-54131-8-1-1 .ant-popover-content').should('be.visible');
+        cy.get('.lhc-help-54126-8-54131-8-1-1 .ant-popover-content').should('be.visible');
         cy.get(popoverHTMLLink).should('not.exist');
       });
     });
@@ -190,11 +199,11 @@ describe('popover buttons', () => {
           helpButton_2 = 'help-button-/type2/1';
           helpButton_3 = 'help-button-/type3/1';
           copyrightButton0 = 'copyright-button-/type0/1';
-          popover0 = '.help-class-type0-1 .ant-popover-inner-content';
-          popover1 = '.help-class-type1-1 .ant-popover-inner-content';
-          popover2 = '.help-class-type2-1 .ant-popover-inner-content';
-          popover3 = '.help-class-type3-1 .ant-popover-inner-content';
-          copyPopover0 = '.copyright-class-type0-1 .ant-popover-inner-content';
+          popover0 = '.lhc-help-type0-1 .ant-popover-inner-content';
+          popover1 = '.lhc-help-type1-1 .ant-popover-inner-content';
+          popover2 = '.lhc-help-type2-1 .ant-popover-inner-content';
+          popover3 = '.lhc-help-type3-1 .ant-popover-inner-content';
+          copyPopover0 = '.lhc-copyright-class-type0-1 .ant-popover-inner-content';
           break;
         case 'horizontal':
           helpButton_0 = 'help-button-/horizontalTable/type0/1/1';
@@ -202,11 +211,11 @@ describe('popover buttons', () => {
           helpButton_2 = 'help-button-/horizontalTable/type2/1/1';
           helpButton_3 = 'help-button-/horizontalTable/type3/1/1';
           copyrightButton0 = 'copyright-button-/horizontalTable/type0/1/1';
-          popover0 = '.help-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
-          popover1 = '.help-class-horizontalTable-type1-1-1 .ant-popover-inner-content';
-          popover2 = '.help-class-horizontalTable-type2-1-1 .ant-popover-inner-content';
-          popover3 = '.help-class-horizontalTable-type3-1-1 .ant-popover-inner-content';
-          copyPopover0 = '.copyright-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
+          popover0 = '.lhc-help-horizontalTable-type0-1-1 .ant-popover-inner-content';
+          popover1 = '.lhc-help-horizontalTable-type1-1-1 .ant-popover-inner-content';
+          popover2 = '.lhc-help-horizontalTable-type2-1-1 .ant-popover-inner-content';
+          popover3 = '.lhc-help-horizontalTable-type3-1-1 .ant-popover-inner-content';
+          copyPopover0 = '.lhc-copyright-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
           break;
         case 'matrix':
           helpButton_0 = 'help-button-/matrixTable/type0/1/1';
@@ -214,11 +223,11 @@ describe('popover buttons', () => {
           helpButton_2 = 'help-button-/matrixTable/type2/1/1';
           helpButton_3 = 'help-button-/matrixTable/type3/1/1';
           copyrightButton0 = 'copyright-button-/matrixTable/type0/1/1';
-          popover0 = '.help-class-matrixTable-type0-1-1 .ant-popover-inner-content';
-          popover1 = '.help-class-matrixTable-type1-1-1 .ant-popover-inner-content';
-          popover2 = '.help-class-matrixTable-type2-1-1 .ant-popover-inner-content';
-          popover3 = '.help-class-matrixTable-type3-1-1 .ant-popover-inner-content';
-          copyPopover0 = '.copyright-class-matrixTable-type0-1-1 .ant-popover-inner-content';
+          popover0 = '.lhc-help-matrixTable-type0-1-1 .ant-popover-inner-content';
+          popover1 = '.lhc-help-matrixTable-type1-1-1 .ant-popover-inner-content';
+          popover2 = '.lhc-help-matrixTable-type2-1-1 .ant-popover-inner-content';
+          popover3 = '.lhc-help-matrixTable-type3-1-1 .ant-popover-inner-content';
+          copyPopover0 = '.lhc-copyright-class-matrixTable-type0-1-1 .ant-popover-inner-content';
           break;
       }
 
@@ -288,3 +297,84 @@ describe('popover buttons', () => {
     });
   });
 });
+
+describe('images in coding instructions', () => {
+  describe('coding instrcutions with images shown inline', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-contained-image.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "allowHTMLInInstructions": true,
+          "showCodingInstruction": true });
+    });
+
+    it("should show an image with a url in the 'src' attribute", ()=>{
+      cy.byCss("#help-a/1 img").eq(0)
+        .should("be.visible")
+        .should('have.attr', 'src', '/test/data/a-picture.png');
+    })
+
+    it("should show an image with a local id in the 'src' attribute", ()=>{
+      cy.byCss("#help-b/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+    })
+
+    it("should show an image with a local id without quotes in the 'src' attribute", ()=>{
+      cy.byCss("#help-c/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+    })
+  });
+
+  describe('coding instrcutions with images shown in popover', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-contained-image.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "allowHTMLInInstructions": true });
+    });
+
+    it("should show an image with a url in the 'src' attribute", ()=>{
+      cy.byId("help-button-a/1").click()
+
+      cy.byCss("#help-content-a/1 img").eq(0)
+        .should("be.visible")
+        .should('have.attr', 'src', '/test/data/a-picture.png');
+
+      //make the popover disappear
+      cy.byCss(".lhc-form-title .lhc-question").eq(0).click({force: true});
+      cy.byCss("#help-content-a/1").should("not.exist");
+
+    })
+
+    it("should show an image with a local id in the 'src' attribute", ()=>{
+      cy.byId("help-button-b/1").click()
+
+      cy.byCss("#help-content-b/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+
+      //make the popover disappear
+      cy.byCss(".lhc-form-title .lhc-question").eq(0).click({force: true});
+      cy.byCss("#help-content-b/1").should("not.exist");
+    })
+
+    it("should show an image with a local id without quotes in the 'src' attribute", ()=>{
+      cy.byId("help-button-c/1").click()
+
+      cy.byCss("#help-content-c/1 img").eq(0)
+        .should("be.visible")
+        .invoke("attr", "src")
+        .should("match", /^data:image\/png\;base64/);
+
+      //make the popover disappear
+      cy.byCss(".lhc-form-title .lhc-question").eq(0).click({force: true});
+      cy.byCss("#help-content-c/1").should("not.exist");
+    })
+  });
+
+})

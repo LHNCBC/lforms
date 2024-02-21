@@ -32,8 +32,8 @@ var self = {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations, or null if there is 
-   *  no valid QuestionnaireResponse. The caller may wish to put all of the returned 
+   * @returns an array of QuestionnaireResponse and Observations, or null if there is
+   *  no valid QuestionnaireResponse. The caller may wish to put all of the returned
    *  resources into a transaction Bundle for creating them on a FHIR server.
    */
    convertLFormsToQRAndExtracFHIRData: function(lfData, subject) {
@@ -243,7 +243,7 @@ var self = {
         }
       }
       // when option's values are string, integer, date or time
-      else if(item.dataType === "ST" || item.dataType === "INT" || 
+      else if(item.dataType === "ST" || item.dataType === "INT" ||
           item.dataType === "DT" || item.dataType === "TM") {
         var valueKey = this._getValueKeyByDataType("value", item);
         option[valueKey] = answer.text;
@@ -270,7 +270,7 @@ var self = {
 
       optionArray.push(option);
     }
-    
+
     return optionArray;
   },
 
