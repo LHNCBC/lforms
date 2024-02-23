@@ -11,19 +11,21 @@ function addCommonSDCExportFns(ns) {
   /**
    * Convert LForms captured data to FHIR SDC QuestionnaireResponse
    * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *  The default is false.
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
    * @returns {{}} a QuestionnaireResponse, or null if there is no valid QuestionnaireResponse.
    */
-  self.convertLFormsToQuestionnaireResponse = function(lfData, subject) {
+  self.convertLFormsToQuestionnaireResponse = function(lfData, noExtensions, subject) {
     var target = null;
     if (lfData) {
       var source = lfData.getFormData(true,true,true);
       if (!lfData._invalidData) {
         target = {};
         this._processRepeatingItemValues(source);
-        this._setResponseFormLevelFields(target, source);
+        this._setResponseFormLevelFields(target, source, noExtensions);
         if (this._processQRQuestionnaire) {
           this._processQRQuestionnaire(target, source);
         }
@@ -775,17 +777,19 @@ function addCommonSDCExportFns(ns) {
    * Set form level attribute
    * @param target a QuestionnaireResponse object
    * @param source a LForms form object
-
+   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    * @private
    */
-  self._setResponseFormLevelFields = function(target, source) {
+  self._setResponseFormLevelFields = function(target, source, noExtensions) {
 
     // resourceType
     target.resourceType = "QuestionnaireResponse";
 
     // meta
+    var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [this.stdQRProfile];
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
 
     // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
     //target.identifier = {
@@ -886,7 +890,7 @@ function addCommonSDCExportFns(ns) {
 
     // item could have an empty value if its sub-item has a value
     if (item.value === undefined || item.value === null || item.value === '')
-       return null;
+      return null;
 
     var dataType = this._getAssumedDataTypeForExport(item);
     var values = this._answerRepeats(item)? item.value: [item.value];

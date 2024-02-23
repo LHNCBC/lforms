@@ -1733,7 +1733,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             it('should convert to SDC Questionnaire with extensions', function(done) {
               $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
                 var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
-                assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
+                assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
                 done();
               });
             });
@@ -1750,10 +1750,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert to standard QuestionnaireResponse without any extensions', function(done) {
-
             $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQR = LForms.Util.getFormFHIRData(
-                  'QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
+                  'QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData),
+                  {noExtensions: true});
               assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
               assert.equal(fhirQR.toString().match(/extension/), undefined);
               done();

@@ -29,6 +29,8 @@ var self = {
    *  extension).
    *
    * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *  The default is false.
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
@@ -36,8 +38,8 @@ var self = {
    *  no valid QuestionnaireResponse. The caller may wish to put all of the returned
    *  resources into a transaction Bundle for creating them on a FHIR server.
    */
-   convertLFormsToQRAndExtracFHIRData: function(lfData, subject) {
-    var qr = this.convertLFormsToQuestionnaireResponse(lfData, subject);
+   convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
     if (!qr) {
       return null;
     }

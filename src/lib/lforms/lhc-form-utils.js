@@ -238,7 +238,8 @@ const FormUtils = {
           if (options.extract)
             fhirData = fhir.SDC.convertLFormsToQRAndExtracFHIRData(formData, options.subject);
           else
-            fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData, options.subject);
+            fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
+              options.noExtensions, options.subject);
           break;
       }
     }
@@ -385,9 +386,10 @@ const FormUtils = {
     if (matchData) {
       const versionNum = parseFloat(matchData[0]);
       // Following http://www.hl7.org/fhir/directory.cfml
-      releaseID = versionNum > 4.0 && versionNum <= 4.3 ? 
-          'R4B' : versionNum > 3.0 && versionNum <= 4.0 ? 
-          'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 
+      releaseID = versionNum >= 5.0 && versionNum < 6.0 || versionNum == 4.2 || (versionNum >=4.4 & versionNum <=4.6) ?
+          'R5' : versionNum == 4.1 || versionNum == 4.3 ?
+          'R4B' : versionNum > 3.0 && versionNum <= 4.0 ?
+          'R4' : versionNum >= 1.1 && versionNum <= 3.0 ?
           'STU3' : versionStr;
     }
     return releaseID;
