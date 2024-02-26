@@ -1,4 +1,5 @@
 import { TestPage } from "../support/lforms_testpage.po.js";
+import {TestUtil} from "../support/testUtilFacade";
 
 describe('on repeating items', function() {
   const tp: any = new TestPage();
@@ -86,6 +87,36 @@ describe('on repeating items', function() {
     cy.byId(deleteButtonId2).should('not.exist');
     cy.byId(deleteButtonId3).should('not.exist');
     cy.byId(deleteButtonId4).should('be.visible');
+  });
+});
+
+describe('repeating group with answerValueSet items', () => {
+  const tp: any = new TestPage();
+
+  it('should render radio button layout properly after adding a repeating group', () => {
+    tp.openBaseTestPage();
+    TestUtil.waitForFHIRLibsLoaded();
+    tp.loadFromTestData('repeating-group-that-contain-an-item-with-answerValueSet.R4.json', 'R4');
+    // The form has a question with 7 radio button options.
+    cy.get('.ant-radio-input').should('have.length', 7);
+    cy.get('.ant-radio-input').eq(0).click();
+    // Add a repeating group.
+    cy.contains('Add another "repeating group"').click();
+    // The 7 radio button inputs in the repeating group should be rendered.
+    cy.get('.ant-radio-input').should('have.length', 14);
+  });
+
+  it('should render radio button layout properly after adding a nested repeating group', () => {
+    tp.openBaseTestPage();
+    TestUtil.waitForFHIRLibsLoaded();
+    tp.loadFromTestData('nested-repeating-groups-that-contain-an-item-with-answerValueSet.R4.json', 'R4');
+    // The form has a question with 7 radio button options.
+    cy.get('.ant-radio-input').should('have.length', 7);
+    cy.byId('9744363809788/1').type('some text');
+    // Add a repeating group.
+    cy.contains('Add another "Outer group"').click();
+    // The 7 radio button inputs in the repeating group should be rendered.
+    cy.get('.ant-radio-input').should('have.length', 14);
   });
 });
 

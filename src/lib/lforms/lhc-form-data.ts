@@ -2075,7 +2075,14 @@ export default class LhcFormData {
   addRepeatingItems(item) {
 
     var maxRecId = this.getRepeatingItemMaxId(item);
-    var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
+    var repeatItem = this._repeatableItems[item.linkId];
+    // For a repeating group with answerValueSet items, make sure the "answers"
+    // property on items are copied to the repeating group. The radio-button
+    // layout of the newly added repeating item was not rendering correctly,
+    // since this._repeatableItems was set earlier before the "answers"
+    // property was set on items. See LF-2864.
+    this._fillAnswersInRepeatItem(repeatItem, item);
+    var newItem = CommonUtils.deepCopy(repeatItem);
     newItem._id = maxRecId + 1;
 
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
@@ -2105,6 +2112,26 @@ export default class LhcFormData {
     }
 
     return newItem;
+  }
+
+
+  /**
+   * Recursively fill the 'answers' property on repeated items and nested child items, if missing.
+   * @param repeatItem matching item in this._repeatableItems or one of its children
+   * @param item a repeating group item or one of its children
+   */
+  _fillAnswersInRepeatItem(repeatItem, item) {
+    if (repeatItem.items && Array.isArray(repeatItem.items) && repeatItem.items.length > 0) {
+      repeatItem.items.forEach((x) => {
+        var matchingItem = item.items.find((y) => y.linkId === x.linkId);
+        if (matchingItem) {
+          if (!x.answers && matchingItem.answers) {
+            x.answers = matchingItem.answers;
+          }
+          this._fillAnswersInRepeatItem(x, matchingItem);
+        }
+      });
+    }
   }
 
 
@@ -2983,13 +3010,11 @@ export default class LhcFormData {
             }
           }
         }
-
         let newValue = item._multipleAnswers ? listVals : listVals[0];
         // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
         item.value = newValue;
       }
     }
-
   }
 
 

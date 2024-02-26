@@ -1,0 +1,39 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test repeating groups that contain an item with answerValueSet",
+  "status": "draft",
+  "item": [
+    {
+      "item": [
+        {
+          "type": "choice",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "radio-button",
+                    "display": "Radio Button"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+              "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+            }
+          ],
+          "linkId": "4889621624823",
+          "text": "item with answerValueSet",
+          "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions"
+        }
+      ],
+      "type": "group",
+      "linkId": "537774793644",
+      "text": "repeating group",
+      "repeats": true
+    }
+  ]
+}

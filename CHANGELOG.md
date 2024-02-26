@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.0.0] 2024-02-19
+## [36.0.0] 2024-02-23
 ### Changed
 - Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
   replaced them with type 'CODING' and an 'answerConstraint' attribute.
@@ -13,6 +13,14 @@ This project follows [Semantic Versioning](http://semver.org/).
   'optionsOrString are supported. 'OptionsOrType' is not supported yet.
 - Added the support of item.type changes R5. Added 'coding' and removed
   'choice' and 'open-choice'.
+
+## [35.0.3] 2024-02-20
+### Updated
+- autocomplete-lhc version.
+
+## [35.0.2] 2024-02-16
+### Fixed
+- answerValueSet items in repeated groups was not rendered properly.
 
 ## [35.0.1] 2024-02-06
 ### Fixed
