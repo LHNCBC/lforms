@@ -392,9 +392,9 @@ const FormUtils = {
     if (matchData) {
       const versionNum = parseFloat(matchData[0]);
       // Following http://www.hl7.org/fhir/directory.cfml
-      releaseID = versionNum > 4.0 && versionNum <= 4.3 ? 
-          'R4B' : versionNum > 3.0 && versionNum <= 4.0 ? 
-          'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 
+      releaseID = versionNum > 4.0 && versionNum <= 4.3 ?
+          'R4B' : versionNum > 3.0 && versionNum <= 4.0 ?
+          'R4' : versionNum >= 1.1 && versionNum <= 3.0 ?
           'STU3' : versionStr;
     }
     return releaseID;
@@ -1034,19 +1034,19 @@ const FormUtils = {
 
 
   /**
-   * Returns true if the HTML version of the help text contains any of the not allowed tags.
+   * Check and return not allowed tags when the HTML version of the help text
    * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
    * https://hl7.org/fhir/R4/narrative.html for allowed subset of the HTML tags.
-   * @param {*} htmlNarrative 
+   * @param {*} htmlNarrative
    * @return [{array}] an array of invalid tags and attibutes
    */
   checkForInvalidHtmlTags: function(htmlNarrative) {
     let invalidTagsAttributes=[];
     let notAllowedTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
-    let deprecatedTags = ['acronym', 'applet', 'basefont', 'big', 'blink', 'center', 'dir', 'embed', 'font', 
+    let deprecatedTags = ['acronym', 'applet', 'basefont', 'big', 'blink', 'center', 'dir', 'embed', 'font',
         'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'tt', 'u'];
     const FORBID_TAGS = notAllowedTags.concat(deprecatedTags);
-    const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i; 
+    const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i;
     const FORBID_ATTR = ['style'];
 
     // Tags (not in the FORBID_TAGS list above) that could have a URL value.
@@ -1069,7 +1069,7 @@ const FormUtils = {
       "video": ["poster","src"]
     }
     // Some tags have multiple URL values in an attributes. For example:
-    // <img srcset="/image4x.jpg 4x, /image3x.jpg 3x, /image2x.jpg 2x, /image1x.jpg 1x" 
+    // <img srcset="/image4x.jpg 4x, /image3x.jpg 3x, /image2x.jpg 2x, /image1x.jpg 1x"
     //      src="/image.jpg">
     const TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR = {
       "img": "srcset",
@@ -1091,7 +1091,7 @@ const FormUtils = {
               urlAttrs.forEach(urlAttr => {
                 if(attr.toLocaleLowerCase() === urlAttr && !value.match(ALLOWED_URI_REGEXP)) {
                   invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
-                } 
+                }
               })
             }
           }
@@ -1107,7 +1107,7 @@ const FormUtils = {
                     invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
                   }
                 })
-              } 
+              }
             }
           }
         };
@@ -1116,10 +1116,10 @@ const FormUtils = {
           FORBID_ATTR.forEach(forbidAttr => {
             if(attr.toLocaleLowerCase() === forbidAttr) {
               invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbidAttr });
-            } 
+            }
           });
         }
-        
+
       }
 
       // Do nothing on onclosetag(name, attributes) {}
@@ -1127,7 +1127,7 @@ const FormUtils = {
 
     parser.write(htmlNarrative);
     parser.end();
-    
+
     return invalidTagsAttributes;
   }
 
