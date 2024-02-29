@@ -1723,7 +1723,7 @@ export default class LhcFormData {
    */
   _getOriginalValue(value, dataType=null, hasAnswerList=false) {
     var retValue;
-    if (value !== undefined && value !== null) {
+    if (value !== undefined && value !== null && value !== '') {
       // has a data type
       if (dataType) {
         switch (dataType) {
