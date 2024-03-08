@@ -69,7 +69,7 @@ function addR4ExportFns(ns) {
 
       }
       // for Quantity,
-      else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
+      else if (dataType === 'QTY') {  // SimpleQuantity (no comparators)
         answer = {};
         answer[valueKey] = this._makeQuantity(defaultAnswer, item.units);
         initialValues.push(answer);

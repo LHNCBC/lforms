@@ -340,7 +340,7 @@ var self = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (dataType === 'QTY') { // for now, handling only simple quantities without the comparators.
+      else if (dataType === 'QTY') { // SimpleQuantity (no comparators)
         var fhirQuantity = this._makeQuantity(item.defaultAnswer, item.units);
         if(fhirQuantity) {
           targetItem[valueKey] = fhirQuantity;
@@ -458,7 +458,7 @@ var self = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (dataType === 'QTY') { // for now, handling only simple quantities without the comparators.
+        else if (dataType === 'QTY') { // SimpleQuantity (no comparators)
           let fhirQuantity = this._makeQuantity(condition.trigger.value, sourceItem.units);
           if(fhirQuantity) {
             enableWhenRule[valueKey] = fhirQuantity;

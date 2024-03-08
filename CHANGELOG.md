@@ -6,8 +6,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
   replaced them with type 'CODING' and an 'answerConstraint' attribute.
-  The existing form data files in lforms data format with 'CNE' and 'CWE' data types
-  are backward compatible.
+  'CNE' and 'CWE' data types are still supported in legacy data files.
 ### Added
 - Added the support of 'answerContraint' in R5.  Only 'optionsOnly' and 
   'optionsOrString are supported. 'OptionsOrType' is not supported yet.

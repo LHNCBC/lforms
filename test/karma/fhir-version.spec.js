@@ -23,6 +23,16 @@ describe('guessFHIRVersion', function() {
       done();
     });
   });
+  it('should recognize an R5 Questionnaire with "option"', function(done) {
+    $.get('/test/data/R5/weightHeightQuestionnaire.json', function z(whQ) {
+      // Remove the meta.profile so we can test whether the guess function can
+      // correctly guess based on structure only.
+      delete whQ.meta;
+      var fhirVersion = LForms.Util.guessFHIRVersion(whQ);
+      assert.equal(fhirVersion, 'R5');
+      done();
+    });
+  });
 });
 
 describe('_fhirVersionToRelease', function() {

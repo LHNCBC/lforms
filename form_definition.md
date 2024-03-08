@@ -106,8 +106,8 @@ about the meaning of each key:
        screen/container, medium screen/container, small screen/container and a
        responsive layout. The default value is 'auto'.
     * <a name="defaultAnswerLayout"></a>defaultAnswerLayout -
-      an object that controls the answer layout for each item
-      that has a dataType of CWE or CNE and has an answer list but does not specify
+      an object that controls the answer layout for each item that has a dataType of 
+      CODING, INT, DT, TM or ST, and has an answer list but does not specify
       answerLayout on the item itself. It has a single key of "answerLayout", which
       has two keys, "type" and "columns". If "type" is set to be "COMBO_BOX", the
       [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget
@@ -239,7 +239,7 @@ about the meaning of each key:
                 * value - A value that the answer for the “source” question must match to fire the trigger.
                     * For value types string, number, or boolean, the answer and trigger value 
                       must exactly match.
-                    * For (source) questions with lists (CNE/CWE), the trigger value should 
+                    * For (source) questions with lists, the trigger value should 
                       be a "code object" with any or all of these three fields: code, system, and text,
                       for example: {"code": "LA2-8", "system": "http://loinc.org"}. 
                       The trigger value will be considered to match the answer if 1) code systems 
@@ -281,15 +281,15 @@ about the meaning of each key:
       templateOptions section.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are:
-        * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'.
-          The supported values are 'COMBO_BOX' (default), and 'RADIO_CHECKBOX'. (see
-          [defaultAnswerLayout](#defaultAnswerLayout))
+        * answerLayout - the layout of the answers when a item has a dataType of CODING, INT, 
+          DT, TM or ST. The supported values are 'COMBO_BOX' (default), and 'RADIO_CHECKBOX'. 
+          (see[defaultAnswerLayout](#defaultAnswerLayout))
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
         * colCSS - an array of valid CSS settings that could apply to its related column in a
           horizontal table. It only works when its parent item/section has a
           {"questionLayout": "horizontal"} value in its "displayControl".
         * listColHeaders - For questions that are search lists (specified with a
-          URL in "externallyDefined" and dataType "CNE" or "CWE") this specifies
+          URL in "externallyDefined" and dataType of "CODING") this specifies
           the column headers (as an array) that will appear over the rows of choices.
           This is useful when each list item displays multiple fields.  If
           nothing is specified for this attribute, column headers will not be

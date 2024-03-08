@@ -562,8 +562,16 @@ const FormUtils = {
         }
         return ret;
       });
-      version = foundSTU3 ? 'STU3' : 'R4';
+      var foundR5 = this._testValues(fhirData, 'item', function(item) {
+        let ret = !!(
+          item.disabledDisplay ||
+          item.answerConstraint ||
+          item.type === 'coding');
+        return ret;
+      });
+      version = foundSTU3 ? 'STU3' : foundR5 ? 'R5' : 'R4';
     }
+    // R4 and R5 QuestionnaireResponses are too similar
     else if (fhirData.resourceType == 'QuestionnaireResponse') {
       if (fhirData.parent)
         version = 'STU3';

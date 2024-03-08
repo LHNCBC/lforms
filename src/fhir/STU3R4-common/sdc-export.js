@@ -86,7 +86,7 @@ function addSTU3R4ExportFns(ns) {
           // without an answer list
           // for Quantity
           else if (dataType === "QTY") {
-            // For now, handling only simple quantities without the comparators.
+            // SimpleQuantity (no comparators)
             // [{
             //   // from Element: extension
             //   "value" : <decimal>, // Numerical value (with implicit precision)
