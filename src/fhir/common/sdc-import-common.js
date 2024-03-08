@@ -484,7 +484,7 @@ function addCommonSDCImportFns(ns) {
           answer = fhirVal;
         }
       }
-      if (answer !== undefined || answer !== null) 
+      if (answer !== undefined || answer !== null)
           answers.push(answer);
       messages.push(hasMessages ? {errors} : null);
     }
@@ -998,20 +998,20 @@ function addCommonSDCImportFns(ns) {
           }
           break;
         case "INT":
-          if (qrValue.hasOwnProperty('valueQuantity')) {
-            item.value = qrValue.valueQuantity.value;
-            if(qrValue.valueQuantity.code) {
-              item.unit = {name: qrValue.valueQuantity.code};
-            }
+          // has an answer list
+          if (InternalUtil.hasAnswerList(item)) {
+            // answer repeats (autocomplete or checkboxes)
+            ns._processOtherAnswerOptionValueInQR(answer, item)
           }
-          else if (qrValue.hasOwnProperty('valueInteger')) {
-            // has an answer list
-            if (InternalUtil.hasAnswerList(item)) {
-              // answer repeats (autocomplete or checkboxes)
-              ns._processOtherAnswerOptionValueInQR(answer, item)
+          // normal item
+          else {
+            if (qrValue.hasOwnProperty('valueQuantity')) {
+              item.value = qrValue.valueQuantity.value;
+              if(qrValue.valueQuantity.code) {
+                item.unit = {name: qrValue.valueQuantity.code};
+              }
             }
-            // normal item
-            else {
+            else if (qrValue.hasOwnProperty('valueInteger')) {
               item.value = qrValue.valueInteger;
             }
           }
@@ -1034,7 +1034,7 @@ function addCommonSDCImportFns(ns) {
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
           // normal item
-          else {
+          else if (qrValue.hasOwnProperty('valueDate')) {
             item.value = qrValue.valueDate;
           }
           break;
@@ -1045,7 +1045,7 @@ function addCommonSDCImportFns(ns) {
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
           // normal item
-          else {
+          else if (qrValue.hasOwnProperty('valueTime')) {
             item.value = qrValue.valueTime;
           }
           break;
@@ -1077,8 +1077,8 @@ function addCommonSDCImportFns(ns) {
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
           // normal item
-          else {
-            item.value = qrValue.valueString;
+          else if (qrValue.hasOwnProperty('valueString')) {
+              item.value = qrValue.valueString;
           }
           break;
         case "TX":
@@ -1097,68 +1097,6 @@ function addCommonSDCImportFns(ns) {
       }
     }
   }
-
-
-  /**
-   * Get LForms data type from questionnaire item
-   *
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._getDataType = function (qItem) {
-    var type = 'string';
-    switch (qItem.type) {
-      case 'string':
-        type = 'ST';
-        break;
-      case 'group':
-        type = 'SECTION';
-        break;
-      case "choice":
-        type = 'CODING';
-        break;
-      case "open-choice":
-        type = 'CODING';
-        break;
-      case 'integer':
-        type = 'INT';
-        break;
-      case 'decimal':
-        type = 'REAL';
-        break;
-      case 'text':
-        type = 'TX';
-        break;
-      case "boolean":
-        type = 'BL';
-        break;
-      case "date":
-        type = 'DT';
-        break;
-      case "dateTime":
-        type = 'DTM';
-        break;
-      case "time":
-        type = 'TM';
-        break;
-      case "display":
-        type = 'TITLE';
-        break;
-      case "url":
-        type = 'URL';
-        break;
-      case "quantity":
-        type = 'QTY';
-        break;
-      case "attachment":
-        type = 'attachment';
-        break;
-      case "coding":
-        type = 'CODING';
-        break;
-    }
-    return type;
-  };
 
 
   /**
@@ -1438,7 +1376,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
     // a valueString, which is a user supplied value that is not in the answers
-    else if (qrItemValue.valueString) {
+    else if (qrItemValue.valueString && lfItem.answerConstraint === 'optionsOrString') {
       retValue = qrItemValue.valueString;
     }
     return retValue;
@@ -1503,15 +1441,11 @@ function addCommonSDCImportFns(ns) {
           answerText = qrItemValue.valueTime;
           break;
       }
-      if (answerText)
+      if (answerText) {
         retValue = { text: answerText };
-    }
-
-    // compare retValue to the item.answers
-    for(var i=0, len=lfItem.answers.length; i<len; i++) {
-      if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {
-        retValue = lfItem.answers[i];
-        break;
+      }
+      else if (lfItem.answerConstraint === "optionsOrString" && qrItemValue.valueString) {
+        retValue = qrItemValue.valueString;
       }
     }
 

@@ -5,8 +5,7 @@ import * as FHIRSupport from "../../../src/fhir/versions.js";
 // R4B is same as R4 for Questionnaire and QuestionnaireResponse.
 // Only need to test R4B in the test for profile.
 delete FHIRSupport.R4B;
-// R5 is not tested in this file
-delete FHIRSupport.R5;
+
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 import {TestUtil} from "../support/testUtilFacade.js";
 import {TestPage} from '../support/lforms_testpage.po.js';
@@ -59,7 +58,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
 
-        if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4
+        if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4/R5
           it('should work on question text in horizontal tables', function() {
             util.addFormToPage('tables.json', null, {fhirVersion});
             var idCSS = '#col/g2/g1m1/1/1';

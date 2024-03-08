@@ -105,7 +105,7 @@
           fileAnchor.value = '';
 
           try {
-            LForms.Util.addFormToPage(questionnaire, 'formContainer').then(function() {
+            LForms.Util.addFormToPage(questionnaire, 'formContainer', {'fhirVersion':getFHIRVersion()}).then(function() {
               console.log("Form Added successfully")
             })
             .catch(function(e) {
