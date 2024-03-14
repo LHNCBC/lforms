@@ -91,7 +91,6 @@ You need to include the following files in your project:
 1. `webcomponent/styles.css`
 2. `webcomponent/assets/lib/zone.min.js` (unless you already have zone.min.js 
    on the page)
-3. `webcomponent/scripts.js`
 4. `webcomponent/runtime.js`
 5. `webcomponent/polyfills.js`
 6. `webcomponent/main.js`

@@ -6,7 +6,7 @@ const path = require('path');
 
 (async function build() {
 
-  // es2017 files from angular 14 build
+  // es2017 files from angular 17 build
   const jsFileDir = './dist/lforms/webcomponent';
   //const jsFiles = ['scripts.js', 'runtime.js', 'polyfills.js', 'main.js'
   const jsFiles = ['runtime.js', 'polyfills.js', 'main.js'
@@ -26,4 +26,10 @@ const path = require('path');
   fs.writeFileSync(path.join(jsFileDir, 'lhc-forms.js'), outputContent);
   fs.writeFileSync(path.join(jsFileDir, 'lhc-forms.js.map'), concat.sourceMap);
 
+  // rename zone.umd.min.js to zone.min.js for backward compatibity
+  fs.rename('./dist/lforms/webcomponent/assets/lib/zone.umd.min.js',
+      './dist/lforms/webcomponent/assets/lib/zone.min.js', function (err) {
+    if (err) throw err
+    console.log('Successfully renamed zone.umd.min.js to zone.min.js.')
+  })
 })()
