@@ -168,13 +168,10 @@
        */
       function loadFormList() {
         let formList = document.getElementById("form-list");
-        testForms.forEach(form => {
+        testForms.forEach((form, index) => {
           let option = document.createElement("option");
           option.text = form.text;
-          option.value = JSON.stringify({
-            url: "/test/data/lforms/" + form.name + ".json",
-            tempOptions: form.tempOptions,
-            formOptions: form.formOptions})
+          option.value = index;
           formList.add(option);
         })
       }
@@ -190,15 +187,15 @@
       /**
        * Load and display a form
        */
-      async function fetchAndDisplayForm(strForm) {
-        let jsonForm = JSON.parse(strForm)
-        let formData = await loadJsonFromUrl(jsonForm.url);
+      async function fetchAndDisplayForm(formInfo) {
+        let url = "/test/data/lforms/" + formInfo.name + ".json";
+        let formData = await loadJsonFromUrl(url);
         testForm.questionnaire = formData;
-        if (jsonForm.formOptions) {
-          Object.assign(formData,jsonForm.formOptions)
+        if (formInfo.formOptions) {
+          Object.assign(formData,formInfo.formOptions)
         }
-        if (jsonForm.tempOptions) {
-          testForm.options = jsonForm.tempOptions;
+        if (formInfo.tempOptions) {
+          testForm.options = formInfo.tempOptions;
         }
 
       }
@@ -216,7 +213,7 @@
         let fhirVersion = this.getFHIRVersion();
 
         if (formList.value) {
-          fetchAndDisplayForm(formList.value);
+          fetchAndDisplayForm(testForms[formList.value]);
         }
       };
 

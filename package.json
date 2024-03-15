@@ -82,7 +82,7 @@
     "chai": "~4.3.6",
     "concat": "^1.0.3",
     "concat-with-sourcemaps": "^1.1.0",
-    "cypress": "^10.10.0",
+    "cypress": "^13.7.0",
     "cypress-real-events": "^1.7.6",
     "fs-extra": "^11.2.0",
     "http-server": "^14.1.1",
