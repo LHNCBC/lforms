@@ -456,7 +456,7 @@ describe('Util library', function() {
       qPart.meta.profile = ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7'];
       LForms.FHIR.R4.SDC._handleMeta(qPart, true);
       assert.deepEqual(qPart.meta.profile, ['http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7', defaultProfiles.R4]);
-      
+
       // Conversion to R4B
       qPart.meta.profile = ['http://hl7.org/fhir/4.3/StructureDefinition/Questionnaire'];
       LForms.FHIR.R4B.SDC._handleMeta(qPart);
@@ -711,10 +711,10 @@ describe('Util library', function() {
   });
 
   describe('LForms.Util.checkForInvalidHtmlTags()', () => {
-    let notAllowedTags = ['html', 'head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
-    let deprecatedTags = ['acronym', 'applet', 'basefont', 'big', 'blink', 'center', 'dir', 'embed', 'font', 
+    const NOT_ALLOWED_TAGS = ['html', 'head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
+    const DEPRECATED_TAGS = ['acronym', 'applet', 'basefont', 'big', 'blink', 'center', 'dir', 'embed', 'font',
         'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'tt', 'u'];
-    let TAGS_WITH_URL = {
+    const TAGS_WITH_URL = {
       "a": ["href"],
       "area": ["href"],
       "blockquote": ["cite"],
@@ -730,26 +730,26 @@ describe('Util library', function() {
       "tract": ["src"],
       "video": ["poster","src"]
     }
-    let TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR = {
+    const TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR = {
       "img": "srcset",
-      "source": "srcset" 
+      "source": "srcset"
     }
-    
+
     // test forbid tags
-    notAllowedTags.forEach(tag => {
+    NOT_ALLOWED_TAGS.forEach(tag => {
       it('should find the not allowed tags and attributes - ' + tag, () => {
         let sourceHTML = `<${tag}>A not allowed tag</${tag}>`;
         let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
         assert.equal(invalidTagsAttributes[0].tag, tag );
-      })      
+      })
     });
     // test deprecated tags
-    deprecatedTags.forEach(tag => {
+    DEPRECATED_TAGS.forEach(tag => {
       it('should find the deprecated tags and attributes - ' + tag, () => {
         let sourceHTML = `<${tag}>A deprecated tag</${tag}>`;
         let invalidTagsAttributes  = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-        assert.equal(invalidTagsAttributes[0].tag, tag); 
-      })      
+        assert.equal(invalidTagsAttributes[0].tag, tag);
+      })
     });
     // test tags with an attribute that has an url
     for (const [tag, urlAttrs] of Object.entries(TAGS_WITH_URL)) {
@@ -757,18 +757,18 @@ describe('Util library', function() {
         it('should find an attribute with an invalid url - ' + tag + ':' + urlAttr, () => {
           let sourceHTML = `<${tag} ${urlAttr}='https://a_url'>A tag with an attribute whose value is an invalid url.</${tag}>`;
           let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-          assert.equal(invalidTagsAttributes[0].tag, tag); 
+          assert.equal(invalidTagsAttributes[0].tag, tag);
           assert.equal(invalidTagsAttributes[0].attribute, urlAttr);
         })
         it('should find an attribute with a local url as valid - ' + tag + ':' + urlAttr, () => {
           let sourceHTML = `<${tag} ${urlAttr}='/a_url'>A tag with an attribute whose value is a local url.</${tag}>`;
           let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-          assert.equal(invalidTagsAttributes.length, 0); 
+          assert.equal(invalidTagsAttributes.length, 0);
         })
         it('should find an attribute with a local ID as valid - ' + tag + ':' + urlAttr, () => {
           let sourceHTML = `<${tag} ${urlAttr}='#a_id'>A tag with an attribute whose value is a local id.</${tag}>`;
           let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-          assert.equal(invalidTagsAttributes.length, 0); 
+          assert.equal(invalidTagsAttributes.length, 0);
         })
       })
     };
@@ -777,18 +777,18 @@ describe('Util library', function() {
       it('should find an attribute with multiple urls, where one or more urls are invalid - ' + tag + ':' + urlAttr, () => {
         let sourceHTML = `<${tag} ${urlAttr}='https://a_url, https://b_url'>A tag with an attribute that has one or more invalid urls.</${tag}>`;
         let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-        assert.equal(invalidTagsAttributes[0].tag, tag); 
+        assert.equal(invalidTagsAttributes[0].tag, tag);
         assert.equal(invalidTagsAttributes[0].attribute, urlAttr);
       })
       it('should find an attribute with a local url as valid - ' + tag + ':' + urlAttr, () => {
         let sourceHTML = `<${tag} ${urlAttr}='/a_url', '/b_url>A tag with an attribute whose value are a local url.</${tag}>`;
         let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-        assert.equal(invalidTagsAttributes.length, 0); 
+        assert.equal(invalidTagsAttributes.length, 0);
       })
       it('should find an attribute with a local ID as valid - ' + tag + ':' + urlAttr, () => {
         let sourceHTML = `<${tag} ${urlAttr}='#a_id, #a_id'>A tag with an attribute whose value are a local id.</${tag}>`;
         let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-        assert.equal(invalidTagsAttributes.length, 0); 
+        assert.equal(invalidTagsAttributes.length, 0);
       })
     };
 
