@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [35.1.0] 2034-02-05
 ### Added
-- Added the support for checking and filtering invalid html tags and attributes
+- Added the support for detecting invalid html tags and attributes
   in the html version of the help text.
 
 ## [35.0.0] 2023-12-21

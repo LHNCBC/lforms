@@ -127,7 +127,7 @@ about the meaning of each key:
       item's text. The default is false.
     * displayScoreWithAnswerText  - a boolean that controls whether to display scores along 
       with answer texts for answers that have scores. The default is true.
-    * displayInvalidHTML - a boolean that controls whether to show the filtered html content 
+    * displayInvalidHTML - a boolean that controls whether to show the escaped html content 
       from the rendering-xhtml extension if it contains invalid tags or attributes. 
       The default value is false, which means if the HTML content is not valid, 
       the text content will be used/displayed (even if the text is empty).
