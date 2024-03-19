@@ -562,14 +562,19 @@ const FormUtils = {
         }
         return ret;
       });
-      var foundR5 = this._testValues(fhirData, 'item', function(item) {
-        let ret = !!(
-          item.disabledDisplay ||
-          item.answerConstraint ||
-          item.type === 'coding');
-        return ret;
-      });
-      version = foundSTU3 ? 'STU3' : foundR5 ? 'R5' : 'R4';
+      if (foundSTU3) {
+        version = 'STU3';
+      }
+      else {
+        var foundR5 = this._testValues(fhirData, 'item', function(item) {
+          let ret = !!(
+            item.disabledDisplay ||
+            item.answerConstraint ||
+            item.type === 'coding');
+          return ret;
+        });
+        version = foundR5 ? 'R5' : 'R4';
+      }
     }
     // R4 and R5 QuestionnaireResponses are too similar
     else if (fhirData.resourceType == 'QuestionnaireResponse') {

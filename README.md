@@ -98,8 +98,8 @@ You need to include the following files in your project:
    FHIR Questionnaires:
    - `fhir/lformsFHIRAll.min.js`
    - `fhir/R5/lformsFHIR.min.js`
-   - `fhir/R4/lformsFHIR.min.js`
    - `fhir/R4B/lformsFHIR.min.js`
+   - `fhir/R4/lformsFHIR.min.js`
    - `fhir/STU3/lformsFHIR.min.js`
 
 There is an example of an app using these files at
