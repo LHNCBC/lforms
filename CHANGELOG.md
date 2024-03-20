@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.0.4] 2024-03-08
+### Updated
+- Updated autocomplete-lhc version to include loading indicator.
+
 ## [35.0.3] 2024-02-20
 ### Updated
 - autocomplete-lhc version.

@@ -96,6 +96,10 @@
   background-color: #E8E8E8;
 }
 
+span.loading-indicator-container {
+  width: 100%;
+}
+
 /* buttons in tables */
 .lhc-de-button {
   width: 22px;
@@ -372,7 +376,7 @@ screen_reader_only {
 .lhc-form .ant-checkbox-disabled+span,
 .lhc-form .ant-radio-disabled+span,
 .lhc-form input:disabled,
-.lhc-form .ant-picker-input>input-disabled, 
+.lhc-form .ant-picker-input>input-disabled,
 .lhc-form .ant-picker-input>input[disabled],
 .lhc-form .lhc-item-readyonly {
   color: rgba(0,0,0,.75);
