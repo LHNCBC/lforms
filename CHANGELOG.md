@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.0.5] 2024-03-21
+### Fixed
+- Fixed a bug in "npm run start-public"
+
 ## [35.0.4] 2024-03-08
 ### Updated
 - Updated autocomplete-lhc version to include loading indicator.

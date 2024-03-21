@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "35.0.4",
+  "version": "35.0.5",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -17,8 +17,8 @@
     "start": "start-server-and-test start:fhir-dev http://localhost:$npm_package_config_testPortFhir start:lforms-dev",
     "start:lforms-dev": "ng serve --configuration=debugging",
     "start:fhir-dev": "webpack serve -c webpack.fhir.config.js --host localhost --env debugging=true",
-    "start-public": "node bin/start-public.js",
-    "start-dist-public": "node bin/start-public.js  --dist",
+    "start-public": "start-server-and-test start:fhir-dev http://localhost:$npm_package_config_testPortFhir start-public:lforms-dev",
+    "start-public:lforms-dev": "node bin/start-public.js",
     "build:lforms-dev:update": "npm run build:lforms-dev && npm run build:prepare-zip",
     "build:lforms-dev": "ng build --configuration=debugging --extra-webpack-config webpack.lforms.extra.config.js && node concatenate.js",
     "build:lforms": "ng build --configuration production --extra-webpack-config webpack.lforms.extra.config.js && node concatenate.js",
