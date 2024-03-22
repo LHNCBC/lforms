@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.1.0] 2024-03-22
+### Updated
+- Upgraded angular to v17
+- Upgraded cypress to v13
+
+## [35.0.4] 2024-03-08
+### Updated
+- Updated autocomplete-lhc version to include loading indicator.
+
 ## [35.0.3] 2024-02-20
 ### Updated
 - autocomplete-lhc version.
