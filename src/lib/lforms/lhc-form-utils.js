@@ -1034,7 +1034,7 @@ const FormUtils = {
 
 
   /**
-   * Check and return not allowed tags when the HTML version of the help text
+   * Check and return not allowed tags within the HTML version of the help text.
    * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
    * https://hl7.org/fhir/R4/narrative.html for allowed subset of the HTML tags.
    * @param {*} htmlNarrative
