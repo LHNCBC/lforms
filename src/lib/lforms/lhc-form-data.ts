@@ -108,8 +108,8 @@ export default class LhcFormData {
     // This option decides the minimum level of the messages to be displayed underneath the item.
     // The allowed values are 'info', 'warning', 'error' and null. Selecting the 'info' level will
     // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
-    // 'warning' and 'error' messages. The default value is 'error', which means no messages will be
-    // displayed. No messages will be displayed if meggeageLevel is null.
+    // 'warning' and 'error' messages. The default value is 'error'.
+    // No messages will be displayed if meggeageLevel is null.
     messageLevel: "error"
   };
 
