@@ -2,11 +2,28 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [35.1.0] 2034-02-05
+## [35.1.0] 2034-03-29
 ### Added
 - Added the support for detecting invalid html tags and attributes
   in the html version of the help text.
 
+## [35.0.4] 2024-03-08
+### Updated
+- Updated autocomplete-lhc version to include loading indicator.
+
+## [35.0.3] 2024-02-20
+### Updated
+- autocomplete-lhc version.
+
+## [35.0.2] 2024-02-16
+### Fixed
+- answerValueSet items in repeated groups was not rendered properly.
+
+## [35.0.1] 2024-02-06
+### Fixed
+- Fixed a bug that enableWhen breaks when there is a loop of references to 
+  the items in enableWhen.question.
+  
 ## [35.0.0] 2023-12-21
 ### Fixed
 - QuestionnaireResponse no longer contains answers to child questions of
