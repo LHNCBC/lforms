@@ -887,13 +887,20 @@ function addCommonSDCImportFns(ns) {
    */
   qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
     let mismatchItem = [];
-    let itemsInBoth = qr.item[0].item.filter((obj1) => {
-      let matched = formData.items[0].items.some((obj2) => {
-        return obj1.linkId === obj2.linkId;
-      });
+    // Extract items from the questionnaire response based on the view type
+    // qr.item[0].item is for LForms grid view and qr.item is for normal LForms view
 
+    let items = qr.item[0].item ? qr.item[0].item : qr.item;
+
+    let itemsInBoth = items.filter(qrItem => {
+      let matched = false;
+      if (formData.items[0].items) {
+        matched = formData.items[0].items.some(formDataItem => qrItem.linkId === formDataItem.linkId);
+      } else {
+        matched = formData.items.some(formDataItem => qrItem.linkId === formDataItem.linkId);
+      }
       if (!matched) {
-        mismatchItem.push(obj1.linkId);
+        mismatchItem.push(qrItem.linkId);
       }
       return matched;
       //Handle the missmatch between questionnaire and questionnaireResponse 
@@ -902,7 +909,10 @@ function addCommonSDCImportFns(ns) {
     if (mismatchItem.length > 0) {
       console.log('Mismatched items linkId:', mismatchItem);
     }
-    qr.item[0].item = itemsInBoth;
+
+    // Update questionnaire response items with filtered items
+    qr.item[0].item ? qr.item[0].item = itemsInBoth : qr.item = itemsInBoth;
+
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
       // not to set item values by default values for saved forms with user data
