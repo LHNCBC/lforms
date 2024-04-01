@@ -32,7 +32,7 @@ export class LhcButtonPopoverComponent implements OnInit {
   /**
    * Send the popover content to screen reader log when the popover button is clicked
    */
-  onShowingPopver(): void {
+  onShowingPopover(): void {
     let title = this.popoverType === "copyright-string" ? "Copyright notice:" : "Instruction:"
     let content, contentId;
 

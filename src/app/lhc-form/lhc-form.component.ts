@@ -117,7 +117,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
               let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
                 // convert it to a lforms form data
-                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q);
+                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.options);
               }
             }
             self.lhcFormData = new LhcFormData(q);

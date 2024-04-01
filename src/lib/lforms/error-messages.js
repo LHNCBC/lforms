@@ -15,6 +15,9 @@ export const ErrorMessages = {
     },
     'MultipleValuesForNonRepeat': {
       'en': 'An attempt was made to assign multiple values to a non-repeating item.'
+    },
+    'invalidTagInHelpHTMLContent': {
+      'en': 'Invalid HTML tags/attributes found in the help text.'
     }
   },
 

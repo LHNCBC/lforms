@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.1.0] 2034-03-29
+### Added
+- Added the support for detecting invalid html tags and attributes
+  in the html version of the help text.
+
 ## [35.0.4] 2024-03-08
 ### Updated
 - Updated autocomplete-lhc version to include loading indicator.

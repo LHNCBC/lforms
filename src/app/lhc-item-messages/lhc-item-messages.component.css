@@ -8,6 +8,9 @@
 
 .lhc-item-error {
   background-color: orange;
+  margin: 2px 0 2px 2px;
+  border-radius: 4px;
+  padding: 2px 4px 2px 4px;
 }
 
 .lhc-item-warning {
