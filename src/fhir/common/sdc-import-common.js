@@ -943,7 +943,12 @@ function addCommonSDCImportFns(ns) {
     }
 
     // Update questionnaire response items with filtered items
-    qr.item[0].item ? qr.item[0].item = itemsInBoth : qr.item = itemsInBoth;
+    if (qr.item && qr.item[0] && qr.item[0].item) {
+      qr.item[0].item = itemsInBoth;
+    } 
+    else {
+      qr.item = itemsInBoth;
+    }
 
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
