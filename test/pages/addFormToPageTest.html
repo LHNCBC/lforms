@@ -64,11 +64,26 @@
     <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
 
     <script>
-
-      window.onload = function() {
-        var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
-        LForms.Util.setFHIRContext(fhirAPI);
+      // Sometimes the tests fail because either FHIR or LForms is not defined.
+      // Not sure why, but maybe waiting will help?
+      let wait = 0, waitInterval = 100, maxWait = 3000;
+      function setFHIRContext() {
+        if (!window.FHIR || !window.LForms || !LForms.FHIR) {
+          if (wait > maxWait) {
+            throw('Could not load ' + (!window.FHIR ? 'FHIR client' : !window.LForms ? 'LForms' :
+              'LForms.FHIR') + ' in ' + maxWait + ' ms');
+          }
+          else {
+            wait += waitInterval;
+            setTimeout(setFHIRContext, waitInterval);
+          }
+        }
+        else {
+          let fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
+          LForms.Util.setFHIRContext(fhirAPI);
+        }
       }
+      window.onload = setFHIRContext;
     </script>
 
     <script>
