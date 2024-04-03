@@ -180,10 +180,13 @@ function addCommonSDCImportFns(ns) {
    * Convert FHIR SQC Questionnaire to LForms definition
    *
    * @param fhirData - FHIR Questionnaire object
+   * @param options - LForms options object
    * @returns {{}} - LForms json object
    */
-  self.convertQuestionnaireToLForms = function (fhirData) {
+  self.convertQuestionnaireToLForms = function (fhirData, options) {
     var target = null;
+    if (options) 
+      self._widgetOptions = options;
 
     if(fhirData) {
       target = LForms.Util.baseFormDef();
@@ -1530,7 +1533,7 @@ function addCommonSDCImportFns(ns) {
   self._processCodingInstructions = function(qItem) {
     // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
     // which in LForms is an attribute of the parent item, not a separate item.
-    let ret = null;
+    let helps, errors, messages;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     let xhtmlFormat;
     if ( qItem.type === "display" && ci) {
@@ -1541,15 +1544,33 @@ function addCommonSDCImportFns(ns) {
 
       // there is a xhtml extension
       if (xhtmlFormat) {
-        ret = {
+        helps = {
           codingInstructionsFormat: "html",
           codingInstructions: xhtmlFormat.valueString,
           codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
         };
+        // check if html string contains invalid html tags, when the html version needs to be displayed
+        if (self._widgetOptions?.allowHTMLInInstructions) {
+          let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+            helps.codingInstructionsHasInvalidHtmlTag = true;
+            errors = {};
+            errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
+            messages = [{errors}];
+            // print detailed errors messages in console
+            console.log("Possible invalid HTML tags/attributes found in help text:")
+            invalidTagsAttributes.forEach(ele => {
+              if (ele.attribute)
+                console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
+              else if (ele.tag)
+                console.log("  - Element: " + ele.tag);
+            });
+          }
+        }
       }
       // no xhtml extension, default to 'text'
       else {
-        ret = {
+        helps = {
           codingInstructionsFormat: "text",
           codingInstructions: qItem.text,
           codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
@@ -1557,7 +1578,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
 
-    return ret;
+    return [helps, messages];
   };
 
 
@@ -1572,12 +1593,16 @@ function addCommonSDCImportFns(ns) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var help = self._processCodingInstructions(qItem.item[i]);
+        var [help, messages] = self._processCodingInstructions(qItem.item[i]);
+        if (messages) {
+          LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructions');
+        }
         // pick one coding instruction if there are multiple ones in Questionnaire
-        if (help !== null) {
+        if (help) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
           targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
+          targetItem.codingInstructionsHasInvalidHtmlTag = help.codingInstructionsHasInvalidHtmlTag;
         }
         else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);

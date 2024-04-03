@@ -26,6 +26,9 @@
         background-color: #337ab7;
         border-color: #2e6da4;
       }
+      .option-checkbox {
+        margin: 2px 8px;
+      }
       .hide {
         display: none;
       }
@@ -37,9 +40,20 @@
 
     <div id="lforms-form">
       <div class="panel panel-default">
-        <div class="panel-heading">LForms Build Test Page with FHIR Context</div>
+        <h3 class="panel-heading">LForms Build Test Page with FHIR Context</h3>
         <div class="panel-body">
           <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
+          <div id="tempOptionList">
+            <div>LHC-Forms options:</div>
+            <div>
+              <span class="option-checkbox"><label><input type="checkbox" id="allowHTMLInInstructions" />
+                  allowHTMLInInstructions</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" />
+                  displayInvalidHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" />
+                  showCodingInstruction</label></span>
+            </div>
+          </div>
           <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
           <select id="fhirVersion">
             <option value="R4">R4</option>
@@ -112,14 +126,32 @@
       function loadFile(event) {
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
-        var questionnaire;
+        var questionnaire, options = { 'messageLevel': 'info' };
+        var allowHTMLInInstructions = document.querySelector('#allowHTMLInInstructions').checked,
+            displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
+            showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+
         reader.onload = function() {
           var questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
 
           try {
-            LForms.Util.addFormToPage(questionnaire, 'formContainer').then(function() {
+            // Set the options values when the option checkboxes have non-default values.
+            // Do not set the options with the default values, which will overwrite the 
+            // options values within the lforms data file (not affecting Questionnaires as options
+            // are not included in Questionnaires).
+            if (allowHTMLInInstructions) {
+              options["allowHTMLInInstructions"] = true;
+            }
+            if (displayInvalidHTML) {
+              options["displayInvalidHTML"] = true;
+            }
+            if (showCodingInstruction) {
+              options["showCodingInstruction"] = true;
+            }
+
+            LForms.Util.addFormToPage(questionnaire, 'formContainer', options).then(function() {
               console.log("Form Added successfully")
             })
             .catch(function(e) {

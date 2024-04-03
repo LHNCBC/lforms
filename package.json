@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "35.1.0",
+  "version": "35.2.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -63,6 +63,7 @@
     "deep-equal": "^2.2.3",
     "fast-copy": "^3.0.1",
     "fhirpath": "3.2.0",
+    "htmlparser2": "^9.1.0",
     "jquery": "^3.7.1",
     "moment": "2.29.4",
     "ng-zorro-antd": "^17.3.0",

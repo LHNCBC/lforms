@@ -14,6 +14,8 @@ import version from '../../version.json';
 
 import Validation from "./lhc-form-validation.js"
 
+var errorMessages = InternalUtil.errorMessages;
+
 //import LForms from "./lforms";
 // const LForms = (window as any).LForms;
 declare var LForms: any;
@@ -97,7 +99,18 @@ export default class LhcFormData {
     // whether to hide repetition numbers next to the item's text
     hideRepetitionNumber: false,
     // whether to display score along with text when there scores in answers
-    displayScoreWithAnswerText: true
+    displayScoreWithAnswerText: true,
+    // whether to show the filtered html content from the rendering-xhtml extension
+    // if it contains invalid tags or attributes. The default value is false, which
+    // means if the HTML content is not valid, the text content will be used/displayed
+    // (even if the text is empty).
+    displayInvalidHTML: false,
+    // This option decides the minimum level of the messages to be displayed underneath the item.
+    // The allowed values are 'info', 'warning', 'error' and null. Selecting the 'info' level will
+    // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
+    // 'warning' and 'error' messages. The default value is 'error'.
+    // No messages will be displayed if meggeageLevel is null.
+    messageLevel: "error"
   };
 
   // other instance level variables that were not previously listed
@@ -941,25 +954,48 @@ export default class LhcFormData {
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
 
-      // recreate the answerOption to add or remove the scores from display texts
-      if (scoreFlagChanged) {
+      // recreate the answerOption to add or remove the scores from display texts,
+      // when the lhcFormData instance has been initialized.
+      if (scoreFlagChanged && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
           if (!!item._hasAnswerList && item._hasScoreInAnswer)
             this._updateAutocompOptions(item);
         }
       }
-      // update html version of help text with contained images when needed
-      if (this._containedImages &&
-          this.templateOptions.allowHTMLInInstructions) {
+      // update and check the html version of help text,
+      // when the lhcFormData instance has been initialized.
+      if (this.templateOptions.allowHTMLInInstructions && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
           if (item.codingInstructions &&
               item.codingInstructions.length > 0 &&
-              item.codingInstructionsFormat === "html" &&
-              item.codingInstructions.match(/img/) &&
-              item.codingInstructions.match(/src/)) {
-            this._setCodingInstructionsWithContainedImages(item);
+              item.codingInstructionsFormat === "html") {
+            // process contained images
+            if (this._containedImages &&
+                item.codingInstructions.match(/img/) &&
+                item.codingInstructions.match(/src/)) {
+              this._setCodingInstructionsWithContainedImages(item);
+            }
+            let errors, messages;
+            // check if html string contains invalid html tags, when the html version needs to be displayed
+            let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
+            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(helpHTML);
+              if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+              item.codingInstructionsHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
+              messages = [{errors}];
+              // print detailed errors messages in console
+              console.log("Possible invalid HTML tags/attributes found in help text:")
+              invalidTagsAttributes.forEach(ele => {
+                if (ele.attribute)
+                  console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
+                else if (ele.tag)
+                  console.log("  - Element: " + ele.tag);
+              });
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
+            }
           }
         }
       }
@@ -3635,7 +3671,6 @@ export default class LhcFormData {
       }
       item._codingInstructionsWithContainedImages = doc.body.innerHTML;
     }
-
   }
 
 };
