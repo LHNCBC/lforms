@@ -88,7 +88,7 @@
             <span class="option-checkbox"><label><input type="checkbox" id="allowHTMLInInstructions" /> allowHTMLInInstructions</label></span>
             <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
             <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
-          </div>          
+          </div>
         </div>
         <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load
           From File</button>
@@ -173,13 +173,10 @@
        */
       function loadFormList() {
         let formList = document.getElementById("form-list");
-        testForms.forEach(form => {
+        testForms.forEach((form, index) => {
           let option = document.createElement("option");
           option.text = form.text;
-          option.value = JSON.stringify({
-            url: "/test/data/lforms/" + form.name + ".json",
-            tempOptions: form.tempOptions,
-            formOptions: form.formOptions})
+          option.value = index;
           formList.add(option);
         })
       }
@@ -195,15 +192,15 @@
       /**
        * Load and display a form
        */
-      async function fetchAndDisplayForm(strForm) {
-        let jsonForm = JSON.parse(strForm)
-        let formData = await loadJsonFromUrl(jsonForm.url);
+      async function fetchAndDisplayForm(formInfo) {
+        let url = "/test/data/lforms/" + formInfo.name + ".json";
+        let formData = await loadJsonFromUrl(url);
         testForm.questionnaire = formData;
-        if (jsonForm.formOptions) {
-          Object.assign(formData,jsonForm.formOptions)
+        if (formInfo.formOptions) {
+          Object.assign(formData,formInfo.formOptions)
         }
-        if (jsonForm.tempOptions) {
-          testForm.options = jsonForm.tempOptions;
+        if (formInfo.tempOptions) {
+          testForm.options = formInfo.tempOptions;
         }
 
       }
@@ -221,7 +218,7 @@
         let fhirVersion = this.getFHIRVersion();
 
         if (formList.value) {
-          fetchAndDisplayForm(formList.value);
+          fetchAndDisplayForm(testForms[formList.value]);
         }
       };
 
@@ -415,23 +412,23 @@
         var allowHTMLInInstructions = document.querySelector('#allowHTMLInInstructions').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
-        
+
         reader.onload = function() {
           var questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
           testForm.questionnaire = questionnaire;
-          testForm.fhirVersion = getFHIRVersion()          
+          testForm.fhirVersion = getFHIRVersion()
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.
           testForm.prepop = window.prepopulateFHIR;
           var options = { 'messageLevel': 'info' };
           // Set the options values when the option checkboxes have non-default values.
-          // Do not set the options with the default values, which will overwrite the 
+          // Do not set the options with the default values, which will overwrite the
           // options values within the lform data file (not affecting Questionnaires as options
           // are not included in Questionnaires).
           if(allowHTMLInInstructions) {
-            options["allowHTMLInInstructions"] = true; 
+            options["allowHTMLInInstructions"] = true;
           }
           if (displayInvalidHTML) {
             options["displayInvalidHTML"] = true;
@@ -439,7 +436,7 @@
           if (showCodingInstruction) {
             options["showCodingInstruction"] = true;
           }
-          
+
           testForm.options = options
 
         };
@@ -573,7 +570,7 @@
     <!-- ES2017 files of the LHC-Forms web component -->
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/jszip/vendor/FileSaver.js"></script>
-    <script src="/assets/lib/zone.min.js"></script>
+    <script src="/assets/lib/zone.umd.min.js"></script>
     <script src="/runtime.js"></script>
     <script src="/polyfills.js"></script>
     <script src="/main.js"></script>

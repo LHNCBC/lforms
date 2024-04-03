@@ -1,28 +1,33 @@
 <ng-container *ngIf="item">
-  <nz-radio-group 
-    [ngModel]="radioValue" 
+  <nz-radio-group
+    [ngModel]="radioValue"
     (ngModelChange)="onModelChange($event)"
-    [nzDisabled]="item._readOnly"
     role="radiogroup"
     [nzName]="'radiogroup_' + item._elementId"
     attr.aria-labelledby="label-{{ item._elementId }}"
     (click)="lhcDataService.setActiveRow(item)">
-    <label 
-      nz-radio 
+    <label
+      nz-radio
+      [nzDisabled]="item._readOnly"
+      [disabled]="item._readOnly"
       [nzValue]="true"
-      [(ngModel)]="booleanModels[0]" 
+      [(ngModel)]="booleanModels[0]"
       [id]="item._elementId + 'true'"
       >Yes</label>
     <label
-      nz-radio 
+      nz-radio
+      [nzDisabled]="item._readOnly"
+      [disabled]="item._readOnly"
       [nzValue]="false"
-      [(ngModel)]="booleanModels[1]" 
+      [(ngModel)]="booleanModels[1]"
       [id]="item._elementId + 'false'"
       >No</label>
     <label
-      nz-radio 
+      nz-radio
+      [nzDisabled]="item._readOnly"
+      [disabled]="item._readOnly"
       [nzValue]="null"
-      [(ngModel)]="booleanModels[2]" 
+      [(ngModel)]="booleanModels[2]"
       [id]="item._elementId + 'null'"
       >Not Answered</label>
   </nz-radio-group>

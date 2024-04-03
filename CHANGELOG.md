@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [35.2.0] 2024-04-03
+### Updated
+- Upgraded angular to v17
+- Upgraded cypress to v13
+
 ## [35.1.0] 2034-03-29
 ### Added
 - Added the support for detecting invalid html tags and attributes

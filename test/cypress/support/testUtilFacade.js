@@ -62,12 +62,26 @@ export const TestUtil = {
 
 
   /**
+   * Wait for LForms to be loaded.
+   */
+  waitForLFormsLoaded() {
+    cy.window().then(win => {
+      let LForms = win.LForms;
+      cy.wrap({1: 2}).should(()=> {
+        // not sure this wrap is needed, but without it sometimes the expect fails.
+        expect(typeof(LForms) === "object").to.be.true;
+      });
+    });
+  },
+
+
+  /**
    * Wait for the externally linked FHIR libraries to be loaded.
    */
   waitForFHIRLibsLoaded() {
     cy.window().then(win => {
       let LForms = win.LForms;
-      expect(typeof(LForms.FHIR) === "object" && typeof(LForms.FHIR.R4) === "object" && typeof(LForms.FHIR.STU3) === "object").to.be.true;
+      expect(typeof(LForms) === "object" && typeof(LForms.FHIR) === "object" && typeof(LForms.FHIR.R4) === "object" && typeof(LForms.FHIR.STU3) === "object").to.be.true;
     });
   },
 

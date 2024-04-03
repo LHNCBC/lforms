@@ -15,7 +15,7 @@ module.exports = function (config) {
     files: [
       {pattern: 'test/data/**/*.json', included: false, served: true},
       { pattern: './node_modules/jquery/dist/jquery.min.js', watched: false },
-      { pattern: './node_modules/zone.js/dist/zone.min.js', watched: false }
+      { pattern: './node_modules/zone.js/bundles/zone.umd.min.js', watched: false }
     ],
     client: {
       clearContext: false // leave Jasmine Spec Runner output visible in browser

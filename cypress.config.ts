@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress';
 import { config } from './package.json';
 
 export default defineConfig({
+  retries: 2,
   videosFolder: 'test/cypress/videos',
   video: false,
   screenshotsFolder: 'test/cypress/screenshots',
@@ -14,6 +15,7 @@ export default defineConfig({
     },
     specPattern: 'test/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'test/cypress/support/index.ts',
-    baseUrl: 'http://localhost:'+config.testPort
+    baseUrl: 'http://localhost:'+config.testPort,
+    testIsolation: false
   },
 });

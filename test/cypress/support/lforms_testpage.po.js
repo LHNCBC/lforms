@@ -2,6 +2,7 @@
 //const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
 //const elementFactory = TestUtil.elementFactory;
 import {setFHIRVersion} from './util';
+import {TestUtil} from './testUtilFacade';
 
 export class TestPage {
 
@@ -320,6 +321,9 @@ export class TestPage {
    */
   openBaseTestPage() {
     cy.visit(this.testPageUrl);
+    // For some reason, LForms is sometimes not present yet.  Try waiting for
+    // it.
+    TestUtil.waitForLFormsLoaded();
     cy.window().then((win) => {
       // Reduce the duration that validation messages stay, to have faster tests.
       win.LForms.Validations._timeout = 100;
