@@ -1,6 +1,6 @@
 {
   "/lforms/fhir": {
-    "target": "http://localhost:5206",
+    "target": "http://localhost:4201",
     "secure": false,
     "logLevel": "debug"
   }

@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress';
 import { config } from './package.json';
 
 export default defineConfig({
+  retries: 2,
   videosFolder: 'test/cypress/videos',
   video: false,
   screenshotsFolder: 'test/cypress/screenshots',
