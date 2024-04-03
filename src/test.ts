@@ -19,10 +19,6 @@ getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting()
 );
-// Then we find all the tests.
-const context = require.context('./', true, /\.spec\.ts$/);
-// And load the modules.
-context.keys().map(context);
 
 // TODO: load fhir unit tests
 //const fhirContext = require.context('../test/karma', true, /\.spec\.js$/)

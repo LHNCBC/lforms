@@ -72,7 +72,7 @@
           "dataType": "DT",
           "units": "",
           "header": false,
-          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>coding instruction",
           "codingInstructionsFormat": "html",
           "linkId": "/54126-8/21112-8"
         },

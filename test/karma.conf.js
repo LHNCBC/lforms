@@ -35,7 +35,6 @@ module.exports = function(config) {
       {pattern: 'test/data/**/*.js', included: true, served: true},
       {pattern: 'dist/lforms/webcomponent/*.js.map', included: false, served: true},
       'dist/lforms/webcomponent/assets/lib/zone.min.js',
-      'dist/lforms/webcomponent/scripts.js',
       'dist/lforms/webcomponent/runtime.js',
       'dist/lforms/webcomponent/polyfills.js',
       'dist/lforms/webcomponent/main.js',

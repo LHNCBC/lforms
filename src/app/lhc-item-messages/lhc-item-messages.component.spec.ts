@@ -52,7 +52,9 @@ describe('LhcItemMessagesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should not show messages by default', ()=>{
+  it('should not show messages if the level is set to null', ()=>{
+    lfData.setMessageLevel(null);
+    fixture.detectChanges();
     const componentDe: DebugElement = fixture.debugElement;
     const errorDe = componentDe.query(By.css('.lhc-item-error'));
     expect(errorDe).toBeNull();
@@ -63,6 +65,16 @@ describe('LhcItemMessagesComponent', () => {
     expect(component.showInfo()).toBe(false);
   });
 
+  it('should show error messages by default', ()=>{
+    const componentDe: DebugElement = fixture.debugElement;
+    const errorDe = componentDe.query(By.css('.lhc-item-error'));
+    expect(errorDe.nativeElement).toBeTruthy();
+    expect(component.showErrors()).toBe(true);
+    const warningDe = componentDe.query(By.css('.lhc-item-warning'));
+    expect(warningDe).toBeNull();
+    expect(component.showWarnings()).toBe(false);
+    expect(component.showInfo()).toBe(false);
+  });
 
   it('should show only error messages if the level is set to "error"', ()=>{
     lfData.setMessageLevel('error');
