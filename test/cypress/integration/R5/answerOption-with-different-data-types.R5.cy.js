@@ -1,3 +1,4 @@
+import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
 import { AddFormToPageTestPage } from "../../support/addFormToPageTest.po";
 import * as util from "../../support/util";
 
@@ -5,27 +6,26 @@ let fhirVersions = ["R5"];
 const po = new AddFormToPageTestPage();
 
 function testOneValueType(valueType, params, fhirVersion, fileName, answerConstraint) {
-  // valueString
-  describe(fhirVersion + " - " + valueType, () => {
 
-    it('should render a questionnaire with '+valueType+' in answerOption', function() {
+  describe(fhirVersion + " - " + valueType + " - " + answerConstraint, () => {
+
+    it('should render a questionnaire with answerOption where item.type='+valueType +' and item.answerConstraint=' + answerConstraint, function() {
       util.addFormToPage(fileName, null, {fhirVersion});
-
       // group 1
       // autocomplete, non-repeats
       cy.byId(params.itemIds.g1item1)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
       // raidobutoon
@@ -43,15 +43,15 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
         // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
 
       // group 4
       // radiobutton, prefix, score
@@ -65,8 +65,8 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
 
       // group 5
       // autocomplete, non-repeats, initial
-      // for open-choice, the initial value is free text
-      if (valueType === "valueCoding.open-choice") {
+      // for optionsOrString, the initial value is free text
+      if (answerConstraint === "optionsOrString") {
         cy.byId(params.itemIds.g5item1)
           .should('be.visible')
           .should('have.value', "user typed value");
@@ -79,36 +79,26 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
       // autocomplete, repeats, initial
       cy.byId(params.itemIds.g5item2)
         .should('be.visible');
-      if (fhirVersion === 'R4') {
+
+      cy.byId(`item-${params.itemIds.g5item2}`)
+        .byCss('span.autocomp_selected li')
+        .should('have.length', 2)
+      cy.byId(`item-${params.itemIds.g5item2}`)
+        .byCss('span.autocomp_selected li')
+        .eq(0)
+        .should('have.text', '×' + params.itemValues.g1Answer2)
+      // for optionsOrString, the 2nd initial value is free text
+      if (answerConstraint === "optionsOrString") {
         cy.byId(`item-${params.itemIds.g5item2}`)
-          .byCss('span.autocomp_selected li')
-          .should('have.length', 2)
-        cy.byId(`item-${params.itemIds.g5item2}`)
-          .byCss('span.autocomp_selected li')
-          .eq(0)
-          .should('have.text', '×' + params.itemValues.g1Answer2)
-        // for open-choice, the 2nd initial value is free text
-        if (valueType === "valueCoding.open-choice") {
-          cy.byId(`item-${params.itemIds.g5item2}`)
-            .byCss('span.autocomp_selected li')
-            .eq(1)
-            .should('have.text', '×' + 'user typed value')
-        }
-        else {
-          cy.byId(`item-${params.itemIds.g5item2}`)
           .byCss('span.autocomp_selected li')
           .eq(1)
-          .should('have.text', '×' + params.itemValues.g1Answer3)
-        }
+          .should('have.text', '×' + 'user typed value')
       }
       else {
         cy.byId(`item-${params.itemIds.g5item2}`)
-          .byCss('span.autocomp_selected li')
-          .should('have.length', 1)
-        cy.byId(`item-${params.itemIds.g5item2}`)
-          .byCss('span.autocomp_selected li')
-          .eq(0)
-          .should('have.text', '×' + params.itemValues.g1Answer2)   
+        .byCss('span.autocomp_selected li')
+        .eq(1)
+        .should('have.text', '×' + params.itemValues.g1Answer3)
       }
 
       // group 6
@@ -116,13 +106,13 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
       cy.byId(params.itemIds.g6item1ans2)
           .should('be.visible')
           .should('contain',params.itemValues.g1Answer2);
-      // for open-choice, the initial value is free text
-      if (valueType === "valueCoding.open-choice") {
+      // for optionsOrString, the initial value is free text
+      if (answerConstraint === "optionsOrString") {
         cy.byId(`${params.itemIds.g6item1ans2} input`)
           .should('not.be.checked');
-        cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+        cy.byId(`${valueType}-group6-item1/1/1_other input`)
           .should('be.checked');
-        cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+        cy.byId(`${valueType}-group6-item1/1/1_otherValue`)
           .should('be.visible')
           .should('have.value', "user typed value")
       }
@@ -142,42 +132,38 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
       cy.byId(params.itemIds.g6item2ans3)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer3);
-      if (fhirVersion === 'R4') {
-        if (valueType === "valueCoding.open-choice") {
-          cy.byId(`${params.itemIds.g6item2ans3} input`)
-            .should('not.be.checked');
-          cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
-            .should('be.checked');
-          cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
-            .should('be.visible')
-            .should('have.value', "user typed value")
-        }
-        else {
-          cy.byId(`${params.itemIds.g6item2ans3} input`)
-            .should('be.checked');
-        }
+
+      if (answerConstraint === "optionsOrString") {
+        cy.byId(`${params.itemIds.g6item2ans3} input`)
+          .should('not.be.checked');
+        cy.byId(`${valueType}-group6-item2/1/1_other input`)
+          .should('be.checked');
+        cy.byId(`${valueType}-group6-item2/1/1_otherValue`)
+          .should('be.visible')
+          .should('have.value', "user typed value")
       }
       else {
         cy.byId(`${params.itemIds.g6item2ans3} input`)
-          .should('not.be.checked');
+          .should('be.checked');
       }
 
     });
 
-    it('should get a correct QR from a questionnaire with '+valueType+' in answerOption, and should merge back to the questionnaire', function() {
+    it('should get a correct QR from a questionnaire with answerOption where item.type='+valueType +' and item.answerConstraint=' + answerConstraint +
+        ', and should merge back to the questionnaire', function() {
       // group 1
       // autocomplete, non-repeats
       cy.byId(params.itemIds.g1item1)
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
 
       // group 2
       // raidobutoon
@@ -193,13 +179,13 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
       // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
 
       // group 4
       // radiobutton, prefix, score
@@ -222,41 +208,32 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
         expect(qr.item[2].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         expect(qr.item[3].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         expect(qr.item[3].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        if (valueType === "valueCoding.open-choice") {
+        if (answerConstraint === "optionsOrString") {
           expect(qr.item[4].item[0].answer).to.deep.equal([{"valueString": "user typed value"}])
         }
         else {
           expect(qr.item[4].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         }
-        
-        if (fhirVersion === 'R4') {
-          if (valueType === "valueCoding.open-choice") {
-            expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
-          }
-          else {
-            expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])           
-          }
+
+        if (answerConstraint === "optionsOrString") {
+          expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
         }
         else {
-          expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
+          expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])
         }
-        if (valueType === "valueCoding.open-choice") {
+
+        if (answerConstraint === "optionsOrString") {
           expect(qr.item[5].item[0].answer).to.deep.equal([{"valueString": "user typed value"}])
         }
         else {
-          expect(qr.item[5].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])          
+          expect(qr.item[5].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         }
-        
-        if (fhirVersion === 'R4') {
-          if (valueType === "valueCoding.open-choice") {
-            expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
-          }
-          else {
-            expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])           
-          }
+
+        if (answerConstraint === "optionsOrString") {
+          expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
         }
         else {
-          expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
+          expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])
         }
 
 
@@ -267,7 +244,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
           let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
           expect(mergedFormData.hasSavedData).to.equal(true)
           util.addFormToPage(mergedFormData, null, {fhirVersion});
-          
+
           // user data sould be displayed
           // group 1
           // autocomplete, non-repeats
@@ -276,11 +253,11 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
           // autocomplete, repeats
           cy.byId(`item-${params.itemIds.g1item2}`)
             .byCss('span.autocomp_selected li')
-            .should('have.length', 1)          
+            .should('have.length', 1)
           cy.byId(`item-${params.itemIds.g1item2}`)
             .byCss('span.autocomp_selected li')
             .eq(0)
-            .should('have.text', '×' + params.itemValues.g1Answer2)       
+            .should('have.text', '×' + params.itemValues.g1Answer2)
 
           // group 2
           // raidobutoon
@@ -297,11 +274,11 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
           // autocomplete, repeats, prefix, score
           cy.byId(`item-${params.itemIds.g3item2}`)
             .byCss('span.autocomp_selected li')
-            .should('have.length', 1)             
+            .should('have.length', 1)
           cy.byId(`item-${params.itemIds.g3item2}`)
             .byCss('span.autocomp_selected li')
             .eq(0)
-            .should('have.text', '×' + params.itemValues.g3Answer2)   
+            .should('have.text', '×' + params.itemValues.g3Answer2)
 
           // group 4
           // radiobutton, prefix, score
@@ -313,7 +290,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
 
           // group 5
           // autocomplete, non-repeats, initial
-          if (valueType === "valueCoding.open-choice") {
+          if (answerConstraint === "optionsOrString") {
             cy.byId(params.itemIds.g5item1)
               .should('have.value', "user typed value");
           }
@@ -322,34 +299,23 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
               .should('have.value', params.itemValues.g1Answer2);
           }
           // autocomplete, repeats, initial
-          if (fhirVersion === 'R4') {
+          cy.byId(`item-${params.itemIds.g5item2}`)
+            .byCss('span.autocomp_selected li')
+            .should('have.length', 2)
+          cy.byId(`item-${params.itemIds.g5item2}`)
+            .byCss('span.autocomp_selected li').eq(0)
+            .should('have.text', '×' + params.itemValues.g1Answer2)
+            if (answerConstraint === "optionsOrString") {
             cy.byId(`item-${params.itemIds.g5item2}`)
               .byCss('span.autocomp_selected li')
-              .should('have.length', 2)
-            cy.byId(`item-${params.itemIds.g5item2}`)
-              .byCss('span.autocomp_selected li').eq(0)
-              .should('have.text', '×' + params.itemValues.g1Answer2)
-            if (valueType === "valueCoding.open-choice") {
-              cy.byId(`item-${params.itemIds.g5item2}`)
-                .byCss('span.autocomp_selected li')
-                .eq(1)
-                .should('have.text', '×' + 'user typed value')
-            }
-            else {
-              cy.byId(`item-${params.itemIds.g5item2}`)
-                .byCss('span.autocomp_selected li')
-                .eq(1)
-                .should('have.text', '×' + params.itemValues.g1Answer3)
-            }
+              .eq(1)
+              .should('have.text', '×' + 'user typed value')
           }
           else {
             cy.byId(`item-${params.itemIds.g5item2}`)
               .byCss('span.autocomp_selected li')
-              .should('have.length', 1)
-            cy.byId(`item-${params.itemIds.g5item2}`)
-                .byCss('span.autocomp_selected li')
-                .eq(0)
-                .should('have.text', '×' + params.itemValues.g1Answer2)
+              .eq(1)
+              .should('have.text', '×' + params.itemValues.g1Answer3)
           }
 
           // group 6
@@ -358,12 +324,12 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
             .should('not.be.checked');
           cy.byId(`${params.itemIds.g6item1ans3} input`)
             .should('not.be.checked');
-          if (valueType === "valueCoding.open-choice") {
+            if (answerConstraint === "optionsOrString") {
             cy.byId(`${params.itemIds.g6item1ans2} input`)
               .should('not.be.checked');
-            cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+            cy.byId(`${valueType}-group6-item1/1/1_other input`)
               .should('be.checked');
-            cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+            cy.byId(`${valueType}-group6-item1/1/1_otherValue`)
               .should('be.visible')
               .should('have.value', "user typed value")
           }
@@ -377,31 +343,25 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
             .should('not.be.checked');
           cy.byId(`${params.itemIds.g6item2ans2} input`)
             .should('be.checked');
-          if (fhirVersion === 'R4') {
-            if (valueType === "valueCoding.open-choice") {
-              cy.byId(`${params.itemIds.g6item2ans3} input`)
-                .should('not.be.checked');
-              cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
-                .should('be.checked');
-              cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
-                .should('be.visible')
-                .should('have.value', "user typed value")
-            }
-            else {
-              cy.byId(`${params.itemIds.g6item2ans3} input`)
-                .should('be.checked');
-            }
+          if (answerConstraint === "optionsOrString") {
+            cy.byId(`${params.itemIds.g6item2ans3} input`)
+              .should('not.be.checked');
+            cy.byId(`${valueType}-group6-item2/1/1_other input`)
+              .should('be.checked');
+            cy.byId(`${valueType}-group6-item2/1/1_otherValue`)
+              .should('be.visible')
+              .should('have.value', "user typed value")
           }
           else {
             cy.byId(`${params.itemIds.g6item2ans3} input`)
-              .should('not.be.checked');
+              .should('be.checked');
           }
 
         });
       });
-      
-    
-      
+
+
+
     });
 
   });
@@ -464,7 +424,7 @@ describe('AnswerOption with different types', () => {
         }
 
       };
-      
+
 
       let qrItemValues = {
         'valueString': {
@@ -493,9 +453,9 @@ describe('AnswerOption with different types', () => {
           g1Answer3 : {"valueCoding": {"code": "c3", "display": "Answer 3"}}
         }
       };
-      
+
       let itemIds = ((valueType, itemValues) => {
-        let coding = (valueType === "valueCoding.choice" || valueType === "valueCoding.open-choice") 
+        let coding = (valueType === "valueCoding");
 
         return {
           g1item1 : `${valueType}-group1-item1/1/1`,
@@ -526,13 +486,14 @@ describe('AnswerOption with different types', () => {
           itemIds: ids,
           itemValues: values,
           qrItemValues: qrItemValues[valueType]
-        }
+        };
+
         ["optionsOnly", "optionsOrString"].forEach(answerConstraint => {
           let fileName = `answerOption/answerOption-${valueType}.${answerConstraint}.${fhirVersion}.json`;
-        
+
           testOneValueType(valueType, params, fhirVersion, fileName, answerConstraint);
         })
-        
+
       });
 
     })(fhirVersions[i]);
@@ -540,5 +501,5 @@ describe('AnswerOption with different types', () => {
 });
 
 
-  
+
 
