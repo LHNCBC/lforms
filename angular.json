@@ -55,9 +55,9 @@
                 "src/favicon.ico",
                 "src/assets",
                 {
-                  "glob": "zone.min.js",
-                  "input": "node_modules/zone.js/dist/",
-                  "output": "assets/lib"
+                  "glob": "zone.umd.min.js",
+                  "input": "node_modules/zone.js/bundles/",
+                  "output": "assets/lib/"
                 }
               ],
               "optimization": true,
@@ -101,9 +101,9 @@
                   "output": "test/data"
                 },
                 {
-                  "glob": "zone.min.js",
-                  "input": "node_modules/zone.js/dist/",
-                  "output": "assets/lib"
+                  "glob": "zone.umd.min.js",
+                  "input": "node_modules/zone.js/bundles/",
+                  "output": "assets/lib/"
                 },
                 {
                   "glob": "**",
@@ -171,10 +171,11 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
+              "src/assets",
               {
-                "glob": "zone.min.js",
-                "input": "node_modules/zone.js/dist/",
-                "output": "assets/lib"
+                "glob": "zone.umd.min.js",
+                "input": "node_modules/zone.js/bundles/",
+                "output": "assets/lib/"
               }
             ],
             "styles": [

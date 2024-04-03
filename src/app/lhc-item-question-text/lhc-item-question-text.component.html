@@ -41,11 +41,20 @@
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
        ></div>
+      <div *ngSwitchCase="'inline-plain'" 
+            id="help-{{ item._elementId }}" 
+            class="lhc-inline-help"
+            attr.aria-label="Help for question {{item.question}}" 
+            attr.aria-describedby="label-{{ item._elementId }}"
+      >{{item.codingInstructionsPlain}}</div>
       <ng-container *ngSwitchCase="'popover-escaped'">
         <lhc-button-popover [item]="item" [popoverType]="'help-string'"></lhc-button-popover>
        </ng-container>
       <ng-container *ngSwitchCase="'popover-html'">
         <lhc-button-popover [item]="item" [popoverType]="'help-html'"></lhc-button-popover>
+      </ng-container>
+      <ng-container *ngSwitchCase="'popover-plain'">
+        <lhc-button-popover [item]="item" [popoverType]="'help-plain'"></lhc-button-popover>
       </ng-container>
     </span>
     <!-- copyright -->

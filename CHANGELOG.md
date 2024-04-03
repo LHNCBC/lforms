@@ -2,9 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [35.0.5] 2024-03-21
+## [35.2.1] 2024-04-03
 ### Fixed
 - Fixed a bug in "npm run start-public"
+
+## [35.2.0] 2024-04-02
+### Updated
+- Upgraded angular to v17
+- Upgraded cypress to v13
+
+## [35.1.0] 2034-03-29
+### Added
+- Added the support for detecting invalid html tags and attributes
+  in the html version of the help text.
 
 ## [35.0.4] 2024-03-08
 ### Updated
