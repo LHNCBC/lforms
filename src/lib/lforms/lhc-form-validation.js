@@ -108,7 +108,7 @@ const Validation = {
           valid = regex.test(value);
           break;
         case "TM":  // time
-          var regex = /^([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9])(\.[0-9]+)?$/;
+          var regex = /^([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?$/;
           valid = regex.test(value);
           break;
         case "YEAR":
