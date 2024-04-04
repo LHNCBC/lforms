@@ -2,7 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [35.2.0] 2024-04-03
+## [35.2.1] 2024-04-03
+### Fixed
+- Fixed a bug in "npm run start-public"
+
+## [35.2.0] 2024-04-02
 ### Updated
 - Upgraded angular to v17
 - Upgraded cypress to v13

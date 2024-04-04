@@ -146,14 +146,13 @@
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "browserTarget": "lforms:build:debugging"
+            "browserTarget": "lforms:build:debugging",
+            "proxyConfig": "./proxy.conf.json"
           },
           "configurations": {
             "debugging": {
-              "proxyConfig": "./proxy.conf.json"
             },
             "production": {
-              "browserTarget": "lforms:build:debugging"
             }
           }
         },
