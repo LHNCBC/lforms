@@ -180,18 +180,18 @@ other questions</li>
 
 <p>LHC-Forms can be used either as a prebuilt package or installed using
 <a href="https://www.npmjs.com/">npm</a> (<code>npm
-install lforms</code>, but see the note <a href="#npmInstall">below</a> about the
+install lforms</code>), but see the note <a href="#npmInstall">below</a> about the
 npm installation).  If you aren't using npm, the simplest way to start using
 LHC-Forms is by linking to the prebuilt version hosted on
-clinicaltables.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
+lhcforms-static.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
 </p>
 <dl>
-  <dt>CSS</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/styles.css</dd>
+  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/styles.css</dd>
   <dt>JavaScript</dt>
   <dd>
     <ol style="padding-left: 0">
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/assets/lib/zone.min.js</li>
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/lhc-forms.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/assets/lib/zone.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/lhc-forms.js</li>
     </ol>
     <p>The zone.min.js file should be left out if you already have that in your
     page (e.g. if the page contains an Angular app).</p>
@@ -201,23 +201,22 @@ clinicaltables.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
   support.  The first file provides support for STU3 and R4 versions of FHIR,
   and the other two provide support for one specific version.
     <ul style="padding-left: 0">
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/34.0.0/fhir/lformsFHIRAll.min.js</li>
-      <li><b>OR</b> https://clinicaltables.nlm.nih.gov/lforms-versions/34.0.0/fhir/R4/lformsFHIR.min.js</li>
-      <li><b>OR</b> https://clinicaltables.nlm.nih.gov/lforms-versions/34.0.0/fhir/STU3/lformsFHIR.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/lformsFHIRAll.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/R4/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/STU3/lformsFHIR.min.js</li>
     </ul>
   </dd>
 </dl>
 
 <p>Note that the URLs contain a release version number, 34.0.0, for which you
 can substitute any of the other prebuilt versions (34 or higher) available at
-https://clinicaltables.nlm.nih.gov/lforms-versions.</p>
+https://lhcforms-static.nlm.nih.gov/lforms-versions.</p>
 
-<p>For production applications, it is probably better to download these files
-and serve them from your server, to avoid introducing a dependency on the
-clinicaltables servers, though you may continue to link to clinicaltables if you
-wish.  Zip files of each version's files are avaialble at
+<p>For production applications, if you would prefer to download these files
+and serve them from your server to avoid introducing a dependency on the
+lhcforms-static servers, zip files of each version's files are avaialble at
 <a
-href="https://clinicaltables.nlm.nih.gov/lforms-versions">https://clinicaltables.nlm.nih.gov/lforms-versions</a>.</p>
+href="https://lhcforms-static.nlm.nih.gov/lforms-versions">https://lhcforms-static.nlm.nih.gov/lforms-versions</a>.</p>
 
 <p id=npmInstall>If you decide to use the npm package, note that for now the JavaScript files
 do not work when the package is required or imported, so you will still need to
