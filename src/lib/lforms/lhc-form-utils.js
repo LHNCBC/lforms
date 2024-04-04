@@ -4,6 +4,7 @@
  */
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
+import * as htmlparser2 from "htmlparser2";
 
 const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
@@ -1038,6 +1039,105 @@ const FormUtils = {
     // definition.
     return item.answerCardinality && item.answerCardinality.max &&
       (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+  },
+
+
+  /**
+   * Check and return not allowed tags within the HTML version of the help text.
+   * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
+   * https://hl7.org/fhir/R4/narrative.html for allowed subset of the HTML tags.
+   * @param {*} htmlNarrative
+   * @return [{array}] an array of invalid tags and attibutes
+   */
+  checkForInvalidHtmlTags: function(htmlNarrative) {
+    let invalidTagsAttributes=[];
+    let notAllowedTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
+    let deprecatedTags = ['acronym', 'applet', 'basefont', 'big', 'blink', 'center', 'dir', 'embed', 'font',
+        'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'tt', 'u'];
+    const FORBID_TAGS = notAllowedTags.concat(deprecatedTags);
+    const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i;
+    const FORBID_ATTR = ['style'];
+
+    // Tags (not in the FORBID_TAGS list above) that could have a URL value.
+    // See https://stackoverflow.com/questions/2725156/complete-list-of-html-tag-attributes-which-have-a-url-value
+    // TBD: A full url in 'cite' might not be invalid.
+    const TAGS_WITH_URL = {
+      "a": ["href"],
+      "area": ["href"],
+      "blockquote": ["cite"],
+      "del": ["cite"],
+      "img": ["langdesc","src","usemap"],
+      "input": ["src","usemap"],
+      "ins": ["cite"],
+      "q": ["cite"],
+      "audio": ["src"],
+      "button": ["formaction"],
+      "input": ["formaction"],
+      "source": ["src"],
+      "tract": ["src"],
+      "video": ["poster","src"]
+    }
+    // Some tags have multiple URL values in an attributes. For example:
+    // <img srcset="/image4x.jpg 4x, /image3x.jpg 3x, /image2x.jpg 2x, /image1x.jpg 1x"
+    //      src="/image.jpg">
+    const TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR = {
+      "img": "srcset",
+      "source": "srcset"  //'srcset' has one URL when <source> is included in <picture> and <video> (where multiple <source> tags are used instead).
+    }
+
+    const parser = new htmlparser2.Parser({
+      onopentag(name, attributes) {
+        // check tags
+        FORBID_TAGS.forEach(tag => {
+          if (name.toLocaleLowerCase() === tag) {
+            invalidTagsAttributes.push({"tag": tag});
+          }
+        });
+        // check attributes with one URL value
+        for (const [tag, urlAttrs] of Object.entries(TAGS_WITH_URL)) {
+          if (name.toLocaleLowerCase() === tag) {
+            for (const [attr, value] of Object.entries(attributes)) {
+              urlAttrs.forEach(urlAttr => {
+                if(attr.toLocaleLowerCase() === urlAttr && !value.match(ALLOWED_URI_REGEXP)) {
+                  invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
+                }
+              })
+            }
+          }
+        };
+        // check attributes that chould have multiple URL values
+        for (const [tag, urlAttr] of Object.entries(TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR)) {
+          if (name.toLocaleLowerCase() === tag) {
+            for (const [attr, value] of Object.entries(attributes)) {
+              if(attr.toLocaleLowerCase() === urlAttr) {
+                let urlValues = value.split(",");
+                urlValues.forEach(urlValue => {
+                  if (!urlValue.trim().match(ALLOWED_URI_REGEXP)) {
+                    invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
+                  }
+                })
+              }
+            }
+          }
+        };
+        // check attributes
+        for (const [attr, value] of Object.entries(attributes)) {
+          FORBID_ATTR.forEach(forbidAttr => {
+            if(attr.toLocaleLowerCase() === forbidAttr) {
+              invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbidAttr });
+            }
+          });
+        }
+
+      }
+
+      // Do nothing on onclosetag(name, attributes) {}
+    });
+
+    parser.write(htmlNarrative);
+    parser.end();
+
+    return invalidTagsAttributes;
   }
 
 };

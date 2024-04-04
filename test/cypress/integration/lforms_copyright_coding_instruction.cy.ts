@@ -35,17 +35,10 @@ describe('popover buttons', () => {
 
   // coding instructions
   describe('coding instructions help message', () => {
-    const popoverHTMLLink1 = 'a[href="http://lforms-demo1.nlm.nih.gov"]';
-    const popoverHTMLLink2 = 'a[href="http://lforms-demo2.nlm.nih.gov"]';
-    const popoverHTMLLink3 = 'a[href="http://lforms-demo3.nlm.nih.gov"]';
-
     const inline1 = 'help-/type1/1';
     const inline2 = 'help-/type2/1';
     const inline3 = 'help-/type3/1';
 
-    const inlineHTMLLink1 = 'a[href="http://lforms-demo1.nlm.nih.gov"]';
-    const inlineHTMLLink2 = 'a[href="http://lforms-demo2.nlm.nih.gov"]';
-    const inlineHTMLLink3 = 'a[href="http://lforms-demo3.nlm.nih.gov"]';
     const helpButton0 = 'help-button-/type0/1'; // text formatted content, no 'codingInstructionsFormat'
     const helpButton1 = 'help-button-/type1/1'; // html formatted content, no 'codingInstructionsFormat'
     const helpButton2 = 'help-button-/type2/1'; // html formatted content, 'codingInstructionsFormat' is 'text'
@@ -77,22 +70,21 @@ describe('popover buttons', () => {
 
       cy.byId(helpButton1).click();
       cy.byId(helpPopover1).should('be.visible');
-      cy.get(popoverHTMLLink1).should('not.exist');
-      cy.byId(helpPopover1).should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo1.nlm.nih.gov\'>LForms Demo 1</a>');
+      cy.byId(helpPopover1).get("button.testButton").should('not.exist');
+      cy.byId(helpPopover1).should('have.text', '<code>HTML</code> instructions, with a <button class=\'testButton\'>button</button>LForms Demo 1');
 
       cy.byId(field1).click();
       cy.byId(helpPopover1).should('not.exist');
       cy.byId(helpButton2).click();
       cy.byId(helpPopover2).should('be.visible');
-      cy.get(popoverHTMLLink2).should('not.exist');
-      cy.byId(helpPopover2).should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo2.nlm.nih.gov\'>LForms Demo 2</a>');
+      cy.byId(helpPopover2).get("button.testButton").should('not.exist');
+      cy.byId(helpPopover2).should('have.text', '<code>HTML</code> instructions, with a <button class=\'testButton\'>button</button>LForms Demo 2');
 
       cy.byId(field1).click();
       cy.byId(helpPopover2).should('not.exist');
       cy.byId(helpButton3).click();
       cy.byId(helpPopover3).should('be.visible');
-
-      cy.byId(helpPopover3).get('a[href="http://lforms-demo3.nlm.nih.gov"]').should('be.visible');
+      cy.byId(helpPopover3).get('button.testButton').should('be.visible');
 
       // inline
       cy.window().then((win) => {
@@ -100,13 +92,12 @@ describe('popover buttons', () => {
         testForm.options = {showCodingInstruction: true};
 
         cy.byId(inline1).should('be.visible');
-        cy.byId(inline1).get(inlineHTMLLink1).should('not.exist');
+        cy.byId(inline1).byCss("button.testButton").should('not.exist');
         cy.byId(inline2).should('be.visible');
-        cy.byId(inline2).get(inlineHTMLLink2).should('not.exist');
+        cy.byId(inline2).byCss("button.testButton").should('not.exist');
         cy.byId(inline3).should('be.visible');
-
-        cy.byId('help-/type3/1').get('a').should('be.visible').should('have.attr', 'href', 'http://lforms-demo3.nlm.nih.gov');
-        cy.byId(inline3).get(inlineHTMLLink3).should('be.visible');
+        cy.byId('help-/type3/1').get('button').should('be.visible');
+        cy.byId(inline3).byCss("button.testButton").should('be.visible');
       });
     });
 
@@ -127,20 +118,21 @@ describe('popover buttons', () => {
       cy.byId(helpPopover0).should('not.exist');
       cy.byId(helpButton1).click();
       cy.byId(helpPopover1).should('be.visible');
-      cy.get(inlineHTMLLink1).should('not.exist');
-      cy.byId(helpPopover1).should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo1.nlm.nih.gov\'>LForms Demo 1</a>');
+      cy.byId(helpPopover1).byCss("button.testButton").should('not.exist');
+      cy.byId(helpPopover1).should('have.text', '<code>HTML</code> instructions, with a <button class=\'testButton\'>button</button>LForms Demo 1');
 
       cy.byId(field1).click();
       cy.byId(helpPopover1).should('not.exist');
       cy.byId(helpButton2).click();
       cy.byId(helpPopover2).should('be.visible');
-      cy.get(inlineHTMLLink2).should('not.exist');
-      cy.byId(helpPopover2).should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo2.nlm.nih.gov\'>LForms Demo 2</a>');
+      cy.byId(helpPopover2).byCss("button.testButton").should('not.exist');
+      cy.byId(helpPopover2).should('have.text', '<code>HTML</code> instructions, with a <button class=\'testButton\'>button</button>LForms Demo 2');
 
       cy.byId(field1).click();
       cy.byId(helpPopover2).should('not.exist');
       cy.byId(helpButton3).click();
-      cy.byId(helpPopover3).should('be.visible').should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo3.nlm.nih.gov\'>LForms Demo 3</a>');
+      cy.byId(helpPopover3).byCss("button.testButton").should('not.exist');
+      cy.byId(helpPopover3).should('be.visible').should('have.text', '<code>HTML</code> instructions, with a <button class=\'testButton\'>button</button>LForms Demo 3');
 
       // inline
       cy.window().then((win) => {
@@ -148,11 +140,11 @@ describe('popover buttons', () => {
         testForm.options = {showCodingInstruction: true};
 
         cy.byId(inline1).should('be.visible');
-        cy.byId(inline1).get(inlineHTMLLink1).should('not.exist');
+        cy.byId(inline1).byCss("button.testButton").should('not.exist');
         cy.byId(inline2).should('be.visible');
-        cy.byId(inline2).get(inlineHTMLLink2).should('not.exist');
+        cy.byId(inline2).byCss("button.testButton").should('not.exist');
         cy.byId(inline3).should('be.visible');
-        cy.byId(inline3).get(inlineHTMLLink3).should('not.exist');
+        cy.byId(inline3).byCss("button.testButton").should('not.exist');
       });
     });
 
@@ -167,7 +159,6 @@ describe('popover buttons', () => {
         const nameHelpButton = 'help-button-/54126-8/54125-0/1/1';
         const genderHelpButton = 'help-button-/54126-8/54131-8/1/1';
         const gender = '/54126-8/54131-8/1/1';
-        const popoverHTMLLink = 'a[href="http://google.com"]';
         const popover = '.lhc-help-54126-8-54125-0-1-1 .ant-popover-inner-content';
 
         cy.byId(nameHelpButton).should('be.visible');
@@ -176,15 +167,15 @@ describe('popover buttons', () => {
         // HTML formatted coding instructions
         cy.byId(nameHelpButton).click();
         cy.get(popover).should('be.visible');
-        cy.get(popoverHTMLLink).should('be.visible');
+        cy.get("button.testButton").should('be.visible');
 
         cy.byId(gender).click();
-        cy.get(popoverHTMLLink).should('not.exist');
+        cy.get("button.testButton").should('not.exist');
 
         // Text coding instructions
         cy.byId(genderHelpButton).click();
         cy.get('.lhc-help-54126-8-54131-8-1-1 .ant-popover-content').should('be.visible');
-        cy.get(popoverHTMLLink).should('not.exist');
+        cy.get("button.testButton").should('not.exist');
       });
     });
 
@@ -252,7 +243,7 @@ describe('popover buttons', () => {
       // escaped HTML coding instructions, when "codingInstructionsFormat" is not set
       cy.byId(helpButton_1).click();
       cy.get(popover1).should('be.visible')
-        .should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo1.nlm.nih.gov\'>LForms Demo 1</a>');
+        .should('have.text', '<code>HTML</code> instructions, with a <button>button</button>LForms Demo 1');
 
       cy.byId(field_1).click();
       cy.get(popover1).should('not.exist');
@@ -260,7 +251,7 @@ describe('popover buttons', () => {
       // escaped HTML coding instructions, when "codingInstructionsFormat" = "text"
       cy.byId(helpButton_2).click();
       cy.get(popover2).should('be.visible')
-        .should('have.text', '<code>HTML</code> instructions, with a <button>button</button> and a link <a href=\'http://lforms-demo2.nlm.nih.gov\'>LForms Demo 2</a>');
+        .should('have.text', '<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2');
 
       cy.byId(field_1).click();
       cy.get(popover2).should('not.exist');
@@ -269,9 +260,9 @@ describe('popover buttons', () => {
       cy.byId(helpButton_3).click();
       cy.get(popover3)
         .should('be.visible')
-        .should('have.text', 'HTML instructions, with a button and a link LForms Demo 3')
-        .get('a')
-        .should('have.attr', 'href', 'http://lforms-demo3.nlm.nih.gov');
+        .should('have.text', 'HTML instructions, with a buttonLForms Demo 3')
+      cy.get(popover3).byCss("button")
+        .should('be.visible');
 
       cy.byId(field_1).click();
       cy.get(popover3).should('not.exist');
@@ -374,6 +365,113 @@ describe('images in coding instructions', () => {
       //make the popover disappear
       cy.byCss(".lhc-form-title .lhc-question").eq(0).click({force: true});
       cy.byCss("#help-content-c/1").should("not.exist");
+    })
+  });
+
+})
+
+describe('invalid html tags/attributes in coding instructions', () => {
+  describe('regular text shown inline', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "messageLevel": "error",
+          "allowHTMLInInstructions": true,
+          "displayInvalidHTML": false,
+          "showCodingInstruction": true });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the regular help text", ()=>{
+      cy.byCss("#help-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "A plain text instruction.");
+    })
+
+  });
+
+  describe('escaped invalid html shown in inline', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4",
+          "messageLevel": "error", 
+          "allowHTMLInInstructions": true,
+          "displayInvalidHTML": true,
+          "showCodingInstruction": true });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the escaped html", ()=>{
+      cy.byCss("#help-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
+    })
+
+  });
+
+  describe('regular text shown popover', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "messageLevel": "error",
+          "allowHTMLInInstructions": true,
+           "displayInvalidHTML": false,
+          "showCodingInstruction": false });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the regular help text", ()=>{
+      cy.byId("help-button-item1/1").click()
+
+      cy.byCss("#help-content-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "A plain text instruction.");
+    })
+
+   
+  });
+
+  describe('escaped invalid html shown in popover', ()=>{
+    before(() => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+        { "fhirVersion": "R4", 
+          "messageLevel": "error",
+          "allowHTMLInInstructions": true,
+           "displayInvalidHTML": true,
+          "showCodingInstruction": false });
+    });
+
+    it("should show an error message", ()=>{
+      cy.byCss("#item-item1/1 .lhc-item-error").eq(0)
+        .should("be.visible")
+        .should("have.text", "Error: Invalid HTML tags/attributes found in the help text.");
+    })
+
+    it("should show the escaped html", ()=>{
+      cy.byId("help-button-item1/1").click()
+
+      cy.byCss("#help-content-item1/1").eq(0)
+        .should("be.visible")
+        .should("have.text", "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
     })
   });
 

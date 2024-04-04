@@ -176,10 +176,18 @@ export class LhcDataService {
     if (item.codingInstructions && item.codingInstructions.length > 0) {
       var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
       if (this.lhcFormData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
-        var format = "html";        
+        var format = "html";  // use item.codingInstructions (safe html)     
+        if (item.codingInstructionsHasInvalidHtmlTag) {
+          if (this.lhcFormData.templateOptions.displayInvalidHTML) {
+            format = "escaped" // use item.codingInstructions (escaped)
+          }
+          else {
+            format = "plain"; // use item.codingInstructionsPlain
+          }
+        }
       }
       else {
-        format = "escaped";
+        format = "escaped"; // use item.codingInstructions
       }
       ret = position + "-" + format;
     }

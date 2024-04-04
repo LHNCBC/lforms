@@ -12,7 +12,7 @@
       "questionCode": "q1",
       "header": false,
       "units": null,
-      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo.nlm.nih.gov'>LForms Demo</a>",
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo",
       "codingInstructionsFormat": "html",
       "value": "no data type",
       "questionCardinality": null,

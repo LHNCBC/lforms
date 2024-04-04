@@ -1,44 +1,48 @@
 
 <div *ngIf="item" >
-  <nz-radio-group 
-    [ngModel]="radioValue" 
+  <nz-radio-group
+    [ngModel]="radioValue"
     (ngModelChange)="onRadioModelChange($event)"
-    [nzDisabled]="item._readOnly" 
+    [nzDisabled]="item._readOnly"
     [nzName]="'radiogroup_' + item._elementId"
     attr.aria-labelledby="label-{{ item._elementId }}"
     role="radiogroup"
-    nz-row 
+    nz-row
     class="lhc-radio-group"
     [ngClass]="{'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl)}">
-    <label 
-      *ngFor="let answer of acOptions.listItems; index as i" 
-      class="lhc-answer" 
+    <label
+      *ngFor="let answer of acOptions.listItems; index as i"
+      class="lhc-answer"
       nz-radio
+      [nzDisabled]="item._readOnly"
+      [disabled]="item._readOnly"
       (click)="lhcDataService.setActiveRow(item)"
-      [nzValue]="item.answers[i]" 
-      [(ngModel)]="radioModels[i]" 
+      [nzValue]="item.answers[i]"
+      [(ngModel)]="radioModels[i]"
       [id]="lhcDataService.getItemAnswerId(item, answer)">
       {{answer._displayText}}
     </label>
 
-    <label 
-      *ngIf="item.answerConstraint === 'optionsOrString'" 
+    <label
+      *ngIf="item.answerConstraint === 'optionsOrString'"
       nz-radio
+      [nzDisabled]="item._readOnly"
+      [disabled]="item._readOnly"
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="{'text': otherValue, '_notOnList': true}"
-      [(ngModel)]="otherRadioModel" 
-      [id]="item._elementId + '_other'" 
+      [(ngModel)]="otherRadioModel"
+      [id]="item._elementId + '_other'"
       class="lhc-answer">
       Other
-      <input 
-        type="text" 
+      <input
+        type="text"
         [ngModel]="otherValue"
         (ngModelChange)="onOtherValueChange($event)"
         class="lhc-answer-other-input"
-        [id]="item._elementId + '_otherValue'" 
-        nz-input 
+        [id]="item._elementId + '_otherValue'"
+        nz-input
         [disabled]="item._readOnly"
-        *ngIf="radioValue && radioValue._notOnList" 
+        *ngIf="radioValue && radioValue._notOnList"
         (focus)="lhcDataService.setActiveRow(item)"/>
     </label>
   </nz-radio-group>

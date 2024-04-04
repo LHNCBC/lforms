@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.0.0] 2024-02-23
+## [36.0.0] 2024-04-04
 ### Changed
 - Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
   replaced them with type 'CODING' and an 'answerConstraint' attribute.
@@ -12,6 +12,24 @@ This project follows [Semantic Versioning](http://semver.org/).
   'optionsOrString are supported. 'OptionsOrType' is not supported yet.
 - Added the support of item.type changes R5. Added 'coding' and removed
   'choice' and 'open-choice'.
+
+## [35.2.1] 2024-04-03
+### Fixed
+- Fixed a bug in "npm run start-public"
+
+## [35.2.0] 2024-04-02
+### Updated
+- Upgraded angular to v17
+- Upgraded cypress to v13
+
+## [35.1.0] 2034-03-29
+### Added
+- Added the support for detecting invalid html tags and attributes
+  in the html version of the help text.
+
+## [35.0.4] 2024-03-08
+### Updated
+- Updated autocomplete-lhc version to include loading indicator.
 
 ## [35.0.3] 2024-02-20
 ### Updated
