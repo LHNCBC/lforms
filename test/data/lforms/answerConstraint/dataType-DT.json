@@ -1,0 +1,519 @@
+{
+  "name": "Answers with DT type, no answerConstraint",
+  "items": [
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueDate - autocomplete",
+      "questionCode": "valueDate-group1",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueDate-group1",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "DT",
+          "question": "valueDate",
+          "questionCode": "valueDate-group1-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group1-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "DT",
+          "question": "valueDate - repeats",
+          "questionCode": "valueDate-group1-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group1-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueDate - radiocheckbox",
+      "questionCode": "valueDate-group2",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueDate-group2",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "DT",
+          "question": "valueDate",
+          "questionCode": "valueDate-group2-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group2-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "DT",
+          "question": "valueDate - repeats",
+          "questionCode": "valueDate-group2-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group2-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueDate - prefix- score",
+      "questionCode": "valueDate-group3",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueDate-group3",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "DT",
+          "question": "valueDate",
+          "questionCode": "valueDate-group3-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group3-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "2022-09",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "2022-09-20",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "DT",
+          "question": "valueDate - repeats",
+          "questionCode": "valueDate-group3-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group3-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "2022-09",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "2022-09-20",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueDate - radiocheckbox - prefix - score",
+      "questionCode": "valueDate-group4",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueDate-group4",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "DT",
+          "question": "valueDate",
+          "questionCode": "valueDate-group4-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group4-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "2022-09",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "2022-09-20",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "DT",
+          "question": "valueDate - repeats - prefix - score",
+          "questionCode": "valueDate-group4-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group4-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "2022-09",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "2022-09-20",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueDate - autocomplete - initial",
+      "questionCode": "valueDate-group5",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueDate-group5",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "DT",
+          "question": "valueDate",
+          "questionCode": "valueDate-group5-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group5-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+          "defaultAnswer": {
+            "text": "2022-09"
+          },
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "DT",
+          "question": "valueDate - repeats",
+          "questionCode": "valueDate-group5-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group5-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueDate - radiocheckbox - initial",
+      "questionCode": "valueDate-group6",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueDate-group6",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "DT",
+          "question": "valueDate",
+          "questionCode": "valueDate-group6-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group6-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+          "defaultAnswer": {
+            "text": "2022-09"
+          },
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "DT",
+          "question": "valueDate - repeats",
+          "questionCode": "valueDate-group6-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueDate-group6-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "2022"
+            },
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "text": "2022-09"
+            },
+            {
+              "text": "2022-09-20"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    }
+  ]
+}

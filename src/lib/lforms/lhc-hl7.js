@@ -154,8 +154,8 @@ const LhcHL7 = {
     {"seq":43,"len":200	,"dt":"CE", "opt":"O","name":"Planned Patient Transport Comment"}
   ],
 
-  getHL7V2DataType: function(lformsDataType) {
-
+  getHL7V2DataType: function(lfItem) {
+    var lformsDataType = lfItem.dataType;
     var ret;
     switch (lformsDataType) {
       case "INT":
@@ -168,9 +168,15 @@ const LhcHL7 = {
       case "DT":
       case "DTM":
       case "TM":
-      case "CNE":
-      case "CWE":
-          ret = lformsDataType;
+        ret = lformsDataType;
+        break;
+      case "CODING":
+        if (!lfItem.answerConstraint || lfItem.answerConstraint === 'optionsOnly') {
+          ret = "CNE";
+        }
+        else if (lfItem.answerConstraint === 'optionsOrString') {
+          ret = "CWE";
+        }
         break;
       // Commenting out these cases which are handled by the default, but
       // leaving them here for reference.
@@ -349,9 +355,9 @@ const LhcHL7 = {
 
 
   /**
-   * Constructs an OBX5 for a list item (CNE/CWE)
+   * Constructs an OBX5 for a list item (CNE or CWE)
    * @param itemVal a value for a list item
-   * @param dataType the data type of the item (CNE or CWE)
+   * @param dataType the HL7 data type (CNE or CWE)
    * @return the OBX5 field string
    */
   _generateOBX5: function(itemVal, dataType, answerCS) {
@@ -427,11 +433,11 @@ const LhcHL7 = {
       else if (!LhcFormUtils.isItemValueEmpty(item.value)) {
         var isArrayVal = Array.isArray(item.value);
         var vals = isArrayVal ? item.value : [item.value];
-
+        var hl7DataType = this.getHL7V2DataType(item);
         var itemObxArray = [];
         itemObxArray[0] = "OBX";
         itemObxArray[1] = formInfo.obxIndex++;
-        itemObxArray[2] = this.getHL7V2DataType(item.dataType);
+        itemObxArray[2] = hl7DataType;
         itemObxArray[3] = item.questionCode + this.delimiters.component +
             item.question + this.delimiters.component + questionCS;
         // unit
@@ -454,8 +460,8 @@ const LhcHL7 = {
           }
 
           // OBX5 (answer value)
-          if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-            itemObxArray[5] = this._generateOBX5(val, item.dataType);
+          if (hl7DataType === 'CNE' || hl7DataType === 'CWE') {
+            itemObxArray[5] = this._generateOBX5(val, hl7DataType);
           }
           else if (item.dataType === 'DT' || item.dataType === 'DTM') {
             var dv = (typeof val === 'string')? CommonUtils.stringToDate(val): val;

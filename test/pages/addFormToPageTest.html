@@ -59,6 +59,7 @@
             <option value="R4">R4</option>
             <option value="STU3">STU3</option>
             <option value="R4B">R4B</option>
+            <option value="R5">R5</option>
           </select>
         </div>
       </div>
@@ -137,21 +138,7 @@
           fileAnchor.value = '';
 
           try {
-            // Set the options values when the option checkboxes have non-default values.
-            // Do not set the options with the default values, which will overwrite the 
-            // options values within the lforms data file (not affecting Questionnaires as options
-            // are not included in Questionnaires).
-            if (allowHTMLInInstructions) {
-              options["allowHTMLInInstructions"] = true;
-            }
-            if (displayInvalidHTML) {
-              options["displayInvalidHTML"] = true;
-            }
-            if (showCodingInstruction) {
-              options["showCodingInstruction"] = true;
-            }
-
-            LForms.Util.addFormToPage(questionnaire, 'formContainer', options).then(function() {
+            LForms.Util.addFormToPage(questionnaire, 'formContainer', {'fhirVersion':getFHIRVersion()}).then(function() {
               console.log("Form Added successfully")
             })
             .catch(function(e) {

@@ -28,7 +28,7 @@ var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     var fhir = LForms.FHIR[fhirVersion];
-    var fhirVerisonInData = fhirVersion === 'R4B' ? 'R4' : fhirVersion; 
+    var fhirVerisonInData = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
         it('should import initial.valueQuantity', ()=>{
@@ -85,7 +85,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(q.version, "a_version");
 
             let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, formData);
-            if (fhirVersion === "R4") {
+            if (fhirVersion === "R4" || fhirVersion === "R4B" || fhirVersion === "R5") {
               assert.equal(qr.questionnaire, "a_canonical_url_of_the_questionnaire|a_version");
             }
             else if (fhirVersion === "STU3") {
@@ -151,7 +151,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   for (let type of [undefined, 'Coding', 'CodeableConcept']) {
                     it('should set a '+(multiselect ? 'multiselect ' : 'single-select ')+
                        dataType+' value with '+Object.keys(fhirVal)+', and _type='+type, function() {
-                      let lfItem = {dataType, answers};
+                      let lfItem = dataType === "CWE" ?  {'dataType': 'CODING', 'answers': answers, 'answerConstraint':'optionsOrString'} :
+                          {'dataType': 'CODING', 'answers': answers};
                       let fhirVals = [JSON.parse(JSON.stringify(fhirVal))];
                       if (multiselect) {
                         fhirVals.push(JSON.parse(JSON.stringify(fhirVal2)));
@@ -192,7 +193,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               for (let multiselect of [false, true]) {
                 it('should handle off-list answers for '+
                    (multiselect ? 'multiselect' : 'single-select')+' lists', function() {
-                  let lfItem = {dataType: 'CWE', answers};
+                  let lfItem = {'dataType': 'CODING', 'answers': answers, 'answerConstraint':'optionsOrString'};
                   let fhirVals = [caseN[0]];
                   if (multiselect) {
                     fhirVals.push(caseN[1]);
@@ -218,7 +219,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             for (let multiselect of [false, true]) {
               it('should handle off-list answers for '+
                  (multiselect ? 'multiselect' : 'single-select')+' lists', function() {
-                let lfItem = {dataType: 'CWE', answers};
+                let lfItem = {'dataType': 'CODING', 'answers': answers, 'answerConstraint':'optionsOrString'};
                 let fhirVals = ['four'];
                 if (multiselect) {
                   fhirVals.push('five');
@@ -597,7 +598,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
-              "dataType": "CNE",
+              "dataType": "CODING",
               "answerCardinality": {
                 "min": "0",
                 "max": "*"
@@ -619,7 +620,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }]
               };
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
-            assert.equal(out.type, "choice");
+            if (fhirVersion === "R5") {
+              assert.equal(out.type, "coding");
+            }
+            // R4, STU3
+            else {
+              assert.equal(out.type, "choice");
+            }
+
             assert.deepEqual(out.extension, [
               {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -645,7 +653,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 row",
-              "dataType": "CNE",
+              "dataType": "CODING",
               "answerCardinality": {
                 "min": "0",
                 "max": "*"
@@ -667,7 +675,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }]
               };
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
-            assert.equal(out.type, "choice");
+            if (fhirVersion === "R5") {
+              assert.equal(out.type, "coding");
+            }
+            // R4, STU3
+            else {
+              assert.equal(out.type, "choice");
+            }
             assert.deepEqual(out.extension, [
               {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -694,7 +708,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 column",
-              "dataType": "CNE",
+              "dataType": "CODING",
               "answerCardinality": {
                 "min": "0",
                 "max": "*"
@@ -716,7 +730,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 }]
               };
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
-            assert.equal(out.type, "choice");
+            if (fhirVersion === "R5") {
+              assert.equal(out.type, "coding");
+            }
+            // R4, STU3
+            else {
+              assert.equal(out.type, "choice");
+            }
             assert.deepEqual(out.extension, [
               {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -1210,7 +1230,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(convertedLfData.items[0].items[1].answers[2].code, "LA46-8");
               // TODO - other not supported
               //assert.equal(convertedLfData.items[0].items[1].answers[2].other, "Please Specify");
-              assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
+              assert.equal(convertedLfData.items[0].items[1].dataType, "CODING");
 
               // TODO - skip logic triggers for min/max inclusive/exclusive are not supported.
               // Only skip logic 'value' works in STU3
@@ -1421,10 +1441,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 type: 'quantity'
               }]
             };
-            if(fhirVersion === 'R4' || fhirVersion === 'R4B') {
+            if(fhirVersion === 'R4' || fhirVersion === 'R4B' || fhirVersion === 'R5') {
               fhirData.item[0].initial = [{valueQuantity: {value: 222}}];
             }
-            else { // STU3
+            else if(fhirVersion === 'STU3') { // STU3
               fhirData.item[0].initialQuantity = {value: 222};
             }
 
@@ -1521,7 +1541,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(FHTData)), true);
 
               assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
-              assert.equal(fhirQ.item[0].item[1].extension, undefined);
+              assert.deepEqual(fhirQ.item[0].item[1].extension[0], {
+                url: "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                valueCodeableConcept: {
+                  coding: [
+                    {
+                      system: "http://hl7.org/fhir/questionnaire-item-control",
+                      code: "drop-down",
+                      display: "Drop down",
+                    },
+                  ],
+                  text: "Drop down",
+                },
+              });
 
               assert.equal(fhirQ.toString().match(/extension/), undefined);
               done();
@@ -1543,7 +1575,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               }]
             };
             var lfdata = fhir.SDC.convertQuestionnaireToLForms(fhirData);
-            assert.equal(lfdata.url, 'http://test-questionnaire-url'); 
+            assert.equal(lfdata.url, 'http://test-questionnaire-url');
             let qr = LForms.Util._convertLFormsToFHIRData("QuestionnaireResponse", fhirVersion, lfdata);
             if (fhirVersion === 'STU3') {
               assert.equal(qr.questionnaire, undefined)
@@ -1718,7 +1750,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert to standard QuestionnaireResponse without any extensions', function(done) {
-
             $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
               var fhirQR = LForms.Util.getFormFHIRData(
                   'QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData),
@@ -1843,7 +1874,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should properly convert to LForms answers', function () {
             var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q2');
             assert.equal(item.questionCode, '44255-8');
-            assert.equal(item.dataType, 'CNE');
+            assert.equal(item.dataType, 'CODING');
             assert.equal(item.answers[1].code, 'LA6569-3');
             assert.equal(item.answers[1].text, 'Several days');
             assert.equal(item.answers[1].score, 1);
@@ -1852,7 +1883,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should work when using url reference for contained ValueSet', function () {
             var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q9');
             assert.equal(item.questionCode, '44260-8');
-            assert.equal(item.dataType, 'CNE');
+            assert.equal(item.dataType, 'CODING');
             assert.equal(item.answers[1].code, 'LA6569-3');
             assert.equal(item.answers[1].text, 'Several days');
             assert.equal(item.answers[1].score, 1);

@@ -1,4 +1,4 @@
-import { InternalUtil } from '../lib/lforms/internal-utils.js';
+import { InternalUtil } from '../../lib/lforms/internal-utils.js';
 import {importFHIRQuantity} from './import-common.js'
 
 // TBD import this path function from fhirpath.js.  When that is done, also
@@ -265,6 +265,7 @@ function addCommonSDCImportFns(ns) {
     //A lot of parsing depends on data type. Extract it first.
     self._processExtensions(targetItem, qItem);
     self._processDataType(targetItem, qItem);
+    if (self._processAnswerConstraint) self._processAnswerConstraint(targetItem, qItem);
     self._processTextAndPrefix(targetItem, qItem);
     self._processCodeAndLinkId(targetItem, qItem);
     self._processDisplayItemCode(targetItem, qItem);
@@ -424,7 +425,7 @@ function addCommonSDCImportFns(ns) {
       let errors = {};
       let hasMessages = false;
       if (InternalUtil.hasAnswerList(lfItem)) {
-        if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
+        if (lfDataType === "CODING" ) {
           var codings = null;
           if (fhirVal._type === 'CodeableConcept') {
             codings = fhirVal.coding;
@@ -433,8 +434,8 @@ function addCommonSDCImportFns(ns) {
             codings = [fhirVal];
           }
           if (!codings) {
-            // the value or the default value could be a string for 'open-choice'/CWE
-            if (lfDataType === 'CWE') {
+            // the value or the default value could be a string for optionsOrString
+            if (lfItem.answerConstraint === 'optionsOrString') {
               answer = fhirVal;
             }
           }
@@ -458,19 +459,14 @@ function addCommonSDCImportFns(ns) {
                 }
               }
             }
-            if (!answer && lfDataType === 'CWE') { // no match in the list.
-              answer = self._processCWECNEValueInQR({valueCoding: fhirVal}, lfItem, true);
+            if (!answer && lfItem.answerConstraint === 'optionsOrString') { // no match in the list.
+              answer = self._processCODINGValueInQR({valueCoding: fhirVal}, lfItem, true);
             }
           }
         }
-        // answerOption is string, integer, data or time
+        // answerOption is string, integer, date or time
         else if (lfItem.answers) {
-          var itemAnswers = lfItem.answers;
-          for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
-            if (fhirVal === itemAnswers[j].text) {
-              answer = itemAnswers[j];
-            }
-          }
+          answer = self._processNonCodingAnswerValueInQR(fhirVal, lfItem, forDefault);
         }
       }
       else {
@@ -491,7 +487,8 @@ function addCommonSDCImportFns(ns) {
           answer = fhirVal;
         }
       }
-      answers.push(answer);
+      if (answer !== undefined || answer !== null)
+          answers.push(answer);
       messages.push(hasMessages ? {errors} : null);
     }
     return [answers, messages];
@@ -503,6 +500,8 @@ function addCommonSDCImportFns(ns) {
    *  its units as necessary, and sets error messages.
    * @param lfItem the LForms item to for which these are new values
    * @param quantity the FHIR Quantity value for the item
+   * @param forDefault if true, the intented target of the values is the item's
+   *  default value instead of the item value.
    * @return an array of two elements:  the processed/converted value (possibly
    *  null if there were an error), and an error/warning/info messages object
    *  (see _convertFHIRValues for the format) if there were messages.  In the
@@ -876,7 +875,7 @@ function addCommonSDCImportFns(ns) {
 
   // ---------------- QuestionnaireResponse Import ---------------
 
-  var qrImport = self._mergeQR;
+  var qrImport = self._mergeQR = {};
 
   /**
    * Merge a QuestionnaireResponse instance into an LForms form object
@@ -956,7 +955,7 @@ function addCommonSDCImportFns(ns) {
             this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
             // process item.answer.item, if applicable
             if(qrItemInfo.qrAnswersItemsInfo) {
-              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CNE/CWE
+              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CODING
               // moreover, each answer has already got its own item above if question repeats
               if(qrItemInfo.qrAnswersItemsInfo.length > 1) {
                 throw new Error('item.answer.item with item.answer.length > 1 is not yet supported');
@@ -1002,20 +1001,20 @@ function addCommonSDCImportFns(ns) {
           }
           break;
         case "INT":
-          if (qrValue.hasOwnProperty('valueQuantity')) {
-            item.value = qrValue.valueQuantity.value;
-            if(qrValue.valueQuantity.code) {
-              item.unit = {name: qrValue.valueQuantity.code};
-            }
+          // has an answer list
+          if (InternalUtil.hasAnswerList(item)) {
+            // answer repeats (autocomplete or checkboxes)
+            ns._processOtherAnswerOptionValueInQR(answer, item)
           }
-          else if (qrValue.hasOwnProperty('valueInteger')) {
-            // has an answer list
-            if (InternalUtil.hasAnswerList(item)) {
-              // answer repeats (autocomplete or checkboxes)
-              ns._processOtherAnswerOptionValueInQR(answer, item)
+          // normal item
+          else {
+            if (qrValue.hasOwnProperty('valueQuantity')) {
+              item.value = qrValue.valueQuantity.value;
+              if(qrValue.valueQuantity.code) {
+                item.unit = {name: qrValue.valueQuantity.code};
+              }
             }
-            // normal item
-            else {
+            else if (qrValue.hasOwnProperty('valueInteger')) {
               item.value = qrValue.valueInteger;
             }
           }
@@ -1038,7 +1037,7 @@ function addCommonSDCImportFns(ns) {
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
           // normal item
-          else {
+          else if (qrValue.hasOwnProperty('valueDate')) {
             item.value = qrValue.valueDate;
           }
           break;
@@ -1049,19 +1048,18 @@ function addCommonSDCImportFns(ns) {
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
           // normal item
-          else {
+          else if (qrValue.hasOwnProperty('valueTime')) {
             item.value = qrValue.valueTime;
           }
           break;
         case "DTM":
           item.value = qrValue.valueDateTime;
           break;
-        case "CNE":
-        case "CWE":
+        case "CODING":
           if (ns._answerRepeats(item)) {
             var value = [];
             for (var j=0,jLen=answer.length; j<jLen; j++) {
-              var val = ns._processCWECNEValueInQR(answer[j], item);
+              var val = ns._processCODINGValueInQR(answer[j], item);
               if (val) {
                 value.push(val);
               }
@@ -1069,7 +1067,7 @@ function addCommonSDCImportFns(ns) {
             item.value = value;
           }
           else {
-            var val = ns._processCWECNEValueInQR(qrValue, item);
+            var val = ns._processCODINGValueInQR(qrValue, item);
             if (val) {
               item.value = val;
             }
@@ -1082,8 +1080,8 @@ function addCommonSDCImportFns(ns) {
             ns._processOtherAnswerOptionValueInQR(answer, item)
           }
           // normal item
-          else {
-            item.value = qrValue.valueString;
+          else if (qrValue.hasOwnProperty('valueString')) {
+              item.value = qrValue.valueString;
           }
           break;
         case "TX":
@@ -1102,67 +1100,6 @@ function addCommonSDCImportFns(ns) {
       }
     }
   }
-
-
-  /**
-   * Get LForms data type from questionnaire item
-   *
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._getDataType = function (qItem) {
-    var type = 'string';
-
-    switch (qItem.type) {
-      case 'string':
-        type = 'ST';
-        break;
-      case 'group':
-        type = 'SECTION';
-        break;
-      case "choice":
-        type = 'CNE';
-        break;
-      case "open-choice":
-        type = 'CWE';
-        break;
-      case 'integer':
-        type = 'INT';
-        break;
-      case 'decimal':
-        type = 'REAL';
-        break;
-      case 'text':
-        type = 'TX';
-        break;
-      case "boolean":
-        type = 'BL';
-        break;
-      case "date":
-        //dataType = 'date';
-        type = 'DT';
-        break;
-      case "dateTime":
-        type = 'DTM';
-        break;
-      case "time":
-        type = 'TM';
-        break;
-      case "display":
-        type = 'TITLE';
-        break;
-      case "url":
-        type = 'URL';
-        break;
-      case "quantity":
-        type = 'QTY';
-        break;
-      case "attachment":
-        type = 'attachment';
-        break;
-    }
-    return type;
-  };
 
 
   /**
@@ -1401,7 +1338,7 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
+   * Handle the item.value in QuestionnaireResponse for CODING typed items
    * @param qrItemValue a value of item in QuestionnaireResponse
    * @param lfItem an item in lforms
    * @param notOnList a flag indicates if the item's value is known to be not any of the answers
@@ -1409,7 +1346,7 @@ function addCommonSDCImportFns(ns) {
    * @returns {{code: *, text: *}}
    * @private
    */
-  self._processCWECNEValueInQR = function(qrItemValue, lfItem, notOnList) {
+  self._processCODINGValueInQR = function(qrItemValue, lfItem, notOnList) {
     var retValue;
     // a valueCoding, which is one of the answers
     if (qrItemValue.valueCoding) {
@@ -1428,7 +1365,7 @@ function addCommonSDCImportFns(ns) {
       }
       // compare retValue to the item.answers
       // if not same, add "_notOnList: true" to retValue
-      else if (lfItem.dataType === 'CWE' && lfItem.answers) {
+      else if (lfItem.answerConstraint === 'optionsOrString' && lfItem.answers) {
         var found = false;
         for(var i=0, len=lfItem.answers.length; i<len; i++) {
           if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {
@@ -1442,7 +1379,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
     // a valueString, which is a user supplied value that is not in the answers
-    else if (qrItemValue.valueString) {
+    else if (qrItemValue.valueString && lfItem.answerConstraint === 'optionsOrString') {
       retValue = qrItemValue.valueString;
     }
     return retValue;
@@ -1507,15 +1444,11 @@ function addCommonSDCImportFns(ns) {
           answerText = qrItemValue.valueTime;
           break;
       }
-      if (answerText)
+      if (answerText) {
         retValue = { text: answerText };
-    }
-
-    // compare retValue to the item.answers
-    for(var i=0, len=lfItem.answers.length; i<len; i++) {
-      if (LForms.Util.areTwoAnswersSame(retValue, lfItem.answers[i], lfItem)) {
-        retValue = lfItem.answers[i];
-        break;
+      }
+      else if (lfItem.answerConstraint === "optionsOrString" && qrItemValue.valueString) {
+        retValue = qrItemValue.valueString;
       }
     }
 

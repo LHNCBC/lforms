@@ -26,8 +26,8 @@ const CONSTANTS = {
     DT: "DT",
     DTM: "DTM",
     TM: "TM",
-    CNE: "CNE",
-    CWE: "CWE",
+    CNE: "CNE", // deprecated, replaced with CODING and item.answerConstraint: 'optionsOnly'
+    CWE: "CWE",  // deprecated, replaced with CODING and item.answerConstraint: 'optionsOrType' and/or 'optionsOrString'
     NR: "NR",
     YEAR: "YEAR",
     MONTH: "MONTH",
@@ -38,7 +38,8 @@ const CONSTANTS = {
     SECTION: "SECTION",
     TITLE: "TITLE",
     QTY: "QTY",
-    BL: "BL"    // not fully supported yet
+    BL: "BL",
+    CODING: "CODING", // R5 'coding'
     // BIN:    "BIN",   // not supported yet
     // RTO:    "RTO",   // not supported yet
   },

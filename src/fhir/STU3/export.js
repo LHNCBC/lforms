@@ -1,6 +1,6 @@
 // STU3-specific export code common to DiagnosticReport and SDC.
 
-import commonExport from '../export-common.js';
+import commonExport from '../common/export-common.js';
 
 let self = Object.create(commonExport); // copies properties to self.prototype
 Object.assign(self, {

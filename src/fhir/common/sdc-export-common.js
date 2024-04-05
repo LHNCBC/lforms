@@ -50,11 +50,9 @@ function addCommonSDCExportFns(ns) {
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @returns {{}}
    */
-  self.convertLFormsToQuestionnaire = function(lfData, noExtensions) {
+  self.convertLFormsToQuestionnaire = function(lfData) {
     var target = {};
 
     if (lfData) {
@@ -68,7 +66,7 @@ function addCommonSDCExportFns(ns) {
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
         for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          var newItem = this._processItem(source.items[i], source, noExtensions);
+          var newItem = this._processItem(source.items[i], source);
           target.item.push(newItem);
         }
       }
@@ -85,16 +83,19 @@ function addCommonSDCExportFns(ns) {
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @returns {{}}
    * @private
    */
-  self._processItem = function(item, source, noExtensions) {
+  self._processItem = function(item, source) {
     var targetItem = {};
 
     // type
     targetItem.type = this._getFhirDataType(item);
+
+    // answerConstraint
+    if (this._handleAnswerConstraint) {
+      this._handleAnswerConstraint(targetItem, item)
+    }
 
     // id (empty for new record)
 
@@ -168,7 +169,7 @@ function addCommonSDCExportFns(ns) {
       targetItem.readOnly = true;
     }
 
-    this._handleChoiceField(targetItem, item, noExtensions);
+    this._handleChoiceField(targetItem, item);
     this._handleTerminologyServer(targetItem, item);
 
     // initialValue, for default values
@@ -183,7 +184,7 @@ function addCommonSDCExportFns(ns) {
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var newItem = this._processItem(item.items[i], source, noExtensions);
+        var newItem = this._processItem(item.items[i], source);
         targetItem.item.push(newItem);
       }
     }
@@ -246,8 +247,8 @@ function addCommonSDCExportFns(ns) {
     // handle special constraints for "display" item
     this._handleSpecialConstraints(targetItem, item);
 
-    // if no extensions are allowed or there is no extension, remove it
-    if (noExtensions || targetItem.extension.length === 0)
+    // if there is no extension, remove it
+    if (targetItem.extension.length === 0)
       delete targetItem.extension;
 
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
@@ -450,7 +451,7 @@ function addCommonSDCExportFns(ns) {
     if (!LForms.jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
       // for answers
-      if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE" ||
+      if (item.displayControl.answerLayout && (item.dataType ==="CODING" ||
           item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT"
           || item.dataType === "TM"))) {
         // search field
@@ -545,25 +546,6 @@ function addCommonSDCExportFns(ns) {
         "valueUrl": item.terminologyServer
       });
     }
-  };
-
-
-
-  /**
-   * Convert LForms data type to FHIR SDC data type
-   * @param item an item in the LForms form object
-   * @returns {string}
-   * @private
-   */
-  self._getFhirDataType = function(item) {
-
-    var dataType = this._getAssumedDataTypeForExport(item);
-    var type = this._lformsTypesToFHIRTypes[dataType];
-    // default is string
-    if (!type) {
-      type = 'string';
-    }
-    return type;
   };
 
 
@@ -723,7 +705,7 @@ function addCommonSDCExportFns(ns) {
   };
 
 
-  // known source data types (besides CNE/CWE) in skip logic export handling,
+  // known source data types (besides CODING) in skip logic export handling,
   // see _createEnableWhenRulesForSkipLogicCondition below
   self._skipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"]
     .reduce((map, type) => {map[type] = type; return map;}, {});
@@ -759,10 +741,10 @@ function addCommonSDCExportFns(ns) {
       // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
-      else if ( sourceDataType === 'CWE' || sourceDataType === 'CNE' ) {
+      else if ( sourceDataType === 'CODING' ) {
         let answerCoding = self._copyTriggerCoding(triggerValue, null, true);
         if (! answerCoding) {
-          throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
+          throw new Error('Invalid CODING trigger, key=' + key + '; value=' + triggerValue);
         }
         rule = { answerCoding: answerCoding };
       }
@@ -794,10 +776,9 @@ function addCommonSDCExportFns(ns) {
   /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
+   * @param source a LForms form object
    * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
    *        The default is false.
-   * @param source a LForms form object
-
    * @private
    */
   self._setResponseFormLevelFields = function(target, source, noExtensions) {
@@ -884,84 +865,6 @@ function addCommonSDCExportFns(ns) {
       }
     }
     return ret;
-  };
-
-
-  /**
-   * Converting the given item's value to FHIR QuestionaireResponse.answer (an array).
-   * This is almost straightly refactored out of the original function self._handleAnswerValues.
-   * This function only looks at the item value itself and not its sub-items, if any.
-   * Here are the details for a single value's conversion (to an element in the returned answer array)
-   * - For item data type quantity (QTY), a valueQuantity answer element will be created IF
-   *   either (or both) item value or item unit is available.
-   * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, attachment, and url,
-   *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
-   *   an empty string.
-   * - For CNE and CWE, a valueCoding entry is created IF at least one of the item value's code, text, or system
-   *   is available
-   * - No answer entry will be created in all other cases, e.g., for types reference, title, section, etc.
-   * @param item the item whose value is to be converted
-   * @return the converted FHIR QuestionnaireResponse answer (an array), or null if the value is not converted -
-   *         see the function description above for more details.
-   * @private
-   */
-  self._lfItemValueToFhirAnswer = function(item) {
-
-    // item could have an empty value if its sub-item has a value
-    if (item.value === undefined || item.value === null || item.value === '')
-       return null;
-
-    var dataType = this._getAssumedDataTypeForExport(item);
-    var values = this._answerRepeats(item)? item.value: [item.value];
-    var answers = [];
-    for(var i=0; i < values.length; ++i) {
-      var itemValue = values[i];
-      if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
-        var answer = null;
-        // for Coding
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          // for CWE, the value could be string if it is a user typed, not-on-list value
-          if (dataType === 'CWE' && typeof itemValue === 'string') {
-            answer = { "valueString" : itemValue };
-          }
-          else if (!LForms.jQuery.isEmptyObject(itemValue)) {
-            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
-            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
-            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
-            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
-          }
-        }
-        else if (item.answers && (dataType === 'INT' || dataType === 'ST' || dataType === 'DT' || dataType === 'TM')) {
-          var valueKey = this._getValueKeyByDataType("value", item);
-          answer = {[valueKey]: itemValue.text};
-        }
-        // for Quantity
-        else if (dataType === "QTY") {
-          // For now, handling only simple quantities without the comparators.
-          // [{
-          //   // from Element: extension
-          //   "value" : <decimal>, // Numerical value (with implicit precision)
-          //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-          //   "unit" : "<string>", // Unit representation
-          //   "system" : "<uri>", // Code System that defines coded unit form
-          //   "code" : "<code>" // Coded form of the unit
-          // }]
-          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
-        }
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment
-        else if (this._lformsTypesToFHIRFields[dataType]) {
-          var valueKey = this._getValueKeyByDataType("value", item);
-          answer = {[valueKey]: itemValue};
-        }
-      }
-
-      if(answer !== null) {
-        answers.push(answer);
-      }
-
-    }
-
-    return answers.length === 0? null: answers;
   };
 
 

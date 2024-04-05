@@ -1,10 +1,12 @@
 import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
-delete FHIRSupport.default; 
-// R4B is same as R4 for Questionnaire and QuestionnaireResponse. 
+delete FHIRSupport.default;
+// R4B is same as R4 for Questionnaire and QuestionnaireResponse.
 // No need to test R4B in this test file.
 delete FHIRSupport.R4B;
+// R5 is not tested in this file
+delete FHIRSupport.R5;
 let fhirVersions = Object.keys(FHIRSupport);
 const po = new AddFormToPageTestPage();
 
@@ -21,15 +23,15 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
       // raidobutoon
@@ -47,15 +49,15 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
         // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
 
       // group 4
       // radiobutton, prefix, score
@@ -112,7 +114,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         cy.byId(`item-${params.itemIds.g5item2}`)
           .byCss('span.autocomp_selected li')
           .eq(0)
-          .should('have.text', '×' + params.itemValues.g1Answer2)   
+          .should('have.text', '×' + params.itemValues.g1Answer2)
       }
 
       // group 6
@@ -175,13 +177,13 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
 
       // group 2
       // raidobutoon
@@ -197,13 +199,13 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
       // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .click()
         .type('{downArrow}')
         .type('{downArrow}')
-        .type('{enter}'); 
+        .type('{enter}');
 
       // group 4
       // radiobutton, prefix, score
@@ -232,13 +234,13 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         else {
           expect(qr.item[4].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         }
-        
+
         if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
           if (valueType === "valueCoding.open-choice") {
             expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
           }
           else {
-            expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])           
+            expect(qr.item[4].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])
           }
         }
         else {
@@ -248,15 +250,15 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           expect(qr.item[5].item[0].answer).to.deep.equal([{"valueString": "user typed value"}])
         }
         else {
-          expect(qr.item[5].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])          
+          expect(qr.item[5].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         }
-        
+
         if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
           if (valueType === "valueCoding.open-choice") {
             expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,{"valueString": "user typed value"}])
           }
           else {
-            expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])           
+            expect(qr.item[5].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2,params.qrItemValues.g1Answer3])
           }
         }
         else {
@@ -271,7 +273,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
           expect(mergedFormData.hasSavedData).to.equal(true)
           util.addFormToPage(mergedFormData, null, {fhirVersion});
-          
+
           // user data sould be displayed
           // group 1
           // autocomplete, non-repeats
@@ -280,11 +282,11 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           // autocomplete, repeats
           cy.byId(`item-${params.itemIds.g1item2}`)
             .byCss('span.autocomp_selected li')
-            .should('have.length', 1)          
+            .should('have.length', 1)
           cy.byId(`item-${params.itemIds.g1item2}`)
             .byCss('span.autocomp_selected li')
             .eq(0)
-            .should('have.text', '×' + params.itemValues.g1Answer2)       
+            .should('have.text', '×' + params.itemValues.g1Answer2)
 
           // group 2
           // raidobutoon
@@ -301,11 +303,11 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           // autocomplete, repeats, prefix, score
           cy.byId(`item-${params.itemIds.g3item2}`)
             .byCss('span.autocomp_selected li')
-            .should('have.length', 1)             
+            .should('have.length', 1)
           cy.byId(`item-${params.itemIds.g3item2}`)
             .byCss('span.autocomp_selected li')
             .eq(0)
-            .should('have.text', '×' + params.itemValues.g3Answer2)   
+            .should('have.text', '×' + params.itemValues.g3Answer2)
 
           // group 4
           // radiobutton, prefix, score
@@ -403,9 +405,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
 
         });
       });
-      
-    
-      
+
+
+
     });
 
   });
@@ -479,7 +481,7 @@ describe('AnswerOption with different types', () => {
         }
 
       };
-      
+
 
       let qrItemValues = {
         'valueString': {
@@ -513,9 +515,9 @@ describe('AnswerOption with different types', () => {
           g1Answer3 : {"valueCoding": {"code": "c3", "display": "Answer 3"}}
         }
       };
-      
+
       let itemIds = ((valueType, itemValues) => {
-        let coding = (valueType === "valueCoding.choice" || valueType === "valueCoding.open-choice") 
+        let coding = (valueType === "valueCoding.choice" || valueType === "valueCoding.open-choice")
 
         return {
           g1item1 : `${valueType}-group1-item1/1/1`,
@@ -559,5 +561,5 @@ describe('AnswerOption with different types', () => {
 });
 
 
-  
+
 

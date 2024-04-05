@@ -392,7 +392,8 @@ const FormUtils = {
     if (matchData) {
       const versionNum = parseFloat(matchData[0]);
       // Following http://www.hl7.org/fhir/directory.cfml
-      releaseID = versionNum > 4.0 && versionNum <= 4.3 ?
+      releaseID = versionNum >= 5.0 && versionNum < 6.0 || versionNum == 4.2 || (versionNum >=4.4 & versionNum <=4.6) ?
+          'R5' : versionNum == 4.1 || versionNum == 4.3 ?
           'R4B' : versionNum > 3.0 && versionNum <= 4.0 ?
           'R4' : versionNum >= 1.1 && versionNum <= 3.0 ?
           'STU3' : versionStr;
@@ -567,8 +568,21 @@ const FormUtils = {
         }
         return ret;
       });
-      version = foundSTU3 ? 'STU3' : 'R4';
+      if (foundSTU3) {
+        version = 'STU3';
+      }
+      else {
+        var foundR5 = this._testValues(fhirData, 'item', function(item) {
+          let ret = !!(
+            item.disabledDisplay ||
+            item.answerConstraint ||
+            item.type === 'coding');
+          return ret;
+        });
+        version = foundR5 ? 'R5' : 'R4';
+      }
     }
+    // R4 and R5 QuestionnaireResponses are too similar
     else if (fhirData.resourceType == 'QuestionnaireResponse') {
       if (fhirData.parent)
         version = 'STU3';

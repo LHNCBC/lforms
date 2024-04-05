@@ -1,4 +1,4 @@
-import renderingStyle from './extensions/rendering-style';
+import renderingStyle from '../extensions/rendering-style';
 var extProcessors = {};
 extProcessors[renderingStyle.extURL] = renderingStyle.processExtension;
 

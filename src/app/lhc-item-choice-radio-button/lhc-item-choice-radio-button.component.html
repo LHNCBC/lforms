@@ -3,7 +3,8 @@
   <nz-radio-group
     [ngModel]="radioValue"
     (ngModelChange)="onRadioModelChange($event)"
-    [nzName]="radiogroup + item._elementId"
+    [nzDisabled]="item._readOnly"
+    [nzName]="'radiogroup_' + item._elementId"
     attr.aria-labelledby="label-{{ item._elementId }}"
     role="radiogroup"
     nz-row
@@ -23,7 +24,7 @@
     </label>
 
     <label
-      *ngIf="item.dataType === 'CWE'"
+      *ngIf="item.answerConstraint === 'optionsOrString'"
       nz-radio
       [nzDisabled]="item._readOnly"
       [disabled]="item._readOnly"

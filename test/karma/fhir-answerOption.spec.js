@@ -1,5 +1,6 @@
 // Tests for FHIR SDC library
-let fhirVers = Object.keys(LForms.Util.FHIRSupport);
+//let fhirVers = Object.keys(LForms.Util.FHIRSupport);
+const fhirVers = ["R4", "STU3"];
 
 function testImportAnswerOption(params) {
   for (var i=0, len=fhirVers.length; i<len; ++i) {

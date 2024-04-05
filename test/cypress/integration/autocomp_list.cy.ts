@@ -103,6 +103,7 @@ describe('autocomp list', () => {
       cy.byId('rxcui/1/1').should('have.value', '1043753');
 
       cy.byId('medication/1/1').clear().typeAndWait('Factor X')
+      cy.get('#searchResults').should('be.visible');
       cy.get('#searchResults li:first-child').click();
       cy.byId('strength/1/1').should('have.value', '1 unt Injection');
       cy.byId('rxcui/1/1').should('have.value', '1719235');

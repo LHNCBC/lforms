@@ -2,6 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.0] 2024-04-04
+### Changed
+- Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
+  replaced them with type 'CODING' and an 'answerConstraint' attribute.
+  'CNE' and 'CWE' data types are still supported in legacy data files.
+### Added
+- Added the support of 'answerContraint' in R5.  Only 'optionsOnly' and 
+  'optionsOrString are supported. 'OptionsOrType' is not supported yet.
+- Added the support of item.type changes R5. Added 'coding' and removed
+  'choice' and 'open-choice'.
+
 ## [35.2.1] 2024-04-03
 ### Fixed
 - Fixed a bug in "npm run start-public"

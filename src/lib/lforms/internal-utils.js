@@ -2,6 +2,7 @@
 // by application code.
 import {ErrorMessages} from "./error-messages.js";
 import CommonUtils from "../lforms/lhc-common-utils.js";
+import CONSTANTS from "./lhc-form-datatypes.js";
 /**
  *  A default message source identifier (for when the messageSource parameter
  *  below is optional and not provided.
@@ -166,10 +167,10 @@ export const InternalUtil = {
    * @returns 
    */
   hasAnswerList: function(item) {
-    return item.dataType === "CNE" || item.dataType === "CWE" || item.answers &&
+    return item.dataType === "CODING" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
   }
-  
+
 }
 
 

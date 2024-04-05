@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ScreenReaderLog } from './screen-reader-log';
 import CommonUtils from "./lforms/lhc-common-utils.js";
-
+import {InternalUtil} from "./lforms/internal-utils.js";
 declare var LForms: any;
 // @Injectable({
 //   providedIn: 'root'
@@ -596,6 +596,7 @@ export class LhcDataService {
 
     }
   };
+
 }
 
 

@@ -56,26 +56,11 @@ describe('FHIR answerValueSet', () => {
 
     it('should have expected answer list and saved value when the QuestionnaireReponse is merged to the Questionnaire', () => {
       cy.window().then((win) => {
-        cy.readFile(
-          'test/data/R4/q-with-answerValueSet-autocomplete.json'
-        ).then((q) => {
-          // readFile will parse the JSON
-          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
-            q,
-            fhirVersion
-          );
-          cy.readFile(
-            'test/data/R4/qr-with-answerValueSet-autocomplete.json'
-          ).then((qr) => {
-            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
-              qr,
-              formDef,
-              fhirVersion
-            );
-            win.LForms.Util.addFormToPage(mergedFormData, 'formContainer', {
-              fhirVersion,
-            });
-
+        cy.readFile('test/data/R4/q-with-answerValueSet-autocomplete.json').then((q) => {  // readFile will parse the JSON
+          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+          cy.readFile('test/data/R4/qr-with-answerValueSet-autocomplete.json').then((qr) => {
+            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+            win.LForms.Util.addFormToPage(mergedFormData, "formContainer", {fhirVersion});
             // check saved values
             cy.byId(answerField1).should('have.value', 'Yes');
             cy.byId('item-yesno2/1')

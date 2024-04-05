@@ -4,8 +4,6 @@
 
 // Note: code after "//// TODO" are temparorily commented out
 
-// jQuery is added in angular.json
-//import jQuery from "jquery"; // not to use, otherwise two copies of the lib will be used.
 import CONSTANTS from "./lhc-form-datatypes.js";
 import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
@@ -73,15 +71,15 @@ export default class LhcFormData {
     displayControl: {
       // controls the question layout of the form. default value for questionLayout is "vertical".
       // available value could be "horizontal" when all the items in the form are on the same level,
-      // or "matrix" when all the item are on the same level and all are CWE or CNE types items and all have the same list of answers.
-      // not changeable on a rendered form.
+      // or "matrix" when all the item are on the same level and all are CODING/INT/TM/DT/ST types items
+      // and all have the same list of answers. not changeable on a rendered form.
       "questionLayout": "vertical"
     },
     // controls the view mode of the form, permitted values are "lg", "md", "sm", and "auto".
     // meaning the layout is responsive to the screen/container's size
     // each item can override this setting for the item by setting its own value in displayControl.viewMode
     viewMode: "auto",
-    // controls the default answer layout for CWE/CNE typed items if answerLayout is not specified on the item's displayControl.
+    // controls the default answer layout for CODING typed items if answerLayout is not specified on the item's displayControl.
     // not changeable on a rendered form.
     defaultAnswerLayout: {
       "answerLayout": {
@@ -846,7 +844,7 @@ export default class LhcFormData {
     for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
       var sourceItem = this.itemList[i];
       // it has an answer list
-      if ((sourceItem.dataType === 'CNE' || sourceItem.dataType === 'CWE') &&
+      if ((sourceItem.dataType === CONSTANTS.DATA_TYPE.CODING) &&
           sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
         // check if any one of the answers has a score
         for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
@@ -1044,6 +1042,17 @@ export default class LhcFormData {
     for (var i=0; i<iLen; i++) {
       var item = items[i];
 
+      // convert CNE to Coding
+      if (item.dataType === CONSTANTS.DATA_TYPE.CNE) {
+        item.dataType = CONSTANTS.DATA_TYPE.CODING;
+        // the default value for item.answerConstraint is "optionsOnly";
+      }
+      // convert CWE to Coding
+      else if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+        item.dataType = CONSTANTS.DATA_TYPE.CODING;
+        item.answerConstraint = "optionsOrString";
+      }
+
       LhcFormUtils.initializeCodes(item);
 
       // set display text for the item
@@ -1216,13 +1225,13 @@ export default class LhcFormData {
       }
       // autocomplete
       else if (item._hasAnswerList) {
-        if (item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+        if (item.answerConstraint === "optionsOrString") {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
           else
             item._placeholder = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
         }
-        // INT, ST, DT, TM and CNE
+        // INT, ST, DT, TM and CODING (and answerConstraint == 'optionsOnly')
         else {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
@@ -1242,17 +1251,19 @@ export default class LhcFormData {
           case CONSTANTS.DATA_TYPE.TM:
             item._placeholder = "HH:MM:SS";
             break;
-          case CONSTANTS.DATA_TYPE.CNE:
-            if (item.externallyDefined)
+          case CONSTANTS.DATA_TYPE.CODING:
+            if (!item.answerConstaint || item.answerConstraint === 'optionsOnly' ) {
+              if (item.externallyDefined)
               item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
             else
               item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";
-            break;
-          case CONSTANTS.DATA_TYPE.CWE:
-            if (item.externallyDefined)
+            }
+            else if (item.answerConstraint === 'optionsOrString') {
+              if (item.externallyDefined)
               item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
             else
               item._placeholder = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+            }
             break;
           case "SECTION":
           case "TITLE":
@@ -1330,8 +1341,7 @@ export default class LhcFormData {
     }
 
     // process the answer code system
-    if (Array.isArray(item.answers) && (item.dataType === CONSTANTS.DATA_TYPE.CNE ||
-        item.dataType === CONSTANTS.DATA_TYPE.CNE)) {
+    if (Array.isArray(item.answers) && (item.dataType === CONSTANTS.DATA_TYPE.CODING)) {
       var answerCodeSystem = item.answerCodeSystem ? LhcFormUtils.getCodeSystem(item.answerCodeSystem) : null;
       for (var i=0, iLen = item.answers.length; i<iLen; i++) {
         var answer = item.answers[i];
@@ -1612,7 +1622,8 @@ export default class LhcFormData {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       var itemData:any = {};
-      // for user typed data of a CWE item, it is in item.value as {text: "some other value", _notOnList: true}.
+      // for user typed data of an item whose answerConstraint is 'optionsOrString',
+      // it is in item.value as {text: "some other value", _notOnList: true}.
 
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
       // or if the item is hidden and the flag is set to ignore hidden items
@@ -1626,8 +1637,8 @@ export default class LhcFormData {
         itemData.questionCode = item.questionCode;
         // not a group or title item
         if (item.dataType!==CONSTANTS.DATA_TYPE.SECTION && item.dataType!==CONSTANTS.DATA_TYPE.TITLE) {
-          if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType, item._hasAnswerList);
-          if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
+          if (item.value !== undefined) itemData.value = this._getOriginalValue(item, item.value, item.dataType, item._hasAnswerList);
+          if (item.unit) itemData.unit = this._getOriginalValue(item, item.unit);
         }
       }
       // otherwise include form definition data
@@ -1640,10 +1651,10 @@ export default class LhcFormData {
         for (var field in item) {
           // special handling for user input values
           if (field === "value") {
-            itemData[field] = this._getOriginalValue(item[field], item.dataType, item._hasAnswerList);
+            itemData[field] = this._getOriginalValue(item, item[field], item.dataType, item._hasAnswerList);
           }
           else if (field === "unit") {
-            itemData[field] = this._getOriginalValue(item[field]);
+            itemData[field] = this._getOriginalValue(item, item[field]);
           }
           // ignore the internal lforms data and angular data
           else if (!field.match(/^[_\$]/) && field !== 'extension') {
@@ -1674,16 +1685,16 @@ export default class LhcFormData {
    * Process values for a user selected/typed answer or unit.
    * Also remove internal data whose field/key names start with _.
    * @param obj either an answer object or a unit object
-   * @param typeCWE optional, a flag indicates the item type is CWE, where data is
-   * handled by autocomplete-lhc or radio buttons/checkboxes. default is false
+   * @param withOffListValue optional, a flag indicates the value could be an off-list value,
+   * where data is handled by autocomplete-lhc or radio buttons/checkboxes. default is false.
    * @returns {{}}  a new object with the internal attributes removed.
    * @private
    */
-  _filterInternalData(obj, typeCWE) {
+  _filterInternalData(obj, withOffListValue) {
     var objReturn = {};
 
-    // special handling for the user-typed value for CWE data type
-    if (typeCWE && obj._notOnList && !obj.code && !obj.system) {
+    // special handling for the user-typed value for CODING
+    if (withOffListValue && obj._notOnList && !obj.code && !obj.system) {
       // return a string value
       objReturn = obj.text;
     }
@@ -1744,12 +1755,12 @@ export default class LhcFormData {
    * Process value where it is an object or an array of objects
    * (when getting the user data from the form)
    * @param value the captured value
-   * @param typeCWE optional, a flag indicates the item type is CWE, where data is
-   * handled by autocomplete-lhc or radio buttons/checkboxes. default is false
+   * @param withOffListValue optional, a flag indicates the value could be an off-list value,
+   * where data is handled by autocomplete-lhc or radio buttons/checkboxes. default is false.
    * @returns {*}
    * @private
    */
-  _getObjectValue(value, typeCWE = false) {
+  _getObjectValue(value, withOffListValue = false) {
     var retValue =null;
     if (value) {
       // an array
@@ -1757,7 +1768,7 @@ export default class LhcFormData {
         var answers = [];
         for (var j = 0, jLen = value.length; j < jLen; j++) {
           if (typeof value[j] === 'object') {
-            answers.push(this._filterInternalData(value[j], typeCWE));
+            answers.push(this._filterInternalData(value[j], withOffListValue));
           }
           // for primitive data type
           else {
@@ -1768,7 +1779,7 @@ export default class LhcFormData {
       }
       // an object
       else if (typeof value === 'object') {
-        retValue = this._filterInternalData(value, typeCWE);
+        retValue = this._filterInternalData(value, withOffListValue);
       }
     }
     return retValue;
@@ -1778,12 +1789,13 @@ export default class LhcFormData {
   /**
    * Special handling for user input values, to get the original answer or unit object if there is one
    * (when getting the user data from the form)
+   * @param item an item
    * @param value the data object of the selected answer
    * @param dataType optional, the data type of the value
    * @param hasAnswerList optional, a flag that indicates there is an answer list
    * @private
    */
-  _getOriginalValue(value, dataType=null, hasAnswerList=false) {
+  _getOriginalValue(item, value, dataType=null, hasAnswerList=false) {
     var retValue;
     if (value !== undefined && value !== null) {
       // has a data type
@@ -1791,7 +1803,11 @@ export default class LhcFormData {
         switch (dataType) {
           case CONSTANTS.DATA_TYPE.INT:
             if (hasAnswerList) {
-              retValue = value; // value is an object or an array of {text: value, ...}
+              if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
+                retValue = this._getObjectValue(value);
+              // for 'optionsOrString', it should handle the case where 'OTHER' is selected
+              else if (item.answerConstraint === 'optionsOrString')
+                retValue = this._getObjectValue(value, true);
             }
             else {
               if (Array.isArray(value)) {
@@ -1819,7 +1835,11 @@ export default class LhcFormData {
             break;
           case CONSTANTS.DATA_TYPE.DT:
             if (hasAnswerList) {
-              retValue = value; // value is an object or an array of {text: value, ...}
+              if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
+                retValue = this._getObjectValue(value);
+              // for 'optionsOrString', it should handle the case where 'OTHER' is selected
+              else if (item.answerConstraint === 'optionsOrString')
+                retValue = this._getObjectValue(value, true);
             }
             else {
               retValue = Array.isArray(value) ? value.map(val=> CommonUtils.dateToDTStringISO(val)) :
@@ -1829,19 +1849,28 @@ export default class LhcFormData {
           case CONSTANTS.DATA_TYPE.DTM:
             retValue = CommonUtils.dateToDTMString(value);
             break;
-          case CONSTANTS.DATA_TYPE.CNE:
-            retValue = this._getObjectValue(value);
-            break;
-          case CONSTANTS.DATA_TYPE.CWE:
-            // for CWE, it should handle the case where 'OTHER' is selected
-            retValue = this._getObjectValue(value, true);
+          case CONSTANTS.DATA_TYPE.CODING:
+            if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
+              retValue = this._getObjectValue(value);
+            // for 'optionsOrString', it should handle the case where 'OTHER' is selected
+            else if (item.answerConstraint === 'optionsOrString')
+              retValue = this._getObjectValue(value, true);
             break;
           case CONSTANTS.DATA_TYPE.BL:
             retValue = value ? true : false;
             break;
           case CONSTANTS.DATA_TYPE.ST:
           case CONSTANTS.DATA_TYPE.TM:
-            retValue = value; // value is an object or an array of {text: value} when hasAnswerList is true
+            if (hasAnswerList) {
+              if (!item.answerConstraint || item.answerConstraint === 'optionsOnly')
+                retValue = this._getObjectValue(value);
+              // for 'optionsOrString', it should handle the case where 'OTHER' is selected
+              else if (item.answerConstraint === 'optionsOrString')
+                retValue = this._getObjectValue(value, true);
+            }
+            else {
+              retValue = value;
+            }
             break;
           default:
             retValue = value;
@@ -2949,44 +2978,44 @@ export default class LhcFormData {
    */
   _resetItemValueWithAnswers(item) {
 
-    // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
+    // default answer and item.value could be a string value, if it is a not-on-list value for the item
+    // whose answerConstraint is 'optionsOrString',
     // convert it to the internal format of {text: 'string value', _notOnList: true}
-    var modifiedValue = null;
-    // item.value has the priority over item.defaultAnswer
-    // if this is a saved form with user data, default answers are not to be used.
-    // (item.value could be a coding that is no on the answer list, in R5)
-    var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
-    if (answerValue) {
-      modifiedValue = [];
-      // could be an array of multiple default values or a single value
-      var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
-          answerValue : [answerValue];
-      if (item.dataType !== CONSTANTS.DATA_TYPE.CWE) {
-        modifiedValue = answerValueArray;
-      }
-      else {
-        // go through each value, there could be multiple not-on-list values
-        for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
-          // string value is allowed if it is CWE
-          if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
-            modifiedValue.push({
-              "text": answerValueArray[i],
-              "_notOnList" : true});
-            // for radio button/checkbox display, where only one "Other" option is displayed
-            item._answerOther = answerValueArray[i];
-            item._answerOtherChecked = true;
-          }
-          else {
-            modifiedValue.push(answerValueArray[i]);
+    if (item._hasAnswerList) {
+      var modifiedValue = null;
+      // item.value has the priority over item.defaultAnswer
+      // if this is a saved form with user data, default answers are not to be used.
+      // (item.value could be a coding that is no on the answer list, in R5)
+      var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
+      if (answerValue) {
+        modifiedValue = [];
+        // could be an array of multiple default values or a single value
+        var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
+            answerValue : [answerValue];
+        if (item.answerConstraint !== "optionsOrString") {
+          modifiedValue = answerValueArray;
+        }
+        else {
+          // go through each value, there could be multiple not-on-list values
+          for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
+            // string value is allowed if it is CODING and answerConstraint is 'optionsOrString'
+            if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
+              modifiedValue.push({
+                "text": answerValueArray[i],
+                "_notOnList" : true});
+              // for radio button/checkbox display, where only one "Other" option is displayed
+              item._answerOther = answerValueArray[i];
+              item._answerOtherChecked = true;
+            }
+            else {
+              modifiedValue.push(answerValueArray[i]);
+            }
           }
         }
       }
-    }
 
-    if (modifiedValue) {
-      var listVals = [];
-      // CNE/CWE
-      if (item.dataType === CONSTANTS.DATA_TYPE.CNE || item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+      if (modifiedValue) {
+        var listVals = [];
         for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
           var userValue = modifiedValue[k];
           var found = false;
@@ -3004,8 +3033,9 @@ export default class LhcFormData {
                   found = true;
                 }
               }
-              // value is not on the answer list and it is a CWE (so that user saved values that are not on the list will be kept)
-              if (!found && item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+              // value is not on the answer list and it is optionsOrString
+              // (so that user saved values that are not on the list will be kept)
+              if (!found && item.answerConstraint === "optionsOrString" && userValue) {
                 userValue._notOnList = true;  // _notOnList might have been set above when the orginal value is a string
                 listVals.push(userValue);
               }
@@ -3016,15 +3046,10 @@ export default class LhcFormData {
             }
           }
         }
+        let newValue = item._multipleAnswers ? listVals : listVals[0];
+        // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
+        item.value = newValue;
       }
-      // INT, ST, DT and TM
-      else {
-        listVals = modifiedValue;
-      }
-
-      let newValue = item._multipleAnswers ? listVals : listVals[0];
-      // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
-      item.value = newValue;
     }
   }
 
@@ -3108,13 +3133,13 @@ export default class LhcFormData {
       }
 
       var options:any = {
-        matchListValue: item.dataType !== CONSTANTS.DATA_TYPE.CWE, // INT, ST, DT, TM and CNE should all match
+        matchListValue: item.answerConstraint !== "optionsOrString", // INT, ST, DT, TM and CODING (answerConstaint == 'optionsOnly') should all match
         maxSelect: maxSelect,
         autoFill: false
       };
 
       // externallyDefined
-      var url = item.externallyDefined; // item.dataType should be CNE or CWE
+      var url = item.externallyDefined; // item.dataType should be CODING
       if (url) {
         options.url = url;
         options.autocomp = true;
@@ -3451,8 +3476,7 @@ export default class LhcFormData {
         switch (item.dataType) {
           // answer lists: {"code", "LA-83"}, {"label","A"} and etc.
           // the key is one of the keys in the answers.
-          case CONSTANTS.DATA_TYPE.CNE:
-          case CONSTANTS.DATA_TYPE.CWE:
+          case CONSTANTS.DATA_TYPE.CODING:
           case CONSTANTS.DATA_TYPE.INT:
           case CONSTANTS.DATA_TYPE.ST:
           case CONSTANTS.DATA_TYPE.DT:
@@ -3462,7 +3486,7 @@ export default class LhcFormData {
             var isEqual = false;
             for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
               let answerValue = answerValues[m];
-              if (item.dataType === CONSTANTS.DATA_TYPE.CNE || item.dataType === CONSTANTS.DATA_TYPE.CWE) {
+              if (item.dataType === CONSTANTS.DATA_TYPE.CODING) {
                 if(item.answerCodeSystem) {
                   answerValue = Object.assign({system: item.answerCodeSystem}, answerValue);
                 }

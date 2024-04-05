@@ -14,8 +14,13 @@
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
+var fhirVersionNum = '3.0';
 
 var self = {
+
+  stdQProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/Questionnaire',
+  stdQRProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/QuestionnaireResponse',
+
 
   /**
    *  Convert LForms captured data to a bundle consisting of a FHIR SDC
@@ -29,8 +34,8 @@ var self = {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations, or null if there is 
-   *  no valid QuestionnaireResponse. The caller may wish to put all of the returned 
+   * @returns an array of QuestionnaireResponse and Observations, or null if there is
+   *  no valid QuestionnaireResponse. The caller may wish to put all of the returned
    *  resources into a transaction Bundle for creating them on a FHIR server.
    */
    convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {
@@ -197,10 +202,8 @@ var self = {
    *  Processes settings for a list field with choices.
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    */
-  _handleChoiceField: function(targetItem, item, noExtensions) {
+  _handleChoiceField: function(targetItem, item) {
     // an extension for the search url of the auto-complete field.
     if(item.externallyDefined) {
       this._handleExternallyDefined(targetItem, item);
@@ -209,7 +212,7 @@ var self = {
     else if (item.answers && !item.answerValueSet) {
       // Make sure the answers did not come from answerExpression.
       if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp])
-        targetItem.option = this._handleAnswers(item, noExtensions);
+        targetItem.option = this._handleAnswers(item);
     }
     else if (item.answerValueSet)
       targetItem.options = item.answerValueSet;
@@ -219,19 +222,17 @@ var self = {
   /**
    * Process an item's answer list
    * @param item an item in the LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
    * @returns {Array}
    * @private
    */
-  _handleAnswers: function(item, noExtensions) {
+  _handleAnswers: function(item) {
     var optionArray = [];
     for (var i=0, iLen=item.answers.length; i<iLen; i++) {
       var answer = item.answers[i];
       var option = {};
 
       // when option's values are Coding
-      if (item.dataType === "CNE" || item.dataType === "CWE") {
+      if (item.dataType === "CODING") {
 
         // option's value supports integer, date, time, string and Coding
         // for LForms, all answers are Coding
@@ -244,36 +245,34 @@ var self = {
         }
       }
       // when option's values are string, integer, date or time
-      else if(item.dataType === "ST" || item.dataType === "INT" || 
+      else if(item.dataType === "ST" || item.dataType === "INT" ||
           item.dataType === "DT" || item.dataType === "TM") {
         var valueKey = this._getValueKeyByDataType("value", item);
         option[valueKey] = answer.text;
       }
 
-      // needs an extension for label
-      if (!noExtensions) {
-        var ext = [];
-        if(answer.label) {
-          ext.push({
-            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
-            "valueString" : answer.label
-          });
-        }
+      // label
+      var ext = [];
+      if(answer.label) {
+        ext.push({
+          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+          "valueString" : answer.label
+        });
+      }
 
-        if (answer.score !== null && answer.score !== undefined) {
-          ext.push({
-            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
-            "valueDecimal" : parseFloat(answer.score)
-          });
-        }
-        if(ext.length > 0) {
-          option.extension = ext;
-        }
+      if (answer.score !== null && answer.score !== undefined) {
+        ext.push({
+          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+          "valueDecimal" : parseFloat(answer.score)
+        });
+      }
+      if(ext.length > 0) {
+        option.extension = ext;
       }
 
       optionArray.push(option);
     }
-    
+
     return optionArray;
   },
 
@@ -296,7 +295,7 @@ var self = {
       // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
-      if (dataType === 'CWE' || dataType === 'CNE' ) {
+      if (dataType === 'CODING' ) {
         var codeSystem = null, coding = null;
 
         // item.defaultAnswer could be an array of multiple default values or a single value.
@@ -341,7 +340,7 @@ var self = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (dataType === 'QTY') { // for now, handling only simple quantities without the comparators.
+      else if (dataType === 'QTY') { // SimpleQuantity (no comparators)
         var fhirQuantity = this._makeQuantity(item.defaultAnswer, item.units);
         if(fhirQuantity) {
           targetItem[valueKey] = fhirQuantity;
@@ -441,7 +440,7 @@ var self = {
         // for Coding
         // multiple selections, item.value is an array
         // NO support of multiple selections in FHIR SDC, just pick one
-        else if (dataType === 'CWE' || dataType === 'CNE' ) {
+        else if (dataType === 'CODING' ) {
           let answerCoding = this._copyTriggerCoding(condition.trigger.value, null, true);
           if (answerCoding) {
             enableWhenRule[valueKey] = answerCoding;
@@ -459,7 +458,7 @@ var self = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (dataType === 'QTY') { // for now, handling only simple quantities without the comparators.
+        else if (dataType === 'QTY') { // SimpleQuantity (no comparators)
           let fhirQuantity = this._makeQuantity(condition.trigger.value, sourceItem.units);
           if(fhirQuantity) {
             enableWhenRule[valueKey] = fhirQuantity;

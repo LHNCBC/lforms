@@ -41,7 +41,7 @@ describe('LhcGroupHorizontalComponent', () => {
       {
         "questionCode": "readonlyCNE-sb",
         "linkId":"/horizontalTable/readonlyCNE-sb",
-        "dataType": "CNE",
+        "dataType": "CODING",
         "question": "radio button",
         "answerCardinality": {
           "min": "0",
@@ -76,7 +76,7 @@ describe('LhcGroupHorizontalComponent', () => {
         "questionCode": "colC",
         "linkId": "/horizontalTable/colC",
         "question": "A CNE",
-        "dataType": "CNE",
+        "dataType": "CODING",
         "answers": [
           {
             "code": "c1",

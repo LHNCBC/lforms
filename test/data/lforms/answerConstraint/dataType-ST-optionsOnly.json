@@ -1,0 +1,544 @@
+{
+  "code": "answers-with-string-type",
+  "name": "Answers with ST type, answerConstraint='optionsOnly'",
+  "items": [
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueString - autocomplete",
+      "questionCode": "valueString-group1",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueString-group1",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString",
+          "questionCode": "valueString-group1-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group1-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString - repeats",
+          "questionCode": "valueString-group1-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group1-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ],
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueString - radiocheckbox",
+      "questionCode": "valueString-group2",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueString-group2",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString",
+          "questionCode": "valueString-group2-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group2-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString - repeats",
+          "questionCode": "valueString-group2-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group2-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ],
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueString - prefix- score",
+      "questionCode": "valueString-group3",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueString-group3",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString",
+          "questionCode": "valueString-group3-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group3-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "a",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "b",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "c",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString - repeats",
+          "questionCode": "valueString-group3-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group3-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "a",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "b",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "c",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ],
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueString - radiocheckbox - prefix - score",
+      "questionCode": "valueString-group4",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueString-group4",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString",
+          "questionCode": "valueString-group4-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group4-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "a",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "b",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "c",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString - repeats - prefix - score",
+          "questionCode": "valueString-group4-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group4-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "a",
+              "label": "A",
+              "score": "1"
+            },
+            {
+              "text": "b",
+              "label": "B",
+              "score": "2"
+            },
+            {
+              "text": "c",
+              "label": "C",
+              "score": "3"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ],
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueString - autocomplete - initial",
+      "questionCode": "valueString-group5",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueString-group5",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString",
+          "questionCode": "valueString-group5-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group5-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "defaultAnswer": {
+            "text": "b"
+          },
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString - repeats",
+          "questionCode": "valueString-group5-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group5-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ],
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueString - radiocheckbox - initial",
+      "questionCode": "valueString-group6",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueString-group6",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString",
+          "questionCode": "valueString-group6-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group6-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "defaultAnswer": {
+            "text": "b"
+          },
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "ST",
+          "answerConstraint": "optionsOnly",
+          "question": "valueString - repeats",
+          "questionCode": "valueString-group6-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueString-group6-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "a"
+            },
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "text": "b"
+            },
+            {
+              "text": "c"
+            }
+          ],
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ],
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      }
+    }
+  ]
+}

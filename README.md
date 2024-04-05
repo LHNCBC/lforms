@@ -97,6 +97,8 @@ You need to include the following files in your project:
 6. _One_ of the FHIR support library files, assuming you are planning to use
    FHIR Questionnaires:
    - `fhir/lformsFHIRAll.min.js`
+   - `fhir/R5/lformsFHIR.min.js`
+   - `fhir/R4B/lformsFHIR.min.js`
    - `fhir/R4/lformsFHIR.min.js`
    - `fhir/STU3/lformsFHIR.min.js`
 
