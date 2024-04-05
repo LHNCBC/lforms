@@ -206,6 +206,9 @@ const FormUtils = {
    *    that the DiagnosticReport and associated Observation resources be placed
    *    together in a bundle.  When this is not present, a bundle will not be
    *    used.
+   *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
+   *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
+   *    The default is false.
    *  * extract:  a flag for QuestionnaireReponse that data should be extracted
    *    (using the observationExtract extension).  In this case the returned
    *    resource will be an array consisting of the QuestionnaireResponse and any
@@ -233,11 +236,13 @@ const FormUtils = {
             options.subject, inBundle, bundleType);
           break;
         case "Questionnaire":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData,
+            options.noExtensions);
           break;
         case "QuestionnaireResponse":
           if (options.extract)
-            fhirData = fhir.SDC.convertLFormsToQRAndExtracFHIRData(formData, options.subject);
+            fhirData = fhir.SDC.convertLFormsToQRAndExtracFHIRData(formData,
+              options.noExtensions, options.subject);
           else
             fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
               options.noExtensions, options.subject);
