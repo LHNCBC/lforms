@@ -120,8 +120,11 @@ export class AppModule {
 
     window['LForms'] = LForms;
 
-    // define the web component
-    customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));
+    if(!customElements.get('wc-lhc-form')) {
+      // define the web component
+      customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));
+    }
+
   }
 
   ngDoBootstrap() {}

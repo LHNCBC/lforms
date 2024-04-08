@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.1] 2024-04-08
+### Fixed
+- Gaurd against loading wc-lhc-form webcomponent more than once.
+
 ## [36.0.0] 2024-04-04
 ### Changed
 - Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
