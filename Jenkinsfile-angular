@@ -38,12 +38,12 @@ pipeline {
       }
     }
   }
-  post {
-    unsuccessful {
-      slackSend color: 'danger', channel: '#product-ops-qa', message: "Pipeline Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-    }
-    fixed {
-      slackSend color: 'good', channel: '#product-ops-qa', message: "Pipeline Ran Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-    }
-  }
+  // post {
+  //   unsuccessful {
+  //     slackSend color: 'danger', channel: '#product-ops-qa', message: "Pipeline Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+  //   }
+  //   fixed {
+  //     slackSend color: 'good', channel: '#product-ops-qa', message: "Pipeline Ran Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+  //   }
+  // }
 }
