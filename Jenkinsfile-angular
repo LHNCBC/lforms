@@ -29,12 +29,7 @@ pipeline {
       }
       steps {
         echo "Started building"
-        sh '''
-          npm ci
-          npm run build
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npm publish
-        '''
+        sh 'docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t lforms . --force-rm --no-cache'
       }
     }
   }
