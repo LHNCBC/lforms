@@ -2,9 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.0.1] 2024-04-17
+## [36.0.2] 2024-04-17
 ### Fixed
-- Fixed a pisition issue of the validation messages.
+- Fixed a position issue of the validation messages.
+
+## [36.0.1] 2024-04-08
+### Fixed
+- Guard against loading wc-lhc-form webcomponent more than once.
 
 ## [36.0.0] 2024-04-04
 ### Changed
