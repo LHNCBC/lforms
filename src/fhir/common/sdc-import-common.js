@@ -185,7 +185,7 @@ function addCommonSDCImportFns(ns) {
    */
   self.convertQuestionnaireToLForms = function (fhirData, options) {
     var target = null;
-    if (options) 
+    if (options)
       self._widgetOptions = options;
 
     if(fhirData) {
@@ -1261,7 +1261,7 @@ function addCommonSDCImportFns(ns) {
     if (item.answerValueSet) {
       var terminologyServer = this._getTerminologyServer(item);
       if (terminologyServer)
-        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet;
+        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet + '&_format=json';
     }
     return rtn;
   };
@@ -1316,7 +1316,7 @@ function addCommonSDCImportFns(ns) {
           else { // use FHIR context
             var fhirClient = LForms.fhirContext.client;
             pendingPromises.push(fhirClient.request(lfData._buildURL(
-              ['ValueSet','$expand'], {url: item.answerValueSet})
+              ['ValueSet','$expand'], {url: item.answerValueSet, _format: 'json'})
             ).then(function(response) {
               var valueSet = response;
               var answers = self.answersFromVS(valueSet);
