@@ -15,7 +15,9 @@
 .lhc-form .lhc-validation-popover {
   display: none;
 }
-
+.lhc-form .lhc-de-input-unit-content {
+  position: relative;
+}
 .lhc-form .lhc-invalid.lhc-visited-before:hover .lhc-validation-popover,
 .lhc-form .lhc-invalid.lhc-visited-before.lhc-active-row .lhc-validation-popover,
 /* .lhc-form .lhc-invalid.lhc-active-row .lhc-validation-popover, */
@@ -23,7 +25,7 @@
   border-radius: 6px;
   bottom: 35px;
   background-color: #fcf8e3;
-  /* left: 5px; */
+  /* left: 0px; */
   padding: 4px 6px;
   position: absolute;
   z-index: 98;
@@ -37,7 +39,7 @@
 .lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-visited-before:hover .lhc-validation-popover,
 .lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-visited-before.lhc-active-row .lhc-validation-popover,
 .lhc-form .lhc-layout-horizontal .lhc-invalid.lhc-show-validation .lhc-validation-popover {
-  bottom: 59px;
+  /* bottom: 59px; */
 }
 .lhc-form .lhc-invalid .lhc-validation-popover:before {
   border: solid;
