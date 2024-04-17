@@ -31,7 +31,17 @@ describe('addFormToPage Error Message Test', () => {
     //"Unable to load ValueSet http://terminology.hl7.org/ValueSet/v3-MessageWaitingPriority-invalid from FHIR server"
     cy.get("#loadMsg").contains("Unable to load ValueSet")
     cy.get("#loadMsg").contains(/v3-MessageWaitingPriority-invalid|yesnodontknow-invalid/g)
-    
+
+  });
+
+  it('successfully load a form that requests AnswerValueSet', () => {
+    // load a lforms form data
+    cy.visit('/test/pages/addFormToPageTest.html');
+    cy.get("#loadBtn").contains("Load From File");
+    cy.get('#fileAnchor').uploadFile('test/data/lforms/bit-of-everything.json');
+    cy.get('.lhc-form-title').contains('Bit of everything');
+    // has no error message
+    cy.get("#loadMsg").contains("Unable to load ValueSet from").should('not.exist');
   });
 
 
