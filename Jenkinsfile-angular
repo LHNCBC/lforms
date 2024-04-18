@@ -1,0 +1,44 @@
+pipeline {
+  agent { label 'ecs' }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+  }
+  environment {
+    AWS_CREDENTIALS = credentials('AWS-KEYS')
+    AWS_ENV = """${sh(
+      returnStdout: true,
+      script: 'env | awk -F= \'/^AWS/ {print "-e " $1}\''
+    )}"""
+    GIT_ENV = """${sh(
+      returnStdout: true,
+      script: 'env | awk -F= \'/^GIT/ {print "-e " $1}\''
+    )}"""
+  }
+  stages {
+    stage('Setup') {
+      steps {
+        sh '''
+          docker pull $CICD_ECR_REGISTRY/cicd:latest
+          docker tag $CICD_ECR_REGISTRY/cicd:latest cicd:latest
+        '''
+      }
+    }
+    stage('Build') {
+      environment {
+        NPM_TOKEN = credentials('NPM_TOKEN')
+      }
+      steps {
+        echo "Started building"
+        sh 'docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t lforms . --force-rm --no-cache'
+      }
+    }
+  }
+  post {
+    unsuccessful {
+      slackSend color: 'danger', channel: '#product-ops-stage', message: "Pipeline Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    }
+    fixed {
+      slackSend color: 'good', channel: '#product-ops-stage', message: "Pipeline Ran Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+    }
+  }
+}
