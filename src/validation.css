@@ -3,12 +3,12 @@
 .lhc-form lhc-item.lhc-invalid div.ng-touched {
   border: 2px solid #FF0000;
 } */
-.lhc-form lhc-item.lhc-invalid.lhc-visited-before lhc-input input[type="number"],
-.lhc-form lhc-item.lhc-invalid.lhc-visited-before lhc-input input[type="text"],
-.lhc-form lhc-item.lhc-invalid.lhc-visited-before lhc-input textarea,
-.lhc-form lhc-item.lhc-invalid.lhc-show-validation lhc-input input[type="number"],
-.lhc-form lhc-item.lhc-invalid.lhc-show-validation lhc-input input[type="text"],
-.lhc-form lhc-item.lhc-invalid.lhc-show-validation lhc-input textarea {
+.lhc-form .lhc-invalid.lhc-visited-before lhc-input input[type="number"],
+.lhc-form .lhc-invalid.lhc-visited-before lhc-input input[type="text"],
+.lhc-form .lhc-invalid.lhc-visited-before lhc-input textarea,
+.lhc-form .lhc-invalid.lhc-show-validation lhc-input input[type="number"],
+.lhc-form .lhc-invalid.lhc-show-validation lhc-input input[type="text"],
+.lhc-form .lhc-invalid.lhc-show-validation lhc-input textarea {
   border: 2px solid #FF0000;
 }
 
