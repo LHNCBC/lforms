@@ -1291,7 +1291,7 @@ function addCommonSDCImportFns(ns) {
         }
         else { // if not already loaded
           if (expURL) {
-            pendingPromises.push(fetch(expURL).then(function(response) {
+            pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
               return response.json();
             }).then(function(parsedJSON) {
               if (parsedJSON.resourceType==="OperationOutcome" ) {
@@ -1315,9 +1315,11 @@ function addCommonSDCImportFns(ns) {
           }
           else { // use FHIR context
             var fhirClient = LForms.fhirContext.client;
-            pendingPromises.push(fhirClient.request(lfData._buildURL(
-              ['ValueSet','$expand'], {url: item.answerValueSet, _format: 'json'})
-            ).then(function(response) {
+            pendingPromises.push(fhirClient.request({
+                url: lfData._buildURL(
+                  ['ValueSet', '$expand'], {url: item.answerValueSet, _format: 'json'}),
+                headers: {'Accept': 'application/fhir+json'}
+              }).then(function(response) {
               var valueSet = response;
               var answers = self.answersFromVS(valueSet);
               if (answers) {
