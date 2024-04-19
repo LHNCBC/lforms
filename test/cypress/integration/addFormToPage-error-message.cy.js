@@ -38,7 +38,7 @@ describe('addFormToPage Error Message Test', () => {
     // load a lforms form data
     cy.visit('/test/pages/addFormToPageTest.html');
     cy.get("#loadBtn").contains("Load From File");
-    cy.get('#fileAnchor').uploadFile('test/data/lforms/bit-of-everything.json');
+    cy.get('#fileAnchor').uploadFile('test/data/R4/bit-of-everything.json');
     cy.get('.lhc-form-title').contains('Bit of everything');
     // has no error message
     cy.get("#loadMsg").contains("Unable to load ValueSet from").should('not.exist');
