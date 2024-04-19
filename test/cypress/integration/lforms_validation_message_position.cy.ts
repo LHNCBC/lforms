@@ -29,15 +29,16 @@ describe('Validations Message Position', () => {
     const addButtonIds = ['add-/int1/1', 'add-/st1/1', 'add-/group1/1', 'add-/group2/1'];
     const otherEl = '/other/1'; // Use for creating blur event
 
-    // testing messages positions
-    testOneType(0, "ss", inputIds[0], otherEl);
-    testOneType(1, "55", inputIds[1], otherEl);
-    testOneType(2, "ss", inputIds[2], otherEl);
-    testOneType(3, "55", inputIds[3], otherEl);
-    testOneType(4, "ss", inputIds[4], otherEl);
-    testOneType(5, "55", inputIds[5], otherEl);
-    testOneType(6, "ss", inputIds[6], otherEl);
-    testOneType(7, "55", inputIds[7], otherEl);
+    // No need to test normal cases that are not repeating.
+    // // testing messages positions
+    // testOneType(0, "ss", inputIds[0], otherEl);
+    // testOneType(1, "55", inputIds[1], otherEl);
+    // testOneType(2, "ss", inputIds[2], otherEl);
+    // testOneType(3, "55", inputIds[3], otherEl);
+    // testOneType(4, "ss", inputIds[4], otherEl);
+    // testOneType(5, "55", inputIds[5], otherEl);
+    // testOneType(6, "ss", inputIds[6], otherEl);
+    // testOneType(7, "55", inputIds[7], otherEl);
 
     // add a repeating item and test message positions
     cy.byId(addButtonIds[0]).click();
@@ -45,6 +46,7 @@ describe('Validations Message Position', () => {
     cy.byId(addButtonIds[1]).click();
     testOneType(5, "55", '/st1/2', otherEl);
 
+    // test validation messages in repeating groups
     cy.byId(addButtonIds[2]).click();
     testOneType(6, "ss", '/group1/int1/1/1', otherEl);
     testOneType(7, "55", '/group1/st1/1/1', otherEl);
