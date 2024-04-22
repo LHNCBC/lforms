@@ -34,14 +34,34 @@ describe('addFormToPage Error Message Test', () => {
 
   });
 
-  it('successfully load a form that requests AnswerValueSet', () => {
+  it('successfully load a form that requests AnswerValueSet', (done) => {
     // load a lforms form data
     cy.visit('/test/pages/addFormToPageTest.html');
     cy.get("#loadBtn").contains("Load From File");
+    let valueSetQuery;
+    cy.intercept({
+      query: {
+        _format: 'json'
+      },
+      times: 1
+    }, (req) => {
+      expect(req.url.endsWith('&_format=json')).to.be.true;
+      valueSetQuery = req.url.slice(0, -13);
+    }).as('valueSet');
     cy.get('#fileAnchor').uploadFile('test/data/R4/bit-of-everything.json');
     cy.get('.lhc-form-title').contains('Bit of everything');
     // has no error message
     cy.get("#loadMsg").contains("Unable to load ValueSet from").should('not.exist');
+    cy.wait('@valueSet').then(() => {
+      cy.request(valueSetQuery).then((response) => {
+        // Confirm that if the valueSet query is sent without JSON Accept header and _format search param,
+        // it returns XML by default from the external server.
+        // If in the future the external server changes behavior, we will disable this test case as it is
+        // not valid anymore.
+        expect(response.body.startsWith('<?xml version=')).to.be.true;
+        done();
+      });
+    });
   });
 
 
