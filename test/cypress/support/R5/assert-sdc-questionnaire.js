@@ -17,7 +17,6 @@ function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.item[0].code[0].display).toBe("Your health information");
   expect(fhirData.item[0].code[0].system).toBe(undefined);
   expect(fhirData.item[0].text).toBe("Your health information");
-  expect(fhirData.item[0].required).toBe(false);
   expect(fhirData.item[0].linkId).toBe("/54126-8");
   expect(fhirData.item[0].type).toBe("group");
 
@@ -25,7 +24,6 @@ function assertFHTQuestionnaire(fhirData) {
 
   expect(fhirData.item[0].item[0].text).toBe("Name");
   expect(fhirData.item[0].item[0].type).toBe("text");
-  expect(fhirData.item[0].item[0].required).toBe(false);
   expect(fhirData.item[0].item[0].repeats).toBe(true);
   expect(fhirData.item[0].item[0].linkId).toBe("/54126-8/54125-0");
   expect(fhirData.item[0].item[0].code[0].code).toBe("54125-0");
@@ -34,7 +32,6 @@ function assertFHTQuestionnaire(fhirData) {
 
   expect(fhirData.item[0].item[12].text).toBe("Your diseases history");
   expect(fhirData.item[0].item[12].type).toBe("group");
-  expect(fhirData.item[0].item[12].required).toBe(false);
   expect(fhirData.item[0].item[12].repeats).toBe(true);
   expect(fhirData.item[0].item[12].linkId).toBe("/54126-8/54137-5");
   expect(fhirData.item[0].item[12].code[0].code).toBe("54137-5");
@@ -44,7 +41,6 @@ function assertFHTQuestionnaire(fhirData) {
 
   expect(fhirData.item[0].item[12].item[0].text).toBe("Disease or Condition");
   expect(fhirData.item[0].item[12].item[0].type).toBe("coding");
-  expect(fhirData.item[0].item[12].item[0].required).toBe(false);
   expect(fhirData.item[0].item[12].item[0].repeats).toBeFalsy();
   expect(fhirData.item[0].item[12].item[0].linkId).toBe("/54126-8/54137-5/54140-9");
   expect(fhirData.item[0].item[12].item[0].code[0].code).toBe("54140-9");
@@ -61,7 +57,6 @@ function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.item[1].code[0].display).toBe("Family member health information");
   expect(fhirData.item[1].code[0].system).toBe(undefined);
   expect(fhirData.item[1].text).toBe("Family member health information");
-  expect(fhirData.item[1].required).toBe(false);
   expect(fhirData.item[1].linkId).toBe("/54114-4");
   expect(fhirData.item[1].type).toBe("group");
 }

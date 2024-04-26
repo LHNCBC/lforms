@@ -21,14 +21,11 @@
   "item": [
     {
       "type": "group",
-
-      "required": false,
       "linkId": "valueCoding.choice-group1",
       "text": "answerOption - valueCoding - autocomplete",
       "item": [
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -44,24 +41,31 @@
               }
             }
           ],
-          "required": false,
           "linkId": "valueCoding.choice-group1-item1",
           "text": "valueCoding",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ]
         },
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -77,19 +81,27 @@
               }
             }
           ],
-          "required": false,
           "repeats": true,
           "linkId": "valueCoding.choice-group1-item2",
           "text": "valueCoding - repeats",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ]
         }
@@ -97,14 +109,11 @@
     },
     {
       "type": "group",
-
-      "required": false,
       "linkId": "valueCoding.choice-group2",
       "text": "answerOption - valueCoding - radiocheckbox",
       "item": [
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -124,24 +133,31 @@
               "valueCode": "vertical"
             }
           ],
-          "required": false,
           "linkId": "valueCoding.choice-group2-item1",
           "text": "valueCoding",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ]
         },
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -161,19 +177,27 @@
               "valueCode": "horizontal"
             }
           ],
-          "required": false,
           "repeats": true,
           "linkId": "valueCoding.choice-group2-item2",
           "text": "valueCoding - repeats",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ]
         }
@@ -181,14 +205,11 @@
     },
     {
       "type": "group",
-
-      "required": false,
       "linkId": "valueCoding.choice-group3",
       "text": "answerOption - valueCoding - prefix- score",
       "item": [
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -204,12 +225,14 @@
               }
             }
           ],
-          "required": false,
           "linkId": "valueCoding.choice-group3-item1",
           "text": "valueCoding",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" },
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -222,7 +245,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" },
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -235,7 +261,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" },
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -251,7 +280,6 @@
         },
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -267,13 +295,15 @@
               }
             }
           ],
-          "required": false,
           "repeats": true,
           "linkId": "valueCoding.choice-group3-item2",
           "text": "valueCoding - repeats",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" },
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -286,7 +316,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" },
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -299,7 +332,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" },
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -317,14 +353,11 @@
     },
     {
       "type": "group",
-
-      "required": false,
       "linkId": "valueCoding.choice-group4",
       "text": "answerOption - valueCoding - radiocheckbox - prefix - score",
       "item": [
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -344,12 +377,14 @@
               "valueCode": "vertical"
             }
           ],
-          "required": false,
           "linkId": "valueCoding.choice-group4-item1",
           "text": "valueCoding",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" },
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -362,7 +397,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" },
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -375,7 +413,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" },
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -391,7 +432,6 @@
         },
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -411,13 +451,15 @@
               "valueCode": "horizontal"
             }
           ],
-          "required": false,
           "repeats": true,
           "linkId": "valueCoding.choice-group4-item2",
           "text": "valueCoding - repeats - prefix - score",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" },
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -430,7 +472,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" },
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -443,7 +488,10 @@
               ]
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" },
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              },
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
@@ -461,14 +509,11 @@
     },
     {
       "type": "group",
-
-      "required": false,
       "linkId": "valueCoding.choice-group5",
       "text": "answerOption - valueCoding - autocomplete - initial",
       "item": [
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -484,25 +529,35 @@
               }
             }
           ],
-          "required": false,
           "linkId": "valueCoding.choice-group5-item1",
           "text": "valueCoding",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ],
-          "initialCoding": { "code": "c2", "display": "Answer 2" }
+          "initialCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
         },
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -518,35 +573,43 @@
               }
             }
           ],
-          "required": false,
           "repeats": true,
           "linkId": "valueCoding.choice-group5-item2",
           "text": "valueCoding - repeats",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ],
-          "initialCoding": { "code": "c2", "display": "Answer 2" }
+          "initialCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
         }
       ]
     },
     {
       "type": "group",
-
-      "required": false,
       "linkId": "valueCoding.choice-group6",
       "text": "answerOption - valueCoding - radiocheckbox",
       "item": [
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -566,25 +629,35 @@
               "valueCode": "vertical"
             }
           ],
-          "required": false,
           "linkId": "valueCoding.choice-group6-item1",
           "text": "valueCoding",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ],
-          "initialCoding": { "code": "c2", "display": "Answer 2" }
+          "initialCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
         },
         {
           "type": "choice",
-
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -604,22 +677,33 @@
               "valueCode": "horizontal"
             }
           ],
-          "required": false,
           "repeats": true,
           "linkId": "valueCoding.choice-group6-item2",
           "text": "valueCoding - repeats",
           "option": [
             {
-              "valueCoding": { "code": "c1", "display": "Answer 1" }
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
             },
             {
-              "valueCoding": { "code": "c2", "display": "Answer 2" }
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
             },
             {
-              "valueCoding": { "code": "c3", "display": "Answer 3" }
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ],
-          "initialCoding": { "code": "c2", "display": "Answer 2" }
+          "initialCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
         }
       ]
     }

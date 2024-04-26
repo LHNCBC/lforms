@@ -107,8 +107,8 @@ function addCommonSDCExportFns(ns) {
     // extension
     targetItem.extension = item.extension || []; // later we delete if empty
 
-    // required
-    if (item._answerRequired === true || item._answerRequired === false) {
+    // required, the default value is false
+    if (item._answerRequired === true) {
       targetItem.required = item._answerRequired;
     }
 

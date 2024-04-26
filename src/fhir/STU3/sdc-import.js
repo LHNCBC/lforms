@@ -58,7 +58,7 @@ function addSDCImportFns(ns) {
 
   /**
    * Parse questionnaire object for answer cardinality
-   * 
+   *
    * NOT USED!!
    *
    * @param lfItem {object} - LForms item object to assign answer cardinality
@@ -146,7 +146,7 @@ function addSDCImportFns(ns) {
               answer.system = option[optionKey[0]].system;
             }
           }
-          else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' || 
+          else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' ||
               optionKey[0] === 'valueTime' ){
             answer.text = option[optionKey[0]];
           }
@@ -198,11 +198,19 @@ function addSDCImportFns(ns) {
     var required = qItem.required;
     var answerCardinality, questionCardinality;
     // CODING, repeats handled by autocompleter with multiple answers in one question
-    if (lfItem.dataType === 'CODING' || 
-        qItem.option && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' || 
+    if (lfItem.dataType === 'CODING' ||
+        qItem.option && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' ||
         lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
       if (repeats) {
-        answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        // if it has sub items that are not 'display'
+        if (qItem.item && qItem.item.length >=0 &&
+            qItem.item.some(item => item.type !== 'display')) {
+          answerCardinality = {max: "1"};
+          questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
+        else {
+          answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
       }
       else {
         answerCardinality = {max: "1"};
