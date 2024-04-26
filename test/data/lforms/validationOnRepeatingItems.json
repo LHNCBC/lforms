@@ -1,0 +1,118 @@
+{
+  "code": "validationTestOnRepeatingItems",
+  "name": "Validation test on repeating items",
+  "templateOptions": {
+    "allowMultipleEmptyRepeatingItems": true
+  },
+  "items": [
+    {
+      "questionCode": "int0",
+      "dataType": "INT",
+      "restrictions": {},
+      "question": "INT non-repeating, for comparision",
+      "linkId": "/int0"
+    },
+    {
+      "questionCode": "st0",
+      "dataType": "ST",
+      "restrictions": {
+        "minLength": 5,
+        "pattern": "/^[a-z]+$/"
+      },
+      "question": "ST with minLength=5 and non-digit pattern, non-repeating, for comparision",
+      "linkId": "/st0"
+    },
+    {
+      "questionCode": "int1",
+      "dataType": "INT",
+      "restrictions": {},
+      "questionCardinality": {
+        "max": "*",
+        "min": "1"
+      },
+      "question": "INT repeating",
+      "linkId": "/int1"
+    },
+    {
+      "questionCode": "st1",
+      "dataType": "ST",
+      "restrictions": {
+        "minLength": 5,
+        "pattern": "/^[a-z]+$/"
+      },
+      "questionCardinality": {
+        "max": "*",
+        "min": "1"
+      },
+      "question": "ST with minLength=5 and non-digit pattern",
+      "linkId": "/st1"
+    },
+    {
+      "questionCode": "group1",
+      "dateType": "SECTION",
+      "header": true,
+      "linkId": "/group1",
+      "question": "A repeating group with vertical layout",
+      "questionCardinality": {
+        "max": "*",
+        "min": "1"
+      },
+      "items": [
+        {
+          "questionCode": "group1/int1",
+          "dataType": "INT",
+          "question": "INT item in a repeating group",
+          "linkId": "/group1/int1"
+        },
+        {
+          "questionCode": "group1/st1",
+          "dataType": "ST",
+          "restrictions": {
+            "minLength": 5,
+            "pattern": "/^[a-z]+$/"
+          },
+          "question": "ST with minLength=5 and non-digit pattern, in a repeating group",
+          "linkId": "/group1/st1"
+        }
+      ]
+    },
+    {
+      "questionCode": "group2",
+      "dateType": "SECTION",
+      "header": true,
+      "linkId": "/group2",
+      "question": "A repeating group with horizontal layout",
+      "displayControl": {
+        "questionLayout": "horizontal"
+      },
+      "questionCardinality": {
+        "max": "*",
+        "min": "1"
+      },
+      "items": [
+        {
+          "questionCode": "group2/int1",
+          "dataType": "INT",
+          "question": "INT item in a repeating group",
+          "linkId": "/group2/int1"
+        },
+        {
+          "questionCode": "group2/st1",
+          "dataType": "ST",
+          "restrictions": {
+            "minLength": 5,
+            "pattern": "/^[a-z]+$/"
+          },
+          "question": "ST with minLength=5 and non-digit pattern, in a repeating group",
+          "linkId": "/group2/st1"
+        }
+      ]
+    },
+    {
+      "questionCode": "other",
+      "dataType": "ST",
+      "question": "Other",
+      "linkId": "/other"
+    }
+  ]
+}

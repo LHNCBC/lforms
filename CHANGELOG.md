@@ -2,10 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.0.2] 2024-04-25
+## [36.0.3] 2024-04-25
 ### Fixed
 - Fixed a bug that repeating items that have answer list and have child 
   items are not rendered correctly.
+  
+## [36.0.2] 2024-04-17
+### Fixed
+- Fixed a position issue of the validation messages.
 
 ## [36.0.1] 2024-04-08
 ### Fixed
