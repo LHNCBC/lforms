@@ -37,7 +37,7 @@ const fhirMock = {
             rtnData = resources.ValueSet[vsID];
           }
           // url
-          else if (md = relativeURL.match(/ValueSet\/\$expand\?url=http\:\/\/hl7\.org\/fhir\/ValueSet\/(.+)/)
+          else if (md = relativeURL.match(/ValueSet\/\$expand\?url=http\:\/\/hl7\.org\/fhir\/ValueSet\/(.+)&_format=json/)
           ) {
             rtnData = resources.ValueSet[md[1]]
           }

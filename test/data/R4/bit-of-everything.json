@@ -1,0 +1,271 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "bit-of-everything",
+  "meta": {
+    "versionId": "19",
+    "lastUpdated": "2022-06-08T19:32:55.2018936+00:00"
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><b>Bit of everything</b><hr /><span style=\"color: gray;\">Status:</span> Active<br /><span style=\"color: gray;\">Publisher:</span> DEMO: Telstra Health\r\n</div>"
+  },
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+      "valueUrl": "https://sqlonfhir-r4.azurewebsites.net/fhir"
+    }
+  ],
+  "url": "http://fhir.telstrahealth.com/fast-forms/Questionnaire/bit-of-everything",
+  "name": "BitOfEverything",
+  "title": "Bit of everything",
+  "status": "active",
+  "date": "2021-06-14",
+  "publisher": "DEMO: Telstra Health",
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "user",
+        "display": "User Type"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "demo",
+            "display": "Demonstration"
+          }
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+          "valueUrl": "https://sqlonfhir-r4.azurewebsites.net/fhir"
+        }
+      ],
+      "linkId": "root",
+      "text": "Bit of Everything",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "Item-label",
+          "text": "display label",
+          "type": "display"
+        },
+        {
+          "linkId": "Item-string",
+          "text": "string",
+          "type": "string"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://standards.healthconnex.com.au/fhir/StructureDefinition/Questionnaire-TextArea-Row",
+              "valueInteger": 10
+            }
+          ],
+          "linkId": "Item-text",
+          "text": "text",
+          "type": "text"
+        },
+        {
+          "linkId": "Item-bool",
+          "code": [
+            {
+              "code": "true"
+            }
+          ],
+          "text": "boolean",
+          "type": "boolean"
+        },
+        {
+          "linkId": "Item-date",
+          "text": "date",
+          "type": "date"
+        },
+        {
+          "linkId": "Item-datetime",
+          "text": "datetime",
+          "type": "dateTime"
+        },
+        {
+          "linkId": "Item-time",
+          "text": "time",
+          "type": "time"
+        },
+        {
+          "linkId": "Item-integer",
+          "text": "integer",
+          "type": "integer"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "m",
+                "display": "meters"
+              }
+            }
+          ],
+          "linkId": "Item-decimal",
+          "text": "decimal",
+          "type": "decimal"
+        },
+        {
+          "linkId": "Item-url",
+          "text": "url",
+          "type": "url"
+        },
+        {
+          "linkId": "Item-reference",
+          "text": "reference",
+          "type": "reference"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+              "valueCode": "image/png"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+              "valueCode": "image/jpeg"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+              "valueCode": "application/json"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/mimeType",
+              "valueCode": "application/pdf"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/maxSize",
+              "valueDecimal": 1000000
+            }
+          ],
+          "linkId": "Item-attachment",
+          "text": "attachment",
+          "type": "attachment"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "m",
+                "display": "meters"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "cm",
+                "display": "centimeters"
+              }
+            }
+          ],
+          "linkId": "Item-quantity",
+          "text": "quantity",
+          "type": "quantity"
+        },
+        {
+          "linkId": "Item-rb-local",
+          "text": "radiobuttons (answerOptions)",
+          "type": "choice",
+          "repeats": false,
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://example.org/coding-test",
+                "code": "a",
+                "display": "option A"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://example.org/coding-test",
+                "code": "b",
+                "display": "option B"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "Item-rb",
+          "text": "radiobuttons (answerValueSet)",
+          "type": "choice",
+          "repeats": false,
+          "answerValueSet": "http://fhir.telstrahealth.com.au/tcm/ValueSet/ARE"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down"
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "Item10",
+          "text": "drop-down (answerValueSet)",
+          "type": "choice",
+          "repeats": false,
+          "answerValueSet": "http://fhir.telstrahealth.com.au/tcm/ValueSet/ARE"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "autocomplete"
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "Item11",
+          "text": "autocomplete (countries)",
+          "type": "choice",
+          "repeats": false,
+          "answerValueSet": "http://fhir.telstrahealth.com.au/tcm/ValueSet/COU"
+        },
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "autocomplete"
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "Item12",
+          "text": "open-choice (countries)",
+          "type": "open-choice",
+          "repeats": false,
+          "answerValueSet": "http://fhir.telstrahealth.com.au/tcm/ValueSet/COU"
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.4] 2024-05-01
+### Fixed
+- Fetching of ValueSets needs to specify JSON.
+
 ## [36.0.3] 2024-04-26
 ### Fixed
 - Fixed a bug to catch and throw an error when an enableWhen field 
