@@ -2,9 +2,22 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.0.1] 2024-04-17
+## [36.0.4] 2024-05-01
 ### Fixed
 - Fetching of ValueSets needs to specify JSON.
+
+## [36.0.3] 2024-04-26
+### Fixed
+- Fixed a bug to catch and throw an error when an enableWhen field 
+  in Questionnaire points to an invalid linkId.
+
+## [36.0.2] 2024-04-17
+### Fixed
+- Fixed a position issue of the validation messages.
+
+## [36.0.1] 2024-04-08
+### Fixed
+- Guard against loading wc-lhc-form webcomponent more than once.
 
 ## [36.0.0] 2024-04-04
 ### Changed

@@ -68,6 +68,11 @@ function addSDCImportFns(ns) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
+          if (!linkIdItemMap[qItem.enableWhen[i].question]) {
+            throw new Error("Question with linkId '" + qItem.linkId +
+                "' contains enableWhen pointing to a question with linkId '" +
+                qItem.enableWhen[i].question  + "' that does not exist.")
+          }
           var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
           var condition = {source: qItem.enableWhen[i].question, trigger: {}};
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
@@ -123,7 +128,7 @@ function addSDCImportFns(ns) {
               answer.system = option[optionKey[0]].system;
             }
           }
-          else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' || 
+          else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' ||
               optionKey[0] === 'valueTime' ){
             answer.text = option[optionKey[0]];
           }
@@ -175,8 +180,8 @@ function addSDCImportFns(ns) {
     var required = qItem.required;
     var answerCardinality, questionCardinality;
     // CODING, repeats handled by autocompleter with multiple answers in one question
-    if (lfItem.dataType === 'CODING' || 
-        qItem.answerOption && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' || 
+    if (lfItem.dataType === 'CODING' ||
+        qItem.answerOption && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' ||
         lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
       if (repeats) {
         answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
