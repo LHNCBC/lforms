@@ -1,15 +1,5 @@
 {
   "resourceType": "QuestionnaireResponse",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|3.0"
-    ],
-    "tag": [
-      {
-        "code": "lformsVersion: 36.0.1"
-      }
-    ]
-  },
   "status": "completed",
   "authored": "2024-04-24T19:17:37.563Z",
   "item": [
