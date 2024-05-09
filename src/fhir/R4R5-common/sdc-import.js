@@ -68,6 +68,11 @@ function addSDCImportFns(ns) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
+          if (!linkIdItemMap[qItem.enableWhen[i].question]) {
+            throw new Error("Question with linkId '" + qItem.linkId +
+                "' contains enableWhen pointing to a question with linkId '" +
+                qItem.enableWhen[i].question  + "' that does not exist.")
+          }
           var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
           var condition = {source: qItem.enableWhen[i].question, trigger: {}};
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
