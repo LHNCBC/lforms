@@ -184,7 +184,15 @@ function addSDCImportFns(ns) {
         qItem.answerOption && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' ||
         lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
       if (repeats) {
-        answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        // if it has sub items that are not 'display'
+        if (qItem.item && qItem.item.length >=0 &&
+            qItem.item.some(item => item.type !== 'display')) {
+          answerCardinality = {max: "1"};
+          questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
+        else {
+          answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
       }
       else {
         answerCardinality = {max: "1"};

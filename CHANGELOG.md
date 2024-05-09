@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.5] 2024-05-09
+### Fixed
+- Fixed a bug that repeating items that have answer list and have child 
+  items are not rendered correctly.
+  
 ## [36.0.4] 2024-05-01
 ### Fixed
 - Fetching of ValueSets needs to specify JSON.

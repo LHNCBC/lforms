@@ -1,0 +1,138 @@
+{
+  "status": "draft",
+  "title": "items under a repeatinng choice item",
+  "resourceType": "Questionnaire",
+  "meta": {
+      "profile": [
+          "http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire"
+      ]
+  },
+  "item": [
+      {
+          "type": "choice",
+          "extension": [
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                      "coding": [
+                          {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": "drop-down",
+                              "display": "Drop down"
+                          }
+                      ],
+                      "text": "Drop down"
+                  }
+              }
+          ],
+          "repeats": true,
+          "linkId": "/choice",
+          "text": "a repeating choice item that has child items",
+          "option": [
+              {
+                  "valueCoding": {
+                      "code": "C1",
+                      "display": "Answer A"
+                  }
+              },
+              {
+                  "valueCoding": {
+                      "code": "C2",
+                      "display": "Answer B"
+                  }
+              },
+              {
+                  "valueCoding": {
+                      "code": "C3",
+                      "display": "Answer C"
+                  }
+              }
+          ],
+          "item": [
+              {
+                  "type": "string",
+                  "linkId": "/choice/st",
+                  "text": "a string item in an item"
+              },
+              {
+                  "type": "integer",
+                  "repeats": true,
+                  "linkId": "/choice/int",
+                  "text": "a repeating integer item in an item"
+              },
+              {
+                  "type": "group",
+                  "linkId": "/choice/group",
+                  "text": "a sub group item",
+                  "item": [
+                      {
+                          "type": "string",
+                          "linkId": "/choice/group/st",
+                          "text": "a string item"
+                      },
+                      {
+                          "type": "integer",
+                          "repeats": true,
+                          "linkId": "/choice/group/int",
+                          "text": "a repeating integer item in sub group"
+                      }
+                  ]
+              },
+              {
+                  "type": "choice",
+                  "extension": [
+                      {
+                          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                          "valueCodeableConcept": {
+                              "coding": [
+                                  {
+                                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                      "code": "drop-down",
+                                      "display": "Drop down"
+                                  }
+                              ],
+                              "text": "Drop down"
+                          }
+                      }
+                  ],
+                  "repeats": true,
+                  "linkId": "/choice/choice",
+                  "text": "a repeating choice sub-item that has child items, and is in another repeating choice item",
+                  "option": [
+                      {
+                          "valueCoding": {
+                              "code": "c1",
+                              "display": "Answer 1"
+                          }
+                      },
+                      {
+                          "valueCoding": {
+                              "code": "c2",
+                              "display": "Answer 2"
+                          }
+                      },
+                      {
+                          "valueCoding": {
+                              "code": "c3",
+                              "display": "Answer 3"
+                          }
+                      }
+                  ],
+                  "item": [
+                      {
+                          "type": "string",
+                          "linkId": "/choice/choice/st",
+                          "text": "a string sub-item"
+                      },
+                      {
+                          "type": "integer",
+                          "repeats": true,
+                          "linkId": "/choice/choice/int",
+                          "text": "a repeating integer sub-item"
+                      }
+                  ]
+              }
+          ]
+      }
+  ]
+}
