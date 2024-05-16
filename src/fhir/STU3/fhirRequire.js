@@ -21,7 +21,7 @@ fhir.SDC._commonExport = commonExport;
 import addCommonSDCExportFns from '../common/sdc-export-common.js'
 addCommonSDCExportFns(fhir.SDC);
 import addCommonSDCImportFns from '../common/sdc-import-common.js';
-addCommonSDCImportFns(fhir.SDC, fhir.fhirpath);
+addCommonSDCImportFns(fhir.SDC);
 import addSTU3R4ExportFns from '../STU3R4-common/sdc-export.js'
 addSTU3R4ExportFns(fhir.SDC);
 import addSTU3R4ImportFns from '../STU3R4-common/sdc-import.js'

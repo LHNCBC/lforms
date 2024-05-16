@@ -1,12 +1,13 @@
 import { InternalUtil } from '../../lib/lforms/internal-utils.js';
 import {importFHIRQuantity} from './import-common.js';
+const fhirpath = require('fhirpath');
 
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
  *  code, and adds additional functions to it.
  */
-function addCommonSDCImportFns(ns, fhirpath) {
+function addCommonSDCImportFns(ns) {
 "use strict";
 
   var self = ns;
