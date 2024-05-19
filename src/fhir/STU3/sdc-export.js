@@ -54,6 +54,18 @@ var self = {
     for (var i=0, len=lfData.itemList.length; i<len; ++i) {
       var item = lfData.itemList[i];
       if (this._getExtractValue(item) && this._hasItemValue(item)) {
+        const categCodeableConcepts = [];
+        // Use the categories from the closest ancestor item (including itself)
+        var ancestor = item;
+        while (ancestor && !categCodeableConcepts.length) {
+          if (ancestor.extension) {
+            const categExts = LForms.Util.findObjectInArray(ancestor.extension, 'url',
+              this.fhirExtObsExtractCategory,  0, true);
+            categExts.forEach((x)=>categCodeableConcepts.push(x.valueCodeableConcept));
+          }
+          ancestor = ancestor._parentItem;
+        }
+
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
@@ -70,6 +82,8 @@ var self = {
           }
           if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
             obs[j].performer = qr.author;
+          if (categCodeableConcepts.length)
+            obs[j].category = categCodeableConcepts;
 
           rtn.push(obs[j]);
         }
