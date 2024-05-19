@@ -46,7 +46,7 @@ export const InternalUtil = {
       item.value = val;
       changed = true;
     }
-    
+
     return changed;
   },
 
@@ -163,12 +163,35 @@ export const InternalUtil = {
 
   /**
    *  Check if the lforms item has an answer list
-   * @param {*} item 
-   * @returns 
+   * @param {*} item
+   * @returns
    */
   hasAnswerList: function(item) {
     return item.dataType === "CODING" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
+  },
+
+
+  /**
+   * Check an item's skip logic status to decide if the item is enabled
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetEnabled: function(item) {
+    return item ? item._enableWhenExpVal !== false &&
+        item._skipLogicStatus !== 'target-disabled' : false;
+  },
+
+
+  /**
+   * Check an item's skip logic status to decide if the item is enabled and protected (not hidden from view)
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetDisabledAndProtected: function(item) {
+    return item ? (item._enableWhenExpVal === false ||
+        item._skipLogicStatus === 'target-disabled') &&
+        item.disabledDisplay === 'protected' : false;
   }
 
 }

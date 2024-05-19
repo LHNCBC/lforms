@@ -566,6 +566,8 @@ export default class LhcFormData {
     this._updateLastRepeatingItemsStatus(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
+    // run the all form controls
+    this._checkFormControls();
 
     // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
@@ -622,12 +624,29 @@ export default class LhcFormData {
         if (item.skipLogic) {
           changed = this._updateItemSkipLogicStatus(item, null) || changed;
         }
-        // Hide the sub items if isHiddenInDef flag is true.
-        if (item.isHiddenInDef) {
-          if (!item._isHiddenFromView) changed = true;
-          item._isHiddenFromView = true;
-          changed = this._setSubItemsHidden(item) || changed;
+        // set _isHiddenFromView when the item changes its status from hidden to shown
+        // or from shown to hidden
+        if (this.isItemHidden(item)) {
+          // changed from shown to hidden
+          if (!item._isHiddenFromView) {
+            changed = true;
+            item._isHiddenFromView = true;
+            changed = this._setSubItemsHiddenFromView(item, true) || changed;
+          }
         }
+        else {
+          // changed from hidden to shown
+          if (item._isHiddenFromView) {
+            changed = true;
+            item._isHiddenFromView = false;
+            changed = this._setSubItemsHiddenFromView(item, false) || changed;
+          }
+        }
+        // if (this.isItemHidden(item)) {
+        //   if (!item._isHiddenFromView) changed = true;
+        //   item._isHiddenFromView = true;
+        //   changed = this._setSubItemsHiddenFromView(item) || changed;
+        // }
       }
     }
 
@@ -640,19 +659,32 @@ export default class LhcFormData {
 
 
   /**
-   * Update sub items if the current item is hidden
-   * @param item the item that is hidden
+   * Update the _isHiddenFromView value on sub items
+   * @param item the parent item
+   * @param hidden the parent item's hidden status
    * @return {boolean} whether the item._isHiddenFromView has changed
    */
-  _setSubItemsHidden(item) {
+  _setSubItemsHiddenFromView(item, hidden) {
     var changed = false;
     // process the sub items
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
-        if (!subItem._isHiddenFromView) changed = true;
-        subItem._isHiddenFromView = true;
-        changed = this._setSubItemsHidden(subItem) || changed;
+        if (hidden) {
+          // changed from shown to hidden
+          if (!subItem._isHiddenFromView) {
+            changed = true;
+            subItem._isHiddenFromView = true;
+          }
+        }
+        else {
+          // changed from hidden to shown
+          if (subItem._isHiddenFromView) {
+            changed = true;
+            subItem._isHiddenFromView = false;
+          }
+        }
+        changed = this._setSubItemsHiddenFromView(subItem, hidden) || changed;
       }
     }
     return changed;
@@ -770,12 +802,12 @@ export default class LhcFormData {
   /**
    * Preset skip logic status for newly added repeating items
    * @param item an item
-   * @param hide if the parent item is already hidden
+   * @param disabled if the parent item is already diasabled
    * @private
    */
-  _presetSkipLogicStatus(item, hide) {
+  _presetSkipLogicStatus(item, disabled) {
     // if it has skip logic or one of its ancestors has skip logic
-    if (item.skipLogic || hide) {
+    if (item.skipLogic || disabled) {
       this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_DISABLED, true);
       var isDisabled = true;
       // process the sub items
@@ -804,7 +836,7 @@ export default class LhcFormData {
         if (!noLog)
           this._actionLogs.push(msg);
       }
-      item._preSkipLogicStatus = item._skipLogicStatus;
+      //item._preSkipLogicStatus = item._skipLogicStatus;
       item._skipLogicStatus = newStatus;
       changed = true;
     }
@@ -1372,7 +1404,7 @@ export default class LhcFormData {
 
     // set up readonly flag
     item._readOnly = (item.editable && item.editable === "0") ||
-      !!item.calculationMethod;
+      !!item.calculationMethod || InternalUtil.targetDisabledAndProtected(item);
 
     if (this._fhir) {
       this._fhir.SDC.processExtensions(item, 'obj_text');
@@ -1384,9 +1416,9 @@ export default class LhcFormData {
   /**
    *  Returns true if the item is hidden for any reason.
    */
-  _isHidden(item) {
-    return item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._isHiddenFromView ||
-      item._enableWhenExpVal === false;
+  isItemHidden(item) {
+    return ((item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._enableWhenExpVal === false) &&
+       item.disabledDisplay !=='protected') || item.isHiddenInDef;
   }
 
 
@@ -1417,7 +1449,7 @@ export default class LhcFormData {
 
       // consider if the last sibling is hidden by skip logic, or is hidden by a FHIR extension
       if (!foundLastSibling) {
-        if (this._isHidden(item)) {
+        if (this.isItemHidden(item)) {
           item._lastSibling = false;
           lastSiblingIndex -= 1;
         }
@@ -2457,7 +2489,7 @@ export default class LhcFormData {
             insertPosition = this._findIndexForNewRepetition(item);
             maxRecId = this.getRepeatingItemMaxId(item);
           }
-          var parentItemHidden = this._isHidden(item._parentItem);
+          var parentItemDisabled = item._parentItem._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
           for (var i=0; i<newRowsNeeded; ++i) {
             var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
             newItem._id = maxRecId + 1;
@@ -2465,7 +2497,7 @@ export default class LhcFormData {
             newItem._parentItem = item._parentItem;
             repetitions.push(newItem);
             // preset the skip logic status to target-disabled on the new items
-            this._presetSkipLogicStatus(newItem, parentItemHidden);
+            this._presetSkipLogicStatus(newItem, parentItemDisabled);
           }
         }
         // Set values now that the right number of rows are present

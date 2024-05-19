@@ -96,6 +96,10 @@
   background-color: #E8E8E8;
 }
 
+.lhc-form .lhc-item-disabled-protected {
+  background-color: #E8E8E8;
+}
+
 span.loading-indicator-container {
   width: 100%;
 }
@@ -301,6 +305,10 @@ span.loading-indicator-container {
   border-top: 2px solid white;
   padding: 4px 2px 4px 2px;
 }
+/* disabled and protected display */
+.lhc-form .lhc-item.lhc-datatype-TITLE.lhc-item-disabled-protected .lhc-item-display {
+  background-color: #E8E8E8;
+}
 
 .lhc-form .lhc-item-group-title {
   background: #e6f1ff;
@@ -313,6 +321,10 @@ span.loading-indicator-container {
   border-width: 0;
   border-top: 2px solid white;
   padding: 4px 2px 4px 2px;
+}
+/* disabled and protected group */
+.lhc-form .lhc-item-disabled-protected .lhc-item-group-title {
+  background-color: #E8E8E8;
 }
 
 /* first row in a group or in the form */

@@ -1,0 +1,69 @@
+{
+  "title": "Quesionnaire (R5 only) with disabledDisplay",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "s1",
+      "text": "source item for enableWhen. true=>enable; false|not answered=>disable.",
+      "prefix": "0.",
+      "type": "boolean"
+    },
+    {
+      "linkId": "a1",
+      "text": "disabledDisplay = 'hidden' on question item",
+      "prefix": "1.",
+      "type": "string",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "a2",
+      "text": "disabledDisplay = 'protected' on question item",
+      "prefix": "2.",
+      "type": "string",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "b1",
+      "text": "disabledDisplay = 'hidden' on display item",
+      "prefix": "3",
+      "type": "display",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "b2",
+      "text": "disabledDisplay = 'protected' on display item",
+      "prefix": "4.",
+      "type": "display",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    }
+  ]
+}

@@ -185,7 +185,7 @@ function addCommonSDCImportFns(ns) {
    */
   self.convertQuestionnaireToLForms = function (fhirData, options) {
     var target = null;
-    if (options) 
+    if (options)
       self._widgetOptions = options;
 
     if(fhirData) {
@@ -282,6 +282,7 @@ function addCommonSDCImportFns(ns) {
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
+    if (self._processDisabledDisplay) self._processDisabledDisplay(targetItem, qItem);
 
     return targetItem;
   };

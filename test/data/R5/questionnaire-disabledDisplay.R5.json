@@ -1,0 +1,292 @@
+{
+  "title": "Quesionnaire (R5 only) with disabledDisplay",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "s1",
+      "text": "source item for enableWhen. true=>enable; false|not answered=>disable.",
+      "prefix": "0.",
+      "type": "boolean"
+    },
+    {
+      "linkId": "a1",
+      "text": "disabledDisplay = 'hidden' on question item",
+      "prefix": "1.",
+      "type": "string",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "a2",
+      "text": "disabledDisplay = 'protected' on question item",
+      "prefix": "2.",
+      "type": "string",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "b1",
+      "text": "disabledDisplay = 'hidden' on display item",
+      "prefix": "3",
+      "type": "display",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "b2",
+      "text": "disabledDisplay = 'protected' on display item",
+      "prefix": "4.",
+      "type": "display",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "g1",
+      "text": "disabledDisplay = 'hidden' on group item",
+      "prefix": "5.",
+      "type": "group",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "item": [
+        {
+          "linkId": "g1a1",
+          "text": "a question item in a group",
+          "prefix": "6.",
+          "type": "string"
+        },
+        {
+          "linkId": "g1b1",
+          "text": "a display item in a group",
+          "prefix": "7.",
+          "type": "display"
+        },
+        {
+          "linkId": "g1g1",
+          "text": "a sub group item",
+          "prefix": "8.",
+          "type": "group",
+          "item": [
+            {
+              "linkId": "g1g1a1",
+              "text": "a question item in a sub group item",
+              "prefix": "9.",
+              "type": "string"
+            },
+            {
+              "linkId": "g1g1b1",
+              "text": "a display item in a sub group item",
+              "prefix": "10.",
+              "type": "display"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "g2",
+      "text": "disabledDisplay not set on group item",
+      "prefix": "11.",
+      "type": "group",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "item": [
+        {
+          "linkId": "g1a1",
+          "text": "a question item in a group",
+          "prefix": "12.",
+          "type": "string"
+        },
+        {
+          "linkId": "g1b1",
+          "text": "a display item in a group",
+          "prefix": "13.",
+          "type": "display"
+        },
+        {
+          "linkId": "g1g1",
+          "text": "a sub group item",
+          "prefix": "14.",
+          "type": "group",
+          "item": [
+            {
+              "linkId": "g1g1a1",
+              "text": "a question item in a sub group item",
+              "prefix": "15.",
+              "type": "string"
+            },
+            {
+              "linkId": "g1g1b1",
+              "text": "a display item in a sub group item",
+              "prefix": "16.",
+              "type": "display"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "g3",
+      "text": "disabledDisplay = 'protected' on group item",
+      "prefix": "17.",
+      "type": "group",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "item": [
+        {
+          "linkId": "g3a1",
+          "text": "disabledDisplay = 'hidden' on question item in a group",
+          "prefix": "18.",
+          "type": "string",
+          "disabledDisplay": "hidden",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3a2",
+          "text": "disabledDisplay = 'protected' on question item in a group",
+          "prefix": "19.",
+          "type": "string",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3b1",
+          "text": "disabledDisplay = 'hidden' on display item in a group",
+          "prefix": "20.",
+          "type": "display",
+          "disabledDisplay": "hidden",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3b2",
+          "text": "disabledDisplay = 'protected' on display item in a group",
+          "prefix": "21.",
+          "type": "display",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3g1",
+          "text": "disabledDisplay = 'hidden' on group item in a group",
+          "prefix": "22.",
+          "type": "group",
+          "disabledDisplay": "hidden",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "item": [
+            {
+              "linkId": "g3g1a1",
+              "text": "a question item in a sub group",
+              "prefix": "23.",
+              "type": "string"
+            },
+            {
+              "linkId": "g3g1b1",
+              "text": "a display item in a sub group",
+              "prefix": "24.",
+              "type": "display"
+            }
+          ]
+        },
+        {
+          "linkId": "g3g2",
+          "text": "disabledDisplay = 'protected' on group item in a group",
+          "prefix": "25.",
+          "type": "group",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "item": [
+            {
+              "linkId": "g3g2a1",
+              "text": "a question item in a sub group",
+              "prefix": "26.",
+              "type": "string"
+            },
+            {
+              "linkId": "g3g2b1",
+              "text": "a display item in a sub group",
+              "prefix": "27.",
+              "type": "display"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

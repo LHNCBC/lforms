@@ -161,6 +161,26 @@ function addR5ImportFns(ns) {
   };
 
 
+  /**
+   * Process item.disabledDisplay
+   * @param {*} lfItem LForms item
+   * @param {*} qItem Questionnaire item
+   */
+  self._processDisabledDisplay = function(lfItem, qItem) {
+    if (qItem.disabledDisplay) {
+      lfItem.disabledDisplay = qItem.disabledDisplay;
+    }
+  };
+
+
+  /**
+   * Handle the item.value in QuestionnaireResponse for non-CODING typed items
+   * @param {*} fhirValue a value of item in QuestionnaireResponse, without the 'valueX' key
+   * @param {*} lfItem an item in lforms
+   * @param {boolean} forDefault if true, the intented target of the values is the item's
+   *   default value instead of the item value. The default value is false.
+   * @returns the answer
+   */
   self._processNonCodingAnswerValueInQR = function(fhirValue, lfItem, forDefault=false) {
     let answer;
     if (lfItem.dataType === "ST" || lfItem.dataType === "INT" ||
