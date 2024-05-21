@@ -52,7 +52,7 @@ describe('load saved user data', () => {
   it('repeating items should be shown', () => {
     cy.byId(ff.rpq1_1).should('be.visible').should('have.value', 'instance A');
     cy.byId(ff.rpq1_2).should('be.visible').should('have.value', 'instance B');
-    cy.byId(ff.rpq1_add_btn).should('be.visible').should('contain', 'Add another "A Repeating Item"');
+    cy.byId(ff.rpq1_add_btn).should('be.visible').should('contain', '+ A Repeating Item');
   });
 
   it('repeating items/section within a repeating section should be shown', () => {
@@ -69,9 +69,9 @@ describe('load saved user data', () => {
     cy.byId(ff.rpq5_3).should('be.visible').should('have.value', '402');
     cy.byId(ff.rpq5_5).should('be.visible').should('have.value', '403');
 
-    cy.byId(ff.rpq4_add_btn_1).should('be.visible').should('contain', 'Add another "A repeating section in a repeating section"');
-    cy.byId(ff.rpq4_add_btn_2).should('be.visible').should('contain', 'Add another "A repeating section in a repeating section"');
-    cy.byId(ff.rpq2_add_btn).should('be.visible').should('contain', 'Add another "A Repeating Section"');
+    cy.byId(ff.rpq4_add_btn_1).should('be.visible').should('contain', '+ A repeating section in a repeating section');
+    cy.byId(ff.rpq4_add_btn_2).should('be.visible').should('contain', '+ A repeating section in a repeating section');
+    cy.byId(ff.rpq2_add_btn).should('be.visible').should('contain', '+ A Repeating Section');
 
     cy.byId(ff.rpq4_del_btn_3).should('be.visible').should('have.text', '-');
     cy.byId(ff.rqp2_del_btn_2).should('be.visible').should('have.text', '-');
@@ -93,11 +93,11 @@ describe('load saved user data', () => {
   it('form should be actionable', () => {
     // add a repeating item
     cy.byId(ff.rpq1_add_btn).click().should('not.exist');
-    cy.byId(ff.rpq1_add_btn_3).should('be.visible').should('contain', 'Add another "A Repeating Item"');
+    cy.byId(ff.rpq1_add_btn_3).should('be.visible').should('contain', '+ A Repeating Item');
     cy.byId(ff.rpq1_3).should('have.value', '');
     // add a repeating section
     cy.byId(ff.rpq4_add_btn_1).click().should('not.exist');
-    cy.byId(ff.rpq4_add_btn_1b).should('be.visible').should('contain', 'Add another "A repeating section in a repeating section"');
+    cy.byId(ff.rpq4_add_btn_1b).should('be.visible').should('contain', '+ A repeating section in a repeating section');
     cy.byId(ff.rpq5_4).should('have.value', '');
 
     // select from an answer list
