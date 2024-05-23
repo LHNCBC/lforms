@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.6] 2024-05-23
+### Changed
+- CSS tweaks in attachment fields to align with other fields.
+
 ## [36.0.5] 2024-05-09
 ### Fixed
 - Fixed a bug that repeating items that have answer list and have child 
