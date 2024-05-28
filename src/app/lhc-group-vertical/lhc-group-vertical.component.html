@@ -13,11 +13,7 @@
   <!-- sub items -->
   <div *ngIf="item.items" class="lhc-item-group-body">
     <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">
-      <lhc-item *ngIf="item && lhcDataService.targetEnabled(item) && !item._isHiddenFromView"
-        [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}"
-        id="item-{{ item._elementId }}">
-      </lhc-item>
-      <lhc-item *ngIf="item && lhcDataService.targetDisabledAndProtected(item) && !item._isHiddenFromView"
+      <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView"
         [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}"
         id="item-{{ item._elementId }}">
       </lhc-item>

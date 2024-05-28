@@ -227,6 +227,16 @@ export class LhcDataService {
 
 
   /**
+   * Check if the item should be displayed (enabled or disabled but protected)
+   * @param item an item
+   * @return {boolean}
+  */
+  targetShown(item) {
+    return this.lhcFormData ? InternalUtil.targetShown(item) : false;
+  }
+
+
+  /**
    * Get the sequence number for the current repeating item
    * @param item an item in the lforms form items array
    * @returns {string}

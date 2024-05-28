@@ -1,5 +1,5 @@
 {
-  "title": "Quesionnaire (R5 only) with disabledDisplay",
+  "title": "Quesionnaire with disabledDisplay (R5 only) ",
   "resourceType": "Questionnaire",
   "status": "draft",
   "item": [
@@ -283,6 +283,656 @@
               "text": "a display item in a sub group",
               "prefix": "27.",
               "type": "display"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "coding",
+      "prefix": "28.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ],
+      "linkId": "coding1",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on coding item displayed as radio buttons",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    },
+    {
+      "type": "coding",
+      "prefix": "29.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ],
+            "text": "Check-box"
+          }
+        }
+      ],
+      "repeats": true,
+      "linkId": "coding2",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on coding item displayed as checkboxes",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "30.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "gtable",
+                "display": "Group Table"
+              }
+            ],
+            "text": "Group Table"
+          }
+        }
+      ],
+      "linkId": "g4",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "repeats": true,
+      "text": "disabledDisplay = 'protected' on group item displayed as horizontal table",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "g4col1",
+          "text": "A string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g4col2",
+          "text": "A coding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "31.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g5",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on group item displayed as a matrix (repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g5q1",
+          "text": "Question #1",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g5q2",
+          "text": "Question #2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g5q3",
+          "text": "Question #3",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "32.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g6",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on group item displayed as a matrix (non-repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "linkId": "g6q1",
+          "text": "Question #1",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g6q2",
+          "text": "Question #2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g6q3",
+          "text": "Question #3",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "33.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "gtable",
+                "display": "Group Table"
+              }
+            ],
+            "text": "Group Table"
+          }
+        }
+      ],
+      "linkId": "g7",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "repeats": true,
+      "text": "disabledDisplay not set on group item displayed as horizontal table",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "g7col1",
+          "text": "A string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g7col2",
+          "text": "A coding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "34.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g8",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay not set on group item displayed as a matrix (repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g8q1",
+          "text": "Question #1",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g8q2",
+          "text": "Question #2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g8q3",
+          "text": "Question #3",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "35.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g9",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay not set on group item displayed as a matrix (non-repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "linkId": "g9q1",
+          "text": "Question #1",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g9q2",
+          "text": "Question #2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g9q3",
+          "text": "Question #3",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ]
         }

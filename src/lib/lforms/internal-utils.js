@@ -192,8 +192,17 @@ export const InternalUtil = {
     return item ? (item._enableWhenExpVal === false ||
         item._skipLogicStatus === 'target-disabled') &&
         item.disabledDisplay === 'protected' : false;
-  }
+  },
 
+
+  /**
+   * Check if the item should be displayed (enabled or disabled but protected)
+   * @param item an item
+   * @return {boolean}
+  */
+  targetShown: function(item) {
+    return item ? this.targetEnabled(item) || this.targetDisabledAndProtected(item) : false;
+  }
 }
 
 
