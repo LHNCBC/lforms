@@ -173,7 +173,8 @@ function addCommonSDCImportFns(ns) {
   ];
 
   self.itemLevelIgnoredFields = [
-    'definition'
+    'definition',
+    'id'
   ];
 
   /**
