@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.6] 2024-05-21
+### Changed
+- Remove "Add another" on buttons.
+
 ## [36.0.5] 2024-05-09
 ### Fixed
 - Fixed a bug that repeating items that have answer list and have child 

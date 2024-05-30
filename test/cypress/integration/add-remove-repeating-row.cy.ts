@@ -101,7 +101,7 @@ describe('repeating group with answerValueSet items', () => {
     cy.get('.ant-radio-input').should('have.length', 7);
     cy.get('.ant-radio-input').eq(0).click();
     // Add a repeating group.
-    cy.contains('Add another "repeating group"').click();
+    cy.contains('+ repeating group').click();
     // The 7 radio button inputs in the repeating group should be rendered.
     cy.get('.ant-radio-input').should('have.length', 14);
   });
@@ -114,7 +114,7 @@ describe('repeating group with answerValueSet items', () => {
     cy.get('.ant-radio-input').should('have.length', 7);
     cy.byId('9744363809788/1').type('some text');
     // Add a repeating group.
-    cy.contains('Add another "Outer group"').click();
+    cy.contains('+ Outer group').click();
     // The 7 radio button inputs in the repeating group should be rendered.
     cy.get('.ant-radio-input').should('have.length', 14);
   });
