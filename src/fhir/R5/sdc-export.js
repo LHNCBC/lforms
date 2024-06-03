@@ -202,7 +202,6 @@ function addR5ExportFns(ns) {
                 answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
                 answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
                 if (answerCoding && ext.length > 0) {
-                  console.log('haha');
                   answerCoding.extension = ext;
                 }
                 answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
