@@ -180,7 +180,7 @@ function addR5ExportFns(ns) {
         var ext = [];
         if (itemValue.score !== null && itemValue.score !== undefined) {
           ext.push({
-            url: "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+            url: "http://hl7.org/fhir/StructureDefinition/itemWeight",
             valueDecimal: parseFloat(itemValue.score),
           });
         }

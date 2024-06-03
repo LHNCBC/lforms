@@ -118,6 +118,7 @@ function addSTU3R4ExportFns(ns) {
           else if (this._lformsTypesToFHIRFields[dataType]) {
             var valueKey = this._getValueKeyByDataType("value", item);
             answer = {[valueKey]: itemValue};
+            // TODO: not sure if the ordinalValue extension could possibly apply to every data type or just some.
             if (ext.length > 0) {
               answer.extension = ext;
             }

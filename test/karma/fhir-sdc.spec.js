@@ -1907,7 +1907,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "code": "LA6554-5",
               "display": "Eye opening to pain",
               "extension": [{
-                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "url": fhirVersion === 'R5' ? "http://hl7.org/fhir/StructureDefinition/itemWeight" : "http://hl7.org/fhir/StructureDefinition/ordinalValue",
                 "valueDecimal": 2
               }]
             });
