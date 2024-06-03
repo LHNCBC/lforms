@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.7] 2024-06-03
+### Added
+- Copy ordinalValue extension to questionnaire response.
+
 ## [36.0.6] 2024-05-21
 ### Changed
 - Remove "Add another" on buttons.
