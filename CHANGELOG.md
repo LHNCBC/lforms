@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.0.7] 2024-05-22
+### Fixed
+- Updated fhirpath.js to version 3.13.2 to get resource node data types using
+  the `fhirpath.types(nodes)` function.
+  
 ## [36.0.6] 2024-05-21
 ### Changed
 - Remove "Add another" on buttons.
