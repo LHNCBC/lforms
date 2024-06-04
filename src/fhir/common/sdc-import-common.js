@@ -1,18 +1,6 @@
 import { InternalUtil } from '../../lib/lforms/internal-utils.js';
-import {importFHIRQuantity} from './import-common.js'
-
-// TBD import this path function from fhirpath.js.  When that is done, also
-// remove the regex test for /Quantity$/ below and replace it with a simple
-// equality check for a path of 'Quantity'.
-/**
- *  For a given result of a fhirpath.js evaluation, returns the path from the
- *  nearest FHIR type to the result which might be a fragement of that type.
- *  (Example:  Questionnaire.item, given a result consisting of items.)
- */
-function path(fhirpathRes) {
-  return fhirpathRes.__path__;
-}
-
+import {importFHIRQuantity} from './import-common.js';
+const fhirpath = require('fhirpath');
 
 /**
  *  Defines SDC import functions that are the same across the different FHIR
@@ -418,11 +406,8 @@ function addCommonSDCImportFns(ns) {
     var lfDataType = lfItem.dataType;
     var answers = [];
     const messages = [];
-    const fhirValPath = path(fhirVals); // TBD - should be on each value, as they might vary
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
-      if (typeof fhirVal == 'object')
-        fhirVal.__path__ = fhirValPath; // TBD - work around for getting path on individual nodes
       var answer = undefined; // reset back to undefined each iteration
       let errors = {};
       let hasMessages = false;
@@ -473,8 +458,7 @@ function addCommonSDCImportFns(ns) {
       }
       else {
         if((lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT') &&
-            (fhirVal._type === 'Quantity' || /Quantity$/.test(path(fhirVal)))) {
-          delete fhirVal.__path__;
+            (fhirVal._type === 'Quantity' || fhirpath.types(fhirVal)[0] === 'FHIR.Quantity')) {
           fhirVal._type = 'Quantity';
           [answer, errors] = this._convertFHIRQuantity(lfItem, fhirVal);
           hasMessages = !!errors;

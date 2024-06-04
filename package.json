@@ -62,7 +62,7 @@
     "autocomplete-lhc": "^19.2.2",
     "deep-equal": "^2.2.3",
     "fast-copy": "^3.0.1",
-    "fhirpath": "3.2.0",
+    "fhirpath": "3.13.2",
     "htmlparser2": "^9.1.0",
     "jquery": "^3.7.1",
     "moment": "2.29.4",
