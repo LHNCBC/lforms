@@ -114,6 +114,7 @@ var self = {
     }
 
     var obxs = [];
+
     for(var i=0, iLen=values.length; i<iLen; i++) {
       var obx = {
         "resourceType": "Observation",
