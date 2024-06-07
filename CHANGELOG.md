@@ -2,15 +2,29 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.0.6] 2024-05-23
+## [36.1.1] 2024-06-07
 ### Changed
 - CSS tweaks in attachment fields to align with other fields.
+
+## [36.1.0] 2024-05-24
+### Added
+- Support for the FHIR observation-extract-category extension which sets
+  Observation.category when an Observation is extracted from the Questionnaire.
+  
+## [36.0.7] 2024-05-22
+### Fixed
+- Updated fhirpath.js to version 3.13.2 to get resource node data types using
+  the `fhirpath.types(nodes)` function.
+  
+## [36.0.6] 2024-05-21
+### Changed
+- Remove "Add another" on buttons.
 
 ## [36.0.5] 2024-05-09
 ### Fixed
 - Fixed a bug that repeating items that have answer list and have child 
   items are not rendered correctly.
-  
+
 ## [36.0.4] 2024-05-01
 ### Fixed
 - Fetching of ValueSets needs to specify JSON.
