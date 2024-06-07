@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.2.0] 2024-06-07
+### Added
+- support for maxdecimalplaces extension.
+
 ## [36.1.2] 2024-06-07
 ### Fixed
 - Preserve id field in questionnaire items.
