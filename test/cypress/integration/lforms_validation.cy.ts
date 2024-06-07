@@ -49,6 +49,7 @@ describe('Validations', () => {
     real2 = '/REAL2/1',
     real3 = '/REAL3/1',
     real4 = '/REAL4/1',
+    real5 = '/REAL5/1',
     st1 = '/ST1/1',
     st2 = '/ST2/1',
     st3 = '/ST3/1',
@@ -80,6 +81,7 @@ describe('Validations', () => {
     lblreal2 = 'label[for=\'/REAL2/1\']',
     lblreal3 = 'label[for=\'/REAL3/1\']',
     lblreal4 = 'label[for=\'/REAL4/1\']',
+    lblreal5 = 'label[for=\'/REAL5/1\']',
     lblst1 = 'label[for=\'/ST1/1\']',
     lblst2 = 'label[for=\'/ST2/1\']',
     lblst3 = 'label[for=\'/ST3/1\']',
@@ -129,6 +131,7 @@ describe('Validations', () => {
     errorMaxLength = 'must have a total length less than or equal to ',
     errorMinLength = 'must have a total length greater than or equal to ',
     errorPattern = 'must match a RegExp pattern of',
+    errorMaxDecimalPlaces = 'must have decimal places smaller than or equal to ',
     errorRequire = 'requires a value';
 
   describe('data type validations (table)', () => {
@@ -238,6 +241,10 @@ describe('Validations', () => {
 
     it('should validate pattern, with "/" and flags (i, ignore cases)', () => {
       testOneType(stb, lblsta, errorContainer, errorPattern, '2/AAAAA', '/aBBBc');
+    });
+
+    it('should validate maxDecimalPlaces', () => {
+      testOneType(real5, lblreal4, errorContainer, errorMaxDecimalPlaces, '10.123', '10.12');
     });
 
     it('should validate "required" on ST', () => {
