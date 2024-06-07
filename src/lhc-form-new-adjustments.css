@@ -3,7 +3,8 @@ lhc-input,
 lhc-unit,
 lhc-item-text,
 lhc-date,
-lhc-item-choice-autocomplete {
+lhc-item-choice-autocomplete,
+lhc-item-attachment {
   padding: 2px 0 2px 2px;
   display: block;
 }

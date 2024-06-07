@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.1.1] 2024-06-07
+### Changed
+- CSS tweaks in attachment fields to align with other fields.
+
 ## [36.1.0] 2024-05-24
 ### Added
 - Support for the FHIR observation-extract-category extension which sets
