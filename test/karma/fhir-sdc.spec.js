@@ -1606,6 +1606,27 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          it('should preserve id field in questionnaire items', function() {
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              resourceType: 'Questionnaire',
+              url: 'http://test-questionnaire-url',
+              version: 'version',
+              status: 'draft',
+              item: [{
+                id: 100,
+                text: 'item a',
+                linkId: '1',
+                type: 'string',
+              }]
+            };
+            var lfdata = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfdata.url, 'http://test-questionnaire-url');
+            let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, lfdata);
+            assert.equal(q.item[0].id, 100);
+          });
+
           if(fhirVersion === 'STU3') {
             describe('argonaut samples', function () {
               it('should parse housing', function (done) {

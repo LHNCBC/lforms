@@ -162,8 +162,10 @@ function addCommonSDCImportFns(ns) {
     'url'
   ];
 
+  // Item-level fields that are simply copied from the FHIR Questionnaire format to the LHC-Forms format, and back.
   self.itemLevelIgnoredFields = [
-    'definition'
+    'definition',
+    'id'
   ];
 
   /**

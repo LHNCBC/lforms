@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.1.2] 2024-06-07
+### Fixed
+- Preserve id field in questionnaire items.
+
 ## [36.1.1] 2024-06-07
 ### Changed
 - CSS tweaks in attachment fields to align with other fields.
