@@ -1493,6 +1493,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(fhirQ.item[0].extension, expected_fhirQ.item[0].extension);
             assert.deepEqual(fhirQ.item[1].extension, expected_fhirQ.item[1].extension);
             assert.equal(fhirQ.item[1].maxLength, expected_fhirQ.item[1].maxLength);
+            assert.deepEqual(fhirQ.item[2].extension, expected_fhirQ.item[2].extension);
           });
 
           it('should convert externally defined', function (done) {

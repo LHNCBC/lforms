@@ -280,7 +280,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must have decimal places smaller than or equal to " + keyValue+ ".");
+              errors.push("must not have more than " + keyValue + " decimal places.");
             }
             break;
           default:

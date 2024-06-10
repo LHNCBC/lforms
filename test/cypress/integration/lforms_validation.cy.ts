@@ -131,7 +131,7 @@ describe('Validations', () => {
     errorMaxLength = 'must have a total length less than or equal to ',
     errorMinLength = 'must have a total length greater than or equal to ',
     errorPattern = 'must match a RegExp pattern of',
-    errorMaxDecimalPlaces = 'must have decimal places smaller than or equal to ',
+    errorMaxDecimalPlaces = ' decimal places.',
     errorRequire = 'requires a value';
 
   describe('data type validations (table)', () => {

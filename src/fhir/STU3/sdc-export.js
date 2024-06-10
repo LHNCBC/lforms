@@ -207,7 +207,7 @@ var self = {
           case "maxDecimalPlaces":
             if (dataType === "REAL") {
               extValue = {
-                url: "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces",
+                url: this.fhirExtUrlMaxDecimalPlaces,
                 valueInteger: parseInt(value),
               };
             }
