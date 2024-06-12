@@ -66,7 +66,7 @@ function addSTU3R4ExportFns(ns) {
           var ext = [];
           if (itemValue.score !== null && itemValue.score !== undefined) {
             ext.push({
-              url: "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              url: this.fhirExtUrlOptionScore,
               valueDecimal: parseFloat(itemValue.score),
             });
           }

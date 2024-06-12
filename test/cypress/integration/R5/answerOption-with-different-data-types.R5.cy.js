@@ -4,6 +4,12 @@ import * as util from "../../support/util";
 
 let fhirVersions = ["R5"];
 const po = new AddFormToPageTestPage();
+const itemWeightExtension = {
+  extension: [{
+    url: "http://hl7.org/fhir/StructureDefinition/itemWeight",
+    valueDecimal: 2
+  }]
+};
 
 function testOneValueType(valueType, params, fhirVersion, fileName, answerConstraint) {
 
@@ -204,10 +210,20 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
         expect(qr.item[0].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         expect(qr.item[1].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         expect(qr.item[1].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[2].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[2].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[3].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[3].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
+        if (valueType !== "valueCoding") {
+          const g1Answer2WithExtension = {...params.qrItemValues.g1Answer2, ...itemWeightExtension};
+          expect(qr.item[2].item[0].answer).to.deep.equal([g1Answer2WithExtension])
+          expect(qr.item[2].item[1].answer).to.deep.equal([g1Answer2WithExtension])
+          expect(qr.item[3].item[0].answer).to.deep.equal([g1Answer2WithExtension])
+          expect(qr.item[3].item[1].answer).to.deep.equal([g1Answer2WithExtension])
+        }
+        else {
+          const g1AnswerCodingWithExtension = {...params.qrItemValues.g1Answer2.valueCoding, ...itemWeightExtension};
+          expect(qr.item[2].item[0].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+          expect(qr.item[2].item[1].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+          expect(qr.item[3].item[0].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+          expect(qr.item[3].item[1].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+        }
         if (answerConstraint === "optionsOrString") {
           expect(qr.item[4].item[0].answer).to.deep.equal([{"valueString": "user typed value"}])
         }

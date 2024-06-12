@@ -13,8 +13,7 @@ function addSDCImportFns(ns) {
   var self = ns;
 
   // FHIR extension urls
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
-  self.fhirExtUrlValueSetScore = self.fhirExtUrlOptionScore;
+  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
 
 
   /**
@@ -143,7 +142,7 @@ function addSDCImportFns(ns) {
           if(label) {
             answer.label = label.valueString;
           }
-          var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
+          var score = LForms.Util.findObjectInArray(option.extension, 'url', this.fhirExtUrlOptionScore);
           // Look for argonaut extension.
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
           if(score) {

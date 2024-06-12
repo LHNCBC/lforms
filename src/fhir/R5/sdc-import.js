@@ -6,6 +6,8 @@ function addR5ImportFns(ns) {
 
   var self = ns;
 
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/itemWeight";
+
   /**
    * Parse questionnaire item for data type
    *

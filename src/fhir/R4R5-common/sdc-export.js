@@ -272,7 +272,7 @@ var self = {
 
       if (answer.score !== null && answer.score !== undefined) {
         ext.push({
-          url: "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+          url: this.fhirExtUrlOptionScore,
           valueDecimal: parseFloat(answer.score),
         });
       }

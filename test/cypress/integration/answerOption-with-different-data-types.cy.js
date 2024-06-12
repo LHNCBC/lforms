@@ -224,10 +224,26 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         expect(qr.item[0].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         expect(qr.item[1].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         expect(qr.item[1].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[2].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[2].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[3].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
-        expect(qr.item[3].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
+        const ordinalValueExtension = {
+          extension: [{
+            url: fhirVersion === 'STU3' ? "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue" : "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+            valueDecimal: 2
+          }]
+        };
+        if (!valueType.startsWith("valueCoding")) {
+          const g1Answer2WithExtension = {...params.qrItemValues.g1Answer2, ...ordinalValueExtension};
+          expect(qr.item[2].item[0].answer).to.deep.equal([g1Answer2WithExtension])
+          expect(qr.item[2].item[1].answer).to.deep.equal([g1Answer2WithExtension])
+          expect(qr.item[3].item[0].answer).to.deep.equal([g1Answer2WithExtension])
+          expect(qr.item[3].item[1].answer).to.deep.equal([g1Answer2WithExtension])
+        }
+        else {
+          const g1AnswerCodingWithExtension = {...params.qrItemValues.g1Answer2.valueCoding, ...ordinalValueExtension};
+          expect(qr.item[2].item[0].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+          expect(qr.item[2].item[1].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+          expect(qr.item[3].item[0].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+          expect(qr.item[3].item[1].answer[0].valueCoding).to.deep.equal(g1AnswerCodingWithExtension)
+        }
         if (valueType === "valueCoding.open-choice") {
           expect(qr.item[4].item[0].answer).to.deep.equal([{"valueString": "user typed value"}])
         }
