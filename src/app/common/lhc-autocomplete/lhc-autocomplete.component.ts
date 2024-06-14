@@ -328,7 +328,11 @@ export class LhcAutocompleteComponent implements OnChanges {
 
       // search autocomplete
       if (acOptions.hasOwnProperty('url') || (acOptions.fhir && acOptions.fhir.search)) {
-        this.acType = 'search'
+        this.acType = 'search';
+        // 500ms delay for requests to SNOMED.
+        if (acOptions.url.includes('www.snomed.org')) {
+          acOptions.frequency = 0.5;
+        }
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
       // prefetch autocomplete
@@ -469,8 +473,8 @@ export class LhcAutocompleteComponent implements OnChanges {
    * Get the selected answer object from a 'search' autocompleter
    * @param itemText answer's text
    * @param onList whether the answer's text matches the answers texts on the list
-   * @returns {{}} an answer object with where 'code_system' is renamed to 'system' if 
-   *               there is a 'code_system', along with 'text', 'code' and 
+   * @returns {{}} an answer object with where 'code_system' is renamed to 'system' if
+   *               there is a 'code_system', along with 'text', 'code' and
    *               an optional 'data'.
    */
 
@@ -486,7 +490,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         rtn._notOnList = true;
       }
       // For answerValueSet, when 'questionnaire-itemControl' is set to be 'autocomplete',
-      // it is a search field in lforms. 
+      // it is a search field in lforms.
       // The 'system' value is returned in 'code_system' from the autocompleter.
       // Convert code_system to system
       if (rtn && rtn.code_system && !rtn.system) {
