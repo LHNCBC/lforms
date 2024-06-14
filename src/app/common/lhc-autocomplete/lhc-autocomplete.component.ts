@@ -331,7 +331,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.acType = 'search';
         // 500ms delay for requests to SNOMED.
         if (acOptions.url.includes('www.snomed.org')) {
-          acOptions.frequency = 0.5;
+          acOptions.frequency = acOptions.frequency || 0.5;
         }
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
