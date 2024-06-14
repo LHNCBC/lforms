@@ -274,7 +274,7 @@ const Validation = {
             }
             break;
           case "maxDecimalPlaces":
-            const decimalPart = value.split('.')[1];
+            const decimalPart = value.toString().split('.')[1];
             if (!decimalPart || decimalPart.length <= parseInt(keyValue)) {
               valid = true;
             }
