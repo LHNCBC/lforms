@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.1.4] 2024-06-18
+### Fixed
+- Error message for missing enableWhen.question.
+
 ## [36.1.3] 2024-06-09
 ### Fixed
 - Removed accidental creation of global variable "self", which caused Google
