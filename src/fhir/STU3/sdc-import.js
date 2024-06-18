@@ -96,6 +96,10 @@ function addSDCImportFns(ns) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
+        if (!qItem.enableWhen[i].question) {
+          throw new Error("Question with linkId '" + qItem.linkId +
+            "' contains enableWhen that is missing the enableWhen.question field.");
+        }
         if (!linkIdItemMap[qItem.enableWhen[i].question]) {
           throw new Error("Question with linkId '" + qItem.linkId +
               "' contains enableWhen pointing to a question with linkId '" +
