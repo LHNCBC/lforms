@@ -208,7 +208,7 @@ var self = {
             if (dataType === "REAL") {
               extValue = {
                 url: this.fhirExtUrlMaxDecimalPlaces,
-                valueInteger: parseInt(value),
+                valueInteger: value,
               };
             }
             break;

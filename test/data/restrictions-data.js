@@ -29,7 +29,7 @@ var restrictions_lforms = {
     questionCode: 'Q3',
     dataType: 'REAL',
     restrictions: {
-      maxDecimalPlaces: '2'
+      maxDecimalPlaces: 2
     }
   }]
 };

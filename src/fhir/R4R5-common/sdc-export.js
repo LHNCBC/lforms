@@ -204,7 +204,7 @@ var self = {
                 // You can't use self.fhirExtUrlMaxDecimalPlaces. The self object won't have
                 // the property because it goes through Object.assign() in fhirRequire.js.
                 url: this.fhirExtUrlMaxDecimalPlaces,
-                valueInteger: parseInt(value),
+                valueInteger: value,
               };
             }
             break;

@@ -1643,7 +1643,7 @@ function addCommonSDCImportFns(ns) {
           restrictions['pattern'] = val;
         }
         else if(restriction.url.match(/maxDecimalPlaces$/)) {
-          restrictions['maxDecimalPlaces'] = val;
+          restrictions['maxDecimalPlaces'] = parseInt(val);
         }
       }
     }
