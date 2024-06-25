@@ -118,7 +118,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
                 // convert it to a lforms form data
                 q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.options);
-                // If options.questionnaireResponse is specified, we can utilize it and reduce the number of FHIR requests.
+                // If options.questionnaireResponse is specified, we can utilize it and reduce the number of lforms API calls.
                 if (self.options?.questionnaireResponse) {
                   q = LForms.FHIR[fhirVer].SDC.mergeQuestionnaireResponseToLForms(q, self.options.questionnaireResponse);
                 }
@@ -132,7 +132,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
             }
             self.lhcDataService.setLhcFormData(self.lhcFormData);
             // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
-            if (LForms.FHIR && self.lhcFormData.fhirVersion && !self.options?.questionnaireResponse) {
+            if (LForms.FHIR && self.lhcFormData.fhirVersion) {
               self.lhcFormData.loadFHIRResources(self.prepop).then(()=> {
                 // when a new form is loaded, run all FHIR Expressions including the initial expressions
                 // self.lhcFormData sometimes is set to null to clear the page

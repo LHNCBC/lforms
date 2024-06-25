@@ -12,7 +12,7 @@ describe('Questionnaire enableWhen issues', function() {
               LForms.Util.convertFHIRQuestionnaireToLForms(qData, 'R4')
             }
             catch (error) {
-              assert.equal(error.message, "Question with linkId 'q3' contains enableWhen that is missing the enableWhen.question field.");
+              assert.equal(error.message, "Question with linkId 'q3' contains enableWhen but is missing the enableWhen.question field.");
               done();
             }
           }).fail(function (err) {

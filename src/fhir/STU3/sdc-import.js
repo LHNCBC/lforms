@@ -98,7 +98,7 @@ function addSDCImportFns(ns) {
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         if (!qItem.enableWhen[i].question) {
           throw new Error("Question with linkId '" + qItem.linkId +
-            "' contains enableWhen that is missing the enableWhen.question field.");
+            "' contains enableWhen but is missing the enableWhen.question field.");
         }
         if (!linkIdItemMap[qItem.enableWhen[i].question]) {
           throw new Error("Question with linkId '" + qItem.linkId +

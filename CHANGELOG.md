@@ -2,13 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.1.5] 2024-06-24
+## [36.1.4] 2024-06-25
 ### Changed
 - addFormToPage() can optionally take a questionnaire response in options
-  to reduce number of requests.
-
-## [36.1.4] 2024-06-18
-### Fixed
+  to reduce number of lforms API calls.
 - Error message for missing enableWhen.question.
 
 ## [36.1.3] 2024-06-09

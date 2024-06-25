@@ -154,33 +154,20 @@ describe('Tests of addFormToPage test page', function() {
 
     it('should be able to take a questionnaireResponse in addFormToPage() options', function () {
       util.addFormToPage('fhir-context-q.json', null, {fhirVersion: 'R4'});
-      let requestCounter, q, qr, formDef;
-      cy.intercept('**/ValueSet/$expand?url=http://hl7.org/fhir/ValueSet/yesnodontknow**', (req) => {
-        requestCounter++;
-      }).as('valuesetQuery');
+      cy.byId('#/54126-8/54125-0/1/1').type('Adam');
+      cy.byId('#/54126-8/54128-4/1/1').click().type('{downArrow}').type('{downArrow}').type('{enter}');
+      let q, qr;
       cy.window().then((win) => {
-        requestCounter = 0;
         q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
         qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
-        formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
       });
-      // Reopen page just to make sure queries not being sent is not due to cache.
-      po.openPage();
+      cy.byId('#/54126-8/54125-0/1/1').clear().type('Bla');
+      cy.byId('#/54126-8/54128-4/1/1').click().type('{downArrow}').type('{enter}');
       cy.window().then((win) => {
-        // addFormToPage() takes a qr in options, and the valueset queries should not need to be sent.
-        win.LForms.Util.addFormToPage(formDef, "formContainer", {questionnaireResponse: qr});
-      }).then(() => {
-        cy.get('.lhc-form-title').contains('A questionnaire for testing code that requires a FHIR context');
-        cy.wrap(requestCounter).should('eq', 0);
+        win.LForms.Util.addFormToPage(q, "formContainer", {questionnaireResponse: qr});
       });
-      po.openPage();
-      cy.window().then((win) => {
-        win.LForms.Util.addFormToPage(formDef, "formContainer");
-      });
-      // Valueset query is sent when addFormToPage() doesn't take a qr in options.
-      cy.wait('@valuesetQuery').then(() => {
-        cy.wrap(requestCounter).should('eq', 1);
-      });
+      cy.byId('#/54126-8/54125-0/1/1').should('have.value', 'Adam');
+      cy.byId('#/54126-8/54128-4/1/1').should('have.value', 'No');
     });
 
   });
