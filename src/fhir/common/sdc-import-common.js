@@ -57,6 +57,11 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUnitOpen = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen";
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
   self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
+  self.fhirExtUrlOptionScore_lookup = {
+    'STU3': "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+    'R4': "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+    'R5': "http://hl7.org/fhir/StructureDefinition/itemWeight"
+  };
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,

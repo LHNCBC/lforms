@@ -15,7 +15,7 @@ function addSDCImportFns(ns) {
 
   var self = ns;
 
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
+  self.fhirExtUrlOptionScore = self.fhirExtUrlOptionScore_lookup['STU3'];
   self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue";
 
 
@@ -165,7 +165,7 @@ function addSDCImportFns(ns) {
           if(label) {
             answer.label = label.valueString;
           }
-          var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
+          var score = Object.values(self.fhirExtUrlOptionScore_lookup).reduce((prev, url) => prev || LForms.Util.findObjectInArray(option.extension, 'url', url), undefined);
           // Look for argonaut extension.
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
           if(score) {

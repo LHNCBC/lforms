@@ -6,7 +6,7 @@ function addR4ImportFns(ns) {
 
   var self = ns;
 
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtUrlOptionScore = self.fhirExtUrlOptionScore_lookup['R4'];
 
   /**
    * Parse questionnaire item for data type
