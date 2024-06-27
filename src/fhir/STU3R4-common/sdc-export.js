@@ -92,7 +92,7 @@ function addSTU3R4ExportFns(ns) {
               var valueKey = this._getValueKeyByDataType("value", item);
               answer = {[valueKey]: itemValue.text};
               if (ext.length > 0) {
-                answer.extension = ext;
+                answer[`_${valueKey}`] = {extension: ext};
               }
             }
           }
@@ -108,18 +108,18 @@ function addSTU3R4ExportFns(ns) {
             //   "system" : "<uri>", // Code System that defines coded unit form
             //   "code" : "<code>" // Coded form of the unit
             // }]
-            answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
-            if (ext.length > 0) {
-              answer.extension = ext;
+            var answerQuantity = this._makeValueQuantity(itemValue, item.unit);
+            if (answerQuantity && ext.length > 0) {
+              answerQuantity.extension = ext;
             }
+            answer = this._setIfHasValue(null, 'valueQuantity', answerQuantity);
           }
           // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment, (no coding)
           else if (this._lformsTypesToFHIRFields[dataType]) {
             var valueKey = this._getValueKeyByDataType("value", item);
             answer = {[valueKey]: itemValue};
-            // TODO: not sure if the ordinalValue extension could possibly apply to every data type or just some.
             if (ext.length > 0) {
-              answer.extension = ext;
+              answer[`_${valueKey}`] = {extension: ext};
             }
           }
         }
