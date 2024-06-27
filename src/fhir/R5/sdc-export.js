@@ -181,7 +181,7 @@ function addR5ExportFns(ns) {
         if (itemValue.score !== null && itemValue.score !== undefined) {
           ext.push({
             url: this.fhirExtUrlOptionScore,
-            valueDecimal: parseFloat(itemValue.score),
+            valueDecimal: itemValue.score,
           });
         }
         // with an answer list
@@ -191,7 +191,7 @@ function addR5ExportFns(ns) {
             if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
               answer = { "valueString" : itemValue };
               if (ext.length > 0) {
-                answer.extension = ext;
+                answer['_valueString'] = {extension: ext};
               }
             }
             // optionsOnly
@@ -211,7 +211,7 @@ function addR5ExportFns(ns) {
                 var valueKey = this._getValueKeyByDataType("value", item);
                 answer = {[valueKey]: itemValue.text};
                 if (ext.length > 0) {
-                  answer.extension = ext;
+                  answer[`_${valueKey}`] = {extension: ext};
                 }
               }
             }
@@ -229,17 +229,18 @@ function addR5ExportFns(ns) {
           //   "system" : "<uri>", // Code System that defines coded unit form
           //   "code" : "<code>" // Coded form of the unit
           // }]
-          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
-          if (ext.length > 0) {
-            answer.extension = ext;
+          var answerQuantity = this._makeValueQuantity(itemValue, item.unit);
+          if (answerQuantity && ext.length > 0) {
+            answerQuantity.extension = ext;
           }
+          answer = this._setIfHasValue(null, 'valueQuantity', answerQuantity);
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment, coding
         else if (this._lformsTypesToFHIRFields[dataType]) {
           var valueKey = this._getValueKeyByDataType("value", item);
           answer = {[valueKey]: itemValue};
           if (ext.length > 0) {
-            answer.extension = ext;
+            answer[`_${valueKey}`] = {extension: ext};
           }
         }
       }

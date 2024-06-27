@@ -273,7 +273,7 @@ var self = {
       if (answer.score !== null && answer.score !== undefined) {
         ext.push({
           url: this.fhirExtUrlOptionScore,
-          valueDecimal: parseFloat(answer.score),
+          valueDecimal: answer.score,
         });
       }
       if (ext.length > 0) {

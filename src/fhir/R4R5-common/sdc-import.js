@@ -146,7 +146,7 @@ function addSDCImportFns(ns) {
           // Look for argonaut extension.
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
           if(score) {
-            answer.score = score.valueDecimal.toString();
+            answer.score = parseFloat(score.valueDecimal);
           }
 
         }

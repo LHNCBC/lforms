@@ -263,7 +263,7 @@ var self = {
       if (answer.score !== null && answer.score !== undefined) {
         ext.push({
           "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
-          "valueDecimal" : parseFloat(answer.score)
+          "valueDecimal" : answer.score
         });
       }
       if(ext.length > 0) {

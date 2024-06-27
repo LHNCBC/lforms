@@ -67,7 +67,7 @@ function addSTU3R4ExportFns(ns) {
           if (itemValue.score !== null && itemValue.score !== undefined) {
             ext.push({
               url: this.fhirExtUrlOptionScore,
-              valueDecimal: parseFloat(itemValue.score),
+              valueDecimal: itemValue.score,
             });
           }
           // with an answer list of Coding
