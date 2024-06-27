@@ -330,7 +330,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       if (acOptions.hasOwnProperty('url') || (acOptions.fhir && acOptions.fhir.search)) {
         this.acType = 'search';
         // 500ms delay for requests to SNOMED.
-        if (acOptions.url.includes('www.snomed.org')) {
+        if (acOptions.url.includes('snomed.info')) {
           acOptions.frequency = acOptions.frequency || 0.5;
         }
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
