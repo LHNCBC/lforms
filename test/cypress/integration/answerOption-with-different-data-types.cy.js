@@ -231,7 +231,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           }]
         };
         if (!valueType.startsWith("valueCoding")) {
-          const g1Answer2WithExtension = {...params.qrItemValues.g1Answer2, ...ordinalValueExtension};
+          const g1Answer2WithExtension = {...params.qrItemValues.g1Answer2, [`_${valueType}`]: ordinalValueExtension};
           expect(qr.item[2].item[0].answer).to.deep.equal([g1Answer2WithExtension])
           expect(qr.item[2].item[1].answer).to.deep.equal([g1Answer2WithExtension])
           expect(qr.item[3].item[0].answer).to.deep.equal([g1Answer2WithExtension])

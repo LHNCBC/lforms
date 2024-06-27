@@ -35,8 +35,8 @@ describe('answerOption.initialSelected in Questionnaire', function() {
       expect(formData.items.length).to.equal(8);
       expect(formData.items[0].value).to.eql({code: 'c1', text: 'Answer 1'});
       expect(formData.items[1].value).to.eql({code: 'c1', text: 'Answer 1'});
-      expect(formData.items[2].value).to.eql({label: '1', score: '1', code: 'c01', text: 'With a label 1'});
-      expect(formData.items[3].value).to.eql({label: '1', score: '1', code: 'c01', text: 'With a label 1'});
+      expect(formData.items[2].value).to.eql({label: '1', score: 1, code: 'c01', text: 'With a label 1'});
+      expect(formData.items[3].value).to.eql({label: '1', score: 1, code: 'c01', text: 'With a label 1'});
       expect(formData.items[4].value).to.eql([{code: 'c1', text: 'Answer 1'},{code: 'c2', text: 'Answer 2'}]);
       expect(formData.items[5].value).to.eql([{code: 'c1', text: 'Answer 1'},{code: 'c2', text: 'Answer 2'},
           {code: 'c3', text: 'Answer 3'},{code: 'c4', text: 'Answer 4'}]);

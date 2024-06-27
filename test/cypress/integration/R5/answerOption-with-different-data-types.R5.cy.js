@@ -211,7 +211,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
         expect(qr.item[1].item[0].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         expect(qr.item[1].item[1].answer).to.deep.equal([params.qrItemValues.g1Answer2])
         if (valueType !== "valueCoding") {
-          const g1Answer2WithExtension = {...params.qrItemValues.g1Answer2, ...itemWeightExtension};
+          const g1Answer2WithExtension = {...params.qrItemValues.g1Answer2, [`_${valueType}`]: itemWeightExtension};
           expect(qr.item[2].item[0].answer).to.deep.equal([g1Answer2WithExtension])
           expect(qr.item[2].item[1].answer).to.deep.equal([g1Answer2WithExtension])
           expect(qr.item[3].item[0].answer).to.deep.equal([g1Answer2WithExtension])
