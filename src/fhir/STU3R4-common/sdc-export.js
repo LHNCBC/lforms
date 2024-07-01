@@ -92,7 +92,7 @@ function addSTU3R4ExportFns(ns) {
               var valueKey = this._getValueKeyByDataType("value", item);
               answer = {[valueKey]: itemValue.text};
               if (ext.length > 0) {
-                answer[`_${valueKey}`] = {extension: ext};
+                answer['_'+valueKey] = {extension: ext};
               }
             }
           }
@@ -119,7 +119,7 @@ function addSTU3R4ExportFns(ns) {
             var valueKey = this._getValueKeyByDataType("value", item);
             answer = {[valueKey]: itemValue};
             if (ext.length > 0) {
-              answer[`_${valueKey}`] = {extension: ext};
+              answer['_'+valueKey] = {extension: ext};
             }
           }
         }

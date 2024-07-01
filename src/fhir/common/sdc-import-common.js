@@ -62,6 +62,7 @@ function addCommonSDCImportFns(ns) {
     'R4': "http://hl7.org/fhir/StructureDefinition/ordinalValue",
     'R5': "http://hl7.org/fhir/StructureDefinition/itemWeight"
   };
+  self.fhirExtUrlOptionScoreUrlSet = new Set(Object.values(self.fhirExtUrlOptionScore_lookup));
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
