@@ -247,6 +247,14 @@ describe('Validations', () => {
       testOneType(real5, lblreal4, errorContainer, errorMaxDecimalPlaces, '10.123', '10.12');
     });
 
+    it('should validate maxDecimalPlaces with positive scientific notions', () => {
+      testOneType(real5, lblreal4, errorContainer, errorMaxDecimalPlaces, '1.12345e2', '1.1234e2');
+    });
+
+    it('should validate maxDecimalPlaces with negative scientific notions', () => {
+      testOneType(real5, lblreal4, errorContainer, errorMaxDecimalPlaces, '123.1e-2', '123e-2');
+    });
+
     it('should validate "required" on ST', () => {
       // no initial validations
       cy.get(errorContainer).should('not.exist');
