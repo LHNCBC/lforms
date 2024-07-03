@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.1.4] 2024-07-03
+### Changed
+- Allow ValueSets to load without a FHIR Context if a terminology server is 
+  on the form.
+
 ## [36.1.3] 2024-06-09
 ### Fixed
 - Removed accidental creation of global variable "self", which caused Google
