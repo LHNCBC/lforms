@@ -2,9 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.1.4] 2024-06-14
+## [36.3.1] 2024-07-08
 ### Changed
 - Set 500ms delay for SNOMED requests on autocomplete Search instance.
+
+## [36.3.0] 2024-07-08
+### Added
+- support for maxdecimalplaces extension.
+
+## [36.2.0] 2024-07-03
+### Changed
+- addFormToPage() can optionally take a questionnaire response in options
+  to reduce number of lforms API calls.
+- Error message for missing enableWhen.question.
 
 ## [36.1.3] 2024-06-09
 ### Fixed

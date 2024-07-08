@@ -24,6 +24,13 @@ var restrictions_lforms = {
       minExclusive: '5', // These are not applicable for ST type. The conversion should ignore.
       maxExclusive: '100'
     }
+  },{
+    question: 'Ex Q3',
+    questionCode: 'Q3',
+    dataType: 'REAL',
+    restrictions: {
+      maxDecimalPlaces: 2
+    }
   }]
 };
 
@@ -59,6 +66,17 @@ var restrictions_fhirQ = {
       {
         url: 'http://hl7.org/fhir/StructureDefinition/minLength',
         valueInteger: 1
+      }
+    ]
+  },{
+    text: 'Ex Q3',
+    code: [{code: 'Q3', display: 'Ex Q3'}],
+    linkId: '/Q3',
+    type: 'decimal',
+    extension: [
+      {
+        url: 'http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces',
+        valueInteger: 2
       }
     ]
   }]
