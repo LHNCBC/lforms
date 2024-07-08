@@ -133,7 +133,7 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/regex
     // http://hl7.org/fhir/StructureDefinition/minValue
     // http://hl7.org/fhir/StructureDefinition/maxValue
-    // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces, not supported yet
+    // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces
     // http://hl7.org/fhir/StructureDefinition/maxSize, for attachment, not supported yet
     // maxLength
     if (item.restrictions) {
@@ -194,6 +194,17 @@ var self = {
               extValue = {
                 url: "http://hl7.org/fhir/StructureDefinition/regex",
                 valueString: value,
+              };
+            }
+            break;
+          // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces
+          case "maxDecimalPlaces":
+            if (dataType === "REAL") {
+              extValue = {
+                // You can't use self.fhirExtUrlMaxDecimalPlaces. The self object won't have
+                // the property because it goes through Object.assign() in fhirRequire.js.
+                url: this.fhirExtUrlMaxDecimalPlaces,
+                valueInteger: value,
               };
             }
             break;

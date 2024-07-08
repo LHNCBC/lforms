@@ -47,12 +47,14 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUnitOpen = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen";
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
   self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
+  self.fhirExtUrlMaxDecimalPlaces = "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
     self.fhirExtUrlMaxValue,
     self.fhirExtUrlMinLength,
-    self.fhirExtUrlRegex
+    self.fhirExtUrlRegex,
+    self.fhirExtUrlMaxDecimalPlaces
   ];
 
   // One way or the other, the following extensions are converted to lforms internal fields.
@@ -74,7 +76,8 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
     self.fhirExtUrlDataControl,
-    self.fhirExtChoiceOrientation
+    self.fhirExtChoiceOrientation,
+    self.fhirExtUrlMaxDecimalPlaces
   ]);
 
   // Simple functions for mapping extensions to properties in the internal structure.
@@ -1638,6 +1641,9 @@ function addCommonSDCImportFns(ns) {
         }
         else if(restriction.url.match(/regex$/)) {
           restrictions['pattern'] = val;
+        }
+        else if(restriction.url.match(/maxDecimalPlaces$/)) {
+          restrictions['maxDecimalPlaces'] = parseInt(val);
         }
       }
     }
