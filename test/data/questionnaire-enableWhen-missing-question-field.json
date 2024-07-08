@@ -1,0 +1,34 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Questionnaire where enableWhen contains no question field",
+  "item": [
+    {
+      "linkId": "q1",
+      "text": "enableWhen source item",
+      "type": "integer"
+    },
+    {
+      "linkId": "q2",
+      "text": "enableWhen item with a valid linkId",
+      "type": "string",
+      "enableWhen": [
+        {
+          "question": "q1",
+          "operator": "=",
+          "answerInteger": 5
+        }
+      ]
+    },
+    {
+      "linkId": "q3",
+      "text": "enableWhen item missing question field",
+      "type": "string",
+      "enableWhen": [
+        {
+          "operator": "=",
+          "answerInteger": 5
+        }
+      ]
+    }
+  ]
+}
