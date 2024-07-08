@@ -152,5 +152,23 @@ describe('Tests of addFormToPage test page', function() {
       cy.get('.lf-sn').should('not.exist');
     });
 
+    it('should be able to take a questionnaireResponse in addFormToPage() options', function () {
+      util.addFormToPage('fhir-context-q.json', null, {fhirVersion: 'R4'});
+      cy.byId('#/54126-8/54125-0/1/1').type('Adam');
+      cy.byId('#/54126-8/54128-4/1/1').click().type('{downArrow}').type('{downArrow}').type('{enter}');
+      let q, qr;
+      cy.window().then((win) => {
+        q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
+        qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      });
+      cy.byId('#/54126-8/54125-0/1/1').clear().type('Bla');
+      cy.byId('#/54126-8/54128-4/1/1').click().type('{downArrow}').type('{enter}');
+      cy.window().then((win) => {
+        win.LForms.Util.addFormToPage(q, "formContainer", {questionnaireResponse: qr});
+      });
+      cy.byId('#/54126-8/54125-0/1/1').should('have.value', 'Adam');
+      cy.byId('#/54126-8/54128-4/1/1').should('have.value', 'No');
+    });
+
   });
 });
