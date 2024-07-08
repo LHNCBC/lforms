@@ -2,9 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.2.0] 2024-06-07
+## [36.2.0] 2024-07-08
 ### Added
 - support for maxdecimalplaces extension.
+
+## [36.1.3] 2024-06-09
+### Fixed
+- Removed accidental creation of global variable "self", which caused Google
+  Analytics to throw exceptions when a link was clicked.
 
 ## [36.1.2] 2024-06-07
 ### Fixed
