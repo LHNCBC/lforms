@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.3.1] 2024-07-08
+### Changed
+- Set 500ms delay for SNOMED requests on autocomplete Search instance.
+
 ## [36.3.0] 2024-07-08
 ### Added
 - support for maxdecimalplaces extension.
