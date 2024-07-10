@@ -966,6 +966,25 @@ export default class LhcFormData {
       if (this.templateOptions.allowHTMLInInstructions && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
+          if (item.questionXHTML) {
+            let errors, messages;
+            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item.questionXHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+              item.questionHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+              messages = [{errors}];
+              // print detailed errors messages in console
+              console.log("Possible invalid HTML tags/attributes found in item text:")
+              invalidTagsAttributes.forEach(ele => {
+                if (ele.attribute)
+                  console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
+                else if (ele.tag)
+                  console.log("  - Element: " + ele.tag);
+              });
+              InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
+            }
+          }
           if (item.codingInstructions &&
               item.codingInstructions.length > 0 &&
               item.codingInstructionsFormat === "html") {
