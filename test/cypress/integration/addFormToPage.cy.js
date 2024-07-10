@@ -153,10 +153,16 @@ describe('Tests of addFormToPage test page', function() {
     });
 
     it('should be able to take a questionnaireResponse in addFormToPage() options', function () {
+      let q, qr, beforeValue;
       util.addFormToPage('fhir-context-q.json', null, {fhirVersion: 'R4'});
       cy.byId('#/54126-8/54125-0/1/1').type('Adam');
       cy.byId('#/54126-8/54128-4/1/1').click().type('{downArrow}').type('{downArrow}').type('{enter}');
-      let q, qr;
+      // Store the "Adopted" question answer in beforeValue for verification after addFormToPage().
+      // The answer valueset returned from server is not of deterministic order - it could be
+      // Yes/No/Don't know or No/Yes/Don't know.
+      cy.byId('#/54126-8/54128-4/1/1').invoke('val').then((x) => {
+        beforeValue = x;
+      });
       cy.window().then((win) => {
         q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
         qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
@@ -167,7 +173,9 @@ describe('Tests of addFormToPage test page', function() {
         win.LForms.Util.addFormToPage(q, "formContainer", {questionnaireResponse: qr});
       });
       cy.byId('#/54126-8/54125-0/1/1').should('have.value', 'Adam');
-      cy.byId('#/54126-8/54128-4/1/1').should('have.value', 'No');
+      cy.byId('#/54126-8/54128-4/1/1').invoke('val').should((y) => {
+        expect(y).toBe(beforeValue);
+      });
     });
 
   });
