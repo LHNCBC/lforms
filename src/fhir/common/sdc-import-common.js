@@ -1305,7 +1305,10 @@ function addCommonSDCImportFns(ns) {
             }));
           }
           else { // use FHIR context
-            var fhirClient = LForms.fhirContext.client;
+            var fhirClient = LForms.fhirContext?.client;
+            if (!fhirClient) {
+              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
+            }
             pendingPromises.push(fhirClient.request({
                 url: lfData._buildURL(
                   ['ValueSet', '$expand'], {url: item.answerValueSet, _format: 'json'}),
