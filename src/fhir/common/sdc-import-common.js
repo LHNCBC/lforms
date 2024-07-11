@@ -661,6 +661,31 @@ function addCommonSDCImportFns(ns) {
       if (extFieldData)
         lfItem['obj'+extField] = extFieldData;
     }
+
+    // Set rendering-xhtml properties.
+    const xhtmlFormat = lfItem['obj_text'] ?
+      LForms.Util.findObjectInArray(lfItem['obj_text'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
+    if (xhtmlFormat) {
+      lfItem.questionXHTML = xhtmlFormat.valueString;
+      if (self._widgetOptions?.allowHTMLInInstructions) {
+        let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+        if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+          lfItem.questionHasInvalidHtmlTag = true;
+          let errors = {};
+          errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+          const messages = [{errors}];
+          // print detailed errors messages in console
+          console.log("Possible invalid HTML tags/attributes found in item text:")
+          invalidTagsAttributes.forEach(ele => {
+            if (ele.attribute)
+              console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
+            else if (ele.tag)
+              console.log("  - Element: " + ele.tag);
+          });
+          LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
+        }
+      }
+    }
   };
 
 
