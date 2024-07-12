@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.4.0] 2024-07-12
+### Added
+- Support for rendering-xhtml on item.text.
+
 ## [36.3.1] 2024-07-08
 ### Changed
 - Set 500ms delay for SNOMED requests on autocomplete Search instance.
