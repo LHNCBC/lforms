@@ -25,12 +25,6 @@
     <title>LHC-Forms: A Form-Rendering Widget</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <style>
       /* CSS for adding the version column */
@@ -89,19 +83,11 @@
         <li><a href="#usage">Usage</a></li>
         <ul>
           <li><a href="#rendering">Rendering a Form</a></li>
+          <li><a href="#fhirContext">Setting a FHIR Source</a></li>
           <li><a href="#userData">Retrieving User-Entered Data</a></li>
           <li><a href="#validation">Form Validation</a></li>
         </ul>
-        <li><a href="#fhirSupport">FHIR Support</a></li>
-        <ul>
-          <li><a href="#fhirScripts">JavaScript Files</a></li>
-          <li><a href="#retrieving-fhir-data">Exporting FHIR</a></li>
-          <li><a href="#convert-fhir-data">Importing a Questionnaire</a></li>
-          <ul>
-            <li><a href="#fhirQueries">FHIR Context &amp; Queries</a></li>
-          </ul>
-          <li><a href="#merge-fhir-data">Importing a QuestionnaireResponse</a></li>
-        </ul>
+        <li><a href="#otherAPIs">Other APIs</a></li>
         <li><a href="#form-definition-format">Form Definiton Format</a></li>
         <li><a href="#licensing-and-copyright-notice">Licensing and Copyright Notice</a></li>
         <li><a href="#issues-and-announcements">Issues &amp; Announcements</a></li>
@@ -110,7 +96,8 @@
       <div id=versionList>
         <p>Documentation by version:</p>
         <ul>
-          <li>Current (>=34.x)</li>
+          <li>Current (>=36.2.x)</li>
+          <li><a href="versions/34.x/index.html">34-36.1</a></li>
           <li><a href="versions/30.x/index.html">30-33</a></li>
           <li><a href="versions/27.x/index.html">27-29</a></li>
           <li><a href="versions/17.x/index.html">17-26</a></li>
@@ -147,7 +134,11 @@
 
 <p><a href="https://lhncbc.nlm.nih.gov/project/lhc-forms">LHC-Forms</a> (a.k.a.
 LForms) is a feature-rich, open-source widget that creates input forms based on definition
-files for Web-based applications. It was developed by the Lister Hill National
+files for Web-based applications. The definition files are typically in a format
+known as <a href="https://www.hl7.org/">HL7</a>® <a
+href="https://www.hl7.org/fhir/">FHIR</a>®
+<a=href="https://www.hl7.org/fhir/questionnaire.html#resource">Questionnaires</a>,
+but can also be in LHC-Forms' internal format.  LHC-Forms was developed by the Lister Hill National
 Center for Biomedical
 Communications (<a href="https://lhncbc.nlm.nih.gov">LHNCBC</a>), National Library of
 Medicine (<a href="https://www.nlm.nih.gov">NLM</a>),  part of the National Institutes of
@@ -170,10 +161,18 @@ other questions</li>
   <li>Unit lists for numeric questions</li>
   <li>Date fields</li>
   <li>Help messages for questions</li>
-  <li><a href="#fhirSupport">Support</a> for HL7 <a
-   href="https://www.hl7.org/fhir/">FHIR</a> <a
+  <li>Support for HL7 <a href="https://www.hl7.org/fhir/">FHIR</a> <a
    href="https://www.hl7.org/fhir/questionnaire.html">Questionnaires</a>
 </ul>
+<p> For a more detail on support for FHIR Questionnaires, and the associated
+<a href="https://build.fhir.org/ig/HL7/sdc/">Structured Data Capture (SDC)
+Implementation Guide</a>, see the documentation for <a
+href="https://github.com/LHNCBC/lforms/blob/master/r4-support.md">FHIR version R4
+support</a>, <a
+href="https://github.com/LHNCBC/lforms/blob/master/r5-support.md">FHIR version
+R5 support</a>, and <a
+href="https://github.com/LHNCBC/lforms/blob/master/sdc-support.md">SDC
+support</a>.</p>
 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
@@ -186,35 +185,36 @@ LHC-Forms is by linking to the prebuilt version hosted on
 lhcforms-static.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
 </p>
 <dl>
-  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/styles.css</dd>
+  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/webcomponent/styles.css</dd>
   <dt>JavaScript</dt>
   <dd>
     <ol style="padding-left: 0">
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/assets/lib/zone.min.js</li>
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/lhc-forms.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/webcomponent/assets/lib/zone.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/webcomponent/lhc-forms.js</li>
     </ol>
     <p>The zone.min.js file should be left out if you already have that in your
     page (e.g. if the page contains an Angular app).</p>
   </dd>
   <dt>JavaScript for FHIR Support (recommended)</dt>
   <dd>Additionally, you will probably want <b>ONE</b> of the following files for FHIR
-  support.  The first file provides support for STU3 and R4 versions of FHIR,
-  and the other two provide support for one specific version.
+  support.  The first file provides support for the STU3, R4, and R5 versions of FHIR,
+  and the others provide support for one specific version.
     <ul style="padding-left: 0">
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/lformsFHIRAll.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/R4/lformsFHIR.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/STU3/lformsFHIR.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/lformsFHIRAll.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/R5/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/R4/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/STU3/lformsFHIR.min.js</li>
     </ul>
   </dd>
 </dl>
 
-<p>Note that the URLs contain a release version number, 34.0.0, for which you
-can substitute any of the other prebuilt versions (34 or higher) available at
+<p>Note that the URLs contain a release version number, 36.2.0, for which you
+can substitute any of the other prebuilt versions (36.2.0 or higher) available at
 https://lhcforms-static.nlm.nih.gov/lforms-versions.</p>
 
 <p>For production applications, if you would prefer to download these files
 and serve them from your server to avoid introducing a dependency on the
-lhcforms-static servers, zip files of each version's files are avaialble at
+lhcforms-static servers, zip files of each version's files are available at
 <a
 href="https://lhcforms-static.nlm.nih.gov/lforms-versions">https://lhcforms-static.nlm.nih.gov/lforms-versions</a>.</p>
 
@@ -226,8 +226,9 @@ will allow them to be imported in the future.</p>
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 
-<h3><a id="rendering"></a>Rendering a Form</h3>
-<p>In your HTML, create an element to hold the form.  You will pass a
+<h3><a id="rendering" class="anchor" href="#rendering" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rendering a Form</h3>
+
+<h3><a id="rendering"></a><p>In your HTML, create an element to hold the form.  You will pass a
 reference to this element or its ID to a utility function load the form.</p>
 
 <h4>HTML</h4>
@@ -241,84 +242,108 @@ reference to this element or its ID to a utility function load the form.</p>
 <pre><code>LForms.Util.addFormToPage(formDefinition, 'myFormContainer', options);
 </code></pre>
 
-Parameters:
+<b>Parameters:</b>
 <ol>
-  <li>formDefinition - A FHIR Questionnaire, or form definition in LHC-Forms'
+  <li><b>formDefinition</b> - A FHIR Questionnaire, or form definition in LHC-Forms'
    <a href="#formdef">internal format</a> (either JSON or
    a parsed object)</li>
-  <li>formContainer - An element (or its ID, as in this example) into which the
+  <li><b>formContainer</b> - An element (or its ID, as in this example) into which the
    form should be placed</li>
-  <li>options - A map of options.  If you are using FHIR and want prepopulation
-   to occur, pass {prepopulate: true}.  Note that you probably do not want prepopulation to
-   happen if you are planning to <a href="#merge-fhir-data">merge</a> in a saved
-   QuestionnaireResponse.</li>
+  <li><b>options</b> - A map of options, which can be:
+    <dl>
+       <dt>prepopulate</dt><dd>Set this to true if you are using FHIR and want prepopulation
+         to occur from the patient's record.  Note that you probably do not want prepopulation to
+         happen if you are loading a QuestionnaireResponse (via the
+         questionnaireResponse option.</dd>
+       <dt>fhirVersion</dt><dd>If the formDefinition is a FHIR Questionnaire,
+         you can specify which version of FHIR by passing in 'STU3', 'R4', etc.
+         Otherwise LForms will try to guess by looking at the Questionnaire's
+         contents.</dd>
+       <dt>questionnaireResponse</dt><dd>A FHIR QuestionnaireResponse which
+        should be loaded into the rendered form.</dd>
+    </dl>
+  </li>
 </ol>
 
-<h3>
-<a id="userData" class="anchor" href="#retrieving-user-entered-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieving User-Entered Data</h3>
+<p><b>Returns:</b>  a promise that will resolve after all external FHIR resources needed
+by the Questionnaire (see setFHIRContext below) have been loaded (at which point the form
+should be visible).</p>
 
-<p>After the user fills out a form, the data they have entered and things like
-codes for coded answer lists will be stored in the data model.  To retrieve that
-data, LHC-Forms provides several utility methods. To get the data as a FHIR
-QuestionnaireResponse (recommended), see the <a
-href="#retrieving-fhir-data">Exporting FHIR</a> part of the <a
-href="#fhirSupport">FHIR support</a> section.  Alternatively,
-the functions below will return the data in LHC-Forms' internal format.</p>
 
-<h4>Getting the form definition combined with the user data</h4>
-<pre><code>LForms.Util.getFormData(formElement, noEmptyValue, noDisabledItem)</code></pre>
-<p>The utility method <code>LForms.Util.getFormData()</code> will return both the user
-data and the complete form definition data together in a way that can be fed back to LHC-Forms
-to display the form with the data.  This is useful when you want to allow the
-user to save the form so it can be redisplayed later for completion or editing.
-The parameters are:</p>
-<ol>
-<li>formElement - an HTML element that includes the LForm's rendered form. If
-this is omitted, the "body" tag will be used.  If there is more than one
-LForm within formElement, the first found will be used.</li>
-<li>noEmptyValue - (default false) Remove items that have an empty value</li>
-<li>noDisabledItem - (default false) Remove items that are disabled by skip
-logic</li>
+  <h3><a id="fhirContext" class="anchor" href="#fhirContext"
+   aria-hidden="true"><span aria-hidden="true" class="octicon
+   octicon-link"></span></a>Setting a FHIR Source</h3>
 
-</ol>
+  <p>If the Questionnaire does prepopulation of form fields with data, or if it
+  loads ValueSets but does not specify a terminology server, then the following API
+  will need to be called prior to addFormToPage, to provide a connection to a FHIR
+  server, some resources to use in prepopulation, or both.</p>
 
-<h4>Retrieving only the user-entered values</h4>
+  <pre><code>LForms.Util.setFHIRContext(fhirContext, fhirContextVars)</code></pre>
 
-<pre><code>LForms.Util.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
-</code></pre>
-
-<p>To get a compact structure with just the user-entered data and minimal form
-definition data, you can call <code>LForms.Util.getUserData(formElement, true, true,
-true)</code>.  The parameters are:</p>
-<ol>
-<li>formElement - an HTML element that includes the LForm's rendered form. If
-this is omitted, the "body" tag will be used.  If there is more than one
-LForm within formElement, the first found will be used.</li>
-<li>noFormDefData - (default false) If this is true, the form
-definition data will not be returned along with the data, except for item codes.
-Even when false, the form definition data included is only the item-level data,
-not the form-level data.</li>
-<li>noEmptyValue - (default false) If this is true, items that have
-an empty value will be removed.</li>
-<li>noHiddenItem - (default false) If this is true, items that are
-hidden by skip logic will be removed.</li>
-</ol>
-
-  <h4>
-    <a id="retrieving-hl7-data" class="anchor" href="#retrieving-hl7-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Retrieving User-Entered Data as HL7 v2 OBR and OBX segments (version >= 12.8)
-  </h4>
-  <p>The user entered data, along with some form definition data can be retrieved as HL7 v2 OBR and OBX segments.
-    To retrieve that data, LHC-Forms provides the following utility method:</p>
-  <pre>
-    <code>LForms.Util.getFormHL7Data(element)</code></pre>
-
-  <p>The parameter is:</p>
+  <b>Parameters:</b>
   <ol>
-    <li>element - (optional if there is only one LHC-Forms widget on the page.)  The containing HTML element that includes
-      the LHC-Forms rendered form. It could be the DOM element or its id.</li>
+    <li><b>fhirContext</b> - an instance of 'client-js', a.k.a. the npm package <a
+     href="https://www.npmjs.com/package/fhirclient">fhirclient</a>, version 2.
+     (See <a
+     href="http://docs.smarthealthit.org/client-js">http://docs.smarthealthit.org/client-js</a>
+     for documentation.).  A non-npm version, ready to use in a browser, can be found
+     at https://cdn.jsdelivr.net/npm/fhirclient@2/build/fhir-client.min.js.  It
+     should be initialized with a connection to the FHIR server to be used.  If
+     all that is needed by the Questionnaire are launchContext variables, this
+     parameter can be omitted if the next parameter is provided.
+    </li>
+    <li><b>fhirContextVars</b> - (optional) data for the FHIR <a href=
+     "https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-launchContext.html">launchContext</a>
+     extension which makes variables available to other expressions in a Questionnaire.  If
+     provided, fhirContextVars should be a map from launchContext variable names to
+     FHIR resources (as objects).  Note that some launchContext variables can be
+     retrieved from the FHIR server (via the fhirContext parameter).  Values
+     provided here will take priority over values from fhirContext.</li>
   </ol>
 
+  <h3><a id="userData" class="anchor" href="#userData"
+   aria-hidden="true"><span aria-hidden="true" class="octicon
+   octicon-link"></span></a>Retrieving User-Entered Data</h3>
+
+  <p>After a user has filled out the form the user-entered data can be
+    retrieved as <a href="https://www.hl7.org/fhir/">FHIR</a> <a
+    href="https://www.hl7.org/fhir/questionnaireresponse.html">QuestionnaireResponse</a>
+    resource, using the following utility method, which also supports getting
+    the Questionnaire back (a feature useful for converting between FHIR versions):</p>
+  <pre>
+    <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, formDataSource, options)</code></pre>
+
+  <b>Parameters:</b>
+  <ol>
+    <li><b>resourceType</b> - a FHIR resource type, which should be one of
+      "QuestionnaireResponse", "Questionnaire", "DiagnosticReport".</li>
+    <li><b>fhirVersion</b> - the version of FHIR being used.  This can be set to either
+     "STU3", "R4", or "R5".</li>
+    <li><b>formDataSource</b> - Optional.  Either the containing HTML element that
+      includes the rendered form, a CSS selector for that element, an
+      LFormsData object (such as returned by LForms.Util.getFormData), or an
+      LHC-Forms form definition (parsed).  If not provided, the first LHC-Forms
+      form found in the page will be used.</li>
+    <li><b>options</b> - An optional hash of other options, with the following optional keys:
+      <ul>
+        <li><b>extract</b> - a flag used for resourceType=QuestionnaireResponse to
+          indicate that data should be <a
+          href="https://build.fhir.org/ig/HL7/sdc/extraction.html#obs-extract">extracted</a>
+          (using the FHIR observationExtract extension) to other FHIR resources.
+          In this case the return value will be an array consisting of the
+          QuestionnaireResponse and any extracted Observations.
+        <li><b>subject</b> - A local FHIR resource that is the subject of the output
+          resource.  If provided, a reference to this resource
+          will be added to the output FHIR resource when applicable.</li>
+        <li><b>bundleType</b> - optional, and only used for DiagnosticReport output.
+          This may be either "transaction" or "collection", and requests
+          that the DiagnosticReport and associated Observation resources be placed
+          together in a bundle of that type.  When this is not present, a bundle
+          will not be used.</li>
+      </ul>
+    </li>
+  </ol>
 
   <h3>
     <a id="validation" class="anchor" href="#validation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
@@ -335,68 +360,19 @@ hidden by skip logic will be removed.</li>
   valid this function returns null.
   </p>
 
-  <p>The parameter is:</p>
-
-  <ol>
-    <li>formElement - (optional) an HTML element that includes the LForm's rendered form. If
+  <b>Parameters:</b>
+  <ul>
+    <li><b>formElement</b> - (optional) an HTML element that includes the rendered form. If
     this is omitted, the "body" tag will be used.  If there is more than one
-    LForm within formElement, the first found will be used.</li>
-  </ol>
+    LHC-Forms form within formElement, the first found will be used.</li>
+  </ul>
 
 
-  <h2><a id="fhirSupport"></a>Support for FHIR Questionnaire Resources</h2>
-  <p>LHC-Forms can import and export <a href="https://www.hl7.org/fhir/">FHIR</a>
-   Questionnaire and QuestionnaireResponse
-   resources.  For the current extent of that support, see the documentation for
-   <a href="https://github.com/lhncbc/lforms/blob/master/r4-support.md">version
-   R4 support"</a> and <a
-   href="https://github.com/lhncbc/lforms/blob/master/sdc-support.md">SDC
-   support</a>.  Also, there is partial support for exporting DSTU2
-   DiagnosticReports, and for importing them if generated by LHC-Forms.</p>
-
-  <h3><a id="fhirScripts"></a>Files for FHIR Support</h3>
-  <p>Because adding support for FHIR (and multiple versions of FHIR) would
-   increase the size of the LHC-Forms library, support for FHIR is added through
-   separate files.  See the <a href="#installation">Installation section</a> for the
-   options for FHIR support files.</p>
-
-  <h3>
-    <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Exporting FHIR Resources
-  </h3>
-  <p>The form definition and user-entered data can be
-    retrieved as <a href="https://www.hl7.org/fhir/">FHIR</a> resources, using
-    the following utility method:</p>
-  <pre>
-    <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, formDataSource, options)</code></pre>
-
-  <p>The parameters are:</p>
-  <ol>
-    <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport",
-      "Questionnaire" and "QuestionnaireResponse" are supported as parameter values.</li>
-    <li>fhirVersion - the version of FHIR being used.  This can be set to either
-     "STU3" or "R4".</li>
-    <li>formDataSource - Optional.  Either the containing HTML element that
-      includes the rendered form, a CSS selector for that element, an
-      LFormsData object, or an LHC-Forms form definition (parsed).  If not
-      provided, the first LHC-Forms form found in the page will be used.</li>
-    <li>options - An optional hash of other options, with the following optional keys:
-      <ul>
-        <li>bundleType - optional, and only used for DiagnosticReport output.
-          This may be either "transaction" or "collection", and requests
-          that the DiagnosticReport and associated Observation resources be placed
-          together in a bundle of that type.  When this is not present, a bundle
-          will not be used.</li>
-        <li>extract - a flag used for resourceType=QuestionnaireResponse to
-          indicate that data should be extracted (using the observationExtract
-          extension).  In this case the return value will be an array
-          consisting of the QuestionnaireResponse and any extracted Observations.
-        <li>subject: A local FHIR resource that is the subject of the output
-          resource.  If provided, a reference to this resource
-          will be added to the output FHIR resource when applicable.</li>
-      </ul>
-    </li>
-  </ol>
+  <h2><a id="otherAPIs" class="anchor" href="#otherAPIs"
+  aria-hidden="true"><span aria-hidden="true" class="octicon
+  octicon-link"></span></a>Other APIs</h2>
+  <p>The following are older APIs which might still be useful in some
+  situations.</p>
 
   <h3>
     <a id="convert-fhir-data" class="anchor" href="#convert-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
@@ -406,17 +382,16 @@ hidden by skip logic will be removed.</li>
     which can then be loaded into the LHC-Forms widget to show the form.  To do
     that conversion, LHC-Forms provides the following
     utility method.  Note also that the addFormToPage method documented above
-    can take a FHIR Questionnaire, so this step is only needed if you are trying
-    to <a href="#merge-fhir-data">show a QuestionnaireResponse</a>.</p>
+    can take a FHIR Questionnaire, so this API should seldom be needed.</p>
   <pre>
     <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData, fhirVersion)</code></pre>
 
-  <p>The parameters are:</p>
+  <b>Parameters:</b>
   <ol>
-    <li>fhirData - a FHIR Questionnaire resource (parsed).  If you run into a problem,
+    <li><b>fhirData</b> - a FHIR Questionnaire resource (parsed).  If you run into a problem,
       please open an issue on the <a href="https://github.com/lhncbc/lforms"
       >LForms</a> repository.</li>
-    <li>fhirVersion - the version of FHIR in which the Questionnaire is
+    <li><b>fhirVersion</b> - the version of FHIR in which the Questionnaire is
      written (currently takes either "STU3" or "R4").  This maybe be omitted if
      the Questionnaire resource (in fhirData) contains a <a href=
      "https://build.fhir.org/versioning.html#mp-version">meta.profile</a>
@@ -424,41 +399,8 @@ hidden by skip logic will be removed.</li>
      precedence.</li>
   </ol>
 
-  <p>The return value is a form definition in the <a
+  <p><b>Returns:<b> a form definition in the <a
    href="https://github.com/lhncbc/lforms/blob/master/form_definition.md">LHC-Forms format</a>.</p>
-
-  <h4><a name="fhirQueries"></a>FHIR Context &amp; Queries</h4>
-  <p>If the Questionnaire referenced external FHIR resources or <a href=
-   "https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-launchContext.html">launchContext</a>
-   variables, those will still
-   need to be loaded.  Before that can happen, you will need to tell LForms about
-   the connection to the FHIR server, via:</p>
-   <pre><code>LForms.Util.setFHIRContext(fhirContext, fhirContextVars)</code></pre>
-  <p>The "fhirContext" parameter should be an instance of 'client-js', a.k.a. the npm package <a
-   href="https://www.npmjs.com/package/fhirclient">fhirclient</a>, version 2.
-   (See <a
-   href="http://docs.smarthealthit.org/client-js">http://docs.smarthealthit.org/client-js</a>
-   for documentation.).  A non-npm version, ready to use in a browser, can be found
-   at https://cdn.jsdelivr.net/npm/fhirclient@2/build/fhir-client.min.js.  It
-   should be initialized with a connection to the FHIR server to be used.  If
-   all that is needed by the Questionnaire are launchContext variables, this
-   parameter can be omitted if the next parameter is provided.
-  </p>
-  <p>The "fhirContextVars" parameter (optional) is used for the FHIR <a href=
-   "https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-launchContext.html">launchContext</a>
-   which makes variables available to other expressions in a Questionnaire.  If
-   provided, fhirContextVars should be a map from launchContext variable names to
-   FHIR resources (as objects).  Note that some launchContext variables can be
-   retrieved from the FHIR server (via the fhirContext parameter).  Values
-   provided here will take priority over values from fhirContext.</p>
-
-  <p>If rendering using <a
-  href="#usage">LForms.Util.addFormToPage()</a>, the external FHIR
-  resources will be loaded when that is called, and if you have passed in
-  prepopulate=true as an option, prepopulation will also be performed when the
-  resources are loaded.  The addFormToPage function returns a promise that will resolve
-  after all external FHIR resources have been loaded (at which point the form
-  should be visible).</p>
 
   <h3>
     <a id="merge-fhir-data" class="anchor" href="#merge-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
@@ -472,19 +414,19 @@ hidden by skip logic will be removed.</li>
   <pre>
     <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData, fhirVersion)</code></pre>
 
-  <p>The parameters are:</p>
+  <b>Parameters:</b>
   <ol>
-    <li>resourceType - a FHIR resource type. Currently only
-      "QuestionnaireResponse" and "DiagnosticReport" (either a
-      DiagnosticReport resource with "contained" Observation resources or a
-      "searchset" typed Bundle of a DiagnosticReport and associated Observation
-      resources) are supported.</li>
-    <li>fhirData - a FHIR resource of the type specified in the resourceType
+    <li><b>resourceType</b> - a FHIR resource type. Currently only
+     "QuestionnaireResponse" and "DiagnosticReport" (either a
+     DiagnosticReport resource with "contained" Observation resources or a
+     "searchset" typed Bundle of a DiagnosticReport and associated Observation
+     resources) are supported.</li>
+    <li><b>fhirData</b> - a FHIR resource of the type specified in the resourceType
      parameter.  Note that for DiagnosticReports, the merge will only
      work if the DiagnosticReport was originally generated by LHC-Forms.</li>
-    <li>formData - an LHC-Forms form definition or data object.  This can be
+    <li><b>formData</b> - an LHC-Forms form definition or data object.  This can be
      obtained by <a href="#convert-fhir-data">converting a FHIR Questionnaire.</a></li>
-    <li>fhirVersion - the version of FHIR in which the resource is
+    <li><b>fhirVersion</b> - the version of FHIR in which the resource is
      written (currently takes either "STU3" or "R4").  This maybe be omitted if
      the resource (in fhirData) contains a <a href=
      "https://build.fhir.org/versioning.html#mp-version">meta.profile</a>
@@ -492,9 +434,66 @@ hidden by skip logic will be removed.</li>
      precedence.</li>
   </ol>
 
-  <p>The return value is a form definition object but with the user data merged
+  <p><b>Returns:</b> a form definition object but with the user data merged
    into it.  It can be displayed using <a
    href="#usage">LForms.Util.addFormToPage</a> as described above.</p>
+
+  <h3>
+    <a id="retrieving-hl7-data" class="anchor" href="#retrieving-hl7-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Retrieving User-Entered Data as HL7 V2 OBR and OBX segments
+  </h3>
+  <p>The user entered data, along with some form definition data can be retrieved as HL7 V2 OBR and OBX segments.
+    To retrieve that data, LHC-Forms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.getFormHL7Data(element)</code></pre>
+
+  <b>Parameters:</b>
+  <ul>
+    <li><b>element</b> - (optional if there is only one LHC-Forms widget on the page.)  The containing HTML element that includes
+      the LHC-Forms rendered form. It could be the DOM element or its id.</li>
+  </ul>
+
+  <h3>Getting the Internal Format Form Definition Combined with the User Data</h3>
+  <pre><code>LForms.Util.getFormData(formElement, noEmptyValue, noDisabledItem)</code></pre>
+  <p>The utility method <code>LForms.Util.getFormData()</code> will return both the user
+  data and the complete form definition data together in a way that can be fed back to LHC-Forms
+  to display the form with the data.  This is useful when you want to allow the
+  user to save the form so it can be redisplayed later for completion or editing
+  (and if for some reason you are not using FHIR).</p>
+
+  <b>Parameters:</b>
+  <ol>
+    <li><b>formElement</b> - an HTML element that includes the rendered form. If
+    this is omitted, the "body" tag will be used.  If there is more than one
+    LHC-Forms form within formElement, the first found will be used.</li>
+    <li><b>noEmptyValue</b> - (default false) Remove items that have an empty value</li>
+    <li><b>noDisabledItem</b> - (default false) Remove items that are disabled by skip
+    logic</li>
+  </ol>
+
+  <h3>Retrieving Only the User-Entered Values</h3>
+
+  <pre><code>LForms.Util.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+  </code></pre>
+
+  <b>Parameters:</b>
+  <ol>
+    <li><b>formElement</b> - an HTML element that includes the rendered form. If
+     this is omitted, the "body" tag will be used.  If there is more than one
+     LHC-Forms form within formElement, the first found will be used.</li>
+    <li><b>noFormDefData</b> - (default false) If this is true, the form
+     definition data will not be returned along with the data, except for item codes.
+     Even when false, the form definition data included is only the item-level data,
+     not the form-level data.</li>
+    <li><b>noEmptyValue</b> - (default false) If this is true, items that have
+     an empty value will be removed.</li>
+    <li><b>noHiddenItem</b> - (default false) If this is true, items that are
+     hidden by skip logic will be removed.</li>
+  </ol>
+
+  <p>To get a compact structure with just the user-entered data and minimal form
+  definition data, you can call <code>LForms.Util.getUserData(formElement, true, true,
+  true)</code>.</p>
 
   <h2>
 <a id="form-definition-format" class="anchor" href="#form-definition-format" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="formdef"></a>Form Definition Format</h2>
@@ -526,7 +525,8 @@ or see the
   These annoucements will probably just be about significant changes.</p>
 <hr>
 
-    <span class="credits left">Project maintained by <a href="https://github.com/lhncbc">LHNCBC</a></span>
+    <span class="credits left">Project maintained by <a
+    href="https://github.com/lhncbc">LHNCBC</a>.  </span>
     <span class="credits right">Hosted on GitHub Pages &mdash; Based on theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
       </section>
 
