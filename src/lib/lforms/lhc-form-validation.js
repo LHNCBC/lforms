@@ -273,6 +273,18 @@ const Validation = {
               errors.push("must match a RegExp pattern of " + keyValue+ ".");
             }
             break;
+          case "maxDecimalPlaces":
+            const parts = value.toString().split(/[eE]/);
+            const exp = parseInt(parts[1]) || 0;
+            const decimalPartLength = parts[0].split('.')[1]?.length || 0;
+            if (decimalPartLength - exp <= keyValue) {
+              valid = true;
+            }
+            else {
+              valid = false;
+              errors.push("must not have more than " + keyValue + " decimal places.");
+            }
+            break;
           default:
             valid = true;
         }

@@ -2,10 +2,52 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.0.7] 2024-06-03
+## [36.3.3] 2024-07-18
 ### Added
 - Copy ordinalValue extension to questionnaire response.
 
+## [36.3.2] 2024-07-10
+### Changed
+- Allow ValueSets to load without a FHIR Context if a terminology server is 
+  on the form.
+
+## [36.3.1] 2024-07-08
+### Changed
+- Set 500ms delay for SNOMED requests on autocomplete Search instance.
+
+## [36.3.0] 2024-07-08
+### Added
+- support for maxdecimalplaces extension.
+
+## [36.2.0] 2024-07-03
+### Changed
+- addFormToPage() can optionally take a questionnaire response in options
+  to reduce number of lforms API calls.
+- Error message for missing enableWhen.question.
+
+## [36.1.3] 2024-06-09
+### Fixed
+- Removed accidental creation of global variable "self", which caused Google
+  Analytics to throw exceptions when a link was clicked.
+
+## [36.1.2] 2024-06-07
+### Fixed
+- Preserve id field in questionnaire items.
+
+## [36.1.1] 2024-06-07
+### Changed
+- CSS tweaks in attachment fields to align with other fields.
+
+## [36.1.0] 2024-05-24
+### Added
+- Support for the FHIR observation-extract-category extension which sets
+  Observation.category when an Observation is extracted from the Questionnaire.
+  
+## [36.0.7] 2024-05-22
+### Fixed
+- Updated fhirpath.js to version 3.13.2 to get resource node data types using
+  the `fhirpath.types(nodes)` function.
+  
 ## [36.0.6] 2024-05-21
 ### Changed
 - Remove "Add another" on buttons.
@@ -14,7 +56,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed a bug that repeating items that have answer list and have child 
   items are not rendered correctly.
-  
+
 ## [36.0.4] 2024-05-01
 ### Fixed
 - Fetching of ValueSets needs to specify JSON.
