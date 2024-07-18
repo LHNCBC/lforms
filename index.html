@@ -316,8 +316,7 @@ should be visible).</p>
     href="https://www.hl7.org/fhir/questionnaireresponse.html">QuestionnaireResponse</a>
     resource, using the following utility method, which also supports getting
     the Questionnaire back (a feature useful for converting between FHIR versions):</p>
-  <pre>
-    <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, formDataSource, options)</code></pre>
+  <pre><code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, formDataSource, options)</code></pre>
 
   <b>Parameters:</b>
   <ol>
@@ -388,8 +387,7 @@ should be visible).</p>
     that conversion, LHC-Forms provides the following
     utility method.  Note also that the addFormToPage method documented above
     can take a FHIR Questionnaire, so this API should seldom be needed.</p>
-  <pre>
-    <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData, fhirVersion)</code></pre>
+  <pre><code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData, fhirVersion)</code></pre>
 
   <b>Parameters:</b>
   <ol>
@@ -416,8 +414,7 @@ should be visible).</p>
    produce a structure that can be loaded into the LHC-Forms widget (using <a
    href="#usage">addFormToPage</a>) To merge FHIR resources into LHC-Forms data,
    LHC-Forms provides the following utility method:</p>
-  <pre>
-    <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData, fhirVersion)</code></pre>
+  <pre><code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData, fhirVersion)</code></pre>
 
   <b>Parameters:</b>
   <ol>
@@ -449,8 +446,7 @@ should be visible).</p>
   </h3>
   <p>The user entered data, along with some form definition data can be retrieved as HL7 V2 OBR and OBX segments.
     To retrieve that data, LHC-Forms provides the following utility method:</p>
-  <pre>
-    <code>LForms.Util.getFormHL7Data(element)</code></pre>
+  <pre><code>LForms.Util.getFormHL7Data(element)</code></pre>
 
   <b>Parameters:</b>
   <ul>
