@@ -185,12 +185,12 @@ LHC-Forms is by linking to the prebuilt version hosted on
 lhcforms-static.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
 </p>
 <dl>
-  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/webcomponent/styles.css</dd>
+  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/webcomponent/styles.css</dd>
   <dt>JavaScript</dt>
   <dd>
     <ol style="padding-left: 0">
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/webcomponent/assets/lib/zone.min.js</li>
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/webcomponent/lhc-forms.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/webcomponent/assets/lib/zone.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/webcomponent/lhc-forms.js</li>
     </ol>
     <p>The zone.min.js file should be left out if you already have that in your
     page (e.g. if the page contains an Angular app).</p>
@@ -200,16 +200,16 @@ lhcforms-static.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
   support.  The first file provides support for the STU3, R4, and R5 versions of FHIR,
   and the others provide support for one specific version.
     <ul style="padding-left: 0">
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/lformsFHIRAll.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/R5/lformsFHIR.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/R4/lformsFHIR.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.2.0/fhir/STU3/lformsFHIR.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/lformsFHIRAll.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/R5/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/R4/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/STU3/lformsFHIR.min.js</li>
     </ul>
   </dd>
 </dl>
 
-<p>Note that the URLs contain a release version number, 36.2.0, for which you
-can substitute any of the other prebuilt versions (36.2.0 or higher) available at
+<p>Note that the URLs contain a release version number, 36.3.2, for which you
+can substitute any of the other prebuilt versions (36.3.2 or higher) available at
 https://lhcforms-static.nlm.nih.gov/lforms-versions.</p>
 
 <p>For production applications, if you would prefer to download these files
@@ -249,10 +249,10 @@ reference to this element or its ID to a utility function load the form.</p>
 
 <b>Parameters:</b>
 <ol>
-  <li><b>formDefinition</b> - A FHIR Questionnaire, or form definition in LHC-Forms'
+  <li><b>formDefinition</b> - a FHIR Questionnaire, or form definition in LHC-Forms'
    <a href="#formdef">internal format</a> (either JSON or
    a parsed object)</li>
-  <li><b>formContainer</b> - An element (or its ID, as in this example) into which the
+  <li><b>formContainer</b> - an element (or its ID, as in this example) into which the
    form should be placed</li>
   <li><b>options</b> - A map of options, which can be:
     <dl>
@@ -261,9 +261,9 @@ reference to this element or its ID to a utility function load the form.</p>
          happen if you are loading a QuestionnaireResponse (via the
          questionnaireResponse option.</dd>
        <dt>fhirVersion</dt><dd>If the formDefinition is a FHIR Questionnaire,
-         you can specify which version of FHIR by passing in 'STU3', 'R4', etc.
-         Otherwise LForms will try to guess by looking at the Questionnaire's
-         contents.</dd>
+         you can specify which version of FHIR by passing in 'STU3', 'R4', or 'R5'.
+         Otherwise LForms will try to guess the version by looking at the Questionnaire's
+         structure.</dd>
        <dt>questionnaireResponse</dt><dd>A FHIR QuestionnaireResponse which
         should be loaded into the rendered form.</dd>
     </dl>
@@ -324,12 +324,12 @@ should be visible).</p>
       "QuestionnaireResponse", "Questionnaire", "DiagnosticReport".</li>
     <li><b>fhirVersion</b> - the version of FHIR being used.  This can be set to either
      "STU3", "R4", or "R5".</li>
-    <li><b>formDataSource</b> - Optional.  Either the containing HTML element that
+    <li><b>formDataSource</b> - (optional) either the containing HTML element that
       includes the rendered form, a CSS selector for that element, an
       LFormsData object (such as returned by LForms.Util.getFormData), or an
       LHC-Forms form definition (parsed).  If not provided, the first LHC-Forms
       form found in the page will be used.</li>
-    <li><b>options</b> - An optional hash of other options, with the following optional keys:
+    <li><b>options</b> - an optional hash of other options, with the following optional keys:
       <ul>
         <li><b>extract</b> - a flag used for resourceType=QuestionnaireResponse to
           indicate that data should be <a
@@ -337,7 +337,7 @@ should be visible).</p>
           (using the FHIR observationExtract extension) to other FHIR resources.
           In this case the return value will be an array consisting of the
           QuestionnaireResponse and any extracted Observations.
-        <li><b>subject</b> - A local FHIR resource that is the subject of the output
+        <li><b>subject</b> - a local FHIR resource that is the subject of the output
           resource.  If provided, a reference to this resource
           will be added to the output FHIR resource when applicable.</li>
         <li><b>bundleType</b> - optional, and only used for DiagnosticReport output.
@@ -402,7 +402,7 @@ should be visible).</p>
      precedence.</li>
   </ol>
 
-  <p><b>Returns:<b> a form definition in the <a
+  <p><b>Returns:</b> a form definition in the <a
    href="https://github.com/lhncbc/lforms/blob/master/form_definition.md">LHC-Forms format</a>.</p>
 
   <h3>
