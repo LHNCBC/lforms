@@ -974,14 +974,7 @@ export default class LhcFormData {
               errors = {};
               errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
               messages = [{errors}];
-              // print detailed errors messages in console
-              console.log("Possible invalid HTML tags/attributes found in item text:")
-              invalidTagsAttributes.forEach(ele => {
-                if (ele.attribute)
-                  console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
-                else if (ele.tag)
-                  console.log("  - Element: " + ele.tag);
-              });
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
               InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
             }
           }
@@ -998,19 +991,12 @@ export default class LhcFormData {
             // check if html string contains invalid html tags, when the html version needs to be displayed
             let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
             let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(helpHTML);
-              if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};
               errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
               messages = [{errors}];
-              // print detailed errors messages in console
-              console.log("Possible invalid HTML tags/attributes found in help text:")
-              invalidTagsAttributes.forEach(ele => {
-                if (ele.attribute)
-                  console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
-                else if (ele.tag)
-                  console.log("  - Element: " + ele.tag);
-              });
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
               InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
             }
           }

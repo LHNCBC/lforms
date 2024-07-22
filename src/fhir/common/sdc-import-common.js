@@ -674,14 +674,7 @@ function addCommonSDCImportFns(ns) {
           let errors = {};
           errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
           const messages = [{errors}];
-          // print detailed errors messages in console
-          console.log("Possible invalid HTML tags/attributes found in item text:")
-          invalidTagsAttributes.forEach(ele => {
-            if (ele.attribute)
-              console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
-            else if (ele.tag)
-              console.log("  - Element: " + ele.tag);
-          });
+          LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
           LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
         }
       }
@@ -1511,14 +1504,7 @@ function addCommonSDCImportFns(ns) {
             errors = {};
             errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
             messages = [{errors}];
-            // print detailed errors messages in console
-            console.log("Possible invalid HTML tags/attributes found in help text:")
-            invalidTagsAttributes.forEach(ele => {
-              if (ele.attribute)
-                console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
-              else if (ele.tag)
-                console.log("  - Element: " + ele.tag);
-            });
+            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
           }
         }
       }
