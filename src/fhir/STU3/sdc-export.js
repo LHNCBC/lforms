@@ -285,7 +285,7 @@ var self = {
 
       if (answer.score !== null && answer.score !== undefined) {
         ext.push({
-          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+          "url" : this.fhirExtUrlOptionScore,
           "valueDecimal" : answer.score
         });
       }

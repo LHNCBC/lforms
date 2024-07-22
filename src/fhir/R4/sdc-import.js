@@ -6,7 +6,7 @@ function addR4ImportFns(ns) {
 
   var self = ns;
 
-  self.fhirExtUrlOptionScore = self.fhirExtUrlOptionScore_lookup['R4'];
+  self.fhirExtUrlOptionScore = self.fhirExtUrlOptionScoreLookup['R4'];
 
   /**
    * Parse questionnaire item for data type

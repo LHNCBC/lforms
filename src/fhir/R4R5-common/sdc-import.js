@@ -143,7 +143,7 @@ function addSDCImportFns(ns) {
           if(label) {
             answer.label = label.valueString;
           }
-          // Any of the URLs in self.fhirExtUrlOptionScore_lookup should work on import regardless of the version of FHIR.
+          // Any of the URLs in self.fhirExtUrlOptionScoreLookup should work on import regardless of the version of FHIR.
           var score = option.extension?.find(ext => self.fhirExtUrlOptionScoreUrlSet.has(ext.url));
           // Look for argonaut extension.
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
