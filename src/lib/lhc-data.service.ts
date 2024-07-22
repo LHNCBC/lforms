@@ -173,7 +173,7 @@ export class LhcDataService {
    */
   getItemTextDisplayType(item) {
     var format = 'plain';
-    if (item.questionXHTML && item.questionXHTML.length > 0 && this.lhcFormData.templateOptions.allowHTMLInInstructions) {
+    if (item.questionXHTML && item.questionXHTML.length > 0 && this.lhcFormData.templateOptions.allowHTML) {
       if (!item.questionHasInvalidHtmlTag) {
         format = 'html';
       }
@@ -194,7 +194,7 @@ export class LhcDataService {
     var ret ='';
     if (item.codingInstructions && item.codingInstructions.length > 0) {
       var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
-      if (this.lhcFormData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
+      if (this.lhcFormData.templateOptions.allowHTML && item.codingInstructionsFormat === "html") {
         var format = "html";  // use item.codingInstructions (safe html)
         if (item.codingInstructionsHasInvalidHtmlTag) {
           if (this.lhcFormData.templateOptions.displayInvalidHTML) {

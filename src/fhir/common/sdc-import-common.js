@@ -667,7 +667,7 @@ function addCommonSDCImportFns(ns) {
       LForms.Util.findObjectInArray(lfItem['obj_text'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
     if (xhtmlFormat) {
       lfItem.questionXHTML = xhtmlFormat.valueString;
-      if (self._widgetOptions?.allowHTMLInInstructions) {
+      if (self._widgetOptions?.allowHTML) {
         let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
         if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
           lfItem.questionHasInvalidHtmlTag = true;
@@ -1501,7 +1501,7 @@ function addCommonSDCImportFns(ns) {
           codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
         };
         // check if html string contains invalid html tags, when the html version needs to be displayed
-        if (self._widgetOptions?.allowHTMLInInstructions) {
+        if (self._widgetOptions?.allowHTML) {
           let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             helps.codingInstructionsHasInvalidHtmlTag = true;

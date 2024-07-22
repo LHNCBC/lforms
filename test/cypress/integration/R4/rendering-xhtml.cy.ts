@@ -8,7 +8,7 @@ describe('rendering-xhtml', () => {
   });
 
   it('should display question html if allowed in template options', () => {
-    cy.get('#allowHTMLInInstructions').click();
+    cy.get('#allowHTML').click();
     tp.loadFromTestData('q-with-rendering-xhtml-text.json', 'R4');
     cy.get('.testPlease')
       .should('be.visible')
@@ -24,7 +24,7 @@ describe('rendering-xhtml', () => {
   });
 
   it('should display question escaped html, if invalid tags are displayed in template options', () => {
-    cy.get('#allowHTMLInInstructions').click();
+    cy.get('#allowHTML').click();
     cy.get('#displayInvalidHTML').click();
     tp.loadFromTestData('q-with-rendering-xhtml-text-with-invalid-tag.json', 'R4');
     cy.get('.testPlease')
@@ -34,7 +34,7 @@ describe('rendering-xhtml', () => {
   });
 
   it('should display question text, if invalid tags are not displayed in template options', () => {
-    cy.get('#allowHTMLInInstructions').click();
+    cy.get('#allowHTML').click();
     tp.loadFromTestData('q-with-rendering-xhtml-text-with-invalid-tag.json', 'R4');
     cy.get('.testPlease')
       .should('not.exist');

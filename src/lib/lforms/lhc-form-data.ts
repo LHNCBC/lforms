@@ -66,8 +66,8 @@ export default class LhcFormData {
     showCodingInstruction: false,
     // whether to allow more than one unused repeating item/section
     allowMultipleEmptyRepeatingItems: false,
-    // whether to allow HTML content in the codingInstructions field.
-    allowHTMLInInstructions: false,
+    // whether to allow HTML content in item.text and the codingInstructions field.
+    allowHTML: false,
     displayControl: {
       // controls the question layout of the form. default value for questionLayout is "vertical".
       // available value could be "horizontal" when all the items in the form are on the same level,
@@ -963,7 +963,7 @@ export default class LhcFormData {
       }
       // update and check the html version of help text,
       // when the lhcFormData instance has been initialized.
-      if (this.templateOptions.allowHTMLInInstructions && this.itemList) {
+      if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
           if (item.questionXHTML) {
@@ -1352,7 +1352,7 @@ export default class LhcFormData {
     if (this._containedImages &&
         item.codingInstructions &&
         item.codingInstructions.length > 0 &&
-        this.templateOptions.allowHTMLInInstructions &&
+        this.templateOptions.allowHTML &&
         item.codingInstructionsFormat === "html" &&
         item.codingInstructions.match(/img/) &&
         item.codingInstructions.match(/src/)) {
