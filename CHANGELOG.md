@@ -2,9 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.4.0] 2024-07-12
+## [36.4.0] 2024-07-22
 ### Added
 - Support for rendering-xhtml on item.text.
+
+## [36.3.2] 2024-07-10
+### Changed
+- Allow ValueSets to load without a FHIR Context if a terminology server is 
+  on the form.
 
 ## [36.3.1] 2024-07-08
 ### Changed
