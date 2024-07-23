@@ -193,17 +193,17 @@
             {
               "text": 12,
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": 34,
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": 56,
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -232,17 +232,17 @@
             {
               "text": 12,
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": 34,
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": 56,
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -285,17 +285,17 @@
             {
               "text": 12,
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": 34,
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": 56,
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -325,17 +325,17 @@
             {
               "text": 12,
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": 34,
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": 56,
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 

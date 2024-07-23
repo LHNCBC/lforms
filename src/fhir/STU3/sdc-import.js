@@ -15,7 +15,7 @@ function addSDCImportFns(ns) {
 
   var self = ns;
 
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
+  self.fhirExtUrlOptionScore = self.fhirExtUrlOptionScoreLookup['STU3'];
   self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue";
 
 
@@ -169,11 +169,12 @@ function addSDCImportFns(ns) {
           if(label) {
             answer.label = label.valueString;
           }
-          var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
+          // Any of the URLs in self.fhirExtUrlOptionScoreLookup should work on import regardless of the version of FHIR.
+          var score = option.extension?.find(ext => self.fhirExtUrlOptionScoreUrlSet.has(ext.url));
           // Look for argonaut extension.
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
           if(score) {
-            answer.score = score.valueDecimal.toString();
+            answer.score = parseFloat(score.valueDecimal);
           }
 
         }

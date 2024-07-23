@@ -177,12 +177,22 @@ function addR5ExportFns(ns) {
       var itemValue = values[i];
       if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
         var answer = null;
+        var ext = [];
+        if (itemValue.score !== null && itemValue.score !== undefined) {
+          ext.push({
+            url: this.fhirExtUrlOptionScore,
+            valueDecimal: itemValue.score,
+          });
+        }
         // with an answer list
         if (item.answers) {
           if (_isAnswerOptionType[dataType]) {
             // for optionsOrString, the value could be string if it is a user typed, not-on-list value
             if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {
               answer = { "valueString" : itemValue };
+              if (ext.length > 0) {
+                answer['_valueString'] = {extension: ext};
+              }
             }
             // optionsOnly
             else if (!LForms.jQuery.isEmptyObject(itemValue)) {
@@ -191,12 +201,18 @@ function addR5ExportFns(ns) {
                 var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
                 answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
                 answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+                if (answerCoding && ext.length > 0) {
+                  answerCoding.extension = ext;
+                }
                 answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
               }
               // for INT, ST, DT, TM
               else {
                 var valueKey = this._getValueKeyByDataType("value", item);
                 answer = {[valueKey]: itemValue.text};
+                if (ext.length > 0) {
+                  answer['_'+valueKey] = {extension: ext};
+                }
               }
             }
           }
@@ -213,12 +229,19 @@ function addR5ExportFns(ns) {
           //   "system" : "<uri>", // Code System that defines coded unit form
           //   "code" : "<code>" // Coded form of the unit
           // }]
-          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
+          var answerQuantity = this._makeValueQuantity(itemValue, item.unit);
+          if (answerQuantity && ext.length > 0) {
+            answerQuantity.extension = ext;
+          }
+          answer = this._setIfHasValue(null, 'valueQuantity', answerQuantity);
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri, attachment, coding
         else if (this._lformsTypesToFHIRFields[dataType]) {
           var valueKey = this._getValueKeyByDataType("value", item);
           answer = {[valueKey]: itemValue};
+          if (ext.length > 0) {
+            answer['_'+valueKey] = {extension: ext};
+          }
         }
       }
 

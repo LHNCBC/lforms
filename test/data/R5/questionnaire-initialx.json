@@ -211,7 +211,7 @@
               "valueString": "1"
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
               "valueDecimal": 1
             }
           ],
@@ -227,7 +227,7 @@
               "valueString": "2"
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
               "valueDecimal": 2
             }
           ],
@@ -243,7 +243,7 @@
               "valueString": "3"
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
               "valueDecimal": 3
             }
           ],

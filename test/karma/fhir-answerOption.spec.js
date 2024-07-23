@@ -110,9 +110,9 @@ describe('FHIR SDC functions on answerOption', function() {
     valueType: "valueString",
     answers : [{ "text": "a" }, { "text": "b" }, { "text": "c" }],
     answersWithPrefixScore : [
-      { "text": "a", "label": "A", "score": "1" },
-      { "text": "b", "label": "B", "score": "2" },
-      { "text": "c", "label": "C", "score": "3" }
+      { "text": "a", "label": "A", "score": 1 },
+      { "text": "b", "label": "B", "score": 2 },
+      { "text": "c", "label": "C", "score": 3 }
     ],
     defaultSingle : {"text":'b'},
     defaultRepeatsSTU3 : [{"text":'b'}],
@@ -125,9 +125,9 @@ describe('FHIR SDC functions on answerOption', function() {
     valueType: "valueInteger",
     answers : [{ "text": 12 }, { "text": 34 }, { "text": 56 }],
     answersWithPrefixScore : [
-      { "text": 12, "label": "A", "score": "1" },
-      { "text": 34, "label": "B", "score": "2" },
-      { "text": 56, "label": "C", "score": "3" }
+      { "text": 12, "label": "A", "score": 1 },
+      { "text": 34, "label": "B", "score": 2 },
+      { "text": 56, "label": "C", "score": 3 }
     ],
     defaultSingle : {"text": 34},
     defaultRepeatsSTU3 : [{"text": 34}],
@@ -140,9 +140,9 @@ describe('FHIR SDC functions on answerOption', function() {
     valueType: "valueDate",
     answers : [{ "text": "2022" }, { "text": "2022-09" }, { "text": "2022-09-20" }],
     answersWithPrefixScore : [
-      { "text": "2022", "label": "A", "score": "1" },
-      { "text": "2022-09", "label": "B", "score": "2" },
-      { "text": "2022-09-20", "label": "C", "score": "3" }
+      { "text": "2022", "label": "A", "score": 1 },
+      { "text": "2022-09", "label": "B", "score": 2 },
+      { "text": "2022-09-20", "label": "C", "score": 3 }
     ],
     defaultSingle : {"text": "2022-09"},
     defaultRepeatsSTU3 : [{"text": "2022-09"}],
@@ -155,9 +155,9 @@ describe('FHIR SDC functions on answerOption', function() {
     valueType: "valueTime",
     answers : [{ "text": "10:30:00" }, { "text": "13:30:00" }, { "text": "23:59:59" }],
     answersWithPrefixScore : [
-      { "text": "10:30:00", "label": "A", "score": "1" },
-      { "text": "13:30:00", "label": "B", "score": "2" },
-      { "text": "23:59:59", "label": "C", "score": "3" }
+      { "text": "10:30:00", "label": "A", "score": 1 },
+      { "text": "13:30:00", "label": "B", "score": 2 },
+      { "text": "23:59:59", "label": "C", "score": 3 }
     ],
     defaultSingle : {"text": "13:30:00"},
     defaultRepeatsSTU3 : [{"text": "13:30:00"}],
@@ -174,9 +174,9 @@ describe('FHIR SDC functions on answerOption', function() {
       {"code": "c3", "text": "Answer 3"}
     ],
     answersWithPrefixScore : [
-      {"code": "c1", "text": "Answer 1", "label": "A", "score": "1"},
-      {"code": "c2", "text": "Answer 2", "label": "B", "score": "2"},
-      {"code": "c3", "text": "Answer 3", "label": "C", "score": "3"}
+      {"code": "c1", "text": "Answer 1", "label": "A", "score": 1},
+      {"code": "c2", "text": "Answer 2", "label": "B", "score": 2},
+      {"code": "c3", "text": "Answer 3", "label": "C", "score": 3}
     ],
     defaultSingle : {"code": "c2", "text": "Answer 2"},
     defaultRepeatsSTU3 : [{"code": "c2", "text": "Answer 2"}],
@@ -196,9 +196,9 @@ describe('FHIR SDC functions on answerOption', function() {
       {"code": "c3", "text": "Answer 3"}
     ],
     answersWithPrefixScore : [
-      {"code": "c1", "text": "Answer 1", "label": "A", "score": "1"},
-      {"code": "c2", "text": "Answer 2", "label": "B", "score": "2"},
-      {"code": "c3", "text": "Answer 3", "label": "C", "score": "3"}
+      {"code": "c1", "text": "Answer 1", "label": "A", "score": 1},
+      {"code": "c2", "text": "Answer 2", "label": "B", "score": 2},
+      {"code": "c3", "text": "Answer 3", "label": "C", "score": 3}
     ],
     defaultSingle : "user typed value",
     defaultRepeatsSTU3 : [{"code": "c2", "text": "Answer 2"}],
