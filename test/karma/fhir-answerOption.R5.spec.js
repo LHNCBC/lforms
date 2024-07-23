@@ -1,11 +1,11 @@
 // Tests for FHIR SDC library
 
 function testImportAnswerOption(params, answerConstraint) {
-  let fhirVersion = "R5";  
+  let fhirVersion = "R5";
   let fhir = LForms.FHIR[fhirVersion];
 
   describe(fhirVersion, function() {
-    
+
     it('should import ' + params.valueType + ' as answerOption, with answerConstraint=' + answerConstraint, function (done) {
 
       let displayControlRadioCheckboxVertical = {"answerLayout": { "type": "RADIO_CHECKBOX", "columns": "1" }},
@@ -36,7 +36,7 @@ function testImportAnswerOption(params, answerConstraint) {
           //answerOption - prefix- score
           assert.deepEqual(lfData.items[2].items[0].answers, params.answersWithPrefixScore)
           assert.deepEqual(lfData.items[2].items[0].displayControl, displayControlCombo)
-          assert.deepEqual(lfData.items[2].items[0].answerCardinality, answerCardinalityNonRepeats)              
+          assert.deepEqual(lfData.items[2].items[0].answerCardinality, answerCardinalityNonRepeats)
           assert.deepEqual(lfData.items[2].items[1].answers, params.answersWithPrefixScore)
           assert.deepEqual(lfData.items[2].items[1].displayControl, displayControlCombo)
           assert.deepEqual(lfData.items[2].items[1].answerCardinality, answerCardinalityRepeats)
@@ -64,7 +64,7 @@ function testImportAnswerOption(params, answerConstraint) {
         done(err);
       });
     });
-    
+
     it('should export ' + params.valueType + ' as answerOption, with answerConstraint=' + answerConstraint, function (done) {
 
       let file = `test/data/${fhirVersion}/answerOption/answerOption-${params.valueType}.${answerConstraint}.${fhirVersion}.json`;
@@ -80,7 +80,7 @@ function testImportAnswerOption(params, answerConstraint) {
           assert.deepEqual(q.item[3], fhirQ.item[3])
           assert.deepEqual(q.item[4], fhirQ.item[4])
           assert.deepEqual(q.item[5], fhirQ.item[5])
-          
+
           // assert.deepEqual(q, fhirQ) // meta is different
           assert.equal(q.status, fhirQ.status);
           assert.equal(q.title, fhirQ.title);
@@ -103,14 +103,14 @@ function testImportAnswerOption(params, answerConstraint) {
 
 
 describe('FHIR SDC functions on answerOption', function() {
-  // 1) answerOption is valueString 
+  // 1) answerOption is valueString
   let params = {
     valueType: "valueString",
     answers : [{ "text": "a" }, { "text": "b" }, { "text": "c" }],
     answersWithPrefixScore : [
-      { "text": "a", "label": "A", "score": "1" },
-      { "text": "b", "label": "B", "score": "2" },
-      { "text": "c", "label": "C", "score": "3" }
+      { "text": "a", "label": "A", "score": 1 },
+      { "text": "b", "label": "B", "score": 2 },
+      { "text": "c", "label": "C", "score": 3 }
     ],
     optionsOnly: {
       defaultSingle : {"text": 'b'},
@@ -124,14 +124,14 @@ describe('FHIR SDC functions on answerOption', function() {
   testImportAnswerOption(params, "optionsOnly");
   testImportAnswerOption(params, "optionsOrString");
 
-  // 2) answerOption is valueInteger 
+  // 2) answerOption is valueInteger
   params = {
     valueType: "valueInteger",
     answers : [{ "text": 12 }, { "text": 34 }, { "text": 56 }],
     answersWithPrefixScore : [
-      { "text": 12, "label": "A", "score": "1" },
-      { "text": 34, "label": "B", "score": "2" },
-      { "text": 56, "label": "C", "score": "3" }
+      { "text": 12, "label": "A", "score": 1 },
+      { "text": 34, "label": "B", "score": 2 },
+      { "text": 56, "label": "C", "score": 3 }
     ],
     optionsOnly: {
       defaultSingle : {"text": 34},
@@ -145,14 +145,14 @@ describe('FHIR SDC functions on answerOption', function() {
   testImportAnswerOption(params, "optionsOnly");
   testImportAnswerOption(params, "optionsOrString");
 
-  // 3) answerOption is valueDate 
+  // 3) answerOption is valueDate
   params = {
     valueType: "valueDate",
     answers : [{ "text": "2022" }, { "text": "2022-09" }, { "text": "2022-09-20" }],
     answersWithPrefixScore : [
-      { "text": "2022", "label": "A", "score": "1" },
-      { "text": "2022-09", "label": "B", "score": "2" },
-      { "text": "2022-09-20", "label": "C", "score": "3" }
+      { "text": "2022", "label": "A", "score": 1 },
+      { "text": "2022-09", "label": "B", "score": 2 },
+      { "text": "2022-09-20", "label": "C", "score": 3 }
     ],
     optionsOnly: {
       defaultSingle : {"text": '2022-09'},
@@ -166,14 +166,14 @@ describe('FHIR SDC functions on answerOption', function() {
   testImportAnswerOption(params, "optionsOnly");
   testImportAnswerOption(params, "optionsOrString");
 
-  // 4) answerOption is valueTime 
+  // 4) answerOption is valueTime
   params = {
     valueType: "valueTime",
     answers : [{ "text": "10:30:00" }, { "text": "13:30:00" }, { "text": "23:59:59" }],
     answersWithPrefixScore : [
-      { "text": "10:30:00", "label": "A", "score": "1" },
-      { "text": "13:30:00", "label": "B", "score": "2" },
-      { "text": "23:59:59", "label": "C", "score": "3" }
+      { "text": "10:30:00", "label": "A", "score": 1 },
+      { "text": "13:30:00", "label": "B", "score": 2 },
+      { "text": "23:59:59", "label": "C", "score": 3 }
     ],
     optionsOnly: {
       defaultSingle : {"text": '13:30:00'},
@@ -196,9 +196,9 @@ describe('FHIR SDC functions on answerOption', function() {
       {"code": "c3", "text": "Answer 3"}
     ],
     answersWithPrefixScore : [
-      {"code": "c1", "text": "Answer 1", "label": "A", "score": "1"},
-      {"code": "c2", "text": "Answer 2", "label": "B", "score": "2"},
-      {"code": "c3", "text": "Answer 3", "label": "C", "score": "3"}
+      {"code": "c1", "text": "Answer 1", "label": "A", "score": 1},
+      {"code": "c2", "text": "Answer 2", "label": "B", "score": 2},
+      {"code": "c3", "text": "Answer 3", "label": "C", "score": 3}
     ],
     optionsOnly: {
       defaultSingle : {"code": "c2", "text": "Answer 2"},
