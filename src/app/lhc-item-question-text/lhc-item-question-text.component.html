@@ -15,7 +15,7 @@
           <span *ngSwitchCase="'html'"
                 class="question"
                 [style]="item._obj_textCSS"
-                [innerHTML]="item.questionXHTML"
+                [innerHTML]="item.questionXHTML | safeHtml"
           ></span>
           <span *ngSwitchCase="'plain'"
                 class="question"
