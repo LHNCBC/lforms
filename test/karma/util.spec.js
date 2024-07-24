@@ -800,5 +800,25 @@ describe('Util library', function() {
   })
 
 
+  describe('getSupportedFeatures', function() {
+    it('should retrieves the supported features', function () {
+      var expected = {
+        "itemControl": [
+          "list",
+          "table",
+          "gtable",
+          "inline",
+          "autocomplete",
+          "drop-down",
+          "check-box",
+          "lookup",
+          "radio-button"
+        ]
+      };
+      
+      var target = LForms.Util.getSupportedFeatures();
+      assert.deepEqual(target, expected);
+    });
+  });
 });
 
