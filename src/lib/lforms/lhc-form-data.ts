@@ -3259,10 +3259,14 @@ export default class LhcFormData {
         var answerData = CommonUtils.deepCopy(answers[i]);
 
         var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
+        var displayTextHTML = answerData.textHTML;
         // label is a string
         if (answerData.label) {
           displayText = answerData.label + ". " + displayText;
           hasOneAnswerLabel = true;
+          if (displayTextHTML) {
+            displayTextHTML = answerData.label + ". " + displayTextHTML;
+          }
         }
         // check if one of the values is numeric
         else {
@@ -3273,12 +3277,17 @@ export default class LhcFormData {
 
         if (answerData.score !== undefined && answerData.score !== null) {
           item._hasScoreInAnswer = true;
-          if (addScoreToText)
+          if (addScoreToText) {
             displayText = displayText + " - " + answerData.score;
+            if (displayTextHTML) {
+              displayTextHTML = displayTextHTML + " - " + answerData.score;
+            }
+          }
         }
 
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
+        answerData._displayTextHTML = displayTextHTML;
         modifiedAnswers.push(answerData);
       }
     }

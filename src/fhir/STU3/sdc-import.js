@@ -157,6 +157,20 @@ function addSDCImportFns(ns) {
           else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' ||
               optionKey[0] === 'valueTime' ){
             answer.text = option[optionKey[0]];
+            // rendering-xhtml extension under "_valueString".
+            if (optionKey[0] === 'valueString' && option._valueString) {
+              const xhtmlFormat = LForms.Util.findObjectInArray(option._valueString.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+              if (xhtmlFormat) {
+                answer.textHTML = xhtmlFormat.valueString;
+                if (self._widgetOptions?.allowHTML) {
+                  let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+                  if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+                    answer.answerOptionTextHasInvalidHtmlTag = true;
+                    LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+                  }
+                }
+              }
+            }
           }
           else if (optionKey[0] === 'valueInteger') {
             answer.text = parseInt(option[optionKey[0]])

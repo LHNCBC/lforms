@@ -186,6 +186,25 @@ export class LhcDataService {
 
 
   /**
+   * Check the display type of an answerOption
+   * @param answerOption an answerOption in the lforms form answers array
+   * @returns {string}
+   */
+  getAnswerOptionDisplayType(answerOption) {
+    var format = 'plain';
+    if (answerOption._displayTextHTML && answerOption._displayTextHTML.length > 0 && this.lhcFormData.templateOptions.allowHTML) {
+      if (!answerOption.answerOptionTextHasInvalidHtmlTag) {
+        format = 'html';
+      }
+      else {
+        format = this.lhcFormData.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
+      }
+    }
+    return format;
+  }
+
+
+  /**
    * Check the display type of the coding instructions
    * @param item an item in the lforms form items array
    * @returns {string}
