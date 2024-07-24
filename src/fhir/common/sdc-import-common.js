@@ -1,18 +1,6 @@
 import { InternalUtil } from '../../lib/lforms/internal-utils.js';
-import {importFHIRQuantity} from './import-common.js'
-
-// TBD import this path function from fhirpath.js.  When that is done, also
-// remove the regex test for /Quantity$/ below and replace it with a simple
-// equality check for a path of 'Quantity'.
-/**
- *  For a given result of a fhirpath.js evaluation, returns the path from the
- *  nearest FHIR type to the result which might be a fragement of that type.
- *  (Example:  Questionnaire.item, given a result consisting of items.)
- */
-function path(fhirpathRes) {
-  return fhirpathRes.__path__;
-}
-
+import {importFHIRQuantity} from './import-common.js';
+const fhirpath = require('fhirpath');
 
 /**
  *  Defines SDC import functions that are the same across the different FHIR
@@ -48,6 +36,8 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtInitialExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression";
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
   self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
+  self.fhirExtObsExtractCategory =
+    "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observation-extract-category";
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtEnableWhenExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
@@ -57,12 +47,14 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUnitOpen = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitOpen";
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
   self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
+  self.fhirExtUrlMaxDecimalPlaces = "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
     self.fhirExtUrlMaxValue,
     self.fhirExtUrlMinLength,
-    self.fhirExtUrlRegex
+    self.fhirExtUrlRegex,
+    self.fhirExtUrlMaxDecimalPlaces
   ];
 
   // One way or the other, the following extensions are converted to lforms internal fields.
@@ -84,7 +76,8 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
     self.fhirExtUrlDataControl,
-    self.fhirExtChoiceOrientation
+    self.fhirExtChoiceOrientation,
+    self.fhirExtUrlMaxDecimalPlaces
   ]);
 
   // Simple functions for mapping extensions to properties in the internal structure.
@@ -172,8 +165,10 @@ function addCommonSDCImportFns(ns) {
     'url'
   ];
 
+  // Item-level fields that are simply copied from the FHIR Questionnaire format to the LHC-Forms format, and back.
   self.itemLevelIgnoredFields = [
-    'definition'
+    'definition',
+    'id'
   ];
 
   /**
@@ -417,11 +412,8 @@ function addCommonSDCImportFns(ns) {
     var lfDataType = lfItem.dataType;
     var answers = [];
     const messages = [];
-    const fhirValPath = path(fhirVals); // TBD - should be on each value, as they might vary
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
-      if (typeof fhirVal == 'object')
-        fhirVal.__path__ = fhirValPath; // TBD - work around for getting path on individual nodes
       var answer = undefined; // reset back to undefined each iteration
       let errors = {};
       let hasMessages = false;
@@ -472,8 +464,7 @@ function addCommonSDCImportFns(ns) {
       }
       else {
         if((lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT') &&
-            (fhirVal._type === 'Quantity' || /Quantity$/.test(path(fhirVal)))) {
-          delete fhirVal.__path__;
+            (fhirVal._type === 'Quantity' || fhirpath.types(fhirVal)[0] === 'FHIR.Quantity')) {
           fhirVal._type = 'Quantity';
           [answer, errors] = this._convertFHIRQuantity(lfItem, fhirVal);
           hasMessages = !!errors;
@@ -1262,7 +1253,7 @@ function addCommonSDCImportFns(ns) {
     if (item.answerValueSet) {
       var terminologyServer = this._getTerminologyServer(item);
       if (terminologyServer)
-        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet;
+        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet + '&_format=json';
     }
     return rtn;
   };
@@ -1292,7 +1283,7 @@ function addCommonSDCImportFns(ns) {
         }
         else { // if not already loaded
           if (expURL) {
-            pendingPromises.push(fetch(expURL).then(function(response) {
+            pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
               return response.json();
             }).then(function(parsedJSON) {
               if (parsedJSON.resourceType==="OperationOutcome" ) {
@@ -1315,10 +1306,15 @@ function addCommonSDCImportFns(ns) {
             }));
           }
           else { // use FHIR context
-            var fhirClient = LForms.fhirContext.client;
-            pendingPromises.push(fhirClient.request(lfData._buildURL(
-              ['ValueSet','$expand'], {url: item.answerValueSet})
-            ).then(function(response) {
+            var fhirClient = LForms.fhirContext?.client;
+            if (!fhirClient) {
+              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
+            }
+            pendingPromises.push(fhirClient.request({
+                url: lfData._buildURL(
+                  ['ValueSet', '$expand'], {url: item.answerValueSet, _format: 'json'}),
+                headers: {'Accept': 'application/fhir+json'}
+              }).then(function(response) {
               var valueSet = response;
               var answers = self.answersFromVS(valueSet);
               if (answers) {
@@ -1649,6 +1645,9 @@ function addCommonSDCImportFns(ns) {
         }
         else if(restriction.url.match(/regex$/)) {
           restrictions['pattern'] = val;
+        }
+        else if(restriction.url.match(/maxDecimalPlaces$/)) {
+          restrictions['maxDecimalPlaces'] = parseInt(val);
         }
       }
     }

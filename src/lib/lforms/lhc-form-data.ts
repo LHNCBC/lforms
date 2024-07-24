@@ -342,14 +342,14 @@ export default class LhcFormData {
    *  should be set to false (which is the default).
    */
   loadFHIRResources(prepopulate) {
-    if (!LForms.fhirContext) {
-      //throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+    var lfData = this;
+    var sdc = this._fhir.SDC;
+
+    const terminologyServer = sdc._getTerminologyServer(this);
+    if (!LForms.fhirContext && !terminologyServer) {
       console.log('Warning: FHIR resources might not be loaded, because loadFHIRResources() was called before LForms.Util.setFHIRContext()');
     }
-    var lfData = this;
-
-    var sdc = this._fhir.SDC;
-    var pendingPromises = sdc.loadLaunchContext(this);
+    var pendingPromises = LForms.fhirContext ? sdc.loadLaunchContext(this) : [];
 
     // answerValueSet (for prefetched lists)
     pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));

@@ -67,33 +67,34 @@ function addSDCImportFns(ns) {
   self._processSkipLogic = function (lfItem, qItem, linkIdItemMap) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
-      for(var i = 0; i < qItem.enableWhen.length; i++) {
-          if (!linkIdItemMap[qItem.enableWhen[i].question]) {
-            throw new Error("Question with linkId '" + qItem.linkId +
-                "' contains enableWhen pointing to a question with linkId '" +
-                qItem.enableWhen[i].question  + "' that does not exist.")
-          }
-          var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
-          var condition = {source: qItem.enableWhen[i].question, trigger: {}};
-          var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-          var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
-          if(! opMapping) {
-            throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
-          }
+      for (var i = 0; i < qItem.enableWhen.length; i++) {
+        if (!qItem.enableWhen[i].question) {
+          throw new Error("Question with linkId '" + qItem.linkId +
+            "' contains enableWhen but is missing the enableWhen.question field.");
+        }
+        if (!linkIdItemMap[qItem.enableWhen[i].question]) {
+          throw new Error("Question with linkId '" + qItem.linkId +
+            "' contains enableWhen pointing to a question with linkId '" +
+            qItem.enableWhen[i].question + "' that does not exist.")
+        }
+        var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
+        var condition = {source: qItem.enableWhen[i].question, trigger: {}};
+        var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+        var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
+        if (!opMapping) {
+          throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
+        }
 
-          if(opMapping === 'exists') {
-            condition.trigger.exists = answer; // boolean value here regardless of data type
-          }
-          else if(dataType === 'CODING') {
-            condition.trigger[opMapping] = self._copyTriggerCoding(answer, null, false);
-          }
-          else if(dataType === 'QTY') {
-            condition.trigger[opMapping] = answer.value;
-          }
-          else {
-            condition.trigger[opMapping] = answer;
-          }
-          lfItem.skipLogic.conditions.push(condition);
+        if (opMapping === 'exists') {
+          condition.trigger.exists = answer; // boolean value here regardless of data type
+        } else if (dataType === 'CODING') {
+          condition.trigger[opMapping] = self._copyTriggerCoding(answer, null, false);
+        } else if (dataType === 'QTY') {
+          condition.trigger[opMapping] = answer.value;
+        } else {
+          condition.trigger[opMapping] = answer;
+        }
+        lfItem.skipLogic.conditions.push(condition);
       }
       if(qItem.enableBehavior) {
         lfItem.skipLogic.logic = qItem.enableBehavior.toUpperCase();
@@ -184,7 +185,15 @@ function addSDCImportFns(ns) {
         qItem.answerOption && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' ||
         lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
       if (repeats) {
-        answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        // if it has sub items that are not 'display'
+        if (qItem.item && qItem.item.length >=0 &&
+            qItem.item.some(item => item.type !== 'display')) {
+          answerCardinality = {max: "1"};
+          questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
+        else {
+          answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
       }
       else {
         answerCardinality = {max: "1"};

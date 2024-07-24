@@ -39,6 +39,8 @@ const FormUtils = {
    * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
    *  Questionnaire. options are: `R4` or `STU3`. If not provided an attempt will be made to determine
    *  the version from the Questionnaire content. 'R4B' is treated as 'R4'.
+   * @param {boolean} [options.questionnaireResponse] Optional, it may help reduce the number of
+   * lforms API calls when specified.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
    *  Questionnaire).
@@ -241,7 +243,7 @@ const FormUtils = {
           break;
         case "QuestionnaireResponse":
           if (options.extract)
-            fhirData = fhir.SDC.convertLFormsToQRAndExtracFHIRData(formData,
+            fhirData = fhir.SDC.convertLFormsToQRAndExtractFHIRData(formData,
               options.noExtensions, options.subject);
           else
             fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,

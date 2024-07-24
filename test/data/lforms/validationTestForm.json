@@ -180,6 +180,16 @@
       "linkId": "/REAL4"
     },
     {
+      "questionCode": "REAL5",
+      "dataType": "REAL",
+      "restrictions": {
+        "maxDecimalPlaces": 2
+      },
+      "answerCardinality": null,
+      "question": "REAL with maxDecimalPlaces restrictions",
+      "linkId": "/REAL5"
+    },
+    {
       "questionCode": "ST1",
       "dataType": "ST",
       "restrictions": {

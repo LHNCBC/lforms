@@ -1474,12 +1474,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, LForms.Util.deepCopy(validationTestForm));
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
-              assert.equal(convertedLfData.items.length, 35);
+              assert.equal(convertedLfData.items.length, 36);
               // TODO - min/max exclusive is not supported
               assert.equal(convertedLfData.items[12].restrictions.minInclusive, 5);
               assert.equal(convertedLfData.items[14].restrictions.maxInclusive, 10);
-              assert.equal(convertedLfData.items[21].restrictions.minLength, 5);
-              assert.equal(convertedLfData.items[22].restrictions.maxLength, 10);
+              assert.equal(convertedLfData.items[20].restrictions.maxDecimalPlaces, 2);
+              assert.equal(convertedLfData.items[22].restrictions.minLength, 5);
+              assert.equal(convertedLfData.items[23].restrictions.maxLength, 10);
               done();
             });
 
@@ -1492,18 +1493,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(fhirQ.item[0].extension, expected_fhirQ.item[0].extension);
             assert.deepEqual(fhirQ.item[1].extension, expected_fhirQ.item[1].extension);
             assert.equal(fhirQ.item[1].maxLength, expected_fhirQ.item[1].maxLength);
+            assert.deepEqual(fhirQ.item[2].extension, expected_fhirQ.item[2].extension);
           });
 
           it('should convert externally defined', function (done) {
             $.get('/base/test/data/lforms/validationTestForm.json', function(validationTestForm) {
-              const itemIndex = 28; // for the item with externally defined set
+              const itemIndex = 29; // for the item with externally defined set
               var optionsRes = validationTestForm.items[itemIndex].externallyDefined;
               assert.equal(typeof optionsRes, 'string');
               // Display control
               var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(LForms.Util.deepCopy(validationTestForm)));
               var convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
 
-              assert.equal(convertedLfData.items.length, 35);
+              assert.equal(convertedLfData.items.length, 36);
               assert.equal(convertedLfData.items[itemIndex].externallyDefined, optionsRes);
 
               // Also check that it an handle the old URL for backward
@@ -1513,7 +1515,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(ext.url, fhir.SDC.fhirExtUrlExternallyDefined);
               ext.url = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
               convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
-              assert.equal(convertedLfData.items.length, 35);
+              assert.equal(convertedLfData.items.length, 36);
               assert.equal(convertedLfData.items[itemIndex].externallyDefined, optionsRes);
 
               done();
@@ -1604,6 +1606,27 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(fhirQ.copryrightNotice, undefined, "copyrightText property should not exist on questionnaire");
               done();
             });
+          });
+
+          it('should preserve id field in questionnaire items', function() {
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              resourceType: 'Questionnaire',
+              url: 'http://test-questionnaire-url',
+              version: 'version',
+              status: 'draft',
+              item: [{
+                id: 100,
+                text: 'item a',
+                linkId: '1',
+                type: 'string',
+              }]
+            };
+            var lfdata = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfdata.url, 'http://test-questionnaire-url');
+            let q = LForms.Util._convertLFormsToFHIRData("Questionnaire", fhirVersion, lfdata);
+            assert.equal(q.item[0].id, 100);
           });
 
           if(fhirVersion === 'STU3') {

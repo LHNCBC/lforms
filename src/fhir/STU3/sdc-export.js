@@ -38,7 +38,7 @@ var self = {
    *  no valid QuestionnaireResponse. The caller may wish to put all of the returned
    *  resources into a transaction Bundle for creating them on a FHIR server.
    */
-   convertLFormsToQRAndExtracFHIRData: function(lfData, noExtensions, subject) {
+   convertLFormsToQRAndExtractFHIRData: function(lfData, noExtensions, subject) {
     var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
     if (!qr) {
       return null;
@@ -54,6 +54,18 @@ var self = {
     for (var i=0, len=lfData.itemList.length; i<len; ++i) {
       var item = lfData.itemList[i];
       if (this._getExtractValue(item) && this._hasItemValue(item)) {
+        const categCodeableConcepts = [];
+        // Use the categories from the closest ancestor item (including itself)
+        var ancestor = item;
+        while (ancestor && !categCodeableConcepts.length) {
+          if (ancestor.extension) {
+            const categExts = LForms.Util.findObjectInArray(ancestor.extension, 'url',
+              this.fhirExtObsExtractCategory,  0, true);
+            categExts.forEach((x)=>categCodeableConcepts.push(x.valueCodeableConcept));
+          }
+          ancestor = ancestor._parentItem;
+        }
+
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
@@ -70,6 +82,8 @@ var self = {
           }
           if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
             obs[j].performer = qr.author;
+          if (categCodeableConcepts.length)
+            obs[j].category = categCodeableConcepts;
 
           rtn.push(obs[j]);
         }
@@ -133,7 +147,7 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/regex
     // http://hl7.org/fhir/StructureDefinition/minValue
     // http://hl7.org/fhir/StructureDefinition/maxValue
-    // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces, not supported yet
+    // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces
     // http://hl7.org/fhir/StructureDefinition/maxSize, for attachment, not supported yet
     // maxLength
     if (item.restrictions) {
@@ -188,7 +202,16 @@ var self = {
                 "valueString": value
               };
             }
-            break
+            break;
+          // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces
+          case "maxDecimalPlaces":
+            if (dataType === "REAL") {
+              extValue = {
+                url: this.fhirExtUrlMaxDecimalPlaces,
+                valueInteger: value,
+              };
+            }
+            break;
         }
         if (extValue) {
           targetItem.extension.push(extValue);

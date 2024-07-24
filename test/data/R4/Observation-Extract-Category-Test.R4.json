@@ -1,0 +1,104 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Observation Extract Category Test",
+  "status": "draft",
+  "item": [
+    {
+      "item": [
+        {
+          "type": "string",
+          "linkId": "6237057833524",
+          "code": [
+            {
+              "system": "localsystem",
+              "code": "item-1",
+              "display": "test code"
+            }
+          ],
+          "text": "Child item with extract-catgory",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observation-extract-category",
+              "valueCodeableConcept": {
+                "text": "Vital Signs",
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "version": "4.0.1",
+                    "code": "vital-signs",
+                    "display": "Vital Signs"
+                  },
+                  {
+                    "system": "localsystem1",
+                    "code": "123",
+                    "display": "History"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observation-extract-category",
+              "valueCodeableConcept": {
+                "text": "Vital Signs2",
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "version": "4.0.1",
+                    "code": "vital-signs2",
+                    "display": "Vital Signs2"
+                  },
+                  {
+                    "system": "localsystem1",
+                    "code": "1232",
+                    "display": "History"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "linkId": "6237057833524",
+          "code": [
+            {
+              "system": "localsystem",
+              "code": "item-2",
+              "display": "test code 2"
+            }
+          ],
+          "text": "Child item without extract-catgory",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ]
+        }
+      ],
+      "type": "group",
+      "linkId": "1060570839573",
+      "text": "Parent Item with extract-category",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observation-extract-category",
+          "valueCodeableConcept": {
+            "text": "Social History",
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "version": "4.0.1",
+                "code": "social-history",
+                "display": "Social History"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

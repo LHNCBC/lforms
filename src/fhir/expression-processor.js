@@ -98,7 +98,7 @@ import deepEqual from "deep-equal";
             this._linkIdToQItem);
         }
         this._regenerateQuestionnaireResp();
-        self = this;
+        const self = this;
         this._currentRunPromise =
           this._asyncRunCalculations(includeInitialExpr, false).then(()=>{
             // At this point, every promise for the pending queries has been

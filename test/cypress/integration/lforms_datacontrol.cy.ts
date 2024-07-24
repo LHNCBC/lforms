@@ -51,7 +51,7 @@ describe('data control', () => {
     cy.byId(btnAdd2).should('not.exist');
     cy.byId(btnDel1).should('not.exist');
     cy.byId(btnDel2).should('not.exist');
-    cy.byId(btnAdd1).should('contain', 'Add another row of "A non-repeating horizontal table"');
+    cy.byId(btnAdd1).should('contain', '+ A non-repeating horizontal table');
 
     // 'add' button works
     cy.byId(btnAdd1).click();
@@ -60,7 +60,7 @@ describe('data control', () => {
 
     cy.byId(btnDel1).should('be.visible');
     cy.byId(btnDel2).should('be.visible');
-    cy.byId(btnAdd1).should('contain', 'Add another row of "A non-repeating horizontal table"');
+    cy.byId(btnAdd1).should('contain', '+ A non-repeating horizontal table');
     cy.byId(field1).should('be.visible');
     cy.byId(field2).should('be.visible');
 
@@ -86,7 +86,7 @@ describe('data control', () => {
 
   it('can control answerCardinality of an item with answer list', () => {
     tp.openBaseTestPage();
- 
+
     tp.loadFromTestData('dataControl-answerCardinality.json');
     const src = '/cardinalityControl/1';
     const dst = '/test_changing_repeats/1';
@@ -97,7 +97,7 @@ describe('data control', () => {
     // strength is reset
     cy.byId(dst).click().type('{downArrow}').blur()
     cy.byId(dst).should('have.value', "Answer 1");
-     
+
     // make it repeating
     cy.byId(src).click().type('{downArrow}').type('{downArrow}').blur();
     cy.byId("item-"+dst).byCss('span.autocomp_selected li').eq(0).should('have.text', '×Answer 1')
