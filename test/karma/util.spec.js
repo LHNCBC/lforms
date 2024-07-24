@@ -800,7 +800,7 @@ describe('Util library', function() {
   })
 
 
-  describe('getSupportedFeatures', function() {
+  describe('getSupportedItemControl', function() {
     it('should retrieves the supported features', function () {
       var expected = {
         "itemControl": [
@@ -816,7 +816,7 @@ describe('Util library', function() {
         ]
       };
       
-      var target = LForms.Util.getSupportedFeatures();
+      var target = LForms.Util.getSupportedItemControl();
       assert.deepEqual(target, expected);
     });
   });

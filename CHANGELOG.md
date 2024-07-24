@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [36.3.3] 2024-07-24
 ### Added
-- Added a function, 'getSupportedFeatures', to return an object containing a list of supported item controls.
+- Added a function, 'getSupportedItemControl', to return an object containing a list of supported item controls.
 
 ## [36.3.2] 2024-07-10
 ### Changed

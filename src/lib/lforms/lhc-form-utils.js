@@ -6,7 +6,7 @@ import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
 import * as htmlparser2 from "htmlparser2";
 
-import itemControls from '../../assets/item-controls.json';
+import itemControls from '../item-controls.json';
 
 const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
@@ -1152,7 +1152,7 @@ const FormUtils = {
   /**
    * Get an object that contain a list of Item Control codes
    */
-  getSupportedFeatures: function() {
+  getSupportedItemControl: function() {
     return itemControls;
   }
 
