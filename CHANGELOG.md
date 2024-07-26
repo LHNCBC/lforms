@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.5.0] 2024-07-26
+### Added
+- Support for rendering-xhtml on answerOption.
+
 ## [36.4.0] 2024-07-23
 ### Added
 - Support for rendering-xhtml on item.text.
