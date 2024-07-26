@@ -272,6 +272,17 @@ var self = {
           item.dataType === "DT" || item.dataType === "TM") {
         var valueKey = this._getValueKeyByDataType("value", item);
         option[valueKey] = answer.text;
+        // Restore rendering-xhtml extension on _valueString
+        if (valueKey === 'valueString' && answer.textHTML) {
+          option._valueString = {
+            extension: [
+              {
+                url: "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                valueString: answer.textHTML
+              }
+            ]
+          };
+        }
       }
 
       // label
