@@ -22,7 +22,7 @@ describe('ExpressionProcessor', function () {
         done();
       });
     });
-  }),
+  });
 
   describe('_evaluateFHIRPath', function() {
     it('should use the FHIR model', function(done) {
@@ -46,7 +46,7 @@ describe('ExpressionProcessor', function () {
         done();
       });
     });
-  }),
+  });
 
   describe('_addToIDtoQRItemMap', function() {
     it('should handle repeating items with missing data', function() {
@@ -438,6 +438,185 @@ describe('ExpressionProcessor', function () {
           done();
         }
         catch(e) {done(e)}
+      });
+    });
+  });
+
+  let originalFetch = window.fetch;
+  /**
+   * Mocks fetch requests.
+   * @param {Array} results - an array of fetch response descriptions, each item
+   *  of which is an array with the RegExp URL as the first item and the response
+   *  JSON object as the second. Non-mocked requests are passed to the original
+   *  fetch function and an error message is printed containing the result
+   *  returned from the server, which can be used when developing tests for
+   *  mocking these requests.
+   */
+  function mockFetchResults(results) {
+    window.fetch =
+      (url, ...otherParams) => new Promise((resolve, _) => {
+        const mockedResult = results?.find(r => r[0].test(url))?.[1]
+        if(mockedResult) {
+          resolve({ json: () => mockedResult });
+        } else {
+          resolve(originalFetch.call(window, url, ...otherParams)
+            .then(r => r.json())
+            .then(bundle => {
+              console.error(`"${url}" is not mocked and returns:\n${JSON.stringify(bundle, null, 2)}`);
+              return {
+                json: () => bundle
+              }
+            }));
+        }
+      });
+  }
+
+  describe('application/x-fhir-query', function() {
+    afterEach(() => {
+      window.fetch = originalFetch;
+    })
+    it('should be supported', function(done) {
+      mockFetchResults([[
+        /https:\/\/clinicaltables\.nlm\.nih\.gov\/fhir\/R4\/CodeSystem\/\$lookup\?system=https:\/\/clinicaltables\.nlm\.nih\.gov\/fhir\/CodeSystem\/rxterms&code=AR&property=STRENGTHS_AND_FORMS&_format=json/,
+        {
+          "resourceType": "Parameters",
+          "parameter": [
+            {
+              "name": "name",
+              "valueString": "rxterms/ctss"
+            },
+            {
+              "name": "display",
+              "valueString": "AXID AR (Oral Pill)"
+            },
+            {
+              "name": "property",
+              "part": [
+                {
+                  "name": "code",
+                  "valueCode": "STRENGTHS_AND_FORMS"
+                },
+                {
+                  "name": "value",
+                  "valueCoding": {
+                    "code": "211821",
+                    "display": "75 mg Tab"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]]);
+
+      const lfData = new LForms.LFormsData({
+        fhirVersion: 'R4',
+        extension: [{
+          "url" : LForms.FHIR.R4.SDC.fhirExtVariable,
+          "valueExpression" : {
+            "name": "strengthFormLookup",
+            "language": "application/x-fhir-query",
+            "expression": "https://clinicaltables.nlm.nih.gov/fhir/R4/CodeSystem/$lookup?system=https://clinicaltables.nlm.nih.gov/fhir/CodeSystem/rxterms&code={{%resource.item.where(linkId='/q1').answer.value}}&property=STRENGTHS_AND_FORMS"
+          }
+        }],
+        items: [{
+          linkId: '/q1', dataType: 'ST', value: "AR"
+        }, {
+          linkId: '/q2', dataType: 'CODING',
+          answers: [
+            {
+              "code": "211821",
+              "display": "75 mg Tab"
+            }
+          ],
+          extension: [{
+            "url" : LForms.FHIR.R4.SDC.fhirExtCalculatedExp,
+            "valueExpression" : {
+              "language": "text/fhirpath",
+              "expression": "%strengthFormLookup.parameter.where(name='property' and part.where(name='code' and value='STRENGTHS_AND_FORMS').exists()).part.where(name='value').value"
+            }
+          }]
+        }]
+      });
+
+      const exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
+      exp.runCalculations().then(() => {
+        assert.equal(lfData.items[1].value, lfData.items[1].answers[0]);
+        done();
+      });
+    });
+  });
+
+  describe('asynchronous expression in text/fhirpath', function() {
+    afterEach(() => {
+      window.fetch = originalFetch;
+    })
+    it('should be supported', function(done) {
+      mockFetchResults([
+        [/ValueSet\?url=http%3A%2F%2Fhl7\.org%2Ffhir%2FValueSet%2Fobservation-vitalsignresult/, {
+          "resourceType": "Bundle",
+          "entry": [
+            {
+              "resource": {
+                "resourceType": "ValueSet",
+                "compose": {
+                  "include": [
+                    {
+                      "system": "http://loinc.org",
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }],
+        [/code=29463-7&system=http%3A%2F%2Floinc\.org/, {
+          "resourceType": "Parameters",
+          "parameter": [
+            {
+              "name": "result",
+              "valueBoolean": true
+            }
+          ]
+        }]
+      ]);
+
+      const lfData = new LForms.LFormsData({
+        fhirVersion: 'R4',
+        extension: [{
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }],
+        items: [{
+          linkId: '/q1', dataType: 'ST',
+          // TODO: I don't know why the LForms.LFormsData constructor doesn't initialize terminologyServer from "extensions"
+          terminologyServer: 'https://lforms-fhir.nlm.nih.gov/baseR4',
+          extension: [
+            // {
+            //   "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+            //   "valueUrl": "'https://lforms-fhir.nlm.nih.gov/baseR4"
+            // },
+            {
+              "url" : LForms.FHIR.R4.SDC.fhirExtVariable,
+              "valueExpression" : {
+                "name": "someBool",
+                "language": "text/fhirpath",
+                "expression": "'29463-7'.memberOf('http://hl7.org/fhir/ValueSet/observation-vitalsignresult')"
+              }
+            }, {
+            "url" : LForms.FHIR.R4.SDC.fhirExtCalculatedExp,
+            "valueExpression" : {
+              "language": "text/fhirpath",
+              "expression": "iif(%someBool, 'valTrue', 'valFalse')"
+            }
+          }]
+        }]
+      });
+
+      const exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
+      exp.runCalculations().then(() => {
+        assert.equal(lfData.items[0].value, 'valTrue');
+        done();
       });
     });
   });

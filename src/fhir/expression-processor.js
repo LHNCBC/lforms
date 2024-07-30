@@ -26,6 +26,7 @@
 export let ExpressionProcessor;
 import copy from "fast-copy";
 import deepEqual from "deep-equal";
+import replaceAsync from 'string-replace-async';
 
 (function() {
   "use strict";
@@ -227,136 +228,24 @@ import deepEqual from "deep-equal";
         item._varChanged = false; // clear flag
         changesByVarsOnly = false; // clear it, so we process this and all child items
       }
-      if (!changesByVarsOnly) { // process this and all child items
+      // TODO: remove changesByVarsOnly completely since it breaks asynchronous
+      //  evaluations (for now I just commented it out)
+      if (true /*!changesByVarsOnly*/) { // process this and all child items
         item._varChanged = false; // clear flag in case it was set
         var fhirExt = item._fhirExt;
         if (fhirExt) {
-          var sdc = this._fhir.SDC;
           var exts = item._exprExtensions;
           if (exts) {
             var fieldChanged = false;
-            var self = this;
             for (let i=0, len=exts.length; i<len; ++i) {
               let ext = exts[i];
-              // Skip initialExpressions if we are not including those.
-              let isInitialExp = ext.url == sdc.fhirExtInitialExp;
-              if (includeInitialExpr || !isInitialExp) {
-                let isCalcExp = ext.url == sdc.fhirExtCalculatedExp;
-                // We only run initialExpression or calculatedExpression
-                // on one of the repeating items of the repeating group (the
-                // last one, because there is a flag to mark the last one).
-                if ((isCalcExp || isInitialExp) && item._questionRepeatable && !item._lastRepeatingItem)
-                  continue; // skip to next expression extension for this item
-
-                // Skip calculated expressions of editable fields for which the user has
-                // edited the value.
-                // Compare the item.value to the last calculated value (if any).  If
-                // they differ, then the user has edited the field, and in that case we
-                // skip setting the value and halt further calculations for the field.
-                var prevCalcVals = this._calculatedValues[this._getRepetitionKey(item)];
-                let currentVals;
-                if (isCalcExp && !item._userModifiedCalculatedValue && prevCalcVals) {
-                  // Get the current values for the item, which might be
-                  // repeating.
-                  currentVals = this._lfData.getItemValues(item);
-                  if (!this._equalAnswers(prevCalcVals, currentVals) && !item._answerListReset) {
-                    item._userModifiedCalculatedValue = true;
-                  }
-                }
-
-                if (!isCalcExp || !item._userModifiedCalculatedValue) {
-                  let varName = ext.valueExpression.name; // i.e., a variable name
-                  var itemVars;
-                  if (varName)
-                    itemVars = this._getItemVariables(item); // creates item._fhirVariables if necessary
-                  var oldVal;
-                  let newVal;
-                  var updateValue = false;
-                  if (ext.valueExpression.language=="text/fhirpath") {
-                    if (varName) {
-                      // Temporarily delete the old value, so we don't have
-                      // circular references.
-                      oldVal = itemVars[varName];
-                      delete itemVars[varName];
-                    }
-                    newVal = this._evaluateFHIRPath(item,
-                      ext.valueExpression.expression);
-                    updateValue = true;
-                    if (varName)
-                      itemVars[varName] = oldVal; // update handled below
-                  }
-                  else if (ext.valueExpression.language=="application/x-fhir-query") {
-                    let queryURL = ext.valueExpression.expression;
-                    // The expression might have embedded FHIRPath in the URI, inside {{...}}
-                    // Use "undefinedExprVal" to keep track of whether one of
-                    // the embedded FHIRPath expressions returns undefined (or
-                    // null).
-                    let undefinedExprVal = false;
-                    queryURL = queryURL.replace(/\{\{([^}]+)\}\}/g, function(match, fpExp) {
-                      // Replace the FHIRPath with the evaluated expressions
-                      let result = self._evaluateFHIRPath(item, fpExp)[0];
-                      if (result === null || result === undefined)
-                        undefinedExprVal = true; // i.e., URL likely not usable
-                      return undefinedExprVal ? '' : '' + result;
-                    });
-                    if (!item._currentFhirQueryURLs)
-                      item._currentFhirQueryURLs = {};
-                    let oldQueryURL = item._currentFhirQueryURLs[varName];
-                    // If queryURL is not a new value, we don't need to do anything
-                    if (queryURL !== oldQueryURL) {
-                      item._currentFhirQueryURLs[varName] = queryURL;
-                      if (undefinedExprVal) {
-                        newVal = undefined;
-                        updateValue = true;
-                      }
-                      else {
-                        // Look for a cached result
-                        if (this._queryCache.hasOwnProperty(queryURL)) {
-                          newVal = this._queryCache[queryURL];
-                          updateValue = true;
-                        }
-                        else { // query not cached
-                          let fetchPromise = this._fetch(queryURL);
-                          // Store the promise that handles the response. We
-                          // will have to wait for it later.
-                          this._pendingQueries.push(fetchPromise.then(function(parsedJSON) {
-                            newVal = (self._queryCache[queryURL] = parsedJSON);
-                          }, function fail(e) {
-                            console.error("Unable to load FHIR data from "+queryURL);
-                          }).then(function() {
-                            // Update the item with the fetched value, and
-                            // update the variable if there was a name defined.
-                            var fChanged = self._updateItemFromExp(
-                              item, ext.url, varName, newVal, isCalcExp, currentVals);
-                            if (varName) {
-                              var vChanged = self._updateItemVariable(item, varName,
-                                newVal);
-                            }
-
-                            if (item._answerListReset) item._answerListReset =false;
-
-                            return {fields: fChanged, variables: vChanged};
-                          }));
-                        }
-                      }
-                    }
-                  }
-                  // else CQL (TBD)
-
-                  if (updateValue) {
-                    // Update the item with the fetched value, and
-                    // update the variable if there was a name defined.
-                    var fChanged = this._updateItemFromExp(
-                      item, ext.url, varName, newVal, isCalcExp, currentVals);
-                    fieldChanged = fieldChanged || fChanged;
-                    if (varName)
-                      this._updateItemVariable(item, varName, newVal);
-                  }
-                }
-              }
+              fieldChanged = fieldChanged ||
+                this._evaluateExpression(item, ext, includeInitialExpr);
             }
 
-            if (item._answerListReset) item._answerListReset =false;
+            if (item._answerListReset) {
+              item._answerListReset = false;
+            }
 
             rtn = {fields: fieldChanged, variables: item._varChanged};
           }
@@ -371,16 +260,178 @@ import deepEqual from "deep-equal";
           // Note:  We need to process all the child items; we cannot do an
           // early loop exit based on rtn.
           childChanges = this._evaluateExpressions(item.items[j], includeInitialExpr, changesByVarsOnly);
-          if (childChanges.fields)
+          if (childChanges.fields) {
             rtn.fields = true;
-          if (childChanges.variables)
+          }
+          if (childChanges.variables) {
             rtn.variables = true;
+          }
         }
       }
 
       return rtn;
     },
 
+    /**
+     * Evaluates an expression for a given item.
+     * @param item an LFormsData or item from LFormsData.
+     * @param ext  an FHIR extension structure.
+     * @param includeInitialExpr whether or not to run expressions from
+     *  initialExpression extensions (which should only be run when the form is
+     *  loaded).
+     * @returns true if the evaluation changed the field value, false otherwise.
+     */
+    _evaluateExpression: function(item, ext, includeInitialExpr) {
+      let sdc = this._fhir.SDC;
+      let self = this;
+      let fieldChanged = false;
+      // Skip initialExpressions if we are not including those.
+      let isInitialExp = ext.url === sdc.fhirExtInitialExp;
+      if (includeInitialExpr || !isInitialExp) {
+        let isCalcExp = ext.url === sdc.fhirExtCalculatedExp;
+        // We only run initialExpression or calculatedExpression
+        // on one of the repeating items of the repeating group (the
+        // last one, because there is a flag to mark the last one).
+        if ((isCalcExp || isInitialExp) && item._questionRepeatable && !item._lastRepeatingItem) {
+          return false; // skip to next expression extension for this item
+        }
+
+        // Skip calculated expressions of editable fields for which the user has
+        // edited the value.
+        // Compare the item.value to the last calculated value (if any).  If
+        // they differ, then the user has edited the field, and in that case we
+        // skip setting the value and halt further calculations for the field.
+        var prevCalcVals = this._calculatedValues[this._getRepetitionKey(item)];
+        let currentVals;
+        if (isCalcExp && !item._userModifiedCalculatedValue && prevCalcVals) {
+          // Get the current values for the item, which might be
+          // repeating.
+          currentVals = this._lfData.getItemValues(item);
+          if (!this._equalAnswers(prevCalcVals, currentVals) && !item._answerListReset) {
+            item._userModifiedCalculatedValue = true;
+          }
+        }
+
+        if (!isCalcExp || !item._userModifiedCalculatedValue) {
+          let varName = ext.valueExpression.name; // i.e., a variable name
+          var itemVars;
+          if (varName) {
+            itemVars = this._getItemVariables(item); // creates item._fhirVariables if necessary
+          }
+          var oldVal;
+          let newVal;
+          if (ext.valueExpression.language === 'text/fhirpath') {
+            if (varName) {
+              // Temporarily delete the old value, so we don't have
+              // circular references.
+              oldVal = itemVars[varName];
+              // TODO: This "delete" breaks asynchronous evaluations
+              // delete itemVars[varName];
+            }
+            newVal = this._evaluateFHIRPath(item,
+              ext.valueExpression.expression);
+
+            if (newVal instanceof Promise) {
+              this._pendingQueries.push(newVal.then((nv) => {
+                if (varName) {
+                  itemVars[varName] = oldVal; // update handled below
+                }
+                // Update the item with the fetched value, and
+                // update the variable if there was a name defined.
+                var fChanged = this._updateItemFromExp(
+                  item, ext.url, varName, nv, isCalcExp, currentVals);
+                var vChanged = false;
+                if (varName) {
+                  vChanged = this._updateItemVariable(item, varName, nv);
+                }
+
+                if (item._answerListReset) {
+                  item._answerListReset = false;
+                }
+
+                return {fields: fChanged, variables: vChanged};
+              }));
+            } else {
+              if (varName) {
+                itemVars[varName] = oldVal; // update handled below
+              }
+              // Update the item with the fetched value, and
+              // update the variable if there was a name defined.
+              var fChanged = this._updateItemFromExp(
+                item, ext.url, varName, newVal, isCalcExp, currentVals);
+              fieldChanged = fieldChanged || fChanged;
+              if (varName) {
+                this._updateItemVariable(item, varName, newVal);
+              }
+            }
+          }
+          else if (ext.valueExpression.language === 'application/x-fhir-query') {
+            // The expression might have embedded FHIRPath in the URI, inside {{...}}
+            // Use "undefinedExprVal" to keep track of whether one of
+            // the embedded FHIRPath expressions returns undefined (or
+            // null).
+            let undefinedExprVal = false;
+            // Store the promise that handles the response. We
+            // will have to wait for it later.
+            this._pendingQueries.push(
+              replaceAsync(
+                ext.valueExpression.expression,
+                /\{\{([^}]+)\}\}/g,
+                function(match, fpExp) {
+                  // Replace the FHIRPath with the evaluated expressions
+                  return Promise.resolve(self._evaluateFHIRPath(item, fpExp))
+                    .then(r => {
+                      let result = r[0];
+                      if (result === null || result === undefined) {
+                        undefinedExprVal = true; // i.e., URL likely not usable
+                      }
+                      return undefinedExprVal ? '' : '' + result;
+                    });
+                }).then( queryURL => {
+                if (!item._currentFhirQueryURLs) {
+                  item._currentFhirQueryURLs = {};
+                }
+                let oldQueryURL = item._currentFhirQueryURLs[varName];
+                // If queryURL is not a new value, we don't need to do anything
+                if (queryURL !== oldQueryURL) {
+                  item._currentFhirQueryURLs[varName] = queryURL;
+                  const newValPromise = undefinedExprVal ?
+                    Promise.resolve(undefined)
+                    : this._queryCache.hasOwnProperty(queryURL) ?
+                      Promise.resolve(this._queryCache[queryURL])
+                      : this._fetch(queryURL).then(function(parsedJSON) {
+                        return (self._queryCache[queryURL] = parsedJSON);
+                      }, function fail() {
+                        console.error('Unable to load FHIR data from ' +
+                          queryURL);
+                      });
+                  // Store the promise that handles the response. We
+                  // will have to wait for it later.
+                  return newValPromise.then(function(newVal) {
+                    // Update the item with the fetched value, and
+                    // update the variable if there was a name defined.
+                    var fChanged = self._updateItemFromExp(
+                      item, ext.url, varName, newVal, isCalcExp, currentVals);
+                    var vChanged = false;
+                    if (varName) {
+                      vChanged = self._updateItemVariable(item, varName,
+                        newVal);
+                    }
+
+                    if (item._answerListReset) {
+                      item._answerListReset = false;
+                    }
+
+                    return {fields: fChanged, variables: vChanged};
+                  });
+                }
+              }));
+          }
+          // else CQL (TBD)
+        }
+      }
+      return fieldChanged;
+    },
 
     /**
      *  Regenerates the QuestionnaireResponse resource and the map from
@@ -525,7 +576,11 @@ import deepEqual from "deep-equal";
           if (base)
             expression = {base, expression};
           compiledExpr = this._compiledExpressions[expression] =
-            this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
+            this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel, {
+              async: true,
+              // TODO: I guess I can get the terminology server from the item
+              ...(item.terminologyServer ? {terminologyUrl: item.terminologyServer} : {})
+            });
         }
         fhirPathVal = compiledExpr(contextNode, fVars);
       }

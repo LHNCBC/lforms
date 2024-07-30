@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.4.0] 2024-07-29
+### Added
+- Support for asynchronous FHIRPath expressions.
+
 ## [36.3.3] 2024-07-22
 ### Added
 - Copy questionnaire-ordinalValue (STU3), ordinalValue (R4) and
