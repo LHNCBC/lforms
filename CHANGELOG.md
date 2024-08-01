@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.3.3] 2024-07-22
+### Added
+- Copy questionnaire-ordinalValue (STU3), ordinalValue (R4) and
+  itemWeight (R5) extensions to questionnaire response.
+
 ## [36.3.2] 2024-07-10
 ### Changed
 - Allow ValueSets to load without a FHIR Context if a terminology server is 

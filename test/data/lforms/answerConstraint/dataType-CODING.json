@@ -200,19 +200,19 @@
               "code": "c1",
               "text": "Answer 1",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "code": "c2",
               "text": "Answer 2",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "code": "c3",
               "text": "Answer 3",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -241,19 +241,19 @@
               "code": "c1",
               "text": "Answer 1",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "code": "c2",
               "text": "Answer 2",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "code": "c3",
               "text": "Answer 3",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -296,19 +296,19 @@
               "code": "c1",
               "text": "Answer 1",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "code": "c2",
               "text": "Answer 2",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "code": "c3",
               "text": "Answer 3",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -338,19 +338,19 @@
               "code": "c1",
               "text": "Answer 1",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "code": "c2",
               "text": "Answer 2",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "code": "c3",
               "text": "Answer 3",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 

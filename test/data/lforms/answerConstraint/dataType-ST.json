@@ -191,17 +191,17 @@
             {
               "text": "a",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "b",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "c",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
           "questionCardinality": {
@@ -228,17 +228,17 @@
             {
               "text": "a",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "b",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "c",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
           "questionCardinality": {
@@ -283,17 +283,17 @@
             {
               "text": "a",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "b",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "c",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
           "questionCardinality": {
@@ -321,17 +321,17 @@
             {
               "text": "a",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "b",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "c",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
           "questionCardinality": {
@@ -527,7 +527,7 @@
         "max": "1"
       }
     }
-    
-   
+
+
   ]
 }
