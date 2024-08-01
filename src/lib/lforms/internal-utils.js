@@ -191,7 +191,7 @@ export const InternalUtil = {
   targetDisabledAndProtected: function(item) {
     return item ? (item._enableWhenExpVal === false ||
         item._skipLogicStatus === 'target-disabled') &&
-        item.disabledDisplay === 'protected' : false;
+        item._disabledDisplayStatus === 'protected' : false;
   },
 
 

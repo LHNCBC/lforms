@@ -1,4 +1,3 @@
-import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
 import { AddFormToPageTestPage } from "../../support/addFormToPageTest.po";
 import * as util from "../../support/util";
 

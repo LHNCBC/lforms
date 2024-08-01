@@ -440,6 +440,7 @@ export default class LhcFormData {
     this._repeatableItems = {};
     this._setTreeNodes(this.items, this);
     this._updateLastRepeatingItemsStatus(this.items);
+    this._updateItemDisabledDisplayStatus(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -478,6 +479,7 @@ export default class LhcFormData {
     // update internal status
     this._updateTreeNodes(this.items,this);
     this._updateLastRepeatingItemsStatus(this.items);
+    this._updateItemDisabledDisplayStatus(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -862,6 +864,27 @@ export default class LhcFormData {
     }
   }
 
+
+  /**
+   * Create a list of reference to the items in the tree
+   * @param items sibling items on one level of the tree
+   * @param parentDisabledDisplayStatus the disableDisplay status from its parent item.
+   * @private
+   */
+  _updateItemDisabledDisplayStatus(items, parentDisabledDisplayStatus=null) {
+
+    for (let i=0, iLen=items.length; i<iLen; i++) {
+      let item = items[i];
+      let disabledDisplayStatus = item.disabledDisplay || parentDisabledDisplayStatus;
+      if (disabledDisplayStatus) {
+        item._disabledDisplayStatus = disabledDisplayStatus;
+        // process the sub items
+        if (item.items && item.items.length > 0) {
+          this._updateItemDisabledDisplayStatus(item.items, disabledDisplayStatus);
+        }
+      }
+    }
+  }
 
   /**
    * Find all the items across the form that have scores
@@ -1418,7 +1441,7 @@ export default class LhcFormData {
    */
   isItemHidden(item) {
     return ((item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._enableWhenExpVal === false) &&
-       item.disabledDisplay !=='protected') || item.isHiddenInDef;
+       item._disabledDisplayStatus !=='protected') || item.isHiddenInDef;
   }
 
 

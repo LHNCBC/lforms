@@ -483,6 +483,7 @@
           "repeats": true,
           "linkId": "g5q1",
           "text": "Question #1",
+          "answerConstraint": "optionsOrString",
           "answerOption": [
             {
               "valueCoding": {
@@ -509,6 +510,7 @@
           "repeats": true,
           "linkId": "g5q2",
           "text": "Question #2",
+          "answerConstraint": "optionsOrString",
           "answerOption": [
             {
               "valueCoding": {
@@ -535,6 +537,7 @@
           "repeats": true,
           "linkId": "g5q3",
           "text": "Question #3",
+          "answerConstraint": "optionsOrString",
           "answerOption": [
             {
               "valueCoding": {
@@ -591,6 +594,7 @@
           "type": "coding",
           "linkId": "g6q1",
           "text": "Question #1",
+          "answerConstraint": "optionsOrString",
           "answerOption": [
             {
               "valueCoding": {
@@ -616,6 +620,7 @@
           "type": "coding",
           "linkId": "g6q2",
           "text": "Question #2",
+          "answerConstraint": "optionsOrString",
           "answerOption": [
             {
               "valueCoding": {
@@ -641,6 +646,7 @@
           "type": "coding",
           "linkId": "g6q3",
           "text": "Question #3",
+          "answerConstraint": "optionsOrString",
           "answerOption": [
             {
               "valueCoding": {
