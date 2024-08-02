@@ -48,6 +48,12 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
   self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
   self.fhirExtUrlMaxDecimalPlaces = "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces";
+  self.fhirExtUrlOptionScoreLookup = {
+    'STU3': "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+    'R4': "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+    'R5': "http://hl7.org/fhir/StructureDefinition/itemWeight"
+  };
+  self.fhirExtUrlOptionScoreUrlSet = new Set(Object.values(self.fhirExtUrlOptionScoreLookup));
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -1163,7 +1169,7 @@ function addCommonSDCImportFns(ns) {
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
           self.fhirExtUrlValueSetScore);
         if(ordExt) {
-          answer.score = ordExt.valueDecimal;
+          answer.score = parseFloat(ordExt.valueDecimal);
         }
         rtn.push(answer);
       });

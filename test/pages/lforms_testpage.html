@@ -278,9 +278,9 @@
        * Get SDC 'Questionnaire' data from the form and display it in console
        */
       function showFHIRSDCQuestionnaire() {
-        if (testForm.questionnaire) {
+        if (testForm.lhcFormData) {
           var fhir = getFHIR();
-          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.questionnaire);
+          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.lhcFormData);
           var fhirString = JSON.stringify(sdc, null, 4);
           console.log(fhirString);
         }

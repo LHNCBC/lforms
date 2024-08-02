@@ -6,6 +6,8 @@ function addR5ImportFns(ns) {
 
   var self = ns;
 
+  self.fhirExtUrlOptionScore = self.fhirExtUrlOptionScoreLookup['R5'];
+
   /**
    * Parse questionnaire item for data type
    *

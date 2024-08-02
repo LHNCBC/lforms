@@ -195,7 +195,7 @@
                   "valueString": "A"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 1
                 }
               ]
@@ -208,7 +208,7 @@
                   "valueString": "B"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 2
                 }
               ]
@@ -221,7 +221,7 @@
                   "valueString": "C"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 3
                 }
               ]
@@ -258,7 +258,7 @@
                   "valueString": "A"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 1
                 }
               ]
@@ -271,7 +271,7 @@
                   "valueString": "B"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 2
                 }
               ]
@@ -284,7 +284,7 @@
                   "valueString": "C"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 3
                 }
               ]
@@ -331,7 +331,7 @@
                   "valueString": "A"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 1
                 }
               ]
@@ -344,7 +344,7 @@
                   "valueString": "B"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 2
                 }
               ]
@@ -357,7 +357,7 @@
                   "valueString": "C"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 3
                 }
               ]
@@ -398,7 +398,7 @@
                   "valueString": "A"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 1
                 }
               ]
@@ -411,7 +411,7 @@
                   "valueString": "B"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 2
                 }
               ]
@@ -424,7 +424,7 @@
                   "valueString": "C"
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
                   "valueDecimal": 3
                 }
               ]

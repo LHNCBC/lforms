@@ -192,17 +192,17 @@
             {
               "text": "2022",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "2022-09",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "2022-09-20",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -231,17 +231,17 @@
             {
               "text": "2022",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "2022-09",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "2022-09-20",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -284,17 +284,17 @@
             {
               "text": "2022",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "2022-09",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "2022-09-20",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
@@ -324,17 +324,17 @@
             {
               "text": "2022",
               "label": "A",
-              "score": "1"
+              "score": 1
             },
             {
               "text": "2022-09",
               "label": "B",
-              "score": "2"
+              "score": 2
             },
             {
               "text": "2022-09-20",
               "label": "C",
-              "score": "3"
+              "score": 3
             }
           ],
 
