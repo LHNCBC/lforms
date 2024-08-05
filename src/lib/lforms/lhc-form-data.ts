@@ -154,12 +154,6 @@ export default class LhcFormData {
    *       plus a 'fileContent' field that contains the actual file contents.
    */
   constructor(data, packageStore=null) {
-    // Backward compatibility. Assign value to allowHTML if there is allowHTMLInInstructions in templateOptions.
-    if (data && data.templateOptions && data.templateOptions.hasOwnProperty('allowHTMLInInstructions') &&
-      !data.templateOptions.hasOwnProperty('allowHTML')) {
-      data.templateOptions.allowHTML = data.templateOptions.allowHTMLInInstructions;
-      delete data.templateOptions.allowHTMLInInstructions;
-    }
 
     if (packageStore) {
       this._packageStore = packageStore;
@@ -947,6 +941,13 @@ export default class LhcFormData {
    * @param existingOptions existing options in the form data
    */
   setTemplateOptions(newOptions, existingOptions=null) {
+    // Backward compatibility. Assign value to allowHTML if there is allowHTMLInInstructions in templateOptions.
+    if (newOptions && newOptions.hasOwnProperty('allowHTMLInInstructions') &&
+      !newOptions.hasOwnProperty('allowHTML')) {
+      newOptions.allowHTML = newOptions.allowHTMLInInstructions;
+      delete newOptions.allowHTMLInInstructions;
+    }
+
     if (newOptions) {
       if (!existingOptions)
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
