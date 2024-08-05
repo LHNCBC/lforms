@@ -5,6 +5,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [36.4.0] 2024-07-23
 ### Added
 - Support for rendering-xhtml on item.text.
+- Added new template option allowHTML. allowHTMLInInstructions is deprecated.
 
 ## [36.3.3] 2024-07-22
 ### Added
