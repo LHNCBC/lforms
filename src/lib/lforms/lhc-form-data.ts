@@ -154,6 +154,12 @@ export default class LhcFormData {
    *       plus a 'fileContent' field that contains the actual file contents.
    */
   constructor(data, packageStore=null) {
+    // Backward compatibility. Assign value to allowHTML if there is allowHTMLInInstructions in templateOptions.
+    if (data && data.templateOptions && data.templateOptions.hasOwnProperty('allowHTMLInInstructions') &&
+      !data.templateOptions.hasOwnProperty('allowHTML')) {
+      data.templateOptions.allowHTML = data.templateOptions.allowHTMLInInstructions;
+      delete data.templateOptions.allowHTMLInInstructions;
+    }
 
     if (packageStore) {
       this._packageStore = packageStore;
