@@ -58,10 +58,16 @@ describe('rendering-xhtml', () => {
       cy.byId('#item-valueString-group2-item1/1/1')
         .find('.testBold')
         .should('have.length', 3);
+      cy.byId('#item-valueString-group2-item1/1/1')
+        .find('.testImage')
+        .should('be.visible');
       // checkbox
       cy.byId('#item-valueString-group2-item2/1/1')
         .find('.testBold')
         .should('have.length', 3);
+      cy.byId('#item-valueString-group2-item2/1/1')
+        .find('.testImage')
+        .should('be.visible');
     });
 
     it('should display answerOption text if not allowed in template options', () => {
