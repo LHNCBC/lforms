@@ -1,0 +1,20 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire with item text containing rendering-xhtml extension, with invalid tags",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "1.2",
+      "text": "Please answer Yes or No to each of the following questions:",
+      "_text": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": "<i class='testPlease'>Please</i> answer <script>Yes</script> or <b>No</b> to each of the following questions:"
+          }
+        ]
+      },
+      "type": "display"
+    }
+  ]
+}
