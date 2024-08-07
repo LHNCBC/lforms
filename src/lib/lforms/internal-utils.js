@@ -62,6 +62,22 @@ export const InternalUtil = {
 
 
   /**
+   * Prints detailed errors about invalid HTML in console.
+   * @param invalidTagsAttributes object of invalid HTML tag and attributes
+   * returned from LForms.Util.checkForInvalidHtmlTags().
+   */
+  printInvalidHtmlToConsole: function(invalidTagsAttributes) {
+    console.log("Possible invalid HTML tags/attributes:");
+    invalidTagsAttributes.forEach(ele => {
+      if (ele.attribute)
+        console.log("  - Attribute: " + ele.attribute + " in " + ele.tag);
+      else if (ele.tag)
+        console.log("  - Element: " + ele.tag);
+    });
+  },
+
+
+  /**
    *  Sets the "messages" attribute of the given item.  If the given array of
    *  messages object only consists of nulls (no messages), then the messages
    *  attribute will be removed from the item.

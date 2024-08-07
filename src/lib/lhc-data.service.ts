@@ -167,6 +167,25 @@ export class LhcDataService {
 
 
   /**
+   * Check the display type of item.text
+   * @param item an item in the lforms form items array
+   * @returns {string}
+   */
+  getItemTextDisplayType(item) {
+    var format = 'plain';
+    if (item.questionXHTML && item.questionXHTML.length > 0 && this.lhcFormData.templateOptions.allowHTML) {
+      if (!item.questionHasInvalidHtmlTag) {
+        format = 'html';
+      }
+      else {
+        format = this.lhcFormData.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
+      }
+    }
+    return format;
+  }
+
+
+  /**
    * Check the display type of the coding instructions
    * @param item an item in the lforms form items array
    * @returns {string}
@@ -175,7 +194,7 @@ export class LhcDataService {
     var ret ='';
     if (item.codingInstructions && item.codingInstructions.length > 0) {
       var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
-      if (this.lhcFormData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
+      if (this.lhcFormData.templateOptions.allowHTML && item.codingInstructionsFormat === "html") {
         var format = "html";  // use item.codingInstructions (safe html)
         if (item.codingInstructionsHasInvalidHtmlTag) {
           if (this.lhcFormData.templateOptions.displayInvalidHTML) {

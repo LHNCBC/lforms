@@ -87,8 +87,10 @@ about the meaning of each key:
       The default is false;
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
-    * allowHTMLInInstructions - a boolean that controls whether to allow HTML
-      content in the codingInstructions field. The default is false. If it is false,
+    * allowHTML - a boolean that controls whether to allow HTML content in question
+      text and the codingInstructions field.
+      See https://hl7.org/fhir/extensions/StructureDefinition-rendering-xhtml.html.
+      The default is false. If it is false,
       the **codingInstructionsFormat** field on item level is ignored, and no HTML
       formatted coding instructions will be displayed.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
@@ -273,7 +275,7 @@ about the meaning of each key:
       question (so it should be brief).
     * codingInstructionsFormat - (optional) the text format of the codingInstructions,
       either 'html' or 'text'. If not specified, the default is 'text'.
-      If **allowHTMLInInstructions** in **templateOptions** is set to be false,
+      If **allowHTML** in **templateOptions** is set to be false,
       then codingInstructionsFormat is ignored and treated as if it is set to 'text'.
       No HTML formatted coding instructions will be displayed.
     * <a name="calculationMethod"></a>calculationMethod - For fields whose value

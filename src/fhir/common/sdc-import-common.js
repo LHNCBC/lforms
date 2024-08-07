@@ -668,6 +668,24 @@ function addCommonSDCImportFns(ns) {
       if (extFieldData)
         lfItem['obj'+extField] = extFieldData;
     }
+
+    // Set rendering-xhtml properties.
+    const xhtmlFormat = lfItem['obj_text'] ?
+      LForms.Util.findObjectInArray(lfItem['obj_text'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
+    if (xhtmlFormat) {
+      lfItem.questionXHTML = xhtmlFormat.valueString;
+      if (self._widgetOptions?.allowHTML) {
+        let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+        if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+          lfItem.questionHasInvalidHtmlTag = true;
+          let errors = {};
+          errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+          const messages = [{errors}];
+          LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+          LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
+        }
+      }
+    }
   };
 
 
@@ -1486,21 +1504,14 @@ function addCommonSDCImportFns(ns) {
           codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
         };
         // check if html string contains invalid html tags, when the html version needs to be displayed
-        if (self._widgetOptions?.allowHTMLInInstructions) {
+        if (self._widgetOptions?.allowHTML) {
           let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             helps.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};
             errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
             messages = [{errors}];
-            // print detailed errors messages in console
-            console.log("Possible invalid HTML tags/attributes found in help text:")
-            invalidTagsAttributes.forEach(ele => {
-              if (ele.attribute)
-                console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
-              else if (ele.tag)
-                console.log("  - Element: " + ele.tag);
-            });
+            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
           }
         }
       }
