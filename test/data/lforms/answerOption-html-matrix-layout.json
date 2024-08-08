@@ -1,0 +1,111 @@
+{
+  "type": "LOINC",
+  "code": "copyriht-help",
+  "name": "answerOption HTML in matrix layout",
+  "templateOptions": {
+    "allowHTML": true,
+    "displayInvalidHTML": true
+  },
+  "items": [
+    {
+      "questionCode": "matrixTable",
+      "question": "Plain text answerOption",
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "matrix"
+      },
+      "items": [
+        {
+          "questionCode": "type0",
+          "question": "A question",
+          "linkId": "/matrixTable0/type0",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ]
+        }
+      ],
+      "linkId": "/matrixTable0"
+    },
+    {
+      "questionCode": "matrixTable",
+      "question": "HTML answerOption",
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "matrix"
+      },
+      "items": [
+        {
+          "questionCode": "type0",
+          "question": "A question",
+          "linkId": "/matrixTable1/type0",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "_displayTextHTML": "Answer <button>button</button> 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "_displayTextHTML": "Answer <button>button</button> 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "_displayTextHTML": "Answer <button>button</button> 3"
+            }
+          ]
+        }
+      ],
+      "linkId": "/matrixTable1"
+    },
+    {
+      "questionCode": "matrixTable",
+      "question": "Escaped answerOption",
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "matrix"
+      },
+      "items": [
+        {
+          "questionCode": "type0",
+          "question": "A question",
+          "linkId": "/matrixTable2/type0",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "_displayTextHTML": "Answer <script>button</script> 1",
+              "answerOptionTextHasInvalidHtmlTag": true
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "_displayTextHTML": "Answer <script>button</script> 2",
+              "answerOptionTextHasInvalidHtmlTag": true
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "_displayTextHTML": "Answer <script>button</script> 3",
+              "answerOptionTextHasInvalidHtmlTag": true
+            }
+          ]
+        }
+      ],
+      "linkId": "/matrixTable2"
+    }
+  ],
+  "lformsVersion": "29.0.0"
+}
