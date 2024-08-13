@@ -259,7 +259,7 @@ reference to this element or its ID to a utility function load the form.</p>
        <dt>prepopulate</dt><dd>Set this to true if you are using FHIR and want prepopulation
          to occur from the patient's record.  Note that you probably do not want prepopulation to
          happen if you are loading a QuestionnaireResponse (via the
-         questionnaireResponse option.</dd>
+         questionnaireResponse option).</dd>
        <dt>fhirVersion</dt><dd>If the formDefinition is a FHIR Questionnaire,
          you can specify which version of FHIR by passing in 'STU3', 'R4', or 'R5'.
          Otherwise LForms will try to guess the version by looking at the Questionnaire's
@@ -281,8 +281,8 @@ should be visible).</p>
 
   <p>If the Questionnaire does prepopulation of form fields with data, or if it
   loads ValueSets but does not specify a terminology server, then the following API
-  will need to be called prior to addFormToPage, to provide a connection to a FHIR
-  server, some resources to use in prepopulation, or both.</p>
+  will need to be called prior to addFormToPage.  It provides a connection to a FHIR
+  server and/or some FHIR resources to use in prepopulation.</p>
 
   <pre><code>LForms.Util.setFHIRContext(fhirContext, fhirContextVars)</code></pre>
 
@@ -331,9 +331,9 @@ should be visible).</p>
       form found in the page will be used.</li>
     <li><b>options</b> - an optional hash of other options, with the following optional keys:
       <ul>
-        <li><b>extract</b> - a flag used for resourceType=QuestionnaireResponse to
-          indicate that data should be <a
-          href="https://build.fhir.org/ig/HL7/sdc/extraction.html#obs-extract">extracted</a>
+        <li><b>extract</b> - a flag (true or false, false being the default)
+          used for resourceType=QuestionnaireResponse to indicate that data should
+          be <a href="https://build.fhir.org/ig/HL7/sdc/extraction.html#obs-extract">extracted</a>
           (using the FHIR observationExtract extension) to other FHIR resources.
           In this case the return value will be an array consisting of the
           QuestionnaireResponse and any extracted Observations.
@@ -454,6 +454,8 @@ should be visible).</p>
       the LHC-Forms rendered form. It could be the DOM element or its id.</li>
   </ul>
 
+  <p><b>Returns:</b> a string of HL7 V2 data</p>
+
   <h3>Getting the Internal Format Form Definition Combined with the User Data</h3>
   <pre><code>LForms.Util.getFormData(formElement, noEmptyValue, noDisabledItem)</code></pre>
   <p>The utility method <code>LForms.Util.getFormData()</code> will return both the user
@@ -471,6 +473,10 @@ should be visible).</p>
     <li><b>noDisabledItem</b> - (default false) Remove items that are disabled by skip
     logic</li>
   </ol>
+
+  <p><b>Returns:</b> a form definition object but with the user data merged
+   into it.  It can be displayed using <a
+   href="#usage">LForms.Util.addFormToPage</a> as described above.</p>
 
   <h3>Retrieving Only the User-Entered Values</h3>
 
