@@ -800,24 +800,15 @@ describe('Util library', function() {
   })
 
 
-  describe('getSupportedItemControl', function() {
-    it('should retrieves the supported features', function () {
-      var expected = {
-        "itemControl": [
-          "list",
-          "table",
-          "gtable",
-          "inline",
-          "autocomplete",
-          "drop-down",
-          "check-box",
-          "lookup",
-          "radio-button"
-        ]
-      };
-      
-      var target = LForms.Util.getSupportedItemControl();
-      assert.deepEqual(target, expected);
+  describe('getSupportedFeatures', function() {
+    it('should retrieves the supported features', function(done) {
+      $.get('/lib/item-controls.json', function(ic) {
+        var target = LForms.Util.getSupportedFeatures();
+        assert.deepEqual(target, ic);
+        done();
+      }).fail(function (err) {
+        done(err);
+      });
     });
   });
 });

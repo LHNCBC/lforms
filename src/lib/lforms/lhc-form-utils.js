@@ -1152,7 +1152,7 @@ const FormUtils = {
   /**
    * Get an object that contain a list of Item Control codes
    */
-  getSupportedItemControl: function() {
+  getSupportedFeatures: function() {
     return itemControls;
   }
 
