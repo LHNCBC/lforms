@@ -421,6 +421,8 @@ function addCommonSDCImportFns(ns) {
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
       if (typeof fhirVal === 'object') {
+        // types[i] is a string with a namespaced data type, such as
+        // "FHIR.Quantity", "FHIR.date", "System.String"
         fhirVal._type = fhirVal._type || types[i]?.split('.')[1];
       }
       var answer = undefined; // reset back to undefined each iteration

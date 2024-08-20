@@ -197,8 +197,9 @@ import replaceAsync from 'string-replace-async';
      * @return whether the value changed.
      */
     _updateItemVariable: function (item, varName, newVal) {
-      var oldVal = item._fhirVariables[varName];
-      item._fhirVariables[varName] = newVal;
+      const itemVars = this._getItemVariables(item); // creates item._fhirVariables if necessary
+      var oldVal = itemVars[varName];
+      itemVars[varName] = newVal;
       if (!deepEqual(oldVal, newVal)) {
         item._varChanged = true; // flag for re-running expressions.
       }
@@ -224,13 +225,11 @@ import replaceAsync from 'string-replace-async';
       var rtn = {};
       // If changesByVarsOnly, for any item that has _varChanged set, we run any field
       // expressions that are within that group (or item).
-      if (changesByVarsOnly && item.items && item._varChanged) {
+      if (changesByVarsOnly && item._varChanged) {
         item._varChanged = false; // clear flag
         changesByVarsOnly = false; // clear it, so we process this and all child items
       }
-      // TODO: remove changesByVarsOnly completely since it breaks asynchronous
-      //  evaluations (for now I just commented it out)
-      if (true /*!changesByVarsOnly*/) { // process this and all child items
+      if (!changesByVarsOnly) { // process this and all child items
         item._varChanged = false; // clear flag in case it was set
         var fhirExt = item._fhirExt;
         if (fhirExt) {
@@ -239,8 +238,9 @@ import replaceAsync from 'string-replace-async';
             var fieldChanged = false;
             for (let i=0, len=exts.length; i<len; ++i) {
               let ext = exts[i];
-              fieldChanged = fieldChanged ||
-                this._evaluateExpression(item, ext, includeInitialExpr);
+              if (this._evaluateExpression(item, ext, includeInitialExpr)) {
+                fieldChanged = true;
+              }
             }
 
             if (item._answerListReset) {
@@ -307,35 +307,20 @@ import replaceAsync from 'string-replace-async';
           // Get the current values for the item, which might be
           // repeating.
           currentVals = this._lfData.getItemValues(item);
-          if (!this._equalAnswers(prevCalcVals, currentVals) && !item._answerListReset) {
+          if (!item._answerListReset && !this._equalAnswers(prevCalcVals, currentVals)) {
             item._userModifiedCalculatedValue = true;
           }
         }
 
         if (!isCalcExp || !item._userModifiedCalculatedValue) {
           let varName = ext.valueExpression.name; // i.e., a variable name
-          var itemVars;
-          if (varName) {
-            itemVars = this._getItemVariables(item); // creates item._fhirVariables if necessary
-          }
-          var oldVal;
           let newVal;
           if (ext.valueExpression.language === 'text/fhirpath') {
-            if (varName) {
-              // Temporarily delete the old value, so we don't have
-              // circular references.
-              oldVal = itemVars[varName];
-              // TODO: This "delete" breaks asynchronous evaluations
-              // delete itemVars[varName];
-            }
             newVal = this._evaluateFHIRPath(item,
               ext.valueExpression.expression);
 
             if (newVal instanceof Promise) {
               this._pendingQueries.push(newVal.then((nv) => {
-                if (varName) {
-                  itemVars[varName] = oldVal; // update handled below
-                }
                 // Update the item with the fetched value, and
                 // update the variable if there was a name defined.
                 var fChanged = this._updateItemFromExp(
@@ -352,9 +337,6 @@ import replaceAsync from 'string-replace-async';
                 return {fields: fChanged, variables: vChanged};
               }));
             } else {
-              if (varName) {
-                itemVars[varName] = oldVal; // update handled below
-              }
               // Update the item with the fetched value, and
               // update the variable if there was a name defined.
               var fChanged = this._updateItemFromExp(
@@ -387,7 +369,8 @@ import replaceAsync from 'string-replace-async';
                       }
                       return undefinedExprVal ? '' : '' + result;
                     });
-                }).then( queryURL => {
+                }
+              ).then( queryURL => {
                 if (!item._currentFhirQueryURLs) {
                   item._currentFhirQueryURLs = {};
                 }
@@ -425,7 +408,8 @@ import replaceAsync from 'string-replace-async';
                     return {fields: fChanged, variables: vChanged};
                   });
                 }
-              }));
+              })
+            );
           }
           // else CQL (TBD)
         }
@@ -568,18 +552,21 @@ import replaceAsync from 'string-replace-async';
           fVars['qitem'] = this._linkIdToQItem[item.linkId];
         }
         else {
+          base = '';
           contextNode = this._lfData._fhirVariables.resource;
         }
 
-        var compiledExpr = this._compiledExpressions[expression];
+        const terminologyServer = this._fhir.SDC._getTerminologyServer(item);
+        const compiledExpressionKey = base + ';' + expression + ';'
+          + terminologyServer;
+        let compiledExpr = this._compiledExpressions[compiledExpressionKey];
         if (!compiledExpr) {
           if (base)
             expression = {base, expression};
-          compiledExpr = this._compiledExpressions[expression] =
+          compiledExpr = this._compiledExpressions[compiledExpressionKey] =
             this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel, {
               async: true,
-              // TODO: I guess I can get the terminology server from the item
-              ...(item.terminologyServer ? {terminologyUrl: item.terminologyServer} : {})
+              ...(terminologyServer ? {terminologyUrl: terminologyServer} : {})
             });
         }
         fhirPathVal = compiledExpr(contextNode, fVars);
