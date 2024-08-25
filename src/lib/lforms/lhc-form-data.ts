@@ -644,11 +644,6 @@ export default class LhcFormData {
             changed = this._setSubItemsHiddenFromView(item, false) || changed;
           }
         }
-        // if (this.isItemHidden(item)) {
-        //   if (!item._isHiddenFromView) changed = true;
-        //   item._isHiddenFromView = true;
-        //   changed = this._setSubItemsHiddenFromView(item) || changed;
-        // }
       }
     }
 
@@ -664,7 +659,8 @@ export default class LhcFormData {
    * Update the _isHiddenFromView value on sub items
    * @param item the parent item
    * @param hidden the parent item's hidden status
-   * @return {boolean} whether the item._isHiddenFromView has changed
+   * @return {boolean} whether the item's "_isHiddenFromView" or
+   *     any of its subitems' "_isHiddenFromView" has changed.
    */
   _setSubItemsHiddenFromView(item, hidden) {
     var changed = false;
@@ -1438,7 +1434,7 @@ export default class LhcFormData {
     item._multipleAnswers = LhcFormUtils._hasMultipleAnswers(item);
 
     // set up readonly flag
-    item._readOnly = (item.editable && item.editable === "0") ||
+    item._readOnly = (item.editable === "0") ||
       !!item.calculationMethod || InternalUtil.targetDisabledAndProtected(item);
 
     if (this._fhir) {

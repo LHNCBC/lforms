@@ -127,31 +127,31 @@
       ],
       "item": [
         {
-          "linkId": "g1a1",
+          "linkId": "g2a1",
           "text": "a question item in a group",
           "prefix": "12.",
           "type": "string"
         },
         {
-          "linkId": "g1b1",
+          "linkId": "g2b1",
           "text": "a display item in a group",
           "prefix": "13.",
           "type": "display"
         },
         {
-          "linkId": "g1g1",
+          "linkId": "g2g1",
           "text": "a sub group item",
           "prefix": "14.",
           "type": "group",
           "item": [
             {
-              "linkId": "g1g1a1",
+              "linkId": "g2g1a1",
               "text": "a question item in a sub group item",
               "prefix": "15.",
               "type": "string"
             },
             {
-              "linkId": "g1g1b1",
+              "linkId": "g2g1b1",
               "text": "a display item in a sub group item",
               "prefix": "16.",
               "type": "display"
