@@ -85,7 +85,7 @@
         <div id="tempOptionList">
           <div>LHC-Forms options (for uploaded files through the "Load From File" button)</div>
           <div>
-            <span class="option-checkbox"><label><input type="checkbox" id="allowHTMLInInstructions" /> allowHTMLInInstructions</label></span>
+            <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" /> allowHTML</label></span>
             <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
             <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
           </div>
@@ -122,7 +122,7 @@
         {text: 'Glasgow Coma Score (with score rules)', name: 'glasgow'},
         {text: 'Full-Featured Demo', name: 'allInOne',
             tempOptions: {
-              allowHTMLInInstructions: true,
+              allowHTML: true,
               allowMultipleEmptyRepeatingItems: true
             }},
         {text: 'Form Builder created test form', name: 'formBuilder'},
@@ -247,7 +247,7 @@
       // options
       function toggleCodingInstructionFormat() {
         if (testForm.questionnaire) {
-          let options = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
+          let options = {allowHTML: !testForm.lhcFormData.templateOptions.allowHTML};
           testForm.options = options;
         }
       }
@@ -398,7 +398,7 @@
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
         var questionnaire;
-        var allowHTMLInInstructions = document.querySelector('#allowHTMLInInstructions').checked,
+        var allowHTML = document.querySelector('#allowHTML').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
 
@@ -416,8 +416,8 @@
           // Do not set the options with the default values, which will overwrite the
           // options values within the lform data file (not affecting Questionnaires as options
           // are not included in Questionnaires).
-          if(allowHTMLInInstructions) {
-            options["allowHTMLInInstructions"] = true;
+          if(allowHTML) {
+            options["allowHTML"] = true;
           }
           if (displayInvalidHTML) {
             options["displayInvalidHTML"] = true;

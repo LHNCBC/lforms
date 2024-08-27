@@ -167,6 +167,25 @@ export class LhcDataService {
 
 
   /**
+   * Check the display type of item.text
+   * @param item an item in the lforms form items array
+   * @returns {string}
+   */
+  getItemTextDisplayType(item) {
+    var format = 'plain';
+    if (item.questionXHTML && item.questionXHTML.length > 0 && this.lhcFormData.templateOptions.allowHTML) {
+      if (!item.questionHasInvalidHtmlTag) {
+        format = 'html';
+      }
+      else {
+        format = this.lhcFormData.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
+      }
+    }
+    return format;
+  }
+
+
+  /**
    * Check the display type of the coding instructions
    * @param item an item in the lforms form items array
    * @returns {string}
@@ -175,8 +194,8 @@ export class LhcDataService {
     var ret ='';
     if (item.codingInstructions && item.codingInstructions.length > 0) {
       var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
-      if (this.lhcFormData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
-        var format = "html";  // use item.codingInstructions (safe html)     
+      if (this.lhcFormData.templateOptions.allowHTML && item.codingInstructionsFormat === "html") {
+        var format = "html";  // use item.codingInstructions (safe html)
         if (item.codingInstructionsHasInvalidHtmlTag) {
           if (this.lhcFormData.templateOptions.displayInvalidHTML) {
             format = "escaped" // use item.codingInstructions (escaped)
@@ -237,7 +256,7 @@ export class LhcDataService {
    * or a checkbox.
    * @param item an item in lhc-forms
    * @param answer an answer in the item's answer list.
-   * @returns 
+   * @returns
    */
   getItemAnswerId(item, answer) {
     let id = item._elementId + (answer.code || answer.text);
@@ -586,12 +605,12 @@ export class LhcDataService {
    * @param skipComparison whether to skip comparision of previous value and current value. defalut is false.
    */
   onItemValueChange(item, currentValue, previousValue, skipComparison=false) {
-    if (this.lhcFormData && 
+    if (this.lhcFormData &&
       (skipComparison || !skipComparison && !CommonUtils.deepEqual(currentValue, previousValue))) {
-      
+
       // run lforms internal changes
       this.lhcFormData.updateOnSourceItemChange(item)
-      
+
       this.sendActionsToScreenReader();
 
     }

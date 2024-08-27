@@ -66,8 +66,8 @@ export default class LhcFormData {
     showCodingInstruction: false,
     // whether to allow more than one unused repeating item/section
     allowMultipleEmptyRepeatingItems: false,
-    // whether to allow HTML content in the codingInstructions field.
-    allowHTMLInInstructions: false,
+    // whether to allow HTML content in item.text and the codingInstructions field.
+    allowHTML: false,
     displayControl: {
       // controls the question layout of the form. default value for questionLayout is "vertical".
       // available value could be "horizontal" when all the items in the form are on the same level,
@@ -941,6 +941,13 @@ export default class LhcFormData {
    * @param existingOptions existing options in the form data
    */
   setTemplateOptions(newOptions, existingOptions=null) {
+    // Backward compatibility. Assign value to allowHTML if there is allowHTMLInInstructions in templateOptions.
+    if (newOptions && newOptions.hasOwnProperty('allowHTMLInInstructions') &&
+      !newOptions.hasOwnProperty('allowHTML')) {
+      newOptions.allowHTML = newOptions.allowHTMLInInstructions;
+      delete newOptions.allowHTMLInInstructions;
+    }
+
     if (newOptions) {
       if (!existingOptions)
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
@@ -963,9 +970,21 @@ export default class LhcFormData {
       }
       // update and check the html version of help text,
       // when the lhcFormData instance has been initialized.
-      if (this.templateOptions.allowHTMLInInstructions && this.itemList) {
+      if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
+          if (item.questionXHTML) {
+            let errors, messages;
+            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item.questionXHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+              item.questionHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+              messages = [{errors}];
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+              InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
+            }
+          }
           if (item.codingInstructions &&
               item.codingInstructions.length > 0 &&
               item.codingInstructionsFormat === "html") {
@@ -979,19 +998,12 @@ export default class LhcFormData {
             // check if html string contains invalid html tags, when the html version needs to be displayed
             let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
             let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(helpHTML);
-              if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};
               errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
               messages = [{errors}];
-              // print detailed errors messages in console
-              console.log("Possible invalid HTML tags/attributes found in help text:")
-              invalidTagsAttributes.forEach(ele => {
-                if (ele.attribute)
-                  console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
-                else if (ele.tag)
-                  console.log("  - Element: " + ele.tag);
-              });
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
               InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
             }
           }
@@ -1333,7 +1345,7 @@ export default class LhcFormData {
     if (this._containedImages &&
         item.codingInstructions &&
         item.codingInstructions.length > 0 &&
-        this.templateOptions.allowHTMLInInstructions &&
+        this.templateOptions.allowHTML &&
         item.codingInstructionsFormat === "html" &&
         item.codingInstructions.match(/img/) &&
         item.codingInstructions.match(/src/)) {
