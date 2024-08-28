@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Google Tag Manager-->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-59GQ6JK');</script>
+    <!-- End Google Tag Manager -->
+
+    <style id="antiClickjack">
+      body{display:none !important;}
+    </style>
+    <script type="text/javascript">
+      if (self === top) {
+        var antiClickjack = document.getElementById("antiClickjack");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+      } else {
+        top.location = self.location;
+      }
+    </script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>LForms Demos</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  </head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe sandbox="" src="https://www.googletagmanager.com/ns.html?id=GTM-59GQ6JK"
+    height="0" width="0" style="display:none;visibility:hidden" title="googletagmanager"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div class="wrapper">
+
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/lhncbc/lforms">View On GitHub</a></li>
+          <li class="fork" style="padding-left: 2em"><a href="index.html">Documentation</a></li>
+          <li class="downloads"><a href="https://github.com/lhncbc/lforms/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/lhncbc/lforms/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+
+      </div><!-- end header -->
+
+      <section>
+        <div id="title">
+          <h1>LForms Demos</h1>
+          <p>A widget for rendering feature-rich forms defined in JSON definition files</p>
+          <hr>
+        </div>
+
+<p>The following demos introduce LForms (a.k.a. LHC-Forms) a few features at a time using simple
+forms.  These demos use the FHIR<sup>®</sup> <a href="https://www.hl7.org/fhir/questionnaire.html"
+>Questionnaire</a> format to define the forms.  For additional demos, see the <a
+href="https://lhcforms.nlm.nih.gov/lhcforms">LHC-Forms demo</a> website.</p>
+
+<ol>
+  <li class="demo"><span class="demoTitle">Single-question form:</span>
+    Click on the "JavaScript" tab to view this form's definition.  This form
+only defines the question "Eye color".
+    <div>
+      <a class="showSource" _src="lforms/rxmdh3jq/34">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Coded answer lists:</span> Questions can have coded
+answer lists.  In FHIR, list questions can either be of type "choice" (which limits
+answers to the list, or "open-choice", which allows entry of off-list answers).
+    <div>
+      <a class="showSource" _src="lforms/v0uo9kam/23">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Date fields &amp; fields with units</span>: Questions
+can also be date fields with a calendar input, or be numeric fields with units.
+    <div>
+      <a class="showSource" _src="lforms/90so0gxg/21">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">AJAX autocompletion fields:</span> When answer lists
+are too large to be included directly in the form definition, they can be
+specified via a URL for an external FHIR ValueSet, and the field will show matches as the user
+types.
+    <div>
+      <a class="showSource" _src="lforms/83of00cj/27">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Sections (groups) and repeats:</span> Questions can be grouped inside
+labeled sections and sections can have sub-sections.  A "repeats" flag can be
+set on sections (or questions) to make them repeat.
+    <div>
+      <a class="showSource" _src="lforms/d3y6pc1r/20">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Tables of fields:</span> A group's questions can
+be shown as columns in a table by requesting using FHIR's <a
+href="https://hl7.org/fhir/uv/sdc/rendering.html#itemControl">itemControl</a> extension
+and setting a value of "gtable".
+    <div>
+      <a class="showSource" _src="lforms/4m7o1L7k/19">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Help text:</span> Questions can have associated help
+text, which by default is shown when the user clicks on the help button next to
+the question.
+    <div>
+      <a class="showSource" _src="lforms/6d5rhvn1/20">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Skip logic:</span> Questions can be conditionally
+shown depending on the value in other questions.  The condition can either be an
+exact value or a range (if the value is numeric).  The skip logic is defined on
+the "target" question, which is initially hidden until the triggering condition
+from the other ("source") field is met.  In the example below, try picking
+"Green" for "Favorite color".
+    <div>
+      <a class="showSource" _src="lforms/3apezk07/16">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Multi-answer questions:</span> Questions can be
+allowed to have multiple answers, by setting "repeats" to true (in the FHIR
+Questionnaire definition).  For questions that do not have a list for the user
+to pick from, when "repeats" is set to true a button will appear which allows
+the user to add more blanks for that question.
+    <div>
+      <a class="showSource" _src="lforms/sdted75w/34">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">One field controlling another field's list:</span>
+This simple form has just two fields, one that
+provides a search autocompleter (using the RxTerms API from the <a
+href="https://clinicaltables.nlm.nih.gov">Clinical Table Search
+Service</a>) and one that obtains its list of strengths from the data associated
+with the selected drug name.
+    <div>
+      <a class="showSource" _src="lforms/ccbr6nos/23">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Ready-made form definitions from LOINC:</span> The
+autocompleting field at the top lets you select a <a href="http://loinc.org">LOINC</a>
+medical form which is then rendered below.  (Try typing "vital" to see a vital
+signs panel.)  These form definitions are
+available from the <a href="https://clinicaltables.nlm.nih.gov">Clinical Table
+Search Service</a>, which provides them in LHC-Forms internal format.  LOINC forms
+can also be obtained as FHIR Questionnaires from the <a
+href="https://loinc.org/fhir/">LOINC terminology server</a>.
+    <div>
+      <a class="showSource" _src="lforms/weaqqbg4/41">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">FHIR Questionnaire support:</span> As in most of the demos
+    above,  the form you see in the first example below is specified by a <a
+    href="https://www.hl7.org/fhir/questionnaire.html">FHIR Questionnaire</a>
+    definition.  After filling in the field,
+    click the button to see the FHIR QuestionnaireResponse output.
+    <div>
+      <a class="showSource" _src="lforms/8f754jhy/54">[Show Demo]</a>
+    </div>
+    FHIR QuestionnaireResponse data can be merged with a FHIR Questionnaire to
+    show a form with data from the QuestionnaireResponse.  The following example shows
+    how do to that.
+    <div>
+      <a class="showSource" _src="lforms/y8o65qwe/26">[Show Demo]</a>
+    </div>
+  </li>
+
+</ol>
+
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+      </section>
+    </div>
+    <script
+     src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="javascripts/demo.js"></script>
+  </body>
+</html>

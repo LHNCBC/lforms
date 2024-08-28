@@ -111,15 +111,15 @@
         <p>Documentation by version:</p>
         <ul>
           <li><a href="../../index.html">Current (>=36.2.x)</a></li>
-          <li><a href="../34.x/index.html">34-36.1</a></li>
-          <li>30-33 (this version)</li>
-          <li><a href="../27.x/index.html">27-29</a></li>
-          <li><a href="../17.x/index.html">17-26</a></li>
-          <li><a href="../13.x/index.html">13-16</a></li>
-          <li><a href="../11.x/index.html">11-12</a></li>
-          <li><a href="../7.x/index.html">7-10</a></li>
-          <li><a href="../6.x/index.html">6.x</a></li>
-          <li><a href="../5.5/index.html">5.5</a></li>
+          <li>34-36.1 (this version)</li>
+          <li><a href="../../versions/30.x/index.html">30-33</a></li>
+          <li><a href="../../versions/27.x/index.html">27-29</a></li>
+          <li><a href="../../versions/17.x/index.html">17-26</a></li>
+          <li><a href="../../versions/13.x/index.html">13-16</a></li>
+          <li><a href="../../versions/11.x/index.html">11-12</a></li>
+          <li><a href="../../versions/7.x/index.html">7-10</a></li>
+          <li><a href="../../versions/6.x/index.html">6.x</a></li>
+          <li><a href="../../versions/5.5/index.html">5.5</a></li>
         </ul>
       </div>
     </div>
@@ -181,52 +181,47 @@ other questions</li>
 
 <p>LHC-Forms can be used either as a prebuilt package or installed using
 <a href="https://www.npmjs.com/">npm</a> (<code>npm
-install lforms</code>).  If you aren't using npm, the simplest way to start
-using LHC-Forms is by linking to the prebuilt version hosted on
-clinicaltables.nlm.nih.gov.  The URLs for the JavaScript and the CSS are:
+install lforms</code>), but see the note <a href="#npmInstall">below</a> about the
+npm installation).  If you aren't using npm, the simplest way to start using
+LHC-Forms is by linking to the prebuilt version hosted on
+lhcforms-static.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
 </p>
 <dl>
-  <dt>CSS</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/webcomponent/styles.css</dd>
+  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/styles.css</dd>
   <dt>JavaScript</dt>
   <dd>
     <ol style="padding-left: 0">
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/webcomponent/assets/lib/zone.min.js</li>
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/webcomponent/scripts.js</li>
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/webcomponent/runtime-es5.js</li>
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/webcomponent/polyfills-es5.js</li>
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/webcomponent/main-es5.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/assets/lib/zone.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/webcomponent/lhc-forms.js</li>
     </ol>
     <p>The zone.min.js file should be left out if you already have that in your
-    page (e.g. if the page contains an Angular app), and the scripts.js file
-    just contains jQuery, so if you already have jQuery 3 on the page, that can
-    be left out as well.</p>
+    page (e.g. if the page contains an Angular app).</p>
   </dd>
   <dt>JavaScript for FHIR Support (recommended)</dt>
   <dd>Additionally, you will probably want <b>ONE</b> of the following files for FHIR
   support.  The first file provides support for STU3 and R4 versions of FHIR,
   and the other two provide support for one specific version.
     <ul style="padding-left: 0">
-      <li>https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/fhir/lformsFHIRAll.min.js</li>
-      <li><b>OR</b> https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/fhir/R4/lformsFHIR.min.js</li>
-      <li><b>OR</b> https://clinicaltables.nlm.nih.gov/lforms-versions/30.0.0-beta.6/fhir/STU3/lformsFHIR.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/lformsFHIRAll.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/R4/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/34.0.0/fhir/STU3/lformsFHIR.min.js</li>
     </ul>
   </dd>
 </dl>
 
-<p>Note that the URLs contain a release version number, 30.0.0-beta.6, for which you
-can substitute any of the other prebuilt versions (30 or higher) available at
-https://clinicaltables.nlm.nih.gov/lforms-versions.</p>
+<p>Note that the URLs contain a release version number, 34.0.0, for which you
+can substitute any of the other prebuilt versions (34 or higher) available at
+https://lhcforms-static.nlm.nih.gov/lforms-versions.</p>
 
-<p>For production applications, it is probably better to download these files
-and serve them from your server, to avoid introducing a dependency on the
-clinicaltables servers, though you may continue to link to clinicaltables if you
-wish.  Zip files of each version's files are avaialble at
+<p>For production applications, if you would prefer to download these files
+and serve them from your server to avoid introducing a dependency on the
+lhcforms-static servers, zip files of each version's files are avaialble at
 <a
-href="https://clinicaltables.nlm.nih.gov/lforms-versions">https://clinicaltables.nlm.nih.gov/lforms-versions</a>.</p>
+href="https://lhcforms-static.nlm.nih.gov/lforms-versions">https://lhcforms-static.nlm.nih.gov/lforms-versions</a>.</p>
 
-<p>If you decide to use the npm package, note that for now the JavaScript files
+<p id=npmInstall>If you decide to use the npm package, note that for now the JavaScript files
 do not work when the package is required or imported, so you will still need to
-load the above files from the package directory via script tags.  We are hoping to find a solution that
+load the above files from the npm package's directory via script tags.  We are hoping to find a solution that
 will allow them to be imported in the future.</p>
 
 <h2>
@@ -395,7 +390,7 @@ hidden by skip logic will be removed.</li>
           will not be used.</li>
         <li>extract - a flag used for resourceType=QuestionnaireResponse to
           indicate that data should be extracted (using the observationExtract
-          extension).  In this case the returned resource will be an array
+          extension).  In this case the return value will be an array
           consisting of the QuestionnaireResponse and any extracted Observations.
         <li>subject: A local FHIR resource that is the subject of the output
           resource.  If provided, a reference to this resource
@@ -510,7 +505,7 @@ hidden by skip logic will be removed.</li>
 (recommended) or the LHC-Forms internal format.  To get a rough idea of what
 the internal format is you can take a look at one of the
 <a
-href="https://github.com/lhncbc/lforms/blob/master/app/data/sample-data.js">samples</a>,
+href="https://github.com/LHNCBC/lforms/tree/master/test/data/lforms">samples</a>,
 or see the
 <a href="https://github.com/lhncbc/lforms/blob/master/form_definition.md">form definition documentation</a>.</p>
 

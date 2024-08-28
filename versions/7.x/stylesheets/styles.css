@@ -867,3 +867,7 @@ section #title .credits.right {
 li.demo {
   margin-bottom: 0.75em;
 }
+
+a.showSource, a.hideSource {
+  cursor: pointer;
+}
