@@ -7,10 +7,23 @@
         <!-- prefix -->
         <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
         <!-- question text -->
-        <span class="question" [style]="item._obj_textCSS">{{item.question}}
-          <!-- required -->
-          <span *ngIf="item._answerRequired" class="lhc-required" title="Required">*</span>
-        </span>
+        <ng-container [ngSwitch]="lhcDataService.getItemTextDisplayType(item)">
+          <span *ngSwitchCase="'escaped'"
+               class="question"
+               [style]="item._obj_textCSS"
+          >{{item.questionXHTML}}</span>
+          <span *ngSwitchCase="'html'"
+                class="question"
+                [style]="item._obj_textCSS"
+                [innerHTML]="item.questionXHTML | safeHtml"
+          ></span>
+          <span *ngSwitchCase="'plain'"
+                class="question"
+                [style]="item._obj_textCSS"
+          >{{item.question}}</span>
+        </ng-container>
+        <!-- required -->
+        <span *ngIf="item._answerRequired" class="lhc-required" title="Required"> *</span>
       </label>
     </span>
     <!-- code -->
@@ -41,10 +54,10 @@
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
        ></div>
-      <div *ngSwitchCase="'inline-plain'" 
-            id="help-{{ item._elementId }}" 
+      <div *ngSwitchCase="'inline-plain'"
+            id="help-{{ item._elementId }}"
             class="lhc-inline-help"
-            attr.aria-label="Help for question {{item.question}}" 
+            attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
       >{{item.codingInstructionsPlain}}</div>
       <ng-container *ngSwitchCase="'popover-escaped'">

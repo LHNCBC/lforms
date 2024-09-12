@@ -46,8 +46,8 @@
           <div id="tempOptionList">
             <div>LHC-Forms options:</div>
             <div>
-              <span class="option-checkbox"><label><input type="checkbox" id="allowHTMLInInstructions" />
-                  allowHTMLInInstructions</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" />
+                  allowHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" />
                   displayInvalidHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" />
@@ -128,7 +128,7 @@
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
         var questionnaire, options = { 'messageLevel': 'info' };
-        var allowHTMLInInstructions = document.querySelector('#allowHTMLInInstructions').checked,
+        var allowHTML = document.querySelector('#allowHTML').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
 

@@ -15,8 +15,7 @@ guide (IG).
 See https://build.fhir.org/ig/HL7/sdc/rendering.html for descriptions of these
 fields.
 * rendering-style:  on item.text and prefix
-* rendering-xhtml:  on item.text, but only for itemControl of type "help", and
-  it does not perform any sanization, and allows any HTML, so please consider
+* rendering-xhtml:  on item.text. It does not perform any sanization, and allows any HTML, so please consider
   security issues before using.
 * hidden
 * itemControl:  Support for types:  gtable, table, drop-down, autocomplete,

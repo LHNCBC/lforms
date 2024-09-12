@@ -18,6 +18,9 @@ export const ErrorMessages = {
     },
     'invalidTagInHelpHTMLContent': {
       'en': 'Invalid HTML tags/attributes found in the help text.'
+    },
+    'invalidTagInHTMLContent': {
+      'en': 'Invalid HTML tags/attributes found in item text.'
     }
   },
 
