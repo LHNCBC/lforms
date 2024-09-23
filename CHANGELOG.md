@@ -2,9 +2,23 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.3.3] 2024-07-24
+## [36.5.1] 2024-07-30
 ### Added
 - Added a function, 'getSupportedItemControl', to return an object containing a list of supported item controls.
+
+## [36.5.0] 2024-07-29
+### Added
+- Support for asynchronous FHIRPath expressions.
+
+## [36.4.0] 2024-07-23
+### Added
+- Support for rendering-xhtml on item.text.
+- Added new template option allowHTML. allowHTMLInInstructions is deprecated.
+
+## [36.3.3] 2024-07-22
+### Added
+- Copy questionnaire-ordinalValue (STU3), ordinalValue (R4) and
+  itemWeight (R5) extensions to questionnaire response.
 
 ## [36.3.2] 2024-07-10
 ### Changed

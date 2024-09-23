@@ -20,7 +20,7 @@
       "copyrightNotice": "A Copyright notice of the item 2",
       "question": "no codingInstructionsFormat, html codingInstructions",
       "linkId": "/type1"
-    },   
+    },
     {
       "questionCode": "type2",
       "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2",
@@ -47,7 +47,7 @@
       },
       "displayControl": {
         "questionLayout": "horizontal"
-      },        
+      },
       "items": [
         {
           "questionCode": "type0",
@@ -63,7 +63,7 @@
           "question": "no codingInstructionsFormat, html codingInstructions",
           "linkId": "/horizontalTable/type1"
         },
-        
+
         {
           "questionCode": "type2",
           "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2",
@@ -79,7 +79,7 @@
           "copyrightNotice": "A Copyright notice of the item 3",
           "question": "codingInstructionsFormat='html', html codingInstructions",
           "linkId": "/horizontalTable/type3"
-        }      
+        }
       ],
       "linkId": "/horizontalTable"
     },
@@ -89,7 +89,7 @@
       "dataType": "SECTION",
       "displayControl": {
         "questionLayout": "matrix"
-      },        
+      },
       "items": [
         {
           "questionCode": "type0",
@@ -133,7 +133,7 @@
             }
           ]
         },
-        
+
         {
           "questionCode": "type2",
           "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2",
@@ -177,7 +177,7 @@
               "text": "Answer 3"
             }
           ]
-        }      
+        }
       ],
       "linkId": "/matrixTable"
     }

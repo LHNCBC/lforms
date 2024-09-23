@@ -28399,7 +28399,7 @@
   "templateOptions": {
     "showCodingInstruction": false,
     "allowMultipleEmptyRepeatingItems": false,
-    "allowHTMLInInstructions": false,
+    "allowHTML": false,
     "displayControl": {
       "questionLayout": "vertical"
     }

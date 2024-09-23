@@ -48,6 +48,12 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
   self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
   self.fhirExtUrlMaxDecimalPlaces = "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces";
+  self.fhirExtUrlOptionScoreLookup = {
+    'STU3': "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+    'R4': "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+    'R5': "http://hl7.org/fhir/StructureDefinition/itemWeight"
+  };
+  self.fhirExtUrlOptionScoreUrlSet = new Set(Object.values(self.fhirExtUrlOptionScoreLookup));
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -411,8 +417,14 @@ function addCommonSDCImportFns(ns) {
     var lfDataType = lfItem.dataType;
     var answers = [];
     const messages = [];
+    const types = fhirpath.types(fhirVals);
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
+      if (typeof fhirVal === 'object') {
+        // types[i] is a string with a namespaced data type, such as
+        // "FHIR.Quantity", "FHIR.date", "System.String"
+        fhirVal._type = fhirVal._type || types[i]?.split('.')[1];
+      }
       var answer = undefined; // reset back to undefined each iteration
       let errors = {};
       let hasMessages = false;
@@ -463,8 +475,7 @@ function addCommonSDCImportFns(ns) {
       }
       else {
         if((lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT') &&
-            (fhirVal._type === 'Quantity' || fhirpath.types(fhirVal)[0] === 'FHIR.Quantity')) {
-          fhirVal._type = 'Quantity';
+            fhirVal._type === 'Quantity') {
           [answer, errors] = this._convertFHIRQuantity(lfItem, fhirVal);
           hasMessages = !!errors;
         }
@@ -660,6 +671,24 @@ function addCommonSDCImportFns(ns) {
       let extFieldData = qItem[extField];
       if (extFieldData)
         lfItem['obj'+extField] = extFieldData;
+    }
+
+    // Set rendering-xhtml properties.
+    const xhtmlFormat = lfItem['obj_text'] ?
+      LForms.Util.findObjectInArray(lfItem['obj_text'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
+    if (xhtmlFormat) {
+      lfItem.questionXHTML = xhtmlFormat.valueString;
+      if (self._widgetOptions?.allowHTML) {
+        let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+        if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+          lfItem.questionHasInvalidHtmlTag = true;
+          let errors = {};
+          errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+          const messages = [{errors}];
+          LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+          LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
+        }
+      }
     }
   };
 
@@ -1162,7 +1191,7 @@ function addCommonSDCImportFns(ns) {
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
           self.fhirExtUrlValueSetScore);
         if(ordExt) {
-          answer.score = ordExt.valueDecimal;
+          answer.score = parseFloat(ordExt.valueDecimal);
         }
         rtn.push(answer);
       });
@@ -1479,21 +1508,14 @@ function addCommonSDCImportFns(ns) {
           codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
         };
         // check if html string contains invalid html tags, when the html version needs to be displayed
-        if (self._widgetOptions?.allowHTMLInInstructions) {
+        if (self._widgetOptions?.allowHTML) {
           let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             helps.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};
             errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
             messages = [{errors}];
-            // print detailed errors messages in console
-            console.log("Possible invalid HTML tags/attributes found in help text:")
-            invalidTagsAttributes.forEach(ele => {
-              if (ele.attribute)
-                console.log("  - Attribute: " + ele.attribute +" in " + ele.tag);
-              else if (ele.tag)
-                console.log("  - Element: " + ele.tag);
-            });
+            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
           }
         }
       }

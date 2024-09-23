@@ -537,6 +537,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
             assert.deepEqual(qData.item[1].extension, questionnaire.item[1].extension);
           });
+
+          it('should preserve rendering-xhtml extension on _text', function (){
+            $.get('test/data/R4/q-with-rendering-xhtml-text.json', function(json) {
+              const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+              assert.equal(lfData.items[0].questionXHTML, "<i class='testPlease'>Please</i> answer <b>Yes</b> or <b>No</b> to each of the following questions:");
+              const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+              assert.ok(qData.item[0]._text);
+              assert.deepEqual(qData.item[0]._text, json.item[0]._text);
+            });
+          });
         });
 
         describe('itemToQuestionnaireItem', function() {
@@ -1839,6 +1849,103 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             };
             var out = fhir.SDC._processResponseItem(item);
             assert.equal(out.answer[0].valueDecimal, 0);
+          });
+
+          it('should copy ordinalValue extension to FHIR QuestionnaiReresponse', function () {
+            var item = {
+              "questionCode": "9267-6",
+              "localQuestionCode": null,
+              "dataType": "CODING",
+              "header": false,
+              "units": null,
+              "codingInstructions": null,
+              "copyrightNotice": null,
+              "question": "GCS eye",
+              "answers": [
+                {
+                  "label": "1",
+                  "code": "LA6553-7",
+                  "text": "No eye opening",
+                  "score": 1,
+                  "other": null,
+                  "system": "http://loinc.org"
+                },
+                {
+                  "label": "2",
+                  "code": "LA6554-5",
+                  "text": "Eye opening to pain",
+                  "score": 2,
+                  "other": null,
+                  "system": "http://loinc.org"
+                },
+                {
+                  "label": "3",
+                  "code": "LA6555-2",
+                  "text": "Eye opening to verbal command",
+                  "score": 3,
+                  "other": null,
+                  "system": "http://loinc.org"
+                },
+                {
+                  "label": "4",
+                  "code": "LA6556-0",
+                  "text": "Eyes open spontaneously",
+                  "score": 4,
+                  "other": null,
+                  "system": "http://loinc.org"
+                }
+              ],
+              "skipLogic": null,
+              "restrictions": null,
+              "defaultAnswer": null,
+              "formatting": null,
+              "calculationMethod": null,
+              "linkId": "/9267-6",
+              "questionCodeSystem": "http://loinc.org",
+              "codeList": [
+                {
+                  "code": "9267-6",
+                  "display": "GCS eye",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "displayControl": {
+                "answerLayout": {
+                  "type": "COMBO_BOX",
+                  "columns": "0"
+                }
+              },
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "value": {
+                "label": "2",
+                "code": "LA6554-5",
+                "text": "Eye opening to pain",
+                "score": 2,
+                "other": null,
+                "system": "http://loinc.org"
+              }
+            };
+            var out = fhir.SDC._processResponseItem(item);
+            assert.equal(out.linkId, "/9267-6");
+            assert.equal(out.text, "GCS eye");
+            assert.deepEqual(out.answer[0].valueCoding, {
+              "system": "http://loinc.org",
+              "code": "LA6554-5",
+              "display": "Eye opening to pain",
+              "extension": [{
+                "url": fhirVersion === 'R5' ? "http://hl7.org/fhir/StructureDefinition/itemWeight"
+                  : fhirVersion === 'STU3' ? "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue"
+                    : "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 2
+              }]
+            });
           });
         });
 

@@ -46,7 +46,7 @@ export const InternalUtil = {
       item.value = val;
       changed = true;
     }
-    
+
     return changed;
   },
 
@@ -58,6 +58,22 @@ export const InternalUtil = {
    */
   modelForOffListUnit: function(text) {
     return text ? {"name": text, "_displayUnit": text} : undefined;
+  },
+
+
+  /**
+   * Prints detailed errors about invalid HTML in console.
+   * @param invalidTagsAttributes object of invalid HTML tag and attributes
+   * returned from LForms.Util.checkForInvalidHtmlTags().
+   */
+  printInvalidHtmlToConsole: function(invalidTagsAttributes) {
+    console.log("Possible invalid HTML tags/attributes:");
+    invalidTagsAttributes.forEach(ele => {
+      if (ele.attribute)
+        console.log("  - Attribute: " + ele.attribute + " in " + ele.tag);
+      else if (ele.tag)
+        console.log("  - Element: " + ele.tag);
+    });
   },
 
 
@@ -163,8 +179,8 @@ export const InternalUtil = {
 
   /**
    *  Check if the lforms item has an answer list
-   * @param {*} item 
-   * @returns 
+   * @param {*} item
+   * @returns
    */
   hasAnswerList: function(item) {
     return item.dataType === "CODING" || item.answers &&

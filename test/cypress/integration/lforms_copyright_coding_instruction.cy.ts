@@ -55,7 +55,7 @@ describe('popover buttons', () => {
       tp.LoadForm.openFullFeaturedForm();
     });
 
-    it('should have HTML and/or TEXT content when templateOptions.allowHTMLInInstructions is true', () => {
+    it('should have HTML and/or TEXT content when templateOptions.allowHTML is true', () => {
       // popover
       cy.byId(helpButton0).should('be.visible');
       cy.byId(helpButton1).should('be.visible');
@@ -101,7 +101,7 @@ describe('popover buttons', () => {
       });
     });
 
-    it('should have only escaped TEXT content when templateOptions.allowHTMLInInstructions is false', () => {
+    it('should have only escaped TEXT content when templateOptions.allowHTML is false', () => {
       tp.LoadForm.openFullFeaturedForm();
       cy.byId('change-option').click();
 
@@ -152,7 +152,7 @@ describe('popover buttons', () => {
       tp.loadFromTestData('ussg-fhp.json', 'R4');
       cy.window().then((win) => {
         const testForm: any = win.document.getElementById('test-form');
-        testForm.options = {allowHTMLInInstructions: true};
+        testForm.options = {allowHTML: true};
         // Allow page to refresh this options change so that we don't get detached elements below.
         cy.wait(100);
 
@@ -293,9 +293,9 @@ describe('images in coding instructions', () => {
   describe('coding instrcutions with images shown inline', ()=>{
     before(() => {
       cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('q-with-contained-image.json', 'formContainer', 
-        { "fhirVersion": "R4", 
-          "allowHTMLInInstructions": true,
+      util.addFormToPage('q-with-contained-image.json', 'formContainer',
+        { "fhirVersion": "R4",
+          "allowHTML": true,
           "showCodingInstruction": true });
     });
 
@@ -323,9 +323,9 @@ describe('images in coding instructions', () => {
   describe('coding instrcutions with images shown in popover', ()=>{
     before(() => {
       cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('q-with-contained-image.json', 'formContainer', 
-        { "fhirVersion": "R4", 
-          "allowHTMLInInstructions": true });
+      util.addFormToPage('q-with-contained-image.json', 'formContainer',
+        { "fhirVersion": "R4",
+          "allowHTML": true });
     });
 
     it("should show an image with a url in the 'src' attribute", ()=>{
@@ -374,10 +374,10 @@ describe('invalid html tags/attributes in coding instructions', () => {
   describe('regular text shown inline', ()=>{
     before(() => {
       cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
-        { "fhirVersion": "R4", 
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer',
+        { "fhirVersion": "R4",
           "messageLevel": "error",
-          "allowHTMLInInstructions": true,
+          "allowHTML": true,
           "displayInvalidHTML": false,
           "showCodingInstruction": true });
     });
@@ -399,10 +399,10 @@ describe('invalid html tags/attributes in coding instructions', () => {
   describe('escaped invalid html shown in inline', ()=>{
     before(() => {
       cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer',
         { "fhirVersion": "R4",
-          "messageLevel": "error", 
-          "allowHTMLInInstructions": true,
+          "messageLevel": "error",
+          "allowHTML": true,
           "displayInvalidHTML": true,
           "showCodingInstruction": true });
     });
@@ -424,10 +424,10 @@ describe('invalid html tags/attributes in coding instructions', () => {
   describe('regular text shown popover', ()=>{
     before(() => {
       cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
-        { "fhirVersion": "R4", 
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer',
+        { "fhirVersion": "R4",
           "messageLevel": "error",
-          "allowHTMLInInstructions": true,
+          "allowHTML": true,
            "displayInvalidHTML": false,
           "showCodingInstruction": false });
     });
@@ -446,16 +446,16 @@ describe('invalid html tags/attributes in coding instructions', () => {
         .should("have.text", "A plain text instruction.");
     })
 
-   
+
   });
 
   describe('escaped invalid html shown in popover', ()=>{
     before(() => {
       cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer', 
-        { "fhirVersion": "R4", 
+      util.addFormToPage('q-with-invalid-xhtml.json', 'formContainer',
+        { "fhirVersion": "R4",
           "messageLevel": "error",
-          "allowHTMLInInstructions": true,
+          "allowHTML": true,
            "displayInvalidHTML": true,
           "showCodingInstruction": false });
     });
