@@ -134,9 +134,10 @@ function addSDCImportFns(ns) {
    * @param lfItem {object} - LForms item object to assign answer list
    * @param qItem {object} - Questionnaire item object
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   * @param containedImages contained images info, see buildContainedImageMap() for details.
    * @private
    */
-  self._processAnswers = function (lfItem, qItem, containedVS) {
+  self._processAnswers = function (lfItem, qItem, containedVS, containedImages) {
     if(qItem.option) {
       lfItem.answers = [];
       for(var i = 0; i < qItem.option.length; i++) {
@@ -163,7 +164,13 @@ function addSDCImportFns(ns) {
               if (xhtmlFormat) {
                 answer.textHTML = xhtmlFormat.valueString;
                 if (self._widgetOptions?.allowHTML) {
-                  let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+                  // process contained images
+                  if (containedImages &&
+                    xhtmlFormat.valueString.match(/img/) &&
+                    xhtmlFormat.valueString.match(/src/)) {
+                    answer.textHTML = self._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
+                  }
+                  let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(answer.textHTML);
                   if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
                     answer.answerOptionTextHasInvalidHtmlTag = true;
                     LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);

@@ -193,12 +193,13 @@ function addCommonSDCImportFns(ns) {
       target = LForms.Util.baseFormDef();
       self._processFormLevelFields(target, fhirData);
       var containedVS = self._extractContainedVS(fhirData);
+      var containedImages = self.buildContainedImageMap(fhirData.contained);
 
       if(fhirData.item && fhirData.item.length > 0) {
         var linkIdItemMap = self._createLinkIdItemMap(fhirData);
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap, containedImages);
           // no instructions on the questionnaire level
           target.items.push(item);
         }
@@ -257,10 +258,11 @@ function addCommonSDCImportFns(ns) {
    * @param qItem - item object as defined in FHIR Questionnaire.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
+   * @param containedImages - contained images info, see buildContainedImageMap() for details.
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
-  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
+  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap, containedImages) {
 
     var targetItem = {};
     //A lot of parsing depends on data type. Extract it first.
@@ -277,12 +279,12 @@ function addCommonSDCImportFns(ns) {
     self._processRestrictions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
-    self._processAnswers(targetItem, qItem, containedVS);
+    self._processAnswers(targetItem, qItem, containedVS, containedImages);
     self._processDefaultAnswer(targetItem, qItem);
     self._processTerminologyServer(targetItem, qItem);
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
-    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
+    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap, containedImages);
 
     return targetItem;
   };
@@ -1534,8 +1536,9 @@ function addCommonSDCImportFns(ns) {
    * @param qItem the Questionnaire (item) node being imported
    * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   * @param containedImages - contained images info, see buildContainedImageMap() for details.
    */
-  self._processChildItems = function(targetItem, qItem, containedVS, linkIdItemMap) {
+  self._processChildItems = function(targetItem, qItem, containedVS, linkIdItemMap, containedImages) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
@@ -1551,7 +1554,7 @@ function addCommonSDCImportFns(ns) {
           targetItem.codingInstructionsHasInvalidHtmlTag = help.codingInstructionsHasInvalidHtmlTag;
         }
         else {
-          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap, containedImages);
           targetItem.items.push(item);
         }
       }
