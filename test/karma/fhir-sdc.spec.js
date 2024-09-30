@@ -541,7 +541,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should preserve rendering-xhtml extension on _text', function (){
             $.get('test/data/R4/q-with-rendering-xhtml-text.json', function(json) {
               const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
-              assert.equal(lfData.items[0].questionXHTML, "<i class='testPlease'>Please</i> answer <b>Yes</b> or <b>No</b> to each of the following questions:");
+              assert.equal(lfData.items[0]._displayTextHTML, "<i class='testPlease'>Please</i> answer <b>Yes</b> or <b>No</b> to each of the following questions:");
               const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
               assert.ok(qData.item[0]._text);
               assert.deepEqual(qData.item[0]._text, json.item[0]._text);

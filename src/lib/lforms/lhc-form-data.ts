@@ -966,11 +966,11 @@ export default class LhcFormData {
       if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          if (item.questionXHTML) {
+          if (item._displayTextHTML) {
             let errors, messages;
-            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item.questionXHTML);
+            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item._displayTextHTML);
             if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-              item.questionHasInvalidHtmlTag = true;
+              item.hasInvalidHtmlTag = true;
               errors = {};
               errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
               messages = [{errors}];

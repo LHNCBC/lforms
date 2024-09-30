@@ -87,19 +87,19 @@
               "code": "c1",
               "text": "Answer 1",
               "_displayTextHTML": "Answer <script>button</script> 1",
-              "answerOptionTextHasInvalidHtmlTag": true
+              "hasInvalidHtmlTag": true
             },
             {
               "code": "c2",
               "text": "Answer 2",
               "_displayTextHTML": "Answer <script>button</script> 2",
-              "answerOptionTextHasInvalidHtmlTag": true
+              "hasInvalidHtmlTag": true
             },
             {
               "code": "c3",
               "text": "Answer 3",
               "_displayTextHTML": "Answer <script>button</script> 3",
-              "answerOptionTextHasInvalidHtmlTag": true
+              "hasInvalidHtmlTag": true
             }
           ]
         }

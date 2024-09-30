@@ -172,7 +172,7 @@ function addSDCImportFns(ns) {
                   }
                   let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(answer.textHTML);
                   if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
-                    answer.answerOptionTextHasInvalidHtmlTag = true;
+                    answer.hasInvalidHtmlTag = true;
                     LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
                   }
                 }

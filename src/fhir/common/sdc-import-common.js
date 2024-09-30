@@ -674,11 +674,11 @@ function addCommonSDCImportFns(ns) {
     const xhtmlFormat = lfItem['obj_text'] ?
       LForms.Util.findObjectInArray(lfItem['obj_text'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
     if (xhtmlFormat) {
-      lfItem.questionXHTML = xhtmlFormat.valueString;
+      lfItem._displayTextHTML = xhtmlFormat.valueString;
       if (self._widgetOptions?.allowHTML) {
         let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
         if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-          lfItem.questionHasInvalidHtmlTag = true;
+          lfItem.hasInvalidHtmlTag = true;
           let errors = {};
           errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
           const messages = [{errors}];
