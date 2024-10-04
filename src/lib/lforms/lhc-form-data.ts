@@ -961,12 +961,18 @@ export default class LhcFormData {
             this._updateAutocompOptions(item);
         }
       }
-      // update and check the html version of help text,
-      // when the lhcFormData instance has been initialized.
       if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
+          // update and check the html version of question text,
+          // when the lhcFormData instance has been initialized.
           if (item._displayTextHTML) {
+            // process contained images
+            if (this._containedImages &&
+                item._displayTextHTML.match(/img/) &&
+                item._displayTextHTML.match(/src/)) {
+              item._displayTextHTML = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTML);
+            }
             let errors, messages;
             let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item._displayTextHTML);
             if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
@@ -978,6 +984,8 @@ export default class LhcFormData {
               InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
             }
           }
+          // update and check the html version of help text,
+          // when the lhcFormData instance has been initialized.
           if (item.codingInstructions &&
               item.codingInstructions.length > 0 &&
               item.codingInstructionsFormat === "html") {
@@ -985,7 +993,7 @@ export default class LhcFormData {
             if (this._containedImages &&
                 item.codingInstructions.match(/img/) &&
                 item.codingInstructions.match(/src/)) {
-              this._setCodingInstructionsWithContainedImages(item);
+              item._codingInstructionsWithContainedImages = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
             }
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
@@ -1342,7 +1350,7 @@ export default class LhcFormData {
         item.codingInstructionsFormat === "html" &&
         item.codingInstructions.match(/img/) &&
         item.codingInstructions.match(/src/)) {
-      this._setCodingInstructionsWithContainedImages(item);
+      item._codingInstructionsWithContainedImages = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
     }
 
     // process the answer code system
@@ -3679,36 +3687,6 @@ export default class LhcFormData {
       ret = "lhc-active-row";
     }
     return ret;
-  }
-
-
-  /**
-   * Get the coding instruction, replacing local ids in the 'src' attributes of
-   * the 'img' tags if the local ids are in the 'contained' with image data,
-   * and if codingInstructionsFormat is 'html'.
-   * @param item an item in lforms
-   */
-  _setCodingInstructionsWithContainedImages(item) {
-
-    if (this._containedImages) {
-      // go though each image in the html string and replace local ids in image source
-      // with contained data
-      let parser = new DOMParser();
-      let doc = parser.parseFromString(item.codingInstructions, "text/html");
-
-      let imgs = doc.getElementsByTagName("img");
-      for (let i = 0; i < imgs.length; i++) {
-        let urlValue = imgs[i].getAttribute("src");
-        if (urlValue && urlValue.match(/^#/)) {
-          let localId = urlValue.substring(1);
-          let imageData = this._containedImages[localId];
-          if (imageData) {
-            imgs[i].setAttribute("src", imageData);
-          }
-        }
-      }
-      item._codingInstructionsWithContainedImages = doc.body.innerHTML;
-    }
   }
 
 };

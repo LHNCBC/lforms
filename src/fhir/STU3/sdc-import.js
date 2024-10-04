@@ -168,7 +168,7 @@ function addSDCImportFns(ns) {
                   if (containedImages &&
                     xhtmlFormat.valueString.match(/img/) &&
                     xhtmlFormat.valueString.match(/src/)) {
-                    answer.textHTML = self._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
+                    answer.textHTML = LForms.Util._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
                   }
                   let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(answer.textHTML);
                   if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {

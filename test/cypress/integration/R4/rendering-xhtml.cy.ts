@@ -14,6 +14,9 @@ describe('rendering-xhtml', () => {
       cy.get('.testPlease')
         .should('be.visible')
         .should('have.text', 'Please');
+      // contained image
+      cy.get('.testContainedImage')
+        .should('be.visible');
     });
 
     it('should display question text if not allowed in template options', () => {
@@ -21,6 +24,7 @@ describe('rendering-xhtml', () => {
       cy.get('.testPlease')
         .should('not.exist');
       cy.get('.question')
+        .eq(0)
         .should('have.text', 'Please answer Yes or No to each of the following questions:');
     });
 
@@ -31,6 +35,7 @@ describe('rendering-xhtml', () => {
       cy.get('.testPlease')
         .should('not.exist');
       cy.get('.question')
+        .eq(0)
         .should('have.text', "<i class='testPlease'>Please</i> answer <script>Yes</script> or <b>No</b> to each of the following questions:");
     });
 
@@ -40,6 +45,7 @@ describe('rendering-xhtml', () => {
       cy.get('.testPlease')
         .should('not.exist');
       cy.get('.question')
+        .eq(0)
         .should('have.text', 'Please answer Yes or No to each of the following questions:');
     });
   });
