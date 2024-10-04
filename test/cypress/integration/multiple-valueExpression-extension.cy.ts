@@ -7,7 +7,7 @@ describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   it('should have empty initial values', () => {
     // load rxterms R4 Questionnaire
     cy.visit('/test/pages/lforms_testpage.html');
-    cy.get("#loadBtn").contains("Load From File");
+    cy.get("#loadBtn").contains("Load Form From File");
     cy.get('#fileAnchor').uploadFile('test/data/R4/rxterms.R4.json');
     cy.get('.lhc-form-title').contains('RxTerms Lookup');
 
