@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.5.1] 2024-09-19
+### Fixed
+- Fixed a bug that loaded data on repeating, readonly items could be deleted.
+
 ## [36.5.0] 2024-07-29
 ### Added
 - Support for asynchronous FHIRPath expressions.
