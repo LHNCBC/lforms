@@ -1,0 +1,28 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "name": "Questionnaire with read-only, repeating items",
+  "item": [
+    {
+      "linkId": "q1",
+      "text": "read-only, repeating item, string",
+      "type": "string",
+      "repeats": true,
+      "readOnly": true
+    },
+    {
+      "linkId": "g1",
+      "text": "a group",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "g1q1",
+          "text": "read-only, repeating item, string in a group",
+          "type": "string",
+          "repeats": true,
+          "readOnly": true
+        }
+      ]
+    }
+  ]
+}
