@@ -88,7 +88,7 @@
           <li><a href="#validation">Form Validation</a></li>
         </ul>
         <li><a href="#otherAPIs">Other APIs</a></li>
-        <li><a href="#form-definition-format">Form Definiton Format</a></li>
+        <li><a href="#form-definition-format">Form Definition Format</a></li>
         <li><a href="#licensing-and-copyright-notice">Licensing and Copyright Notice</a></li>
         <li><a href="#issues-and-announcements">Issues &amp; Announcements</a></li>
       </ul>
@@ -292,19 +292,25 @@ should be visible).</p>
      href="https://www.npmjs.com/package/fhirclient">fhirclient</a>, version 2.
      (See <a
      href="http://docs.smarthealthit.org/client-js">http://docs.smarthealthit.org/client-js</a>
-     for documentation.).  A non-npm version, ready to use in a browser, can be found
-     at https://cdn.jsdelivr.net/npm/fhirclient@2/build/fhir-client.min.js.  It
-     should be initialized with a connection to the FHIR server to be used.  If
-     all that is needed by the Questionnaire are launchContext variables, this
-     parameter can be omitted if the next parameter is provided.
+     for documentation.  A non-npm version, ready to use in a browser, can be found
+     at https://cdn.jsdelivr.net/npm/fhirclient@2/build/fhir-client.min.js.)  It
+     should be initialized with a connection to the FHIR server to be used.  As an example, one common
+     need for this parameter is to set not only the FHIR server but also the
+     patient ID.  There is an undocumented feature of the fhirclient library
+     that lets you do that this way:
+     <pre><code>LForms.Util.setFHIRContext(FHIR.client({serverUrl: serverUrl, tokenResponse: { patient: patientId }}));</code></pre>
+     However, if all that is needed from the FHIR server by the Questionnaire
+     are resources for launchContext variables, this parameter can be omitted if the next
+     parameter is provided.
     </li>
     <li><b>fhirContextVars</b> - (optional) data for the FHIR <a href=
      "https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-launchContext.html">launchContext</a>
      extension which makes variables available to other expressions in a Questionnaire.  If
-     provided, fhirContextVars should be a map from launchContext variable names to
-     FHIR resources (as objects).  Note that some launchContext variables can be
-     retrieved from the FHIR server (via the fhirContext parameter).  Values
-     provided here will take priority over values from fhirContext.</li>
+     provided, fhirContextVars should be a map from variable names declared in the launchContext
+     extensions to FHIR resources (as objects).  For example, {'someVarName', someValue}.
+     The fhirContext can also be used to supply this data for certain standard
+     variables like "patient" and "encounter", but it will only be used for
+     those values if not supplied here.</li>
   </ol>
 
   <h3><a id="userData" class="anchor" href="#userData"
@@ -529,7 +535,7 @@ or see the
   changes or updates to LHC-Forms, sign up for the email list by sending the
   message "subscribe LHCFORMS-ANNOUNCE" (no subject needed) to <a href=
   "mailto:listserv@list.nih.gov?body=subscribe LHCFORMS-ANNOUNCE">listserv@list.nih.gov</a>.
-  These annoucements will probably just be about significant changes.</p>
+  These announcements will probably just be about significant changes.</p>
 <hr>
 
     <span class="credits left">Project maintained by <a
