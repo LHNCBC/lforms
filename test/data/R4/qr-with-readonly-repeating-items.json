@@ -1,0 +1,42 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "meta": {
+      "profile": [
+          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|3.0"
+      ]
+  },
+  "status": "completed",
+  "authored": "2024-09-19T13:45:06.577Z",
+  "item": [
+      {
+          "linkId": "q1",
+          "text": "read-only, repeating item, string",
+          "answer": [
+              {
+                  "valueString": "aaa"
+              },
+              {
+                  "valueString": "bbb"
+              }
+          ]
+      },
+      {
+          "linkId": "g1",
+          "text": "a group",
+          "item": [
+              {
+                  "linkId": "g1q1",
+                  "text": "read-only, repeating item, string in a group",
+                  "answer": [
+                      {
+                          "valueString": "ccc"
+                      },
+                      {
+                          "valueString": "ddd"
+                      }
+                  ]
+              }
+          ]
+      }
+  ]
+}

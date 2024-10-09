@@ -418,8 +418,14 @@ function addCommonSDCImportFns(ns) {
     var lfDataType = lfItem.dataType;
     var answers = [];
     const messages = [];
+    const types = fhirpath.types(fhirVals);
     for (let i=0, len=fhirVals.length; i<len; ++i) {
       let fhirVal = fhirVals[i];
+      if (typeof fhirVal === 'object') {
+        // types[i] is a string with a namespaced data type, such as
+        // "FHIR.Quantity", "FHIR.date", "System.String"
+        fhirVal._type = fhirVal._type || types[i]?.split('.')[1];
+      }
       var answer = undefined; // reset back to undefined each iteration
       let errors = {};
       let hasMessages = false;
@@ -470,8 +476,7 @@ function addCommonSDCImportFns(ns) {
       }
       else {
         if((lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT') &&
-            (fhirVal._type === 'Quantity' || fhirpath.types(fhirVal)[0] === 'FHIR.Quantity')) {
-          fhirVal._type = 'Quantity';
+            fhirVal._type === 'Quantity') {
           [answer, errors] = this._convertFHIRQuantity(lfItem, fhirVal);
           hasMessages = !!errors;
         }

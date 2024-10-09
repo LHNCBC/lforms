@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "36.5.0",
+  "version": "36.6.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -62,12 +62,13 @@
     "autocomplete-lhc": "^19.2.2",
     "deep-equal": "^2.2.3",
     "fast-copy": "^3.0.1",
-    "fhirpath": "3.13.2",
+    "fhirpath": "^3.15.1",
     "htmlparser2": "^9.1.0",
     "jquery": "^3.7.1",
     "moment": "2.29.4",
     "ng-zorro-antd": "^17.3.0",
     "rxjs": "~7.8.0",
+    "string-replace-async": "^3.0.2",
     "tslib": "^2.4.1",
     "zone.js": "~0.14.0"
   },

@@ -4,7 +4,7 @@ describe('"questionnaire-hidden" extension Test', () => {
   it('should hide all kinds of items that have the questionnnaire-hidden extension', () => {
     // load a lforms form data
     cy.visit('/test/pages/lforms_testpage.html');
-    cy.get("#loadBtn").contains("Load From File");
+    cy.get("#loadBtn").contains("Load Form From File");
     cy.get('#fileAnchor').uploadFile('test/data/R4/questionnaire-hidden-extension.json');
     cy.get('.lhc-form-title').contains('A questionnaire for testing questionnaire-hidden extension');
 
@@ -12,7 +12,7 @@ describe('"questionnaire-hidden" extension Test', () => {
     const item = 'label-q1/1';
     cy.byId(item).should('be.visible');
 
-    // hidden item 
+    // hidden item
     const hiddenItem = 'label-q2/1';
     cy.byId(hiddenItem).should('not.exist');
 
@@ -56,7 +56,7 @@ describe('"questionnaire-hidden" extension Test', () => {
 
     // hidden question row in a matrix
     const mgroup = 'label-g-displayed-matrix/1'  //displayed matrix
-    const row1 = 'label-g-displayed-matrix/q1/1/1' //a hidden question in a matrix	
+    const row1 = 'label-g-displayed-matrix/q1/1/1' //a hidden question in a matrix
     const radio1 = 'g-displayed-matrix/q1/1/1LA10427-5'
     const row2 = 'label-g-displayed-matrix/q2/1/1' //a displayed question in a matrix
     const radio2 = 'g-displayed-matrix/q2/1/1LA10427-5'
@@ -72,20 +72,20 @@ describe('"questionnaire-hidden" extension Test', () => {
     cy.visit('/test/pages/lforms_testpage.html');
 
     cy.window().then((win) => {
-      cy.readFile('test/data/R4/hidden-item-questionnaire.R4.json').then((q) => {  
+      cy.readFile('test/data/R4/hidden-item-questionnaire.R4.json').then((q) => {
         let fhirVersion = "R4";
         let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
 
         cy.readFile('test/data/R4/hidden-item-questionnaire-response.R4.json').then((qr) => {
           let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
           util.addFormToPage(mergedFormData, null, {fhirVersion});
-        
+
           // 4 items visible
           cy.byId('CE-VISIBLE/1').should('be.visible').should('have.value', '2');
           cy.byId('ITEM-VISIBLE/1').should('be.visible').should('have.value', '2');
           cy.byId('label-GROUP-VISIBLE/1').should('be.visible');
           cy.byId('GROUP-VISIBLE/CE-VISIBLE/1/1').should('be.visible').should('have.value', '2');
-  
+
           // others are hidden
           cy.byId('CE-HIDDEN/1').should('not.exist');
           cy.byId('GROUP-VISIBLE/CE-HIDDEN/1/1').should('not.exist');
