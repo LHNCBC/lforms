@@ -862,7 +862,7 @@ export default class LhcFormData {
 
 
   /**
-   * Create a list of reference to the items in the tree
+   * Update the disabled display stutus on the items
    * @param items sibling items on one level of the tree
    * @param parentDisabledDisplayStatus the disableDisplay status from its parent item.
    * @private

@@ -194,20 +194,20 @@ export const InternalUtil = {
    * @returns {boolean}
    */
   targetEnabled: function(item) {
-    return item ? item._enableWhenExpVal !== false &&
-        item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED : false;
+    return item._enableWhenExpVal !== false &&
+        item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
   },
 
 
   /**
-   * Check an item's skip logic status to decide if the item is enabled and protected (not hidden from view)
+   * Check an item's skip logic status to decide if the item is disabled and
+   * protected (not hidden from view)
    * @param item an item
    * @returns {boolean}
    */
   targetDisabledAndProtected: function(item) {
-    return item ? (item._enableWhenExpVal === false ||
-        item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) &&
-        item._disabledDisplayStatus === 'protected' : false;
+    return !this.targetEnabled(item) &&
+        item._disabledDisplayStatus === 'protected';
   },
 
 
@@ -217,9 +217,8 @@ export const InternalUtil = {
    * @return {boolean}
   */
   targetShown: function(item) {
-    // this.targetEnabled(item) || this.targetDisabledAndProtected(item)
-    return item ? item._enableWhenExpVal !== false && item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED
-        || item._disabledDisplayStatus === 'protected' : false;
+    return this.targetEnabled(item) ||
+        this.targetDisabledAndProtected(item);
   }
 }
 
