@@ -15,28 +15,41 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("s1/1false").click();
 
     // check items with disabledDisplay = 'protected'
-    // question
+    // string question
     cy.byId("item-a2/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
     cy.byId("a2/1")
       .should("be.visible")
       .should("be.disabled");
-
+    // coding question
+    cy.byId("item-a2a/1")
+    .should("have.class", "lhc-item-disabled-protected")
+    .should("be.visible");
+    cy.byId("a2a/1")
+    .should("be.visible")
+    .should("be.disabled");
     // display
     cy.byId("item-b2/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
 
-    // group
+    // group, disabledDisplay is 'protected'
     cy.byId("item-g3/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    // question in a group
+    // string question in a group
     cy.byId("item-g3a2/1/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
     cy.byId("g3a2/1/1")
+      .should("be.visible")
+      .should("be.disabled");
+    // coding question in a group
+    cy.byId("item-g3a2a/1/1")
+      .should("have.class", "lhc-item-disabled-protected")
+      .should("be.visible");
+    cy.byId("g3a2a/1/1")
       .should("be.visible")
       .should("be.disabled");
     // display in a group
@@ -82,7 +95,12 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-g4/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
+    // string question
     cy.byId("g4col1/1/1")
+      .should("be.visible")
+      .should("be.disabled");
+    // coding question
+    cy.byId("g4col2/1/1")
       .should("be.visible")
       .should("be.disabled");
 
@@ -129,28 +147,41 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("s1/1true").click();
 
     // check items with disabledDisplay = 'protected'
-    // question
+    // string question
     cy.byId("item-a2/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
     cy.byId("a2/1")
       .should("be.visible")
       .should("not.be.disabled");
-
+    // coding question
+    cy.byId("item-a2a/1")
+    .should("not.have.class", "lhc-item-disabled-protected")
+    .should("be.visible");
+    cy.byId("a2a/1")
+    .should("be.visible")
+    .should("not.be.disabled");
     // display
     cy.byId("item-b2/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
 
-    // group
+    // group, disabledDisplay is 'protected'
     cy.byId("item-g3/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    // question in a group
+    // string question in a group
     cy.byId("item-g3a2/1/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
     cy.byId("g3a2/1/1")
+      .should("be.visible")
+      .should("not.be.disabled");
+    // coding question in a group
+    cy.byId("item-g3a2a/1/1")
+      .should("not.have.class", "lhc-item-disabled-protected")
+      .should("be.visible");
+    cy.byId("g3a2a/1/1")
       .should("be.visible")
       .should("not.be.disabled");
     // display in a group
@@ -196,7 +227,12 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-g4/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
+    // string question
     cy.byId("g4col1/1/1")
+      .should("be.visible")
+      .should("not.be.disabled");
+    // coding question
+    cy.byId("g4col2/1/1")
       .should("be.visible")
       .should("not.be.disabled");
 

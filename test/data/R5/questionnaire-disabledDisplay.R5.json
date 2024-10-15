@@ -1,5 +1,5 @@
 {
-  "title": "Quesionnaire with disabledDisplay (R5 only) ",
+  "title": "Questionnaire with disabledDisplay (R5 only) ",
   "resourceType": "Questionnaire",
   "status": "draft",
   "item": [
@@ -11,7 +11,7 @@
     },
     {
       "linkId": "a1",
-      "text": "disabledDisplay = 'hidden' on question item",
+      "text": "disabledDisplay = 'hidden' on a string question item",
       "prefix": "1.",
       "type": "string",
       "disabledDisplay": "hidden",
@@ -24,8 +24,42 @@
       ]
     },
     {
+      "type": "coding",
+      "linkId": "a1a",
+      "prefix": "1a.",
+      "text": "disabledDisplay = 'hidden' on a coding question item",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    },
+    {
       "linkId": "a2",
-      "text": "disabledDisplay = 'protected' on question item",
+      "text": "disabledDisplay = 'protected' on a string question item",
       "prefix": "2.",
       "type": "string",
       "disabledDisplay": "protected",
@@ -34,6 +68,40 @@
           "question": "s1",
           "operator": "=",
           "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "type": "coding",
+      "linkId": "a2a",
+      "prefix": "2a.",
+      "text": "disabledDisplay = 'protected' on a coding question item",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
         }
       ]
     },
@@ -86,6 +154,46 @@
           "type": "string"
         },
         {
+          "linkId": "g1a1a",
+          "text": "disabledDisplay = 'protected' on a question item in a group",
+          "prefix": "6a.",
+          "type": "string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g1a1b",
+          "prefix": "6b.",
+          "text": "disabledDisplay = 'protected' on a coding question item",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
           "linkId": "g1b1",
           "text": "a display item in a group",
           "prefix": "7.",
@@ -131,6 +239,46 @@
           "text": "a question item in a group",
           "prefix": "12.",
           "type": "string"
+        },
+        {
+          "linkId": "g2a1a",
+          "text": "disabledDisplay = 'protected' on a question item in a group",
+          "prefix": "12a.",
+          "type": "string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g2a1b",
+          "prefix": "12b.",
+          "text": "disabledDisplay = 'protected' on a coding question item",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
         },
         {
           "linkId": "g2b1",
@@ -199,6 +347,46 @@
               "question": "s1",
               "operator": "=",
               "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3a2a",
+          "text": "disabledDisplay = 'protected' on a question item in a group",
+          "prefix": "19a.",
+          "type": "string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g3a2b",
+          "prefix": "19b.",
+          "text": "disabledDisplay = 'protected' on a coding question item",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
             }
           ]
         },

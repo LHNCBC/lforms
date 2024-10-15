@@ -201,7 +201,7 @@ export const InternalUtil = {
 
   /**
    * Check an item's skip logic status to decide if the item is disabled and
-   * protected (not hidden from view)
+   * protected.
    * @param item an item
    * @returns {boolean}
    */
@@ -212,7 +212,7 @@ export const InternalUtil = {
 
 
   /**
-   * Check if the item should be displayed (enabled or disabled but protected, not hidden from view)
+   * Check if the item should be displayed.
    * @param item an item
    * @return {boolean}
   */
