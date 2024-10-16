@@ -1059,11 +1059,11 @@ const FormUtils = {
   checkForInvalidHtmlTags: function(htmlNarrative) {
     let invalidTagsAttributes=[];
     let notAllowedTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
-    let deprecatedTags = ['acronym', 'applet', 'basefont', 'big', 'blink', 'center', 'dir', 'embed', 'font',
-        'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'tt', 'u'];
+    let deprecatedTags = ['applet', 'basefont', 'blink', 'center', 'dir', 'embed', 'font',
+        'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'u'];
     const FORBID_TAGS = notAllowedTags.concat(deprecatedTags);
     const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i;
-    const FORBID_ATTR = ['style'];
+    const FORBID_ATTR = [];
 
     // Tags (not in the FORBID_TAGS list above) that could have a URL value.
     // See https://stackoverflow.com/questions/2725156/complete-list-of-html-tag-attributes-which-have-a-url-value
@@ -1127,14 +1127,14 @@ const FormUtils = {
             }
           }
         };
-        // check attributes
-        for (const [attr, value] of Object.entries(attributes)) {
-          FORBID_ATTR.forEach(forbidAttr => {
-            if(attr.toLocaleLowerCase() === forbidAttr) {
-              invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbidAttr });
-            }
-          });
-        }
+        // check attributes (not FORBID_ATTR for now)
+        // for (const [attr, value] of Object.entries(attributes)) {
+        //   FORBID_ATTR.forEach(forbidAttr => {
+        //     if(attr.toLocaleLowerCase() === forbidAttr) {
+        //       invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbidAttr });
+        //     }
+        //   });
+        // }
 
       }
 
