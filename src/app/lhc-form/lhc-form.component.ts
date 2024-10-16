@@ -6,6 +6,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 
 import LhcFormData from '../../lib/lforms/lhc-form-data';
 import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
+import copy from "fast-copy";
 
 declare var LForms: any;
 declare var ResizeObserver;
@@ -120,7 +121,9 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                 q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.options);
                 // If options.questionnaireResponse is specified, we can utilize it and reduce the number of lforms API calls.
                 if (self.options?.questionnaireResponse) {
-                  q = LForms.FHIR[fhirVer].SDC.mergeQuestionnaireResponseToLForms(q, self.options.questionnaireResponse);
+                  // make a copy of questionnaireResponse so that the original data are not modified
+                  let qr = copy(self.options.questionnaireResponse);
+                  q = LForms.FHIR[fhirVer].SDC.mergeQuestionnaireResponseToLForms(q, qr);
                 }
               }
             }

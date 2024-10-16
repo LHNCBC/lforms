@@ -5,6 +5,7 @@
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
 import * as htmlparser2 from "htmlparser2";
+import copy from "fast-copy";
 
 const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
@@ -305,23 +306,25 @@ const FormUtils = {
     }
 
     if (fhirData) {
-      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirData);
+      // make a copy of the fhirData so the original data are not modified.
+      let fhirDataCopy = copy(fhirData);
+      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirDataCopy);
       var fhir = LForms.FHIR[fhirVersion];
-      switch (fhirData.resourceType) {
+      switch (fhirDataCopy.resourceType) {
         case "DiagnosticReport":
-          formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirDataCopy);
           formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
         case "Bundle":
           // Bundle should contain DiagnosticReport
-          if (fhirData.type === "searchset" &&
-              fhirData.entry.find(ele => ele.resource.resourceType === "DiagnosticReport")) {
-            formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          if (fhirDataCopy.type === "searchset" &&
+            fhirDataCopy.entry.find(ele => ele.resource.resourceType === "DiagnosticReport")) {
+            formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirDataCopy);
             formData.hasSavedData = true; // will be used to determine whether to update or save
           }
           break;
         case "QuestionnaireResponse":
-          formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirDataCopy);
           formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
       }

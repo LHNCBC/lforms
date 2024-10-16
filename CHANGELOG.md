@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.5.2] 2024-10-16
+### Fixed
+- Updated checkForInvalidHtml to allow more tags/attributes.
+- Fixed a bug that help text and copyright text could be out of postion
+  if they are too long.
+- Fixed a bug that the QuestionnaireResponse data could be modified 
+  when passed in to the mergeFHIRDataIntoLForms function.
+
 ## [36.5.1] 2024-09-19
 ### Fixed
 - Fixed a bug that loaded data on repeating, readonly items could be deleted.
