@@ -334,10 +334,11 @@ div.cdk-overlay-pane {
 }
 /* show newlines in popover*/
 .lhc-popover-help .ant-popover-inner-content,
-.lhc-popver-copyright .ant-popover-inner-content,
+.lhc-popover-copyright .ant-popover-inner-content,
 .lhc-form .lhc-inline-help,
 .lhc-form .lhc-inline-copyright {
   white-space: pre-wrap;
+  width: auto;
 }
 /* div.ant-popover {
   top: 10px;
