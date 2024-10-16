@@ -7,7 +7,7 @@
         <!-- prefix -->
         <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
         <!-- question text -->
-        <ng-container [ngSwitch]="lhcDataService.getXhtmlDisplayType(item)">
+        <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(item)">
           <span *ngSwitchCase="'escaped'"
                class="question"
                [style]="item._obj_textCSS"

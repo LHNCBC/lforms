@@ -20,7 +20,7 @@
       [nzValue]="item.answers[i]"
       [(ngModel)]="radioModels[i]"
       [id]="lhcDataService.getItemAnswerId(item, answer)">
-      <ng-container [ngSwitch]="lhcDataService.getXhtmlDisplayType(answer)">
+      <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
         <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
         <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
         <ng-container *ngSwitchCase="'plain'">{{answer._displayText}}</ng-container>

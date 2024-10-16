@@ -15,7 +15,7 @@
         <th *ngFor="let answer of item.items[0].answers; index as i;"
             class="lhc-form-matrix-cell"
             id="answer-{{index}}">
-          <ng-container [ngSwitch]="lhcDataService.getXhtmlDisplayType(answer)">
+          <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
             <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
             <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
             <ng-container *ngSwitchCase="'plain'">{{answer.text}}</ng-container>

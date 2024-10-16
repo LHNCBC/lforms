@@ -678,7 +678,7 @@ function addCommonSDCImportFns(ns) {
       if (self._widgetOptions?.allowHTML) {
         let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
         if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-          lfItem.hasInvalidHtmlTag = true;
+          lfItem._hasInvalidHtmlTag = true;
           let errors = {};
           errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
           const messages = [{errors}];
