@@ -626,23 +626,24 @@ export default class LhcFormData {
         if (item.skipLogic) {
           changed = this._updateItemSkipLogicStatus(item, null) || changed;
         }
-        // set _isHiddenFromView when the item changes its status from hidden to shown
-        // or from shown to hidden
-        if (this.isItemHidden(item)) {
-          // changed from shown to hidden
-          if (!item._isHiddenFromView) {
-            changed = true;
-            item._isHiddenFromView = true;
-            changed = this._setSubItemsHiddenFromView(item, true) || changed;
-          }
+      }
+    }
+
+    // set item_isHiddenFromView after other changes are done
+    for (let i=0, iLen=this.items.length; i<iLen; i++) {
+      let item = this.items[i];
+      // item should be hidden
+      if (this.isItemHidden(item)) {
+        if (!item._isHiddenFromView) {
+          item._isHiddenFromView = true;
+          this._setSubItemsHiddenFromView(item, true);
         }
-        else {
-          // changed from hidden to shown
-          if (item._isHiddenFromView) {
-            changed = true;
-            item._isHiddenFromView = false;
-            changed = this._setSubItemsHiddenFromView(item, false) || changed;
-          }
+      }
+      // item should not be hidden
+      else {
+        if (item._isHiddenFromView) {
+          item._isHiddenFromView = false;
+          this._setSubItemsHiddenFromView(item, false);
         }
       }
     }
@@ -659,33 +660,28 @@ export default class LhcFormData {
    * Update the _isHiddenFromView value on sub items
    * @param item the parent item
    * @param hidden the parent item's hidden status
-   * @return {boolean} whether the item's "_isHiddenFromView" or
-   *     any of its subitems' "_isHiddenFromView" has changed.
    */
   _setSubItemsHiddenFromView(item, hidden) {
-    var changed = false;
     // process the sub items
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
-        if (hidden) {
-          // changed from shown to hidden
+        let toBeHidden = hidden || this.isItemHidden(subItem);
+        // item should be hidden
+        if (toBeHidden) {
           if (!subItem._isHiddenFromView) {
-            changed = true;
             subItem._isHiddenFromView = true;
           }
         }
+        // item should not be hidden
         else {
-          // changed from hidden to shown
           if (subItem._isHiddenFromView) {
-            changed = true;
             subItem._isHiddenFromView = false;
           }
         }
-        changed = this._setSubItemsHiddenFromView(subItem, hidden) || changed;
+        this._setSubItemsHiddenFromView(subItem, toBeHidden);
       }
     }
-    return changed;
   }
 
 

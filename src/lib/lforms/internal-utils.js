@@ -206,8 +206,9 @@ export const InternalUtil = {
    * @returns {boolean}
    */
   targetDisabledAndProtected: function(item) {
-    return !this.targetEnabled(item) &&
-        item._disabledDisplayStatus === 'protected';
+    return item._disabledDisplayStatus === 'protected' &&
+        !this.targetEnabled(item);
+
   },
 
 
@@ -217,8 +218,8 @@ export const InternalUtil = {
    * @return {boolean}
   */
   targetShown: function(item) {
-    return this.targetEnabled(item) ||
-        this.targetDisabledAndProtected(item);
+    return item._disabledDisplayStatus === 'protected' ||
+        this.targetEnabled(item);
   }
 }
 
