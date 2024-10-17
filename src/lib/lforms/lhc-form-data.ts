@@ -629,24 +629,8 @@ export default class LhcFormData {
       }
     }
 
-    // set item_isHiddenFromView after other changes are done
-    for (let i=0, iLen=this.items.length; i<iLen; i++) {
-      let item = this.items[i];
-      // item should be hidden
-      if (this.isItemHidden(item)) {
-        if (!item._isHiddenFromView) {
-          item._isHiddenFromView = true;
-          this._setSubItemsHiddenFromView(item, true);
-        }
-      }
-      // item should not be hidden
-      else {
-        if (item._isHiddenFromView) {
-          item._isHiddenFromView = false;
-          this._setSubItemsHiddenFromView(item, false);
-        }
-      }
-    }
+    // update item._isHiddenFromView after other changes are done
+    this._updateSubItemsHiddenFromView(this, false)
 
     // update internal status
     this._updateTreeNodes(this.items,this);
@@ -658,28 +642,24 @@ export default class LhcFormData {
 
   /**
    * Update the _isHiddenFromView value on sub items
-   * @param item the parent item
+   * @param item the parent item or the form
    * @param hidden the parent item's hidden status
    */
-  _setSubItemsHiddenFromView(item, hidden) {
+  _updateSubItemsHiddenFromView(item, hidden) {
     // process the sub items
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
         let toBeHidden = hidden || this.isItemHidden(subItem);
-        // item should be hidden
+        // the sub item should be hidden
         if (toBeHidden) {
-          if (!subItem._isHiddenFromView) {
-            subItem._isHiddenFromView = true;
-          }
+          subItem._isHiddenFromView = true;
         }
-        // item should not be hidden
+        // the sub item should not be hidden
         else {
-          if (subItem._isHiddenFromView) {
-            subItem._isHiddenFromView = false;
-          }
+          subItem._isHiddenFromView = false;
         }
-        this._setSubItemsHiddenFromView(subItem, toBeHidden);
+        this._updateSubItemsHiddenFromView(subItem, toBeHidden);
       }
     }
   }
