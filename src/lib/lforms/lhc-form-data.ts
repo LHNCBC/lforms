@@ -651,14 +651,9 @@ export default class LhcFormData {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
         let toBeHidden = hidden || this.isItemHidden(subItem);
-        // the sub item should be hidden
-        if (toBeHidden) {
-          subItem._isHiddenFromView = true;
-        }
-        // the sub item should not be hidden
-        else {
-          subItem._isHiddenFromView = false;
-        }
+        // set the sub item's hidden status
+        subItem._isHiddenFromView = toBeHidden;
+        // process the sub item's sub items
         this._updateSubItemsHiddenFromView(subItem, toBeHidden);
       }
     }
