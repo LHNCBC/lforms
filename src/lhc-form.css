@@ -383,3 +383,8 @@ screen_reader_only {
   cursor: not-allowed;
   /* opacity: 0.5; */
 }
+.lhc-form .lhc-button:disabled {
+  color: #666666;
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

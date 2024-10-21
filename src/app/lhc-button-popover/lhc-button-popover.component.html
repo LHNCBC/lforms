@@ -1,6 +1,7 @@
 <ng-container [ngSwitch]="popoverType">
-  <button *ngSwitchCase="'repeating-item'" id="add-{{item._elementId}}" type="button" class="lhc-float-button lhc-button"  
+  <button *ngSwitchCase="'repeating-item'" id="add-{{item._elementId}}" type="button" class="lhc-float-button lhc-button"
           nz-popover
+          [disabled]="item._readOnly"
           [(nzPopoverVisible)]="item._showUnusedItemWarning"
           [nzPopoverContent]="warningStrTemplate"
           nzPopoverPlacement="topLeft"
@@ -10,27 +11,27 @@
           (blur)="lhcDataService.hideUnusedItemWarning(item)"
           attr.aria-controls="add-button-{{item._elementId}}"
           attr.aria-label="add button for {{item.question}}"
-          attr.aria-describedby="add-button-{{ item._elementId }}">              
+          attr.aria-describedby="add-button-{{ item._elementId }}">
     {{ buttonLabel }}
   </button>
-  <button *ngSwitchCase="'help-string'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"  
+  <button *ngSwitchCase="'help-string'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"
           nz-popover
           [nzPopoverContent]="helpStrTemplate"
-          nzPopoverTrigger="click" 
-          nzPopoverPlacement="right"  
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
           nzPopoverTitle="Instruction"
           nzPopoverOverlayClassName="lhc-popover-help lhc-help{{ item._elementId.replaceAll('/','-') }}"
           (click)="onShowingPopover(item)"
           attr.aria-controls="help-content-{{item._elementId}}"
           attr.aria-label="Help button for {{item.question}}"
-          attr.aria-describedby="help-button-{{ item._elementId }}">              
+          attr.aria-describedby="help-button-{{ item._elementId }}">
     <i nz-icon nzType="question-circle" nzTheme="fill"></i>
   </button>
-  <button *ngSwitchCase="'help-html'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"  
+  <button *ngSwitchCase="'help-html'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"
           nz-popover
           [nzPopoverContent]="helpHtmlTemplate"
-          nzPopoverTrigger="click" 
-          nzPopoverPlacement="right"  
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
           nzPopoverTitle="Instruction"
           nzPopoverOverlayClassName="lhc-popover-help lhc-help{{ item._elementId.replaceAll('/','-') }}"
           (click)="onShowingPopover(item)"
@@ -40,21 +41,21 @@
     <i nz-icon nzType="question-circle" nzTheme="fill"></i>
   </button>
   <button *ngSwitchCase="'help-plain'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"
-          nz-popover 
-          [nzPopoverContent]="helpPlainTemplate" 
-          nzPopoverTrigger="click" 
+          nz-popover
+          [nzPopoverContent]="helpPlainTemplate"
+          nzPopoverTrigger="click"
           nzPopoverPlacement="right"
           nzPopoverTitle="Instruction"
           nzPopoverOverlayClassName="lhc-popover-help lhc-help{{ item._elementId.replaceAll('/','-') }}"
-          (click)="onShowingPopover(item)" 
+          (click)="onShowingPopover(item)"
           attr.aria-controls="help-content-{{item._elementId}}"
-          attr.aria-label="Help button for {{item.question}}" 
+          attr.aria-label="Help button for {{item.question}}"
           attr.aria-describedby="help-button-{{ item._elementId }}">
     <i nz-icon nzType="question-circle" nzTheme="fill"></i>
   </button>
   <ng-container *ngSwitchCase="'copyright-string'">
-    <button *ngIf="!formLevel" id="copyright-button-{{item._elementId}}" type="button" class="lhc-copyright-button" 
-            nz-popover            
+    <button *ngIf="!formLevel" id="copyright-button-{{item._elementId}}" type="button" class="lhc-copyright-button"
+            nz-popover
             [nzPopoverContent]="copyrightStrTemplate"
             nzPopoverTrigger="click"
             nzPopoverPlacement="right"
@@ -62,28 +63,28 @@
             nzPopoverOverlayClassName="lhc-popover-copyright lhc-copyright-class{{ item._elementId.replaceAll('/','-') }}"
             (click)="onShowingPopover(item)"
             attr.aria-controls="copyright-content-{{item._elementId}}"
-            attr.aria-label="Copyright button for {{item.question}}" 
+            attr.aria-label="Copyright button for {{item.question}}"
             attr.aria-describedby="copyright-button-{{ item._elementId }}">
       <i nz-icon nzType="copyright-circle" nzTheme="fill"></i>
     </button>
-    <button *ngIf="formLevel" 
-            id="copyright-button-{{popoverIdentifier}}" 
-            type="button" 
-            class="lhc-copyright-button" 
-            nz-popover            
+    <button *ngIf="formLevel"
+            id="copyright-button-{{popoverIdentifier}}"
+            type="button"
+            class="lhc-copyright-button"
+            nz-popover
             [nzPopoverContent]="copyrightStrTemplate"
             nzPopoverTrigger="click"
             nzPopoverPlacement="right"
             nzPopoverTitle="Copyright"
-            nzPopoverOverlayClassName="lhc-popover-copyright lhc-copyright-class{{popoverIdentifier}}"        
-            (click)="onShowingPopover(item)"    
+            nzPopoverOverlayClassName="lhc-popover-copyright lhc-copyright-class{{popoverIdentifier}}"
+            (click)="onShowingPopover(item)"
             attr.aria-controls="copyright-content-{{popoverIdentifier}}"
-            attr.aria-label="Copyright button for {{item.name || item.shortName}}" 
+            attr.aria-label="Copyright button for {{item.name || item.shortName}}"
             attr.aria-describedby="copyright-button-{{popoverIdentifier}}">
       <i nz-icon nzType="copyright-circle" nzTheme="outline"></i>
     </button>
   </ng-container>
-  
+
 </ng-container>
 
 <!-- unused item warning template -->
@@ -108,9 +109,9 @@
 </ng-template>
 <!-- help popover template with plain text-->
 <ng-template #helpPlainTemplate>
-  <span attr.aria-labelledby="help-button-{{item._elementId}}" 
+  <span attr.aria-labelledby="help-button-{{item._elementId}}"
         role="region"
-        attr.aria-label="Instruction for {{item.question}}" 
+        attr.aria-label="Instruction for {{item.question}}"
         attr.aria-describedby="help-content-{{item._elementId}}"
         id="help-content-{{item._elementId}}"
   >{{item.codingInstructionsPlain}}</span>
@@ -127,10 +128,10 @@
 
 <!-- copyright popover template -->
 <ng-template #copyrightStrTemplate >
-  <span *ngIf="!formLevel" 
+  <span *ngIf="!formLevel"
         attr.aria-labelledby="copyright-button-{{item._elementId}}"
         role="region"
-        attr.aria-label="Copyright notice for {{item.question}}" 
+        attr.aria-label="Copyright notice for {{item.question}}"
         attr.aria-describedby="copyright-content-{{item._elementId}}"
         id="copyright-content-{{item._elementId}}"
   >{{item.copyrightNotice}}</span>
@@ -138,8 +139,8 @@
         id="copyright-content-{{popoverIdentifier}}"
         attr.aria-labelledby="copyright-button-{{popoverIdentifier}}"
         role="region"
-        attr.aria-label="Copyright notice for {{item.name || item.shortName}}" 
+        attr.aria-label="Copyright notice for {{item.name || item.shortName}}"
         attr.aria-describedby="copyright-content-{{popoverIdentifier}}"
         id="copyright-content-{{popoverIdentifier}}"
-  >{{item.copyrightNotice}}</span>  
+  >{{item.copyrightNotice}}</span>
 </ng-template>

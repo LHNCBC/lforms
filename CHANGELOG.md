@@ -2,9 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.5.1] 2024-07-30
+## [36.5.2] 2024-10-21
 ### Added
 - Added a function, 'getSupportedItemControl', to return an object containing a list of supported item controls.
+
+## [36.5.1] 2024-09-19
+### Fixed
+- Fixed a bug that loaded data on repeating, readonly items could be deleted.
 
 ## [36.5.0] 2024-07-29
 ### Added
