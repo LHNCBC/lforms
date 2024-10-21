@@ -134,7 +134,8 @@ function addSDCImportFns(ns) {
             answer.text = option[optionKey[0]];
             // rendering-xhtml extension under "_valueString".
             if (optionKey[0] === 'valueString' && option._valueString) {
-              const xhtmlFormat = LForms.Util.findObjectInArray(option._valueString.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+              answer['obj_valueString'] = option._valueString;
+              const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
                 answer.textHTML = xhtmlFormat.valueString;
                 if (self._widgetOptions?.allowHTML) {
