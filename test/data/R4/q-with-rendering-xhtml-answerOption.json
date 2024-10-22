@@ -69,7 +69,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-                    "valueString": "bold <b class='testBold'>C</b><img class='testImage' src=\"/test/data/a-picture.png\"/>"
+                    "valueString": "bold <b class='testBold'>C</b><img class='testImage' src='/test/data/a-picture.png'>"
                   }
                 ]
               }
@@ -135,7 +135,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-                    "valueString": "bold <b class='testBold'>C</b><img class='testImage' src=\"/test/data/a-picture.png\"/>"
+                    "valueString": "bold <b class='testBold'>C</b><img class='testImage' src='/test/data/a-picture.png'>"
                   }
                 ]
               }
