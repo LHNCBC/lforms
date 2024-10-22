@@ -172,16 +172,7 @@ export class LhcDataService {
    * @returns {string}
    */
   getTextDisplayType(item) {
-    var format = 'plain';
-    if (item._displayTextHTML && item._displayTextHTML.length > 0 && this.lhcFormData.templateOptions.allowHTML) {
-      if (!item._hasInvalidHtmlTag) {
-        format = 'html';
-      }
-      else {
-        format = this.lhcFormData.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
-      }
-    }
-    return format;
+    return this.lhcFormData?.getTextDisplayType(item) || 'plain';
   }
 
 

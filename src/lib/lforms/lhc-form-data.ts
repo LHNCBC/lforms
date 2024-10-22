@@ -948,16 +948,23 @@ export default class LhcFormData {
       // check if displayScoreWithAnswerText is changed
       let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined &&
           newOptions.displayScoreWithAnswerText !== existingOptions.displayScoreWithAnswerText;
+      // check if allowHTML is changed
+      let allowHTMLChanged = newOptions.allowHTML !== undefined &&
+        newOptions.allowHTML !== existingOptions.allowHTML;
+      // check if displayInvalidHTML is changed
+      let displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
+        newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
 
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
 
       // recreate the answerOption to add or remove the scores from display texts,
+      // or switch between 'html', 'escaped' and 'plain' display types,
       // when the lhcFormData instance has been initialized.
-      if (scoreFlagChanged && this.itemList) {
+      if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged) && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          if (!!item._hasAnswerList && item._hasScoreInAnswer)
+          if (!!item._hasAnswerList)
             this._updateAutocompOptions(item);
         }
       }
@@ -3239,12 +3246,48 @@ export default class LhcFormData {
           options.codes = codes;
           options.itemToHeading = itemToHeading;
         }
+
+        // If it's using autocomplete-lhc (drop-down display)... use proper content for _displayText
+        // and set isListHTML.
+        if (!item.displayControl || !item.displayControl.answerLayout || item.displayControl.answerLayout.type !== 'RADIO_CHECKBOX') {
+          // Set isListHTML to true if any of the answer options should be displayed as HTML.
+          options.isListHTML = answers.some(a => a._displayType === 'html');
+          for (let i = 0; i < answers.length; ++i) {
+            if (answers[i]._displayType === 'html') {
+              answers[i]._displayText = answers[i]._displayTextHTML;
+            } else if (answers[i]._displayType === 'escaped') {
+              answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayTextHTML);
+            } else if (options.isListHTML) {
+              answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayText);
+            }
+          }
+        }
       }
+
       // check if the new option has changed
       if (!CommonUtils.deepEqual(options, item._autocompOptions)) {
         item._autocompOptions = options;
       }
     } // end of list
+  }
+
+
+  /**
+   * Check the display type of item.text or an answerOption.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
+   */
+  getTextDisplayType(item) {
+    var format = 'plain';
+    if (item._displayTextHTML && item._displayTextHTML.length > 0 && this.templateOptions.allowHTML) {
+      if (!item._hasInvalidHtmlTag) {
+        format = 'html';
+      }
+      else {
+        format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
+      }
+    }
+    return format;
   }
 
 
@@ -3296,6 +3339,7 @@ export default class LhcFormData {
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
         answerData._displayTextHTML = displayTextHTML;
+        answerData._displayType = this.getTextDisplayType(answerData);
         modifiedAnswers.push(answerData);
       }
     }

@@ -11,6 +11,60 @@
   "item": [
     {
       "type": "group",
+      "linkId": "valueString-group1",
+      "text": "answerOption - valueString - dropdown",
+      "item": [
+        {
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "valueString-group1-item1",
+          "text": "valueString",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>A</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b"
+            },
+            {
+              "valueString": "bold c",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "bold <b class='testBold'>C</b><img class='testImage' src=\"/test/data/a-picture.png\"/>"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
       "linkId": "valueString-group2",
       "text": "answerOption - valueString - radiocheckbox",
       "item": [

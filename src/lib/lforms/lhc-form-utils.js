@@ -1176,6 +1176,17 @@ const FormUtils = {
     parser.end();
 
     return invalidTagsAttributes;
+  },
+
+
+  /**
+   * Escapes a string for safe use as an HTML attribute.
+   * @param val the string to be escaped
+   * @return the escaped version of val
+   */
+  escapeAttribute: function (val) {
+    return val.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g,
+      '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
 };
