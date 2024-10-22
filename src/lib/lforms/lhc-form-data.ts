@@ -503,7 +503,7 @@ export default class LhcFormData {
     // for skip logic, data controls and formulas
     this._setupSourceToTargetMap();
 
-    // run the all form controls
+    // run all form controls
     this._checkFormControls();
   }
 
@@ -568,7 +568,7 @@ export default class LhcFormData {
     this._updateLastRepeatingItemsStatus(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
-    // run the all form controls
+    // run all form controls
     this._checkFormControls();
 
     // run FHIRPath expression
@@ -805,7 +805,6 @@ export default class LhcFormData {
         if (!noLog)
           this._actionLogs.push(msg);
       }
-      //item._preSkipLogicStatus = item._skipLogicStatus;
       item._skipLogicStatus = newStatus;
       changed = true;
     }
