@@ -10,7 +10,8 @@ module.exports = function(config) {
 
     // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
     proxies: {
-      '/test/data/': '/base/test/data/'
+      '/test/data/': '/base/test/data/',
+      '/lib': '/base/src/lib'
     },
 
     plugins: [
@@ -31,6 +32,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      {pattern: 'src/lib/item-controls.json', included: false, served: true}, 
       {pattern: 'test/data/**/*.json', included: false, served: true},
       {pattern: 'test/data/**/*.js', included: true, served: true},
       {pattern: 'dist/lforms/webcomponent/*.js.map', included: false, served: true},
