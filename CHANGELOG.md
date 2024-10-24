@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.5.3] 2024-10-24
+### Fixed
+- Errors with attempting to access undefined environment variables when
+  evaluating FHIRPath expressions where the variables are evaluated
+  asynchronously.
+
 ## [36.5.2] 2024-10-21
 ### Added
 - Added a function, 'getSupportedItemControl', to return an object containing a list of supported item controls.
