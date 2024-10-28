@@ -1,4 +1,4 @@
-<ng-container *ngIf="item && lhcDataService.targetShown(item)">
+<ng-container *ngIf="item">
     <ng-container  [ngSwitch]="item.dataType">
       <!-- 'group' -->
       <ng-container *ngSwitchCase="'SECTION'">
@@ -14,14 +14,14 @@
         <!-- question item could have sub items -->
         <div *ngIf="item.items" class="lhc-item-group-body">
           <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">
-            <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView"
+            <lhc-item *ngIf="item && !item._isHiddenFromView && lhcDataService.targetShown(item)"
               [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}"
               id="item-{{ item._elementId }}">
             </lhc-item>
           </ng-container>
         </div>
         <!-- a button at the end of each repeating section -->
-        <div class="lhc-button-padding {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && lhcDataService.targetShown(item) && !item._isHiddenFromView">
+        <div class="lhc-button-padding {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && !item._isHiddenFromView && lhcDataService.targetEnabled(item)">
           <div class="{{lhcDataService.getSkipLogicClass(item)}}">
             <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ {{item._text}}'></lhc-button-popover>
           </div>

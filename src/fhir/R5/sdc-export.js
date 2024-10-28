@@ -146,6 +146,17 @@ function addR5ExportFns(ns) {
   };
 
 
+  /**
+   * Process item.disabledDisplay
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   */
+  self._handleDisabledDisplay = function(targetItem, item) {
+    if (item.disabledDisplay) {
+      targetItem.disabledDisplay = item.disabledDisplay;
+    }
+  };
+
    /**
    * Converting the given item's value to FHIR QuestionaireResponse.answer (an array).
    * This is almost straightly refactored out of the original function self._handleAnswerValues.

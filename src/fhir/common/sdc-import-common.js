@@ -283,6 +283,7 @@ function addCommonSDCImportFns(ns) {
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
+    if (self._processDisabledDisplay) self._processDisabledDisplay(targetItem, qItem);
 
     return targetItem;
   };

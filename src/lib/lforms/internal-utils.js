@@ -185,8 +185,42 @@ export const InternalUtil = {
   hasAnswerList: function(item) {
     return item.dataType === "CODING" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
-  }
+  },
 
+
+  /**
+   * Check an item's skip logic status to decide if the item is enabled
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetEnabled: function(item) {
+    return item._enableWhenExpVal !== false &&
+        item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+  },
+
+
+  /**
+   * Check an item's skip logic status to decide if the item is disabled and
+   * protected.
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetDisabledAndProtected: function(item) {
+    return item._disabledDisplayStatus === 'protected' &&
+        !this.targetEnabled(item);
+
+  },
+
+
+  /**
+   * Check if the item should be displayed.
+   * @param item an item
+   * @return {boolean}
+  */
+  targetShown: function(item) {
+    return item._disabledDisplayStatus === 'protected' ||
+        this.targetEnabled(item);
+  }
 }
 
 
