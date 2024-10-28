@@ -226,13 +226,32 @@ export class LhcDataService {
 
 
   /**
-   * Check an item's skip logic status to decide if the item should be shown
+   * Check an item's skip logic status to decide if the item is enabled
    * @param item an item
    * @returns {boolean}
    */
+  targetEnabled(item) {
+    return this.lhcFormData ? InternalUtil.targetEnabled(item): false;
+  }
+
+
+  /**
+   * Check an item's skip logic status to decide if the item is enabled and protected (not hidden from view)
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetDisabledAndProtected(item) {
+    return this.lhcFormData ? InternalUtil.targetDisabledAndProtected(item) : false;
+  }
+
+
+  /**
+   * Check if the item should be displayed (enabled or disabled but protected)
+   * @param item an item
+   * @return {boolean}
+  */
   targetShown(item) {
-    return this.lhcFormData ? item._enableWhenExpVal !== false &&
-      this.lhcFormData.getSkipLogicClass(item) !== 'target-disabled' : null;
+    return this.lhcFormData ? InternalUtil.targetShown(item) : false;
   }
 
 
@@ -356,6 +375,9 @@ export class LhcDataService {
     }
     if (item._isHiddenFromView) {
       eleClass += ' lhc-hidden-from-view';
+    }
+    if (this.targetDisabledAndProtected(item)) {
+      eleClass += ' lhc-item-disabled-protected'
     }
     if (Array.isArray(item._validationErrors) && item._validationErrors.length > 0) {
       eleClass += ' lhc-invalid'
