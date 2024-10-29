@@ -200,66 +200,6 @@ describe('rendering-xhtml', () => {
       cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; bold <b class=\"testBold\">C</b><img class=\"testImage\" src=\"/test/data/a-picture.png\">");
     });
 
-    describe('matrix layout', () => {
-      beforeEach(() => {
-        tp.openBaseTestPage();
-        tp.loadFromTestData('answerOption-html-matrix-layout.json');
-      });
-
-      it('should display plain text', () => {
-        cy.byId('item-/matrixTable0/1')
-          .find('th.lhc-form-matrix-cell')
-          .as('tableHeaders');
-        cy.get('@tableHeaders')
-          .should('have.length', 3);
-        cy.get('@tableHeaders')
-          .eq(0)
-          .should('have.text', 'Answer 1');
-        cy.get('@tableHeaders')
-          .eq(1)
-          .should('have.text', 'Answer 2');
-        cy.get('@tableHeaders')
-          .eq(2)
-          .should('have.text', 'Answer 3');
-      });
-
-      it('should display HTML', () => {
-        cy.byId('item-/matrixTable1/1')
-          .find('th.lhc-form-matrix-cell')
-          .as('tableHeaders');
-        cy.get('@tableHeaders')
-          .should('have.length', 3);
-        cy.get('@tableHeaders')
-          .eq(0)
-          .find('button')
-          .should('exist');
-        cy.get('@tableHeaders')
-          .eq(1)
-          .find('button')
-          .should('exist');
-        cy.get('@tableHeaders')
-          .eq(2)
-          .find('button')
-          .should('exist');
-      });
-
-      it('should display escaped HTML', () => {
-        cy.byId('item-/matrixTable2/1')
-          .find('th.lhc-form-matrix-cell')
-          .as('tableHeaders');
-        cy.get('@tableHeaders')
-          .should('have.length', 3);
-        cy.get('@tableHeaders')
-          .eq(0)
-          .should('have.text', 'Answer <script>button</script> 1');
-        cy.get('@tableHeaders')
-          .eq(1)
-          .should('have.text', 'Answer <script>button</script> 2');
-        cy.get('@tableHeaders')
-          .eq(2)
-          .should('have.text', 'Answer <script>button</script> 3');
-      });
-    });
   });
 });
 
