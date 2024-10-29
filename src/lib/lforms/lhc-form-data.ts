@@ -142,6 +142,7 @@ export default class LhcFormData {
   _showInfo;
   contained;
   _containedImages;
+  _containedImageHtmlMap = new Map();
 
   /**
    * Constructor
@@ -978,7 +979,15 @@ export default class LhcFormData {
             if (this._containedImages &&
                 item._displayTextHTML.match(/img/) &&
                 item._displayTextHTML.match(/src/)) {
-              item._displayTextHTML = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTML);
+              // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
+              // strings in LForms.Util._getHtmlStringWithContainedImages() for repeated questions.
+              if (this._containedImageHtmlMap.has(item._displayTextHTML)) {
+                item._displayTextHTML = this._containedImageHtmlMap.get(item._displayTextHTML);
+              } else {
+                const mapKey = item._displayTextHTML;
+                item._displayTextHTML = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTML);
+                this._containedImageHtmlMap.set(mapKey, item._displayTextHTML);
+              }
             }
             let errors, messages;
             let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item._displayTextHTML);
