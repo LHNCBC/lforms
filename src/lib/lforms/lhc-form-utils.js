@@ -1050,37 +1050,6 @@ const FormUtils = {
 
 
   /**
-   * Get the rendering-xhtml string, replacing local ids in the 'src' attributes of
-   * the 'img' tags if the local ids are in the 'contained' with image data,
-   * @param containedImages a hashmap of image data from the "contained" in FHIR questionnaire
-   * @param value an HTML string
-   */
-  _getHtmlStringWithContainedImages: function(containedImages, value) {
-    if (containedImages) {
-      // go though each image in the html string and replace local ids in image source
-      // with contained data
-      let parser = new DOMParser();
-      let doc = parser.parseFromString(value, "text/html");
-
-      let imgs = doc.getElementsByTagName("img");
-      for (let i = 0; i < imgs.length; i++) {
-        let urlValue = imgs[i].getAttribute("src");
-        if (urlValue && urlValue.match(/^#/)) {
-          let localId = urlValue.substring(1);
-          let imageData = containedImages[localId];
-          if (imageData) {
-            imgs[i].setAttribute("src", imageData);
-          }
-        }
-      }
-      return doc.body.innerHTML;
-    } else {
-      return '';
-    }
-  },
-
-
-  /**
    * Check and return not allowed tags within the HTML version of the help text.
    * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
    * https://hl7.org/fhir/R4/narrative.html for allowed subset of the HTML tags.

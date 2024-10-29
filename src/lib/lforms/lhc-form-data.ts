@@ -965,7 +965,7 @@ export default class LhcFormData {
       if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged) && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          if (!!item._hasAnswerList)
+          if (!!item._hasAnswerList && (!scoreFlagChanged || item._hasScoreInAnswer))
             this._updateAutocompOptions(item);
         }
       }
@@ -980,12 +980,12 @@ export default class LhcFormData {
                 item._displayTextHTML.match(/img/) &&
                 item._displayTextHTML.match(/src/)) {
               // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
-              // strings in LForms.Util._getHtmlStringWithContainedImages() for repeated questions.
+              // strings in _getHtmlStringWithContainedImages() for repeated questions.
               if (this._containedImageHtmlMap.has(item._displayTextHTML)) {
                 item._displayTextHTML = this._containedImageHtmlMap.get(item._displayTextHTML);
               } else {
                 const mapKey = item._displayTextHTML;
-                item._displayTextHTML = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTML);
+                item._displayTextHTML = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTML);
                 this._containedImageHtmlMap.set(mapKey, item._displayTextHTML);
               }
             }
@@ -1009,7 +1009,7 @@ export default class LhcFormData {
             if (this._containedImages &&
                 item.codingInstructions.match(/img/) &&
                 item.codingInstructions.match(/src/)) {
-              item._codingInstructionsWithContainedImages = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
+              item._codingInstructionsWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
             }
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
@@ -1366,7 +1366,7 @@ export default class LhcFormData {
         item.codingInstructionsFormat === "html" &&
         item.codingInstructions.match(/img/) &&
         item.codingInstructions.match(/src/)) {
-      item._codingInstructionsWithContainedImages = LForms.Util._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
+      item._codingInstructionsWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
     }
 
     // process the answer code system

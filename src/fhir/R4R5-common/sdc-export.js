@@ -285,7 +285,7 @@ var self = {
         option[valueKey] = answer.text;
         // Restore rendering-xhtml extension on _valueString
         if (valueKey === 'valueString' && answer['obj_valueString']) {
-          option._valueString = answer['obj_valueString'];
+          option._valueString = answer.obj_valueString;
         }
       }
 
