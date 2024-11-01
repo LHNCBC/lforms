@@ -792,12 +792,29 @@ describe('Util library', function() {
       })
     };
 
-    // 'style' is now an allowed attribute.
-    // it('should find the invalid style attribute', () => {
-    //   let sourceHTML = "<div style='some styles'></div";
-    //   let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
-    //   assert.equal(invalidTagsAttributes[0].attribute, 'style');
-    // })
+    //'style' is now an allowed attribute, but remote urls in css are not allowed.
+    it('should find the invalid style attribute', () => {
+      let sourceHTML = "<div style='font-weight: bold'></div>";
+      let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
+      assert.equal(invalidTagsAttributes.length, 0);
+
+      sourceHTML = '<div style=\"background-image: url(\'img_tree.gif\'), url(\'file://local.jpg\'),url(\'paper.gif\'),url(http://google.com), url(\'example_with_url_inside.gif\'),url(\'url(123.png)\')\"></div>'
+      invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
+      assert.equal(invalidTagsAttributes.length, 2);
+      assert.deepEqual(invalidTagsAttributes,
+        [
+          {
+              "tag": "div",
+              "attribute": "style",
+              "cssPropertyValue": "background-image : url('file://local.jpg')"
+          },
+          {
+              "tag": "div",
+              "attribute": "style",
+              "cssPropertyValue": "background-image : url(http://google.com)"
+          }
+        ]);
+  })
 
     it('should pass the basic-example-narrative from fhir website', () => {
       //https://www.hl7.org/fhir/basic-example-narrative.json

@@ -6,6 +6,7 @@ import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
 import * as htmlparser2 from "htmlparser2";
 import copy from "fast-copy";
+import parse from 'style-to-object';
 
 const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
@@ -1052,21 +1053,96 @@ const FormUtils = {
   },
 
 
+  /** Check if URLs in CSS have values that are not allowed by FHIR specs
+   * (Remote URLs are not allowed)
+   * @param {*} cssValue CSS value on the 'style' attribute of a DOM element
+   * @returns A array of URLs that are not allowed.
+   */
+  _hasForbidCssUrl: function(cssValue) {
+    // possible usage of url() in the cssValue
+    // Note: css property name is case-sensitive.
+    //
+    // No url(\'https://example.com/images/myImg.jpg\');
+    // url("https://example.com/images/myImg.jpg");
+    // url(\"https://example.com/images/myImg.jpg\");
+    // url('https://example.com/images/myImg.jpg');
+    // url(https://example.com/images/myImg.jpg);
+    // url("data:image/jpg;base64,iRxVB0…");
+    // url(\"data:image/jpg;base64,iRxVB0…\");
+    // url('data:image/jpg;base64,iRxVB0…');
+    // url(data:image/jpg;base64,iRxVB0…);
+    // url(myImg.jpg);
+    // url(#IDofSVGpath);
+
+    // The following cases are not allowed.
+    // url("https://...");
+    // url(\"https://...");
+    // url('https://...');
+    // url(https://...);
+    // url("http://...");
+    // url(\"http://...");
+    // url('http://...');
+    // url(http://...);
+    // url("file://...");
+    // url(\"file://...");
+    // url('file://...');
+    // url(file://...);
+
+    // sample output:
+    //  css= "url(\"img_tree.gif\"), url('file://local.jpg'),url('paper.gif'),url(http://google.com), url(\"example_with_url_inside.gif\"),url('url(123.png)')"
+    //  [
+    //   "url(\"img_tree.gif\")",
+    //   "url('paper.gif')",
+    //   "url('file://local.jpg')",
+    //   "url(http://google.com)",
+    //   "url(\"example_with_url_inside.gif\")",
+    //   "url('url(123.png)"
+    //  ]
+
+    let forbidURLs = [];
+    const CSS_URL_REGEXP = /url\(\s*["']?(.*?)["']?\s*\)/g;
+    let matched = cssValue.match(CSS_URL_REGEXP)
+
+    const URL_PARAM_REGEXP = /^url\(\s*[\\"']?(http|https|file)\:\/\//
+    if (matched) {
+      for(let i=0; i<matched.length; i++) {
+        let urlString = matched[i];
+        if (urlString.match(URL_PARAM_REGEXP)) {
+          forbidURLs.push(urlString)
+        }
+      }
+    }
+
+    return forbidURLs;
+  },
+
   /**
    * Check and return not allowed tags within the HTML version of the help text.
    * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
    * https://hl7.org/fhir/R4/narrative.html for allowed subset of the HTML tags.
    * @param {*} htmlNarrative
-   * @return [{array}] an array of invalid tags and attibutes
+   * @return [{array}] an array of invalid tags and attributes
    */
   checkForInvalidHtmlTags: function(htmlNarrative) {
     let invalidTagsAttributes=[];
-    let notAllowedTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
+    let forbidTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
     let deprecatedTags = ['applet', 'basefont', 'blink', 'center', 'dir', 'embed', 'font',
         'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'u'];
-    const FORBID_TAGS = notAllowedTags.concat(deprecatedTags);
+    const FORBID_TAGS = forbidTags.concat(deprecatedTags);
     const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i;
     const FORBID_ATTR = [];
+    const CSS_PROPERTIES_WITH_URL = [
+      "background",
+      "background-image",
+      "mask",
+      "mask-image",
+      "list-style",
+      "list-style-image",
+      "border-image",
+      "border-image-source",
+      "content",
+      "cursor"
+    ];
 
     // Tags (not in the FORBID_TAGS list above) that could have a URL value.
     // See https://stackoverflow.com/questions/2725156/complete-list-of-html-tag-attributes-which-have-a-url-value
@@ -1095,6 +1171,7 @@ const FormUtils = {
       "source": "srcset"  //'srcset' has one URL when <source> is included in <picture> and <video> (where multiple <source> tags are used instead).
     }
 
+    let that = this;
     const parser = new htmlparser2.Parser({
       onopentag(name, attributes) {
         // check tags
@@ -1108,18 +1185,18 @@ const FormUtils = {
           if (name.toLocaleLowerCase() === tag) {
             for (const [attr, value] of Object.entries(attributes)) {
               urlAttrs.forEach(urlAttr => {
-                if(attr.toLocaleLowerCase() === urlAttr && !value.match(ALLOWED_URI_REGEXP)) {
+                if(attr === urlAttr && !value.match(ALLOWED_URI_REGEXP)) {
                   invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
                 }
               })
             }
           }
         };
-        // check attributes that chould have multiple URL values
+        // check attributes that could have multiple URL values
         for (const [tag, urlAttr] of Object.entries(TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR)) {
           if (name.toLocaleLowerCase() === tag) {
             for (const [attr, value] of Object.entries(attributes)) {
-              if(attr.toLocaleLowerCase() === urlAttr) {
+              if(attr === urlAttr) {
                 let urlValues = value.split(",");
                 urlValues.forEach(urlValue => {
                   if (!urlValue.trim().match(ALLOWED_URI_REGEXP)) {
@@ -1133,14 +1210,32 @@ const FormUtils = {
         // check attributes (not FORBID_ATTR for now)
         // for (const [attr, value] of Object.entries(attributes)) {
         //   FORBID_ATTR.forEach(forbidAttr => {
-        //     if(attr.toLocaleLowerCase() === forbidAttr) {
+        //     if(attr === forbidAttr) {
         //       invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbidAttr });
         //     }
         //   });
         // }
 
-      }
+        // check "style" attribute for URLs
+        for (const [attr, value] of Object.entries(attributes)) {
+          if(attr === "style") {
+            // parse the CSS string
+            let cssObj = parse(value);
+            for (const [cssProp, cssValue] of Object.entries(cssObj)) {
+              CSS_PROPERTIES_WITH_URL.forEach(styleProp => {
+                if (cssProp.toLocaleLowerCase() === styleProp) {
+                  let forbidURLs = that._hasForbidCssUrl(cssValue);
+                  forbidURLs.map(urlString => {
+                    invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(),
+                      "attribute": "style", "cssPropertyValue": styleProp + " : " + urlString });
 
+                  })
+                }
+              })
+            }
+          }
+        }
+      }
       // Do nothing on onclosetag(name, attributes) {}
     });
 
