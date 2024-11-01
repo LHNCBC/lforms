@@ -1058,7 +1058,7 @@ const FormUtils = {
    * @param {*} cssValue CSS value on the 'style' attribute of a DOM element
    * @returns A array of URLs that are not allowed.
    */
-  _hasForbidCssUrl: function(cssValue) {
+  _hasForbiddenCssUrl: function(cssValue) {
     // possible usage of url() in the cssValue
     // Note: css property name is case-sensitive.
     //
@@ -1099,7 +1099,7 @@ const FormUtils = {
     //   "url('url(123.png)"
     //  ]
 
-    let forbidURLs = [];
+    let forbiddenURLs = [];
     const CSS_URL_REGEXP = /url\(\s*["']?(.*?)["']?\s*\)/g;
     let matched = cssValue.match(CSS_URL_REGEXP)
 
@@ -1108,12 +1108,12 @@ const FormUtils = {
       for(let i=0; i<matched.length; i++) {
         let urlString = matched[i];
         if (urlString.match(URL_PARAM_REGEXP)) {
-          forbidURLs.push(urlString)
+          forbiddenURLs.push(urlString)
         }
       }
     }
 
-    return forbidURLs;
+    return forbiddenURLs;
   },
 
   /**
@@ -1125,12 +1125,12 @@ const FormUtils = {
    */
   checkForInvalidHtmlTags: function(htmlNarrative) {
     let invalidTagsAttributes=[];
-    let forbidTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
+    let forbiddenTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
     let deprecatedTags = ['applet', 'basefont', 'blink', 'center', 'dir', 'embed', 'font',
         'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'u'];
-    const FORBID_TAGS = forbidTags.concat(deprecatedTags);
+    const FORBIDDEN_TAGS = forbiddenTags.concat(deprecatedTags);
     const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i;
-    const FORBID_ATTR = [];
+    const FORBIDDEN_ATTR = [];
     const CSS_PROPERTIES_WITH_URL = [
       "background",
       "background-image",
@@ -1141,10 +1141,12 @@ const FormUtils = {
       "border-image",
       "border-image-source",
       "content",
-      "cursor"
+      "cursor",
+      "src",
+      "offset-path"
     ];
 
-    // Tags (not in the FORBID_TAGS list above) that could have a URL value.
+    // Tags (not in the FORBIDDEN_TAGS list above) that could have a URL value.
     // See https://stackoverflow.com/questions/2725156/complete-list-of-html-tag-attributes-which-have-a-url-value
     // TBD: A full url in 'cite' might not be invalid.
     const TAGS_WITH_URL = {
@@ -1175,7 +1177,7 @@ const FormUtils = {
     const parser = new htmlparser2.Parser({
       onopentag(name, attributes) {
         // check tags
-        FORBID_TAGS.forEach(tag => {
+        FORBIDDEN_TAGS.forEach(tag => {
           if (name.toLocaleLowerCase() === tag) {
             invalidTagsAttributes.push({"tag": tag});
           }
@@ -1207,11 +1209,11 @@ const FormUtils = {
             }
           }
         };
-        // check attributes (not FORBID_ATTR for now)
+        // check attributes (not FORBIDDEN_ATTR for now)
         // for (const [attr, value] of Object.entries(attributes)) {
-        //   FORBID_ATTR.forEach(forbidAttr => {
-        //     if(attr === forbidAttr) {
-        //       invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbidAttr });
+        //   FORBIDDEN_ATTR.forEach(forbiddenAttr => {
+        //     if(attr === forbiddenAttr) {
+        //       invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbiddenAttr });
         //     }
         //   });
         // }
@@ -1224,8 +1226,8 @@ const FormUtils = {
             for (const [cssProp, cssValue] of Object.entries(cssObj)) {
               CSS_PROPERTIES_WITH_URL.forEach(styleProp => {
                 if (cssProp.toLocaleLowerCase() === styleProp) {
-                  let forbidURLs = that._hasForbidCssUrl(cssValue);
-                  forbidURLs.map(urlString => {
+                  let forbiddenURLs = that._hasForbiddenCssUrl(cssValue);
+                  forbiddenURLs.forEach(urlString => {
                     invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(),
                       "attribute": "style", "cssPropertyValue": styleProp + " : " + urlString });
 

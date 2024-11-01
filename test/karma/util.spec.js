@@ -798,7 +798,7 @@ describe('Util library', function() {
       let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
       assert.equal(invalidTagsAttributes.length, 0);
 
-      sourceHTML = '<div style=\"background-image: url(\'img_tree.gif\'), url(\'file://local.jpg\'),url(\'paper.gif\'),url(http://google.com), url(\'example_with_url_inside.gif\'),url(\'url(123.png)\')\"></div>'
+      sourceHTML = '<div style=\"background-image: url(\'img_tree.gif\'), url(\'#localId\'),url(\'data:image\/png\;base64/somefageimagedata\'), url(\'file://local.jpg\'),url(\'paper.gif\'),url(http://google.com), url(\'example_with_url_inside.gif\'),url(\'url(123.png)\')\"></div>'
       invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
       assert.equal(invalidTagsAttributes.length, 2);
       assert.deepEqual(invalidTagsAttributes,
@@ -814,6 +814,49 @@ describe('Util library', function() {
               "cssPropertyValue": "background-image : url(http://google.com)"
           }
         ]);
+
+      // check the sample data of urls
+      // on https://developer.mozilla.org/en-US/docs/Web/CSS/url_function
+      let srcHTMLs = [
+        /* Simple usage */
+        'url("https://example.com/images/myImg.jpg")',
+        "url('https://example.com/images/myImg.jpg')",
+        'url(https://example.com/images/myImg.jpg)',
+        'url("data:image/jpg;base64,iRxVB0…")',
+        'url(myImg.jpg)',
+        'url(#IDofSVGpath)',
+
+        /* associated properties */
+        'background-image: url("star.gif")',
+        "list-style-image: url('../images/bullet.jpg')",
+        'content: url("my-icon.jpg")',
+        'cursor: url(my-cursor.cur)',
+        'border-image-source: url(/media/diamonds.png)',
+        "src: url('fantastic-font.woff')",
+        'offset-path: url(#path)',
+        'mask-image: url("masks.svg#mask1")',
+
+        /* Properties with fallbacks */
+        'cursor: url(pointer.cur), pointer',
+
+        /* Associated short-hand properties */
+        "background: url('star.gif') bottom right repeat-x blue",
+        'border-image: url("/media/diamonds.png") 30 fill / 30px / 30px space',
+
+        /* As a parameter in another CSS function */
+        'background-image: cross-fade(20% url(first.png), url(second.png))',
+        'mask-image: image(url(mask.png), skyblue, linear-gradient(rgb(0 0 0 / 100%), transparent))',
+
+        /* as part of a non-shorthand multiple value */
+        'content: url(star.svg) url(star.svg) url(star.svg) url(star.svg) url(star.svg)'
+
+      ];
+
+      srcHTMLs.forEach(srcHTML => {
+        let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(srcHTML);
+        assert.equal(invalidTagsAttributes.length, 0);
+      })
+
   })
 
     it('should pass the basic-example-narrative from fhir website', () => {
