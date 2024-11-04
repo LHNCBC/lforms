@@ -231,7 +231,7 @@ function addSDCImportFns(ns) {
         answerCardinality.min = "0";
       }
     }
-    // no answerOptiopn, question repeats
+    // no answerOption, question repeats
     else {
       // repeats
       if (repeats) {
