@@ -1,0 +1,185 @@
+{
+  "status": "draft",
+  "title": "New Form",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/5.0/StructureDefinition/Questionnaire"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 36.6.0"
+      }
+    ]
+  },
+  "item": [
+    {
+      "type": "coding",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        }
+      ],
+      "repeats": true,
+      "linkId": "inputList",
+      "text": "Input",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "b",
+            "display": "blue"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "g",
+            "display": "green",
+            "system": "colors"
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "singleSelectOutput",
+      "text": "Single-select output",
+      "item": [
+        {
+          "type": "coding",
+          "answerConstraint": "optionsOrString",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+                "description": "initial integer value",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='inputList').answer.value[0]"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "calculatedAnswer",
+          "text": "Calculated answer"
+        },
+        {
+          "type": "coding",
+          "answerConstraint": "optionsOrString",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+              "valueExpression": {
+                "description": "initial integer value",
+                "language": "text/fhirpath",
+                "expression": "%resource.repeat(item).where(linkId='calculatedAnswer').answer.value"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "calculatedListOption",
+          "text": "Calculated list option"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "multiSelectOutput",
+      "text": "Multi-select output",
+      "item": [
+        {
+          "type": "coding",
+          "answerConstraint": "optionsOrString",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+                "description": "initial integer value",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='inputList').answer.value"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "repeats": true,
+          "linkId": "calculatedAnswers",
+          "text": "Calculated answers"
+        },
+        {
+          "type": "coding",
+          "answerConstraint": "optionsOrString",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+              "valueExpression": {
+                "description": "initial integer value",
+                "language": "text/fhirpath",
+                "expression": "%resource.repeat(item).where(linkId='calculatedAnswers').answer.value"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "repeats": true,
+          "linkId": "calculatedListOptions",
+          "text": "Calculated list options"
+        }
+      ]
+    }
+  ]
+}
