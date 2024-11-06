@@ -11,8 +11,11 @@ export class LhcGroupMatrixComponent {
 
   @Input() item;
   @Input() formLevel: boolean = false;
-  
+
   isCheckbox: boolean = false;
+  _autocompOptions = {
+    listItems: []
+  };
 
   constructor(
     public lhcDataService: LhcDataService) {
@@ -25,6 +28,13 @@ export class LhcGroupMatrixComponent {
   ngOnChanges(changes) {
     // reset initial status
     this.setInitialValue();
+    // Set answerOption list items which have _displayText.
+    const lhcFormData = this.lhcDataService.getLhcFormData();
+    if (lhcFormData && this.item.items[0]) {
+      const resp =
+        lhcFormData._getAnswerDisplayTextWithLabelAndScore(lhcFormData.templateOptions.displayScoreWithAnswerText, this.item.items[0]);
+      this._autocompOptions.listItems = resp[0];
+    }
   }
 
 
@@ -34,7 +44,7 @@ export class LhcGroupMatrixComponent {
    * @param item a form item that has an answer list and supports multiple selections
    */
   updateCheckboxListValue(item): void {
-    
+
     let newValues = [];
     for (let i=0, iLen= item._checkboxModels.length; i<iLen; i++) {
       if (item._checkboxModels[i]) {
@@ -88,7 +98,7 @@ export class LhcGroupMatrixComponent {
    * Set initial status for each row in the matrix
    */
   setInitialValue(): void {
-    
+
     this.isCheckbox = this.item.items[0]?._multipleAnswers;
 
     this.item.items.forEach((subItem) => {
@@ -97,11 +107,11 @@ export class LhcGroupMatrixComponent {
       }
       else {
         this.setRadioInitialValue(subItem);
-      }  
+      }
     });
   }
 
-  
+
   /**
    * Set the initial status of radio bottons for answers of a sub item
    * @param subItem a sub item of the group item that has the matrix layout
@@ -133,7 +143,7 @@ export class LhcGroupMatrixComponent {
    */
   _getCheckboxModels(initialValues, answers): boolean[] {
     let checkboxModels = new Array(answers.length).fill(false);
-  
+
     for (let i=0, iLen=initialValues.length; i<iLen; i++) {
       for (let j=0, jLen=answers.length; j<jLen; j++) {
         if (deepEqual(initialValues[i], answers[j])) {
@@ -167,7 +177,7 @@ export class LhcGroupMatrixComponent {
               checkboxModels[j]=true;
               break;
             }
-          }  
+          }
         }
       }
       subItem._checkboxModels = checkboxModels;

@@ -200,6 +200,113 @@ describe('rendering-xhtml', () => {
       cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; bold <b class=\"testBold\">C</b><img class=\"testImage\" src=\"/test/data/a-picture.png\">");
     });
 
+    describe('matrix layout', () => {
+      it('should display plain text', () => {
+        tp.loadFromTestData('answerOption-html-matrix-layout.json', 'R4');
+        cy.byId('item-/matrixTable0/1')
+          .find('th.lhc-form-matrix-cell')
+          .as('tableHeaders');
+        cy.get('@tableHeaders')
+          .should('have.length', 3);
+        cy.get('@tableHeaders')
+          .eq(0)
+          .should('have.text', 'Answer 1');
+        cy.get('@tableHeaders')
+          .eq(1)
+          .should('have.text', 'Answer 2');
+        cy.get('@tableHeaders')
+          .eq(2)
+          .should('have.text', 'Answer 3');
+        // HTML options should display text when HTML is not allowed.
+        cy.byId('item-/matrixTable1/1')
+          .find('th.lhc-form-matrix-cell')
+          .as('tableHeaders');
+        cy.get('@tableHeaders')
+          .should('have.length', 3);
+        cy.get('@tableHeaders')
+          .eq(0)
+          .should('have.text', 'Answer 1');
+        cy.get('@tableHeaders')
+          .eq(1)
+          .should('have.text', 'Answer 2');
+        cy.get('@tableHeaders')
+          .eq(2)
+          .should('have.text', 'Answer 3');
+        // Invalid HTML options should display text when HTML is not allowed.
+        cy.byId('item-/matrixTable2/1')
+          .find('th.lhc-form-matrix-cell')
+          .as('tableHeaders');
+        cy.get('@tableHeaders')
+          .should('have.length', 3);
+        cy.get('@tableHeaders')
+          .eq(0)
+          .should('have.text', 'Answer 1');
+        cy.get('@tableHeaders')
+          .eq(1)
+          .should('have.text', 'Answer 2');
+        cy.get('@tableHeaders')
+          .eq(2)
+          .should('have.text', 'Answer 3');
+      });
+
+      it('should display HTML', () => {
+        cy.get('#allowHTML').click();
+        tp.loadFromTestData('answerOption-html-matrix-layout.json', 'R4');
+        cy.byId('item-/matrixTable1/1')
+          .find('th.lhc-form-matrix-cell')
+          .as('tableHeaders');
+        cy.get('@tableHeaders')
+          .should('have.length', 3);
+        cy.get('@tableHeaders')
+          .eq(0)
+          .find('button')
+          .should('exist');
+        cy.get('@tableHeaders')
+          .eq(1)
+          .find('button')
+          .should('exist');
+        cy.get('@tableHeaders')
+          .eq(2)
+          .find('button')
+          .should('exist');
+        // Invalid HTML options should display text when invalid HTML is not displayed.
+        cy.byId('item-/matrixTable2/1')
+          .find('th.lhc-form-matrix-cell')
+          .as('tableHeaders');
+        cy.get('@tableHeaders')
+          .should('have.length', 3);
+        cy.get('@tableHeaders')
+          .eq(0)
+          .should('have.text', 'Answer 1');
+        cy.get('@tableHeaders')
+          .eq(1)
+          .should('have.text', 'Answer 2');
+        cy.get('@tableHeaders')
+          .eq(2)
+          .should('have.text', 'Answer 3');
+      });
+
+      it('should display escaped HTML', () => {
+        cy.get('#allowHTML').click();
+        cy.get('#displayInvalidHTML').click();
+        tp.loadFromTestData('answerOption-html-matrix-layout.json', 'R4');
+        cy.byId('item-/matrixTable2/1')
+          .find('th.lhc-form-matrix-cell')
+          .as('tableHeaders');
+        cy.get('@tableHeaders')
+          .should('have.length', 3);
+        cy.get('@tableHeaders')
+          .eq(0)
+          .should('have.text', 'Answer <script>button</script> 1');
+        cy.get('@tableHeaders')
+          .eq(1)
+          .should('have.text', 'Answer <script>button</script> 2');
+        cy.get('@tableHeaders')
+          .eq(2)
+          .should('have.text', 'Answer <script>button</script> 3');
+      });
+    });
+
   });
 });
 
