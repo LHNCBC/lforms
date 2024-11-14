@@ -1,7 +1,4 @@
 {
-  "status": "draft",
-  "title": "New Form",
-  "resourceType": "Questionnaire",
   "meta": {
     "profile": [
       "http://hl7.org/fhir/5.0/StructureDefinition/Questionnaire"
@@ -12,6 +9,9 @@
       }
     ]
   },
+  "status": "draft",
+  "title": "New Form",
+  "resourceType": "Questionnaire",
   "item": [
     {
       "type": "coding",
