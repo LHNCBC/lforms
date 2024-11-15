@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.6.1] 2024-11-15
+### Added
+- Added tests for FHIRPath expressions to work with "coding" items in R5.
+
 ## [36.6.0] 2024-10-22
 ### Added
 - Added support of disabledDisplay in R5 Questionnaire.
