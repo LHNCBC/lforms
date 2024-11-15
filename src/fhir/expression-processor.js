@@ -207,6 +207,18 @@ import replaceAsync from 'string-replace-async';
     },
 
 
+    /**
+     * Ensures that an item's FHIR variable with the specified name exists even
+     * if its value is undefined. We need to define variables to avoid errors
+     * when evaluating FHIRPath expressions.
+     * @param item the item on which the variable should be defined
+     * @param varName the name of the variable
+     */
+    _ensureItemVariable: function (item, varName) {
+      const itemVars = this._getItemVariables(item);
+      itemVars[varName] = itemVars[varName];
+    },
+
 
     /**
      *  Evaluates the expressions for a given item.
@@ -320,6 +332,10 @@ import replaceAsync from 'string-replace-async';
               ext.valueExpression.expression);
 
             if (newVal instanceof Promise) {
+              if (varName) {
+                this._ensureItemVariable(item, varName);
+              }
+
               this._pendingQueries.push(newVal.then((nv) => {
                 // Update the item with the fetched value, and
                 // update the variable if there was a name defined.
@@ -348,6 +364,10 @@ import replaceAsync from 'string-replace-async';
             }
           }
           else if (ext.valueExpression.language === 'application/x-fhir-query') {
+            if (varName) {
+              this._ensureItemVariable(item, varName);
+            }
+
             // The expression might have embedded FHIRPath in the URI, inside {{...}}
             // Use "undefinedExprVal" to keep track of whether one of
             // the embedded FHIRPath expressions returns undefined (or

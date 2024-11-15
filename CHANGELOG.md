@@ -2,9 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.6.1] 2024-11-15
+## [36.6.2] 2024-11-15
 ### Added
 - Added tests for FHIRPath expressions to work with "coding" items in R5.
+
+## [36.6.1] 2024-10-24
+### Fixed
+- Errors with attempting to access undefined environment variables when
+  evaluating FHIRPath expressions where the variables are evaluated
+  asynchronously.
 
 ## [36.6.0] 2024-10-22
 ### Added
