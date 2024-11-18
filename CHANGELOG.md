@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.6.2] 2024-11-18
+### Changed
+- Upgraded to nodejs version 22.
+
 ## [36.6.1] 2024-10-24
 ### Fixed
 - Errors with attempting to access undefined environment variables when
