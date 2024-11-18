@@ -981,12 +981,14 @@ export default class LhcFormData {
                 item._displayTextHTML.match(/src/)) {
               // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
               // strings in _getHtmlStringWithContainedImages() for repeated questions.
-              if (this._containedImageHtmlMap.has(item._displayTextHTML)) {
-                item._displayTextHTML = this._containedImageHtmlMap.get(item._displayTextHTML);
+              // Uses item._displayTextHTMLOriginal to avoid duplicate processing if setTemplateOptions()
+              // is run a second time.
+              if (this._containedImageHtmlMap.has(item._displayTextHTMLOriginal)) {
+                item._displayTextHTML = this._containedImageHtmlMap.get(item._displayTextHTMLOriginal);
               } else {
-                const mapKey = item._displayTextHTML;
-                item._displayTextHTML = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTML);
-                this._containedImageHtmlMap.set(mapKey, item._displayTextHTML);
+                item._displayTextHTMLOriginal = item._displayTextHTML;
+                item._displayTextHTML = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTMLOriginal);
+                this._containedImageHtmlMap.set(item._displayTextHTMLOriginal, item._displayTextHTML);
               }
             }
             let errors, messages;
