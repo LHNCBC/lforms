@@ -272,6 +272,10 @@ var self = {
           item.dataType === "DT" || item.dataType === "TM") {
         var valueKey = this._getValueKeyByDataType("value", item);
         option[valueKey] = answer.text;
+        // Restore rendering-xhtml extension on _valueString
+        if (valueKey === 'valueString' && answer.obj_valueString) {
+          option._valueString = answer.obj_valueString;
+        }
       }
 
       // label

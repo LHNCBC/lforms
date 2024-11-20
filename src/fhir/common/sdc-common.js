@@ -243,23 +243,23 @@ function addCommonSDCFns(ns) {
 
   /**
    * Process image data from the "contained" in FHIR questionnaire
-   * @param lfData - LForms object to assign the extracted fields
+   * @param contained - the 'contained' property of an LForms or Questionnaire object to assign the extracted fields
    * @return images - a hash map where the keys are the id of image binary resources,
    *                  and the values are the image data.
    */
-  self.buildContainedImageMap = function(lfData) {
-    
+  self.buildContainedImageMap = function(contained) {
+
     let images = {}, hasImage;
-    if (lfData.contained && Array.isArray(lfData.contained)) {
-      const validImageMimeTypes = ["image/bmp", "image/jpeg", "image/x-png", 
+    if (contained && Array.isArray(contained)) {
+      const validImageMimeTypes = ["image/bmp", "image/jpeg", "image/x-png",
         "image/png", "image/gif"];
 
-      lfData.contained.forEach(resource => {
+      contained.forEach(resource => {
         if (resource.resourceType === "Binary" &&
             resource.id &&
             validImageMimeTypes.includes(resource.contentType)) {
-          images[resource.id] = "data:" + resource.contentType + ";base64," + resource.data;       
-          hasImage = true;       
+          images[resource.id] = "data:" + resource.contentType + ";base64," + resource.data;
+          hasImage = true;
         }
       })
     }
