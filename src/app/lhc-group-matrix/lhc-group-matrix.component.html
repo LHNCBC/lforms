@@ -39,6 +39,7 @@
               <label *ngIf="isCheckbox">
                 <input
                   type="checkbox"
+                  [disabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
                   [(ngModel)]="subItem._checkboxModels[i]"
@@ -48,6 +49,7 @@
               <label *ngIf="!isCheckbox">
                 <input
                   type="radio"
+                  [disabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
                   [ngModel]="subItem.value"
@@ -64,6 +66,7 @@
               <label>
                 <input
                   type="checkbox"
+                  [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_other'}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
@@ -72,6 +75,7 @@
               <label>
                 <input
                   type="text"
+                  [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_otherValue'}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOther"
@@ -83,6 +87,7 @@
               <label>
                 <input
                   type="radio"
+                  [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_other'}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
@@ -92,6 +97,7 @@
               <label>
                 <input
                   type="text"
+                  [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_otherValue'}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOther"

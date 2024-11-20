@@ -82,16 +82,19 @@
         <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
         <input type="file" id="convZipFileAnchor" onchange="loadConvertAndSaveZippedForms(event)" class="hide" />
         <button id="convBtn" type="button" class="btn btn-success" onclick="document.querySelector('#convZipFileAnchor').click()">Convert Between LHC-Forms/FHIR (zip file)</button>
-        <div id="tempOptionList">
-          <div>LHC-Forms options (for uploaded files through the "Load From File" button)</div>
-          <div>
-            <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" /> allowHTML</label></span>
-            <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
-            <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
+        <div style="border: 1px solid black; padding: 1em" id="loadFromFileSection">
+          <div id="tempOptionList">
+            <div>LHC-Forms options (for uploaded files through the "Load Form From File" button)</div>
+            <div>
+              <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" /> allowHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
+            </div>
           </div>
+          <div style="margin: 8px">QuestionnaireResponse for the Questionnaire selected below: <input type="file" id="qrFile"/></div>
+          <button id="loadBtn" type="button" class="btn btn-success"
+          onclick="document.querySelector('#fileAnchor').click()">Load Form From File</button>
         </div>
-        <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load
-          From File</button>
 
         <div id="formConvStarted" style="display:none; margin:100px; font-size:150%; color:darkred">
           Converting your forms... this may take a while.
@@ -397,15 +400,31 @@
       function loadFile(event) {
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
+        var qrFileField = document.querySelector('#qrFile');
         var questionnaire;
         var allowHTML = document.querySelector('#allowHTML').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+        var questionnaire, qr;
 
         reader.onload = function() {
-          var questionnaire = JSON.parse(reader.result);
+          questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
+          if (qrFileField.value) {
+            var qrReader = new FileReader();
+            qrReader.onload = function() {
+              qr = JSON.parse(qrReader.result);
+              setWebCompOptions();
+            }
+            qrReader.readAsText(qrFileField.files[0]);
+            qrFileField.value = '';
+          }
+          else
+            setWebCompOptions();
+        }
+
+        function setWebCompOptions() {
           testForm.questionnaire = questionnaire;
           testForm.fhirVersion = getFHIRVersion()
           // The prepopulateFHIR variable below is a hack for the test code to signal
@@ -424,6 +443,9 @@
           }
           if (showCodingInstruction) {
             options["showCodingInstruction"] = true;
+          }
+          if (qr) {
+            options.questionnaireResponse = qr;
           }
 
           testForm.options = options

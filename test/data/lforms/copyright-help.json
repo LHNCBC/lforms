@@ -4,7 +4,7 @@
   "name": "copyright and help messages in horizontal tables and matrix layouts",
   "copyrightNotice": "A Copyright notice of the form",
   "templateOptions": {
-    "allowHTML": true
+    "allowHTMLInInstructions": true
   },
   "items": [
     {

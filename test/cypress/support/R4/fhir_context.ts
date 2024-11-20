@@ -29,7 +29,7 @@ const fhirMock = {
 
       request: function(relativeURL) {
         let rtnData, md;
-        relativeURL = decodeURIComponent(relativeURL);
+        relativeURL = decodeURIComponent(relativeURL.url ? relativeURL.url : relativeURL);
         if (relativeURL.startsWith('ValueSet')) {
           // id
           if (md = relativeURL.match(/ValueSet\/([^/]+)\/\$expand/)) {
