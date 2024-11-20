@@ -87,8 +87,8 @@ about the meaning of each key:
       The default is false;
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
-    * allowHTML - a boolean that controls whether to allow HTML content in item.text
-      and the codingInstructions field.
+    * allowHTML - a boolean that controls whether to allow HTML content in question
+      text and the codingInstructions field.
       See https://hl7.org/fhir/extensions/StructureDefinition-rendering-xhtml.html.
       The default is false. If it is false,
       the **codingInstructionsFormat** field on item level is ignored, and no HTML

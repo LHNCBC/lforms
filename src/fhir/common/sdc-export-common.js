@@ -181,6 +181,11 @@ function addCommonSDCExportFns(ns) {
     // data control
     this._handleDataControl(targetItem, item);
 
+    // disabledDisplay
+    if (this._handleDisabledDisplay) {
+      this._handleDisabledDisplay(targetItem, item)
+    }
+
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {

@@ -1,10 +1,10 @@
 import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
+const po = new AddFormToPageTestPage();
 // The project root directory is the root for the cypress server
 describe('calculatedExpression and hasSavedData=true/false tests', () => {
   const intFieldId = '/type-integer/1',
         strFieldId = '/type-string/1';
-  const po = new AddFormToPageTestPage();
   let qr;
 
   it('should show disabled inputs', function() {
@@ -83,3 +83,35 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
 
 
 });
+
+describe('Questionnaire with readOnly and repeats items', () =>{
+  it('should show disabled "+" button', function() {
+    po.openPage();
+    util.addFormToPage('q-with-readonly-repeating-items.json', null, {fhirVersion: 'R4'});
+    cy.byId('add-q1/1').should('be.visible').should('be.disabled');
+    cy.byId('add-g1q1/1/1').should('be.visible').should('be.disabled')
+
+    cy.readFile('test/data/R4/qr-with-readonly-repeating-items.json').then((qr) => {
+      cy.window().then((win) => {
+        let q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
+        let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
+        let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
+
+        win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
+
+        cy.byId('add-q1/2').should('be.visible').should('be.disabled');
+        cy.byId('del-q1/1').should('be.visible').should('be.disabled');
+        cy.byId('q1/1').should('be.visible').should('be.disabled').should('have.value', 'aaa');
+        cy.byId('del-q1/2').should('be.visible').should('be.disabled');
+        cy.byId('q1/2').should('be.visible').should('be.disabled').should('have.value', 'bbb');
+
+        cy.byId('add-g1q1/1/2').should('be.visible').should('be.disabled');
+        cy.byId('del-g1q1/1/1').should('be.visible').should('be.disabled');
+        cy.byId('g1q1/1/1').should('be.visible').should('be.disabled').should('have.value', 'ccc');
+        cy.byId('del-g1q1/1/2').should('be.visible').should('be.disabled');
+        cy.byId('g1q1/1/2').should('be.visible').should('be.disabled').should('have.value', 'ddd');
+
+      });
+    });
+  })
+})
