@@ -815,6 +815,38 @@ describe('Util library', function() {
           }
         ]);
 
+      // check all possible style properties that could have a url 
+      const CSS_PROPERTIES_WITH_URL = [
+        "background",
+        "background-image",
+        "border",
+        "border-image",
+        "border-image-source",
+        "content",
+        "cursor",
+        "filter",
+        "list-style",
+        "list-style-image",
+        "mask",
+        "mask-image",
+        "offset-path",
+        "clip-path"
+      ];
+      CSS_PROPERTIES_WITH_URL.forEach(prop => {
+        let sourceHTML = `<div style='${prop}: url(https://a_url)'>A tag</div>`;
+        console.log(sourceHTML)
+        let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(sourceHTML);
+        console.log(invalidTagsAttributes[0])
+        assert.deepEqual(invalidTagsAttributes,
+          [
+            {
+              "tag": "div",
+              "attribute": "style",
+              "cssPropertyValue": `${prop} : url(https://a_url)`
+            }
+          ]);
+      })
+
       // check the sample data of urls
       // on https://developer.mozilla.org/en-US/docs/Web/CSS/url_function
       let srcHTMLs = [

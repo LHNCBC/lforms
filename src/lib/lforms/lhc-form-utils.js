@@ -1062,7 +1062,7 @@ const FormUtils = {
     // possible usage of url() in the cssValue
     // Note: css property name is case-sensitive.
     //
-    // No url(\'https://example.com/images/myImg.jpg\');
+    // //No url(\'https://example.com/images/myImg.jpg\');
     // url("https://example.com/images/myImg.jpg");
     // url(\"https://example.com/images/myImg.jpg\");
     // url('https://example.com/images/myImg.jpg');
@@ -1074,7 +1074,8 @@ const FormUtils = {
     // url(myImg.jpg);
     // url(#IDofSVGpath);
 
-    // The following cases are not allowed.
+    // Any external URLs are not allowed, including http, https, file
+    // or other protocols.
     // url("https://...");
     // url(\"https://...");
     // url('https://...');
@@ -1103,7 +1104,7 @@ const FormUtils = {
     const CSS_URL_REGEXP = /url\(\s*["']?(.*?)["']?\s*\)/g;
     let matched = cssValue.match(CSS_URL_REGEXP)
 
-    const URL_PARAM_REGEXP = /^url\(\s*[\\"']?(http|https|file)\:\/\//
+    const URL_PARAM_REGEXP = /^url\(\s*[\\"']?[A-Za-z0-9]*\:\/\//
     if (matched) {
       for(let i=0; i<matched.length; i++) {
         let urlString = matched[i];
@@ -1131,19 +1132,22 @@ const FormUtils = {
     const FORBIDDEN_TAGS = forbiddenTags.concat(deprecatedTags);
     const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i;
     const FORBIDDEN_ATTR = [];
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/url_function
     const CSS_PROPERTIES_WITH_URL = [
       "background",
       "background-image",
-      "mask",
-      "mask-image",
-      "list-style",
-      "list-style-image",
+      "border",
       "border-image",
       "border-image-source",
       "content",
       "cursor",
-      "src",
-      "offset-path"
+      "filter",
+      "list-style",
+      "list-style-image",
+      "mask",
+      "mask-image",
+      "offset-path",
+      "clip-path"
     ];
 
     // Tags (not in the FORBIDDEN_TAGS list above) that could have a URL value.
