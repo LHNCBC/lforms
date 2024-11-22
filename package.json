@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "36.7.0",
+  "version": "36.7.1",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -62,7 +62,7 @@
     "autocomplete-lhc": "^19.3.1",
     "deep-equal": "^2.2.3",
     "fast-copy": "^3.0.1",
-    "fhirpath": "^3.15.1",
+    "fhirpath": "git+ssh://git@lhc-git.nlm.nih.gov:lfor/fhirpath.js.git#c4a0602af4f442308afc1aac701585f658b426f8",
     "htmlparser2": "^9.1.0",
     "jquery": "^3.7.1",
     "moment": "2.29.4",

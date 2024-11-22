@@ -238,7 +238,7 @@ var self = {
         targetItem.option = this._handleAnswers(item);
     }
     else if (item.answerValueSet)
-      targetItem.options = item.answerValueSet;
+      targetItem.options = {reference: item.answerValueSet};
   },
 
 

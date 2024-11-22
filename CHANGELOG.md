@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.7.1] 2024-11-21
+### Fixed
+- Updated fhirpath.js to version <TBD> to update the `weight()` function and
+  added unit tests for this function.
+- Fixed converting R5 FHIR Questionnaire to LForms form definition.
+- Fixed converting LForms form definition to standard STU3 FHIR Questionnaire.
+- Fixed model for R5.
+
 ## [36.7.0] 2024-11-20
 ### Added
 - Support for rendering-xhtml on answerOption.

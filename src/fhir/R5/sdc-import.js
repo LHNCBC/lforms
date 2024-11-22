@@ -200,6 +200,40 @@ function addR5ImportFns(ns) {
     }
     return answer;
   };
+
+  /**
+   * Converts the given ValueSet into an array of answers that can be used with
+   * a prefetch autocompleter.
+   * @return the array of answers, or null if the extraction cannot be done.
+   */
+  self.answersFromVS = function (valueSet) {
+    var vs = valueSet;
+    var rtn = [];
+    if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
+      vs.expansion.contains.forEach(function (vsItem) {
+        var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
+        // In R5, the "property" (ValueSet.expansion.contains.property) was
+        // added so that if you do an expansion, you can request properties from
+        // the CodeSystem at the same time (without having to do a CodeSytem
+        // $lookup as in R4)
+        const ordProp = LForms.Util.findObjectInArray(vsItem.property, 'code', 'itemWeight');
+        if(ordProp) {
+          answer.score = parseFloat(ordProp.valueDecimal);
+        } else {
+          // Still, someone could provide us with an R5 ValueSet.expansion that
+          // put score extensions on the contained Codings
+          const ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+            self.fhirExtUrlValueSetScore);
+          if(ordExt) {
+            answer.score = parseFloat(ordExt.valueDecimal);
+          }
+        }
+        rtn.push(answer);
+      });
+    }
+    return rtn.length > 0 ? rtn : null;
+  };
+
 }
 
 export default addR5ImportFns;

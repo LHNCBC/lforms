@@ -1,0 +1,52 @@
+{
+  "resourceType": "Questionnaire",
+  "extension": [
+     {
+       "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+       "valueUrl": "'https://lforms-fhir.nlm.nih.gov/baseR4"
+     }
+  ],
+  "item": [
+    {
+      "linkId": "link-1",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "link-1.1",
+          "type": "group",
+          "item": [{
+            "linkId": "link-1.1.1",
+            "type": "choice",
+            "answerValueSet": "some-value-set-1"
+          }, {
+            "linkId": "link-1.1.2",
+            "type": "choice",
+            "answerValueSet": "some-value-set-1"
+          }, {
+            "type": "decimal",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+                "valueExpression": {
+                  "description": "Total score calculation",
+                  "language": "text/fhirpath",
+                  "expression": "%resource.repeat(item).answer.weight().sum()"
+                }
+              }
+            ],
+            "required": false,
+            "linkId": "link-1.1.3",
+            "code": [
+              {
+                "system": "totalScoreSystem",
+                "code": "totalScoreCode",
+                "display": "Total score"
+              }
+            ],
+            "text": "Total score"
+          }]
+        }
+      ]
+    }
+  ]
+}

@@ -595,4 +595,115 @@ describe('ExpressionProcessor', function () {
     });
   });
 
+
+  ['STU3', 'R4', 'R5'].forEach(modelName => {
+    describe(`weight() for ${modelName} questionnaire`, function() {
+      let testQ, testVS;
+
+      describe('with contained ValueSet', function () {
+        before(function(done) {
+          const filename = `test/data/${modelName}/calc-weight/q-with-contained-valueset.json`;
+          LForms.jQuery.get(filename, function (parsedJson) {
+            testQ = parsedJson;
+            done();
+          }).fail(function(e) {
+            console.error(e);
+          });
+        });
+
+        it('should work correctly', function() {
+          let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+            testQ, modelName);
+          const testLFData = new LForms.LFormsData(lformsDef);
+          testLFData.itemList[2].value = {
+            "code": "some-code-1",
+            "system": "some-system-1"
+          };
+          testLFData.itemList[3].value = {
+            "code": "some-code-2",
+            "system": "some-system-2"
+          };
+          assert.equal(testLFData.itemList[4].value, undefined);
+          return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+            assert.equal(testLFData.itemList[4].value, 21);
+          });
+        });
+      });
+
+      describe('with a value set retrieved from the terminology server', function () {
+        before(function (done) {
+          const filenameQ = `test/data/${modelName}/calc-weight/q-with-a-value-set-from-the-terminology-server.json`;
+          const filenameVS = `test/data/${modelName}/calc-weight/some-value-set-1.json`;
+          LForms.jQuery.when(
+            LForms.jQuery.get(filenameQ, function (parsedJson) {
+              testQ = parsedJson;
+            }),
+            LForms.jQuery.get(filenameVS, function (parsedJson) {
+              testVS = parsedJson;
+            }))
+            .fail(function (e) {
+              console.error(e);
+            })
+            .done(function () {
+              done();
+            });
+        });
+
+        it('should work correctly', function () {
+          mockFetchResults([
+            ['ValueSet/$expand?url=some-value-set-1', testVS]
+          ]);
+          let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+            testQ, modelName);
+          const testLFData = new LForms.LFormsData(lformsDef);
+          testLFData.itemList[2].value = {
+            "code": "some-code-1",
+            "system": "some-system-1"
+          };
+          testLFData.itemList[3].value = {
+            "code": "some-code-2",
+            "system": "some-system-2"
+          };
+          assert.equal(testLFData.itemList[4].value, undefined);
+          return testLFData._expressionProcessor.runCalculations(true).then(() => {
+            assert.equal(testLFData.itemList[4].value, 21);
+          });
+        });
+      });
+
+      if (modelName === 'R4') {
+        describe('phq-9 with weight function', function () {
+          before(function(done) {
+            const filename = `test/data/R4/calc-weight/phq9-with-the-weight-function.json`;
+            LForms.jQuery.get(filename, function (parsedJson) {
+              testQ = parsedJson;
+              done();
+            }).fail(function(e) {
+              console.error(e);
+            });
+          });
+
+          it('should work correctly', function() {
+            let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+              testQ, modelName);
+            const testLFData = new LForms.LFormsData(lformsDef);
+            testLFData.itemList.forEach(item => {
+              if (item.answers) {
+                item.value = {
+                  code: item.answers[1].code,
+                  system: item.answers[1].system
+                };
+              }
+            });
+            assert.equal(testLFData.itemList[9].value, undefined);
+            return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+              assert.equal(testLFData.itemList[9].value, 9);
+            });
+          });
+        });
+      }
+
+    });
+  });
+
 });
