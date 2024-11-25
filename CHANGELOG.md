@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.7.0] 2024-11-20
+### Added
+- Support for rendering-xhtml on answerOption.
+
 ## [36.6.1] 2024-10-24
 ### Fixed
 - Errors with attempting to access undefined environment variables when

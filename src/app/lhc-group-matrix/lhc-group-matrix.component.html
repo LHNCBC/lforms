@@ -14,7 +14,13 @@
         <th class="lhc-question"></th>
         <th *ngFor="let answer of item.items[0].answers; index as i;"
             class="lhc-form-matrix-cell"
-            id="answer-{{index}}">{{answer.text}}</th>
+            id="answer-{{index}}">
+          <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
+            <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
+            <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
+            <ng-container *ngSwitchCase="'plain'">{{answer.text}}</ng-container>
+          </ng-container>
+        </th>
         <th class="lhc-form-matrix-cell-other" *ngIf="item.items[0].answerConstraint === 'optionsOrString'"
          id="otherAnswer">Other</th>
       </tr>
