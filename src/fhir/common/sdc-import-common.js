@@ -1194,7 +1194,7 @@ function addCommonSDCImportFns(ns) {
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
           self.fhirExtUrlValueSetScore);
         if(ordExt) {
-          answer.score = parseFloat(ordExt.valueDecimal);
+          answer.score = ordExt.valueDecimal;
         }
         rtn.push(answer);
       });

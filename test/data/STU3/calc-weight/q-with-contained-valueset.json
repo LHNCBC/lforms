@@ -9,6 +9,7 @@
         "contains": [{
           "code": "some-code-1",
           "system": "some-system-1",
+          "display": "some-display-1-1",
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
@@ -18,16 +19,17 @@
         }, {
           "code": "some-code-1",
           "system": "some-system-2",
+          "display": "some-display-1-2",
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
               "valueDecimal": 10
             }
           ]
-        },
-        {
+        }, {
           "code": "some-code-2",
           "system": "some-system-1",
+          "display": "some-display-2-1",
           "extension": [
             {
               "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
@@ -37,12 +39,13 @@
         }, {
           "code": "some-code-2",
           "system": "some-system-2",
-            "extension": [
-              {
-                "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
-                "valueDecimal": 20
-              }
-            ]
+          "display": "some-display-2-2",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
+              "valueDecimal": 20
+            }
+          ]
         }]
       }
     }

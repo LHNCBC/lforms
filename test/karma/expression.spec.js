@@ -688,10 +688,10 @@ describe('ExpressionProcessor', function () {
               testQ, modelName);
             const testLFData = new LForms.LFormsData(lformsDef);
             testLFData.itemList.forEach(item => {
-              if (item.answers) {
+              if ((item.answers || item.answerValueSet) && item.linkId !== '/69722-7') {
                 item.value = {
-                  code: item.answers[1].code,
-                  system: item.answers[1].system
+                  code: 'LA6569-3',
+                  system: 'http://loinc.org'
                 };
               }
             });

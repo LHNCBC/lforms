@@ -9,6 +9,7 @@
         "contains": [{
           "code": "some-code-1",
           "system": "some-system-1",
+          "display": "some-display-1-1",
           "property": [{
             "code" : "itemWeight",
             "valueDecimal": 1
@@ -16,14 +17,15 @@
         }, {
           "code": "some-code-1",
           "system": "some-system-2",
+          "display": "some-display-1-2",
           "property": [{
             "code" : "itemWeight",
             "valueDecimal": 10
           }]
-        },
-        {
+        }, {
           "code": "some-code-2",
           "system": "some-system-1",
+          "display": "some-display-2-1",
           "property": [{
             "code" : "itemWeight",
             "valueDecimal": 2
@@ -31,6 +33,7 @@
         }, {
           "code": "some-code-2",
           "system": "some-system-2",
+          "display": "some-display-2-2",
           "property": [{
             "code" : "itemWeight",
             "valueDecimal": 20

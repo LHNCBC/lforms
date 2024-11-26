@@ -3,7 +3,7 @@
   "extension": [
      {
        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
-       "valueUrl": "'https://lforms-fhir.nlm.nih.gov/baseR4"
+       "valueUrl": "https://lforms-fhir.nlm.nih.gov/baseDstu3"
      }
   ],
   "item": [

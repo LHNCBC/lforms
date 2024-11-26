@@ -218,14 +218,14 @@ function addR5ImportFns(ns) {
         // $lookup as in R4)
         const ordProp = LForms.Util.findObjectInArray(vsItem.property, 'code', 'itemWeight');
         if(ordProp) {
-          answer.score = parseFloat(ordProp.valueDecimal);
+          answer.score = ordProp.valueDecimal;
         } else {
           // Still, someone could provide us with an R5 ValueSet.expansion that
           // put score extensions on the contained Codings
           const ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
             self.fhirExtUrlValueSetScore);
           if(ordExt) {
-            answer.score = parseFloat(ordExt.valueDecimal);
+            answer.score = ordExt.valueDecimal;
           }
         }
         rtn.push(answer);
