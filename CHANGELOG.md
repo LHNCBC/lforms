@@ -2,13 +2,31 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.5.2] 2024-10-16
+## [36.7.1] 2024-12-2
 ### Fixed
 - Updated checkForInvalidHtml to allow more tags/attributes.
-- Fixed a bug that help text and copyright text could be out of postion
+- Fixed a bug that help text and copyright text could be out of position
   if they are too long.
 - Fixed a bug that the QuestionnaireResponse data could be modified 
   when passed in to the mergeFHIRDataIntoLForms function.
+
+## [36.7.0] 2024-11-20
+### Added
+- Support for rendering-xhtml on answerOption.
+
+## [36.6.1] 2024-10-24
+### Fixed
+- Errors with attempting to access undefined environment variables when
+  evaluating FHIRPath expressions where the variables are evaluated
+  asynchronously.
+
+## [36.6.0] 2024-10-22
+### Added
+- Added support of disabledDisplay in R5 Questionnaire.
+ 
+## [36.5.2] 2024-10-21
+### Added
+- Added a function, 'getSupportedItemControl', to return an object containing a list of supported item controls.
 
 ## [36.5.1] 2024-09-19
 ### Fixed

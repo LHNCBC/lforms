@@ -1,0 +1,13 @@
+{
+  "itemControl": [
+    "list",
+    "table",
+    "gtable",
+    "inline",
+    "autocomplete",
+    "drop-down",
+    "check-box",
+    "lookup",
+    "radio-button"
+  ]
+}

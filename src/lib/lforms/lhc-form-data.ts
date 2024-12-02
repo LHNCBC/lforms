@@ -142,6 +142,7 @@ export default class LhcFormData {
   _showInfo;
   contained;
   _containedImages;
+  _containedImageHtmlMap = new Map();
 
   /**
    * Constructor
@@ -184,7 +185,7 @@ export default class LhcFormData {
 
     // process images in 'contained'
     if (data.contained)
-      this._containedImages = this._fhir.SDC.buildContainedImageMap(data)
+      this._containedImages = this._fhir.SDC.buildContainedImageMap(data.contained);
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
@@ -440,6 +441,7 @@ export default class LhcFormData {
     this._repeatableItems = {};
     this._setTreeNodes(this.items, this);
     this._updateLastRepeatingItemsStatus(this.items);
+    this._updateItemDisabledDisplayStatus(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -478,6 +480,7 @@ export default class LhcFormData {
     // update internal status
     this._updateTreeNodes(this.items,this);
     this._updateLastRepeatingItemsStatus(this.items);
+    this._updateItemDisabledDisplayStatus(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -501,7 +504,7 @@ export default class LhcFormData {
     // for skip logic, data controls and formulas
     this._setupSourceToTargetMap();
 
-    // run the all form controls
+    // run all form controls
     this._checkFormControls();
   }
 
@@ -566,6 +569,8 @@ export default class LhcFormData {
     this._updateLastRepeatingItemsStatus(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
+    // run all form controls
+    this._checkFormControls();
 
     // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
@@ -622,14 +627,11 @@ export default class LhcFormData {
         if (item.skipLogic) {
           changed = this._updateItemSkipLogicStatus(item, null) || changed;
         }
-        // Hide the sub items if isHiddenInDef flag is true.
-        if (item.isHiddenInDef) {
-          if (!item._isHiddenFromView) changed = true;
-          item._isHiddenFromView = true;
-          changed = this._setSubItemsHidden(item) || changed;
-        }
       }
     }
+
+    // update item._isHiddenFromView after other changes are done
+    this._updateSubItemsHiddenFromView(this, false)
 
     // update internal status
     this._updateTreeNodes(this.items,this);
@@ -640,22 +642,22 @@ export default class LhcFormData {
 
 
   /**
-   * Update sub items if the current item is hidden
-   * @param item the item that is hidden
-   * @return {boolean} whether the item._isHiddenFromView has changed
+   * Update the _isHiddenFromView value on sub items
+   * @param item the parent item or the form
+   * @param hidden the parent item's hidden status
    */
-  _setSubItemsHidden(item) {
-    var changed = false;
+  _updateSubItemsHiddenFromView(item, hidden) {
     // process the sub items
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
-        if (!subItem._isHiddenFromView) changed = true;
-        subItem._isHiddenFromView = true;
-        changed = this._setSubItemsHidden(subItem) || changed;
+        let toBeHidden = hidden || this.isItemHidden(subItem);
+        // set the sub item's hidden status
+        subItem._isHiddenFromView = toBeHidden;
+        // process the sub item's sub items
+        this._updateSubItemsHiddenFromView(subItem, toBeHidden);
       }
     }
-    return changed;
   }
 
 
@@ -770,12 +772,12 @@ export default class LhcFormData {
   /**
    * Preset skip logic status for newly added repeating items
    * @param item an item
-   * @param hide if the parent item is already hidden
+   * @param disabled if the parent item is already diasabled
    * @private
    */
-  _presetSkipLogicStatus(item, hide) {
+  _presetSkipLogicStatus(item, disabled) {
     // if it has skip logic or one of its ancestors has skip logic
-    if (item.skipLogic || hide) {
+    if (item.skipLogic || disabled) {
       this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_DISABLED, true);
       var isDisabled = true;
       // process the sub items
@@ -804,7 +806,6 @@ export default class LhcFormData {
         if (!noLog)
           this._actionLogs.push(msg);
       }
-      item._preSkipLogicStatus = item._skipLogicStatus;
       item._skipLogicStatus = newStatus;
       changed = true;
     }
@@ -830,6 +831,27 @@ export default class LhcFormData {
     }
   }
 
+
+  /**
+   * Update the disabled display status on the items
+   * @param items sibling items on one level of the tree
+   * @param parentDisabledDisplayStatus the disableDisplay status from its parent item.
+   * @private
+   */
+  _updateItemDisabledDisplayStatus(items, parentDisabledDisplayStatus=null) {
+
+    for (let i=0, iLen=items.length; i<iLen; i++) {
+      let item = items[i];
+      let disabledDisplayStatus = item.disabledDisplay || parentDisabledDisplayStatus;
+      if (disabledDisplayStatus) {
+        item._disabledDisplayStatus = disabledDisplayStatus;
+        // process the sub items
+        if (item.items && item.items.length > 0) {
+          this._updateItemDisabledDisplayStatus(item.items, disabledDisplayStatus);
+        }
+      }
+    }
+  }
 
   /**
    * Find all the items across the form that have scores
@@ -955,29 +977,52 @@ export default class LhcFormData {
       // check if displayScoreWithAnswerText is changed
       let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined &&
           newOptions.displayScoreWithAnswerText !== existingOptions.displayScoreWithAnswerText;
+      // check if allowHTML is changed
+      let allowHTMLChanged = newOptions.allowHTML !== undefined &&
+        newOptions.allowHTML !== existingOptions.allowHTML;
+      // check if displayInvalidHTML is changed
+      let displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
+        newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
 
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
 
       // recreate the answerOption to add or remove the scores from display texts,
+      // or switch between 'html', 'escaped' and 'plain' display types,
       // when the lhcFormData instance has been initialized.
-      if (scoreFlagChanged && this.itemList) {
+      if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged) && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          if (!!item._hasAnswerList && item._hasScoreInAnswer)
+          if (!!item._hasAnswerList && (!scoreFlagChanged || item._hasScoreInAnswer))
             this._updateAutocompOptions(item);
         }
       }
-      // update and check the html version of help text,
-      // when the lhcFormData instance has been initialized.
       if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          if (item.questionXHTML) {
+          // update and check the html version of question text,
+          // when the lhcFormData instance has been initialized.
+          if (item._displayTextHTML) {
+            // process contained images
+            if (this._containedImages &&
+                item._displayTextHTML.match(/img/) &&
+                item._displayTextHTML.match(/src/)) {
+              // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
+              // strings in _getHtmlStringWithContainedImages() for repeated questions.
+              // Uses item._displayTextHTMLOriginal to avoid duplicate processing if setTemplateOptions()
+              // is run a second time.
+              if (this._containedImageHtmlMap.has(item._displayTextHTMLOriginal)) {
+                item._displayTextHTML = this._containedImageHtmlMap.get(item._displayTextHTMLOriginal);
+              } else {
+                item._displayTextHTMLOriginal = item._displayTextHTML;
+                item._displayTextHTML = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTMLOriginal);
+                this._containedImageHtmlMap.set(item._displayTextHTMLOriginal, item._displayTextHTML);
+              }
+            }
             let errors, messages;
-            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item.questionXHTML);
+            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item._displayTextHTML);
             if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-              item.questionHasInvalidHtmlTag = true;
+              item._hasInvalidHtmlTag = true;
               errors = {};
               errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
               messages = [{errors}];
@@ -985,6 +1030,8 @@ export default class LhcFormData {
               InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
             }
           }
+          // update and check the html version of help text,
+          // when the lhcFormData instance has been initialized.
           if (item.codingInstructions &&
               item.codingInstructions.length > 0 &&
               item.codingInstructionsFormat === "html") {
@@ -992,7 +1039,7 @@ export default class LhcFormData {
             if (this._containedImages &&
                 item.codingInstructions.match(/img/) &&
                 item.codingInstructions.match(/src/)) {
-              this._setCodingInstructionsWithContainedImages(item);
+              item._codingInstructionsWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
             }
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
@@ -1349,7 +1396,7 @@ export default class LhcFormData {
         item.codingInstructionsFormat === "html" &&
         item.codingInstructions.match(/img/) &&
         item.codingInstructions.match(/src/)) {
-      this._setCodingInstructionsWithContainedImages(item);
+      item._codingInstructionsWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.codingInstructions);
     }
 
     // process the answer code system
@@ -1383,8 +1430,8 @@ export default class LhcFormData {
     item._multipleAnswers = LhcFormUtils._hasMultipleAnswers(item);
 
     // set up readonly flag
-    item._readOnly = (item.editable && item.editable === "0") ||
-      !!item.calculationMethod;
+    item._readOnly = (item.editable === "0") ||
+      !!item.calculationMethod || InternalUtil.targetDisabledAndProtected(item);
 
     if (this._fhir) {
       this._fhir.SDC.processExtensions(item, 'obj_text');
@@ -1396,9 +1443,9 @@ export default class LhcFormData {
   /**
    *  Returns true if the item is hidden for any reason.
    */
-  _isHidden(item) {
-    return item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._isHiddenFromView ||
-      item._enableWhenExpVal === false;
+  isItemHidden(item) {
+    return ((item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._enableWhenExpVal === false) &&
+       item._disabledDisplayStatus !=='protected') || item.isHiddenInDef;
   }
 
 
@@ -1429,7 +1476,7 @@ export default class LhcFormData {
 
       // consider if the last sibling is hidden by skip logic, or is hidden by a FHIR extension
       if (!foundLastSibling) {
-        if (this._isHidden(item)) {
+        if (this.isItemHidden(item)) {
           item._lastSibling = false;
           lastSiblingIndex -= 1;
         }
@@ -2469,7 +2516,7 @@ export default class LhcFormData {
             insertPosition = this._findIndexForNewRepetition(item);
             maxRecId = this.getRepeatingItemMaxId(item);
           }
-          var parentItemHidden = this._isHidden(item._parentItem);
+          var parentItemDisabled = item._parentItem._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
           for (var i=0; i<newRowsNeeded; ++i) {
             var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
             newItem._id = maxRecId + 1;
@@ -2477,7 +2524,7 @@ export default class LhcFormData {
             newItem._parentItem = item._parentItem;
             repetitions.push(newItem);
             // preset the skip logic status to target-disabled on the new items
-            this._presetSkipLogicStatus(newItem, parentItemHidden);
+            this._presetSkipLogicStatus(newItem, parentItemDisabled);
           }
         }
         // Set values now that the right number of rows are present
@@ -3238,12 +3285,48 @@ export default class LhcFormData {
           options.codes = codes;
           options.itemToHeading = itemToHeading;
         }
+
+        // If it's using autocomplete-lhc (drop-down display)... use proper content for _displayText
+        // and set isListHTML.
+        if (!item.displayControl || !item.displayControl.answerLayout || item.displayControl.answerLayout.type !== 'RADIO_CHECKBOX') {
+          // Set isListHTML to true if any of the answer options should be displayed as HTML.
+          options.isListHTML = answers.some(a => a._displayType === 'html');
+          for (let i = 0; i < answers.length; ++i) {
+            if (answers[i]._displayType === 'html') {
+              answers[i]._displayText = answers[i]._displayTextHTML;
+            } else if (answers[i]._displayType === 'escaped') {
+              answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayTextHTML);
+            } else if (options.isListHTML) {
+              answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayText);
+            }
+          }
+        }
       }
+
       // check if the new option has changed
       if (!CommonUtils.deepEqual(options, item._autocompOptions)) {
         item._autocompOptions = options;
       }
     } // end of list
+  }
+
+
+  /**
+   * Check the display type of item.text or an answerOption.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
+   */
+  getTextDisplayType(item) {
+    var format = 'plain';
+    if (item._displayTextHTML && item._displayTextHTML.length > 0 && this.templateOptions.allowHTML) {
+      if (!item._hasInvalidHtmlTag) {
+        format = 'html';
+      }
+      else {
+        format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
+      }
+    }
+    return format;
   }
 
 
@@ -3266,10 +3349,14 @@ export default class LhcFormData {
         var answerData = CommonUtils.deepCopy(answers[i]);
 
         var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
+        var displayTextHTML = answerData.textHTML;
         // label is a string
         if (answerData.label) {
           displayText = answerData.label + ". " + displayText;
           hasOneAnswerLabel = true;
+          if (displayTextHTML) {
+            displayTextHTML = answerData.label + ". " + displayTextHTML;
+          }
         }
         // check if one of the values is numeric
         else {
@@ -3280,12 +3367,18 @@ export default class LhcFormData {
 
         if (answerData.score !== undefined && answerData.score !== null) {
           item._hasScoreInAnswer = true;
-          if (addScoreToText)
+          if (addScoreToText) {
             displayText = displayText + " - " + answerData.score;
+            if (displayTextHTML) {
+              displayTextHTML = displayTextHTML + " - " + answerData.score;
+            }
+          }
         }
 
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
+        answerData._displayTextHTML = displayTextHTML;
+        answerData._displayType = this.getTextDisplayType(answerData);
         modifiedAnswers.push(answerData);
       }
     }
@@ -3677,36 +3770,6 @@ export default class LhcFormData {
       ret = "lhc-active-row";
     }
     return ret;
-  }
-
-
-  /**
-   * Get the coding instruction, replacing local ids in the 'src' attributes of
-   * the 'img' tags if the local ids are in the 'contained' with image data,
-   * and if codingInstructionsFormat is 'html'.
-   * @param item an item in lforms
-   */
-  _setCodingInstructionsWithContainedImages(item) {
-
-    if (this._containedImages) {
-      // go though each image in the html string and replace local ids in image source
-      // with contained data
-      let parser = new DOMParser();
-      let doc = parser.parseFromString(item.codingInstructions, "text/html");
-
-      let imgs = doc.getElementsByTagName("img");
-      for (let i = 0; i < imgs.length; i++) {
-        let urlValue = imgs[i].getAttribute("src");
-        if (urlValue && urlValue.match(/^#/)) {
-          let localId = urlValue.substring(1);
-          let imageData = this._containedImages[localId];
-          if (imageData) {
-            imgs[i].setAttribute("src", imageData);
-          }
-        }
-      }
-      item._codingInstructionsWithContainedImages = doc.body.innerHTML;
-    }
   }
 
 };
