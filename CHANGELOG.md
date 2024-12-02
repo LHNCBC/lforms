@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.7.1] 2024-12-2
+### Fixed
+- Updated checkForInvalidHtml to allow more tags/attributes.
+- Fixed a bug that help text and copyright text could be out of position
+  if they are too long.
+- Fixed a bug that the QuestionnaireResponse data could be modified 
+  when passed in to the mergeFHIRDataIntoLForms function.
+
 ## [36.7.0] 2024-11-20
 ### Added
 - Support for rendering-xhtml on answerOption.
