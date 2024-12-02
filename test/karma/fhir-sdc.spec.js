@@ -1989,12 +1989,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var qrFile = 'test/data/fhir-import-qn-response.json';
             $.get(lfDefFile, function(lfFormDef) { // load the questionnaire json
               $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
+                var origQR = LForms.Util.deepCopy(fhirQnRespData);
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                   fhirQnRespData, lfFormDef, fhirVersion);
                 assert.equal(mergedFormData.items[3].value, "item.answer.item main item value");
                 assert.equal(mergedFormData.items[3].items[1].value, 20);
                 assert.equal(mergedFormData.items[4].value, "item.answer.item main item value2");
                 assert.equal(mergedFormData.items[4].items[1].value, 30);
+
+                // QR should not be modified
+                assert.deepEqual(origQR, fhirQnRespData);
+
                 itDone();
               }).done().fail(function(err){console.log('answer.item.answer - unable to load ' + qrFile);});
             }).done().fail(function(err){console.log('answer.item.answer - unable to load ' + lfDefFile);});

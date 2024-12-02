@@ -69,7 +69,11 @@ export const InternalUtil = {
   printInvalidHtmlToConsole: function(invalidTagsAttributes) {
     console.log("Possible invalid HTML tags/attributes:");
     invalidTagsAttributes.forEach(ele => {
-      if (ele.attribute)
+      if (ele.attributeValue) {
+        console.log("  - Attribute value: " + ele.attributeValue +
+          " of " + ele.attribute + " in " + ele.tag);
+      }
+      else if (ele.attribute)
         console.log("  - Attribute: " + ele.attribute + " in " + ele.tag);
       else if (ele.tag)
         console.log("  - Element: " + ele.tag);
