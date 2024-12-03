@@ -1,0 +1,270 @@
+{
+  "title": "answerOption HTML in matrix layout",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable0",
+      "text": "Plain text answerOption",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "/matrixTable0/type0",
+          "text": "A question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1"
+            },
+            {
+              "valueString": "Answer 2"
+            },
+            {
+              "valueString": "Answer 3"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "linkId": "/matrixTable0/type1",
+          "text": "Another question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1"
+            },
+            {
+              "valueString": "Answer 2"
+            },
+            {
+              "valueString": "Answer 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable1",
+      "text": "HTML answerOption",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "/matrixTable1/type0",
+          "text": "A question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 1"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 2",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 2"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 3",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 3"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "linkId": "/matrixTable1/type1",
+          "text": "Another question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 1"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 2",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 2"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 3",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 3"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable2",
+      "text": "Escaped answerOption",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "/matrixTable2/type0",
+          "text": "A question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <script>button</script> 1"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 2",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <script>button</script> 2"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 3",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <script>button</script> 3"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "linkId": "/matrixTable2/type1",
+          "text": "Another question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <script>button</script> 1"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 2",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <script>button</script> 2"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 3",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <script>button</script> 3"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

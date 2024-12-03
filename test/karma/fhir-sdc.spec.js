@@ -541,12 +541,25 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should preserve rendering-xhtml extension on _text', function (){
             $.get('test/data/R4/q-with-rendering-xhtml-text.json', function(json) {
               const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
-              assert.equal(lfData.items[0].questionXHTML, "<i class='testPlease'>Please</i> answer <b>Yes</b> or <b>No</b> to each of the following questions:");
+              assert.equal(lfData.items[0]._displayTextHTML, "<i class='testPlease'>Please</i> answer <b>Yes</b> or <b>No</b> to each of the following questions:");
               const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
               assert.ok(qData.item[0]._text);
               assert.deepEqual(qData.item[0]._text, json.item[0]._text);
             });
           });
+
+          if (fhirVersion === 'R4') {
+            it('should preserve rendering-xhtml extension on answerOption _valueString', function (){
+              $.get('test/data/R4/q-with-rendering-xhtml-answerOption.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].items[0].answers[0].text, 'bold a');
+                assert.equal(lfData.items[0].items[0].answers[0].textHTML, "bold <b class='testBold'>A</b>");
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].answerOption[0]._valueString);
+                assert.deepEqual(qData.item[0].item[0].answerOption[0]._valueString, json.item[0].item[0].answerOption[0]._valueString);
+              });
+            });
+          }
         });
 
         describe('itemToQuestionnaireItem', function() {
@@ -1976,12 +1989,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var qrFile = 'test/data/fhir-import-qn-response.json';
             $.get(lfDefFile, function(lfFormDef) { // load the questionnaire json
               $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
+                var origQR = LForms.Util.deepCopy(fhirQnRespData);
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                   fhirQnRespData, lfFormDef, fhirVersion);
                 assert.equal(mergedFormData.items[3].value, "item.answer.item main item value");
                 assert.equal(mergedFormData.items[3].items[1].value, 20);
                 assert.equal(mergedFormData.items[4].value, "item.answer.item main item value2");
                 assert.equal(mergedFormData.items[4].items[1].value, 30);
+
+                // QR should not be modified
+                assert.deepEqual(origQR, fhirQnRespData);
+
                 itDone();
               }).done().fail(function(err){console.log('answer.item.answer - unable to load ' + qrFile);});
             }).done().fail(function(err){console.log('answer.item.answer - unable to load ' + lfDefFile);});
