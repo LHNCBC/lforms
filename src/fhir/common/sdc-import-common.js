@@ -669,27 +669,32 @@ function addCommonSDCImportFns(ns) {
     // text
     lfItem.question = qItem.text;
 
-    // Copy item extensions
+    // process extensions on item._text and item._prefix
     for (let extField of ['_prefix', '_text']) {
+      let itemAttr = 'obj' + extField;
+      // copy over the extensions
       let extFieldData = qItem[extField];
       if (extFieldData)
         lfItem['obj'+extField] = extFieldData;
-    }
 
-    // Set rendering-xhtml properties.
-    const xhtmlFormat = lfItem['obj_text'] ?
-      LForms.Util.findObjectInArray(lfItem['obj_text'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
-    if (xhtmlFormat) {
-      lfItem._displayTextHTML = xhtmlFormat.valueString;
-      if (self._widgetOptions?.allowHTML) {
-        let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
-        if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-          lfItem._hasInvalidHtmlTag = true;
-          let errors = {};
-          errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
-          const messages = [{errors}];
-          LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-          LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
+      let htmlAttrName = itemAttr == 'obj_text' ? '_displayTextHTML' : '_prefixHTML';
+      let invalidFlagName = itemAttr == 'obj_text' ? '_hasInValidHTMLTagInText' : '_hasInValidHTMLTagInPrefix';
+
+      // process rendering-xhtml extension
+      const xhtmlFormat = lfItem[itemAttr] ?
+          LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
+      if (xhtmlFormat) {
+        lfItem[htmlAttrName] = xhtmlFormat.valueString;
+        if (self._widgetOptions?.allowHTML) {
+          let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+            lfItem[invalidFlagName] = true;
+            let errors = {};
+            errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+            const messages = [{errors}];
+            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+            LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
+          }
         }
       }
     }

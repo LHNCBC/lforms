@@ -548,6 +548,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          it('should preserve rendering-xhtml extension on _text', function (){
+            $.get('test/data/R4/q-with-rendering-xhtml-prefix.json', function(json) {
+              const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+              assert.equal(lfData.items[0]._prefixHTML, "<i class='testPlease'>Please</i> answer <b>Yes</b> or <b>No</b> to each of the following questions:");
+              const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+              assert.ok(qData.item[0]._prefix);
+              assert.deepEqual(qData.item[0]._prefix, json.item[0]._prefix);
+            });
+          });
+
           if (fhirVersion === 'R4') {
             it('should preserve rendering-xhtml extension on answerOption _valueString', function (){
               $.get('test/data/R4/q-with-rendering-xhtml-answerOption.json', function(json) {

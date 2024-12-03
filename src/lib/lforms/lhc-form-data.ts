@@ -1000,36 +1000,44 @@ export default class LhcFormData {
       if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          // update and check the html version of question text,
+          // update and check the html version of question text and prefix
           // when the lhcFormData instance has been initialized.
-          if (item._displayTextHTML) {
-            // process contained images
-            if (this._containedImages &&
-                item._displayTextHTML.match(/img/) &&
-                item._displayTextHTML.match(/src/)) {
-              // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
-              // strings in _getHtmlStringWithContainedImages() for repeated questions.
-              // Uses item._displayTextHTMLOriginal to avoid duplicate processing if setTemplateOptions()
-              // is run a second time.
-              if (this._containedImageHtmlMap.has(item._displayTextHTMLOriginal)) {
-                item._displayTextHTML = this._containedImageHtmlMap.get(item._displayTextHTMLOriginal);
-              } else {
-                item._displayTextHTMLOriginal = item._displayTextHTML;
-                item._displayTextHTML = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTMLOriginal);
-                this._containedImageHtmlMap.set(item._displayTextHTMLOriginal, item._displayTextHTML);
+          ['_displayTextHTML', '_prefixHTML'].forEach(htmlAttrName => {
+            if (item[htmlAttrName]) {
+              // process contained images
+              if (this._containedImages &&
+                  item[htmlAttrName].match(/img/) &&
+                  item[htmlAttrName].match(/src/)) {
+                // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
+                // strings in _getHtmlStringWithContainedImages() for repeated questions.
+                // Uses item._displayTextHTMLOriginal to avoid duplicate processing if setTemplateOptions()
+                // is run a second time.
+                let originalHTMLAttrName = htmlAttrName + "Original";
+                if (this._containedImageHtmlMap.has(item[originalHTMLAttrName])) {
+                  item[htmlAttrName] = this._containedImageHtmlMap.get(item[originalHTMLAttrName]);
+                } else {
+                  item[originalHTMLAttrName] = item[htmlAttrName];
+                  item[htmlAttrName] = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item[originalHTMLAttrName]);
+                  this._containedImageHtmlMap.set(item[originalHTMLAttrName], item[htmlAttrName]);
+                }
+              }
+              let errors, messages;
+              let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item[htmlAttrName]);
+              if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+                if (htmlAttrName = '_displayHTML') {
+                  item._hasInvalidHtmlTagInText = true;
+                }
+                else if (htmlAttrName = '_prefixHTML') {
+                  item._hasInValidHTMLTagInPrefix = true;
+                }
+                errors = {};
+                errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+                messages = [{errors}];
+                InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+                InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
               }
             }
-            let errors, messages;
-            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item._displayTextHTML);
-            if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-              item._hasInvalidHtmlTag = true;
-              errors = {};
-              errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
-              messages = [{errors}];
-              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-              InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
-            }
-          }
+          })
           // update and check the html version of help text,
           // when the lhcFormData instance has been initialized.
           if (item.codingInstructions &&
@@ -1054,6 +1062,7 @@ export default class LhcFormData {
               InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
             }
           }
+
         }
       }
 
@@ -1389,6 +1398,7 @@ export default class LhcFormData {
     }
 
     // special handling of the help text when it contains images in the 'contained' field.
+    // and item.text, item.prefix
     if (this._containedImages &&
         item.codingInstructions &&
         item.codingInstructions.length > 0 &&
@@ -3319,7 +3329,7 @@ export default class LhcFormData {
   getTextDisplayType(item) {
     var format = 'plain';
     if (item._displayTextHTML && item._displayTextHTML.length > 0 && this.templateOptions.allowHTML) {
-      if (!item._hasInvalidHtmlTag) {
+      if (!item._hasInValidHTMLTagInText) {
         format = 'html';
       }
       else {
@@ -3329,6 +3339,24 @@ export default class LhcFormData {
     return format;
   }
 
+
+  /**
+   * Check the display type of item.text or an answerOption.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
+   */
+  getPrefixDisplayType(item) {
+    var format = 'plain';
+    if (item._prefixHTML && item._prefixHTML.length > 0 && this.templateOptions.allowHTML) {
+      if (!item._hasInValidHTMLTagInPrefix) {
+        format = 'html';
+      }
+      else {
+        format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
+      }
+    }
+    return format;
+  }
 
   /**
    * Changes the answer's display text when there is a label and/or a score

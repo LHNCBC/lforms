@@ -15,8 +15,7 @@ guide (IG).
 See https://build.fhir.org/ig/HL7/sdc/rendering.html for descriptions of these
 fields.
 * rendering-style:  on item.text and prefix
-* rendering-xhtml:  on item.text. It does not perform any sanization, and allows any HTML, so please consider
-  security issues before using.
+* rendering-xhtml:  on item.text and prefix.
 * hidden
 * itemControl:  Support for types:  gtable, table, drop-down, autocomplete,
   radio-button, check-box, help.  Note that type "list" is the default type of
@@ -77,7 +76,7 @@ fields.
 ### Advanced Rendering
 See https://build.fhir.org/ig/HL7/sdc/rendering.html for descriptions of these
 fields.
-* rendering-xhtml:  Other than for item.text with itemControl of type "help"
+* rendering-xhtml:  Other than for item.text, item.prefix, answerOption and itemControl of type "help"
 * displayCategory
 * sliderStepValue
 * width
