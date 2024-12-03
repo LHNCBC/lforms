@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.7.2] 2024-12-03
+### Changed
+- Upgraded to nodejs version 22.
+
 ## [36.7.1] 2024-12-2
 ### Fixed
 - Updated checkForInvalidHtml to allow more tags/attributes.
