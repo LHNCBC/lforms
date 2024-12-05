@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "36.7.1",
+  "version": "36.7.3",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -69,6 +69,7 @@
     "ng-zorro-antd": "^17.3.0",
     "rxjs": "~7.8.0",
     "string-replace-async": "^3.0.2",
+    "style-to-object": "^1.0.8",
     "tslib": "^2.4.1",
     "zone.js": "~0.14.0"
   },

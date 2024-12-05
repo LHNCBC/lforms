@@ -2,13 +2,25 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.7.1] 2024-11-21
+## [36.7.3] 2024-12-05
 ### Fixed
 - Updated fhirpath.js to version <TBD> to update the `weight()` function and
   added unit tests for this function.
 - Fixed converting R5 FHIR Questionnaire to LForms form definition.
 - Fixed converting LForms form definition to standard STU3 FHIR Questionnaire.
 - Fixed model for R5.
+
+## [36.7.2] 2024-12-03
+### Changed
+- Upgraded to nodejs version 22.
+
+## [36.7.1] 2024-12-2
+### Fixed
+- Updated checkForInvalidHtml to allow more tags/attributes.
+- Fixed a bug that help text and copyright text could be out of position
+  if they are too long.
+- Fixed a bug that the QuestionnaireResponse data could be modified 
+  when passed in to the mergeFHIRDataIntoLForms function.
 
 ## [36.7.0] 2024-11-20
 ### Added
