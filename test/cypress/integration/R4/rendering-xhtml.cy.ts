@@ -68,7 +68,7 @@ describe('rendering-xhtml', () => {
         .should('be.visible');
     });
 
-    it('should display prefix prefix if not allowed in template options', () => {
+    it('should display prefix text if not allowed in template options', () => {
       tp.loadFromTestData('q-with-rendering-xhtml-prefix.json', 'R4');
       cy.get('.testPlease')
         .should('not.exist');

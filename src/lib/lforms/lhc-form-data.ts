@@ -1024,10 +1024,10 @@ export default class LhcFormData {
               let errors, messages;
               let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item[htmlAttrName]);
               if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-                if (htmlAttrName = '_displayHTML') {
+                if (htmlAttrName === '_displayHTML') {
                   item._hasInvalidHtmlTagInText = true;
                 }
-                else if (htmlAttrName = '_prefixHTML') {
+                else if (htmlAttrName === '_prefixHTML') {
                   item._hasInValidHTMLTagInPrefix = true;
                 }
                 errors = {};
