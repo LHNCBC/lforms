@@ -132,6 +132,14 @@
               }
             },
             {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+              "valueExpression": {
+                "description": "initial integer value",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='inputList').answer.value"
+              }
+            },
+            {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
               "valueCodeableConcept": {
                 "coding": [
