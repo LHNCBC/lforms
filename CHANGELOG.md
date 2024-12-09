@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.7.3] 2024-12-09
+### Fixed
+- Matrix layout radio group tab issue.
+
 ## [36.7.2] 2024-12-03
 ### Changed
 - Upgraded to nodejs version 22.
