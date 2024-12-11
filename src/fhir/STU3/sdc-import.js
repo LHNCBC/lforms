@@ -134,9 +134,10 @@ function addSDCImportFns(ns) {
    * @param lfItem {object} - LForms item object to assign answer list
    * @param qItem {object} - Questionnaire item object
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   * @param containedImages contained images info, see buildContainedImageMap() for details.
    * @private
    */
-  self._processAnswers = function (lfItem, qItem, containedVS) {
+  self._processAnswers = function (lfItem, qItem, containedVS, containedImages) {
     if(qItem.option) {
       lfItem.answers = [];
       for(var i = 0; i < qItem.option.length; i++) {
@@ -157,6 +158,27 @@ function addSDCImportFns(ns) {
           else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' ||
               optionKey[0] === 'valueTime' ){
             answer.text = option[optionKey[0]];
+            // rendering-xhtml extension under "_valueString".
+            if (optionKey[0] === 'valueString' && option._valueString) {
+              answer['obj_valueString'] = option._valueString;
+              const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+              if (xhtmlFormat) {
+                answer.textHTML = xhtmlFormat.valueString;
+                if (self._widgetOptions?.allowHTML) {
+                  // process contained images
+                  if (containedImages &&
+                    xhtmlFormat.valueString.match(/img/) &&
+                    xhtmlFormat.valueString.match(/src/)) {
+                    answer.textHTML = LForms.Util._internalUtil._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
+                  }
+                  let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(answer.textHTML);
+                  if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+                    answer.hasInvalidHtmlTag = true;
+                    LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+                  }
+                }
+              }
+            }
           }
           else if (optionKey[0] === 'valueInteger') {
             answer.text = parseInt(option[optionKey[0]])
