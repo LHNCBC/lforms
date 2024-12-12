@@ -1025,10 +1025,10 @@ export default class LhcFormData {
               let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item[htmlAttrName]);
               if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
                 if (htmlAttrName === '_displayHTML') {
-                  item._hasInvalidHtmlTagInText = true;
+                  item._hasInvalidHTMLTagInText = true;
                 }
                 else if (htmlAttrName === '_prefixHTML') {
-                  item._hasInValidHTMLTagInPrefix = true;
+                  item._hasInvalidHTMLTagInPrefix = true;
                 }
                 errors = {};
                 errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
@@ -3329,7 +3329,7 @@ export default class LhcFormData {
   getTextDisplayType(item) {
     var format = 'plain';
     if (item._displayTextHTML && item._displayTextHTML.length > 0 && this.templateOptions.allowHTML) {
-      if (!item._hasInValidHTMLTagInText) {
+      if (!item._hasInvalidHTMLTagInText) {
         format = 'html';
       }
       else {
@@ -3341,14 +3341,14 @@ export default class LhcFormData {
 
 
   /**
-   * Check the display type of item.text or an answerOption.
-   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * Check the display type of item.prefix
+   * @param item an item in the lforms form items array
    * @returns {string}
    */
   getPrefixDisplayType(item) {
     var format = 'plain';
     if (item._prefixHTML && item._prefixHTML.length > 0 && this.templateOptions.allowHTML) {
-      if (!item._hasInValidHTMLTagInPrefix) {
+      if (!item._hasInvalidHTMLTagInPrefix) {
         format = 'html';
       }
       else {

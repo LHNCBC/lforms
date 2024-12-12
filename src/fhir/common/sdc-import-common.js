@@ -678,7 +678,7 @@ function addCommonSDCImportFns(ns) {
         lfItem['obj'+extField] = extFieldData;
 
       let htmlAttrName = itemAttr == 'obj_text' ? '_displayTextHTML' : '_prefixHTML';
-      let invalidFlagName = itemAttr == 'obj_text' ? '_hasInValidHTMLTagInText' : '_hasInValidHTMLTagInPrefix';
+      let invalidFlagName = itemAttr == 'obj_text' ? '_hasInvalidHTMLTagInText' : '_hasInvalidHTMLTagInPrefix';
 
       // process rendering-xhtml extension
       const xhtmlFormat = lfItem[itemAttr] ?
