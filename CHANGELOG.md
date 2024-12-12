@@ -2,9 +2,21 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.8.0] 2024-12-03
+## [36.8.0] 2024-12-12
 ### Added
 - Support for rendering-xhtml on item.prefix
+
+## [36.7.4] 2024-12-11
+### Added
+- Added tests for FHIRPath expressions to work with "coding" items in R5.
+
+## [36.7.3] 2024-12-09
+### Fixed
+- Matrix layout radio group tab issue.
+
+## [36.7.2] 2024-12-03
+### Changed
+- Upgraded to nodejs version 22.
 
 ## [36.7.1] 2024-12-02
 ### Fixed
