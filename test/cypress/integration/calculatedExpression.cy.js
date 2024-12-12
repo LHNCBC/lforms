@@ -187,5 +187,43 @@ describe('calculatedExpression', () => {
       cy.byId('p1.10.1.1/1/1/3/1').should('have.value', 'Immunotherapy Industry Association');
       cy.byId('p1.10.1.2/1/1/3/1').should('have.value', 'IIA900000');
     });
+
+    it('should have FHIRPath expressions work with R5 Coding items', ()=>{
+      util.addFormToPage('calculatedListAnswers.R5.json', null, {fhirVersion: 'R5'});
+
+      // input
+      cy.byId('inputList/1').click();
+      cy.get('#searchResults li').should('have.length', 2);
+      cy.byId('inputList/1').type('{downArrow}').type('{enter}');
+      cy.byId('item-inputList/1')
+        .find('lhc-autocomplete li')
+        .should('have.length', 1);
+      cy.byId('item-inputList/1')
+        .get('lhc-autocomplete li')
+        .eq(0)
+        .should('contain.text', 'blue');
+
+      // single-select output calculated answer
+      cy.byId('calculatedAnswer/1/1').should('have.value', 'blue');
+
+      // single-select output calculated list option
+      cy.byId('calculatedListOption/1/1').click();
+      cy.get('#searchResults li').should('have.length', 1);
+      cy.get('#searchResults li').first().should('contain.text', 'blue');
+
+      // multi-select output calculated answers
+      cy.byId('item-calculatedAnswers/1/1')
+        .find('lhc-autocomplete li')
+        .should('have.length', 1);
+      cy.byId('item-calculatedAnswers/1/1')
+        .get('lhc-autocomplete li')
+        .eq(0)
+        .should('contain.text', 'blue');
+
+      // multi-select output calculated list options
+      cy.byId('calculatedListOptions/1/1').click();
+      cy.get('#searchResults li').should('have.length', 1);
+      cy.get('#searchResults li').first().should('contain.text', 'blue');
+    });
   });
 });

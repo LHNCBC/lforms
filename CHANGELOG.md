@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.7.4] 2024-12-11
+### Added
+- Added tests for FHIRPath expressions to work with "coding" items in R5.
+
 ## [36.7.3] 2024-12-09
 ### Fixed
 - Matrix layout radio group tab issue.
