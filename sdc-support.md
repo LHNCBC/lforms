@@ -14,8 +14,8 @@ guide (IG).
 ### Advanced Rendering
 See https://build.fhir.org/ig/HL7/sdc/rendering.html for descriptions of these
 fields.
-* rendering-style:  on item.text and prefix
-* rendering-xhtml:  on item.text and prefix
+* rendering-style:  on item.text and item.prefix
+* rendering-xhtml:  on item.text, item.prefix and answerOption
 * hidden
 * itemControl:  Support for types:  gtable, table, drop-down, autocomplete,
   radio-button, check-box, help.  Note that type "list" is the default type of
