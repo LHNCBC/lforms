@@ -62,7 +62,7 @@ describe('rendering-xhtml', () => {
       tp.loadFromTestData('q-with-rendering-xhtml-prefix.json', 'R4');
       cy.get('.testPlease')
         .should('be.visible')
-        .should('have.text', 'Please');
+        .should('have.text', 'A');
       // contained image
       cy.get('.testContainedImage')
         .should('be.visible');
@@ -85,7 +85,7 @@ describe('rendering-xhtml', () => {
         .should('not.exist');
       cy.get('.prefix')
         .eq(0)
-        .should('have.text', "<i class='testPlease'>Please</i> answer <script>Yes</script> or <b>No</b> to each of the following questions:");
+        .should('have.text', "<i class='testPlease'>A</i> HTML <script>prefix:</script>");
     });
 
     it('should display prefix text, if invalid tags are not displayed in template options', () => {

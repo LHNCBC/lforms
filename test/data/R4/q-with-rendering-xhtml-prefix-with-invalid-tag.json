@@ -5,13 +5,13 @@
   "item": [
     {
       "linkId": "1.2",
-      "text": "Please answer Yes or No to each of the following questions:",
+      "text": "A question display text",
       "prefix": "A:",
       "_prefix": {
         "extension": [
           {
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-            "valueString": "<i class='testPlease'>Please</i> answer <script>Yes</script> or <b>No</b> to each of the following questions:"
+            "valueString": "<i class='testPlease'>A</i> HTML <script>prefix:</script>"
           }
         ]
       },

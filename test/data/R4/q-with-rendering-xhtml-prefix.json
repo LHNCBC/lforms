@@ -13,13 +13,13 @@
     {
       "linkId": "1.1",
       "type": "display",
-      "text": "Please answer Yes or No to each of the following questions:",
+      "text": "A question display text",
       "prefix": "A:",
       "_prefix": {
         "extension": [
           {
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-            "valueString": "<i class='testPlease'>Please</i> answer <b>Yes</b> or <b>No</b> to each of the following questions:"
+            "valueString": "<i class='testPlease'>A</i> HTML <b>prefix:</b>"
           }
         ]
       }
