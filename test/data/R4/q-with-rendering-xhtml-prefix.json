@@ -1,0 +1,56 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire with item prefix containing rendering-xhtml extension",
+  "status": "draft",
+  "contained": [
+    { "resourceType": "Binary",
+      "contentType": "image/png",
+      "id": "image1",
+      "data":"iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAJpSURBVDhPrZJfSFNRHMe/d/9iRJu4llGaNldmtIQYDmQRIxiLirCH/tAQerAeouhFLJ1UJFEZBQW1F0t6K3AEm08raDgQshkxtNYs0NrKyrm51Xb35657zw6b5ULIPpfL+d3v+Z7vvfd3DpPnwX9ARMdls2RQOp0m91KU/bVQKAT7w7vwZ8YwL4sAvEORqkSzwoj2thNQq9XUWWJRkOOJA/bxm9h2uh4SuZiqBdhYGhO3p9Bh7IHZbKZqgd+C3G437sxcwZbDG6lSHr99Eheb+2AwGKiyICiVSuHABQuaejVkIs/lwYgYUhN4V56/GKagBbu+wnHdWXwuNtvlcqH6WCW4DIeA7TOUNzT4dC6BeOgH5oLziNjyWHF1HYKPPxK/bHcWXq+X1ALFIN/bUagaKxD9EMfe+lbYunvQYT2P6edfMPsmij2GfThy8CjYAEf861vWwDPsIbWAhI5IcHHI+bGyQYmh14/wtHcIMXkE209pwYgZDA734+cEi8bOGuKXyCVIpOKkFih+kYJRkj4INByqRV2nCk1nNpEQgeqda7G5tRZiWWFJOp6BSrma1ALFoJYdRoRffEMmkQUb/fsBzCZzyLE5TD0Lw7TLRNUFQRaLBdFBFhy/W95Lr/B9fI7OlIgEYvB0vUSGD5ONVECv19OZP86Rz+dDt+cstrZrMOmcJgsZ/lWMSAQuy5H+afdvgL/vPe61DUCr1dKVZU62sKWXnTZoTlZhVc1KqhaIvIsh3B/DteO3oNPpqFpgUZBAMpnEg4H7GJ0ZQVQ2ixz/NepcFYx1JlitVkilUuosUTboXyg2e3kAvwCUc/dAF4e/eQAAAABJRU5ErkJggg=="
+    }
+  ],
+  "item": [
+    {
+      "linkId": "1.1",
+      "type": "display",
+      "text": "A question display text",
+      "prefix": "A:",
+      "_prefix": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": "<i class='testPlease'>A</i> HTML <b>prefix:</b>"
+          }
+        ]
+      }
+    },
+    {
+      "linkId": "1.2",
+      "type": "display",
+      "text": "Image in this question's prefix is linked to a 'contained' image through a local id",
+      "prefix": "B:",
+      "_prefix": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": "<br/><img class=\"testContainedImage\" src=\"#image1\"/>"
+          }
+        ]
+      }
+    },
+    {
+      "linkId": "1.3",
+      "type": "display",
+      "text": "Image in this question's prefix is linked to a 'contained' image through a local id - repeat",
+      "prefix": "C:",
+      "_prefix": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": "<br/><img class=\"testContainedImage\" src=\"#image1\"/>"
+          }
+        ]
+      }
+    }
+  ]
+}

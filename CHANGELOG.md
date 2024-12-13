@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.8.0] 2024-12-12
+### Added
+- Support for rendering-xhtml on item.prefix
+
 ## [36.7.4] 2024-12-11
 ### Added
 - Added tests for FHIRPath expressions to work with "coding" items in R5.
@@ -14,7 +18,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Upgraded to nodejs version 22.
 
-## [36.7.1] 2024-12-2
+## [36.7.1] 2024-12-02
 ### Fixed
 - Updated checkForInvalidHtml to allow more tags/attributes.
 - Fixed a bug that help text and copyright text could be out of position

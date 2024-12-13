@@ -25,7 +25,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     },
     "_elementId": "checkbox-cne",
     "_multipleAnswers": true,
-    "_choiceOrientation": 'horizional',
+    "_choiceOrientation": 'horizontal',
     "answers": [
       {
         "code": "c1",
