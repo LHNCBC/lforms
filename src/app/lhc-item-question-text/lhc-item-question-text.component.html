@@ -5,7 +5,23 @@
     <span class="lhc-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
         <!-- prefix -->
-        <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
+        <ng-container *ngIf="item.prefix">
+          <ng-container [ngSwitch]="lhcDataService.getPrefixDisplayType(item)">
+            <span *ngSwitchCase="'escaped'"
+                 class="prefix"
+                 [style]="item._obj_prefixCSS"
+            >{{item._prefixHTML}}</span>
+            <span *ngSwitchCase="'html'"
+                  class="prefix"
+                  [style]="item._obj_prefixCSS"
+                  [innerHTML]="item._prefixHTML | safeHtml"
+            ></span>
+            <span *ngSwitchCase="'plain'"
+                  class="prefix"
+                  [style]="item._obj_prefixCSS"
+            >{{item.prefix}}</span>
+          </ng-container>  
+        </ng-container>
         <!-- question text -->
         <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(item)">
           <span *ngSwitchCase="'escaped'"

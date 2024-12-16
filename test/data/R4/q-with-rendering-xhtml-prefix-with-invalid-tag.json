@@ -1,0 +1,21 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire with item prefix containing rendering-xhtml extension, with invalid tags",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "1.2",
+      "text": "A question display text",
+      "prefix": "A:",
+      "_prefix": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": "<i class='testPlease'>A</i> HTML <script>prefix:</script>"
+          }
+        ]
+      },
+      "type": "display"
+    }
+  ]
+}

@@ -177,6 +177,16 @@ export class LhcDataService {
 
 
   /**
+   * Check the display type of item.prefix.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
+   */
+  getPrefixDisplayType(item) {
+    return this.lhcFormData?.getPrefixDisplayType(item) || 'plain';
+  }
+
+
+  /**
    * Check the display type of the coding instructions
    * @param item an item in the lforms form items array
    * @returns {string}

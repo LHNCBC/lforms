@@ -50,6 +50,55 @@ describe('rendering-xhtml', () => {
     });
   });
 
+  describe('on item.prefix', () => {
+    const tp: TestPage = new TestPage();
+
+    beforeEach(() => {
+      tp.openBaseTestPage();
+    });
+
+    it('should display prefix html if allowed in template options', () => {
+      cy.get('#allowHTML').click();
+      tp.loadFromTestData('q-with-rendering-xhtml-prefix.json', 'R4');
+      cy.get('.testPlease')
+        .should('be.visible')
+        .should('have.text', 'A');
+      // contained image
+      cy.get('.testContainedImage')
+        .should('be.visible');
+    });
+
+    it('should display prefix text if not allowed in template options', () => {
+      tp.loadFromTestData('q-with-rendering-xhtml-prefix.json', 'R4');
+      cy.get('.testPlease')
+        .should('not.exist');
+      cy.get('.prefix')
+        .eq(0)
+        .should('have.text', 'A:');
+    });
+
+    it('should display prefix escaped html, if invalid tags are displayed in template options', () => {
+      cy.get('#allowHTML').click();
+      cy.get('#displayInvalidHTML').click();
+      tp.loadFromTestData('q-with-rendering-xhtml-prefix-with-invalid-tag.json', 'R4');
+      cy.get('.testPlease')
+        .should('not.exist');
+      cy.get('.prefix')
+        .eq(0)
+        .should('have.text', "<i class='testPlease'>A</i> HTML <script>prefix:</script>");
+    });
+
+    it('should display prefix text, if invalid tags are not displayed in template options', () => {
+      cy.get('#allowHTML').click();
+      tp.loadFromTestData('q-with-rendering-xhtml-prefix-with-invalid-tag.json', 'R4');
+      cy.get('.testPlease')
+        .should('not.exist');
+      cy.get('.prefix')
+        .eq(0)
+        .should('have.text', 'A:');
+    });
+  });
+
   describe('on answerOption', () => {
     const tp: TestPage = new TestPage();
 

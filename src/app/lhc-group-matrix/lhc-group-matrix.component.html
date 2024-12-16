@@ -41,6 +41,8 @@
                   type="checkbox"
                   [disabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
                   [(ngModel)]="subItem._checkboxModels[i]"
                   (ngModelChange)="updateCheckboxListValue(subItem)">
@@ -55,6 +57,7 @@
                   [ngModel]="subItem.value"
                   [value]="answer"
                   name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   (change)="updateRadioListValue(subItem, answer)">
               </label>
             </span>
@@ -68,6 +71,8 @@
                   type="checkbox"
                   [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_other'}}"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
                   (ngModelChange)="updateCheckboxListValue(subItem)">
@@ -77,6 +82,8 @@
                   type="text"
                   [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_otherValue'}}"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOther"
                   (ngModelChange)="updateCheckboxListValue(subItem)">
@@ -91,7 +98,9 @@
                   id="{{subItem._elementId + '_other'}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
-                  [value]="true" name="{{subItem._elementId}}"
+                  [value]="true"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   (change)="updateRadioListValueForOther(subItem, subItem._answerOther)">
               </label>
               <label>
@@ -99,6 +108,8 @@
                   type="text"
                   [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_otherValue'}}"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOther"
                   (ngModelChange)="updateRadioListValueForOther(subItem, subItem._answerOther)">
