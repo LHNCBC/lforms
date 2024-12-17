@@ -362,6 +362,20 @@ describe('rendering-xhtml', () => {
         cy.byId('#item-valueCoding-group2-item2/1/1')
           .find('.testItalic')
           .should('have.length', 3);
+        // autocomplete
+        cy.byId('#valueCoding-group1-item1/1/1')
+          .focus();
+        cy.get('#completionOptions li')
+          .as('listOptions');
+        cy.get('@listOptions')
+          .should('be.visible')
+          .should('have.length', 3);
+        cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; italic <i class=\"testItalic\">A</i>");
+        cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; italic <i class=\"testItalic\">B</i>");
+        cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i>");
+        // Check the value in the field after the user selects something.
+        cy.get('@listOptions').eq(1).click();
+        cy.byId('#valueCoding-group1-item1/1/1').should('have.value', "italic B");
       });
     });
 
