@@ -1,10 +1,4 @@
 {
-  "code": [
-    {
-      "code": "answers-with-string-type",
-      "display": "Answers with string type"
-    }
-  ],
   "title": "Questionnaire with answerOptions that contain rendering-xhtml extensions with invalid tags",
   "resourceType": "Questionnaire",
   "status": "draft",
@@ -191,7 +185,7 @@
     },
     {
       "type": "group",
-      "linkId": "valueString-group4",
+      "linkId": "valueString-group3",
       "text": "answerOption - valueString - radiocheckbox - prefix - score",
       "item": [
         {
@@ -369,6 +363,213 @@
                     "valueString": "<script>bold</script> <b class='testBold'>C</b>"
                   }
                 ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "valueCoding-group1",
+      "text": "answerOption - valueCoding - dropdown",
+      "item": [
+        {
+          "type": "choice",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "valueCoding-group1-item1",
+          "text": "valueCoding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "a",
+                "display": "italic a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> A"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "b",
+                "display": "italic b"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c",
+                "display": "italic c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "italic <i class='testItalic'>C</i><img class='testImage' src='/test/data/a-picture.png'>"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "valueCoding-group2",
+      "text": "answerOption - valueCoding - radiocheckbox",
+      "item": [
+        {
+          "type": "choice",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "radio-button",
+                    "display": "Radio Button"
+                  }
+                ],
+                "text": "Radio Button"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "vertical"
+            }
+          ],
+          "linkId": "valueCoding-group2-item1",
+          "text": "valueCoding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "a",
+                "display": "italic a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>A</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "b",
+                "display": "italic b",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>B</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c",
+                "display": "italic c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>C</i>"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "choice",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "check-box",
+                    "display": "Check-box"
+                  }
+                ],
+                "text": "Check-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "horizontal"
+            }
+          ],
+          "repeats": true,
+          "linkId": "valueCoding-group2-item2",
+          "text": "valueCoding - repeats",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "a",
+                "display": "italic a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>A</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "b",
+                "display": "italic b",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>B</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c",
+                "display": "italic c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>C</i>"
+                    }
+                  ]
+                }
               }
             }
           ]

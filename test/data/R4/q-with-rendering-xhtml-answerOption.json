@@ -200,7 +200,7 @@
     },
     {
       "type": "group",
-      "linkId": "valueString-group4",
+      "linkId": "valueString-group3",
       "text": "answerOption - valueString - radiocheckbox - prefix - score",
       "item": [
         {

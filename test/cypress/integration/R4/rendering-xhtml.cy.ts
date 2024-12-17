@@ -377,6 +377,108 @@ describe('rendering-xhtml', () => {
         cy.get('@listOptions').eq(1).click();
         cy.byId('#valueCoding-group1-item1/1/1').should('have.value', "italic B");
       });
+
+      it('should display answerOption text if not allowed in template options', () => {
+        tp.loadFromTestData('q-with-rendering-xhtml-answerOption.json', 'R4');
+        cy.get('.testItalic')
+          .should('not.exist');
+        // radio
+        cy.byId('#valueCoding-group2-item1/1/1a')
+          .should('have.text', "italic a");
+        cy.byId('#valueCoding-group2-item1/1/1b')
+          .should('have.text', "italic b");
+        cy.byId('#valueCoding-group2-item1/1/1c')
+          .should('have.text', "italic c");
+        // checkbox
+        cy.byId('#valueCoding-group2-item2/1/1a')
+          .should('have.text', "italic a");
+        cy.byId('#valueCoding-group2-item2/1/1b')
+          .should('have.text', "italic b");
+        cy.byId('#valueCoding-group2-item2/1/1c')
+          .should('have.text', "italic c");
+        // autocomplete
+        cy.byId('#valueCoding-group1-item1/1/1')
+          .focus();
+        cy.get('#completionOptions li')
+          .as('listOptions');
+        cy.get('@listOptions')
+          .should('be.visible')
+          .should('have.length', 3);
+        cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; italic a");
+        cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; italic b");
+        cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic c");
+        // Check the value in the field after the user selects something.
+        cy.get('@listOptions').eq(1).click();
+        cy.byId('#valueCoding-group1-item1/1/1').should('have.value', "italic b");
+      });
+
+      it('should display answerOption escaped html, if invalid tags are displayed in template options', () => {
+        cy.get('#allowHTML').click();
+        cy.get('#displayInvalidHTML').click();
+        tp.loadFromTestData('q-with-rendering-xhtml-answerOption-with-invalid-tag.json', 'R4');
+        cy.get('.testItalic')
+          .should('not.exist');
+        // radio
+        cy.byId('#valueCoding-group2-item1/1/1a')
+          .should('have.text', "<script>italic</script> <i class='testItalic'>A</i>");
+        cy.byId('#valueCoding-group2-item1/1/1b')
+          .should('have.text', "<script>italic</script> <i class='testItalic'>B</i>");
+        cy.byId('#valueCoding-group2-item1/1/1c')
+          .should('have.text', "<script>italic</script> <i class='testItalic'>C</i>");
+        // checkbox
+        cy.byId('#valueCoding-group2-item2/1/1a')
+          .should('have.text', "<script>italic</script> <i class='testItalic'>A</i>");
+        cy.byId('#valueCoding-group2-item2/1/1b')
+          .should('have.text', "<script>italic</script> <i class='testItalic'>B</i>");
+        cy.byId('#valueCoding-group2-item2/1/1c')
+          .should('have.text', "<script>italic</script> <i class='testItalic'>C</i>");
+        // autocomplete
+        cy.byId('#valueCoding-group1-item1/1/1')
+          .focus();
+        cy.get('#completionOptions li')
+          .as('listOptions');
+        cy.get('@listOptions')
+          .should('be.visible')
+          .should('have.length', 3);
+        cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; &lt;script&gt;italic&lt;/script&gt; A");
+        cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; italic b");
+        cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i><img class=\"testImage\" src=\"/test/data/a-picture.png\">");
+        // Check the value in the field after the user selects something.
+        cy.get('@listOptions').eq(0).click();
+        cy.byId('#valueCoding-group1-item1/1/1').should('have.value', "&lt;script&gt;italic&lt;/script&gt; A");
+      });
+
+      it('should display answerOption text, if invalid tags are not displayed in template options', () => {
+        cy.get('#allowHTML').click();
+        tp.loadFromTestData('q-with-rendering-xhtml-answerOption-with-invalid-tag.json', 'R4');
+        cy.get('.testItalic')
+          .should('not.exist');
+        // radio
+        cy.byId('#valueCoding-group2-item1/1/1a')
+          .should('have.text', "italic a");
+        cy.byId('#valueCoding-group2-item1/1/1b')
+          .should('have.text', "italic b");
+        cy.byId('#valueCoding-group2-item1/1/1c')
+          .should('have.text', "italic c");
+        // checkbox
+        cy.byId('#valueCoding-group2-item2/1/1a')
+          .should('have.text', "italic a");
+        cy.byId('#valueCoding-group2-item2/1/1b')
+          .should('have.text', "italic b");
+        cy.byId('#valueCoding-group2-item2/1/1c')
+          .should('have.text', "italic c");
+        // autocomplete
+        cy.byId('#valueCoding-group1-item1/1/1')
+          .focus();
+        cy.get('#completionOptions li')
+          .as('listOptions');
+        cy.get('@listOptions')
+          .should('be.visible')
+          .should('have.length', 3);
+        cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; italic a");
+        cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; italic b");
+        cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i><img class=\"testImage\" src=\"/test/data/a-picture.png\">");
+      });
     });
 
   });
