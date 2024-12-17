@@ -232,7 +232,7 @@ var dr = {
         code: {
           "coding": [
             {
-              "system": "http://loinc.org",
+              "system": formAndUserData.codeSystem,
               "code": formAndUserData.code,
               "display": formAndUserData.name
             }
