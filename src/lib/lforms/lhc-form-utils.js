@@ -1119,6 +1119,32 @@ const FormUtils = {
     return forbiddenURLs;
   },
 
+
+  /**
+   * Sets answer.textHTML from the rendering-xhtml extension.
+   * @param answer an answer object in Lforms item.
+   * @param xhtmlFormat the "rendering-xhtml" extension from Questionnaire.
+   * @param allowHTML widget option of whether to allow HTML in forms.
+   * @param containedImages contained images info, see buildContainedImageMap() for details.
+   */
+  setAnswerTextHTML: function(answer, xhtmlFormat, allowHTML, containedImages) {
+    answer.textHTML = xhtmlFormat.valueString;
+    if (allowHTML) {
+      // process contained images
+      if (containedImages &&
+        xhtmlFormat.valueString.match(/img/) &&
+        xhtmlFormat.valueString.match(/src/)) {
+        answer.textHTML = InternalUtil._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
+      }
+      let invalidTagsAttributes = this.checkForInvalidHtmlTags(answer.textHTML);
+      if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+        answer._hasInvalidHTMLTagInText = true;
+        InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+      }
+    }
+  },
+
+
   /**
    * Check and return not allowed tags within the HTML version of the help text.
    * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
