@@ -17,4 +17,14 @@ describe('DiagnoticReport', ()=>{
       assert.equal(obsVersion, 'lformsVersion: '+lfDataVersion);
     });
   });
+
+  it('should have code and code system in the DiagnosticReport resource', ()=>{
+    var lfData = new LForms.LFormsData({name: 'test form', code: 'code1', codeSystem: 'code_system',
+      items: [{question: 'q1', dataType: 'ST', value: 'green'
+    }]});
+    var fhirVersion = 'R4';
+    var dr = LForms.Util.getFormFHIRData('DiagnosticReport', fhirVersion, lfData)
+    assert.equal(dr.code.coding[0].system, 'code_system');
+    assert.equal(dr.code.coding[0].code, 'code1');
+  });
 });
