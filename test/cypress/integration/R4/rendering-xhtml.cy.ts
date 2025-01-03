@@ -479,6 +479,31 @@ describe('rendering-xhtml', () => {
         cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; italic b");
         cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i><img class=\"testImage\" src=\"/test/data/a-picture.png\">");
       });
+
+      it('should remove the option after user selects it in multi-select list', () => {
+        cy.get('#allowHTML').click();
+        tp.loadFromTestData('q-with-rendering-xhtml-answerOption.json', 'R4');
+        // autocomplete
+        cy.byId('#valueCoding-group1-item2/1/1')
+          .focus();
+        cy.get('#completionOptions li')
+          .as('listOptions');
+        cy.get('@listOptions')
+          .should('be.visible')
+          .should('have.length', 3);
+        cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; italic <i class=\"testItalic\">A</i>");
+        cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; italic <i class=\"testItalic\">B</i>");
+        cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i>");
+        // Check the list after the user selects something.
+        cy.get('@listOptions').eq(1).click();
+        cy.get('#completionOptions li')
+          .as('listOptions');
+        cy.get('@listOptions')
+          .should('be.visible')
+          .should('have.length', 2);
+        cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; italic <i class=\"testItalic\">A</i>");
+        cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i>");
+      });
     });
 
   });
