@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.8.1] 2024-12-17
+### Fixed
+- Fixed a bug that code.system was not set correctly when exporting 
+  data as DiagnosticReport.
+
 ## [36.8.0] 2024-12-12
 ### Added
 - Support for rendering-xhtml on item.prefix
