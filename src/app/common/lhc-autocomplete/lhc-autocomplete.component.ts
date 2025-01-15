@@ -206,7 +206,11 @@ export class LhcAutocompleteComponent implements OnChanges {
           for (let i=0, iLen = this.options.acOptions.listItemsForModel.length; i<iLen; i++) {
             if (CommonUtils.deepEqual(answer, this.options.acOptions.listItemsForModel[i])) {
               // get the display text from the modified answer list (listItems)
-              displayValue = this.options.acOptions.listItems[i][this.displayProp]
+              displayValue = this.options.acOptions.listItems[i][this.displayProp];
+              if (this.options.acOptions.isListHTML) {
+                displayValue = displayValue.replace(/(<([^>]+)>)/gi, "").trim();
+              }
+
               break;
             }
           }
@@ -343,7 +347,11 @@ export class LhcAutocompleteComponent implements OnChanges {
         // (autocomplete-lhc requires answer text to be unique)
         acOptions.listItems.forEach((item, index) => {
           listItemsText.push(item[this.displayProp]);
-          this.prefetchTextToItem[item[this.displayProp].trim()] = acOptions.listItemsForModel ? acOptions.listItemsForModel[index] : item;
+          let displayPropText = item[this.displayProp].trim();
+          if (acOptions.isListHTML) {
+            displayPropText = displayPropText.replace(/(<([^>]+)>)/gi, "").trim();
+          }
+          this.prefetchTextToItem[displayPropText] = acOptions.listItemsForModel ? acOptions.listItemsForModel[index] : item;
         }, this);
 
         // acOptions has matchListValue, maxSelected, codes
