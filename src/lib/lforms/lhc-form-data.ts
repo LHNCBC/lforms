@@ -184,7 +184,7 @@ export default class LhcFormData {
     }
 
     // process images in 'contained'
-    if (data.contained)
+    if (data.contained && this._fhir)
       this._containedImages = this._fhir.SDC.buildContainedImageMap(data.contained);
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
