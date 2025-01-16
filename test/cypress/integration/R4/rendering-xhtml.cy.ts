@@ -607,9 +607,18 @@ describe('rendering-xhtml', () => {
       cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; &lt;script&gt;italic&lt;/script&gt; A");
       cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; italic b");
       cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i>");
+
       // Check the value in the field after the user selects something.
-      cy.get('@listOptions').eq(0).click();
-      cy.byId('#group1-item1/1/1').should('have.value', "&lt;script&gt;italic&lt;/script&gt; A");
+      cy.get('@listOptions').eq(1).click();
+      cy.byId('#group1-item1/1/1').should('have.value', "italic b");
+      cy.byId('#group1-item1/1/1')
+        .focus();
+      cy.get('#completionOptions li')
+        .as('listOptions');
+      cy.get('@listOptions').eq(2).click();
+      // When user changes selection to the 3rd option, input field should display
+      // the string stripped of the HTML tags.
+      cy.byId('#group1-item1/1/1').should('have.value', "italic C");
     });
 
     it('should display text, if invalid tags are not displayed in template options', () => {
