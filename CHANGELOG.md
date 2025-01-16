@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.10.0] 2025-01-16
+### Added
+- Support for rendering-xhtml on contained[valueSet].expansion.contains.display.
+
 ## [36.9.0] 2024-12-18
 ### Added
 - Support for rendering-xhtml on answerOption.valueCoding.display.
