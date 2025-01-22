@@ -159,7 +159,7 @@ function addSDCImportFns(ns) {
               answer['obj_valueCoding_display'] = option[optionKey[0]]._display;
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
-                LForms.Util.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
               }
             }
           }
@@ -171,7 +171,7 @@ function addSDCImportFns(ns) {
               answer['obj_valueString'] = option._valueString;
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
-                LForms.Util.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
               }
             }
           }
