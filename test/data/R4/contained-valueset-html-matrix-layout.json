@@ -1,0 +1,245 @@
+{
+  "title": "contained valueset HTML in matrix layout",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "contained": [
+    {
+      "resourceType": "ValueSet",
+      "id": "test-valueset-plain",
+      "version": "0.0.0",
+      "title": "Test valueset with rendering-xhtml - plain text",
+      "status": "active",
+      "expansion": {
+        "total": 3,
+        "contains": [
+          {
+            "system": "test",
+            "code": "a",
+            "display": "Answer 1"
+          },
+          {
+            "system": "test",
+            "code": "b",
+            "display": "Answer 2"
+          },
+          {
+            "system": "test",
+            "code": "c",
+            "display": "Answer 3"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "ValueSet",
+      "id": "test-valueset-html",
+      "version": "0.0.0",
+      "title": "Test valueset with rendering-xhtml - HTML",
+      "status": "active",
+      "expansion": {
+        "total": 3,
+        "contains": [
+          {
+            "system": "test",
+            "code": "a",
+            "display": "Answer 1",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <button>button</button> 1"
+                }
+              ]
+            }
+          },
+          {
+            "system": "test",
+            "code": "b",
+            "display": "Answer 2",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <button>button</button> 2"
+                }
+              ]
+            }
+          },
+          {
+            "system": "test",
+            "code": "c",
+            "display": "Answer 3",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <button>button</button> 3"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "ValueSet",
+      "id": "test-valueset-escaped",
+      "version": "0.0.0",
+      "title": "Test valueset with rendering-xhtml - escaped",
+      "status": "active",
+      "expansion": {
+        "total": 3,
+        "contains": [
+          {
+            "system": "test",
+            "code": "a",
+            "display": "Answer 1",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <script>button</script> 1"
+                }
+              ]
+            }
+          },
+          {
+            "system": "test",
+            "code": "b",
+            "display": "Answer 2",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <script>button</script> 2"
+                }
+              ]
+            }
+          },
+          {
+            "system": "test",
+            "code": "c",
+            "display": "Answer 3",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <script>button</script> 3"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable0",
+      "text": "Plain text contained valueset",
+      "item": [
+        {
+          "type": "choice",
+          "linkId": "/matrixTable0/type0",
+          "text": "A question",
+          "answerValueSet": "#test-valueset-plain"
+        },
+        {
+          "type": "choice",
+          "linkId": "/matrixTable0/type1",
+          "text": "Another question",
+          "answerValueSet": "#test-valueset-plain"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable1",
+      "text": "HTML contained valueset",
+      "item": [
+        {
+          "type": "choice",
+          "linkId": "/matrixTable1/type0",
+          "text": "A question",
+          "answerValueSet": "#test-valueset-html"
+        },
+        {
+          "type": "choice",
+          "linkId": "/matrixTable1/type1",
+          "text": "Another question",
+          "answerValueSet": "#test-valueset-html"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable2",
+      "text": "Escaped contained valueset",
+      "item": [
+        {
+          "type": "choice",
+          "linkId": "/matrixTable2/type0",
+          "text": "A question",
+          "answerValueSet": "#test-valueset-escaped"
+        },
+        {
+          "type": "choice",
+          "linkId": "/matrixTable2/type1",
+          "text": "Another question",
+          "answerValueSet": "#test-valueset-escaped"
+        }
+      ]
+    }
+  ]
+}
