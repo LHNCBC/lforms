@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.8.1] 2025-01-28
+### Fixed
+- Fixed a display issue for answers, where the display field might
+  not have data.
 ## [36.8.1] 2024-12-17
 ### Fixed
 - Fixed a bug that code.system was not set correctly when exporting 
