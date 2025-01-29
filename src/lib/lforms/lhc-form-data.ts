@@ -249,8 +249,8 @@ export default class LhcFormData {
     var status = [];
     for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
-      if (item.answerValueSet && ! item.answers) {
-        status.push("Resource not loaded: " + item.answerValueSet)
+      if (item.answerValueSet && !item.answers && !item.externallyDefined && !item.isSearchAutocomplete) {
+        status.push("Value set not loaded: " + item.answerValueSet)
       }
     }
 
