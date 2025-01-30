@@ -201,7 +201,7 @@ function addCommonSDCExportFns(ns) {
       let helpItem = {
         "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
         "type": "display",
-        "linkId": targetItem.linkId + "-help",
+        "linkId": item.codingInstructionsLinkId || targetItem.linkId + "-help",
         "extension": [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
