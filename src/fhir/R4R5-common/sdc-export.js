@@ -257,6 +257,11 @@ var self = {
           option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
         }
 
+        // Restore rendering-xhtml extension on valueCoding._display.
+        if (answer.obj_valueCoding_display) {
+          option.valueCoding._display = answer.obj_valueCoding_display;
+        }
+
         // check default answers, coding only for now
         if (item.defaultAnswer && item.dataType === "CODING") {
           var defaultAnswers =
