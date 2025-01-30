@@ -2,13 +2,18 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.10.0] 2025-01-16
+## [36.10.0] 2025-01-30
 ### Added
 - Support for rendering-xhtml on contained[valueSet].expansion.contains.display.
 
-## [36.9.0] 2024-12-18
+## [36.9.0] 2025-01-30
 ### Added
 - Support for rendering-xhtml on answerOption.valueCoding.display.
+
+## [36.8.2] 2025-01-17
+### Fixed
+- Fixed a bug that linkIds in help text items were lost in exported
+  Questionnaire.
 
 ## [36.8.1] 2024-12-17
 ### Fixed

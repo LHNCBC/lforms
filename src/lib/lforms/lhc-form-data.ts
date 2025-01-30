@@ -1022,7 +1022,7 @@ export default class LhcFormData {
                 }
               }
               let errors, messages;
-              let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item[htmlAttrName]);
+              let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(item[htmlAttrName]);
               if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
                 if (htmlAttrName === '_displayHTML') {
                   item._hasInvalidHTMLTagInText = true;
@@ -1052,7 +1052,7 @@ export default class LhcFormData {
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
             let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
-            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(helpHTML);
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(helpHTML);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};
