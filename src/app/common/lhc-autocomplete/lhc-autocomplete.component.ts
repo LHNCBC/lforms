@@ -210,7 +210,6 @@ export class LhcAutocompleteComponent implements OnChanges {
               if (this.options.acOptions.isListHTML) {
                 displayValue = displayValue.replace(/(<([^>]+)>)/gi, "").trim();
               }
-
               break;
             }
           }
