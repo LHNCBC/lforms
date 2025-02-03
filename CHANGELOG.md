@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.8.4] 2025-02-03
+### Fixed
+- The "url" parameter was not URL-encoded when doing expansions.
+
 ## [36.8.3] 2025-01-30
 ### Fixed
 - Warning messages were being incorrectly generated for failing to load a value
