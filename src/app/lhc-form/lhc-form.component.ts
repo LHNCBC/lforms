@@ -79,9 +79,9 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   /**
    * Called after this component is rendered, but does not include child components.
    */
-  ngAfterViewInit(): void {
-  // Unfortunately, this. lhcFormData is not set yet when this is called.
-  }
+  // ngAfterViewInit(): void {
+  //   Unfortunately, this.lhcFormData is not set yet when this is called.
+  // }
 
   /**
    * Called after the view is completely checked, that is, after a form has
