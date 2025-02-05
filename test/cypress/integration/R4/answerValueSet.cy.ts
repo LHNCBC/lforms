@@ -1,6 +1,7 @@
 import { AddFormToPageTestPage } from '../../support/addFormToPageTest.po';
 import { TestUtil } from '../../support/testUtilFacade';
 import * as util from '../../support/util';
+import {TestPage} from "../../support/lforms_testpage.po";
 
 const fhirVersion = 'R4';
 const fhirMock = require('../../support/R4/fhir_context');
@@ -782,5 +783,111 @@ describe('FHIR answerValueSet', () => {
         });
       });
     });
+  });
+});
+
+describe('contained ValueSet without expansion', () => {
+  const tp: TestPage = new TestPage();
+
+  beforeEach(() => {
+    tp.openBaseTestPage();
+  });
+
+  it('should load contained ValueSet with no expansion', () => {
+    cy.intercept('POST', 'https://hapi.fhir.org/baseR4/ValueSet/$expand', {
+      "resourceType": "ValueSet",
+      "id": "test-valueset",
+      "meta": {
+        "extension": [
+          {
+            "url": "http://hapifhir.io/fhir/StructureDefinition/valueset-expansion-message",
+            "valueString": "ValueSet with URL \"ValueSet.id[ValueSet/test-valueset]\" was expanded using an in-memory expansion"
+          }
+        ]
+      },
+      "status": "active",
+      "compose": {
+        "include": [
+          {
+            "system": "lhc.forms.test.code.system",
+            "concept": [{
+              "code": "a",
+              "display": "Answer 1",
+              "_display": {
+                "extension": [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <button>button</button> 1"
+                }]
+              }
+            }, {
+              "code": "b",
+              "display": "Answer 2",
+              "_display": {
+                "extension": [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <button>button</button> 2"
+                }]
+              }
+            }, {
+              "code": "c",
+              "display": "Answer 3",
+              "_display": {
+                "extension": [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "Answer <button>button</button> 3"
+                }]
+              }
+            }]
+          }
+        ]
+      },
+      "expansion": {
+        "offset": 0,
+        "parameter": [
+          {
+            "name": "offset",
+            "valueInteger": 0
+          },
+          {
+            "name": "count",
+            "valueInteger": 1000
+          }
+        ],
+        "contains": [
+          {
+            "system": "lhc.forms.test.code.system",
+            "code": "a",
+            "display": "Answer 1"
+          },
+          {
+            "system": "lhc.forms.test.code.system",
+            "code": "b",
+            "display": "Answer 2"
+          },
+          {
+            "system": "lhc.forms.test.code.system",
+            "code": "c",
+            "display": "Answer 3"
+          }
+        ]
+      }
+    })
+    tp.loadFromTestData('q-with-contained-valueset-without-expansion.json', 'R4');
+    // autocomplete
+    cy.byId('#group1-item1/1/1')
+      .focus();
+    cy.get('#completionOptions li')
+      .as('listOptions');
+    cy.get('@listOptions')
+      .should('be.visible')
+      .should('have.length', 3);
+    // radio
+    cy.byId('#group2-item1/1/1a').should('have.text', 'Answer 1');
+    cy.byId('#group2-item1/1/1b').should('have.text', 'Answer 2');
+    cy.byId('#group2-item1/1/1c').should('have.text', 'Answer 3');
+    // checkbox
+    cy.byId('#group2-item2/1/1a').should('have.text', 'Answer 1');
+    cy.byId('#group2-item2/1/1b').should('have.text', 'Answer 2');
+    cy.byId('#group2-item2/1/1c').should('have.text', 'Answer 3');
   });
 });
