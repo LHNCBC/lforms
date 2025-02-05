@@ -1196,7 +1196,7 @@ function addCommonSDCImportFns(ns) {
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
         var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
-        // rendering-xhtml extension under "_display" in contained valueset.
+        // rendering-xhtml extension under "_display" in contained valueset expansion.
         if (self._widgetOptions?.allowHTML && vsItem._display) {
           const xhtmlFormat = LForms.Util.findObjectInArray(vsItem._display.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
           if (xhtmlFormat) {
@@ -1317,9 +1317,14 @@ function addCommonSDCImportFns(ns) {
     var items = lfData.itemList;
     for (var i=0, len=items.length; i<len; ++i) {
       let item = items[i];
+      let expURL, vsKey;
       if (item.answerValueSet && !item.isSearchAutocomplete) {
-        let expURL = this._getExpansionURL(item);
-        let vsKey = expURL ? expURL : item.answerValueSet;
+        if (item.answerValueSet.startsWith('#')) {
+          vsKey = item.answerValueSet;
+        } else {
+          expURL = this._getExpansionURL(item);
+          vsKey = expURL ? expURL : item.answerValueSet;
+        }
         item._answerValueSetKey = vsKey;
         if (!LForms._valueSetAnswerCache)
           LForms._valueSetAnswerCache = {};
@@ -1330,7 +1335,40 @@ function addCommonSDCImportFns(ns) {
           lfData._resetItemValueWithAnswers(item);
         }
         else { // if not already loaded
-          if (expURL) {
+          if (item.answerValueSet.startsWith('#')) {
+            const containedVS = lfData.contained.find(x => x.resourceType === 'ValueSet' && x.id === item.answerValueSet.substring(1));
+            console.log(containedVS);
+            const terminologyServer = this._getTerminologyServer(item);
+            if (terminologyServer) {
+              pendingPromises.push(fetch(terminologyServer + '/ValueSet/$expand', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(containedVS)
+              }).then(function (response) {
+                return response.json();
+              }).then(function (parsedJSON) {
+                if (parsedJSON.resourceType==="OperationOutcome") {
+                  var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal");
+                  if (errorOrFatal) {
+                    throw new Error(errorOrFatal.diagnostics);
+                  }
+                }
+                else {
+                  answers = self.answersFromVS(parsedJSON);
+                  if (answers) {
+                    LForms._valueSetAnswerCache[item.answerValueSet] = answers;
+                    item.answers = answers;
+                    lfData._updateAutocompOptions(item);
+                    lfData._resetItemValueWithAnswers(item);
+                  }
+                }
+              }).catch(function(error) {
+                throw new Error("Unable to load ValueSet from " + terminologyServer);
+              }));
+            }
+          } else if (expURL) {
             pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
               return response.json();
             }).then(function(parsedJSON) {
