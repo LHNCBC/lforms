@@ -17,10 +17,10 @@
               {
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
                 "code": "list",
-                "display": "Group Table"
+                "display": "List"
               }
             ],
-            "text": "Group Table"
+            "text": "List"
           }
         },
         {
