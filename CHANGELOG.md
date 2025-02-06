@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.10.1] 2025-01-30
+### Fixed
+- Warning messages were being incorrectly generated for failing to load a value
+  set for an autocomplete field, for which the value set should not be and is
+  not loaded at form initialization time.
+- Improved the timing of the formReady event, so that it is sent after the form
+  has been rendered.
+
 ## [36.10.0] 2025-01-30
 ### Added
 - Support for rendering-xhtml on contained[valueSet].expansion.contains.display.
