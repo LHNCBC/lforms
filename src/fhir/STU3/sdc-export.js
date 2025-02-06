@@ -232,13 +232,18 @@ var self = {
       this._handleExternallyDefined(targetItem, item);
     }
     // option, for answer list
-    else if (item.answers && !item.answerValueSet) {
+    else if (item.answerValueSet) {
+      targetItem.options = item.answerValueSet;
+    }
+    else if (item._options) {
+      // Restore options property.
+      targetItem.options = item._options;
+    }
+    else if (item.answers) {
       // Make sure the answers did not come from answerExpression.
       if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp])
         targetItem.option = this._handleAnswers(item);
     }
-    else if (item.answerValueSet)
-      targetItem.options = item.answerValueSet;
   },
 
 

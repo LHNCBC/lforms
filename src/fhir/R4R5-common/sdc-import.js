@@ -176,6 +176,8 @@ function addSDCImportFns(ns) {
         var vs = containedVS[qItem.answerValueSet];
       if(vs && vs.answers) { // contained ValueSet with an expansion
         lfItem.answers = vs.answers;
+        // To keep answerValueSet property during export.
+        lfItem._answerValueSet = qItem.answerValueSet;
       }
       else
         lfItem.answerValueSet = qItem.answerValueSet; // a URI for a ValueSet, or an ID for a contained ValueSet with no expansion

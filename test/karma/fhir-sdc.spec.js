@@ -580,6 +580,30 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[3].item[0].answerOption[0].valueCoding._display, json.item[3].item[0].answerOption[0].valueCoding._display);
               });
             });
+
+            it('should preserve answerValueSet property for contained ValueSet with expansion', function () {
+              $.get('test/data/R4/q-with-rendering-xhtml-contained-valueset.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.ok(lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                // answerValueSet is restored, no answerOption.
+                assert.ok(!qData.item[0].item[0].answerOption);
+                assert.ok(qData.item[0].item[0].answerValueSet);
+                assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
+              });
+            });
+
+            it('should preserve answerValueSet property for contained ValueSet without expansion', function () {
+              $.get('test/data/R4/q-with-contained-valueset-without-expansion.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                // LForms answers property is not populated during import.
+                assert.ok(!lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(!qData.item[0].item[0].answerOption);
+                assert.ok(qData.item[0].item[0].answerValueSet);
+                assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
+              });
+            });
           }
         });
 

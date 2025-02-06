@@ -1337,7 +1337,6 @@ function addCommonSDCImportFns(ns) {
         else { // if not already loaded
           if (item.answerValueSet.startsWith('#')) {
             const containedVS = lfData.contained.find(x => x.resourceType === 'ValueSet' && x.id === item.answerValueSet.substring(1));
-            console.log(containedVS);
             const terminologyServer = this._getTerminologyServer(item);
             if (terminologyServer) {
               pendingPromises.push(fetch(terminologyServer + '/ValueSet/$expand', {

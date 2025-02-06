@@ -202,6 +202,8 @@ function addSDCImportFns(ns) {
         var vs = containedVS[qItem.options.reference];
       if(vs && vs.answers) {
         lfItem.answers = vs.answers;
+        // To keep options property during export.
+        lfItem._options = qItem.options;
       }
       else
         lfItem.answerValueSet = qItem.options.reference;
