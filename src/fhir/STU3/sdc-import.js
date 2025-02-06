@@ -154,6 +154,14 @@ function addSDCImportFns(ns) {
             if(option[optionKey[0]].system  !== undefined) {
               answer.system = option[optionKey[0]].system;
             }
+            // rendering-xhtml extension under "valueCoding._display".
+            if (option[optionKey[0]]._display) {
+              answer['obj_valueCoding_display'] = option[optionKey[0]]._display;
+              const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+              if (xhtmlFormat) {
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+              }
+            }
           }
           else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' ||
               optionKey[0] === 'valueTime' ){
@@ -163,20 +171,7 @@ function addSDCImportFns(ns) {
               answer['obj_valueString'] = option._valueString;
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
-                answer.textHTML = xhtmlFormat.valueString;
-                if (self._widgetOptions?.allowHTML) {
-                  // process contained images
-                  if (containedImages &&
-                    xhtmlFormat.valueString.match(/img/) &&
-                    xhtmlFormat.valueString.match(/src/)) {
-                    answer.textHTML = LForms.Util._internalUtil._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
-                  }
-                  let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(answer.textHTML);
-                  if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
-                    answer.hasInvalidHtmlTag = true;
-                    LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-                  }
-                }
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
               }
             }
           }
