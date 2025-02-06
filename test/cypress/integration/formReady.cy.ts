@@ -23,8 +23,8 @@ describe('onFormReady', ()=> {
       // addFormDataToPage waits for LForms.Util.addFormToPage, which waits for
       // the onFormReady event.
       util.addFormDataToPage(formDef, container).then(()=>{
-        cy.get('wc-lhc-form').should('not.be.null');
-        cy.get('wc-lhc-form .lhc-question').should('not.be.null');
+        cy.get('wc-lhc-form').should('exist');
+        cy.get('wc-lhc-form .lhc-question').should('exist');
       });
     });
   }
