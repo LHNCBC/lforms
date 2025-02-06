@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.11.0] 2025-02-06
+### Added
+- Loading answerValueSet for contained ValueSets without an expansion.
+### Fixed
+- Exported Questionnaire should have answerValueSet property but not populated 
+  answerOptions if they are from contained ValueSets.
+
 ## [36.10.0] 2025-01-30
 ### Added
 - Support for rendering-xhtml on contained[valueSet].expansion.contains.display.
