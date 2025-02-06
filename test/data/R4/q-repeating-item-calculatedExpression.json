@@ -1,0 +1,119 @@
+{
+  "status": "draft",
+  "resourceType": "Questionnaire",
+  "title": "A list of Observations - for testing only",
+  "extension": [{
+    "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+    "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+  }],
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "list",
+                "display": "Group Table"
+              }
+            ],
+            "text": "Group Table"
+          }
+        },
+        {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "obxFromUrl",
+            "language": "application/x-fhir-query",
+            "expression": "https://lforms-fhir.nlm.nih.gov/baseR4/Observation"
+          }
+        },
+        {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "firstObx",
+            "language": "text/fhirpath",
+            "expression": "%obxFromUrl.entry.first()"
+          }
+        },
+        {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "obx",
+            "language": "text/fhirpath",
+            "expression": "%obxFromUrl.entry"
+          }
+        },
+        {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "aField",
+            "language": "text/fhirpath",
+            "expression": "%obxFromUrl.resourceType"
+          }
+        }
+        
+
+      ],
+      "required": false,
+      "repeats": false,
+      "text": "Observations",
+      "linkId": "/observations",
+      "item": [
+        {
+          "type": "string",
+          "repeats": true,
+          "extension": [            
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+                "description": "Testing",
+                "language" : "text/fhirpath",
+                "expression": "%obx.resource.code.coding.code"
+              }
+            }
+          ],
+          "required": false,
+          "text": "Code",
+          "linkId": "/code"
+        },
+        {
+          "type": "decimal",
+          "repeats": true,
+          "extension": [            
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+                "description": "Testing",
+                "language" : "text/fhirpath",
+                "expression": "%obx.resource.valueQuantity.value"
+              }
+            }
+          ],
+          "required": false,
+          "text": "Value",
+          "linkId": "/value"
+        },
+        {
+          "type": "string",
+          "extension": [            
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+              "valueExpression": {
+                "description": "Testing",
+                "language" : "text/fhirpath",
+                "expression": "%aField"
+              }
+            }
+          ],
+          "required": false,
+          "text": "test",
+          "linkId": "test"
+        }
+      ]
+    }
+  ]
+}

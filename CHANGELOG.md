@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.8.3] 2025-02-05
+### Fixed
+- Fixed a bug that the repeating numbers are not displayed correctly 
+  on the repeating items when their data are loaded through FHIRPath
+  expressions.
+  
 ## [36.8.2] 2025-01-17
 ### Fixed
 - Fixed a bug that linkIds in help text items were lost in exported
