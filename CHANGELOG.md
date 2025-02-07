@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.10.2] 2025-02-07
+### Changed
+- Changed the meta.profile for STU3, R4 and R5 in the exported 
+  QuestionnaireResponse so that the standard FHIR profiles are used.
+
 ## [36.10.1] 2025-01-30
 ### Fixed
 - Warning messages were being incorrectly generated for failing to load a value
