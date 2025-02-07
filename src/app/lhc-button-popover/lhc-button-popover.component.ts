@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-button-popover',
-  templateUrl: './lhc-button-popover.component.html',
-  styleUrls: ['./lhc-button-popover.component.css']
+    selector: 'lhc-button-popover',
+    templateUrl: './lhc-button-popover.component.html',
+    styleUrls: ['./lhc-button-popover.component.css'],
+    standalone: false
 })
 export class LhcButtonPopoverComponent implements OnInit {
 
