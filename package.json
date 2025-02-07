@@ -66,7 +66,7 @@
     "htmlparser2": "^9.1.0",
     "jquery": "^3.7.1",
     "moment": "2.29.4",
-    "ng-zorro-antd": "^17.3.0",
+    "ng-zorro-antd": "^19.0.2",
     "rxjs": "~7.8.0",
     "string-replace-async": "^3.0.2",
     "style-to-object": "^1.0.8",
