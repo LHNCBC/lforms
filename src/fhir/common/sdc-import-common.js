@@ -1325,7 +1325,6 @@ function addCommonSDCImportFns(ns) {
           expURL = this._getExpansionURL(item);
           vsKey = expURL ? expURL : item.answerValueSet;
         }
-        item._answerValueSetKey = vsKey;
         if (!LForms._valueSetAnswerCache)
           LForms._valueSetAnswerCache = {};
         let answers = LForms._valueSetAnswerCache[vsKey];
@@ -1336,37 +1335,7 @@ function addCommonSDCImportFns(ns) {
         }
         else { // if not already loaded
           if (item.answerValueSet.startsWith('#')) {
-            const containedVS = lfData.contained.find(x => x.resourceType === 'ValueSet' && x.id === item.answerValueSet.substring(1));
-            const terminologyServer = this._getTerminologyServer(item);
-            if (terminologyServer) {
-              pendingPromises.push(fetch(terminologyServer + '/ValueSet/$expand', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(containedVS)
-              }).then(function (response) {
-                return response.json();
-              }).then(function (parsedJSON) {
-                if (parsedJSON.resourceType==="OperationOutcome") {
-                  var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal");
-                  if (errorOrFatal) {
-                    throw new Error(errorOrFatal.diagnostics);
-                  }
-                }
-                else {
-                  answers = self.answersFromVS(parsedJSON);
-                  if (answers) {
-                    LForms._valueSetAnswerCache[item.answerValueSet] = answers;
-                    item.answers = answers;
-                    lfData._updateAutocompOptions(item);
-                    lfData._resetItemValueWithAnswers(item);
-                  }
-                }
-              }).catch(function(error) {
-                throw new Error("Unable to load ValueSet from " + terminologyServer);
-              }));
-            }
+            this._expandContainedValueSet(lfData, item, pendingPromises);
           } else if (expURL) {
             pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
               return response.json();
@@ -1416,6 +1385,50 @@ function addCommonSDCImportFns(ns) {
       }
     }
     return pendingPromises;
+  };
+
+  /**
+   * Expands contained valueset against terminology server.
+   * Here we take care of the scenario of contained valuesets without an expansion.
+   * If the contained valueset had an expansion, the answers list would already have been set
+   * on the item from _processAnswers(), while answerValueSet property would not have been set.
+   * @param lfData the LFormsData for the form
+   * @param item an item in ltemList
+   * @param pendingPromises pending promises list for loading answerValueSets
+   * @private
+   */
+  self._expandContainedValueSet = function(lfData, item, pendingPromises) {
+    const containedVS = lfData.contained.find(x => x.resourceType === 'ValueSet' && x.id === item.answerValueSet.substring(1));
+    const terminologyServer = this._getTerminologyServer(item);
+    if (terminologyServer) {
+      pendingPromises.push(fetch(terminologyServer + '/ValueSet/$expand', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(containedVS)
+      }).then(function (response) {
+        return response.json();
+      }).then(function (parsedJSON) {
+        if (parsedJSON.resourceType==="OperationOutcome") {
+          var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal");
+          if (errorOrFatal) {
+            throw new Error(errorOrFatal.diagnostics);
+          }
+        }
+        else {
+          var answers = self.answersFromVS(parsedJSON);
+          if (answers) {
+            LForms._valueSetAnswerCache[item.answerValueSet] = answers;
+            item.answers = answers;
+            lfData._updateAutocompOptions(item);
+            lfData._resetItemValueWithAnswers(item);
+          }
+        }
+      }).catch(function(error) {
+        throw new Error("Unable to load ValueSet from " + terminologyServer);
+      }));
+    }
   };
 
 

@@ -593,7 +593,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               });
             });
 
-            it('should preserve answerValueSet property for contained ValueSet without expansion', function () {
+            it('should preserve answerValueSet property for contained ValueSet without expansion - R4', function () {
               $.get('test/data/R4/q-with-contained-valueset-without-expansion.json', function(json) {
                 const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
                 // LForms answers property is not populated during import.
@@ -605,6 +605,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               });
             });
           }
+
+          if (fhirVersion === 'STU3') {
+            it('should preserve answerValueSet property for contained ValueSet without expansion - STU3', function () {
+              $.get('test/data/STU3/q-with-contained-valueset-without-expansion.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                // LForms answers property is not populated during import.
+                assert.ok(!lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(!qData.item[0].item[0].option);
+                assert.ok(qData.item[0].item[0].options.reference);
+                assert.deepEqual(qData.item[0].item[0].options, json.item[0].item[0].options);
+              });
+            });}
         });
 
         describe('itemToQuestionnaireItem', function() {
