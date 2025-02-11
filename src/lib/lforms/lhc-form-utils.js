@@ -47,7 +47,8 @@ const FormUtils = {
    * lforms API calls when specified.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
-   *  Questionnaire).
+   *  Questionnaire).  If the needed resources fail, the promise will be
+   *  rejected and will contain an array of error messages.
    */
   addFormToPage: function(formDataDef, formContainer, options) {
 
@@ -94,7 +95,7 @@ const FormUtils = {
           resolve()
         });
         eleLhcForm.addEventListener('onError', function(e){
-          reject(e.detail)
+          reject(e.detail); // e.detail will be an array -- see lhc-form.component.ts
         });
       }
       catch(e) {

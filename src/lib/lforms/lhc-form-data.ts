@@ -341,6 +341,9 @@ export default class LhcFormData {
    * @param prepopulate whether or not to perform prepoluation.  If the form
    *  being shown is going to include previously saved user data, this flag
    *  should be set to false (which is the default).
+   * @return a Promise which will be resolved if the loading succeeds, and
+   *  rejected with an array of error messages if one or more resources fails to
+   *  load.
    */
   loadFHIRResources(prepopulate) {
     var lfData = this;
@@ -358,11 +361,33 @@ export default class LhcFormData {
     if (prepopulate)
       pendingPromises.push(sdc.requestLinkedObs(this));
 
-    return Promise.all(pendingPromises).then(function() {
+    return this._resolveAllPromises(pendingPromises).then(function() {
       lfData._notifyAsyncChangeListeners();
     })
-    .catch(function fail(e) {
-      throw e
+    // .catch default throws the error messages, which is what we want
+  }
+
+
+  /**
+   *  Resolves all the given promises and if all succeed, returns a resolved
+   *  Promise.
+   *  Otherwise, if one or more fail, it returns a failed promise with an array
+   *  of the failure reasons.
+   */
+  _resolveAllPromises(promises) {
+    return Promise.allSettled(promises).then(results => {
+      const reasons = [];
+      const length = results.length;
+
+      for (let i = 0; i < length; i++) {
+        if (results[i].status !== 'fulfilled') {
+          reasons.push((results[i] as PromiseRejectedResult).reason);
+        }
+      }
+
+      if (reasons.length > 0) {
+        return Promise.reject(reasons);
+      }
     });
   }
 

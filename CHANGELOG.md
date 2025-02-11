@@ -2,6 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.11.0] 2025-02-10
+### Changed
+- The promise returned by LForms.Util.addFormToPage, when it fails, will now
+  resolve to an array of error messages instead of just a single error message.
+  Likewise the onError event emitted by the web component will now
+  contain an array of errors instead of just a single error message.
+  This is potentially a breaking change, but the impact is unlikely to be
+  harmful given the way error messages are typically used, so we did not change
+  the major version.
+
 ## [36.10.2] 2025-02-03
 ### Fixed
 - The "url" parameter was not URL-encoded when doing expansions.
