@@ -1334,7 +1334,7 @@ function addCommonSDCImportFns(ns) {
           lfData._resetItemValueWithAnswers(item);
         }
         else { // if not already loaded
-          if (false) {
+          if (item.answerValueSet.startsWith('#')) {
             this._expandContainedValueSet(lfData, item, pendingPromises);
           } else if (expURL) {
             pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
