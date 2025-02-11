@@ -1334,7 +1334,7 @@ function addCommonSDCImportFns(ns) {
           lfData._resetItemValueWithAnswers(item);
         }
         else { // if not already loaded
-          if (item.answerValueSet.startsWith('#')) {
+          if (false) {
             this._expandContainedValueSet(lfData, item, pendingPromises);
           } else if (expURL) {
             pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
@@ -1362,24 +1362,25 @@ function addCommonSDCImportFns(ns) {
           else { // use FHIR context
             var fhirClient = LForms.fhirContext?.client;
             if (!fhirClient) {
-              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-            }
-            pendingPromises.push(fhirClient.request({
+              pendingPromises.push(Promise.reject(new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server")));
+            } else {
+              pendingPromises.push(fhirClient.request({
                 url: lfData._buildURL(
                   ['ValueSet', '$expand'], {url: item.answerValueSet, _format: 'json'}),
                 headers: {'Accept': 'application/fhir+json'}
               }).then(function(response) {
-              var valueSet = response;
-              var answers = self.answersFromVS(valueSet);
-              if (answers) {
-                LForms._valueSetAnswerCache[vsKey] = answers;
-                item.answers = answers;
-                lfData._updateAutocompOptions(item);
-                lfData._resetItemValueWithAnswers(item);
-              }
-            }).catch(function(error) {
-              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-            }));
+                var valueSet = response;
+                var answers = self.answersFromVS(valueSet);
+                if (answers) {
+                  LForms._valueSetAnswerCache[vsKey] = answers;
+                  item.answers = answers;
+                  lfData._updateAutocompOptions(item);
+                  lfData._resetItemValueWithAnswers(item);
+                }
+              }).catch(function(error) {
+                throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
+              }));
+            }
           }
         }
       }
