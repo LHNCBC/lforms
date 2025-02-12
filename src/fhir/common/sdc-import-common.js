@@ -1315,7 +1315,7 @@ function addCommonSDCImportFns(ns) {
   self.loadAnswerValueSets = function (lfData) {
     var pendingPromises = [];
     var items = lfData.itemList;
-    for (var i=0, len=items.length; i<len; ++i) {
+    for (var i = 0, len = items.length; i < len; ++i) {
       let item = items[i];
       let expURL, vsKey;
       if (item.answerValueSet && !item.isSearchAutocomplete) {
@@ -1327,59 +1327,65 @@ function addCommonSDCImportFns(ns) {
         }
         if (!LForms._valueSetAnswerCache)
           LForms._valueSetAnswerCache = {};
-        let answers = LForms._valueSetAnswerCache[vsKey];
-        if (answers) {
-          item.answers = answers;
-          lfData._updateAutocompOptions(item);
-          lfData._resetItemValueWithAnswers(item);
-        }
-        else { // if not already loaded
+        let answersOrPromise = LForms._valueSetAnswerCache[vsKey];
+        if (answersOrPromise) {
+          if (typeof answersOrPromise.then === 'function') { // A promise is cached but not yet returned.
+            answersOrPromise.then(function (answers) {
+              if (answers) {
+                self._updateAnswersFromValueSetResponse(answers, lfData, item);
+                return answers;
+              }
+            });
+          } else { // answers list is cached.
+            self._updateAnswersFromValueSetResponse(answersOrPromise, lfData, item);
+          }
+        } else { // if not already loaded
           if (item.answerValueSet.startsWith('#')) {
-            this._expandContainedValueSet(lfData, item, pendingPromises);
+            self._expandContainedValueSet(lfData, item, pendingPromises);
           } else if (expURL) {
-            pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
+            const p = fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
               return response.json();
-            }).then(function(parsedJSON) {
-              if (parsedJSON.resourceType==="OperationOutcome" ) {
-                var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal")
+            }).then(function (parsedJSON) {
+              if (parsedJSON.resourceType === "OperationOutcome") {
+                var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal")
                 if (errorOrFatal) {
                   throw new Error(errorOrFatal.diagnostics)
                 }
-              }
-              else {
-                answers = self.answersFromVS(parsedJSON);
+              } else {
+                var answers = self.answersFromVS(parsedJSON);
                 if (answers) {
-                  LForms._valueSetAnswerCache[expURL] = answers;
-                  item.answers = answers;
-                  lfData._updateAutocompOptions(item);
-                  lfData._resetItemValueWithAnswers(item);
+                  self._updateAnswersFromValueSetResponse(answers, lfData, item);
+                  LForms._valueSetAnswerCache[vsKey] = answers;
                 }
+                return answers;
               }
-            }).catch(function(error) {
-              throw new Error("Unable to load ValueSet from "+expURL);
-            }));
-          }
-          else { // use FHIR context
+            }).catch(function (error) {
+              throw new Error("Unable to load ValueSet from " + expURL);
+            });
+            pendingPromises.push(p);
+            LForms._valueSetAnswerCache[vsKey] = p;
+          } else { // use FHIR context
             var fhirClient = LForms.fhirContext?.client;
             if (!fhirClient) {
-              pendingPromises.push(Promise.reject(new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server")));
+              pendingPromises.push(Promise.reject(new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server")));
             } else {
-              pendingPromises.push(fhirClient.request({
+              const p = fhirClient.request({
                 url: lfData._buildURL(
                   ['ValueSet', '$expand'], {url: item.answerValueSet, _format: 'json'}),
                 headers: {'Accept': 'application/fhir+json'}
-              }).then(function(response) {
+              }).then(function (response) {
                 var valueSet = response;
                 var answers = self.answersFromVS(valueSet);
                 if (answers) {
+                  self._updateAnswersFromValueSetResponse(answers, lfData, item);
                   LForms._valueSetAnswerCache[vsKey] = answers;
-                  item.answers = answers;
-                  lfData._updateAutocompOptions(item);
-                  lfData._resetItemValueWithAnswers(item);
                 }
-              }).catch(function(error) {
-                throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-              }));
+                return answers;
+              }).catch(function (error) {
+                throw new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server");
+              });
+              pendingPromises.push(p);
+              LForms._valueSetAnswerCache[vsKey] = p;
             }
           }
         }
@@ -1398,11 +1404,11 @@ function addCommonSDCImportFns(ns) {
    * @param pendingPromises pending promises list for loading answerValueSets
    * @private
    */
-  self._expandContainedValueSet = function(lfData, item, pendingPromises) {
+  self._expandContainedValueSet = function (lfData, item, pendingPromises) {
     const containedVS = lfData.contained.find(x => x.resourceType === 'ValueSet' && x.id === item.answerValueSet.substring(1));
     const terminologyServer = this._getTerminologyServer(item);
     if (terminologyServer) {
-      pendingPromises.push(fetch(terminologyServer + '/ValueSet/$expand', {
+      const p = fetch(terminologyServer + '/ValueSet/$expand', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1411,25 +1417,40 @@ function addCommonSDCImportFns(ns) {
       }).then(function (response) {
         return response.json();
       }).then(function (parsedJSON) {
-        if (parsedJSON.resourceType==="OperationOutcome") {
-          var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal");
+        if (parsedJSON.resourceType === "OperationOutcome") {
+          var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal");
           if (errorOrFatal) {
             throw new Error(errorOrFatal.diagnostics);
           }
-        }
-        else {
+        } else {
           var answers = self.answersFromVS(parsedJSON);
           if (answers) {
+            self._updateAnswersFromValueSetResponse(answers, lfData, item);
             LForms._valueSetAnswerCache[item.answerValueSet] = answers;
-            item.answers = answers;
-            lfData._updateAutocompOptions(item);
-            lfData._resetItemValueWithAnswers(item);
           }
+          return answers;
         }
-      }).catch(function(error) {
+      }).catch(function (error) {
         throw new Error("Unable to load ValueSet from " + terminologyServer);
-      }));
+      });
+      pendingPromises.push(p);
+      LForms._valueSetAnswerCache[item.answerValueSet] = p;
+
     }
+  };
+
+
+  /**
+   * Updates item.answers based on the response of the answerValueSet $expand operation.
+   * @param answers answers list extracted from answersFromVS()
+   * @param lfData the LFormsData for the form
+   * @param item an item in ltemList
+   * @private
+   */
+  self._updateAnswersFromValueSetResponse = function (answers, lfData, item) {
+    item.answers = answers;
+    lfData._updateAutocompOptions(item);
+    lfData._resetItemValueWithAnswers(item);
   };
 
 

@@ -233,7 +233,7 @@ var self = {
     }
     // option, for answer list
     else if (item.answerValueSet) {
-      targetItem.options ||= {};
+      targetItem.options = {};
       targetItem.options.reference = item.answerValueSet;
     }
     else if (item._options) {
