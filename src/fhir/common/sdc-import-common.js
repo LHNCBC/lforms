@@ -1336,7 +1336,7 @@ function addCommonSDCImportFns(ns) {
                 return answers;
               }
             });
-          } else { // answers list is cached.
+          } else if (answersOrPromise !== 'no FHIR client') { // answers list is cached.
             self._updateAnswersFromValueSetResponse(answersOrPromise, lfData, item);
           }
         } else { // if not already loaded
@@ -1368,6 +1368,9 @@ function addCommonSDCImportFns(ns) {
             var fhirClient = LForms.fhirContext?.client;
             if (!fhirClient) {
               pendingPromises.push(Promise.reject(new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server")));
+              // Cache a string value so the same vsKey don't need to be processed again,
+              // and we return only one rejected promise for the same vsKey.
+              LForms._valueSetAnswerCache[vsKey] = 'no FHIR client';
             } else {
               const p = fhirClient.request({
                 url: lfData._buildURL(
