@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.10.3] 2025-02-13
+### Fixed
+- Only the new externallyDefined URL should be exported.
+
 ## [36.10.2] 2025-02-03
 ### Fixed
 - The "url" parameter was not URL-encoded when doing expansions.
