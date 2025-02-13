@@ -78,6 +78,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlRegex,
     self.fhirExtUrlAnswerRepeats,
     self.fhirExtUrlExternallyDefined,
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
     self.argonautExtUrlExtensionScore,
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,

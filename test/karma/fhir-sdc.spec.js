@@ -492,6 +492,28 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(qData.item[0]._text, questionnaire.item[0]._text);
           });
 
+          it('should be compatible with the old externallyDefined extension URL but export the new URL', function (){
+            var questionnaire = {
+              item: [{
+                extension: [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+                    "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+                  }
+                ]
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.ok(qData.item[0].extension);
+            assert.deepEqual(qData.item[0].extension, [
+              {
+                "url": "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined",
+                "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+              }
+            ]);
+          });
+
           it('should correctly convert data control', function (){
             var questionnaire = {
               item: [ {
