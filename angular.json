@@ -146,7 +146,7 @@
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "browserTarget": "lforms:build:debugging",
+            "buildTarget": "lforms:build:debugging",
             "proxyConfig": "./proxy.conf.json"
           },
           "configurations": {
@@ -159,7 +159,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "lforms:build"
+            "buildTarget": "lforms:build"
           }
         },
         "test": {

@@ -24,7 +24,7 @@ export class LhcButtonPopoverComponent implements OnInit {
    * Set a popover identifier
    */
   ngOnInit(): void {
-    //Get a unique identifer for the popover
+    //Get a unique identifier for the popover
     if (this.formLevel && this.item) {
       this.popoverIdentifier = (this.item.code || this.item.name || this.item.shortName).replaceAll(/[\/\s]/g,'-')
     }
