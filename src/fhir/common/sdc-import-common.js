@@ -1333,8 +1333,8 @@ function addCommonSDCImportFns(ns) {
             answersOrPromise.then(function (answers) {
               if (answers) {
                 self._updateAnswersFromValueSetResponse(answers, lfData, item);
-                return answers;
               }
+              return answers;
             });
           } else if (answersOrPromise !== 'no FHIR client') { // answers list is cached.
             self._updateAnswersFromValueSetResponse(answersOrPromise, lfData, item);
@@ -1367,10 +1367,11 @@ function addCommonSDCImportFns(ns) {
           } else { // use FHIR context
             var fhirClient = LForms.fhirContext?.client;
             if (!fhirClient) {
-              pendingPromises.push(Promise.reject(new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server")));
-              // Cache a string value so the same vsKey don't need to be processed again,
+              const p = Promise.reject(new Error("No FHIR server is found to load ValueSet " + item.answerValueSet));
+              pendingPromises.push(p);
+              // Cache the rejected Promise so the same vsKey don't need to be processed again,
               // and we return only one rejected promise for the same vsKey.
-              LForms._valueSetAnswerCache[vsKey] = 'no FHIR client';
+              LForms._valueSetAnswerCache[vsKey] = p;
             } else {
               const p = fhirClient.request({
                 url: lfData._buildURL(
@@ -1434,11 +1435,10 @@ function addCommonSDCImportFns(ns) {
           return answers;
         }
       }).catch(function (error) {
-        throw new Error("Unable to load ValueSet from " + terminologyServer);
+        throw new Error("Unable to load ValueSet from " + terminologyServer + " for contained ValueSet " + item.answerValueSet);
       });
       pendingPromises.push(p);
       LForms._valueSetAnswerCache[item.answerValueSet] = p;
-
     }
   };
 
