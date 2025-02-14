@@ -64,7 +64,8 @@ function addCommonSDCImportFns(ns) {
   ];
 
   // One way or the other, the following extensions are converted to lforms internal fields.
-  // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
+  // Any extensions not listed here or that has an entry in extensionHandlers that returns
+  // true will be copied over to lforms as is.
   self.handledExtensionSet = new Set([
     self.fhirExtUrlCardinalityMin,
     self.fhirExtUrlCardinalityMax,

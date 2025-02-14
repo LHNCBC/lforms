@@ -2342,7 +2342,7 @@
                   }
                 },
                 {
-                  "url": "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined",
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
                   "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
                 }
               ],
