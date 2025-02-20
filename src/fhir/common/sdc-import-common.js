@@ -1443,13 +1443,39 @@ function addCommonSDCImportFns(ns) {
       });
       pendingPromises.push(p);
       LForms._valueSetAnswerCache[item.answerValueSet] = p;
-    } else {
-      const p = Promise.reject(new Error('Cannot load contained ValueSet "'+
-        item.answerValueSet+'" because it requires a terminology server to be specified.'));
-      pendingPromises.push(p);
-      // Cache the rejected Promise so the same vsKey don't need to be processed again,
-      // and we return only one rejected promise for the same vsKey.
-      LForms._valueSetAnswerCache[item.answerValueSet] = p;
+    } else { // use FHIR context
+      var fhirClient = LForms.fhirContext?.client;
+      if (!fhirClient) {
+        const p = Promise.reject(new Error('Cannot load ValueSet "'+
+          item.answerValueSet+'" because it requires either a terminology '+
+          'server to be specified or LForms.Util.setFHIRContext(...) '+
+          'to have been called to provide access to a FHIR server.'
+        ));
+        pendingPromises.push(p);
+        // Cache the rejected Promise so the same vsKey don't need to be processed again,
+        // and we return only one rejected promise for the same vsKey.
+        LForms._valueSetAnswerCache[item.answerValueSet] = p;
+      } else {
+        const p = fhirClient.request({
+          url: 'ValueSet/$expand?_format=json',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(containedVS)
+        }).then(function (parsedJSON) {
+          var answers = self.answersFromVS(parsedJSON);
+          if (answers) {
+            self._updateAnswersFromValueSetResponse(answers, lfData, item);
+            LForms._valueSetAnswerCache[item.answerValueSet] = answers;
+          }
+          return answers;
+        }).catch(function (error) {
+          throw new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server");
+        });
+        pendingPromises.push(p);
+        LForms._valueSetAnswerCache[item.answerValueSet] = p;
+      }
     }
   };
 

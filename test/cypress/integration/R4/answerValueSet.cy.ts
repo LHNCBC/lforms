@@ -787,13 +787,9 @@ describe('FHIR answerValueSet', () => {
 });
 
 describe('contained ValueSet without expansion', () => {
-  const tp: TestPage = new TestPage();
-
-  beforeEach(() => {
+  it('should load contained ValueSet with no expansion from terminology server', () => {
+    const tp: TestPage = new TestPage();
     tp.openBaseTestPage();
-  });
-
-  it('should load contained ValueSet with no expansion', () => {
     cy.intercept('POST', 'https://hapi.fhir.org/baseR4/ValueSet/$expand', {
       "resourceType": "ValueSet",
       "id": "test-valueset",
@@ -889,5 +885,44 @@ describe('contained ValueSet without expansion', () => {
     cy.byId('#group2-item2/1/1a').should('have.text', 'Answer 1');
     cy.byId('#group2-item2/1/1b').should('have.text', 'Answer 2');
     cy.byId('#group2-item2/1/1c').should('have.text', 'Answer 3');
+  });
+
+  it('should load contained ValueSet with no expansion from FHIR context', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    TestUtil.waitForFHIRLibsLoaded();
+    cy.window().then((win) => {
+      const fhirContext = new Function(
+        'return ' + fhirMock.mockFHIRContext
+      )();
+      win.LForms.Util.setFHIRContext(
+        fhirContext(fhirVersion, null, fhirMock.mockData)
+      );
+    });
+    // Put a form with contained ValueSets without expansion on the page using a FHIR object
+    const file = 'test/data/R4/q-with-contained-valueset-without-expansion.json';
+    cy.readFile(file).then((fhirData) => {
+      // Remove terminology server so we test expansion using FHIR client.
+      delete fhirData.extension;
+      cy.window().then(win=>{
+        win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
+      });
+    });
+    cy.get('.lhc-form-title').should('exist');
+    // autocomplete
+    cy.byId('#group1-item1/1/1')
+      .focus();
+    cy.get('#completionOptions li')
+      .as('listOptions');
+    cy.get('@listOptions')
+      .should('be.visible')
+      .should('have.length', 3);
+    // radio
+    cy.byId('#group2-item1/1/1N').should('have.text', 'No');
+    cy.byId('#group2-item1/1/1Y').should('have.text', 'Yes');
+    cy.byId('#group2-item1/1/1asked-unknown').should('have.text', "Don't know");
+    // checkbox
+    cy.byId('#group2-item2/1/1N').should('have.text', 'No');
+    cy.byId('#group2-item2/1/1Y').should('have.text', 'Yes');
+    cy.byId('#group2-item2/1/1asked-unknown').should('have.text', "Don't know");
   });
 });
