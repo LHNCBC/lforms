@@ -26,16 +26,6 @@
         }
       ],
       "linkId": "2834300786105",
-      "code": [
-        {
-          "code": "a",
-          "display": "aaa"
-        },
-        {
-          "code": "b",
-          "display": "bbb"
-        }
-      ],
       "text": "Answer Value Set Question",
       "required": false,
       "repeats": false,
