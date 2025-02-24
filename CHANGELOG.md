@@ -33,7 +33,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Support for rendering-xhtml on answerOption.valueCoding.display.
 
->>>>>>> pending-release
 ## [36.8.2] 2025-01-17
 ### Fixed
 - Fixed a bug that linkIds in help text items were lost in exported
