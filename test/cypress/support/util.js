@@ -11,7 +11,7 @@ export function visitTestPage() {
 /**
  *  Add a form to the test page
  * @param filePathOrFormDefData the path to the form definition (relative to
- * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified), 
+ * test/data/[fhirVersion], or test/data/lforms if fhirVersion isn't specified),
  * or the form definition data.
  * @param container the ID of the element into which the form should be placed.
  *  Default: 'formContainer'
@@ -22,7 +22,7 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
   if (!container)
     container = 'formContainer';
 
-  
+
   if (typeof filePathOrFormDefData === "string") {
     let fhirVersionInFile = options?.fhirVersion && options?.fhirVersion === 'R4B' ? 'R4' : options?.fhirVersion;
     let filePath = fhirVersionInFile ? fhirVersionInFile +'/'+filePathOrFormDefData :
@@ -34,7 +34,7 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
   else if (typeof filePathOrFormDefData === "object") {
     this.addFormDataToPage(filePathOrFormDefData, container, options);
   }
-  
+
   cy.get('#'+container).find('.lhc-form-title').should('be.visible');
 };
 
@@ -47,14 +47,14 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
  *  & prepoulate)
  */
 export function addFormDataToPage(formDefData, container, options) {
-  
-  cy.window().then((win) => {
+
+  return cy.window().then((win) => {
     win.document.getElementById(container).innerHTML = null;
     return new Cypress.Promise((resolve) => {
       win.LForms.Util.addFormToPage(formDefData, container, options).then(()=>resolve(), ()=>resolve());
     });
   });
-  
+
 };
 
 

@@ -686,7 +686,7 @@ function addCommonSDCImportFns(ns) {
       if (xhtmlFormat) {
         lfItem[htmlAttrName] = xhtmlFormat.valueString;
         if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             lfItem[invalidFlagName] = true;
             let errors = {};
@@ -1196,6 +1196,18 @@ function addCommonSDCImportFns(ns) {
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
         var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
+        // rendering-xhtml extension under "_display" in contained valueset.
+        if (self._widgetOptions?.allowHTML && vsItem._display) {
+          const xhtmlFormat = LForms.Util.findObjectInArray(vsItem._display.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+          if (xhtmlFormat) {
+            answer.textHTML = xhtmlFormat.valueString;
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(answer.textHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              answer._hasInvalidHTMLTagInText = true;
+              LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+            }
+          }
+        }
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
           self.fhirExtUrlValueSetScore);
         if(ordExt) {
@@ -1289,7 +1301,8 @@ function addCommonSDCImportFns(ns) {
     if (item.answerValueSet) {
       var terminologyServer = this._getTerminologyServer(item);
       if (terminologyServer)
-        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet + '&_format=json';
+        rtn = terminologyServer + '/ValueSet/$expand?url='+
+          encodeURIComponent(item.answerValueSet) + '&_format=json';
     }
     return rtn;
   };
@@ -1519,7 +1532,7 @@ function addCommonSDCImportFns(ns) {
         };
         // check if html string contains invalid html tags, when the html version needs to be displayed
         if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             help.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};
