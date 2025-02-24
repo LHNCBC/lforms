@@ -1301,7 +1301,8 @@ function addCommonSDCImportFns(ns) {
     if (item.answerValueSet) {
       var terminologyServer = this._getTerminologyServer(item);
       if (terminologyServer)
-        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet + '&_format=json';
+        rtn = terminologyServer + '/ValueSet/$expand?url='+
+          encodeURIComponent(item.answerValueSet) + '&_format=json';
     }
     return rtn;
   };
