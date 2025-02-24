@@ -808,31 +808,13 @@ describe('contained ValueSet without expansion', () => {
             "system": "lhc.forms.test.code.system",
             "concept": [{
               "code": "a",
-              "display": "Answer 1",
-              "_display": {
-                "extension": [{
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-                  "valueString": "Answer <button>button</button> 1"
-                }]
-              }
+              "display": "Answer 1"
             }, {
               "code": "b",
-              "display": "Answer 2",
-              "_display": {
-                "extension": [{
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-                  "valueString": "Answer <button>button</button> 2"
-                }]
-              }
+              "display": "Answer 2"
             }, {
               "code": "c",
-              "display": "Answer 3",
-              "_display": {
-                "extension": [{
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-                  "valueString": "Answer <button>button</button> 3"
-                }]
-              }
+              "display": "Answer 3"
             }]
           }
         ]

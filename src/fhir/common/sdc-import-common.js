@@ -1431,6 +1431,9 @@ function addCommonSDCImportFns(ns) {
             throw new Error(errorOrFatal.diagnostics);
           }
         } else {
+          if (self._widgetOptions?.allowHTML) {
+            self._copyExtensionsToExpansion(parsedJSON);
+          }
           var answers = self.answersFromVS(parsedJSON);
           if (answers) {
             self._updateAnswersFromValueSetResponse(answers, lfData, item);
@@ -1464,6 +1467,9 @@ function addCommonSDCImportFns(ns) {
           },
           body: JSON.stringify(containedVS)
         }).then(function (parsedJSON) {
+          if (self._widgetOptions?.allowHTML) {
+            self._copyExtensionsToExpansion(parsedJSON);
+          }
           var answers = self.answersFromVS(parsedJSON);
           if (answers) {
             self._updateAnswersFromValueSetResponse(answers, lfData, item);
@@ -1491,6 +1497,28 @@ function addCommonSDCImportFns(ns) {
     item.answers = answers;
     lfData._updateAutocompOptions(item);
     lfData._resetItemValueWithAnswers(item);
+  };
+
+
+  /**
+   * When we do an $expand POST operation, the returned expansion may not have some extensions
+   * like rendering-xhtml on _display. compose.include.concept may have the extensions. Copy
+   * them to expansion.contains if there are matches in comose.include.concept.
+   * @param parsedJSON the returned JSON object from an $expand POST operation
+   */
+  self._copyExtensionsToExpansion = function (parsedJSON) {
+    if (!parsedJSON.expansion?.contains || !parsedJSON.compose?.include) {
+      return;
+    }
+    parsedJSON.expansion.contains.forEach(contains => {
+      const matchingSytem = parsedJSON.compose.include.find(include => include.system === contains.system);
+      if (matchingSytem) {
+        const matchingCode = matchingSytem.concept?.find(concept => concept.code === contains.code);
+        if (matchingCode) {
+          Object.assign(contains, matchingCode);
+        }
+      }
+    });
   };
 
 
