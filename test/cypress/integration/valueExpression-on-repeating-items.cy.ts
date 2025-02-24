@@ -1,6 +1,6 @@
 describe('valueExpression on repeating items', () => {
   
-  it('should have create repeating items with correct SN.', () => {
+  it('should create repeating items with correct SN.', () => {
     cy.visit('/test/pages/lforms_testpage.html');
     cy.get("#loadBtn").contains("Load Form From File");
     cy.get('#fileAnchor').uploadFile('test/data/R4/q-repeating-item-calculatedExpression.json');
