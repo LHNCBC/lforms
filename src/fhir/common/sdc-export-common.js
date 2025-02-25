@@ -201,7 +201,7 @@ function addCommonSDCExportFns(ns) {
       let helpItem = {
         "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
         "type": "display",
-        "linkId": targetItem.linkId + "-help",
+        "linkId": item.codingInstructionsLinkId || targetItem.linkId + "-help",
         "extension": [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
@@ -425,7 +425,7 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._handleMetaProfile = function (meta) {
-    const thisVersion = LForms.Util.detectFHIRVersionFromProfiles([this.stdQProfile]);
+    const thisVersion = this.fhirVersion;
     const retainedProfiles = [];
 
     if(meta.profile?.length > 0) {
@@ -791,10 +791,9 @@ function addCommonSDCExportFns(ns) {
     // resourceType
     target.resourceType = "QuestionnaireResponse";
 
-    // meta
-    var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
+    // meta.profile - set the standard profile
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+    target.meta.profile = [this.stdQRProfile];
 
     // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
     //target.identifier = {
@@ -811,7 +810,7 @@ function addCommonSDCExportFns(ns) {
 
     // questionnaire , required
     // We do not have the ID at this point, so leave it unset for now.  Note
-    // that the fomat has also changed from Reference to canonical in R4.
+    // that the format has also changed from Reference to canonical in R4.
     /*
     target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server

@@ -686,7 +686,7 @@ function addCommonSDCImportFns(ns) {
       if (xhtmlFormat) {
         lfItem[htmlAttrName] = xhtmlFormat.valueString;
         if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             lfItem[invalidFlagName] = true;
             let errors = {};
@@ -1196,6 +1196,18 @@ function addCommonSDCImportFns(ns) {
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
         var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
+        // rendering-xhtml extension under "_display" in contained valueset.
+        if (self._widgetOptions?.allowHTML && vsItem._display) {
+          const xhtmlFormat = LForms.Util.findObjectInArray(vsItem._display.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+          if (xhtmlFormat) {
+            answer.textHTML = xhtmlFormat.valueString;
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(answer.textHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              answer._hasInvalidHTMLTagInText = true;
+              LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+            }
+          }
+        }
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
           self.fhirExtUrlValueSetScore);
         if(ordExt) {
@@ -1289,7 +1301,8 @@ function addCommonSDCImportFns(ns) {
     if (item.answerValueSet) {
       var terminologyServer = this._getTerminologyServer(item);
       if (terminologyServer)
-        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet + '&_format=json';
+        rtn = terminologyServer + '/ValueSet/$expand?url='+
+          encodeURIComponent(item.answerValueSet) + '&_format=json';
     }
     return rtn;
   };
@@ -1491,35 +1504,37 @@ function addCommonSDCImportFns(ns) {
 
   /**
    * Parse questionnaire item for coding instructions
-   *
+   * @param targetItem the LForms node being populated with data
    * @param qItem {object} - Questionnaire item object
-   * @return {{}} an object contains the coding instructions info.
+   * @return {boolean} true if the item is a help text item, false otherwise.
    * @private
    */
-  self._processCodingInstructions = function(qItem) {
+  self._processCodingInstructions = function(targetItem, qItem) {
     // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
     // which in LForms is an attribute of the parent item, not a separate item.
-    let helps, errors, messages;
+    // use one coding instruction if there are multiple ones in Questionnaire.
+    let help, errors, messages;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     let xhtmlFormat;
     if ( qItem.type === "display" && ci) {
-      // only "redering-xhtml" is supported. others are default to text
+      // only "rendering-xhtml" is supported. others are default to text
       if (qItem._text) {
         xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
       }
 
       // there is a xhtml extension
       if (xhtmlFormat) {
-        helps = {
+        help = {
           codingInstructionsFormat: "html",
           codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsLinkId: qItem.linkId,
           codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
         };
         // check if html string contains invalid html tags, when the html version needs to be displayed
         if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-            helps.codingInstructionsHasInvalidHtmlTag = true;
+            help.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};
             errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
             messages = [{errors}];
@@ -1529,15 +1544,27 @@ function addCommonSDCImportFns(ns) {
       }
       // no xhtml extension, default to 'text'
       else {
-        helps = {
+        help = {
           codingInstructionsFormat: "text",
           codingInstructions: qItem.text,
+          codingInstructionsLinkId: qItem.linkId,
           codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
         };
       }
-    }
 
-    return [helps, messages];
+      if (messages) {
+        LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructions');
+      }
+      if (help) {
+        targetItem.codingInstructions = help.codingInstructions;
+        targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+        targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
+        targetItem.codingInstructionsHasInvalidHtmlTag = help.codingInstructionsHasInvalidHtmlTag;
+        targetItem.codingInstructionsLinkId = help.codingInstructionsLinkId;
+      }
+
+      return !!help;
+    }
   };
 
 
@@ -1553,18 +1580,8 @@ function addCommonSDCImportFns(ns) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var [help, messages] = self._processCodingInstructions(qItem.item[i]);
-        if (messages) {
-          LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructions');
-        }
-        // pick one coding instruction if there are multiple ones in Questionnaire
-        if (help) {
-          targetItem.codingInstructions = help.codingInstructions;
-          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
-          targetItem.codingInstructionsHasInvalidHtmlTag = help.codingInstructionsHasInvalidHtmlTag;
-        }
-        else {
+        let isHelpTextItem = self._processCodingInstructions(targetItem, qItem.item[i]);
+        if(!isHelpTextItem) {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap, containedImages);
           targetItem.items.push(item);
         }

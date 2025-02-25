@@ -266,6 +266,11 @@ var self = {
         if (answer.system) {
           option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
         }
+
+        // Restore rendering-xhtml extension on valueCoding._display.
+        if (answer.obj_valueCoding_display) {
+          option.valueCoding._display = answer.obj_valueCoding_display;
+        }
       }
       // when option's values are string, integer, date or time
       else if(item.dataType === "ST" || item.dataType === "INT" ||

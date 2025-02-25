@@ -184,7 +184,7 @@ export default class LhcFormData {
     }
 
     // process images in 'contained'
-    if (data.contained)
+    if (data.contained && this._fhir)
       this._containedImages = this._fhir.SDC.buildContainedImageMap(data.contained);
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
@@ -249,8 +249,8 @@ export default class LhcFormData {
     var status = [];
     for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
-      if (item.answerValueSet && ! item.answers) {
-        status.push("Resource not loaded: " + item.answerValueSet)
+      if (item.answerValueSet && !item.answers && !item.externallyDefined && !item.isSearchAutocomplete) {
+        status.push("Value set not loaded: " + item.answerValueSet)
       }
     }
 
@@ -1022,7 +1022,7 @@ export default class LhcFormData {
                 }
               }
               let errors, messages;
-              let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item[htmlAttrName]);
+              let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(item[htmlAttrName]);
               if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
                 if (htmlAttrName === '_displayHTML') {
                   item._hasInvalidHTMLTagInText = true;
@@ -1052,7 +1052,7 @@ export default class LhcFormData {
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
             let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
-            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(helpHTML);
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(helpHTML);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};
@@ -2472,7 +2472,7 @@ export default class LhcFormData {
 
 
   /**
-   *  Adjusts the number of repeating items in order to accomodate the number of
+   *  Adjusts the number of repeating items in order to accommodate the number of
    *  values in the given array, and assigns the items their values from the
    *  array.
    * @param item an item (possibly repeating) to which values are to be
@@ -2529,8 +2529,8 @@ export default class LhcFormData {
           var parentItemDisabled = item._parentItem._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
           for (var i=0; i<newRowsNeeded; ++i) {
             var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
-            newItem._id = maxRecId + 1;
-            item._parentItem.items.splice(insertPosition, 0, newItem);
+            newItem._id = maxRecId + i + 1;
+            item._parentItem.items.splice(insertPosition+ i, 0, newItem); // insert at the end
             newItem._parentItem = item._parentItem;
             repetitions.push(newItem);
             // preset the skip logic status to target-disabled on the new items

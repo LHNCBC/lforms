@@ -12,8 +12,8 @@ describe('AnswerOption display', () => {
     (function (fhirVersion) {
 
       describe(fhirVersion, () => {
-        it('should display answerOption correcotly even when there are no code or display', () => {
-          let fileName = 'questionnaire-answerOption.json';
+        it('should display answerOption correctly even when when it is missing either a code or a display string (but not both)', () => {
+          let fileName = 'questionnaire-answerOption-without-code-or-display.json';
           util.addFormToPage(fileName, null, {fhirVersion});
   
           cy.byId('/answers/1')

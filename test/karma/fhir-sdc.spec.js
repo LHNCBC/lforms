@@ -111,7 +111,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }]
           };
 
-          it('should handle the import and export of the entryFormat entension', function() {
+          it('should handle the import and export of the entryFormat extension', function() {
             let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
             assert.equal(formData.items[0]._entryFormat, 'string: a entry format from questionnaire');
 
@@ -548,7 +548,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
-          it('should preserve rendering-xhtml extension on _text', function (){
+          it('should preserve rendering-xhtml extension on _prefix', function (){
             $.get('test/data/R4/q-with-rendering-xhtml-prefix.json', function(json) {
               const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
               assert.equal(lfData.items[0]._prefixHTML, "<i class='testPlease'>A</i> HTML <b>prefix:</b>");
@@ -567,6 +567,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
                 assert.ok(qData.item[0].item[0].answerOption[0]._valueString);
                 assert.deepEqual(qData.item[0].item[0].answerOption[0]._valueString, json.item[0].item[0].answerOption[0]._valueString);
+              });
+            });
+
+            it('should preserve rendering-xhtml extension on answerOption valueCoding._display', function (){
+              $.get('test/data/R4/q-with-rendering-xhtml-answerOption.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[3].items[0].answers[0].text, 'italic a');
+                assert.equal(lfData.items[3].items[0].answers[0].textHTML, "italic <i class='testItalic'>A</i>");
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[3].item[0].answerOption[0].valueCoding._display);
+                assert.deepEqual(qData.item[3].item[0].answerOption[0].valueCoding._display, json.item[3].item[0].answerOption[0].valueCoding._display);
               });
             });
           }
@@ -1789,7 +1800,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             it('should convert to SDC Questionnaire with extensions', function(done) {
               $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
                 var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
-                assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
+                assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
                 done();
               });
             });
