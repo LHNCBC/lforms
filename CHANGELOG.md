@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.10.4] 2025-02-24
+### Fixed
+- Fixed a bug that the repeating numbers are not displayed correctly 
+  on the repeating items when their data are loaded through FHIRPath
+  expressions.
+  
 ## [36.10.3] 2025-02-07
 ### Changed
 - Changed the meta.profile for STU3, R4 and R5 in the exported 
