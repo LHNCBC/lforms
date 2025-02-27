@@ -1510,12 +1510,12 @@ function addCommonSDCImportFns(ns) {
     if (!parsedJSON.expansion?.contains || !parsedJSON.compose?.include) {
       return;
     }
-    parsedJSON.expansion.contains.forEach(contains => {
-      const matchingSytem = parsedJSON.compose.include.find(include => include.system === contains.system);
+    parsedJSON.expansion.contains.forEach(function (vsItem) {
+      const matchingSytem = parsedJSON.compose.include.find(include => include.system === vsItem.system);
       if (matchingSytem) {
-        const matchingCode = matchingSytem.concept?.find(concept => concept.code === contains.code);
+        const matchingCode = matchingSytem.concept?.find(concept => concept.code === vsItem.code);
         if (matchingCode) {
-          Object.assign(contains, matchingCode);
+          Object.assign(vsItem, matchingCode);
         }
       }
     });
