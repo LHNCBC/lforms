@@ -725,7 +725,7 @@ import replaceAsync from 'string-replace-async';
       const scoreURI = this._fhir.SDC.fhirExtUrlOptionScore;
       if (listHasData) {
         // list should be an array of any item type, including Coding.
-        // (In R5, FHIR will start suppoing lists of types other than Coding.)
+        // (In R5, FHIR will start supporting lists of types other than Coding.)
         for (let i=0, len=list.length; i<len; ++i) {
           let entry = list[i];
           let newEntry = (newList[i] = {});

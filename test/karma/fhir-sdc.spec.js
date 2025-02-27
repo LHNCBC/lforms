@@ -111,7 +111,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }]
           };
 
-          it('should handle the import and export of the entryFormat entension', function() {
+          it('should handle the import and export of the entryFormat extension', function() {
             let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
             assert.equal(formData.items[0]._entryFormat, 'string: a entry format from questionnaire');
 
@@ -1810,7 +1810,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             it('should convert to SDC Questionnaire with extensions', function(done) {
               $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
                 var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
-                assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
+                assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
                 done();
               });
             });
