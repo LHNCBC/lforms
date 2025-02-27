@@ -3375,8 +3375,9 @@ export default class LhcFormData {
     if (answers && Array.isArray(answers)) {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
-
-        var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
+        
+        // convert integer to string when the answerOption is an integer
+        var displayText = (answerData.text || answerData.code) + ""; 
         var displayTextHTML = answerData.textHTML;
         // label is a string
         if (answerData.label) {

@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.10.5] 2025-02-25
+### Fixed
+- Fixed a display issue for answers, where the display field might
+  not have data.
+
 ## [36.10.4] 2025-02-24
 ### Fixed
 - Fixed a bug that the repeating numbers are not displayed correctly 
@@ -38,6 +43,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug that linkIds in help text items were lost in exported
   Questionnaire.
 
+>>>>>>> pending-release
 ## [36.8.1] 2024-12-17
 ### Fixed
 - Fixed a bug that code.system was not set correctly when exporting 
