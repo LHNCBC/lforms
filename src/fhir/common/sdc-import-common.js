@@ -107,6 +107,7 @@ function addCommonSDCImportFns(ns) {
     extension.url = self.fhirExtInitialExp;
     return true; // add extension to LForms item
   };
+  // Below are two old, deprecated terminology server urls.
   self.extensionHandlers[
     "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer"] =
   self.extensionHandlers[
