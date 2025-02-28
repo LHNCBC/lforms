@@ -4,9 +4,10 @@ import { InternalUtil } from '../../lib/lforms/internal-utils';
 
 
 @Component({
-  selector: 'lhc-unit',
-  templateUrl: './lhc-unit.component.html',
-  styleUrls: ['./lhc-unit.component.css']
+    selector: 'lhc-unit',
+    templateUrl: './lhc-unit.component.html',
+    styleUrls: ['./lhc-unit.component.css'],
+    standalone: false
 })
 export class LhcUnitComponent implements OnChanges {
 

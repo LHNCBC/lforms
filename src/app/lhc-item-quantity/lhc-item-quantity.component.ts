@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'lhc-item-quantity',
-  templateUrl: './lhc-item-quantity.component.html',
-  styleUrls: ['./lhc-item-quantity.component.css']
+    selector: 'lhc-item-quantity',
+    templateUrl: './lhc-item-quantity.component.html',
+    styleUrls: ['./lhc-item-quantity.component.css'],
+    standalone: false
 })
 export class LhcItemQuantityComponent implements OnInit {
 

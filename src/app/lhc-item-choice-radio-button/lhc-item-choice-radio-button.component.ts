@@ -3,9 +3,10 @@ import { CommonUtilsService } from '../../lib/common-utils.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-item-choice-radio-button',
-  templateUrl: './lhc-item-choice-radio-button.component.html',
-  styleUrls: ['./lhc-item-choice-radio-button.component.css']
+    selector: 'lhc-item-choice-radio-button',
+    templateUrl: './lhc-item-choice-radio-button.component.html',
+    styleUrls: ['./lhc-item-choice-radio-button.component.css'],
+    standalone: false
 })
 export class LhcItemChoiceRadioButtonComponent implements OnChanges {
   @Input() item;
