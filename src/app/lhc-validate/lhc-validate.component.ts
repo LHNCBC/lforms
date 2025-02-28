@@ -2,9 +2,10 @@ import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-validate',
-  templateUrl: './lhc-validate.component.html',
-  styleUrls: ['./lhc-validate.component.css'],
+    selector: 'lhc-validate',
+    templateUrl: './lhc-validate.component.html',
+    styleUrls: ['./lhc-validate.component.css'],
+    standalone: false
 })
 export class LhcValidateComponent implements OnChanges {
   @Input() item: any;

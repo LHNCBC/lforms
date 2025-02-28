@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.11.0] 2025-02-27
+### Changed
+- Upgraded angular to v19
+- Upgraded ng-zorro-antd to v19
+
 ## [36.10.5] 2025-02-25
 ### Fixed
 - Fixed a display issue for answers, where the display field might
