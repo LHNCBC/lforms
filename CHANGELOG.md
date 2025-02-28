@@ -2,11 +2,21 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.10.5] 2025-02-27
+## [36.11.1] 2025-02-28
 ### Changed
 - New URL for preferredTerminologyServer extension.
 - preferredTerminologyServer extension should work at root level as well as
   item level.
+
+## [36.11.0] 2025-02-27
+### Changed
+- Upgraded angular to v19
+- Upgraded ng-zorro-antd to v19
+
+## [36.10.5] 2025-02-25
+### Fixed
+- Fixed a display issue for answers, where the display field might
+  not have data.
 
 ## [36.10.4] 2025-02-24
 ### Fixed

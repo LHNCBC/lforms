@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-item-question-text',
-  templateUrl: './lhc-item-question-text.component.html',
-  styleUrls: ['./lhc-item-question-text.component.css'],
+    selector: 'lhc-item-question-text',
+    templateUrl: './lhc-item-question-text.component.html',
+    styleUrls: ['./lhc-item-question-text.component.css'],
+    standalone: false
 })
 export class LhcItemQuestionTextComponent implements OnInit {
   @Input() item: any;

@@ -3,9 +3,10 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 import deepEqual from "deep-equal";
 
 @Component({
-  selector: 'lhc-group-matrix',
-  templateUrl: './lhc-group-matrix.component.html',
-  styleUrls: ['./lhc-group-matrix.component.css']
+    selector: 'lhc-group-matrix',
+    templateUrl: './lhc-group-matrix.component.html',
+    styleUrls: ['./lhc-group-matrix.component.css'],
+    standalone: false
 })
 export class LhcGroupMatrixComponent {
 

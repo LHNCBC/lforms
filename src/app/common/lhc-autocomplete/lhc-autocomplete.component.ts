@@ -5,10 +5,11 @@ import { LhcDataService} from '../../../lib/lhc-data.service';
 import CommonUtils from "../../../lib/lforms/lhc-common-utils.js";
 
 @Component({
-  selector: 'lhc-autocomplete',
-  templateUrl: './lhc-autocomplete.component.html',
-  styleUrls: ['./lhc-autocomplete.component.css'],
-  encapsulation: ViewEncapsulation.Emulated
+    selector: 'lhc-autocomplete',
+    templateUrl: './lhc-autocomplete.component.html',
+    styleUrls: ['./lhc-autocomplete.component.css'],
+    encapsulation: ViewEncapsulation.Emulated,
+    standalone: false
 })
 export class LhcAutocompleteComponent implements OnChanges {
 

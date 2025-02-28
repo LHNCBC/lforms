@@ -2,9 +2,10 @@ import {OnChanges, Component, Input } from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-item-boolean',
-  templateUrl: './lhc-item-boolean.component.html',
-  styleUrls: ['./lhc-item-boolean.component.css']
+    selector: 'lhc-item-boolean',
+    templateUrl: './lhc-item-boolean.component.html',
+    styleUrls: ['./lhc-item-boolean.component.css'],
+    standalone: false
 })
 export class LhcItemBooleanComponent implements OnChanges {
   @Input() item: any;
