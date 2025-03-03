@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.11.2] 2025-03-03
+### Fixed
+- Only the new externallyDefined URL should be exported.
+
 ## [36.11.1] 2025-02-28
 ### Changed
 - New URL for preferredTerminologyServer extension.

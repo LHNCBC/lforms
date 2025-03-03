@@ -64,7 +64,8 @@ function addCommonSDCImportFns(ns) {
   ];
 
   // One way or the other, the following extensions are converted to lforms internal fields.
-  // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
+  // Any extensions not listed here will be copied over to lforms as is, unless it has an
+  // entry in extensionHandlers that does not return true (meaning specifically not to copy).
   self.handledExtensionSet = new Set([
     self.fhirExtUrlCardinalityMin,
     self.fhirExtUrlCardinalityMax,
@@ -77,7 +78,6 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlMinLength,
     self.fhirExtUrlRegex,
     self.fhirExtUrlAnswerRepeats,
-    self.fhirExtUrlExternallyDefined,
     self.argonautExtUrlExtensionScore,
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
@@ -1603,7 +1603,10 @@ function addCommonSDCImportFns(ns) {
       for (var i=0; i < qItem.extension.length; i++) {
         var ext = qItem.extension[i];
         var extHandler = self.extensionHandlers[ext.url];
-        if ((extHandler && extHandler(ext, lfItem)) ||
+        // Extensions should be copied if they aren't handled, which means
+        // 1) there isn't an extension handler or there is one that returns true (the signal to copy),  and
+        // 2) they are not in the handledExtensions list.
+        if ((!extHandler || (extHandler && extHandler(ext, lfItem))) &&
             !self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
