@@ -1518,7 +1518,8 @@ function addCommonSDCImportFns(ns) {
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     let xhtmlFormat;
     if ( qItem.type === "display" && ci) {
-      let isLegal = ci.valueCodeableConcept?.code === 'legal'; // true if it's a legal extension, false if it's a help extension.
+      // true if it's a legal extension, false if it's a help extension.
+      let isLegal = ci.valueCodeableConcept?.coding?.[0]?.code === 'legal';
 
       // only "rendering-xhtml" is supported. others are default to text
       if (qItem._text) {
