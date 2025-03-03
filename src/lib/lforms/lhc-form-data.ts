@@ -1038,6 +1038,7 @@ export default class LhcFormData {
               }
             }
           })
+
           // update and check the html version of help text,
           // when the lhcFormData instance has been initialized.
           if (item.codingInstructions &&
@@ -1059,7 +1060,32 @@ export default class LhcFormData {
               errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
               messages = [{errors}];
               InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
+            }
+          }
+
+          // update and check the html version of legal text,
+          // when the lhcFormData instance has been initialized.
+          if (item.legal &&
+            item.legal.length > 0 &&
+            item.legalFormat === "html") {
+            // process contained images
+            if (this._containedImages &&
+              item.legal.match(/img/) &&
+              item.legal.match(/src/)) {
+              item._legalWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.legal);
+            }
+            let errors, messages;
+            // check if html string contains invalid html tags, when the html version needs to be displayed
+            let legalHTML = item._legalWithContainedImages || item.legal;
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(legalHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              item.legalHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInLegalHTMLContent');
+              messages = [{errors}];
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
             }
           }
 

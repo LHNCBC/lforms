@@ -128,6 +128,7 @@ span.loading-indicator-container {
   margin-bottom: 2px;
 }
 .lhc-form .lhc-help-button,
+.lhc-form .lhc-legal-button,
 .lhc-form .lf-control-button,
 .lhc-form .lhc-copyright-button {
   padding: 0;
@@ -139,12 +140,14 @@ span.loading-indicator-container {
   border: none;
 }
 .lhc-form .lhc-help-button:hover,
+.lhc-form .lhc-legal-button:hover,
 .lhc-form .lf-control-button:hover,
 .lhc-form .lhc-copyright-button:hover {
   color: #0087fd;
   cursor: pointer;
 }
 .lhc-form .lhc-form-title .lhc-help-button,
+.lhc-form .lhc-form-title .lhc-legal-button,
 .lhc-form .lhc-form-title .lf-control-button,
 .lhc-form .lhc-form-title .lhc-copyright-button {
   background-color: inherit;
@@ -152,11 +155,13 @@ span.loading-indicator-container {
   font-weight: bold;
 }
 .lhc-form .lhc-form-title .lhc-help-button:hover,
+.lhc-form .lhc-form-title .lhc-legal-button:hover,
 .lhc-form .lhc-form-title .lf-control-button:hover,
 .lhc-form .lhc-form-title .lhc-copyright-button:hover {
   color: #b4fda7;
 }
 .lhc-form .lhc-help-button i,
+.lhc-form .lhc-legal-button i,
 .lhc-form .lf-control-button i,
 .lhc-form .lhc-copyright-button i{
   font-size: medium;
@@ -348,8 +353,10 @@ div.cdk-overlay-pane {
 }
 /* show newlines in popover*/
 .lhc-popover-help .ant-popover-inner-content,
+.lhc-popover-legal .ant-popover-inner-content,
 .lhc-popover-copyright .ant-popover-inner-content,
 .lhc-form .lhc-inline-help,
+.lhc-form .lhc-inline-legal,
 .lhc-form .lhc-inline-copyright {
   white-space: pre-wrap;
   width: auto;

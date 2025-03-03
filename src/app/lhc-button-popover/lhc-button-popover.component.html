@@ -53,20 +53,46 @@
           attr.aria-describedby="help-button-{{ item._elementId }}">
     <i nz-icon nzType="question-circle" nzTheme="fill"></i>
   </button>
+  <button *ngSwitchCase="'legal-string'" id="legal-button-{{ item._elementId }}" type="button" class="lhc-legal-button"
+          nz-popover
+          [nzPopoverContent]="legalStrTemplate"
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
+          nzPopoverTitle="Legal"
+          nzPopoverOverlayClassName="lhc-popover-legal lhc-legal{{ item._elementId.replaceAll('/','-') }}"
+          (click)="onShowingPopover(item)"
+          attr.aria-controls="legal-content-{{item._elementId}}"
+          attr.aria-label="Legal button for {{item.question}}"
+          attr.aria-describedby="legal-button-{{ item._elementId }}">
+    <i nz-icon nzType="info-circle" nzTheme="fill"></i>
+  </button>
+  <button *ngSwitchCase="'legal-html'" id="legal-button-{{ item._elementId }}" type="button" class="lhc-legal-button"
+          nz-popover
+          [nzPopoverContent]="legalHtmlTemplate"
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
+          nzPopoverTitle="Legal"
+          nzPopoverOverlayClassName="lhc-popover-legal lhc-legal{{ item._elementId.replaceAll('/','-') }}"
+          (click)="onShowingPopover(item)"
+          attr.aria-controls="legal-content-{{item._elementId}}"
+          attr.aria-label="Legal button for {{item.question}}"
+          attr.aria-describedby="legal-button-{{ item._elementId }}">
+    <i nz-icon nzType="info-circle" nzTheme="fill"></i>
+  </button>
+  <button *ngSwitchCase="'legal-plain'" id="legal-button-{{ item._elementId }}" type="button" class="lhc-legal-button"
+          nz-popover
+          [nzPopoverContent]="legalPlainTemplate"
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
+          nzPopoverTitle="Legal"
+          nzPopoverOverlayClassName="lhc-popover-legal lhc-legal{{ item._elementId.replaceAll('/','-') }}"
+          (click)="onShowingPopover(item)"
+          attr.aria-controls="legal-content-{{item._elementId}}"
+          attr.aria-label="Legal button for {{item.question}}"
+          attr.aria-describedby="legal-button-{{ item._elementId }}">
+    <i nz-icon nzType="info-circle" nzTheme="fill"></i>
+  </button>
   <ng-container *ngSwitchCase="'copyright-string'">
-    <button *ngIf="!formLevel" id="copyright-button-{{item._elementId}}" type="button" class="lhc-copyright-button"
-            nz-popover
-            [nzPopoverContent]="copyrightStrTemplate"
-            nzPopoverTrigger="click"
-            nzPopoverPlacement="right"
-            nzPopoverTitle="Copyright"
-            nzPopoverOverlayClassName="lhc-popover-copyright lhc-copyright-class{{ item._elementId.replaceAll('/','-') }}"
-            (click)="onShowingPopover(item)"
-            attr.aria-controls="copyright-content-{{item._elementId}}"
-            attr.aria-label="Copyright button for {{item.question}}"
-            attr.aria-describedby="copyright-button-{{ item._elementId }}">
-      <i nz-icon nzType="copyright-circle" nzTheme="fill"></i>
-    </button>
     <button *ngIf="formLevel"
             id="copyright-button-{{popoverIdentifier}}"
             type="button"
@@ -126,15 +152,38 @@
   >{{item.codingInstructions}}</span>
 </ng-template>
 
+<!-- legal popover template with trusted html -->
+<ng-template #legalHtmlTemplate>
+  <span attr.aria-labelledby="legal-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Legal for {{item.question}}"
+        attr.aria-describedby="legal-content-{{item._elementId}}"
+        id="legal-content-{{item._elementId}}"
+        [innerHTML]="item._legalWithContainedImages || item.legal | safeHtml"
+  ></span>
+</ng-template>
+<!-- legal popover template with plain text-->
+<ng-template #legalPlainTemplate>
+  <span attr.aria-labelledby="legal-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Legal for {{item.question}}"
+        attr.aria-describedby="legal-content-{{item._elementId}}"
+        id="legal-content-{{item._elementId}}"
+  >{{item.legalPlain || item.copyrightNotice}}</span>
+</ng-template>
+<!-- legal popover template -->
+<ng-template #legalStrTemplate>
+  <span attr.aria-labelledby="legal-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Legal for {{item.question}}"
+        attr.aria-describedby="legal-content-{{item._elementId}}"
+        id="legal-content-{{item._elementId}}"
+  >{{item.legal}}</span>
+</ng-template>
+
+
 <!-- copyright popover template -->
 <ng-template #copyrightStrTemplate >
-  <span *ngIf="!formLevel"
-        attr.aria-labelledby="copyright-button-{{item._elementId}}"
-        role="region"
-        attr.aria-label="Copyright notice for {{item.question}}"
-        attr.aria-describedby="copyright-content-{{item._elementId}}"
-        id="copyright-content-{{item._elementId}}"
-  >{{item.copyrightNotice}}</span>
   <span *ngIf="formLevel"
         id="copyright-content-{{popoverIdentifier}}"
         attr.aria-labelledby="copyright-button-{{popoverIdentifier}}"

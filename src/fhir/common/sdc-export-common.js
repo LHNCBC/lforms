@@ -237,6 +237,49 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
+    // the legal is a sub item with a "display" type, and an item-control value as "legal"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+    if (item.legal) {
+      let legalItem = {
+        "text": item.legalPlain ? item.legalPlain : item.legal,
+        "type": "display",
+        "linkId": item.legalLinkId || targetItem.linkId + "-legal",
+        "extension": [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Legal-Button",
+            "coding": [{
+              "code": "legal",
+              "display": "Legal-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      };
+
+      // format could be 'html' or 'text'
+      if (item.legalFormat === 'html') {
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        legalItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.legal
+          }]
+        }
+      }
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(legalItem)
+      }
+      else {
+        targetItem.item = [
+          legalItem
+        ]
+      }
+    }
+
     if (item.maxAttachmentSize) {
       var exts = (targetItem.extension || (targetItem.extension = []));
       exts.push({url: self.fhirExtMaxSize, valueDecimal: item.maxAttachmentSize});

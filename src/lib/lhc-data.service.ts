@@ -216,6 +216,35 @@ export class LhcDataService {
 
 
   /**
+   * Check the display type of item.legal
+   * @param item an item in the lforms form items array
+   * @returns {string}
+   */
+  getLegalDisplayType(item) {
+    var ret ='';
+    if (item.legal && item.legal.length > 0) {
+      var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
+      if (this.lhcFormData.templateOptions.allowHTML && item.legalFormat === "html") {
+        var format = "html";  // use item.legal (safe html)
+        if (item.legalHasInvalidHtmlTag) {
+          if (this.lhcFormData.templateOptions.displayInvalidHTML) {
+            format = "escaped" // use item.legal (escaped)
+          }
+          else {
+            format = "plain"; // use item.legalPlain
+          }
+        }
+      }
+      else {
+        format = "escaped"; // use item.legal
+      }
+      ret = position + "-" + format;
+    }
+    return ret;
+  }
+
+
+  /**
    * Check if there's a unit list
    * @param item an item in the lforms form items array
    * @returns {boolean}
