@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.11.1] 2025-02-28
+### Changed
+- New URL for preferredTerminologyServer extension.
+- preferredTerminologyServer extension should work at root level as well as
+  item level.
+
 ## [36.11.0] 2025-02-27
 ### Changed
 - Upgraded angular to v19
@@ -48,7 +54,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug that linkIds in help text items were lost in exported
   Questionnaire.
 
->>>>>>> pending-release
 ## [36.8.1] 2024-12-17
 ### Fixed
 - Fixed a bug that code.system was not set correctly when exporting 

@@ -23,7 +23,7 @@
                   }
                 },
                 {
-                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+                  "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
                   "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
                 }
               ],
