@@ -3,9 +3,10 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 import { WindowService} from '../../lib/window.service';
 
 @Component({
-  selector: 'lhc-group-vertical',
-  templateUrl: './lhc-group-vertical.component.html',
-  styleUrls: ['./lhc-group-vertical.component.css']
+    selector: 'lhc-group-vertical',
+    templateUrl: './lhc-group-vertical.component.html',
+    styleUrls: ['./lhc-group-vertical.component.css'],
+    standalone: false
 })
 export class LhcGroupVerticalComponent {
 

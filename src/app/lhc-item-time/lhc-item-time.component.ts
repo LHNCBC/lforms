@@ -3,9 +3,10 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
-  selector: 'lhc-item-time',
-  templateUrl: './lhc-item-time.component.html',
-  styleUrls: ['./lhc-item-time.component.css']
+    selector: 'lhc-item-time',
+    templateUrl: './lhc-item-time.component.html',
+    styleUrls: ['./lhc-item-time.component.css'],
+    standalone: false
 })
 export class LhcItemTimeComponent implements OnChanges {
 

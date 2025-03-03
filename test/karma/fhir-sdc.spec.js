@@ -492,6 +492,28 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(qData.item[0]._text, questionnaire.item[0]._text);
           });
 
+          it('should be compatible with the old externallyDefined extension URL but export the new URL', function (){
+            var questionnaire = {
+              item: [{
+                extension: [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+                    "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+                  }
+                ]
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.ok(qData.item[0].extension);
+            assert.deepEqual(qData.item[0].extension, [
+              {
+                "url": "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined",
+                "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+              }
+            ]);
+          });
+
           it('should correctly convert data control', function (){
             var questionnaire = {
               item: [ {
@@ -578,6 +600,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
                 assert.ok(qData.item[3].item[0].answerOption[0].valueCoding._display);
                 assert.deepEqual(qData.item[3].item[0].answerOption[0].valueCoding._display, json.item[3].item[0].answerOption[0].valueCoding._display);
+              });
+            });
+
+            it('should change an old preferredTerminologyServer URL to the new URL at root level', function (){
+              $.get('test/data/R4/preferredTerminologyServer-at-root-level.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.extension[0]);
+                assert.equal(qData.extension[0].url, "http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer");
+                assert.equal(qData.extension[0].valueUrl, "https://clinicaltables.nlm.nih.gov/fhir/R4");
               });
             });
           }

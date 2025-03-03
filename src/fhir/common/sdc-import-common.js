@@ -30,7 +30,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlExternallyDefined = "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
-  self.fhirExtTerminologyServer = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer";
+  self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer";
   self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
   self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
   self.fhirExtInitialExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression";
@@ -64,7 +64,8 @@ function addCommonSDCImportFns(ns) {
   ];
 
   // One way or the other, the following extensions are converted to lforms internal fields.
-  // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
+  // Any extensions not listed here will be copied over to lforms as is, unless it has an
+  // entry in extensionHandlers that does not return true (meaning specifically not to copy).
   self.handledExtensionSet = new Set([
     self.fhirExtUrlCardinalityMin,
     self.fhirExtUrlCardinalityMax,
@@ -77,7 +78,6 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlMinLength,
     self.fhirExtUrlRegex,
     self.fhirExtUrlAnswerRepeats,
-    self.fhirExtUrlExternallyDefined,
     self.argonautExtUrlExtensionScore,
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
@@ -107,11 +107,11 @@ function addCommonSDCImportFns(ns) {
     extension.url = self.fhirExtInitialExp;
     return true; // add extension to LForms item
   };
+  // Below are two old, deprecated terminology server urls.
+  self.extensionHandlers[
+    "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer"] =
   self.extensionHandlers[
     "http://hl7.org/fhir/StructureDefinition/terminology-server"] = function(extension, item) {
-    // Note: The above URI will be the new one, and it is pending the
-    // application of an approved change request (see jira.hl7.org), but for now
-    // we need to use the old one because that is what is published.
     extension.url = self.fhirExtTerminologyServer;
   };
   self.extensionHandlers[self.fhirExtUnitOpen] = function(extension, item) {
@@ -219,6 +219,7 @@ function addCommonSDCImportFns(ns) {
    */
   self._processFormLevelFields = function(lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
+    self._processExtensions(lfData, questionnaire);
     self._processTerminologyServer(lfData, questionnaire);
 
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
@@ -1625,7 +1626,10 @@ function addCommonSDCImportFns(ns) {
       for (var i=0; i < qItem.extension.length; i++) {
         var ext = qItem.extension[i];
         var extHandler = self.extensionHandlers[ext.url];
-        if ((extHandler && extHandler(ext, lfItem)) ||
+        // Extensions should be copied if they aren't handled, which means
+        // 1) there isn't an extension handler or there is one that returns true (the signal to copy),  and
+        // 2) they are not in the handledExtensions list.
+        if ((!extHandler || (extHandler && extHandler(ext, lfItem))) &&
             !self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
