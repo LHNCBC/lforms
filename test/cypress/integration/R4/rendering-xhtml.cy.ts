@@ -99,6 +99,42 @@ describe('rendering-xhtml', () => {
     });
   });
 
+  describe('on item.legal and item.codingInstrctions', () => {
+    const tp: TestPage = new TestPage();
+
+    beforeEach(() => {
+      tp.openBaseTestPage();
+    });
+
+    it('should display help and legal html if allowed in template options', () => {
+      cy.get('#allowHTML').click();
+      tp.loadFromTestData('q-with-rendering-xhtml-help-and-legal.json', 'R4');
+      cy.byId('help-button-1.1/1').click();
+      cy.byId('help-content-1.1/1').should('have.html', 'some help <button>button</button> text');
+      cy.byId('legal-button-1.2/1').click();
+      cy.byId('legal-content-1.2/1').should('have.html', 'some legal <button>button</button> text');
+    });
+
+    it('should display help and legal escaped html, if invalid tags are displayed in template options', () => {
+      cy.get('#allowHTML').click();
+      cy.get('#displayInvalidHTML').click();
+      tp.loadFromTestData('q-with-rendering-xhtml-help-and-legal-with-invalid-tag.json', 'R4');
+      cy.byId('help-button-1.1/1').click();
+      cy.byId('help-content-1.1/1').should('have.text', 'some <script>help</script> <button>button</button> text');
+      cy.byId('legal-button-1.2/1').click();
+      cy.byId('legal-content-1.2/1').should('have.text', 'some <script>legal</script> <button>button</button> text');
+    });
+
+    it('should display help and legal text, if invalid tags are not displayed in template options', () => {
+      cy.get('#allowHTML').click();
+      tp.loadFromTestData('q-with-rendering-xhtml-help-and-legal-with-invalid-tag.json', 'R4');
+      cy.byId('help-button-1.1/1').click();
+      cy.byId('help-content-1.1/1').should('have.text', 'some help text');
+      cy.byId('legal-button-1.2/1').click();
+      cy.byId('legal-content-1.2/1').should('have.text', 'some legal text');
+    });
+  });
+
   describe('on answerOption', () => {
     const tp: TestPage = new TestPage();
 
