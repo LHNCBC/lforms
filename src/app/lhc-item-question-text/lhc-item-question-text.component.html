@@ -106,7 +106,7 @@
            class="lhc-inline-legal"
            attr.aria-label="Legal for question {{item.question}}"
            attr.aria-describedby="label-{{ item._elementId }}"
-      >{{item.legalPlain || item.copyrightNotice}}</div>
+      >{{item.legalPlain}}</div>
       <ng-container *ngSwitchCase="'popover-escaped'">
         <lhc-button-popover [item]="item" [popoverType]="'legal-string'"></lhc-button-popover>
        </ng-container>
