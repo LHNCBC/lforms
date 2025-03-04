@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.12.0] 2025-03-04
+### Added
+- Support for itemControl 'legal'.
+
 ## [36.11.2] 2025-03-03
 ### Fixed
 - Only the new externallyDefined URL should be exported.
