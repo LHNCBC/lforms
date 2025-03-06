@@ -4,9 +4,10 @@ import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
 import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
-  selector: 'lhc-item-datetime',
-  templateUrl: './lhc-item-datetime.component.html',
-  styleUrls: ['./lhc-item-datetime.component.css'],
+    selector: 'lhc-item-datetime',
+    templateUrl: './lhc-item-datetime.component.html',
+    styleUrls: ['./lhc-item-datetime.component.css'],
+    standalone: false
 })
 export class LhcItemDatetimeComponent implements AfterViewInit {
   @Input() item: any;

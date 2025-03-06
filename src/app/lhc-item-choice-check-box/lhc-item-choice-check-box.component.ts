@@ -4,9 +4,10 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
 
 @Component({
-  selector: 'lhc-item-choice-check-box',
-  templateUrl: './lhc-item-choice-check-box.component.html',
-  styleUrls: ['./lhc-item-choice-check-box.component.css'],
+    selector: 'lhc-item-choice-check-box',
+    templateUrl: './lhc-item-choice-check-box.component.html',
+    styleUrls: ['./lhc-item-choice-check-box.component.css'],
+    standalone: false
 })
 export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   @Input() item;

@@ -1,0 +1,45 @@
+{
+  "name": "Questionnaire with answerOption - coding",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "coding",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        }
+      ],
+      "linkId": "/answers",
+      "text": "coding, no code or no display",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1"
+          }
+        },
+        {
+          "valueCoding": {
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -138,7 +138,9 @@
           fileAnchor.value = '';
 
           try {
-            LForms.Util.addFormToPage(questionnaire, 'formContainer', {'fhirVersion':getFHIRVersion()}).then(function() {
+            LForms.Util.addFormToPage(questionnaire, 'formContainer', 
+                {'fhirVersion':getFHIRVersion(), allowHTML, displayInvalidHTML, showCodingInstruction})
+                .then(function() {
               console.log("Form Added successfully")
             })
             .catch(function(e) {

@@ -2,16 +2,59 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.12.0] 2025-02-24
+## [36.13.0] 2025-03-06
 ### Added
 - Support for rendering-xhtml on externally loaded answerValueSet prefetch/radio/checkbox.
 
-## [36.11.0] 2025-02-06
+## [36.12.0] 2025-03-06
 ### Added
 - Loading answerValueSet for contained ValueSets without an expansion.
 ### Fixed
 - Exported Questionnaire should have answerValueSet property but not populated 
   answerOptions if they are from contained ValueSets.
+
+## [36.11.2] 2025-03-03
+### Fixed
+- Only the new externallyDefined URL should be exported.
+
+## [36.11.1] 2025-02-28
+### Changed
+- New URL for preferredTerminologyServer extension.
+- preferredTerminologyServer extension should work at root level as well as
+  item level.
+
+## [36.11.0] 2025-02-27
+### Changed
+- Upgraded angular to v19
+- Upgraded ng-zorro-antd to v19
+
+## [36.10.5] 2025-02-25
+### Fixed
+- Fixed a display issue for answers, where the display field might
+  not have data.
+
+## [36.10.4] 2025-02-24
+### Fixed
+- Fixed a bug that the repeating numbers are not displayed correctly 
+  on the repeating items when their data are loaded through FHIRPath
+  expressions.
+  
+## [36.10.3] 2025-02-07
+### Changed
+- Changed the meta.profile for STU3, R4 and R5 in the exported 
+  QuestionnaireResponse so that the standard FHIR profiles are used.
+
+## [36.10.2] 2025-02-03
+### Fixed
+- The "url" parameter was not URL-encoded when doing expansions.
+
+## [36.10.1] 2025-01-30
+### Fixed
+- Warning messages were being incorrectly generated for failing to load a value
+  set for an autocomplete field, for which the value set should not be and is
+  not loaded at form initialization time.
+- Improved the timing of the formReady event, so that it is sent after the form
+  has been rendered.
 
 ## [36.10.0] 2025-01-30
 ### Added
