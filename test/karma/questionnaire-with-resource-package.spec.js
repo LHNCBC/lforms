@@ -57,8 +57,8 @@ describe('questionnaire with items that have answerValueSet', function () {
       var lfData = new LForms.LFormsData(formData);
       var errors = lfData.checkAnswersResourceStatus();
       assert.equal(errors.length, 2)
-      assert.equal(errors[0], "Resource not loaded: " + "http://hl7.org/fhir/ValueSet/example-expansion|20150622")
-      assert.equal(errors[1], "Resource not loaded: " + "http://hl7.org/fhir/ValueSet/example-expansion")
+      assert.equal(errors[0], "Value set not loaded: " + "http://hl7.org/fhir/ValueSet/example-expansion|20150622")
+      assert.equal(errors[1], "Value set not loaded: " + "http://hl7.org/fhir/ValueSet/example-expansion")
       done()
     }).fail(function (err) {
       done(err);
@@ -73,10 +73,10 @@ describe('questionnaire with items that have answerValueSet', function () {
       var lfData = new LForms.LFormsData(formData);
       var errors = lfData.checkAnswersResourceStatus();
       assert.equal(errors.length, 11)
-      assert.equal(errors[0], "Resource not loaded: " + "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode")
-      assert.equal(errors[1], "Resource not loaded: " + "http://uni-koeln.de/fhir/ValueSet/ecog")
-      assert.equal(errors[2], "Resource not loaded: " + "http://uni-koeln.de/fhir/ValueSet/icd-o-3-m-lunge")
-      assert.equal(errors[10], "Resource not loaded: " + "http://uni-koeln.de/fhir/ValueSet/uicc-lunge")
+      assert.equal(errors[0], "Value set not loaded: " + "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode")
+      assert.equal(errors[1], "Value set not loaded: " + "http://uni-koeln.de/fhir/ValueSet/ecog")
+      assert.equal(errors[2], "Value set not loaded: " + "http://uni-koeln.de/fhir/ValueSet/icd-o-3-m-lunge")
+      assert.equal(errors[10], "Value set not loaded: " + "http://uni-koeln.de/fhir/ValueSet/uicc-lunge")
       done()
     }).fail(function (err) {
       done(err);

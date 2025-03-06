@@ -2,9 +2,10 @@ import { Component, OnInit, OnChanges, Input, ViewEncapsulation } from '@angular
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-item-simple-type',
-  templateUrl: './lhc-item-simple-type.component.html',
-  styleUrls: ['./lhc-item-simple-type.component.css']
+    selector: 'lhc-item-simple-type',
+    templateUrl: './lhc-item-simple-type.component.html',
+    styleUrls: ['./lhc-item-simple-type.component.css'],
+    standalone: false
 })
 export class LhcItemSimpleTypeComponent implements OnChanges {
 
