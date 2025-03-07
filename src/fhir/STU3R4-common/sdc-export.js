@@ -20,7 +20,7 @@ function addSTU3R4ExportFns(ns) {
       if (!item.answerConstraint || item.answerConstraint === "optionsOnly") {
         type = 'choice';
       }
-      else if (item.answerConstraint === "optionsOrString") {
+      else if (item.answerConstraint === "optionsOrString" || item.answerConstraint === "optionsOrType") {
         type = 'open-choice'
       }
     }

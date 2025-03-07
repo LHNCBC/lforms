@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.11.3] 2025-03-07
+### Fixed
+- Fixed a bug that 'coding' type with 'optionsOrType' in answerConstraint
+  in R5 questionnaire was converted to 'coding'.
+  
 ## [36.11.2] 2025-03-03
 ### Fixed
 - Only the new externallyDefined URL should be exported.

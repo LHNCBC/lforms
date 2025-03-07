@@ -212,3 +212,54 @@ describe('FHIR SDC functions on answerOption', function() {
   testImportAnswerOption(params, "optionsOnly");
   testImportAnswerOption(params, "optionsOrString");
 });
+
+describe('coding in R5 with answerConstraint to choice/open-choice in R4', function() {
+  let qR5 = {
+    "id": "r5",
+    "status": "draft",
+    "name": "r5-coding-answerConstraint",
+    "title": "R5 Coding answerConstraint",
+    "resourceType": "Questionnaire",
+    "item": [
+      {
+        "type": "coding",
+        "answerConstraint": "optionsOnly",
+        "linkId": "1",
+        "text": "coding-optionsOnly",
+      },
+      {
+        "type": "coding",
+        "answerConstraint": "optionsOrString",
+        "linkId": "2",
+        "text": "coding-optionsOrString",
+      },
+      {
+        "type": "coding",
+        "answerConstraint": "optionsOrType",
+        "linkId": "3",
+        "text": "coding-optionsOrType",
+      },
+      {
+        "type": "coding",
+        "linkId": "4",
+        "text": "coding",
+      }
+    ]
+  }
+
+  it('should convert coding in R5 with answerConstraint to choice/open-choice in R4', function () {
+    let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(qR5, 'R5');
+    let qR4 = LForms.Util._convertLFormsToFHIRData("Questionnaire", "R4", lfData);
+    
+    //let fhirQ = LForms.Util.convertLFormsToFHIRQuestionnaire(q, fhirVersion);
+    assert.equal(qR4.item[0].type, "choice")
+    assert.equal(qR4.item[0].answerConstraint, null)
+    assert.equal(qR4.item[1].type, "open-choice")
+    assert.equal(qR4.item[1].answerConstraint, null)
+    assert.equal(qR4.item[2].type, "open-choice")
+    assert.equal(qR4.item[2].answerConstraint, null)
+    assert.equal(qR4.item[3].type, "choice")
+    assert.equal(qR4.item[3].answerConstraint, null)
+     
+  });
+});
