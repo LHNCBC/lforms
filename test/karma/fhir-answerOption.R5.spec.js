@@ -251,7 +251,6 @@ describe('coding in R5 with answerConstraint to choice/open-choice in R4', funct
     let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(qR5, 'R5');
     let qR4 = LForms.Util._convertLFormsToFHIRData("Questionnaire", "R4", lfData);
     
-    //let fhirQ = LForms.Util.convertLFormsToFHIRQuestionnaire(q, fhirVersion);
     assert.equal(qR4.item[0].type, "choice")
     assert.equal(qR4.item[0].answerConstraint, null)
     assert.equal(qR4.item[1].type, "open-choice")
