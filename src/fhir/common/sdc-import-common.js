@@ -1516,8 +1516,8 @@ function addCommonSDCImportFns(ns) {
       const matchingSytem = parsedJSON.compose.include.find(include => include.system === vsItem.system);
       if (matchingSytem) {
         const matchingCode = matchingSytem.concept?.find(concept => concept.code === vsItem.code);
-        if (matchingCode) {
-          Object.assign(vsItem, matchingCode);
+        if (matchingCode?._display) {
+          vsItem._display = matchingCode._display;
         }
       }
     });
