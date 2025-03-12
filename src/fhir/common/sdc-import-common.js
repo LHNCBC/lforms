@@ -1503,9 +1503,9 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   * When we do an $expand POST operation, the returned expansion may not have some extensions
-   * like rendering-xhtml on _display. compose.include.concept may have the extensions. Copy
-   * them to expansion.contains if there are matches in comose.include.concept.
+   * When we do an $expand POST operation, the returned expansion may not have the
+   * rendering-xhtml on _display. compose.include.concept may have the extension. Copy
+   * _display to expansion.contains if there are matches in comose.include.concept.
    * @param parsedJSON the returned JSON object from an $expand POST operation
    */
   self._copyExtensionsToExpansion = function (parsedJSON) {
@@ -1513,6 +1513,7 @@ function addCommonSDCImportFns(ns) {
       return;
     }
     parsedJSON.expansion.contains.forEach(function (vsItem) {
+      // compose.include should have a system, but if both systems are undefined, they are considered a match.
       const matchingSytem = parsedJSON.compose.include.find(include => include.system === vsItem.system);
       if (matchingSytem) {
         const matchingCode = matchingSytem.concept?.find(concept => concept.code === vsItem.code);
