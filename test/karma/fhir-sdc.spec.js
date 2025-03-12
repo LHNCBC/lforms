@@ -580,6 +580,22 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          if (fhirVersion === 'R5') {
+
+
+            it('should preserve answerValueSet property for contained ValueSet with expansion - R5', function () {
+              $.get('test/data/R5/q-with-rendering-xhtml-contained-valueset.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.ok(lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                // answerValueSet is restored, no answerOption.
+                assert.ok(!qData.item[0].item[0].answerOption);
+                assert.ok(qData.item[0].item[0].answerValueSet);
+                assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
+              });
+            });
+          }
+
           if (fhirVersion === 'R4') {
             it('should preserve rendering-xhtml extension on answerOption _valueString', function (){
               $.get('test/data/R4/q-with-rendering-xhtml-answerOption.json', function(json) {
