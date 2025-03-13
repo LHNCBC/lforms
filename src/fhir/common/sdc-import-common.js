@@ -1651,14 +1651,17 @@ function addCommonSDCImportFns(ns) {
    * @return {boolean} true if the item is a help text item, false otherwise.
    * @private
    */
-  self._processCodingInstructions = function(targetItem, qItem) {
+  self._processCodingInstructionsAndLegal = function(targetItem, qItem) {
     // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
     // which in LForms is an attribute of the parent item, not a separate item.
     // use one coding instruction if there are multiple ones in Questionnaire.
-    let help, errors, messages;
+    let helpOrLegal, legal, errors, messages;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     let xhtmlFormat;
     if ( qItem.type === "display" && ci) {
+      // true if it's a legal extension, false if it's a help extension.
+      let isLegal = ci.valueCodeableConcept?.coding?.[0]?.code === 'legal';
+
       // only "rendering-xhtml" is supported. others are default to text
       if (qItem._text) {
         xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
@@ -1666,7 +1669,12 @@ function addCommonSDCImportFns(ns) {
 
       // there is a xhtml extension
       if (xhtmlFormat) {
-        help = {
+        helpOrLegal = isLegal ? {
+          legalFormat: "html",
+          legal: xhtmlFormat.valueString,
+          legalLinkId: qItem.linkId,
+          legalPlain: qItem.text  // this always contains the legal in plain text
+        } : {
           codingInstructionsFormat: "html",
           codingInstructions: xhtmlFormat.valueString,
           codingInstructionsLinkId: qItem.linkId,
@@ -1676,9 +1684,12 @@ function addCommonSDCImportFns(ns) {
         if (self._widgetOptions?.allowHTML) {
           let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-            help.codingInstructionsHasInvalidHtmlTag = true;
+            if (isLegal)
+              helpOrLegal.legalHasInvalidHtmlTag = true;
+            else
+              helpOrLegal.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};
-            errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
+            errorMessages.addMsg(errors, isLegal ? 'invalidTagInLegalHTMLContent' : 'invalidTagInHelpHTMLContent');
             messages = [{errors}];
             LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
           }
@@ -1686,7 +1697,12 @@ function addCommonSDCImportFns(ns) {
       }
       // no xhtml extension, default to 'text'
       else {
-        help = {
+        helpOrLegal = isLegal ? {
+          legalFormat: "text",
+          legal: qItem.text,
+          legalinkId: qItem.linkId,
+          legalPlain: qItem.text // this always contains the legal in plain text
+        } : {
           codingInstructionsFormat: "text",
           codingInstructions: qItem.text,
           codingInstructionsLinkId: qItem.linkId,
@@ -1695,17 +1711,25 @@ function addCommonSDCImportFns(ns) {
       }
 
       if (messages) {
-        LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructions');
+        LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructionsAndLegal');
       }
-      if (help) {
-        targetItem.codingInstructions = help.codingInstructions;
-        targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-        targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
-        targetItem.codingInstructionsHasInvalidHtmlTag = help.codingInstructionsHasInvalidHtmlTag;
-        targetItem.codingInstructionsLinkId = help.codingInstructionsLinkId;
+      if (helpOrLegal) {
+        if (isLegal) {
+          targetItem.legal = helpOrLegal.legal;
+          targetItem.legalFormat = helpOrLegal.legalFormat;
+          targetItem.legalPlain = helpOrLegal.legalPlain;
+          targetItem.legalHasInvalidHtmlTag = helpOrLegal.legalHasInvalidHtmlTag;
+          targetItem.legalLinkId = helpOrLegal.legalLinkId;
+        } else {
+          targetItem.codingInstructions = helpOrLegal.codingInstructions;
+          targetItem.codingInstructionsFormat = helpOrLegal.codingInstructionsFormat;
+          targetItem.codingInstructionsPlain = helpOrLegal.codingInstructionsPlain;
+          targetItem.codingInstructionsHasInvalidHtmlTag = helpOrLegal.codingInstructionsHasInvalidHtmlTag;
+          targetItem.codingInstructionsLinkId = helpOrLegal.codingInstructionsLinkId;
+        }
       }
 
-      return !!help;
+      return !!helpOrLegal;
     }
   };
 
@@ -1722,7 +1746,7 @@ function addCommonSDCImportFns(ns) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        let isHelpTextItem = self._processCodingInstructions(targetItem, qItem.item[i]);
+        let isHelpTextItem = self._processCodingInstructionsAndLegal(targetItem, qItem.item[i]);
         if(!isHelpTextItem) {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap, containedImages);
           targetItem.items.push(item);
