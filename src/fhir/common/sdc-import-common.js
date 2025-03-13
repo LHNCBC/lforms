@@ -1197,7 +1197,7 @@ function addCommonSDCImportFns(ns) {
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
         var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
-        // rendering-xhtml extension under "_display" in contained valueset.
+        // rendering-xhtml extension under "_display" in contained valueset expansion.
         if (self._widgetOptions?.allowHTML && vsItem._display) {
           const xhtmlFormat = LForms.Util.findObjectInArray(vsItem._display.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
           if (xhtmlFormat) {
@@ -1317,70 +1317,182 @@ function addCommonSDCImportFns(ns) {
   self.loadAnswerValueSets = function (lfData) {
     var pendingPromises = [];
     var items = lfData.itemList;
-    for (var i=0, len=items.length; i<len; ++i) {
+    for (var i = 0, len = items.length; i < len; ++i) {
       let item = items[i];
+      let expURL, vsKey;
       if (item.answerValueSet && !item.isSearchAutocomplete) {
-        let expURL = this._getExpansionURL(item);
-        let vsKey = expURL ? expURL : item.answerValueSet;
-        item._answerValueSetKey = vsKey;
+        if (item.answerValueSet.startsWith('#')) {
+          vsKey = item.answerValueSet;
+        } else {
+          expURL = this._getExpansionURL(item);
+          vsKey = expURL ? expURL : item.answerValueSet;
+        }
         if (!LForms._valueSetAnswerCache)
           LForms._valueSetAnswerCache = {};
-        let answers = LForms._valueSetAnswerCache[vsKey];
-        if (answers) {
-          item.answers = answers;
-          lfData._updateAutocompOptions(item);
-          lfData._resetItemValueWithAnswers(item);
-        }
-        else { // if not already loaded
-          if (expURL) {
-            pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
+        let answersOrPromise = LForms._valueSetAnswerCache[vsKey];
+        if (answersOrPromise) {
+          if (typeof answersOrPromise.then === 'function') { // A promise is cached but not yet returned.
+            answersOrPromise.then(function (answers) {
+              if (answers) {
+                self._updateAnswersFromValueSetResponse(answers, lfData, item);
+              }
+              return answers;
+            });
+          } else { // answers list is cached.
+            self._updateAnswersFromValueSetResponse(answersOrPromise, lfData, item);
+          }
+        } else { // if not already loaded
+          if (item.answerValueSet.startsWith('#')) {
+            self._expandContainedValueSet(lfData, item, pendingPromises);
+          } else if (expURL) {
+            const p = fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
               return response.json();
-            }).then(function(parsedJSON) {
-              if (parsedJSON.resourceType==="OperationOutcome" ) {
-                var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal")
+            }).then(function (parsedJSON) {
+              if (parsedJSON.resourceType === "OperationOutcome") {
+                var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal")
                 if (errorOrFatal) {
                   throw new Error(errorOrFatal.diagnostics)
                 }
-              }
-              else {
-                answers = self.answersFromVS(parsedJSON);
+              } else {
+                var answers = self.answersFromVS(parsedJSON);
                 if (answers) {
-                  LForms._valueSetAnswerCache[expURL] = answers;
-                  item.answers = answers;
-                  lfData._updateAutocompOptions(item);
-                  lfData._resetItemValueWithAnswers(item);
+                  self._updateAnswersFromValueSetResponse(answers, lfData, item);
+                  LForms._valueSetAnswerCache[vsKey] = answers;
                 }
+                return answers;
               }
-            }).catch(function(error) {
-              throw new Error("Unable to load ValueSet from "+expURL);
-            }));
-          }
-          else { // use FHIR context
+            }).catch(function (error) {
+              throw new Error("Unable to load ValueSet from " + expURL);
+            });
+            pendingPromises.push(p);
+            LForms._valueSetAnswerCache[vsKey] = p;
+          } else { // use FHIR context
             var fhirClient = LForms.fhirContext?.client;
             if (!fhirClient) {
-              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-            }
-            pendingPromises.push(fhirClient.request({
+              const p = Promise.reject(new Error('Cannot load ValueSet "'+
+                item.answerValueSet+'" because it requires either a terminology '+
+                'server to be specified or LForms.Util.setFHIRContext(...) '+
+                'to have been called to provide access to a FHIR server.'
+              ));
+              pendingPromises.push(p);
+              // Cache the rejected Promise so the same vsKey don't need to be processed again,
+              // and we return only one rejected promise for the same vsKey.
+              LForms._valueSetAnswerCache[vsKey] = p;
+            } else {
+              const p = fhirClient.request({
                 url: lfData._buildURL(
                   ['ValueSet', '$expand'], {url: item.answerValueSet, _format: 'json'}),
                 headers: {'Accept': 'application/fhir+json'}
-              }).then(function(response) {
-              var valueSet = response;
-              var answers = self.answersFromVS(valueSet);
-              if (answers) {
-                LForms._valueSetAnswerCache[vsKey] = answers;
-                item.answers = answers;
-                lfData._updateAutocompOptions(item);
-                lfData._resetItemValueWithAnswers(item);
-              }
-            }).catch(function(error) {
-              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-            }));
+              }).then(function (response) {
+                var valueSet = response;
+                var answers = self.answersFromVS(valueSet);
+                if (answers) {
+                  self._updateAnswersFromValueSetResponse(answers, lfData, item);
+                  LForms._valueSetAnswerCache[vsKey] = answers;
+                }
+                return answers;
+              }).catch(function (error) {
+                throw new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server");
+              });
+              pendingPromises.push(p);
+              LForms._valueSetAnswerCache[vsKey] = p;
+            }
           }
         }
       }
     }
     return pendingPromises;
+  };
+
+  /**
+   * Expands contained valueset against terminology server.
+   * Here we take care of the scenario of contained valuesets without an expansion.
+   * If the contained valueset had an expansion, the answers list would already have been set
+   * on the item from _processAnswers(), while answerValueSet property would not have been set.
+   * @param lfData the LFormsData for the form
+   * @param item an item in ltemList
+   * @param pendingPromises pending promises list for loading answerValueSets
+   * @private
+   */
+  self._expandContainedValueSet = function (lfData, item, pendingPromises) {
+    const containedVS = lfData.contained.find(x => x.resourceType === 'ValueSet' && x.id === item.answerValueSet.substring(1));
+    const terminologyServer = this._getTerminologyServer(item);
+    if (terminologyServer) {
+      const p = fetch(terminologyServer + '/ValueSet/$expand', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(containedVS)
+      }).then(function (response) {
+        return response.json();
+      }).then(function (parsedJSON) {
+        if (parsedJSON.resourceType === "OperationOutcome") {
+          var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal");
+          if (errorOrFatal) {
+            throw new Error(errorOrFatal.diagnostics);
+          }
+        } else {
+          var answers = self.answersFromVS(parsedJSON);
+          if (answers) {
+            self._updateAnswersFromValueSetResponse(answers, lfData, item);
+            LForms._valueSetAnswerCache[item.answerValueSet] = answers;
+          }
+          return answers;
+        }
+      }).catch(function (error) {
+        throw new Error("Unable to load ValueSet from " + terminologyServer + " for contained ValueSet " + item.answerValueSet);
+      });
+      pendingPromises.push(p);
+      LForms._valueSetAnswerCache[item.answerValueSet] = p;
+    } else { // use FHIR context
+      var fhirClient = LForms.fhirContext?.client;
+      if (!fhirClient) {
+        const p = Promise.reject(new Error('Cannot load ValueSet "'+
+          item.answerValueSet+'" because it requires either a terminology '+
+          'server to be specified or LForms.Util.setFHIRContext(...) '+
+          'to have been called to provide access to a FHIR server.'
+        ));
+        pendingPromises.push(p);
+        // Cache the rejected Promise so the same vsKey don't need to be processed again,
+        // and we return only one rejected promise for the same vsKey.
+        LForms._valueSetAnswerCache[item.answerValueSet] = p;
+      } else {
+        const p = fhirClient.request({
+          url: 'ValueSet/$expand?_format=json',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(containedVS)
+        }).then(function (parsedJSON) {
+          var answers = self.answersFromVS(parsedJSON);
+          if (answers) {
+            self._updateAnswersFromValueSetResponse(answers, lfData, item);
+            LForms._valueSetAnswerCache[item.answerValueSet] = answers;
+          }
+          return answers;
+        }).catch(function (error) {
+          throw new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server");
+        });
+        pendingPromises.push(p);
+        LForms._valueSetAnswerCache[item.answerValueSet] = p;
+      }
+    }
+  };
+
+
+  /**
+   * Updates item.answers based on the response of the answerValueSet $expand operation.
+   * @param answers answers list extracted from answersFromVS()
+   * @param lfData the LFormsData for the form
+   * @param item an item in ltemList
+   * @private
+   */
+  self._updateAnswersFromValueSetResponse = function (answers, lfData, item) {
+    item.answers = answers;
+    lfData._updateAutocompOptions(item);
+    lfData._resetItemValueWithAnswers(item);
   };
 
 
