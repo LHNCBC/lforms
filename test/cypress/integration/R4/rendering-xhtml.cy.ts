@@ -692,6 +692,111 @@ describe('rendering-xhtml', () => {
       cy.byId('#group1-item1/1/1').should('have.value', "italic a");
     });
 
+    it('should display html on externally loaded answerValueSet', () => {
+      cy.get('#allowHTML').click();
+      cy.intercept('POST', 'https://hapi.fhir.org/baseR4/ValueSet/$expand', {
+        "resourceType": "ValueSet",
+        "id": "test-valueset",
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hapifhir.io/fhir/StructureDefinition/valueset-expansion-message",
+              "valueString": "ValueSet with URL \"ValueSet.id[ValueSet/test-valueset]\" was expanded using an in-memory expansion"
+            }
+          ]
+        },
+        "status": "active",
+        "compose": {
+          "include": [
+            {
+              "system": "lhc.forms.test.code.system",
+              "concept": [{
+                "code": "a",
+                "display": "Answer 1",
+                "_display": {
+                  "extension": [{
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 1"
+                  }]
+                }
+              }, {
+                "code": "b",
+                "display": "Answer 2",
+                "_display": {
+                  "extension": [{
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 2"
+                  }]
+                }
+              }, {
+                "code": "c",
+                "display": "Answer 3",
+                "_display": {
+                  "extension": [{
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "Answer <button>button</button> 3"
+                  }]
+                }
+              }]
+            }
+          ]
+        },
+        "expansion": {
+          "offset": 0,
+          "parameter": [
+            {
+              "name": "offset",
+              "valueInteger": 0
+            },
+            {
+              "name": "count",
+              "valueInteger": 1000
+            }
+          ],
+          "contains": [
+            {
+              "system": "lhc.forms.test.code.system",
+              "code": "a",
+              "display": "Answer 1"
+            },
+            {
+              "system": "lhc.forms.test.code.system",
+              "code": "b",
+              "display": "Answer 2"
+            },
+            {
+              "system": "lhc.forms.test.code.system",
+              "code": "c",
+              "display": "Answer 3"
+            }
+          ]
+        }
+      })
+      tp.loadFromTestData('q-with-contained-valueset-without-expansion.json', 'R4');
+      // radio
+      cy.byId('#item-group2-item1/1/1')
+        .find('button')
+        .should('have.length', 3);
+      // checkbox
+      cy.byId('#item-group2-item2/1/1')
+        .find('button')
+        .should('have.length', 3);
+      // autocomplete
+      cy.byId('#group1-item1/1/1')
+        .focus();
+      cy.get('#completionOptions li')
+        .as('listOptions');
+      cy.get('@listOptions')
+        .should('be.visible')
+        .should('have.length', 3);
+      cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; Answer <button>button</button> 1");
+      cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">2:</span>&nbsp; Answer <button>button</button> 2");
+      cy.get('@listOptions').eq(2).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; Answer <button>button</button> 3");
+      // Check the value in the field after the user selects something.
+      cy.get('@listOptions').eq(1).click();
+      cy.byId('#group1-item1/1/1').should('have.value', "Answer button 2");
+    });
+
     describe('matrix layout', () => {
       it('should display plain text', () => {
         tp.loadFromTestData('contained-valueset-html-matrix-layout.json', 'R4');

@@ -2,9 +2,20 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.12.0] 2025-03-04
+## [36.14.0] 2025-03-13
 ### Added
 - Support for itemControl 'legal'.
+
+## [36.13.0] 2025-03-06
+### Added
+- Support for rendering-xhtml on externally loaded answerValueSet prefetch/radio/checkbox.
+
+## [36.12.0] 2025-03-06
+### Added
+- Loading answerValueSet for contained ValueSets without an expansion.
+### Fixed
+- Exported Questionnaire should have answerValueSet property but not populated 
+  answerOptions if they are from contained ValueSets.
 
 ## [36.11.2] 2025-03-03
 ### Fixed

@@ -37,16 +37,15 @@ function addSDCImportFns(ns) {
       questionnaire.contained.forEach(function(vs) {
         if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
           var answers = self.answersFromVS(vs);
-          if (!answers)
-            answers = []; // continuing with previous default; not sure if needed
-
-          // support both id and url based lookup. STU3 reference is quite vague.
-          var lfVS = {answers: answers};
-          if(vs.id) {
-            answersVS['#' + vs.id] = lfVS;
-          }
-          if(vs.url) {
-            answersVS[vs.url] = lfVS;
+          if (answers) {
+            // support both id and url based lookup. STU3 reference is quite vague.
+            var lfVS = {answers: answers};
+            if(vs.id) {
+              answersVS['#' + vs.id] = lfVS;
+            }
+            if(vs.url) {
+              answersVS[vs.url] = lfVS;
+            }
           }
         }
       });
@@ -201,8 +200,10 @@ function addSDCImportFns(ns) {
     else if (qItem.options) {
       if (containedVS)
         var vs = containedVS[qItem.options.reference];
-      if(vs) {
+      if(vs && vs.answers) {
         lfItem.answers = vs.answers;
+        // To keep options property during export.
+        lfItem._options = qItem.options;
       }
       else
         lfItem.answerValueSet = qItem.options.reference;
