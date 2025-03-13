@@ -1,0 +1,162 @@
+{
+  "contained": [
+    {
+      "resourceType": "ValueSet",
+      "id": "test-valueset",
+      "title": "Test valueset without expansion",
+      "status": "active",
+      "compose": {
+        "include": [
+          {
+            "system": "lhc.forms.test.code.system",
+            "concept": [
+              {
+                "code": "a",
+                "display": "Answer 1",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "Answer <button>button</button> 1"
+                    }
+                  ]
+                }
+              },
+              {
+                "code": "b",
+                "display": "Answer 2",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "Answer <button>button</button> 2"
+                    }
+                  ]
+                }
+              },
+              {
+                "code": "c",
+                "display": "Answer 3",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "Answer <button>button</button> 3"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer",
+      "valueUrl": "https://hapi.fhir.org/baseR4"
+    }
+  ],
+  "status": "draft",
+  "title": "Questionnaire with contained valuesets that don't have an expansion",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/5.0/StructureDefinition/Questionnaire"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 36.12.0"
+      }
+    ]
+  },
+  "item": [
+    {
+      "type": "group",
+      "linkId": "group1",
+      "text": "dropdown",
+      "item": [
+        {
+          "type": "coding",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "group1-item1",
+          "text": "contained valueset - dropdown",
+          "answerValueSet": "#test-valueset"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "group2",
+      "text": "radiocheckbox",
+      "item": [
+        {
+          "type": "coding",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "radio-button",
+                    "display": "Radio Button"
+                  }
+                ],
+                "text": "Radio Button"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "vertical"
+            }
+          ],
+          "linkId": "group2-item1",
+          "text": "contained valueset - radio",
+          "answerValueSet": "#test-valueset"
+        },
+        {
+          "type": "coding",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "check-box",
+                    "display": "Check-box"
+                  }
+                ],
+                "text": "Check-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "horizontal"
+            }
+          ],
+          "repeats": true,
+          "linkId": "group2-item2",
+          "text": "contained valueset - checkbox",
+          "answerValueSet": "#test-valueset"
+        }
+      ]
+    }
+  ]
+}
