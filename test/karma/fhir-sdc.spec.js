@@ -581,8 +581,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           if (fhirVersion === 'R5') {
-
-
             it('should preserve answerValueSet property for contained ValueSet with expansion - R5', function () {
               $.get('test/data/R5/q-with-rendering-xhtml-contained-valueset.json', function(json) {
                 const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
