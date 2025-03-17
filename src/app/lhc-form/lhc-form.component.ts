@@ -204,7 +204,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
           }
           catch (error) {
             const e = typeof error === "string" ? error : error.message
-            console.log(error);
             self.onError.emit([e])
           };
         },1)
