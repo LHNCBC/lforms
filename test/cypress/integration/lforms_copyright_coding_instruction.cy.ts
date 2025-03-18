@@ -20,8 +20,8 @@ describe('popover buttons', () => {
     it('should show a copyright popover message on an item', () => {
       cy.byId('/type0/1').click();
       cy.byId('copyright-content-all-in-one').should('not.exist');
-      cy.byId('copyright-button-/type0/1').click();
-      cy.byId('copyright-content-/type0/1').should('be.visible').should('have.text', 'A Copyright notice of the item');
+      cy.byId('legal-button-/type0/1').click();
+      cy.byId('legal-content-/type0/1').should('be.visible').should('have.text', 'A Copyright notice of the item');
     });
 
     it('should show a copyright popover message on the form title when there is no codes', () => {
@@ -159,14 +159,14 @@ describe('popover buttons', () => {
         const nameHelpButton = 'help-button-/54126-8/54125-0/1/1';
         const genderHelpButton = 'help-button-/54126-8/54131-8/1/1';
         const gender = '/54126-8/54131-8/1/1';
-        const popover = '.lhc-help-54126-8-54125-0-1-1 .ant-popover-inner-content';
-
+        const namePopover = 'help-content-/54126-8/54125-0/1/1';
+        const genderPopover = 'help-content-/54126-8/54131-8/1/1';
         cy.byId(nameHelpButton).should('be.visible');
         cy.byId(genderHelpButton).should('be.visible');
 
         // HTML formatted coding instructions
         cy.byId(nameHelpButton).click();
-        cy.get(popover).should('be.visible');
+        cy.byId(namePopover).should('be.visible');
         cy.get("button.testButton").should('be.visible');
 
         cy.byId(gender).click();
@@ -174,7 +174,7 @@ describe('popover buttons', () => {
 
         // Text coding instructions
         cy.byId(genderHelpButton).click();
-        cy.get('.lhc-help-54126-8-54131-8-1-1 .ant-popover-content').should('be.visible');
+        cy.byId(genderPopover).should('be.visible');
         cy.get("button.testButton").should('not.exist');
       });
     });
@@ -189,36 +189,36 @@ describe('popover buttons', () => {
           helpButton_1 = 'help-button-/type1/1';
           helpButton_2 = 'help-button-/type2/1';
           helpButton_3 = 'help-button-/type3/1';
-          copyrightButton0 = 'copyright-button-/type0/1';
-          popover0 = '.lhc-help-type0-1 .ant-popover-inner-content';
-          popover1 = '.lhc-help-type1-1 .ant-popover-inner-content';
-          popover2 = '.lhc-help-type2-1 .ant-popover-inner-content';
-          popover3 = '.lhc-help-type3-1 .ant-popover-inner-content';
-          copyPopover0 = '.lhc-copyright-class-type0-1 .ant-popover-inner-content';
+          copyrightButton0 = 'legal-button-/type0/1';
+          popover0 = 'help-content-/type0/1';
+          popover1 = 'help-content-/type1/1';
+          popover2 = 'help-content-/type2/1';
+          popover3 = 'help-content-/type3/1';
+          copyPopover0 = 'legal-content-/type0/1';
           break;
         case 'horizontal':
           helpButton_0 = 'help-button-/horizontalTable/type0/1/1';
           helpButton_1 = 'help-button-/horizontalTable/type1/1/1';
           helpButton_2 = 'help-button-/horizontalTable/type2/1/1';
           helpButton_3 = 'help-button-/horizontalTable/type3/1/1';
-          copyrightButton0 = 'copyright-button-/horizontalTable/type0/1/1';
-          popover0 = '.lhc-help-horizontalTable-type0-1-1 .ant-popover-inner-content';
-          popover1 = '.lhc-help-horizontalTable-type1-1-1 .ant-popover-inner-content';
-          popover2 = '.lhc-help-horizontalTable-type2-1-1 .ant-popover-inner-content';
-          popover3 = '.lhc-help-horizontalTable-type3-1-1 .ant-popover-inner-content';
-          copyPopover0 = '.lhc-copyright-class-horizontalTable-type0-1-1 .ant-popover-inner-content';
+          copyrightButton0 = 'legal-button-/horizontalTable/type0/1/1';
+          popover0 = 'help-content-/horizontalTable/type0/1/1';
+          popover1 = 'help-content-/horizontalTable/type1/1/1';
+          popover2 = 'help-content-/horizontalTable/type2/1/1';
+          popover3 = 'help-content-/horizontalTable/type3/1/1';
+          copyPopover0 = 'legal-content-/horizontalTable/type0/1/1';
           break;
         case 'matrix':
           helpButton_0 = 'help-button-/matrixTable/type0/1/1';
           helpButton_1 = 'help-button-/matrixTable/type1/1/1';
           helpButton_2 = 'help-button-/matrixTable/type2/1/1';
           helpButton_3 = 'help-button-/matrixTable/type3/1/1';
-          copyrightButton0 = 'copyright-button-/matrixTable/type0/1/1';
-          popover0 = '.lhc-help-matrixTable-type0-1-1 .ant-popover-inner-content';
-          popover1 = '.lhc-help-matrixTable-type1-1-1 .ant-popover-inner-content';
-          popover2 = '.lhc-help-matrixTable-type2-1-1 .ant-popover-inner-content';
-          popover3 = '.lhc-help-matrixTable-type3-1-1 .ant-popover-inner-content';
-          copyPopover0 = '.lhc-copyright-class-matrixTable-type0-1-1 .ant-popover-inner-content';
+          copyrightButton0 = 'legal-button-/matrixTable/type0/1/1';
+          popover0 = 'help-content-/matrixTable/type0/1/1';
+          popover1 = 'help-content-/matrixTable/type1/1/1';
+          popover2 = 'help-content-/matrixTable/type2/1/1';
+          popover3 = 'help-content-/matrixTable/type3/1/1';
+          copyPopover0 = 'legal-content-/matrixTable/type0/1/1';
           break;
       }
 
@@ -235,44 +235,44 @@ describe('popover buttons', () => {
 
       // simple text coding instructions
       cy.byId(helpButton_0).click();
-      cy.get(popover0).should('be.visible').should('have.text', 'simple text instructions');
+      cy.byId(popover0).should('be.visible').should('have.text', 'simple text instructions');
 
       cy.byId(field_1).click();
-      cy.get(popover0).should('not.exist');
+      cy.byId(popover0).should('not.exist');
 
       // escaped HTML coding instructions, when "codingInstructionsFormat" is not set
       cy.byId(helpButton_1).click();
-      cy.get(popover1).should('be.visible')
+      cy.byId(popover1).should('be.visible')
         .should('have.text', '<code>HTML</code> instructions, with a <button>button</button>LForms Demo 1');
 
       cy.byId(field_1).click();
-      cy.get(popover1).should('not.exist');
+      cy.byId(popover1).should('not.exist');
 
       // escaped HTML coding instructions, when "codingInstructionsFormat" = "text"
       cy.byId(helpButton_2).click();
-      cy.get(popover2).should('be.visible')
+      cy.byId(popover2).should('be.visible')
         .should('have.text', '<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2');
 
       cy.byId(field_1).click();
-      cy.get(popover2).should('not.exist');
+      cy.byId(popover2).should('not.exist');
 
       // enabled HTML coding instructions, when "codingInstructionsFormat" = "html"
       cy.byId(helpButton_3).click();
-      cy.get(popover3)
+      cy.byId(popover3)
         .should('be.visible')
         .should('have.text', 'HTML instructions, with a buttonLForms Demo 3')
-      cy.get(popover3).byCss("button")
+      cy.byId(popover3).byCss("button")
         .should('be.visible');
 
       cy.byId(field_1).click();
-      cy.get(popover3).should('not.exist');
+      cy.byId(popover3).should('not.exist');
 
       // copyright popover
       cy.byId(copyrightButton0).click();
-      cy.get(copyPopover0).should('be.visible').should('have.text', 'A Copyright notice of the item 1');
+      cy.byId(copyPopover0).should('be.visible').should('have.text', 'A Copyright notice of the item 1');
 
       cy.byId(field_1).click();
-      cy.get(popover0).should('not.exist');
+      cy.byId(popover0).should('not.exist');
     }
 
     it('should be able to display HTML/Text formatted coding instructions and copyright notice in vertical list layout', () => {

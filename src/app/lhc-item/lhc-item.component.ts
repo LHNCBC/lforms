@@ -3,9 +3,10 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 import { WindowService} from '../../lib/window.service';
 
 @Component({
-  selector: 'lhc-item',
-  templateUrl: './lhc-item.component.html',
-  styleUrls: ['./lhc-item.component.css'],
+    selector: 'lhc-item',
+    templateUrl: './lhc-item.component.html',
+    styleUrls: ['./lhc-item.component.css'],
+    standalone: false
 })
 export class LhcItemComponent {
 

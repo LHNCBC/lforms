@@ -13,10 +13,12 @@ declare var LForms: any;
 declare var ResizeObserver;
 
 @Component({
-  selector: 'lhc-form',
-  templateUrl: './lhc-form.component.html',
-  styleUrls: ['./lhc-form.component.css'],
-  providers: [WindowService, LhcDataService] // These two services are not provided in root.
+    selector: 'lhc-form',
+    templateUrl: './lhc-form.component.html',
+    styleUrls: ['./lhc-form.component.css'],
+    providers: [WindowService, LhcDataService] // These two services are not provided in root.
+    ,
+    standalone: false
 })
 export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 

@@ -1,0 +1,77 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "title": "Test Questionnaire with item legal and coding instructions containing rendering-xhtml extension",
+  "item": [
+    {
+      "linkId": "1.1",
+      "type": "display",
+      "text": "A question with HTML coding instructions",
+      "item": [
+        {
+          "type": "display",
+          "linkId": "help1",
+          "text": "some help text",
+          "_text": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                "valueString": "some help <button>button</button> text"
+              }
+            ]
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "text": "Help-Button",
+                "coding": [
+                  {
+                    "code": "help",
+                    "display": "Help-Button",
+                    "system": "http://hl7.org/fhir/questionnaire-item-control"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "1.2",
+      "type": "display",
+      "text": "A question with HTML legal",
+      "item": [
+        {
+          "type": "display",
+          "linkId": "legal1",
+          "text": "some legal text",
+          "_text": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                "valueString": "some legal <button>button</button> text"
+              }
+            ]
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "text": "Legal-Button",
+                "coding": [
+                  {
+                    "code": "legal",
+                    "display": "Legal-Button",
+                    "system": "http://hl7.org/fhir/questionnaire-item-control"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

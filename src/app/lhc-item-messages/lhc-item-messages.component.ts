@@ -2,9 +2,10 @@ import { Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-item-messages',
-  templateUrl: './lhc-item-messages.component.html',
-  styleUrls: ['./lhc-item-messages.component.css']
+    selector: 'lhc-item-messages',
+    templateUrl: './lhc-item-messages.component.html',
+    styleUrls: ['./lhc-item-messages.component.css'],
+    standalone: false
 })
 export class LhcItemMessagesComponent implements OnInit {
 

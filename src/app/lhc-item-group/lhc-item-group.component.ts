@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-item-group',
-  templateUrl: './lhc-item-group.component.html',
-  styleUrls: ['./lhc-item-group.component.css'],
+    selector: 'lhc-item-group',
+    templateUrl: './lhc-item-group.component.html',
+    styleUrls: ['./lhc-item-group.component.css'],
+    standalone: false
 })
 export class LhcItemGroupComponent {
   

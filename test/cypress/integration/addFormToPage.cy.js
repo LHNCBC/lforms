@@ -67,6 +67,12 @@ describe('Tests of addFormToPage test page', function() {
     expect(element(by.id('loadMsg')).getText()).toBe('');
   });
 
+  it('should be able to display answerValueSet with an old terminology server URL specified at root level', function () {
+    util.addFormToPage('preferredTerminologyServer-at-root-level.json', null, {fhirVersion: 'R4'});
+    // The form has a question with 7 radio button options.
+    cy.get('.ant-radio-input').should('have.length', 7);
+  });
+
 
   describe('addFormToPage', function () {
     beforeEach(()=> {

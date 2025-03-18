@@ -111,7 +111,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }]
           };
 
-          it('should handle the import and export of the entryFormat entension', function() {
+          it('should handle the import and export of the entryFormat extension', function() {
             let formData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
             assert.equal(formData.items[0]._entryFormat, 'string: a entry format from questionnaire');
 
@@ -492,6 +492,28 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(qData.item[0]._text, questionnaire.item[0]._text);
           });
 
+          it('should be compatible with the old externallyDefined extension URL but export the new URL', function (){
+            var questionnaire = {
+              item: [{
+                extension: [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+                    "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+                  }
+                ]
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.ok(qData.item[0].extension);
+            assert.deepEqual(qData.item[0].extension, [
+              {
+                "url": "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined",
+                "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+              }
+            ]);
+          });
+
           it('should correctly convert data control', function (){
             var questionnaire = {
               item: [ {
@@ -558,6 +580,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          if (fhirVersion === 'R5') {
+            it('should preserve answerValueSet property for contained ValueSet with expansion - R5', function () {
+              $.get('test/data/R5/q-with-rendering-xhtml-contained-valueset.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.ok(lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                // answerValueSet is restored, no answerOption.
+                assert.ok(!qData.item[0].item[0].answerOption);
+                assert.ok(qData.item[0].item[0].answerValueSet);
+                assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
+              });
+            });
+          }
+
           if (fhirVersion === 'R4') {
             it('should preserve rendering-xhtml extension on answerOption _valueString', function (){
               $.get('test/data/R4/q-with-rendering-xhtml-answerOption.json', function(json) {
@@ -580,7 +616,54 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[3].item[0].answerOption[0].valueCoding._display, json.item[3].item[0].answerOption[0].valueCoding._display);
               });
             });
+
+            it('should change an old preferredTerminologyServer URL to the new URL at root level', function (){
+              $.get('test/data/R4/preferredTerminologyServer-at-root-level.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.extension[0]);
+                assert.equal(qData.extension[0].url, "http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer");
+                assert.equal(qData.extension[0].valueUrl, "https://clinicaltables.nlm.nih.gov/fhir/R4");
+              });
+            });
+
+            it('should preserve answerValueSet property for contained ValueSet with expansion', function () {
+              $.get('test/data/R4/q-with-rendering-xhtml-contained-valueset.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.ok(lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                // answerValueSet is restored, no answerOption.
+                assert.ok(!qData.item[0].item[0].answerOption);
+                assert.ok(qData.item[0].item[0].answerValueSet);
+                assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
+              });
+            });
+
+            it('should preserve answerValueSet property for contained ValueSet without expansion - R4', function () {
+              $.get('test/data/R4/q-with-contained-valueset-without-expansion.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                // LForms answers property is not populated during import.
+                assert.ok(!lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(!qData.item[0].item[0].answerOption);
+                assert.ok(qData.item[0].item[0].answerValueSet);
+                assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
+              });
+            });
           }
+
+          if (fhirVersion === 'STU3') {
+            it('should preserve answerValueSet property for contained ValueSet without expansion - STU3', function () {
+              $.get('test/data/STU3/q-with-contained-valueset-without-expansion.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                // LForms answers property is not populated during import.
+                assert.ok(!lfData.items[0].items[0].answers);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(!qData.item[0].item[0].option);
+                assert.ok(qData.item[0].item[0].options.reference);
+                assert.deepEqual(qData.item[0].item[0].options, json.item[0].item[0].options);
+              });
+            });}
         });
 
         describe('itemToQuestionnaireItem', function() {
@@ -1800,7 +1883,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             it('should convert to SDC Questionnaire with extensions', function(done) {
               $.get('/base/test/data/lforms/FHTData.json', function(FHTData) {
                 var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, LForms.Util.deepCopy(FHTData));
-                assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
+                assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
                 done();
               });
             });

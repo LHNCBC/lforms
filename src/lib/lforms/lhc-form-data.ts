@@ -1063,6 +1063,7 @@ export default class LhcFormData {
               }
             }
           })
+
           // update and check the html version of help text,
           // when the lhcFormData instance has been initialized.
           if (item.codingInstructions &&
@@ -1084,7 +1085,32 @@ export default class LhcFormData {
               errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
               messages = [{errors}];
               InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
+            }
+          }
+
+          // update and check the html version of legal text,
+          // when the lhcFormData instance has been initialized.
+          if (item.legal &&
+            item.legal.length > 0 &&
+            item.legalFormat === "html") {
+            // process contained images
+            if (this._containedImages &&
+              item.legal.match(/img/) &&
+              item.legal.match(/src/)) {
+              item._legalWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.legal);
+            }
+            let errors, messages;
+            // check if html string contains invalid html tags, when the html version needs to be displayed
+            let legalHTML = item._legalWithContainedImages || item.legal;
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(legalHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              item.legalHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInLegalHTMLContent');
+              messages = [{errors}];
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
             }
           }
 
@@ -2497,7 +2523,7 @@ export default class LhcFormData {
 
 
   /**
-   *  Adjusts the number of repeating items in order to accomodate the number of
+   *  Adjusts the number of repeating items in order to accommodate the number of
    *  values in the given array, and assigns the items their values from the
    *  array.
    * @param item an item (possibly repeating) to which values are to be
@@ -2554,8 +2580,8 @@ export default class LhcFormData {
           var parentItemDisabled = item._parentItem._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
           for (var i=0; i<newRowsNeeded; ++i) {
             var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
-            newItem._id = maxRecId + 1;
-            item._parentItem.items.splice(insertPosition, 0, newItem);
+            newItem._id = maxRecId + i + 1;
+            item._parentItem.items.splice(insertPosition+ i, 0, newItem); // insert at the end
             newItem._parentItem = item._parentItem;
             repetitions.push(newItem);
             // preset the skip logic status to target-disabled on the new items
@@ -3400,8 +3426,9 @@ export default class LhcFormData {
     if (answers && Array.isArray(answers)) {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
-
-        var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
+        
+        // convert integer to string when the answerOption is an integer
+        var displayText = (answerData.text || answerData.code) + ""; 
         var displayTextHTML = answerData.textHTML;
         // label is a string
         if (answerData.label) {

@@ -5,9 +5,10 @@ import { LhcDataService } from '../../lib/lhc-data.service';
 // and https://embed.plnkr.co/plunk/7BBYAa
 
 @Component({
-  selector: 'lhc-item-attachment',
-  templateUrl: './lhc-item-attachment.component.html',
-  styleUrls: ['./lhc-item-attachment.component.css']
+    selector: 'lhc-item-attachment',
+    templateUrl: './lhc-item-attachment.component.html',
+    styleUrls: ['./lhc-item-attachment.component.css'],
+    standalone: false
 })
 export class LhcItemAttachmentComponent {
   @Input() item: any;
