@@ -35,8 +35,8 @@ const FormUtils = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
-   * @param {Object} [options] A hash of options. See avaialble options under templateOptions in
-   * form_definition.md. 'preppopulate' and 'fhirVersion' are not options in the templateOptions,
+   * @param {Object} [options] A hash of options. See available options under templateOptions in
+   * form_definition.md. 'prepopulate' and 'fhirVersion' are not options in the templateOptions,
    * but are included in the 'options' parameter.
    * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
    *  the form was an imported FHIR Questionnaire).
