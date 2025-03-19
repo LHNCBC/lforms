@@ -20,8 +20,8 @@ describe('popover buttons', () => {
     it('should show a copyright popover message on an item', () => {
       cy.byId('/type0/1').click();
       cy.byId('copyright-content-all-in-one').should('not.exist');
-      cy.byId('copyright-button-/type0/1').click();
-      cy.byId('copyright-content-/type0/1').should('be.visible').should('have.text', 'A Copyright notice of the item');
+      cy.byId('legal-button-/type0/1').click();
+      cy.byId('legal-content-/type0/1').should('be.visible').should('have.text', 'A Copyright notice of the item');
     });
 
     it('should show a copyright popover message on the form title when there is no codes', () => {
@@ -189,36 +189,36 @@ describe('popover buttons', () => {
           helpButton_1 = 'help-button-/type1/1';
           helpButton_2 = 'help-button-/type2/1';
           helpButton_3 = 'help-button-/type3/1';
-          copyrightButton0 = 'copyright-button-/type0/1';
+          copyrightButton0 = 'legal-button-/type0/1';
           popover0 = 'help-content-/type0/1';
           popover1 = 'help-content-/type1/1';
           popover2 = 'help-content-/type2/1';
           popover3 = 'help-content-/type3/1';
-          copyPopover0 = 'copyright-content-/type0/1';
+          copyPopover0 = 'legal-content-/type0/1';
           break;
         case 'horizontal':
           helpButton_0 = 'help-button-/horizontalTable/type0/1/1';
           helpButton_1 = 'help-button-/horizontalTable/type1/1/1';
           helpButton_2 = 'help-button-/horizontalTable/type2/1/1';
           helpButton_3 = 'help-button-/horizontalTable/type3/1/1';
-          copyrightButton0 = 'copyright-button-/horizontalTable/type0/1/1';
+          copyrightButton0 = 'legal-button-/horizontalTable/type0/1/1';
           popover0 = 'help-content-/horizontalTable/type0/1/1';
           popover1 = 'help-content-/horizontalTable/type1/1/1';
           popover2 = 'help-content-/horizontalTable/type2/1/1';
           popover3 = 'help-content-/horizontalTable/type3/1/1';
-          copyPopover0 = 'copyright-content-/horizontalTable/type0/1/1';
+          copyPopover0 = 'legal-content-/horizontalTable/type0/1/1';
           break;
         case 'matrix':
           helpButton_0 = 'help-button-/matrixTable/type0/1/1';
           helpButton_1 = 'help-button-/matrixTable/type1/1/1';
           helpButton_2 = 'help-button-/matrixTable/type2/1/1';
           helpButton_3 = 'help-button-/matrixTable/type3/1/1';
-          copyrightButton0 = 'copyright-button-/matrixTable/type0/1/1';
+          copyrightButton0 = 'legal-button-/matrixTable/type0/1/1';
           popover0 = 'help-content-/matrixTable/type0/1/1';
           popover1 = 'help-content-/matrixTable/type1/1/1';
           popover2 = 'help-content-/matrixTable/type2/1/1';
           popover3 = 'help-content-/matrixTable/type3/1/1';
-          copyPopover0 = 'copyright-content-/matrixTable/type0/1/1';
+          copyPopover0 = 'legal-content-/matrixTable/type0/1/1';
           break;
       }
 

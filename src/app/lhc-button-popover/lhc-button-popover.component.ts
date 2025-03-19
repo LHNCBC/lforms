@@ -16,7 +16,7 @@ export class LhcButtonPopoverComponent implements OnInit {
   @Input() append: boolean = false;
   popoverIdentifier: string = null;
 
-  constructor(private lhcDataService: LhcDataService) { 
+  constructor(private lhcDataService: LhcDataService) {
   }
 
 
@@ -34,12 +34,15 @@ export class LhcButtonPopoverComponent implements OnInit {
    * Send the popover content to screen reader log when the popover button is clicked
    */
   onShowingPopover(): void {
-    let title = this.popoverType === "copyright-string" ? "Copyright notice:" : "Instruction:"
-    let content, contentId;
+    let title, contentId;
 
     if (this.popoverType === "copyright-string") {
       title = "Copyright notice:"
       contentId = "copyright-content-" + (this.formLevel ? this.item.code : this.item._elementId);
+    }
+    else if ( this.popoverType.startsWith('legal')) {
+      title = "Legal:";
+      contentId = "legal-content-" + (this.formLevel ? this.item.code : this.item._elementId);
     }
     else {
       title = "Instruction:"

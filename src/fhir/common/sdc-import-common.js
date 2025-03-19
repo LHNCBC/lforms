@@ -1197,7 +1197,7 @@ function addCommonSDCImportFns(ns) {
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
         var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
-        // rendering-xhtml extension under "_display" in contained valueset.
+        // rendering-xhtml extension under "_display" in contained valueset expansion.
         if (self._widgetOptions?.allowHTML && vsItem._display) {
           const xhtmlFormat = LForms.Util.findObjectInArray(vsItem._display.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
           if (xhtmlFormat) {
@@ -1317,70 +1317,211 @@ function addCommonSDCImportFns(ns) {
   self.loadAnswerValueSets = function (lfData) {
     var pendingPromises = [];
     var items = lfData.itemList;
-    for (var i=0, len=items.length; i<len; ++i) {
+    for (var i = 0, len = items.length; i < len; ++i) {
       let item = items[i];
+      let expURL, vsKey;
       if (item.answerValueSet && !item.isSearchAutocomplete) {
-        let expURL = this._getExpansionURL(item);
-        let vsKey = expURL ? expURL : item.answerValueSet;
-        item._answerValueSetKey = vsKey;
+        if (item.answerValueSet.startsWith('#')) {
+          vsKey = item.answerValueSet;
+        } else {
+          expURL = this._getExpansionURL(item);
+          vsKey = expURL ? expURL : item.answerValueSet;
+        }
         if (!LForms._valueSetAnswerCache)
           LForms._valueSetAnswerCache = {};
-        let answers = LForms._valueSetAnswerCache[vsKey];
-        if (answers) {
-          item.answers = answers;
-          lfData._updateAutocompOptions(item);
-          lfData._resetItemValueWithAnswers(item);
-        }
-        else { // if not already loaded
-          if (expURL) {
-            pendingPromises.push(fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
+        let answersOrPromise = LForms._valueSetAnswerCache[vsKey];
+        if (answersOrPromise) {
+          if (typeof answersOrPromise.then === 'function') { // A promise is cached but not yet returned.
+            answersOrPromise.then(function (answers) {
+              if (answers) {
+                self._updateAnswersFromValueSetResponse(answers, lfData, item);
+              }
+              return answers;
+            });
+          } else { // answers list is cached.
+            self._updateAnswersFromValueSetResponse(answersOrPromise, lfData, item);
+          }
+        } else { // if not already loaded
+          if (item.answerValueSet.startsWith('#')) {
+            self._expandContainedValueSet(lfData, item, pendingPromises);
+          } else if (expURL) {
+            const p = fetch(expURL, {headers: {'Accept': 'application/fhir+json'}}).then(function (response) {
               return response.json();
-            }).then(function(parsedJSON) {
-              if (parsedJSON.resourceType==="OperationOutcome" ) {
-                var errorOrFatal = parsedJSON.issue.find(item => item.severity==="error" || item.severity==="fatal")
+            }).then(function (parsedJSON) {
+              if (parsedJSON.resourceType === "OperationOutcome") {
+                var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal")
                 if (errorOrFatal) {
                   throw new Error(errorOrFatal.diagnostics)
                 }
-              }
-              else {
-                answers = self.answersFromVS(parsedJSON);
+              } else {
+                var answers = self.answersFromVS(parsedJSON);
                 if (answers) {
-                  LForms._valueSetAnswerCache[expURL] = answers;
-                  item.answers = answers;
-                  lfData._updateAutocompOptions(item);
-                  lfData._resetItemValueWithAnswers(item);
+                  self._updateAnswersFromValueSetResponse(answers, lfData, item);
+                  LForms._valueSetAnswerCache[vsKey] = answers;
                 }
+                return answers;
               }
-            }).catch(function(error) {
-              throw new Error("Unable to load ValueSet from "+expURL);
-            }));
-          }
-          else { // use FHIR context
+            }).catch(function (error) {
+              throw new Error("Unable to load ValueSet from " + expURL);
+            });
+            pendingPromises.push(p);
+            LForms._valueSetAnswerCache[vsKey] = p;
+          } else { // use FHIR context
             var fhirClient = LForms.fhirContext?.client;
             if (!fhirClient) {
-              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-            }
-            pendingPromises.push(fhirClient.request({
+              const p = Promise.reject(new Error('Cannot load ValueSet "'+
+                item.answerValueSet+'" because it requires either a terminology '+
+                'server to be specified or LForms.Util.setFHIRContext(...) '+
+                'to have been called to provide access to a FHIR server.'
+              ));
+              pendingPromises.push(p);
+              // Cache the rejected Promise so the same vsKey don't need to be processed again,
+              // and we return only one rejected promise for the same vsKey.
+              LForms._valueSetAnswerCache[vsKey] = p;
+            } else {
+              const p = fhirClient.request({
                 url: lfData._buildURL(
                   ['ValueSet', '$expand'], {url: item.answerValueSet, _format: 'json'}),
                 headers: {'Accept': 'application/fhir+json'}
-              }).then(function(response) {
-              var valueSet = response;
-              var answers = self.answersFromVS(valueSet);
-              if (answers) {
-                LForms._valueSetAnswerCache[vsKey] = answers;
-                item.answers = answers;
-                lfData._updateAutocompOptions(item);
-                lfData._resetItemValueWithAnswers(item);
-              }
-            }).catch(function(error) {
-              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-            }));
+              }).then(function (response) {
+                var valueSet = response;
+                var answers = self.answersFromVS(valueSet);
+                if (answers) {
+                  self._updateAnswersFromValueSetResponse(answers, lfData, item);
+                  LForms._valueSetAnswerCache[vsKey] = answers;
+                }
+                return answers;
+              }).catch(function (error) {
+                throw new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server");
+              });
+              pendingPromises.push(p);
+              LForms._valueSetAnswerCache[vsKey] = p;
+            }
           }
         }
       }
     }
     return pendingPromises;
+  };
+
+  /**
+   * Expands contained valueset against terminology server.
+   * Here we take care of the scenario of contained valuesets without an expansion.
+   * If the contained valueset had an expansion, the answers list would already have been set
+   * on the item from _processAnswers(), while answerValueSet property would not have been set.
+   * @param lfData the LFormsData for the form
+   * @param item an item in ltemList
+   * @param pendingPromises pending promises list for loading answerValueSets
+   * @private
+   */
+  self._expandContainedValueSet = function (lfData, item, pendingPromises) {
+    const containedVS = lfData.contained.find(x => x.resourceType === 'ValueSet' && x.id === item.answerValueSet.substring(1));
+    const terminologyServer = this._getTerminologyServer(item);
+    if (terminologyServer) {
+      const p = fetch(terminologyServer + '/ValueSet/$expand', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(containedVS)
+      }).then(function (response) {
+        return response.json();
+      }).then(function (parsedJSON) {
+        if (parsedJSON.resourceType === "OperationOutcome") {
+          var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal");
+          if (errorOrFatal) {
+            throw new Error(errorOrFatal.diagnostics);
+          }
+        } else {
+          if (self._widgetOptions?.allowHTML) {
+            self._copyExtensionsToExpansion(parsedJSON);
+          }
+          var answers = self.answersFromVS(parsedJSON);
+          if (answers) {
+            self._updateAnswersFromValueSetResponse(answers, lfData, item);
+            LForms._valueSetAnswerCache[item.answerValueSet] = answers;
+          }
+          return answers;
+        }
+      }).catch(function (error) {
+        throw new Error("Unable to load ValueSet from " + terminologyServer + " for contained ValueSet " + item.answerValueSet);
+      });
+      pendingPromises.push(p);
+      LForms._valueSetAnswerCache[item.answerValueSet] = p;
+    } else { // use FHIR context
+      var fhirClient = LForms.fhirContext?.client;
+      if (!fhirClient) {
+        const p = Promise.reject(new Error('Cannot load ValueSet "'+
+          item.answerValueSet+'" because it requires either a terminology '+
+          'server to be specified or LForms.Util.setFHIRContext(...) '+
+          'to have been called to provide access to a FHIR server.'
+        ));
+        pendingPromises.push(p);
+        // Cache the rejected Promise so the same vsKey don't need to be processed again,
+        // and we return only one rejected promise for the same vsKey.
+        LForms._valueSetAnswerCache[item.answerValueSet] = p;
+      } else {
+        const p = fhirClient.request({
+          url: 'ValueSet/$expand?_format=json',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(containedVS)
+        }).then(function (parsedJSON) {
+          if (self._widgetOptions?.allowHTML) {
+            self._copyExtensionsToExpansion(parsedJSON);
+          }
+          var answers = self.answersFromVS(parsedJSON);
+          if (answers) {
+            self._updateAnswersFromValueSetResponse(answers, lfData, item);
+            LForms._valueSetAnswerCache[item.answerValueSet] = answers;
+          }
+          return answers;
+        }).catch(function (error) {
+          throw new Error("Unable to load ValueSet " + item.answerValueSet + " from FHIR server");
+        });
+        pendingPromises.push(p);
+        LForms._valueSetAnswerCache[item.answerValueSet] = p;
+      }
+    }
+  };
+
+
+  /**
+   * Updates item.answers based on the response of the answerValueSet $expand operation.
+   * @param answers answers list extracted from answersFromVS()
+   * @param lfData the LFormsData for the form
+   * @param item an item in ltemList
+   * @private
+   */
+  self._updateAnswersFromValueSetResponse = function (answers, lfData, item) {
+    item.answers = answers;
+    lfData._updateAutocompOptions(item);
+    lfData._resetItemValueWithAnswers(item);
+  };
+
+
+  /**
+   * When we do an $expand POST operation, the returned expansion may not have the
+   * rendering-xhtml on _display. compose.include.concept may have the extension. Copy
+   * _display to expansion.contains if there are matches in comose.include.concept.
+   * @param parsedJSON the returned JSON object from an $expand POST operation
+   */
+  self._copyExtensionsToExpansion = function (parsedJSON) {
+    if (!parsedJSON.expansion?.contains || !parsedJSON.compose?.include) {
+      return;
+    }
+    parsedJSON.expansion.contains.forEach(function (vsItem) {
+      // compose.include should have a system, but if both systems are undefined, they are considered a match.
+      const matchingSytem = parsedJSON.compose.include.find(include => include.system === vsItem.system);
+      if (matchingSytem) {
+        const matchingCode = matchingSytem.concept?.find(concept => concept.code === vsItem.code);
+        if (matchingCode?._display) {
+          vsItem._display = matchingCode._display;
+        }
+      }
+    });
   };
 
 
@@ -1510,14 +1651,17 @@ function addCommonSDCImportFns(ns) {
    * @return {boolean} true if the item is a help text item, false otherwise.
    * @private
    */
-  self._processCodingInstructions = function(targetItem, qItem) {
+  self._processCodingInstructionsAndLegal = function(targetItem, qItem) {
     // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
     // which in LForms is an attribute of the parent item, not a separate item.
     // use one coding instruction if there are multiple ones in Questionnaire.
-    let help, errors, messages;
+    let helpOrLegal, legal, errors, messages;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     let xhtmlFormat;
     if ( qItem.type === "display" && ci) {
+      // true if it's a legal extension, false if it's a help extension.
+      let isLegal = ci.valueCodeableConcept?.coding?.[0]?.code === 'legal';
+
       // only "rendering-xhtml" is supported. others are default to text
       if (qItem._text) {
         xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
@@ -1525,7 +1669,12 @@ function addCommonSDCImportFns(ns) {
 
       // there is a xhtml extension
       if (xhtmlFormat) {
-        help = {
+        helpOrLegal = isLegal ? {
+          legalFormat: "html",
+          legal: xhtmlFormat.valueString,
+          legalLinkId: qItem.linkId,
+          legalPlain: qItem.text  // this always contains the legal in plain text
+        } : {
           codingInstructionsFormat: "html",
           codingInstructions: xhtmlFormat.valueString,
           codingInstructionsLinkId: qItem.linkId,
@@ -1535,9 +1684,12 @@ function addCommonSDCImportFns(ns) {
         if (self._widgetOptions?.allowHTML) {
           let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-            help.codingInstructionsHasInvalidHtmlTag = true;
+            if (isLegal)
+              helpOrLegal.legalHasInvalidHtmlTag = true;
+            else
+              helpOrLegal.codingInstructionsHasInvalidHtmlTag = true;
             errors = {};
-            errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
+            errorMessages.addMsg(errors, isLegal ? 'invalidTagInLegalHTMLContent' : 'invalidTagInHelpHTMLContent');
             messages = [{errors}];
             LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
           }
@@ -1545,7 +1697,12 @@ function addCommonSDCImportFns(ns) {
       }
       // no xhtml extension, default to 'text'
       else {
-        help = {
+        helpOrLegal = isLegal ? {
+          legalFormat: "text",
+          legal: qItem.text,
+          legalinkId: qItem.linkId,
+          legalPlain: qItem.text // this always contains the legal in plain text
+        } : {
           codingInstructionsFormat: "text",
           codingInstructions: qItem.text,
           codingInstructionsLinkId: qItem.linkId,
@@ -1554,17 +1711,25 @@ function addCommonSDCImportFns(ns) {
       }
 
       if (messages) {
-        LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructions');
+        LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructionsAndLegal');
       }
-      if (help) {
-        targetItem.codingInstructions = help.codingInstructions;
-        targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-        targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
-        targetItem.codingInstructionsHasInvalidHtmlTag = help.codingInstructionsHasInvalidHtmlTag;
-        targetItem.codingInstructionsLinkId = help.codingInstructionsLinkId;
+      if (helpOrLegal) {
+        if (isLegal) {
+          targetItem.legal = helpOrLegal.legal;
+          targetItem.legalFormat = helpOrLegal.legalFormat;
+          targetItem.legalPlain = helpOrLegal.legalPlain;
+          targetItem.legalHasInvalidHtmlTag = helpOrLegal.legalHasInvalidHtmlTag;
+          targetItem.legalLinkId = helpOrLegal.legalLinkId;
+        } else {
+          targetItem.codingInstructions = helpOrLegal.codingInstructions;
+          targetItem.codingInstructionsFormat = helpOrLegal.codingInstructionsFormat;
+          targetItem.codingInstructionsPlain = helpOrLegal.codingInstructionsPlain;
+          targetItem.codingInstructionsHasInvalidHtmlTag = helpOrLegal.codingInstructionsHasInvalidHtmlTag;
+          targetItem.codingInstructionsLinkId = helpOrLegal.codingInstructionsLinkId;
+        }
       }
 
-      return !!help;
+      return !!helpOrLegal;
     }
   };
 
@@ -1581,7 +1746,7 @@ function addCommonSDCImportFns(ns) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        let isHelpTextItem = self._processCodingInstructions(targetItem, qItem.item[i]);
+        let isHelpTextItem = self._processCodingInstructionsAndLegal(targetItem, qItem.item[i]);
         if(!isHelpTextItem) {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap, containedImages);
           targetItem.items.push(item);
