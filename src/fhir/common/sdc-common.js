@@ -313,7 +313,7 @@ function addCommonSDCFns(ns) {
       }
     }
 
-    for (var i=0, len=contextItems.length; i<len; ++i) {
+    for (let i=0, len=contextItems.length; i<len; ++i) {
       let contextItemExt = contextItems[i].extension;
       let name=null, typeList=[];
 

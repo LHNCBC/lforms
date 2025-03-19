@@ -2,6 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.15.0] 2025-02-10
+### Changed
+- The promise returned by LForms.Util.addFormToPage, when it fails, will now
+  reject with an array of error messages instead of just a single error message.
+  Likewise the onError event emitted by the web component will now
+  contain an array of errors instead of just a single error message.
+  This is potentially a breaking change, but the impact is unlikely to be
+  harmful given the way error messages are typically used, so we did not change
+  the major version.
+
 ## [36.14.0] 2025-03-13
 ### Added
 - Support for itemControl 'legal'.
