@@ -1320,7 +1320,9 @@ function addCommonSDCImportFns(ns) {
     for (var i = 0, len = items.length; i < len; ++i) {
       let item = items[i];
       let expURL, vsKey;
-      if (item.answerValueSet && !item.isSearchAutocomplete) {
+      // Skip over answerValueSet if item.answers is already present (e.g.,
+      // loaded from a package (see lhc-form-data.ts: _loadAnswerValueSetsFromPackage).
+      if (!item.answers && item.answerValueSet && !item.isSearchAutocomplete) {
         if (item.answerValueSet.startsWith('#')) {
           vsKey = item.answerValueSet;
         } else {
@@ -1362,18 +1364,16 @@ function addCommonSDCImportFns(ns) {
                 return answers;
               }
             }).catch(function (error) {
-              throw new Error("Unable to load ValueSet from " + expURL);
+              throw new Error(`Unable to load ValueSet ${item.answerValueSet} from ${expURL}`);
             });
             pendingPromises.push(p);
             LForms._valueSetAnswerCache[vsKey] = p;
           } else { // use FHIR context
             var fhirClient = LForms.fhirContext?.client;
             if (!fhirClient) {
-              const p = Promise.reject(new Error('Cannot load ValueSet "'+
-                item.answerValueSet+'" because it requires either a terminology '+
-                'server to be specified or LForms.Util.setFHIRContext(...) '+
-                'to have been called to provide access to a FHIR server.'
-              ));
+              const p = Promise.reject(new Error("Unable to load ValueSet "+item.answerValueSet+
+              ".  A terminology server or a FHIR server is needed.  FHIR Questionnaires "+
+              "can specify a preferred terminology server for loading value sets."));
               pendingPromises.push(p);
               // Cache the rejected Promise so the same vsKey don't need to be processed again,
               // and we return only one rejected promise for the same vsKey.
