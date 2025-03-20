@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone, Output, EventEmitter} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone,
+         Output, EventEmitter, AfterViewChecked } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
@@ -12,12 +13,14 @@ declare var LForms: any;
 declare var ResizeObserver;
 
 @Component({
-  selector: 'lhc-form',
-  templateUrl: './lhc-form.component.html',
-  styleUrls: ['./lhc-form.component.css'],
-  providers: [WindowService, LhcDataService] // These two services are not provided in root.
+    selector: 'lhc-form',
+    templateUrl: './lhc-form.component.html',
+    styleUrls: ['./lhc-form.component.css'],
+    providers: [WindowService, LhcDataService] // These two services are not provided in root.
+    ,
+    standalone: false
 })
-export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
+export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
   @Input() questionnaire: any;
   @Input() options: any;
@@ -74,12 +77,47 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
 
+
+  /**
+   * Called after this component is rendered, but does not include child components.
+   */
+  // ngAfterViewInit(): void {
+  //   Unfortunately, this.lhcFormData is not set yet when this is called.
+  // }
+
+  /**
+   * Called after the view is completely checked, that is, after a form has
+   * completely been rendered, and possibly at other times.
+   */
+  ngAfterViewChecked(): void {
+    // If this is the first time this particular form has been rendered, see if
+    // we should send the formReady event.
+    if (this.lhcFormData && !this.lhcFormData._formRendered) {
+      this.lhcFormData._formRendered = true;
+      if (this.lhcFormData._formProcessed)
+        this.formReady();
+    }
+  }
+
+
   /**
    * Remove the observer for window size
    */
   ngOnDestroy() {
     this.observer.unobserve(this.host.nativeElement);
   }
+
+
+  /**
+   *  Sets a flag that the form has been processed and checks whether the form
+   *  is ready.
+   */
+  formProcessed() {
+    this.lhcFormData._formProcessed = true;
+    if (this.lhcFormData._formRendered)
+      this.formReady();
+  }
+
 
 
   /**
@@ -143,30 +181,32 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy {
                   self.lhcFormData._expressionProcessor.runCalculations(!self.lhcFormData.hasSavedData)
                     .then(() => {
                       self.lhcFormData._checkFormControls();
-                      self.formReady();
+                      self.formProcessed();
                     })
                     .catch(error => {
                       const e = typeof error === "string" ? error : error.message
-                      self.onError.emit(e)
+                      self.onError.emit([e])
                     });
                 }
                 else {
-                  self.formReady();
+                  self.formProcessed();
                 }
               })
               .catch(error => {
-                const e = typeof error === "string" ? error : error.message
-                self.onError.emit(e)
+                // loadFHIRResources fails with an array of errors, but perhaps
+                // something else has thrown an exception.
+                const e = error.message ? [error.message] : error;
+                self.onError.emit(e);
               });
             }
             else {
-              self.formReady();
+              self.formProcessed();
             }
 
           }
           catch (error) {
             const e = typeof error === "string" ? error : error.message
-            self.onError.emit(e)
+            self.onError.emit([e])
           };
         },1)
       }

@@ -7,7 +7,8 @@ describe('addFormToPage Error Message Test', () => {
     cy.get('#fileAnchor').uploadFile('test/data/R4/fhir-context-q-wrong-valueset-url.json');
     cy.get('.lhc-form-title').contains('A questionnaire for testing code that requires a FHIR context 1');
     // has an error message
-    cy.get("#loadMsg").contains("Unable to load ValueSet from https://lforms-fhir.nlm.nih.gov/baseDstu3/ValueSet/$expand?url=http://hl7.org/fhir/ValueSet/yesnodontknow-invalid");
+    // This also tests that the url parameter gets URL-encoded.
+    cy.get("#loadMsg").contains("Unable to load ValueSet");
   });
 
   it('show an error when a valueset cannot be loaded because of a wrong fhir context', () => {

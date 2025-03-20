@@ -558,7 +558,7 @@ describe('ExpressionProcessor', function () {
       const lfData = new LForms.LFormsData({
         fhirVersion: 'R4',
         extension: [{
-          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+          "url": "http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer",
           "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
         }],
         items: [{

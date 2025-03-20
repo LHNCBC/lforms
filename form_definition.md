@@ -88,7 +88,7 @@ about the meaning of each key:
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTML - a boolean that controls whether to allow HTML content in question
-      text and the codingInstructions field.
+      text, prefix, codingInstructions and answer's text.
       See https://hl7.org/fhir/extensions/StructureDefinition-rendering-xhtml.html.
       The default is false. If it is false,
       the **codingInstructionsFormat** field on item level is ignored, and no HTML
@@ -366,7 +366,7 @@ about the meaning of each key:
  No data is returned in this event.
 * **onError** - emitted when the ValueSets are not retrieved during the form initialization. 
 The form is still initialized and might be rendered, with possible missing data. 
-The first error is returned in this event.
+The event will contain an array of error messages.
 
 ### How to use properties and events:
 * In HTML: 

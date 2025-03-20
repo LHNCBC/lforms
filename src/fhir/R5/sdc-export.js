@@ -196,7 +196,7 @@ function addR5ExportFns(ns) {
           });
         }
         // with an answer list
-        if (item.answers) {
+        if (item.answers || dataType === 'CODING') {
           if (_isAnswerOptionType[dataType]) {
             // for optionsOrString, the value could be string if it is a user typed, not-on-list value
             if (item.answerConstraint === 'optionsOrString' && typeof itemValue === 'string') {

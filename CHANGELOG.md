@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.7.3] 2024-12-05
+## [36.15.1] 2025-03-20
 ### Fixed
 - Updated fhirpath.js to version <TBD> to update the `weight()` function and
   added unit tests for this function.
@@ -10,11 +10,109 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed converting LForms form definition to standard STU3 FHIR Questionnaire.
 - Fixed model for R5.
 
+## [36.15.0] 2025-02-10
+### Changed
+- The promise returned by LForms.Util.addFormToPage, when it fails, will now
+  reject with an array of error messages instead of just a single error message.
+  Likewise the onError event emitted by the web component will now
+  contain an array of errors instead of just a single error message.
+  This is potentially a breaking change, but the impact is unlikely to be
+  harmful given the way error messages are typically used, so we did not change
+  the major version.
+
+## [36.14.0] 2025-03-13
+### Added
+- Support for itemControl 'legal'.
+
+## [36.13.0] 2025-03-06
+### Added
+- Support for rendering-xhtml on externally loaded answerValueSet prefetch/radio/checkbox.
+
+## [36.12.0] 2025-03-06
+### Added
+- Loading answerValueSet for contained ValueSets without an expansion.
+### Fixed
+- Exported Questionnaire should have answerValueSet property but not populated 
+  answerOptions if they are from contained ValueSets.
+
+## [36.11.2] 2025-03-03
+### Fixed
+- Only the new externallyDefined URL should be exported.
+
+## [36.11.1] 2025-02-28
+### Changed
+- New URL for preferredTerminologyServer extension.
+- preferredTerminologyServer extension should work at root level as well as
+  item level.
+
+## [36.11.0] 2025-02-27
+### Changed
+- Upgraded angular to v19
+- Upgraded ng-zorro-antd to v19
+
+## [36.10.5] 2025-02-25
+### Fixed
+- Fixed a display issue for answers, where the display field might
+  not have data.
+
+## [36.10.4] 2025-02-24
+### Fixed
+- Fixed a bug that the repeating numbers are not displayed correctly 
+  on the repeating items when their data are loaded through FHIRPath
+  expressions.
+  
+## [36.10.3] 2025-02-07
+### Changed
+- Changed the meta.profile for STU3, R4 and R5 in the exported 
+  QuestionnaireResponse so that the standard FHIR profiles are used.
+
+## [36.10.2] 2025-02-03
+### Fixed
+- The "url" parameter was not URL-encoded when doing expansions.
+
+## [36.10.1] 2025-01-30
+### Fixed
+- Warning messages were being incorrectly generated for failing to load a value
+  set for an autocomplete field, for which the value set should not be and is
+  not loaded at form initialization time.
+- Improved the timing of the formReady event, so that it is sent after the form
+  has been rendered.
+
+## [36.10.0] 2025-01-30
+### Added
+- Support for rendering-xhtml on contained[valueSet].expansion.contains.display.
+
+## [36.9.0] 2025-01-30
+### Added
+- Support for rendering-xhtml on answerOption.valueCoding.display.
+
+## [36.8.2] 2025-01-17
+### Fixed
+- Fixed a bug that linkIds in help text items were lost in exported
+  Questionnaire.
+
+## [36.8.1] 2024-12-17
+### Fixed
+- Fixed a bug that code.system was not set correctly when exporting 
+  data as DiagnosticReport.
+
+## [36.8.0] 2024-12-12
+### Added
+- Support for rendering-xhtml on item.prefix
+
+## [36.7.4] 2024-12-11
+### Added
+- Added tests for FHIRPath expressions to work with "coding" items in R5.
+
+## [36.7.3] 2024-12-09
+### Fixed
+- Matrix layout radio group tab issue.
+
 ## [36.7.2] 2024-12-03
 ### Changed
 - Upgraded to nodejs version 22.
 
-## [36.7.1] 2024-12-2
+## [36.7.1] 2024-12-02
 ### Fixed
 - Updated checkForInvalidHtml to allow more tags/attributes.
 - Fixed a bug that help text and copyright text could be out of position

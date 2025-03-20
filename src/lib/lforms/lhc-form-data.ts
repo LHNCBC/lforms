@@ -184,7 +184,7 @@ export default class LhcFormData {
     }
 
     // process images in 'contained'
-    if (data.contained)
+    if (data.contained && this._fhir)
       this._containedImages = this._fhir.SDC.buildContainedImageMap(data.contained);
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
@@ -249,8 +249,8 @@ export default class LhcFormData {
     var status = [];
     for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
-      if (item.answerValueSet && ! item.answers) {
-        status.push("Resource not loaded: " + item.answerValueSet)
+      if (item.answerValueSet && !item.answers && !item.externallyDefined && !item.isSearchAutocomplete) {
+        status.push("Value set not loaded: " + item.answerValueSet)
       }
     }
 
@@ -341,6 +341,9 @@ export default class LhcFormData {
    * @param prepopulate whether or not to perform prepoluation.  If the form
    *  being shown is going to include previously saved user data, this flag
    *  should be set to false (which is the default).
+   * @return a Promise which will be resolved if the loading succeeds, and
+   *  rejected with an array of error messages if one or more resources fails to
+   *  load.
    */
   loadFHIRResources(prepopulate) {
     var lfData = this;
@@ -358,11 +361,33 @@ export default class LhcFormData {
     if (prepopulate)
       pendingPromises.push(sdc.requestLinkedObs(this));
 
-    return Promise.all(pendingPromises).then(function() {
+    return this._resolveAllPromises(pendingPromises).then(function() {
       lfData._notifyAsyncChangeListeners();
     })
-    .catch(function fail(e) {
-      throw e
+    // .catch default throws the error messages, which is what we want
+  }
+
+
+  /**
+   *  Resolves all the given promises and if all succeed, returns a resolved
+   *  Promise.
+   *  Otherwise, if one or more fail, it returns a failed promise with an array
+   *  of the failure reasons.
+   */
+  _resolveAllPromises(promises) {
+    return Promise.allSettled(promises).then(results => {
+      const reasons = [];
+      const length = results.length;
+
+      for (let i = 0; i < length; i++) {
+        if (results[i].status !== 'fulfilled') {
+          reasons.push((results[i] as PromiseRejectedResult).reason);
+        }
+      }
+
+      if (reasons.length > 0) {
+        return Promise.reject(reasons);
+      }
     });
   }
 
@@ -1000,36 +1025,45 @@ export default class LhcFormData {
       if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          // update and check the html version of question text,
+          // update and check the html version of question text and prefix
           // when the lhcFormData instance has been initialized.
-          if (item._displayTextHTML) {
-            // process contained images
-            if (this._containedImages &&
-                item._displayTextHTML.match(/img/) &&
-                item._displayTextHTML.match(/src/)) {
-              // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
-              // strings in _getHtmlStringWithContainedImages() for repeated questions.
-              // Uses item._displayTextHTMLOriginal to avoid duplicate processing if setTemplateOptions()
-              // is run a second time.
-              if (this._containedImageHtmlMap.has(item._displayTextHTMLOriginal)) {
-                item._displayTextHTML = this._containedImageHtmlMap.get(item._displayTextHTMLOriginal);
-              } else {
-                item._displayTextHTMLOriginal = item._displayTextHTML;
-                item._displayTextHTML = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item._displayTextHTMLOriginal);
-                this._containedImageHtmlMap.set(item._displayTextHTMLOriginal, item._displayTextHTML);
+          ['_displayTextHTML', '_prefixHTML'].forEach(htmlAttrName => {
+            if (item[htmlAttrName]) {
+              // process contained images
+              if (this._containedImages &&
+                  item[htmlAttrName].match(/img/) &&
+                  item[htmlAttrName].match(/src/)) {
+                // Get from the cache this._containedImageHtmlMap so we don't process the same HTML
+                // strings in _getHtmlStringWithContainedImages() for repeated questions.
+                // Uses item._displayTextHTMLOriginal to avoid duplicate processing if setTemplateOptions()
+                // is run a second time.
+                let originalHTMLAttrName = htmlAttrName + "Original";
+                if (this._containedImageHtmlMap.has(item[originalHTMLAttrName])) {
+                  item[htmlAttrName] = this._containedImageHtmlMap.get(item[originalHTMLAttrName]);
+                } else {
+                  item[originalHTMLAttrName] = item[htmlAttrName];
+                  item[htmlAttrName] = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item[originalHTMLAttrName]);
+                  this._containedImageHtmlMap.set(item[originalHTMLAttrName], item[htmlAttrName]);
+                }
+              }
+              let errors, messages;
+              let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(item[htmlAttrName]);
+              if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
+                if (htmlAttrName === '_displayHTML') {
+                  item._hasInvalidHTMLTagInText = true;
+                }
+                else if (htmlAttrName === '_prefixHTML') {
+                  item._hasInvalidHTMLTagInPrefix = true;
+                }
+                errors = {};
+                errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+                messages = [{errors}];
+                InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+                InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
               }
             }
-            let errors, messages;
-            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(item._displayTextHTML);
-            if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-              item._hasInvalidHtmlTag = true;
-              errors = {};
-              errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
-              messages = [{errors}];
-              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-              InternalUtil.setItemMessagesArray(item, messages, 'setTemplateOptions');
-            }
-          }
+          })
+
           // update and check the html version of help text,
           // when the lhcFormData instance has been initialized.
           if (item.codingInstructions &&
@@ -1044,16 +1078,42 @@ export default class LhcFormData {
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
             let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
-            let invalidTagsAttributes = LForms.Util.checkForInvalidHtmlTags(helpHTML);
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(helpHTML);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};
               errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
               messages = [{errors}];
               InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
             }
           }
+
+          // update and check the html version of legal text,
+          // when the lhcFormData instance has been initialized.
+          if (item.legal &&
+            item.legal.length > 0 &&
+            item.legalFormat === "html") {
+            // process contained images
+            if (this._containedImages &&
+              item.legal.match(/img/) &&
+              item.legal.match(/src/)) {
+              item._legalWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.legal);
+            }
+            let errors, messages;
+            // check if html string contains invalid html tags, when the html version needs to be displayed
+            let legalHTML = item._legalWithContainedImages || item.legal;
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(legalHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              item.legalHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInLegalHTMLContent');
+              messages = [{errors}];
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
+            }
+          }
+
         }
       }
 
@@ -1389,6 +1449,7 @@ export default class LhcFormData {
     }
 
     // special handling of the help text when it contains images in the 'contained' field.
+    // and item.text, item.prefix
     if (this._containedImages &&
         item.codingInstructions &&
         item.codingInstructions.length > 0 &&
@@ -2462,7 +2523,7 @@ export default class LhcFormData {
 
 
   /**
-   *  Adjusts the number of repeating items in order to accomodate the number of
+   *  Adjusts the number of repeating items in order to accommodate the number of
    *  values in the given array, and assigns the items their values from the
    *  array.
    * @param item an item (possibly repeating) to which values are to be
@@ -2519,8 +2580,8 @@ export default class LhcFormData {
           var parentItemDisabled = item._parentItem._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
           for (var i=0; i<newRowsNeeded; ++i) {
             var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
-            newItem._id = maxRecId + 1;
-            item._parentItem.items.splice(insertPosition, 0, newItem);
+            newItem._id = maxRecId + i + 1;
+            item._parentItem.items.splice(insertPosition+ i, 0, newItem); // insert at the end
             newItem._parentItem = item._parentItem;
             repetitions.push(newItem);
             // preset the skip logic status to target-disabled on the new items
@@ -3319,7 +3380,7 @@ export default class LhcFormData {
   getTextDisplayType(item) {
     var format = 'plain';
     if (item._displayTextHTML && item._displayTextHTML.length > 0 && this.templateOptions.allowHTML) {
-      if (!item._hasInvalidHtmlTag) {
+      if (!item._hasInvalidHTMLTagInText) {
         format = 'html';
       }
       else {
@@ -3329,6 +3390,24 @@ export default class LhcFormData {
     return format;
   }
 
+
+  /**
+   * Check the display type of item.prefix
+   * @param item an item in the lforms form items array
+   * @returns {string}
+   */
+  getPrefixDisplayType(item) {
+    var format = 'plain';
+    if (item._prefixHTML && item._prefixHTML.length > 0 && this.templateOptions.allowHTML) {
+      if (!item._hasInvalidHTMLTagInPrefix) {
+        format = 'html';
+      }
+      else {
+        format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
+      }
+    }
+    return format;
+  }
 
   /**
    * Changes the answer's display text when there is a label and/or a score
@@ -3347,8 +3426,9 @@ export default class LhcFormData {
     if (answers && Array.isArray(answers)) {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
-
-        var displayText = answerData.text + ""; // convert integer to string when the answerOption is an integer
+        
+        // convert integer to string when the answerOption is an integer
+        var displayText = (answerData.text || answerData.code) + ""; 
         var displayTextHTML = answerData.textHTML;
         // label is a string
         if (answerData.label) {

@@ -5,7 +5,23 @@
     <span class="lhc-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
         <!-- prefix -->
-        <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
+        <ng-container *ngIf="item.prefix">
+          <ng-container [ngSwitch]="lhcDataService.getPrefixDisplayType(item)">
+            <span *ngSwitchCase="'escaped'"
+                 class="prefix"
+                 [style]="item._obj_prefixCSS"
+            >{{item._prefixHTML}}</span>
+            <span *ngSwitchCase="'html'"
+                  class="prefix"
+                  [style]="item._obj_prefixCSS"
+                  [innerHTML]="item._prefixHTML | safeHtml"
+            ></span>
+            <span *ngSwitchCase="'plain'"
+                  class="prefix"
+                  [style]="item._obj_prefixCSS"
+            >{{item.prefix}}</span>
+          </ng-container>
+        </ng-container>
         <!-- question text -->
         <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(item)">
           <span *ngSwitchCase="'escaped'"
@@ -70,9 +86,36 @@
         <lhc-button-popover [item]="item" [popoverType]="'help-plain'"></lhc-button-popover>
       </ng-container>
     </span>
-    <!-- copyright -->
-    <ng-container *ngIf="item.copyrightNotice">
-      <lhc-button-popover [item]="item" [popoverType]="'copyright-string'"></lhc-button-popover>
-    </ng-container>
+    <!-- legal -->
+    <span [ngSwitch]="lhcDataService.getLegalDisplayType(item)" *ngIf="item.legal">
+      <div *ngSwitchCase="'inline-escaped'"
+           id="legal-{{ item._elementId }}"
+           class="lhc-inline-legal"
+           attr.aria-label="Legal for question {{item.question}}"
+           attr.aria-describedby="label-{{ item._elementId }}"
+      >{{item.legal}}</div>
+      <div *ngSwitchCase="'inline-html'"
+           id="legal-{{ item._elementId }}"
+           class="lhc-inline-legal"
+           [innerHTML]="item._legalWithContainedImages || item.legal | safeHtml"
+           attr.aria-label="Legal for question {{item.question}}"
+           attr.aria-describedby="label-{{ item._elementId }}"
+      ></div>
+      <div *ngSwitchCase="'inline-plain'"
+           id="legal-{{ item._elementId }}"
+           class="lhc-inline-legal"
+           attr.aria-label="Legal for question {{item.question}}"
+           attr.aria-describedby="label-{{ item._elementId }}"
+      >{{item.legalPlain}}</div>
+      <ng-container *ngSwitchCase="'popover-escaped'">
+        <lhc-button-popover [item]="item" [popoverType]="'legal-string'"></lhc-button-popover>
+       </ng-container>
+      <ng-container *ngSwitchCase="'popover-html'">
+        <lhc-button-popover [item]="item" [popoverType]="'legal-html'"></lhc-button-popover>
+      </ng-container>
+      <ng-container *ngSwitchCase="'popover-plain'">
+        <lhc-button-popover [item]="item" [popoverType]="'legal-plain'"></lhc-button-popover>
+      </ng-container>
+    </span>
   </div>
 </ng-container>

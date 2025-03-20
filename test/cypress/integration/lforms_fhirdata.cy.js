@@ -159,6 +159,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 let [error, fhirData] = callbackData;
                 expect(error).toBeNull();
                 expect(fhirData.resourceType).toBe("DiagnosticReport");
+                expect(fhirData.code.coding[0].system).toBe('LOINC');
+                expect(fhirData.code.coding[0].code).toBe('54127-6N');
                 expect(fhirData.result.length).toBe(1);
                 expect(fhirData.result[0].reference).not.toBe(undefined);
                 expect(fhirData.contained.length).toBe(16);
@@ -274,6 +276,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.resourceType).toBe("Bundle");
               expect(fhirData.entry.length).toBe(1);
               expect(fhirData.entry[0].resource.resourceType).toBe("DiagnosticReport");
+              expect(fhirData.entry[0].resource.code.coding[0].system).toBe('LOINC');
+              expect(fhirData.entry[0].resource.code.coding[0].code).toBe('54127-6N');
               expect(fhirData.entry[0].resource.result).toEqual([]);
 
               // #2 has some values

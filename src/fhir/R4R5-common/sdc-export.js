@@ -227,12 +227,18 @@ var self = {
       this._handleExternallyDefined(targetItem, item);
     }
     // option, for answer list
-    else if (item.answers && !item.answerValueSet) {
+    else if (item.answerValueSet) {
+      targetItem.answerValueSet = item.answerValueSet;
+    }
+    else if (item._answerValueSet) {
+      // Restore answerValueSet property.
+      targetItem.answerValueSet = item._answerValueSet;
+    }
+    else if (item.answers) {
       // Make sure the answers did not come from answerExpression.
       if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp])
         targetItem.answerOption = this._handleAnswers(item);
-    } else if (item.answerValueSet)
-      targetItem.answerValueSet = item.answerValueSet;
+    }
   },
 
   /**
@@ -255,6 +261,11 @@ var self = {
 
         if (answer.system) {
           option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
+        }
+
+        // Restore rendering-xhtml extension on valueCoding._display.
+        if (answer.obj_valueCoding_display) {
+          option.valueCoding._display = answer.obj_valueCoding_display;
         }
 
         // check default answers, coding only for now

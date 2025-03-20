@@ -201,7 +201,7 @@ function addCommonSDCExportFns(ns) {
       let helpItem = {
         "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
         "type": "display",
-        "linkId": targetItem.linkId + "-help",
+        "linkId": item.codingInstructionsLinkId || targetItem.linkId + "-help",
         "extension": [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
@@ -233,6 +233,49 @@ function addCommonSDCExportFns(ns) {
       else {
         targetItem.item = [
           helpItem
+        ]
+      }
+    }
+
+    // the legal is a sub item with a "display" type, and an item-control value as "legal"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+    if (item.legal) {
+      let legalItem = {
+        "text": item.legalPlain ? item.legalPlain : item.legal,
+        "type": "display",
+        "linkId": item.legalLinkId || targetItem.linkId + "-legal",
+        "extension": [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Legal-Button",
+            "coding": [{
+              "code": "legal",
+              "display": "Legal-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      };
+
+      // format could be 'html' or 'text'
+      if (item.legalFormat === 'html') {
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        legalItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.legal
+          }]
+        }
+      }
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(legalItem)
+      }
+      else {
+        targetItem.item = [
+          legalItem
         ]
       }
     }
@@ -425,7 +468,7 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._handleMetaProfile = function (meta) {
-    const thisVersion = LForms.Util.detectFHIRVersionFromProfiles([this.stdQProfile]);
+    const thisVersion = this.fhirVersion;
     const retainedProfiles = [];
 
     if(meta.profile?.length > 0) {
@@ -791,10 +834,9 @@ function addCommonSDCExportFns(ns) {
     // resourceType
     target.resourceType = "QuestionnaireResponse";
 
-    // meta
-    var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
+    // meta.profile - set the standard profile
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+    target.meta.profile = [this.stdQRProfile];
 
     // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
     //target.identifier = {
@@ -811,7 +853,7 @@ function addCommonSDCExportFns(ns) {
 
     // questionnaire , required
     // We do not have the ID at this point, so leave it unset for now.  Note
-    // that the fomat has also changed from Reference to canonical in R4.
+    // that the format has also changed from Reference to canonical in R4.
     /*
     target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
