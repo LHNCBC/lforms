@@ -216,7 +216,7 @@ const FormUtils = {
    *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
-   *  * extract:  a flag for QuestionnaireReponse that data should be extracted
+   *  * extract:  a flag for QuestionnaireResponse that data should be extracted
    *    (using the observationExtract extension).  In this case the returned
    *    resource will be an array consisting of the QuestionnaireResponse and any
    *    extracted Observations.
