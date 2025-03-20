@@ -254,18 +254,48 @@ reference to this element or its ID to a utility function load the form.</p>
    a parsed object)</li>
   <li><b>formContainer</b> - an element (or its ID, as in this example) into which the
    form should be placed</li>
-  <li><b>options</b> - A map of options, which can be:
+  <li><b>options</b> - A map of options, which can be the following items, or any of the <a
+   href="https://github.com/lhncbc/lforms/blob/master/form_definition.md#templateOptions">"templateOptions"</a>
+   defined for the lforms internal format, the more important of which are also
+   included in the list below:
     <dl>
-       <dt>prepopulate</dt><dd>Set this to true if you are using FHIR and want prepopulation
-         to occur from the patient's record.  Note that you probably do not want prepopulation to
-         happen if you are loading a QuestionnaireResponse (via the
-         questionnaireResponse option).</dd>
-       <dt>fhirVersion</dt><dd>If the formDefinition is a FHIR Questionnaire,
-         you can specify which version of FHIR by passing in 'STU3', 'R4', or 'R5'.
-         Otherwise LForms will try to guess the version by looking at the Questionnaire's
-         structure.</dd>
-       <dt>questionnaireResponse</dt><dd>A FHIR QuestionnaireResponse which
-        should be loaded into the rendered form.</dd>
+      <dt>fhirVersion</dt><dd>If the formDefinition is a FHIR Questionnaire,
+       you can specify which version of FHIR by passing in 'STU3', 'R4', or 'R5'.
+       Otherwise LForms will try to guess the version by looking at the Questionnaire's
+       structure.</dd>
+      <dt>questionnaireResponse</dt><dd>A FHIR QuestionnaireResponse which
+       should be loaded into the rendered form.</dd>
+      <dt>prepopulate</dt><dd>Set this to true if you are using FHIR and want prepopulation
+       to occur from the patient's record.  Note that you probably do not want prepopulation to
+       happen if you are loading a QuestionnaireResponse (via the
+       questionnaireResponse option).</dd>
+      <dt>hideTreeLine</dt><dd>a boolean that controls whether to hide tree
+       line styles. The default is false.</dd>
+      <dt>hideIndentation</dt><dd>a boolean that controls whether to hide indentation. The default is false.
+       Note that if this is set true, tree line style will not apply regardless of "hideTreeLine" setting.</dd>
+      <dt>hideRepetitionNumber</dt><dd>a boolean that controls whether to hide repetition numbers next to the
+       item's text. The default is false.</dd>
+      <dt>showQuestionCode</dt><dd>a boolean that controls whether to show question codes.
+       The default is false.</dd>
+      <dt>displayScoreWithAnswerText</dt><dd>a boolean that controls whether to display scores along
+       with answer texts for answers that have scores. The default is true.</dd>
+      <dt>showCodingInstruction</dt><dd>a boolean that controls whether to show "coding
+       instructions" (help text for a question) inline or as popover messages
+       (false: in popover; true: inline).  The default is false.</dd>
+      <dt>allowHTML</dt><dd>a boolean that controls whether to allow HTML content in question
+       text, prefix, codingInstructions and answer's text.
+       (For FHIR, see https://build.fhir.org/ig/HL7/sdc/rendering.html#rendering-xhtml for how to specify HTML.)
+       The default is false.</dd>
+      <dt>displayInvalidHTML</dt><dd>a boolean that controls whether to show the escaped html content
+       from the rendering-xhtml extension if it contains invalid tags or attributes.
+       The default value is false, which means if the HTML content is not valid,
+       the text content will be used/displayed (even if the text is empty).</dd>
+      <dt>allowMultipleEmptyRepeatingItems</dt><dd>a boolean that controls whether to allow
+        more than one unused repeating item/section.  The default is false.</dd>
+      <dt><a name="viewMode"></a>viewMode</dt><dd>the view mode for the form. Permitted values are 'lg',
+       'md', 'sm', and 'auto', which determine the 4 predefined layouts for large
+       screen/container, medium screen/container, small screen/container and a
+       responsive layout. The default value is 'auto'.</dd>
     </dl>
   </li>
 </ol>
