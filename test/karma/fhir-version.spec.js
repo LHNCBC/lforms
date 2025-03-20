@@ -76,21 +76,3 @@ describe('detectFHIRVersion', function() {
     });
   })
 });
-
-describe('Exception in converting R5 to R4', function() {
-  it('should not convert type "coding" with answerConstraint "optionsOrType" in R5 Questionnaire to R4', function(done) {
-    $.get('/test/data/R5/answerOption/answerOption-valueCoding.optionsOrType.R5.json', function(q5) {
-      let fhir = LForms.FHIR["R5"];
-      let lfData = fhir.SDC.convertQuestionnaireToLForms(q5);
-      try {
-        let fhir = LForms.FHIR["R4"];
-        let q4 = fhir.SDC.convertLFormsToQuestionnaire(lfData);
-      }
-      catch (e) {
-        let errMessage = "The type 'coding' with answerConstraint 'optionsOrType' in R5 cannot be converted to a valid type in R4 or STU3."
-        assert.equal(e.message, errMessage);
-      }
-      done();
-    });
-  })
-});
