@@ -214,7 +214,33 @@ describe('FHIR SDC functions on answerOption', function() {
 });
 
 describe('coding in R5 with answerConstraint to choice/open-choice in R4', function() {
-  let qR5 = {
+  let qR5a = {
+    "id": "r5",
+    "status": "draft",
+    "name": "r5-coding-answerConstraint",
+    "title": "R5 Coding answerConstraint",
+    "resourceType": "Questionnaire",
+    "item": [
+      {
+        "type": "coding",
+        "answerConstraint": "optionsOnly",
+        "linkId": "1",
+        "text": "coding-optionsOnly",
+      },
+      {
+        "type": "coding",
+        "answerConstraint": "optionsOrString",
+        "linkId": "2",
+        "text": "coding-optionsOrString",
+      },
+      {
+        "type": "coding",
+        "linkId": "4",
+        "text": "coding",
+      }
+    ]
+  }
+  let qR5b = {
     "id": "r5",
     "status": "draft",
     "name": "r5-coding-answerConstraint",
@@ -246,19 +272,28 @@ describe('coding in R5 with answerConstraint to choice/open-choice in R4', funct
       }
     ]
   }
-
   it('should convert coding in R5 with answerConstraint to choice/open-choice in R4', function () {
-    let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(qR5, 'R5');
+    let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(qR5a, 'R5');
     let qR4 = LForms.Util._convertLFormsToFHIRData("Questionnaire", "R4", lfData);
     
     assert.equal(qR4.item[0].type, "choice")
     assert.equal(qR4.item[0].answerConstraint, null)
     assert.equal(qR4.item[1].type, "open-choice")
     assert.equal(qR4.item[1].answerConstraint, null)
-    assert.equal(qR4.item[2].type, "open-choice")
+    assert.equal(qR4.item[2].type, "choice")
     assert.equal(qR4.item[2].answerConstraint, null)
-    assert.equal(qR4.item[3].type, "choice")
-    assert.equal(qR4.item[3].answerConstraint, null)
+     
+  });
+
+  it('should not convert type "coding" with answerConstraint "optionsOrType" in R5 Questionnaire to R4', function () {
+    try {
+      let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(qR5b, 'R5');
+      let qR4 = LForms.Util._convertLFormsToFHIRData("Questionnaire", "R4", lfData);
+    }
+    catch (e) {
+      let errMessage = "The type 'coding' with answerConstraint 'optionsOrType' in R5 cannot be converted to a valid type in R4 or STU3."
+      assert.equal(e.message, errMessage);
+    }
      
   });
 });
