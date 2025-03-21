@@ -24,27 +24,27 @@ const _versionRanks = {
 };
 
 const FormUtils = {
-  // TODO: need an udpate
   /**
-   *  Adds an LForms form to the page.
+   *  Adds an LForms form or FHIR Questionnaire to the page.
    * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
    *  for backward compatibility, this can be the name of a global-scope variable
    *  (on "window") containing that form definition object. A FHIR Questionnaire can be also be
    *  used as a form definition.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
-   *  This element should be outside the scope of any existing AngularJS app on
+   *  This element should be outside the scope of any existing Angular app on
    *  the page.
    * @param {Object} [options] A hash of options. See available options under templateOptions in
    * form_definition.md. 'prepopulate' and 'fhirVersion' are not options in the templateOptions,
    * but are included in the 'options' parameter.
    * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
-   *  the form was an imported FHIR Questionnaire).
-   * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
-   *  Questionnaire. options are: `R4` or `STU3`. If not provided an attempt will be made to determine
+   *  formDataDef is or was imported from a FHIR Questionnaire).
+   * @param {string} [options.fhirVersion] (optional) The version of FHIR used
+   *  if formDataDef is a FHIR Questionnaire. options are: 'R5', 'R4B', 'R4', or
+   *  'STU3'. If not provided an attempt will be made to determine
    *  the version from the Questionnaire content. 'R4B' is treated as 'R4'.
-   * @param {boolean} [options.questionnaireResponse] Optional, it may help reduce the number of
-   * lforms API calls when specified.
+   * @param {boolean} [options.questionnaireResponse] (optional) A FHIR
+   *  QuestionnaireResponse with a user's answers to the Questionnaire.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
    *  Questionnaire).  If the needed resources fail, the promise will be
