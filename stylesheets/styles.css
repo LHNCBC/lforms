@@ -605,7 +605,7 @@ strong {
 }
 
 .wrapper {
-  max-width: 700px;
+  max-width: 750px;
   margin: 0 auto;
   position: relative;
   padding: 0 20px;
@@ -625,7 +625,7 @@ blockquote {
 code {
   font-family: "Lucida Sans", Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal, sans-serif;
   color: #efefef;
-  font-size: 13px;
+  font-size: 14px;
   margin: 0 4px;
   padding: 4px 6px;
   -moz-border-radius: 2px;
@@ -709,7 +709,7 @@ dt {
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
 }
 #header nav {
-  max-width: 700px;
+  max-width: 750px;
   margin: 0 auto;
   padding: 0 10px;
   background: blue;
@@ -781,7 +781,7 @@ dt {
 }
 
 section {
-  max-width: 700px;
+  max-width: 750px;
   padding: 30px 0px 50px 0px;
   margin: 20px 0;
   margin-top: 70px;
