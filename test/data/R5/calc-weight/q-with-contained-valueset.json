@@ -6,6 +6,10 @@
       "id": "some-value-set-id-5",
       "url": "some-value-set-url-5",
       "expansion": {
+        "property": [{
+          "code": "itemWeight",
+          "uri": "http://hl7.org/fhir/concept-properties#itemWeight"
+        }],
         "contains": [{
           "code": "some-code-1",
           "system": "some-system-1",

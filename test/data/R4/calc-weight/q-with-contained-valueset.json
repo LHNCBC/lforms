@@ -5,47 +5,49 @@
       "resourceType": "ValueSet",
       "id": "some-value-set-id-5",
       "url": "some-value-set-url-5",
-      "expansion": {
-        "contains": [{
-          "code": "some-code-1",
+      "compose": {
+        "include": [{
           "system": "some-system-1",
-          "display": "some-display-1-1",
-          "extension": [
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
-              "valueDecimal": 1
-            }
-          ]
+          "concept": [{
+            "code": "some-code-1",
+            "display": "some-display-1-1",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 1
+              }
+            ]
+          }, {
+            "code": "some-code-2",
+            "display": "some-display-2-1",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 2
+              }
+            ]
+          }]
         }, {
-          "code": "some-code-1",
           "system": "some-system-2",
-          "display": "some-display-1-2",
-          "extension": [
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
-              "valueDecimal": 10
-            }
-          ]
-        }, {
-          "code": "some-code-2",
-          "system": "some-system-1",
-          "display": "some-display-2-1",
-          "extension": [
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
-              "valueDecimal": 2
-            }
-          ]
-        }, {
-          "code": "some-code-2",
-          "system": "some-system-2",
-          "display": "some-display-2-2",
-          "extension": [
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
-              "valueDecimal": 20
-            }
-          ]
+          "concept": [{
+            "code": "some-code-1",
+            "display": "some-display-1-2",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 10
+              }
+            ]
+          },{
+            "code": "some-code-2",
+            "display": "some-display-2-2",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 20
+              }
+            ]
+          }]
         }]
       }
     }

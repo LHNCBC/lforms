@@ -523,7 +523,7 @@ describe('ExpressionProcessor', function () {
 
   describe('asynchronous expression in text/fhirpath', function() {
     afterEach(() => {
-      window.fetch = originalFetch;
+      restoreOriginalFetch();
     })
     it('should be supported', function(done) {
       mockFetchResults([
@@ -596,9 +596,9 @@ describe('ExpressionProcessor', function () {
   });
 
 
-  ['STU3', 'R4', 'R5'].forEach(modelName => {
+  ['R4', 'R5'].forEach(modelName => {
     describe(`weight() for ${modelName} questionnaire`, function() {
-      let testQ, testVS;
+      let testQ, testCS1, testCS2, testCS1_lookup, testCS2_lookup;
 
       describe('with contained ValueSet', function () {
         before(function(done) {
@@ -630,28 +630,30 @@ describe('ExpressionProcessor', function () {
         });
       });
 
-      describe('with a value set retrieved from the terminology server', function () {
+      describe('with a CodeSystem retrieved from the terminology server', function () {
         before(function (done) {
-          const filenameQ = `test/data/${modelName}/calc-weight/q-with-a-value-set-from-the-terminology-server.json`;
-          const filenameVS = `test/data/${modelName}/calc-weight/some-value-set-1.json`;
           LForms.jQuery.when(
-            LForms.jQuery.get(filenameQ, function (parsedJson) {
-              testQ = parsedJson;
-            }),
-            LForms.jQuery.get(filenameVS, function (parsedJson) {
-              testVS = parsedJson;
-            }))
-            .fail(function (e) {
-              console.error(e);
-            })
-            .done(function () {
-              done();
-            });
+            LForms.jQuery.get(`test/data/${modelName}/calc-weight/q-with-a-value-set-from-the-terminology-server.json`),
+            LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-1.json`),
+            LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-2.json`),
+            ...(modelName === 'R5' ? [
+              LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-1-lookup.json`),
+              LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-2-lookup.json`)
+            ] : [])
+          ).fail(function (e) {
+            console.error(e);
+          }).done(function (...r) {
+            [testQ, testCS1, testCS2, testCS1_lookup, testCS2_lookup] = r.map(i => i?.[0]);
+            done();
+          });
         });
 
         it('should work correctly', function () {
           mockFetchResults([
-            ['ValueSet/$expand?url=some-value-set-1', testVS]
+            ['CodeSystem?url=some-system-1', testCS1],
+            ['CodeSystem?url=some-system-2', testCS2],
+            ['CodeSystem/$lookup?code=some-code-1&system=some-system-1&property=itemWeight', testCS1_lookup],
+            ['CodeSystem/$lookup?code=some-code-2&system=some-system-2&property=itemWeight', testCS2_lookup]
           ]);
           let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
             testQ, modelName);
