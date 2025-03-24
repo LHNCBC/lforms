@@ -107,7 +107,7 @@ export default class LhcFormData {
     // The allowed values are 'info', 'warning', 'error' and null. Selecting the 'info' level will
     // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
     // 'warning' and 'error' messages. The default value is 'error'.
-    // No messages will be displayed if meggeageLevel is null.
+    // No messages will be displayed if messageLevel is null.
     messageLevel: "error"
   };
 

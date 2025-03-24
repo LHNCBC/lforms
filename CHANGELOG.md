@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.15.1] 2025-03-18
+### Fixed
+- Fixed a bug that item.type 'coding' with answerConstraint 'optionsOrType' 
+  in R5 questionnaire should not be converted to 'choice' or 'open-choice'
+  in R4. An exception should be thrown.
+  
 ## [36.15.0] 2025-02-10
 ### Changed
 - The promise returned by LForms.Util.addFormToPage, when it fails, will now
