@@ -2,17 +2,11 @@
  * A package to handle FHIR Questionnaire and SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
  *
  * FHIR Questionnaire:
- * https://www.hl7.org/fhir/questionnaire.html
- *
+ * https://hl7.org/fhir/STU3/questionnaire.html
+ * 
  * STU2 SDC Ballot:
- * http://hl7.org/fhir/us/sdc/sdc-questionnaire.html
- * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
+ * https://hl7.org/fhir/us/sdc/STU2/
  *
- * It provides the following functions:
- * convertLFormsToQuestionnaire()
- * -- Convert existing LOINC panels/forms data in LForms format into FHIR (standard or SDC) Questionnaire data
- * convertLFormsToQuestionnaireResponse()
- * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
 var fhirVersionNum = '3.0';
 
@@ -232,13 +226,19 @@ var self = {
       this._handleExternallyDefined(targetItem, item);
     }
     // option, for answer list
-    else if (item.answers && !item.answerValueSet) {
+    else if (item.answerValueSet) {
+      targetItem.options = {};
+      targetItem.options.reference = item.answerValueSet;
+    }
+    else if (item._options) {
+      // Restore options property.
+      targetItem.options = item._options;
+    }
+    else if (item.answers) {
       // Make sure the answers did not come from answerExpression.
       if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp])
         targetItem.option = this._handleAnswers(item);
     }
-    else if (item.answerValueSet)
-      targetItem.options = item.answerValueSet;
   },
 
 

@@ -44,6 +44,7 @@ describe('Tests of addFormToPage test page', function() {
     po.ffDrugNameField.getCyElem().clear();
   });
 
+
   it('DTM datetime picker should work', function () {
     var minMax = [TestUtil.getCurrentDTMString(-60000), TestUtil.getCurrentDTMString(+60000)]; // -/+ a minute
     let dtmInput = element(by.id('/type7/1')).element(by.css("input"));
@@ -58,11 +59,18 @@ describe('Tests of addFormToPage test page', function() {
     });
   });
 
+
   it('should be able to display a very nested form', function() {
     util.addFormToPage('very-nested-form.json');
     cy.get('#formContainer').should('contain', 'NestedQ');
     // Make sure the error message div is blank
     expect(element(by.id('loadMsg')).getText()).toBe('');
+  });
+
+  it('should be able to display answerValueSet with an old terminology server URL specified at root level', function () {
+    util.addFormToPage('preferredTerminologyServer-at-root-level.json', null, {fhirVersion: 'R4'});
+    // The form has a question with 7 radio button options.
+    cy.get('.ant-radio-input').should('have.length', 7);
   });
 
 
@@ -177,6 +185,26 @@ describe('Tests of addFormToPage test page', function() {
         expect(y).toBe(beforeValue);
       });
     });
+  });
+});
 
+
+describe('addFormToPage return values', function () {
+  before(() => {
+    po.openPage();
+  });
+
+  it('should return a complete list of the ValueSet loading errors', ()=>{
+    cy.readFile('test/data/R4/fhir-context-q-wrong-valueset-url-fhircontext.json').then((formDef) => {  // readFile will parse the JSON
+      cy.window().then((win) => {
+        win.document.getElementById('formContainer').innerHTML = null;
+        win.LForms.Util.addFormToPage(formDef, 'formContainer').then(()=>{
+          expect(1).toBe(2); // should not be called
+        }).
+        catch(errors=>{
+          expect(errors.length).toBe(2);
+        });
+      });
+    });
   });
 });

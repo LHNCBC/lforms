@@ -107,7 +107,7 @@ export default class LhcFormData {
     // The allowed values are 'info', 'warning', 'error' and null. Selecting the 'info' level will
     // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
     // 'warning' and 'error' messages. The default value is 'error'.
-    // No messages will be displayed if meggeageLevel is null.
+    // No messages will be displayed if messageLevel is null.
     messageLevel: "error"
   };
 
@@ -341,6 +341,9 @@ export default class LhcFormData {
    * @param prepopulate whether or not to perform prepoluation.  If the form
    *  being shown is going to include previously saved user data, this flag
    *  should be set to false (which is the default).
+   * @return a Promise which will be resolved if the loading succeeds, and
+   *  rejected with an array of error messages if one or more resources fails to
+   *  load.
    */
   loadFHIRResources(prepopulate) {
     var lfData = this;
@@ -358,11 +361,33 @@ export default class LhcFormData {
     if (prepopulate)
       pendingPromises.push(sdc.requestLinkedObs(this));
 
-    return Promise.all(pendingPromises).then(function() {
+    return this._resolveAllPromises(pendingPromises).then(function() {
       lfData._notifyAsyncChangeListeners();
     })
-    .catch(function fail(e) {
-      throw e
+    // .catch default throws the error messages, which is what we want
+  }
+
+
+  /**
+   *  Resolves all the given promises and if all succeed, returns a resolved
+   *  Promise.
+   *  Otherwise, if one or more fail, it returns a failed promise with an array
+   *  of the failure reasons.
+   */
+  _resolveAllPromises(promises) {
+    return Promise.allSettled(promises).then(results => {
+      const reasons = [];
+      const length = results.length;
+
+      for (let i = 0; i < length; i++) {
+        if (results[i].status !== 'fulfilled') {
+          reasons.push((results[i] as PromiseRejectedResult).reason);
+        }
+      }
+
+      if (reasons.length > 0) {
+        return Promise.reject(reasons);
+      }
     });
   }
 
@@ -1038,6 +1063,7 @@ export default class LhcFormData {
               }
             }
           })
+
           // update and check the html version of help text,
           // when the lhcFormData instance has been initialized.
           if (item.codingInstructions &&
@@ -1059,7 +1085,32 @@ export default class LhcFormData {
               errorMessages.addMsg(errors, 'invalidTagInHelpHTMLContent');
               messages = [{errors}];
               InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructions');
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
+            }
+          }
+
+          // update and check the html version of legal text,
+          // when the lhcFormData instance has been initialized.
+          if (item.legal &&
+            item.legal.length > 0 &&
+            item.legalFormat === "html") {
+            // process contained images
+            if (this._containedImages &&
+              item.legal.match(/img/) &&
+              item.legal.match(/src/)) {
+              item._legalWithContainedImages = InternalUtil._getHtmlStringWithContainedImages(this._containedImages, item.legal);
+            }
+            let errors, messages;
+            // check if html string contains invalid html tags, when the html version needs to be displayed
+            let legalHTML = item._legalWithContainedImages || item.legal;
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(legalHTML);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              item.legalHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, 'invalidTagInLegalHTMLContent');
+              messages = [{errors}];
+              InternalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+              InternalUtil.setItemMessagesArray(item, messages, '_processCodingInstructionsAndLegal');
             }
           }
 

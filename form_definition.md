@@ -82,9 +82,9 @@ about the meaning of each key:
   omitted, but supported values are below.
     * showQuestionCode - a boolean that controls whether to show question codes.
       The default is false.
-    * showCodingInstruction - a boolean that controls whether to show coding
-      instructions inline or as popover messages (false: in popover; true: inline).
-      The default is false;
+    * showCodingInstruction - a boolean that controls whether to show "coding
+      instructions" (help text for a question) inline or as popover messages
+      (false: in popover; true: inline).  The default is false;
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTML - a boolean that controls whether to allow HTML content in question
@@ -93,12 +93,6 @@ about the meaning of each key:
       The default is false. If it is false,
       the **codingInstructionsFormat** field on item level is ignored, and no HTML
       formatted coding instructions will be displayed.
-    * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
-      question. For an answer list, it can be an answer label, text, code or
-      their combination, using the syntax such as:  {"code": "B12"}, {"label: "A"}, 
-      {"text": "Male"}, {"text": "Male", "code": "LA2-8"} and etc.
-      For a date field, it can be a date shortcut (like "t" for today).
-      For other field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the selected template.
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
@@ -283,8 +277,12 @@ about the meaning of each key:
       here.  At present we only support a formula for summing the <a
       href="#score">scores</a> for all the questions on the form. To have a field be the sum
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
-    * defaultAnswer - The same as [defaultAnswer](#defaultAnswer) in the
-      templateOptions section.
+    * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
+      question. For an answer list, it can be an answer label, text, code or
+      their combination, using the syntax such as:  {"code": "B12"}, {"label: "A"}, 
+      {"text": "Male"}, {"text": "Male", "code": "LA2-8"} and etc.
+      For a date field, it can be a date shortcut (like "t" for today).
+      For other field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are:
         * answerLayout - the layout of the answers when a item has a dataType of CODING, INT, 
@@ -366,7 +364,7 @@ about the meaning of each key:
  No data is returned in this event.
 * **onError** - emitted when the ValueSets are not retrieved during the form initialization. 
 The form is still initialized and might be rendered, with possible missing data. 
-The first error is returned in this event.
+The event will contain an array of error messages.
 
 ### How to use properties and events:
 * In HTML: 

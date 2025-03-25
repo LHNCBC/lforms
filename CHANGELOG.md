@@ -2,6 +2,47 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.15.1] 2025-03-18
+### Fixed
+- Fixed a bug that item.type 'coding' with answerConstraint 'optionsOrType' 
+  in R5 questionnaire should not be converted to 'choice' or 'open-choice'
+  in R4. An exception should be thrown.
+  
+## [36.15.0] 2025-02-10
+### Changed
+- The promise returned by LForms.Util.addFormToPage, when it fails, will now
+  reject with an array of error messages instead of just a single error message.
+  Likewise the onError event emitted by the web component will now
+  contain an array of errors instead of just a single error message.
+  This is potentially a breaking change, but the impact is unlikely to be
+  harmful given the way error messages are typically used, so we did not change
+  the major version.
+
+## [36.14.0] 2025-03-13
+### Added
+- Support for itemControl 'legal'.
+
+## [36.13.0] 2025-03-06
+### Added
+- Support for rendering-xhtml on externally loaded answerValueSet prefetch/radio/checkbox.
+
+## [36.12.0] 2025-03-06
+### Added
+- Loading answerValueSet for contained ValueSets without an expansion.
+### Fixed
+- Exported Questionnaire should have answerValueSet property but not populated 
+  answerOptions if they are from contained ValueSets.
+
+## [36.11.2] 2025-03-03
+### Fixed
+- Only the new externallyDefined URL should be exported.
+
+## [36.11.1] 2025-02-28
+### Changed
+- New URL for preferredTerminologyServer extension.
+- preferredTerminologyServer extension should work at root level as well as
+  item level.
+
 ## [36.11.0] 2025-02-27
 ### Changed
 - Upgraded angular to v19
@@ -48,7 +89,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug that linkIds in help text items were lost in exported
   Questionnaire.
 
->>>>>>> pending-release
 ## [36.8.1] 2024-12-17
 ### Fixed
 - Fixed a bug that code.system was not set correctly when exporting 

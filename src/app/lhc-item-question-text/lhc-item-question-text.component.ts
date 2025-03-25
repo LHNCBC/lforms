@@ -12,6 +12,12 @@ export class LhcItemQuestionTextComponent implements OnInit {
 
   constructor(public lhcDataService: LhcDataService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // For backward compatability, move item.copyrightNotice to item.legal when found.
+    if (this.item && this.item.copyrightNotice && !this.item.legal) {
+      this.item.legal = this.item.copyrightNotice;
+      delete this.item.copyrightNotice;
+    }
+  }
 
 }
