@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.15.2] 2025-03-27
+### Changed
+- Moved code containing hard-coded SNOMED url out of the lhc-autocomplete
+  component.
+
 ## [36.15.1] 2025-03-18
 ### Fixed
 - Fixed a bug that item.type 'coding' with answerConstraint 'optionsOrType' 
