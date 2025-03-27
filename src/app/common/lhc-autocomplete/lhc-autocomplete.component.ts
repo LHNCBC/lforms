@@ -333,10 +333,6 @@ export class LhcAutocompleteComponent implements OnChanges {
       // search autocomplete
       if (acOptions.hasOwnProperty('url') || (acOptions.fhir && acOptions.fhir.search)) {
         this.acType = 'search';
-        // 500ms delay for requests to SNOMED.
-        if (acOptions.url?.startsWith('https://snowstorm.ihtsdotools.org/')) {
-          acOptions.frequency = acOptions.frequency || 0.5;
-        }
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
       // prefetch autocomplete
