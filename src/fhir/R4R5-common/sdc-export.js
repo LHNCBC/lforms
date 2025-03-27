@@ -2,17 +2,12 @@
  * A package to handle FHIR Questionnaire and SDC Questionnaire and QuestionnaireResponse for LForms
  *
  * FHIR Questionnaire:
- * https://www.hl7.org/fhir/questionnaire.html
+ * https://hl7.org/fhir/R5/questionnaire.html
+ * https://hl7.org/fhir/R4/questionnaire.html
  *
- * R4 Ballot (3.5) for comment:
- * http://hl7.org/fhir/uv/sdc/2018Sep/sdc-questionnaire.html
- * http://hl7.org/fhir/uv/sdc/2018Sep/sdc-questionnaireresponse.html
+ * SDC STU3 Questionnaire and QuestionnaireResponse:
+ * https://hl7.org/fhir/uv/sdc/STU3/
  *
- * It provides the following functions:
- * convertLFormsToQuestionnaire()
- * -- Convert existing LOINC panels/forms data in LForms format into FHIR (standard or SDC) Questionnaire data
- * convertLFormsToQuestionnaireResponse()
- * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
 
 var self = {

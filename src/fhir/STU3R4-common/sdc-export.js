@@ -23,6 +23,19 @@ function addSTU3R4ExportFns(ns) {
       else if (item.answerConstraint === "optionsOrString") {
         type = 'open-choice'
       }
+      // answerConstraint is a new constraint in R5, which is not supported in R4 or STU3.
+      // optionsOrType is not supported in lforms yet. 
+      // The exception could only happen when a R5 Questionnaire with a type 'coding' and 
+      // answerConstraint 'optionsOrType' is loaded and then converted to a R4 Questionnaire
+      // or a STU3 Questionnaire through the getFormFHIRData function.
+      // It should not happen when convertLFormsToQuestionnaire is called in the FHIRPATH expression 
+      // processor functions.
+      else if (item.answerConstraint === "optionsOrType") {
+        // issue an error
+        let errMessage = "The type 'coding' with answerConstraint 'optionsOrType' in R5 cannot be converted to a valid type in R4 or STU3."
+        console.error(errMessage);
+        throw new Error(errMessage);
+      }
     }
     // default is string
     if (!type) {
@@ -33,7 +46,7 @@ function addSTU3R4ExportFns(ns) {
 
 
   /**
-   * Converting the given item's value to FHIR QuestionaireResponse.answer (an array).
+   * Converting the given item's value to FHIR QuestionnaireResponse.answer (an array).
    * This is almost straightly refactored out of the original function self._handleAnswerValues.
    * This function only looks at the item value itself and not its sub-items, if any.
    * Here are the details for a single value's conversion (to an element in the returned answer array)
