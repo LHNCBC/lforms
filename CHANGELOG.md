@@ -2,13 +2,18 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.15.2] 2025-03-20
+## [36.15.3] 2025-03-28
 ### Fixed
 - Updated fhirpath.js to version 3.18.0 to update the `weight()` function and
   added unit tests for this function.
 - Fixed converting R5 FHIR Questionnaire to LForms form definition.
 - Fixed converting LForms form definition to standard STU3 FHIR Questionnaire.
 - Fixed model for R5.
+
+## [36.15.2] 2025-03-27
+### Changed
+- Moved code containing hard-coded SNOMED url out of the lhc-autocomplete
+  component.
 
 ## [36.15.1] 2025-03-18
 ### Fixed
