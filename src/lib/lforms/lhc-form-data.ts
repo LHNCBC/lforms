@@ -3273,6 +3273,10 @@ export default class LhcFormData {
           for (var i=0, len=h.length; i<len; ++i)
             h[i] = h[i].replace(/</g, '&lt;');
         }
+        // 500ms delay for requests to SNOMED.
+        if (options.url.startsWith('https://snowstorm.ihtsdotools.org/')) {
+          options.frequency = 0.5;
+        }
       }
       // isSearchAutocomplete && answerValueSet
       else if (item.isSearchAutocomplete && item.answerValueSet) {
@@ -3309,6 +3313,10 @@ export default class LhcFormData {
               });
             }
           }};
+          // 500ms delay for requests to SNOMED.
+          if (options.url?.startsWith('https://snowstorm.ihtsdotools.org/')) {
+            options.frequency = 0.5;
+          }
         }
         else {
           throw new Error('Cannot properly initialize the list for field "'+
@@ -3426,9 +3434,9 @@ export default class LhcFormData {
     if (answers && Array.isArray(answers)) {
       for (var i = 0, iLen = answers.length; i < iLen; i++) {
         var answerData = CommonUtils.deepCopy(answers[i]);
-        
+
         // convert integer to string when the answerOption is an integer
-        var displayText = (answerData.text || answerData.code) + ""; 
+        var displayText = (answerData.text || answerData.code) + "";
         var displayTextHTML = answerData.textHTML;
         // label is a string
         if (answerData.label) {
