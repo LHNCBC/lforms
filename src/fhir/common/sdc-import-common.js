@@ -1188,40 +1188,6 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   *  Converts the given ValueSet into an array of answers that can be used with a prefetch autocompleter.
-   * @return the array of answers, or null if the extraction cannot be done.
-   */
-  self.answersFromVS = function (valueSet) {
-    var vs = valueSet;
-    var rtn = [];
-    if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-      vs.expansion.contains.forEach(function (vsItem) {
-        var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
-        // rendering-xhtml extension under "_display" in contained valueset expansion.
-        if (self._widgetOptions?.allowHTML && vsItem._display) {
-          const xhtmlFormat = LForms.Util.findObjectInArray(vsItem._display.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-          if (xhtmlFormat) {
-            answer.textHTML = xhtmlFormat.valueString;
-            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(answer.textHTML);
-            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
-              answer._hasInvalidHTMLTagInText = true;
-              LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-            }
-          }
-        }
-        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-          self.fhirExtUrlValueSetScore);
-        if(ordExt) {
-          answer.score = parseFloat(ordExt.valueDecimal);
-        }
-        rtn.push(answer);
-      });
-    }
-    return rtn.length > 0 ? rtn : null;
-  };
-
-
-  /**
    * Convert the given code system to LForms internal code system. Currently
    * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
    * @param codeSystem
