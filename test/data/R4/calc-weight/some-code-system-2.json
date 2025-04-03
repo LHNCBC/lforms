@@ -1,0 +1,32 @@
+{
+  "resourceType": "Bundle",
+  "entry": [{
+    "resource": {
+      "resourceType": "CodeSystem",
+      "id": "some-system-1",
+      "url": "some-system-1",
+      "status": "draft",
+      "content": "example",
+      "concept": [{
+        "code": "some-code-1",
+        "display": "some-display-1-2",
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+            "valueDecimal": 10
+          }
+        ]
+      },{
+        "code": "some-code-2",
+        "display": "some-display-2-2",
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+            "valueDecimal": 20
+          }
+        ]
+      }]
+    }
+  }]
+}
+

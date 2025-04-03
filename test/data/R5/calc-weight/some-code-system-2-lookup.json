@@ -1,0 +1,13 @@
+{
+  "resourceType": "Parameters",
+  "parameter": [ {
+    "name": "property",
+    "part": [ {
+      "name": "code",
+      "valueCode": "itemWeight"
+    }, {
+      "name": "value",
+      "valueDecimal": 20
+    } ]
+  } ]
+}

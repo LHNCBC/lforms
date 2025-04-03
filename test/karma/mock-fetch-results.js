@@ -1,30 +1,73 @@
 let originalFetch = window.fetch;
 
 /**
+ * Checks whether a string (in the first parameter) matches a regular expression
+ * or substring (in the second parameter).
+ * If the second parameter is not passed (no condition), returns true.
+ * @param {string} str - string to check
+ * @param {RegExp|string|undefined} condition - regular expression or substring.
+ * @returns {boolean}
+ */
+function checkString(str, condition) {
+  if (condition === undefined) {
+    return true;
+  } else if (condition instanceof RegExp) {
+    return condition.test(str);
+  } else {
+    return str && (str.indexOf(condition) !== -1)
+  }
+}
+
+/**
  * Mocks fetch requests.
  * @param {Array} results - an array of fetch response descriptions, each item
- *  of which is an array with the RegExp URL as the first item and the response
- *  JSON object as the second. Non-mocked requests are passed to the original
- *  fetch function and an error message is printed containing the result
- *  returned from the server, which can be used when developing tests for
- *  mocking these requests.
+ * of which is an array with a RegExp for a URL or a URL substring as the first
+ * item and a JSON object of the successful response as the second item or, if the second
+ * item is null, a JSON object of the unsuccessful response as the third item.
+ * For mocking POST requests the first item of a response description with a URL
+ * condition could be replaced with an object:
+ * {url: string|Regexp, body: string|RegExp},
+ * where "url" is a RegExp for a URL or a URL substring,
+ * "body" is a RegExp for the body content or a substring of the body content.
+ * @param {Object} options - options for the mock.
+ * @param {number} [options.timeout=0] - timeout for the mock response.
  */
-function mockFetchResults(results) {
+function mockFetchResults(results, {timeout = 0} = {}) {
   window.fetch =
-    (url, ...otherParams) => new Promise((resolve, _) => {
-      const mockedResult = results?.find(r => r[0].test(url))?.[1]
-      if(mockedResult) {
-        resolve({ json: () => mockedResult });
-      } else {
-        resolve(originalFetch.call(window, url, ...otherParams)
-          .then(r => r.json())
-          .then(bundle => {
-            console.error(`"${url}" is not mocked and returns:\n${JSON.stringify(bundle, null, 2)}`);
-            return {
-              json: () => bundle
-            }
-          }));
-      }
+    (url, options) => new Promise((resolve) => {
+      const mockedItem = results?.find(
+        (r) => {
+          if (typeof r[0] === 'string' || r[0] instanceof RegExp) {
+            return checkString(url, r[0]);
+          } else {
+            return checkString(url, r[0]?.url) && checkString(options.body, r[0]?.body);
+          }
+        }
+      );
+      const okResult = mockedItem?.[1];
+      const badResult = mockedItem?.[2];
+
+      setTimeout(() => {
+        if(okResult) {
+          resolve({
+            json: () => Promise.resolve(okResult),
+            headers: {
+              get: (name) => name === 'Content-Type' ? 'application/fhir+json' : undefined
+            },
+            ok: true
+          });
+        } else if(badResult) {
+          resolve({
+            json: () => Promise.resolve(badResult),
+            headers: {
+              get: (name) => name === 'Content-Type' ? 'application/json' : undefined
+            },
+            ok: false
+          });
+        } else {
+          console.error(`"${url}" is not mocked.`);
+        }
+      }, timeout);
     });
 }
 
