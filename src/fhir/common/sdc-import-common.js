@@ -1631,6 +1631,14 @@ function addCommonSDCImportFns(ns) {
       // only "rendering-xhtml" is supported. others are default to text
       if (qItem._text) {
         xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+        const renderingStyle = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+        if (renderingStyle) {
+          if (isLegal) {
+            targetItem._obj_legalCSS = renderingStyle.valueString;
+          } else {
+            targetItem._obj_helpCSS = renderingStyle.valueString;
+          }
+        }
       }
 
       // there is a xhtml extension
