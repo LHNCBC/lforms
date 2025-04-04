@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.16.0] 2025-04-04
+### Added
+- Support for rendering-style on legal and help text.
+
 ## [36.15.3] 2025-03-28
 ### Fixed
 - Updated fhirpath.js to version 3.18.0 to update the `weight()` function and
