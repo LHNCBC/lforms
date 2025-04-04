@@ -650,6 +650,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
               });
             });
+
+            it('should preserve rendering-style extension on help and legal text', function (){
+              $.get('test/data/R4/q-with-rendering-style-help-and-legal.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0]._obj_helpCSS, "font-weight: bold");
+                assert.equal(lfData.items[1]._obj_legalCSS, "font-style: italic");
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0]._text);
+                assert.deepEqual(qData.item[0].item[0]._text, json.item[0].item[0]._text);
+                assert.ok(qData.item[1].item[0]._text);
+                assert.deepEqual(qData.item[1].item[0]._text, json.item[1].item[0]._text);
+              });
+            });
           }
 
           if (fhirVersion === 'STU3') {

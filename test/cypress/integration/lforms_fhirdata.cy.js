@@ -71,6 +71,25 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
           });
         }
+
+        if (fhirVersion === 'R4') {
+          it('should work on legal and help text, inline', function() {
+            tp.openBaseTestPage();
+            cy.get('#showCodingInstruction').click();
+            tp.loadFromTestData('q-with-rendering-style-help-and-legal.json', fhirVersion);
+            expect(element(by.id('help-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
+            expect(element(by.id('legal-1.2/1')).getAttribute('style')).toBe('font-style: italic;');
+          });
+
+          it('should work on legal and help text, popover', function() {
+            cy.visit('test/pages/addFormToPageTest.html');
+            util.addFormToPage('q-with-rendering-style-help-and-legal.json', null, {fhirVersion});
+            cy.byId('help-button-1.1/1').click();
+            expect(element(by.id('help-content-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
+            cy.byId('legal-button-1.2/1').click();
+            expect(element(by.id('legal-content-1.2/1')).getAttribute('style')).toBe('font-style: italic;');
+          });
+        }
       });
 
       describe('FHIR Data: ', function () {
