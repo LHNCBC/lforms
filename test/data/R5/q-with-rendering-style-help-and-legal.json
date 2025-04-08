@@ -5,28 +5,8 @@
   "item": [
     {
       "linkId": "1.1",
-      "type": "choice",
+      "type": "string",
       "text": "A question with styled legal and coding instructions",
-      "answerOption": [
-        {
-          "valueCoding": {
-            "code": "a",
-            "display": "a"
-          }
-        },
-        {
-          "valueCoding": {
-            "code": "b",
-            "display": "b"
-          }
-        },
-        {
-          "valueCoding": {
-            "code": "c",
-            "display": "c"
-          }
-        }
-      ],
       "item": [
         {
           "type": "display",

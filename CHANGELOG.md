@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [36.16.0] 2025-04-04
 ### Added
-- Support for rendering-style on legal and help text.
+- Support for rendering-style on 'legal' and 'help' text in the itemControl extension.
 
 ## [36.15.3] 2025-03-28
 ### Fixed
