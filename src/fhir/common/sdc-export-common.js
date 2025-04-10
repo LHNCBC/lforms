@@ -227,6 +227,17 @@ function addCommonSDCExportFns(ns) {
         }
       }
 
+      // rendering-style extension
+      if (item._obj_helpCSS) {
+        helpItem._text = helpItem._text || {
+          "extension": []
+        };
+        helpItem._text.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+          "valueString": item._obj_helpCSS
+        });
+      }
+
       if (Array.isArray(targetItem.item)) {
         targetItem.item.push(helpItem)
       }
@@ -268,6 +279,17 @@ function addCommonSDCExportFns(ns) {
             "valueString": item.legal
           }]
         }
+      }
+
+      // rendering-style extension
+      if (item._obj_legalCSS) {
+        legalItem._text = legalItem._text || {
+          "extension": []
+        };
+        legalItem._text.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+          "valueString": item._obj_legalCSS
+        });
       }
 
       if (Array.isArray(targetItem.item)) {

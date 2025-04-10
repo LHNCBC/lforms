@@ -1,0 +1,90 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "title": "Test Questionnaire with item legal and coding instructions containing rendering-style extension",
+  "item": [
+    {
+      "linkId": "1.1",
+      "type": "choice",
+      "text": "A question with styled legal and coding instructions",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "a",
+            "display": "a"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "b",
+            "display": "b"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c",
+            "display": "c"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "display",
+          "linkId": "help1",
+          "text": "some help text",
+          "_text": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "text": "Help-Button",
+                "coding": [
+                  {
+                    "code": "help",
+                    "display": "Help-Button",
+                    "system": "http://hl7.org/fhir/questionnaire-item-control"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "display",
+          "linkId": "legal1",
+          "text": "some legal text",
+          "_text": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "text": "Legal-Button",
+                "coding": [
+                  {
+                    "code": "legal",
+                    "display": "Legal-Button",
+                    "system": "http://hl7.org/fhir/questionnaire-item-control"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

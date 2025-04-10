@@ -14,7 +14,7 @@ guide (IG).
 ### Advanced Rendering
 See https://build.fhir.org/ig/HL7/sdc/rendering.html for descriptions of these
 fields.
-* rendering-style:  on item.text and item.prefix
+* rendering-style:  on item.text, item.prefix, legal text and help text
 * rendering-xhtml:  on item.text, item.prefix and answerOption
 * hidden
 * itemControl:  Support for types:  gtable, table, drop-down, autocomplete,

@@ -62,6 +62,7 @@
             class="lhc-inline-help"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_helpCSS"
        >{{item.codingInstructions}}</div>
       <div *ngSwitchCase="'inline-html'"
             id="help-{{ item._elementId }}"
@@ -69,12 +70,14 @@
             [innerHTML]="item._codingInstructionsWithContainedImages || item.codingInstructions | safeHtml"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_helpCSS"
        ></div>
       <div *ngSwitchCase="'inline-plain'"
             id="help-{{ item._elementId }}"
             class="lhc-inline-help"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_helpCSS"
       >{{item.codingInstructionsPlain}}</div>
       <ng-container *ngSwitchCase="'popover-escaped'">
         <lhc-button-popover [item]="item" [popoverType]="'help-string'"></lhc-button-popover>
@@ -93,6 +96,7 @@
            class="lhc-inline-legal"
            attr.aria-label="Legal for question {{item.question}}"
            attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_legalCSS"
       >{{item.legal}}</div>
       <div *ngSwitchCase="'inline-html'"
            id="legal-{{ item._elementId }}"
@@ -100,12 +104,14 @@
            [innerHTML]="item._legalWithContainedImages || item.legal | safeHtml"
            attr.aria-label="Legal for question {{item.question}}"
            attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_legalCSS"
       ></div>
       <div *ngSwitchCase="'inline-plain'"
            id="legal-{{ item._elementId }}"
            class="lhc-inline-legal"
            attr.aria-label="Legal for question {{item.question}}"
            attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_legalCSS"
       >{{item.legalPlain}}</div>
       <ng-container *ngSwitchCase="'popover-escaped'">
         <lhc-button-popover [item]="item" [popoverType]="'legal-string'"></lhc-button-popover>
