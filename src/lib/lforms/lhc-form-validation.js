@@ -2,6 +2,7 @@
  * A package to process user data validations in LForms
  */
 import CommonUtils from "./lhc-common-utils.js";
+import language from '../../../language-config.json';
 
 const Validation = {
   // the period of time (in milliseconds)  for which a validation massage is displayed after the control loses focus
@@ -49,28 +50,7 @@ const Validation = {
     ""         // for header, no input field
   ],
 
-  _errorMessages : {
-    "BL": "must be a boolean (true/false).",     // not fully supported
-    "INT": "must be an integer number.",
-    "REAL": "must be a decimal number.",
-    "ST": "must be a string value.",      // not needed
-    "TX": "must be a text value.",        // not needed
-    "BIN": "must be a binary value.",     // not supported
-    "DT": "must be a date value.",        // not used, handled by lf-date directive
-    "DTM": "must be a date and time value.",  // not supported
-    "TM": "must be a time value.",
-    //"CNE": "must be a value from the answer list.",  // not used, handled by the autocomplete-lhc directive
-    //"CWE": "must be a value from the answer list or a user supplied value.", // not used, handled by the autocomplete-lhc directive
-    "RTO": "must be a ratio value.",          // not supported
-    "QTY": "must be a decimal number",
-    "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
-    "YEAR": "must be a numeric value of year.",
-    "MONTH": "must be a numeric value of month.",
-    "DAY": "must be a numeric value of day.",
-    "URL": "must be a valid URL.",
-    "EMAIL": "must be a valid email address.",
-    "PHONE": "must be a valid phone number."
-  },
+  _errorMessages : language.errorMessages,
 
   /**
    * Returns false if the item requires a value but does not have one, and true otherwise
@@ -187,7 +167,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must be a value greater than " + keyValue + ".");
+              errors.push(language.mustBeGreater + keyValue + ".");
             }
             break;
           case "minInclusive":
@@ -196,7 +176,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must be a value greater than or equal to " + keyValue+ ".");
+              errors.push(language.mustBeGreaterOrEqueal + keyValue+ ".");
             }
             break;
           case "maxExclusive":
@@ -205,7 +185,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must be a value less than " + keyValue+ ".");
+              errors.push(language.mustBeLess + keyValue+ ".");
             }
             break;
           case "maxInclusive":
@@ -214,7 +194,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must be a value less than or equal to " + keyValue+ ".");
+              errors.push(language.mustBeLessOrEqual + keyValue+ ".");
             }
             break;
           case "totalDigits":
@@ -229,7 +209,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must have a total length of " + keyValue+ ".");
+              errors.push(language.mustHaveTotalLength + keyValue+ ".");
             }
             break;
           case "maxLength":
@@ -238,7 +218,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must have a total length less than or equal to " + keyValue+ ".");
+              errors.push(language.mustHaveTotalLengthLessOrEqual + keyValue+ ".");
             }
             break;
           case "minLength":
@@ -247,7 +227,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must have a total length greater than or equal to " + keyValue+ ".");
+              errors.push(language.mustHaveTotalLengthGreaterOrEqual + keyValue+ ".");
             }
             break;
           case "pattern":
@@ -270,7 +250,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must match a RegExp pattern of " + keyValue+ ".");
+              errors.push(language.mustMatchRegex + keyValue+ ".");
             }
             break;
           case "maxDecimalPlaces":

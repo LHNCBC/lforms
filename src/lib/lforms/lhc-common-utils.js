@@ -20,6 +20,7 @@ const CommonUtils = {
     'YYYY',
     'YYYY-M-D',
     'YYYY/M/D',
+    'DD.MM.YYYY',
     moment.ISO_8601,
     'M/D/YYYY HH:mm',
     'M/D/YY HH:mm',
@@ -27,15 +28,16 @@ const CommonUtils = {
     'M-D-YYYY HH:mm',
     'M-D-YY HH:mm',
     'M-D HH:mm',
+    'DD.MM.YYYY HH:mm'
   ],
 
   intRegex: /^\s*(\+|-)?\d+\s*$/,
 
   decRegex: /^\s*[\+-]?([\+-]?\d+\.?\d*([eE]?[\+|-]?\d+)?|[\+-]?\d*\.?\d+[eE]?([\+|-]?\d+)?)\s*$/,
-  
+
   /**
    * Check if two answers can be treated as same
-   * @param answer an answer item that could have part of the attributes set. 
+   * @param answer an answer item that could have part of the attributes set.
    * It should be an object, or this function will return false.
    * @param completeAnswer an answer in the answer list that usually has more attributes set
    * @param item the lforms item that has the completeAnswer in the answer list
@@ -314,12 +316,12 @@ const CommonUtils = {
     return copy(sourceObj);
   },
 
-  
+
   /**
    * deep comparison of two objects
    * @param {*} obj1 an object
    * @param {*} obj2 an object
-   * @returns 
+   * @returns
    */
   deepEqual: function(obj1, obj2) {
     return deepEqual(obj1, obj2);
@@ -386,7 +388,7 @@ const CommonUtils = {
   /**
    * Check if a value is an integer or if it can be correctly converted to a valid float number
    * @param {*} Value a string or numeric value to be tested
-   * @returns {boolean} 
+   * @returns {boolean}
    */
   isInteger(value) {
     return Number.isInteger(value) ? true: typeof value === "number" ? false : this.intRegex.test(value);
@@ -396,7 +398,7 @@ const CommonUtils = {
   /**
    * Check if a value is a number or if it can be correctly converted to a valid float number
    * @param {*} value a string or numeric value to be tested
-   * @returns {boolean} 
+   * @returns {boolean}
    */
   isDecimal(value) {
     return typeof value === "number" ? true : this.decRegex.test(value);
