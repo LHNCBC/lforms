@@ -167,7 +167,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustBeGreater + keyValue + ".");
+              errors.push(language.mustBeGreater.replace('{lformsParam}', keyValue));
             }
             break;
           case "minInclusive":
@@ -176,7 +176,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustBeGreaterOrEqueal + keyValue+ ".");
+              errors.push(language.mustBeGreaterOrEqual.replace('{lformsParam}', keyValue));
             }
             break;
           case "maxExclusive":
@@ -185,7 +185,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustBeLess + keyValue+ ".");
+              errors.push(language.mustBeLess.replace('{lformsParam}', keyValue));
             }
             break;
           case "maxInclusive":
@@ -194,7 +194,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustBeLessOrEqual + keyValue+ ".");
+              errors.push(language.mustBeLessOrEqual.replace('{lformsParam}', keyValue));
             }
             break;
           case "totalDigits":
@@ -209,7 +209,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustHaveTotalLength + keyValue+ ".");
+              errors.push(language.mustHaveTotalLength.replace('{lformsParam}', keyValue));
             }
             break;
           case "maxLength":
@@ -218,7 +218,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustHaveTotalLengthLessOrEqual + keyValue+ ".");
+              errors.push(language.mustHaveTotalLengthLessOrEqual.replace('{lformsParam}', keyValue));
             }
             break;
           case "minLength":
@@ -227,7 +227,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustHaveTotalLengthGreaterOrEqual + keyValue+ ".");
+              errors.push(language.mustHaveTotalLengthGreaterOrEqual.replace('{lformsParam}', keyValue));
             }
             break;
           case "pattern":
@@ -250,7 +250,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push(language.mustMatchRegex + keyValue+ ".");
+              errors.push(language.mustMatchRegex.replace('{lformsParam}', keyValue));
             }
             break;
           case "maxDecimalPlaces":

@@ -38,12 +38,12 @@
     "PHONE": "must be a valid phone number."
   },
   "requiresAValue": "requires a value",
-  "mustBeGreater": "must be a value greater than ",
-  "mustBeGreaterOrEqueal": "must be a value greater than or equal to ",
-  "mustBeLess": "must be a value less than ",
-  "mustBeLessOrEqual": "must be a value less than or equal to ",
-  "mustHaveTotalLength": "must have a total length of ",
-  "mustHaveTotalLengthLessOrEqual": "must have a total length less than or equal to ",
-  "mustHaveTotalLengthGreaterOrEqual": "must have a total length greater than or equal to ",
-  "mustMatchRegex": "must match a RegExp pattern of "
+  "mustBeGreater": "must be a value greater than {lformsParam}.",
+  "mustBeGreaterOrEqual": "must be a value greater than or equal to {lformsParam}.",
+  "mustBeLess": "must be a value less than {lformsParam}.",
+  "mustBeLessOrEqual": "must be a value less than or equal to {lformsParam}.",
+  "mustHaveTotalLength": "must have a total length of {lformsParam}.",
+  "mustHaveTotalLengthLessOrEqual": "must have a total length less than or equal to {lformsParam}.",
+  "mustHaveTotalLengthGreaterOrEqual": "must have a total length greater than or equal to {lformsParam}.",
+  "mustMatchRegex": "must match a RegExp pattern of {lformsParam}."
 }
