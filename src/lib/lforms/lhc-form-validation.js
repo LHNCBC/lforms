@@ -262,7 +262,7 @@ const Validation = {
             }
             else {
               valid = false;
-              errors.push("must not have more than " + keyValue + " decimal places.");
+              errors.push(language.mustNotHaveMoreDecimalPlaces.replace('{lformsParam}', keyValue));
             }
             break;
           default:

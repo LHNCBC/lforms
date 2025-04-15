@@ -45,5 +45,6 @@
   "mustHaveTotalLength": "must have a total length of {lformsParam}.",
   "mustHaveTotalLengthLessOrEqual": "must have a total length less than or equal to {lformsParam}.",
   "mustHaveTotalLengthGreaterOrEqual": "must have a total length greater than or equal to {lformsParam}.",
-  "mustMatchRegex": "must match a RegExp pattern of {lformsParam}."
+  "mustMatchRegex": "must match a RegExp pattern of {lformsParam}.",
+  "mustNotHaveMoreDecimalPlaces": "must not have more than {lformsParam} decimal places."
 }
