@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.17.0] 2025-04-15
+### Added
+- Support for building into a different language.
+- Currently only German is added. Support for additional languages can be added
+  under src/languages.
+
 ## [36.16.0] 2025-04-04
 ### Added
 - Support for rendering-style on 'legal' and 'help' text in the itemControl extension.
