@@ -129,6 +129,7 @@
         attr.aria-label="Instruction for {{item.question}}"
         attr.aria-describedby="help-content-{{item._elementId}}"
         id="help-content-{{item._elementId}}"
+        [style]="item._obj_helpCSS"
         [innerHTML]="item._codingInstructionsWithContainedImages || item.codingInstructions | safeHtml"
   ></span>
 </ng-template>
@@ -139,6 +140,7 @@
         attr.aria-label="Instruction for {{item.question}}"
         attr.aria-describedby="help-content-{{item._elementId}}"
         id="help-content-{{item._elementId}}"
+        [style]="item._obj_helpCSS"
   >{{item.codingInstructionsPlain}}</span>
 </ng-template>
 <!-- help popover template -->
@@ -148,6 +150,7 @@
         attr.aria-label="Instruction for {{item.question}}"
         attr.aria-describedby="help-content-{{item._elementId}}"
         id="help-content-{{item._elementId}}"
+        [style]="item._obj_helpCSS"
   >{{item.codingInstructions}}</span>
 </ng-template>
 
@@ -158,6 +161,7 @@
         attr.aria-label="Legal for {{item.question}}"
         attr.aria-describedby="legal-content-{{item._elementId}}"
         id="legal-content-{{item._elementId}}"
+        [style]="item._obj_legalCSS"
         [innerHTML]="item._legalWithContainedImages || item.legal | safeHtml"
   ></span>
 </ng-template>
@@ -168,6 +172,7 @@
         attr.aria-label="Legal for {{item.question}}"
         attr.aria-describedby="legal-content-{{item._elementId}}"
         id="legal-content-{{item._elementId}}"
+        [style]="item._obj_legalCSS"
   >{{item.legalPlain}}</span>
 </ng-template>
 <!-- legal popover template -->
@@ -177,6 +182,7 @@
         attr.aria-label="Legal for {{item.question}}"
         attr.aria-describedby="legal-content-{{item._elementId}}"
         id="legal-content-{{item._elementId}}"
+        [style]="item._obj_legalCSS"
   >{{item.legal}}</span>
 </ng-template>
 
