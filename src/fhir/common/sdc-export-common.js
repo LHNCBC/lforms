@@ -1068,20 +1068,30 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
-   * Get the extract value for the item or the closest parent
+   * Get the extract value for the item.
    * @param item an item in Questionnaire
+   * @return true if observationExtract=true is found on the parent tree and
+   * no observationExtract=false is specified anywhere in the parent tree;
+   * false if no observationExtract extension is found in the parent tree,
+   * or observationExtract=false is specified somewhere in the parent tree.
    */
   self._getExtractValue = function (item) {
     let currentItem = item;
+    let foundObsExtractTrue = false;
 
-    while (true) {
+    while (currentItem) {
       if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
-        return currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
-      } else if (!currentItem._parentItem) {
-        return false;
+        if (currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean) {
+          foundObsExtractTrue = true;
+        } else {
+          // If observationExtract=false on any parent item, return false since
+          // extraction should not be considered for item.
+          return false;
+        }
       }
       currentItem = currentItem._parentItem;
     }
+    return foundObsExtractTrue;
   };
 
 
