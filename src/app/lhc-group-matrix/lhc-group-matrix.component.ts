@@ -125,11 +125,13 @@ export class LhcGroupMatrixComponent {
     if (subItem.value &&
       subItem.answers && Array.isArray(subItem.answers)) {
 
-      // saved value is not on the answer list
+      // saved/initial value is not on the answer list
       if (subItem.value._notOnList) {
         subItem._answerOtherChecked = true;
         subItem._answerOther = subItem.value.text;
       }
+      // set the radio button status
+      // if saved/initial value is on the answer list
       else {
         for(let i=0; i < subItem.answers.length; i++ ) {
           let answer = subItem.answers[i];
