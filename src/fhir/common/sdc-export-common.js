@@ -1079,6 +1079,13 @@ function addCommonSDCExportFns(ns) {
     let currentItem = item;
     let foundObsExtractTrue = false;
 
+    // If any item.code has extension ObsExtract=true, mark it since the item
+    // should probably be extracted. In this case, ObsExtract=true extension is
+    // not necessary on item level.
+    if (item.codeList && item.codeList.some(c => c.extension?.find(x => x.url === this.fhirExtObsExtract)?.valueBoolean === true)) {
+      foundObsExtractTrue = true;
+    }
+
     while (currentItem) {
       if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
         if (currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean) {

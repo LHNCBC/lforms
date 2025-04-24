@@ -1,26 +1,29 @@
 {
   "resourceType": "Questionnaire",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
-    ]
-  },
-  "title": "New Form",
+  "title": "Test form for extracting Observation.code",
   "status": "draft",
   "item": [
     {
+      "extension": [
+        {
+          "valueBoolean": false,
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
       "item": [
         {
           "type": "boolean",
-          "linkId": "435086811913",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "131986609254",
           "code": [
             {
               "code": "code1",
               "display": "code1"
-            },
-            {
-              "code": "code2",
-              "display": "code2"
             }
           ],
           "text": "blItem1",
@@ -29,38 +32,54 @@
               "valueBoolean": true
             }
           ]
-        },
-        {
-          "type": "boolean",
-          "linkId": "690345986403",
-          "code": [
-            {
-              "code": "code3",
-              "display": "code3"
-            },
-            {
-              "code": "code4",
-              "display": "code4"
-            }
-          ],
-          "text": "blItem2",
-          "initial": [
-            {
-              "valueBoolean": false
-            }
-          ]
         }
       ],
       "type": "group",
-      "linkId": "647569528660",
+      "linkId": "713489323649",
       "text": "group1"
     },
     {
       "item": [
         {
           "type": "boolean",
-          "linkId": "976098473225",
+          "linkId": "596094357940",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
           "code": [
+            {
+              "code": "code2",
+              "display": "code2"
+            },
+            {
+              "code": "code3",
+              "display": "code3"
+            }
+          ],
+          "text": "blItem2",
+          "initial": [
+            {
+              "valueBoolean": true
+            }
+          ]
+        },
+        {
+          "type": "boolean",
+          "linkId": "131135528431",
+          "code": [
+            {
+              "code": "code4",
+              "display": "code4",
+              "extension": [
+                {
+                  "valueBoolean": true,
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+                }
+              ]
+            },
             {
               "code": "code5",
               "display": "code5"
@@ -75,7 +94,7 @@
         }
       ],
       "type": "group",
-      "linkId": "391870763310",
+      "linkId": "232614860805",
       "text": "group2"
     }
   ]
