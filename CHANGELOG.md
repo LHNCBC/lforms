@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.17.0] 2025-04-25
+### Changed
+- If observationExtract=false on an item, we do not consider any child items
+  for extraction.
+- observationExtract can indicate which code should be applied by being on an
+  item.code (in which case, having it the item is not necessary).
+
 ## [36.16.0] 2025-04-04
 ### Added
 - Support for rendering-style on 'legal' and 'help' text in the itemControl extension.
