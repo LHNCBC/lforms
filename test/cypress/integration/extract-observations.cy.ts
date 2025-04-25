@@ -23,7 +23,7 @@ describe('Form with extract observation extension', ()=>{
       expect(bundle[0].item[1].answer).to.eql([{valueCoding: {code: 'code1', display: 'answer 1'}}]);
       expect(bundle[0].item[2].answer).to.eql([{valueCoding: {code: 'codea', display: 'answer a'}}]);
       expect(bundle[0].item[3].answer).to.eql([{valueBoolean: false}]);
-      
+
       expect(bundle[1].resourceType).to.equal("Observation");
       expect(bundle[1].valueBoolean).to.equal(true);
       expect(bundle[2].resourceType).to.equal("Observation");
@@ -34,7 +34,7 @@ describe('Form with extract observation extension', ()=>{
       expect(bundle[4].valueBoolean).to.equal(false);
 
     })
-    
+
   });
 
   it('should not extract observations from empty items', ()=> {
@@ -55,7 +55,7 @@ describe('Form with extract observation extension', ()=>{
       expect(bundle[2].resourceType).to.equal("Observation");
       expect(bundle[2].valueCodeableConcept).to.eql({coding: [{code: 'code1', display: 'answer 1'}], text: "answer 1"});
     })
-    
+
     cy.byId('choiceItem1/1').click().clear().type('{enter}')
     cy.window().then((win)=> {
       let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
@@ -63,7 +63,7 @@ describe('Form with extract observation extension', ()=>{
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);
       expect(bundle[0].item[0].answer).to.eql([{valueBoolean: true}]);
-      
+
       expect(bundle[1].resourceType).to.equal("Observation");
       expect(bundle[1].valueBoolean).to.equal(true);
     })
@@ -72,7 +72,7 @@ describe('Form with extract observation extension', ()=>{
   it('should not extract observations from hidden items and should get boolean value (false) correctly', ()=> {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
-    
+
     cy.byId('blItem1/1false').click();
     cy.window().then((win)=> {
       let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
@@ -80,11 +80,30 @@ describe('Form with extract observation extension', ()=>{
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);
       expect(bundle[0].item[0].answer).to.eql([{valueBoolean: false}]);
-      
+
       expect(bundle[1].resourceType).to.equal("Observation");
       expect(bundle[1].valueBoolean).to.equal(false);
     })
   });
 
- 
+  it('should extract Questionnaire.item.code into Observation.code.coding', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('extractObsCode-test.R4.json', null, {fhirVersion: 'R4'});
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
+      expect(bundle.length).to.equal(3);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      // Should extract more than one item.code into Observation.code.
+      expect(bundle[1].resourceType).to.equal("Observation");
+      expect(bundle[1].code.text).to.equal("blItem2")
+      expect(bundle[1].code.coding.length).to.equal(2);
+      // Should extract only the code with ObsExtract=true if the extension is on code level.
+      expect(bundle[2].resourceType).to.equal("Observation");
+      expect(bundle[2].code.text).to.equal("blItem3")
+      expect(bundle[2].code.coding.length).to.equal(1);
+      expect(bundle[2].code.coding[0].code).to.equal("code4");
+      // Should not extract child items if an item has obsExtract=false.
+      expect(bundle.some(b => b.resourceType === "Observation" && b.code?.text === "blItem1")).to.equal(false);
+    });
+  });
 });
