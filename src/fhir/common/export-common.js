@@ -157,6 +157,7 @@ var self = {
         rtn.push(code);
         hasCodeLevelObsExtract = true;
       } else if (obsExtract || !hasCodeLevelObsExtract) {
+        // If no code level ObsExtract=true is found, all codes will be extracted.
         rtn.push(code);
       }
     }

@@ -7,7 +7,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - If observationExtract=false on an item, we do not consider any child items
   for extraction.
 - observationExtract can indicate which code should be applied by being on an
-  item.code (in which case, having it the item is not necessary).
+  item.code (in which case, having it on the item is not necessary).
 
 ## [36.16.0] 2025-04-04
 ### Added
