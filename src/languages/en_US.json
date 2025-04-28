@@ -3,6 +3,7 @@
   "legalTitle": "legal",
   "dateFormat": "MM/dd/yyyy",
   "dateTimeFormat": "MM/dd/yyyy HH:mm:ss",
+  "timeFormat": "HH:mm:ss",
   "placeholderSearchMultiOptionsOrString": "Search for or type values",
   "placeholderSearchSingleOptionsOrString": "Search for or type a value",
   "placeholderSelectMultiOptionsOrString": "Select one or more or type a value",
@@ -13,6 +14,7 @@
   "placeholderSelectSingle": "Select one",
   "placeholderDate": "MM/DD/YYYY",
   "placeholderDateTime": "MM/DD/YYYY HH:MM:SS",
+  "placeholderTime": "HH:MM:SS",
   "placeholderTypeANumber": "Type a number",
   "placeholderTypeAValue": "Type a value",
   "added": "Added ",
@@ -46,5 +48,10 @@
   "mustHaveTotalLengthLessOrEqual": "must have a total length less than or equal to {lformsParam}.",
   "mustHaveTotalLengthGreaterOrEqual": "must have a total length greater than or equal to {lformsParam}.",
   "mustMatchRegex": "must match a RegExp pattern of {lformsParam}.",
-  "mustNotHaveMoreDecimalPlaces": "must not have more than {lformsParam} decimal places."
+  "mustNotHaveMoreDecimalPlaces": "must not have more than {lformsParam} decimal places.",
+  "booleanYes": "Yes",
+  "booleanNo": "No",
+  "booleanNotAnswered": "Not Answered",
+  "pleaseEnterInfoForTheBlank": "Please enter info in the blank \"{lformsParam}\".",
+  "other": "Other"
 }

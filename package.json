@@ -11,7 +11,7 @@
   "config": {
     "testPort": "4200",
     "testPortFhir": "4201",
-    "localeID": "en_US"
+    "localeID": "de_DE"
   },
   "scripts": {
     "ng": "ng",

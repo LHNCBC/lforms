@@ -11,9 +11,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { en_US } from 'ng-zorro-antd/i18n';
+import { de_DE } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
+import de from '@angular/common/locales/de';
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -56,7 +56,7 @@ import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attac
 import { LhcItemMessagesComponent } from './lhc-item-messages/lhc-item-messages.component';
 
 
-registerLocaleData(en);
+registerLocaleData(de);
 
 @NgModule({ declarations: [
         LhcItemChoiceComponent,
@@ -104,7 +104,7 @@ registerLocaleData(en);
         NzPopoverModule,
         NzIconModule.forRoot(icons),
         NzSwitchModule], providers: [
-        { provide: NZ_I18N, useValue: en_US },
+        { provide: NZ_I18N, useValue: de_DE },
         provideHttpClient(withInterceptorsFromDi())
     ] })
 

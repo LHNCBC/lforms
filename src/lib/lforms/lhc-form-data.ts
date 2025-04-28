@@ -1349,7 +1349,7 @@ export default class LhcFormData {
           if (item.externallyDefined)
             item._placeholder = item._multipleAnswers ? language.placeholderSearchMultiOptionsOrString : language.placeholderSearchSingleOptionsOrString;
           else
-            item._placeholder = item._multipleAnswers ? language.placeholderSelectSingleOptionsOrString : language.placeholderSelectSingleOptionsOrString;
+            item._placeholder = item._multipleAnswers ? language.placeholderSelectMultiOptionsOrString : language.placeholderSelectSingleOptionsOrString;
         }
         // INT, ST, DT, TM and CODING (and answerConstraint == 'optionsOnly')
         else {
@@ -1369,7 +1369,7 @@ export default class LhcFormData {
             item._placeholder = language.placeholderDateTime;
             break;
           case CONSTANTS.DATA_TYPE.TM:
-            item._placeholder = "HH:MM:SS";
+            item._placeholder = language.placeholderTime;
             break;
           case CONSTANTS.DATA_TYPE.CODING:
             if (!item.answerConstaint || item.answerConstraint === 'optionsOnly' ) {

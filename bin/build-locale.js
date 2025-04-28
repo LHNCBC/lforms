@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const localeID = process.argv[2] || 'en_US';
-const languageCode = localeID.substring(0, 2);
+const languageCode = localeID.split('_')[0];
 console.log(`locale ID: ${localeID}`);
 console.log(`language code: ${languageCode}`);
 
@@ -27,7 +27,7 @@ try {
 
 // Copy the language config file to language-config.json (overwrite if exists).
 try {
-  fs.copyFileSync(`src/languages/${languageCode}.json`, 'language-config.json');
+  fs.copyFileSync(`src/languages/${localeID}.json`, 'language-config.json');
   console.log('Language config file copied successfully');
 } catch (err) {
   console.error("An error occurred copying language config file:", err);

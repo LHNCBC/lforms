@@ -13,7 +13,7 @@
       [nzValue]="true"
       [(ngModel)]="booleanModels[0]"
       [id]="item._elementId + 'true'"
-      >Yes</label>
+      >{{language.booleanYes}}</label>
     <label
       nz-radio
       [nzDisabled]="item._readOnly"
@@ -21,7 +21,7 @@
       [nzValue]="false"
       [(ngModel)]="booleanModels[1]"
       [id]="item._elementId + 'false'"
-      >No</label>
+      >{{language.booleanNo}}</label>
     <label
       nz-radio
       [nzDisabled]="item._readOnly"
@@ -29,6 +29,6 @@
       [nzValue]="null"
       [(ngModel)]="booleanModels[2]"
       [id]="item._elementId + 'null'"
-      >Not Answered</label>
+      >{{language.booleanNotAnswered}}</label>
   </nz-radio-group>
 </ng-container>

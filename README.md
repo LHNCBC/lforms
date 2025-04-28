@@ -63,7 +63,7 @@ you don't accidentally add something that we are also working on.
   is only needed for the tests.
 
 - **If you want to build LForms in a different language**, make sure your desired
-  language is listed under src/languages, e.g. `de.json`. In `package.json`, edit
+  locale ID is listed under src/languages, e.g. `de_DE.json`. In `package.json`, edit
   config.localeID to your desired locale, e.g. "de_DE". Then run `npm run build`.
 
 ## Running tests
