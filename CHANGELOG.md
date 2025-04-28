@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.16.1] 2025-04-14
+### Fixed
+- Fixed a bug that initial values are not rendered on matrix (itemControl 'table')
+  layout when more than one item has 'initialSelected' or initial values.
+  
 ## [36.16.0] 2025-04-04
 ### Added
 - Support for rendering-style on 'legal' and 'help' text in the itemControl extension.
