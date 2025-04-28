@@ -4,32 +4,14 @@
 import moment from "moment"
 import copy from "fast-copy";
 import deepEqual from "deep-equal";
+import language from '../../../language-config.json';
 
 const CommonUtils = {
 
 // Acceptable date formats
 
 // Strict parsing -
-  parseDateFormats : [
-    'M/D/YYYY',
-    'M/D/YY',
-    'M/D',
-    'M-D-YYYY',
-    'M-D-YY',
-    'M-D',
-    'YYYY',
-    'YYYY-M-D',
-    'YYYY/M/D',
-    'DD.MM.YYYY',
-    moment.ISO_8601,
-    'M/D/YYYY HH:mm',
-    'M/D/YY HH:mm',
-    'M/D HH:mm',
-    'M-D-YYYY HH:mm',
-    'M-D-YY HH:mm',
-    'M-D HH:mm',
-    'DD.MM.YYYY HH:mm'
-  ],
+  parseDateFormats : [...language.parsedDateFormats, moment.ISO_8601],
 
   intRegex: /^\s*(\+|-)?\d+\s*$/,
 

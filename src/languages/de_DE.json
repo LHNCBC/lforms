@@ -53,5 +53,24 @@
   "booleanNo": "NEIN",
   "booleanNotAnswered": "Nicht beantwortet",
   "pleaseEnterInfoForTheBlank": "Bitte geben Sie Informationen in das Feld „{lformsParam}“ ein.",
-  "other": "Andere"
+  "other": "Andere",
+  "parsedDateFormats": [
+    "M/D/YYYY",
+    "M/D/YY",
+    "M/D",
+    "M-D-YYYY",
+    "M-D-YY",
+    "M-D",
+    "YYYY",
+    "YYYY-M-D",
+    "YYYY/M/D",
+    "DD.MM.YYYY",
+    "M/D/YYYY HH:mm",
+    "M/D/YY HH:mm",
+    "M/D HH:mm",
+    "M-D-YYYY HH:mm",
+    "M-D-YY HH:mm",
+    "M-D HH:mm",
+    "DD.MM.YYYY HH:mm"
+  ]
 }
