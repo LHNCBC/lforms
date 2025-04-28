@@ -66,6 +66,10 @@ you don't accidentally add something that we are also working on.
   locale ID is listed under src/languages, e.g. `de_DE.json`. In `package.json`, edit
   config.localeID to your desired locale, e.g. "de_DE". Then run `npm run build`.
 
+  If your desired language is not yet listed under src/languages, please contact us
+  to have it added. Please note that LForms cannot support more languages than listed
+  here: https://ng.ant.design/docs/i18n/en.
+
 ## Running tests
 
 1. Run `npm run test` to run unit tests and e2e tests, which also copies the 

@@ -30,7 +30,7 @@
     "DTM": "muss ein Datums- und Uhrzeitwert sein.",
     "TM": "muss eine Zeitangabe sein.",
     "RTO": "muss ein Verhältniswert sein.",
-    "QTY": "muss eine Dezimalzahl sein",
+    "QTY": "muss eine Dezimalzahl sein.",
     "NR": "müssen zwei numerische Werte sein, die durch ein ^ getrennt sind. Ein Wert kann weggelassen werden, das ^ jedoch nicht.",
     "YEAR": "muss eine Jahresangabe sein.",
     "MONTH": "muss eine numerische Monatsangabe sein.",
