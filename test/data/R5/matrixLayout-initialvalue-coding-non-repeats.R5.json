@@ -1,27 +1,12 @@
 {
-  "code": [
-    {
-      "code": "matrix-layout2",
-      "display": "Another form with matrix layout, single selection"
-    }
-  ],
-  "title": "Another form with matrix layout, single selection",
+  "title": "matrix layout, single selection, coding",
   "resourceType": "Questionnaire",
   "status": "draft",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
-    ],
-    "tag": [
-      {
-        "code": "lformsVersion: 33.3.1"
-      }
-    ]
-  },
   "item": [
     {
       "lindId": "g1",
       "type": "group",
+      "text": "matrix layout",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -39,7 +24,7 @@
       ],
       "item": [
         {
-          "type": "open-choice",
+          "type": "coding",
           "code": [
             {
               "code": "g1m1",
@@ -69,14 +54,14 @@
               "valueCoding": {
                 "code": "c1",
                 "display": "Answer a"
-              },
-              "initialSelected": true
+              }
             },
             {
               "valueCoding": {
                 "code": "c2",
                 "display": "Answer b"
-              }
+              },
+              "initialSelected": true
             },
             {
               "valueCoding": {
@@ -93,7 +78,7 @@
           ]
         },
         {
-          "type": "open-choice",
+          "type": "coding",
           "code": [
             {
               "code": "g1m2",
@@ -123,7 +108,8 @@
               "valueCoding": {
                 "code": "c1",
                 "display": "Answer a"
-              }
+              },
+              "initialSelected": true
             },
             {
               "valueCoding": {
@@ -143,15 +129,10 @@
                 "display": "Answer d"
               }
             }
-          ],
-          "initial": [
-            {
-              "valueString": "User typed string"
-            }
           ]
         },
         {
-          "type": "open-choice",
+          "type": "coding",
           "code": [
             {
               "code": "g1m3",
@@ -205,7 +186,7 @@
           ]
         },
         {
-          "type": "open-choice",
+          "type": "coding",
           "code": [
             {
               "code": "g1m4",
