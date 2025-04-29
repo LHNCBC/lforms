@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import { CommonUtilsService } from '../../lib/common-utils.service';
 import deepEqual from "deep-equal";
 import language from '../../../language-config.json';
 
@@ -21,6 +22,7 @@ export class LhcGroupMatrixComponent {
   };
 
   constructor(
+    private commonUtils: CommonUtilsService,
     public lhcDataService: LhcDataService) {
   }
 
@@ -72,9 +74,10 @@ export class LhcGroupMatrixComponent {
    * @param item a form item that has an answer list and supports single selections
    * @param answer an answer object in the answer list
    */
-  updateRadioListValue(item, answer) {
+  updateRadioListValue(item, answer, index) {
     item.value = answer;
     item._answerOtherChecked = false;
+    item._selectedRadio = index;
 
     // run the change function
     this.lhcDataService.onItemValueChange(item, null, null, true)
@@ -124,15 +127,27 @@ export class LhcGroupMatrixComponent {
     if (subItem.value &&
       subItem.answers && Array.isArray(subItem.answers)) {
 
-      // saved value is not on the answer list
+      // saved/initial value is not on the answer list
       if (subItem.value._notOnList) {
         subItem._answerOtherChecked = true;
         subItem._answerOther = subItem.value.text;
+      }
+      // set the radio button status
+      // if saved/initial value is on the answer list
+      else {
+        for(let i=0; i < subItem.answers.length; i++ ) {
+          let answer = subItem.answers[i];
+          if (this.commonUtils.areTwoAnswersSame(subItem.value, answer, subItem)) {
+            subItem._selectedRadio = i;
+            break;
+          }
+        }
       }
     }
     // reset status
     else {
       subItem._answerOtherChecked = false;
+      subItem._selectedRadio = null;
       delete subItem._answerOther;
     }
   }

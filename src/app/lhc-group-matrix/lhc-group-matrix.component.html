@@ -54,11 +54,11 @@
                   [disabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
-                  [ngModel]="subItem.value"
+                  [checked]="subItem._selectedRadio === i"
                   [value]="answer"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"
-                  (change)="updateRadioListValue(subItem, answer)">
+                  (change)="updateRadioListValue(subItem, answer, i)">
               </label>
             </span>
           </td>

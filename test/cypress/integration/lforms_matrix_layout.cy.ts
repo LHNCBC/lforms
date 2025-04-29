@@ -242,7 +242,7 @@ describe('Form level Matrix layout', () => {
         const formData = win.LForms.Util.getUserData();
         expect(formData.itemsData[0].value).to.eql({"code": "c1", "text": "Answer a"});
         expect(formData.itemsData[1].value).to.eql("User typed string");
-        expect(formData.itemsData[2].value).to.be.undefined;
+        expect(formData.itemsData[2].value).to.eql({"code": "c3", "text": "Answer c"});
         expect(formData.itemsData[3].value).to.be.undefined;
       });
   
@@ -269,7 +269,7 @@ describe('Form level Matrix layout', () => {
         const formData = win.LForms.Util.getUserData();
         expect(formData.itemsData[0].value).to.eql([{"code": "c1", "text": "Answer 1"},{"code": "c2", "text": "Answer 2"}]);
         expect(formData.itemsData[1].value).to.eql([{"code": "c1", "text": "Answer 1"},"user typed string"]);
-        expect(formData.itemsData[2].value).to.be.undefined;
+        expect(formData.itemsData[2].value).to.eql([{"code": "c3", "text": "Answer 3"}]);
         expect(formData.itemsData[3].value).to.be.undefined;
       });
   
@@ -293,7 +293,7 @@ describe('Form level Matrix layout', () => {
         const formData = win.LForms.Util.getUserData();
         expect(formData.itemsData[0].items[0].value).to.eql({"code": "c1", "text": "Answer a"});
         expect(formData.itemsData[0].items[1].value).to.eql("User typed string");
-        expect(formData.itemsData[0].items[2].value).to.be.undefined;
+        expect(formData.itemsData[0].items[2].value).to.eql({"code": "c3", "text": "Answer c"});
         expect(formData.itemsData[0].items[3].value).to.be.undefined;
       });
     });
@@ -318,7 +318,7 @@ describe('Form level Matrix layout', () => {
         const formData = win.LForms.Util.getUserData();
         expect(formData.itemsData[0].items[0].value).to.eql([{"code": "c1", "text": "Answer 1"},{"code": "c2", "text": "Answer 2"}]);
         expect(formData.itemsData[0].items[1].value).to.eql([{"code": "c1", "text": "Answer 1"},"user typed string"]);
-        expect(formData.itemsData[0].items[2].value).to.be.undefined;
+        expect(formData.itemsData[0].items[2].value).to.eql([{"code": "c3", "text": "Answer 3"}]);
         expect(formData.itemsData[0].items[3].value).to.be.undefined;
       });
     });

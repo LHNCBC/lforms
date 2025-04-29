@@ -154,7 +154,8 @@
               "valueCoding": {
                 "code": "c3",
                 "display": "Answer 3"
-              }
+              },
+              "initialSelected": true
             },
             {
               "valueCoding": {
