@@ -50,7 +50,7 @@
   "mustMatchRegex": " - muss folgendem Muster entsprechen: {lformsParam}.",
   "mustNotHaveMoreDecimalPlaces": "darf nicht mehr als {lformsParam} Dezimalstellen haben.",
   "booleanYes": "Ja",
-  "booleanNo": "NEIN",
+  "booleanNo": "Nein",
   "booleanNotAnswered": "Nicht beantwortet",
   "pleaseEnterInfoForTheBlank": "Bitte geben Sie Informationen in das Feld „{lformsParam}“ ein.",
   "other": "Andere",
