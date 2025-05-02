@@ -149,7 +149,9 @@ var self = {
     let rtn = [];
     for (let i = 0; i < item.codeList.length; i++) {
       const code = item.codeList[i];
-      const obsExtract = code.extension?.find(x => x.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract")?.valueBoolean;
+      const obsExtract = code.extension
+        ?.find(x => x.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract")
+        ?.valueBoolean;
       if (obsExtract && !hasCodeLevelObsExtract) {
         // If a code with ObsExtract=true is found, clear the result
         // since we will only add those with ObservationExtract=true.

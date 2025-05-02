@@ -12,7 +12,7 @@
       ],
       "item": [
         {
-          "type": "boolean",
+          "type": "integer",
           "extension": [
             {
               "valueBoolean": true,
@@ -26,10 +26,10 @@
               "display": "code1"
             }
           ],
-          "text": "blItem1",
+          "text": "intItem1",
           "initial": [
             {
-              "valueBoolean": true
+              "valueInteger": 7
             }
           ]
         }
@@ -41,12 +41,24 @@
     {
       "item": [
         {
-          "type": "boolean",
+          "type": "choice",
           "linkId": "596094357940",
           "extension": [
             {
               "valueBoolean": true,
               "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ]
+              }
             }
           ],
           "code": [
@@ -59,10 +71,20 @@
               "display": "code3"
             }
           ],
-          "text": "blItem2",
-          "initial": [
+          "text": "codingItem2",
+          "answerOption": [
             {
-              "valueBoolean": true
+              "valueCoding": {
+                "code": "answer1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "answer2",
+                "display": "Answer 2"
+              },
+              "initialSelected": true
             }
           ]
         },
@@ -72,17 +94,17 @@
           "code": [
             {
               "code": "code4",
-              "display": "code4",
+              "display": "code4"
+            },
+            {
+              "code": "code5",
+              "display": "code5",
               "extension": [
                 {
                   "valueBoolean": true,
                   "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
                 }
               ]
-            },
-            {
-              "code": "code5",
-              "display": "code5"
             }
           ],
           "text": "blItem3",

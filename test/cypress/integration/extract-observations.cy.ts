@@ -90,20 +90,21 @@ describe('Form with extract observation extension', ()=>{
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObsCode-test.R4.json', null, {fhirVersion: 'R4'});
     cy.window().then((win) => {
-      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      console.log(bundle);
       expect(bundle.length).to.equal(3);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       // Should extract more than one item.code into Observation.code.
       expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].code.text).to.equal("blItem2")
+      expect(bundle[1].code.text).to.equal("codingItem2")
       expect(bundle[1].code.coding.length).to.equal(2);
       // Should extract only the code with ObsExtract=true if the extension is on code level.
       expect(bundle[2].resourceType).to.equal("Observation");
       expect(bundle[2].code.text).to.equal("blItem3")
       expect(bundle[2].code.coding.length).to.equal(1);
-      expect(bundle[2].code.coding[0].code).to.equal("code4");
+      expect(bundle[2].code.coding[0].code).to.equal("code5");
       // Should not extract child items if an item has obsExtract=false.
-      expect(bundle.some(b => b.resourceType === "Observation" && b.code?.text === "blItem1")).to.equal(false);
+      expect(bundle.some(b => b.resourceType === "Observation" && b.code?.text === "intItem1")).to.equal(false);
     });
   });
 });
