@@ -11,14 +11,14 @@ try {
   data = data
     // Replace "en_US" in "import { en_US } from 'ng-zorro-antd/i18n';"
     // /[a-z]{2,4}_[A-Z]{2}/ is regex for locale ID.
-    .replace(/(import { )[a-z]{2,4}_[A-Z]{2}( } from)/, '$1' + localeID + '$2')
+    .replace(/(import\s+{\s*)[a-z]{2,4}_[A-Z]{2}(\s*}\s+from)/, '$1' + localeID + '$2')
     // Replace "en_US" in "{ provide: NZ_I18N, useValue: en_US }"
-    .replace(/({ provide: NZ_I18N, useValue: )[a-z]{2,4}_[A-Z]{2}( })/, '$1' + localeID + '$2')
+    .replace(/({\s*provide:\s*NZ_I18N,\s*useValue:\s*)[a-z]{2,4}_[A-Z]{2}(\s*})/, '$1' + localeID + '$2')
     // Replace "en" in "import en from '@angular/common/locales/en';"
     // /[a-z]{2}/ is regex for language code.
-    .replace(/(import )[a-z]{2}( from '@angular\/common\/locales\/)[a-z]{2}(';)/, '$1' + languageCode + '$2' + languageCode + '$3')
+    .replace(/(import\s+)[a-z]{2}(\s+from\s+'@angular\/common\/locales\/)[a-z]{2}('\s*;)/, '$1' + languageCode + '$2' + languageCode + '$3')
     // Replace "en" in "registerLocaleData(en);"
-    .replace(/(registerLocaleData\()[a-z]{2}(\);)/, '$1' + languageCode + '$2');
+    .replace(/(registerLocaleData\s*\(\s*)[a-z]{2}(\s*\)\s*;)/, '$1' + languageCode + '$2');
   fs.writeFileSync(filePath, data, 'utf-8');
   console.log('app.module.ts modified successfully for locale.');
 } catch (err) {
