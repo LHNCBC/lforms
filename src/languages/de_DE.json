@@ -36,7 +36,7 @@
     "MONTH": "muss eine numerische Monatsangabe sein.",
     "DAY": "muss eine numerische Tagesangangabe sein.",
     "URL": "muss eine gültige URL sein.",
-    "EMAIL": "muss eine gültige URL sein.",
+    "EMAIL": "muss eine gültige E-Mail-Adresse sein.",
     "PHONE": "muss eine gültige Telefonnummer sein."
   },
   "requiresAValue": " - Eingabe erforderlich",
