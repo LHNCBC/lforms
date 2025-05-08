@@ -1070,35 +1070,30 @@ function addCommonSDCExportFns(ns) {
   /**
    * Get the extract value for the item.
    * @param item an item in Questionnaire
-   * @return true if observationExtract=true is found on the parent tree and
-   * no observationExtract=false is specified anywhere in the parent tree;
-   * false if no observationExtract extension is found in the parent tree,
-   * or observationExtract=false is specified somewhere in the parent tree.
+   * @return true if observationExtract=true is found on the item or nearest parent;
+   * false if no observationExtract extension is found in the parent tree, or
+   * observationExtract=false is specified on the nearest parent.
    */
   self._getExtractValue = function (item) {
     let currentItem = item;
-    let foundObsExtractTrue = false;
 
     // If any item.code has extension ObsExtract=true, mark it since the item
     // should probably be extracted. In this case, ObsExtract=true extension is
     // not necessary on item level.
     if (item.codeList && item.codeList.some(c => c.extension?.find(x => x.url === this.fhirExtObsExtract)?.valueBoolean === true)) {
-      foundObsExtractTrue = true;
+      return true;
     }
 
     while (currentItem) {
       if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
-        if (currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean) {
-          foundObsExtractTrue = true;
-        } else {
-          // If observationExtract=false on any parent item, return false since
-          // extraction should not be considered for item.
-          return false;
+        const obsExtractValueBoolean = currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+        if (obsExtractValueBoolean === true || obsExtractValueBoolean === false) {
+          return obsExtractValueBoolean;
         }
       }
       currentItem = currentItem._parentItem;
     }
-    return foundObsExtractTrue;
+    return false;
   };
 
 

@@ -2,6 +2,12 @@
   "resourceType": "Questionnaire",
   "title": "Test form for extracting Observation.code",
   "status": "draft",
+  "extension": [
+    {
+      "valueBoolean": true,
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+    }
+  ],
   "item": [
     {
       "extension": [
@@ -11,6 +17,22 @@
         }
       ],
       "item": [
+        {
+          "type": "integer",
+          "linkId": "131986609253",
+          "code": [
+            {
+              "code": "code0",
+              "display": "code0"
+            }
+          ],
+          "text": "intItem0",
+          "initial": [
+            {
+              "valueInteger": 6
+            }
+          ]
+        },
         {
           "type": "integer",
           "extension": [
