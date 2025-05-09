@@ -145,25 +145,7 @@ var self = {
     if (!item.codeList || !item.codeList.length) {
       return [];
     }
-    let hasCodeLevelObsExtract = false;
-    let rtn = [];
-    for (let i = 0; i < item.codeList.length; i++) {
-      const code = item.codeList[i];
-      const obsExtract = code.extension
-        ?.find(x => x.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract")
-        ?.valueBoolean;
-      if (obsExtract && !hasCodeLevelObsExtract) {
-        // If a code with ObsExtract=true is found, clear the result
-        // since we will only add those with ObservationExtract=true.
-        rtn.length = 0;
-        rtn.push(code);
-        hasCodeLevelObsExtract = true;
-      } else if (obsExtract || !hasCodeLevelObsExtract) {
-        // If no code level ObsExtract=true is found, all codes will be extracted.
-        rtn.push(code);
-      }
-    }
-    return rtn;
+    return item._codesWithObsExtractTrue || item.codeList;
   },
 
 

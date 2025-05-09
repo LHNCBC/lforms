@@ -4,8 +4,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [36.17.0] 2025-04-25
 ### Changed
-- If observationExtract=false on an item, we do not consider any child items
-  for extraction.
+- If observationExtract=false on an item, child items are not considered
+  for extraction unless they explicitly turn extraction back on again by
+  observationExtract=true.
 - observationExtract can indicate which code or codes should be applied by being on
   item.code (in which case, having it on the item is not necessary).
 
