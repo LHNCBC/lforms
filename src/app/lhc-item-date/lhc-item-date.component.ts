@@ -2,6 +2,7 @@ import {Component, Input, OnInit, AfterViewInit, ViewChild} from '@angular/core'
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
 import {CommonUtilsService} from "../../lib/common-utils.service";
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-item-date',
@@ -10,7 +11,7 @@ import {CommonUtilsService} from "../../lib/common-utils.service";
     standalone: false
 })
 export class LhcItemDateComponent implements AfterViewInit {
-  
+
   @Input() item: any;
 
   @ViewChild('nzDatePickerComponent')
@@ -40,10 +41,12 @@ export class LhcItemDateComponent implements AfterViewInit {
    *       2) use [ngModel] like in other compoments does not work as expected.
    */
   onModelChange(value: Date): void {
-    
+
     let prevValue = this.item.value;
 
     this.item.value = value;
     this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue)
   }
+
+  protected readonly language = language;
 }

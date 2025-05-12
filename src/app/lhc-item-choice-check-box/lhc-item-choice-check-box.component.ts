@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-item-choice-check-box',
@@ -12,6 +13,7 @@ import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
 export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   @Input() item;
   @Input() acOptions; // item._autocompOptions
+  language = language;
 
   // internal data models
   otherValue: string = null;
@@ -41,7 +43,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         if (value._notOnList) {
           this.otherCheckboxModel = true;
           this.otherValue = value.text;
-        } 
+        }
         else {
           for (let i = 0; i < iLen; i++) {
             let answer = this.item.answers[i];

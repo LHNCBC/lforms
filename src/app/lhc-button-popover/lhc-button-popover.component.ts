@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-button-popover',
@@ -41,11 +42,11 @@ export class LhcButtonPopoverComponent implements OnInit {
       contentId = "copyright-content-" + (this.formLevel ? this.item.code : this.item._elementId);
     }
     else if ( this.popoverType.startsWith('legal')) {
-      title = "Legal:";
+      title = `${language.legalTitle}:`;
       contentId = "legal-content-" + (this.formLevel ? this.item.code : this.item._elementId);
     }
     else {
-      title = "Instruction:"
+      title = `${language.helpTitle}:`;
       contentId = "help-content-" + (this.formLevel ? this.item.code : this.item._elementId);
     }
 
@@ -55,4 +56,6 @@ export class LhcButtonPopoverComponent implements OnInit {
       this.lhcDataService.sendMsgToScreenReader(`${title} ${content}`)
     }, 10)
   }
+
+  protected readonly language = language;
 }

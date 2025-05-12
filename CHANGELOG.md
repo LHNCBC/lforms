@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.17.0] 2025-04-15
+### Added
+- Support for building into a different language.
+- Currently only German is added. Support for additional languages can be added
+  under src/languages.
+
 ## [36.16.1] 2025-04-14
 ### Fixed
 - Fixed a bug that initial values are not rendered on matrix (itemControl 'table')
