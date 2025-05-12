@@ -1,5 +1,6 @@
 import {OnChanges, Component, Input } from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-item-boolean',
@@ -10,6 +11,7 @@ import {LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemBooleanComponent implements OnChanges {
   @Input() item: any;
   booleanModels:  boolean[] = new Array(3);
+  language = language;
 
   constructor(public lhcDataService: LhcDataService) {}
 

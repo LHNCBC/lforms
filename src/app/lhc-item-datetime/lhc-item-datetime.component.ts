@@ -2,6 +2,7 @@ import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core'
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
 import {CommonUtilsService} from "../../lib/common-utils.service";
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-item-datetime',
@@ -20,7 +21,7 @@ export class LhcItemDatetimeComponent implements AfterViewInit {
     private commonUtilsService: CommonUtilsService
   ) {}
 
-  
+
   ngAfterViewInit() {
     // Set aria-label attribute of the actual <input> element.
     this.nzDatePickerComponent.pickerInput.nativeElement.setAttribute(
@@ -35,7 +36,7 @@ export class LhcItemDatetimeComponent implements AfterViewInit {
    * @param result the selected date
    */
   onOk(result: Date | Date[] | null): void {
-    
+
   }
 
 
@@ -44,9 +45,9 @@ export class LhcItemDatetimeComponent implements AfterViewInit {
    * @param result the selected date
    */
   onCalendarChange(result: Array<Date | null>): void {
-    
+
   }
-  
+
 
   /**
    * model change event handler
@@ -58,9 +59,10 @@ export class LhcItemDatetimeComponent implements AfterViewInit {
     let prevValue = this.item.value;
     this.item.value = value;
     // Sometimes changing the time alone will see this.item.value has the latest value already.
-    // which will make this.item.value and value having the same value. 
+    // which will make this.item.value and value having the same value.
     // Force to run the change function
     this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue, true)
   }
 
+  protected readonly language = language;
 }
