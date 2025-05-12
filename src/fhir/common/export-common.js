@@ -120,7 +120,7 @@ var self = {
         "resourceType": "Observation",
         "status": "final",
         "code": {
-          "coding": this._getExtractedObsCodes(item),
+          "coding": item._codesToExtract || item.codeList,
           "text": item.question
         }
       };
@@ -134,18 +134,6 @@ var self = {
       obxs.push(obx);
     }
     return obxs;
-  },
-
-
-  /**
-   * Gets the list of Questionnaire.item.code that will be extracted into
-   * Observation.code.coding.
-   */
-  _getExtractedObsCodes: function(item) {
-    if (!item.codeList || !item.codeList.length) {
-      return [];
-    }
-    return item._codesWithObsExtractTrue || item.codeList;
   },
 
 

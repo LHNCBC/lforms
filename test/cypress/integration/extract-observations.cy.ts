@@ -91,7 +91,7 @@ describe('Form with extract observation extension', ()=>{
     util.addFormToPage('extractObsCode-test.R4.json', null, {fhirVersion: 'R4'});
     cy.window().then((win) => {
       const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
-      expect(bundle.length).to.equal(4);
+      expect(bundle.length).to.equal(5);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       // Should not extract child items if parent item has obsExtract=false.
       expect(bundle.some(b => b.resourceType === "Observation" && b.code?.text === "intItem0")).to.equal(false);
@@ -107,6 +107,11 @@ describe('Form with extract observation extension', ()=>{
       expect(bundle[3].code.text).to.equal("blItem3")
       expect(bundle[3].code.coding.length).to.equal(1);
       expect(bundle[3].code.coding[0].code).to.equal("code5");
+      // Should skip codes with ObsExtract=false.
+      expect(bundle[4].resourceType).to.equal("Observation");
+      expect(bundle[4].code.text).to.equal("blItem4")
+      expect(bundle[4].code.coding.length).to.equal(1);
+      expect(bundle[4].code.coding[0].code).to.equal("code6");
     });
   });
 });

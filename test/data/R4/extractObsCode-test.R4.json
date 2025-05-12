@@ -135,6 +135,38 @@
               "valueBoolean": true
             }
           ]
+        },
+        {
+          "type": "boolean",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "131135528432",
+          "code": [
+            {
+              "code": "code6",
+              "display": "code6"
+            },
+            {
+              "code": "code7",
+              "display": "code7",
+              "extension": [
+                {
+                  "valueBoolean": false,
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+                }
+              ]
+            }
+          ],
+          "text": "blItem4",
+          "initial": [
+            {
+              "valueBoolean": true
+            }
+          ]
         }
       ],
       "type": "group",

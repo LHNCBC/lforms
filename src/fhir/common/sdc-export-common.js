@@ -1077,30 +1077,63 @@ function addCommonSDCExportFns(ns) {
   self._getExtractValue = function (item) {
     let currentItem = item;
 
+    const [codesToExtract, hasCodeLevelObsExtractTrue] = self._getExtractedObsCodes(item);
     // If any item.code has extension ObsExtract=true, mark it since the item
     // should probably be extracted. In this case, ObsExtract=true extension is
     // not necessary on item level.
-    if (item.codeList) {
-      const codesWithObsExtractTrue = item.codeList.filter(c =>
-        c.extension?.find(x => x.url === this.fhirExtObsExtract)?.valueBoolean === true);
-      // If there are code level ObsExtract=true extensions, cache the list in
-      // item._codesWithObsExtractTrue so we don't need to look for them in _getExtractedObsCodes().
-      if (codesWithObsExtractTrue.length) {
-        item._codesWithObsExtractTrue = codesWithObsExtractTrue;
-        return true;
-      }
+    if (hasCodeLevelObsExtractTrue) {
+      item._codesToExtract = codesToExtract;
+      return true;
     }
 
     while (currentItem) {
       if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
         const obsExtractValueBoolean = currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
-        if (obsExtractValueBoolean === true || obsExtractValueBoolean === false) {
-          return obsExtractValueBoolean;
+        if (obsExtractValueBoolean === true) {
+          // Before returning true (item deemed extractable), cache the list in
+          // item._codesToExtract so we don't need to look for them when creating Observations.
+          item._codesToExtract = codesToExtract;
+          return true;
+        } else if (obsExtractValueBoolean === false) {
+          return false;
         }
       }
       currentItem = currentItem._parentItem;
     }
     return false;
+  };
+
+
+  /**
+   * Gets the list of Questionnaire.item.code that will be extracted into
+   * Observation.code.coding.
+   * @returns an array of Observation codes to be extracted, and a boolean flag
+   * indicating whether ObsExtract=true extension is found at code level.
+   */
+  self._getExtractedObsCodes = function(item) {
+    if (!item.codeList || !item.codeList.length) {
+      return [[], false];
+    }
+    let hasCodeLevelObsExtractTrue = false;
+    let extractedCodes = [];
+    for (let i = 0; i < item.codeList.length; i++) {
+      const code = item.codeList[i];
+      const obsExtractBooleanValue = code.extension
+        ?.find(x => x.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract")
+        ?.valueBoolean;
+      if (obsExtractBooleanValue === true && !hasCodeLevelObsExtractTrue) {
+        // If a code with ObsExtract=true is found, clear the result
+        // since we will only add those with ObservationExtract=true.
+        extractedCodes.length = 0;
+        extractedCodes.push(code);
+        hasCodeLevelObsExtractTrue = true;
+      } else if (obsExtractBooleanValue === true || (!hasCodeLevelObsExtractTrue && obsExtractBooleanValue !== false)) {
+        // If no code level ObsExtract=true is found, all codes will be extracted,
+        // except those explicitly with code level ObsExtract=false.
+        extractedCodes.push(code);
+      }
+    }
+    return [extractedCodes, hasCodeLevelObsExtractTrue];
   };
 
 
