@@ -1069,6 +1069,8 @@ function addCommonSDCExportFns(ns) {
 
   /**
    * Get the extract value for the item.
+   * If the item is extractable, item._codesToExtract is set which will be used
+   * later when creating extracted Observations.
    * @param item an item in Questionnaire
    * @return true if self._getExtractValueFromItemAndParentLevel() returns true
    * for the item, or code-level observationExtract=true is found on the item.
@@ -1078,19 +1080,10 @@ function addCommonSDCExportFns(ns) {
       // Check ObsExtract extension at item level and above. If the item is deemed
       // extractable and some codes have ObsExtract=false, the item is still
       // extractable (extracts all codes except those with ObsExtract=false). See
-      // https://lhc-git.nlm.nih.gov/lfor/lforms/-/merge_requests/396#note_39832.
+      // https://chat.fhir.org/#narrow/channel/179255-questionnaire/topic/Observation.20extraction.20with.20both.20item.20and.20item.2Ecode/with/517623297.
       return true;
     } else {
-      const [codesToExtract, hasCodeLevelObsExtractTrue] = self._getExtractedObsCodes(item);
-      // If any item.code has extension ObsExtract=true, mark it since the item
-      // should be extracted. In this case, ObsExtract=true extension is not
-      // necessary on item level.
-      if (hasCodeLevelObsExtractTrue) {
-        item._codesToExtract = codesToExtract;
-        return true;
-      } else {
-        return false;
-      }
+      return self._getExtractedObsCodes(item);
     }
   };
 
@@ -1111,8 +1104,7 @@ function addCommonSDCExportFns(ns) {
         if (obsExtractValueBoolean === true) {
           // Before returning true (item deemed extractable), cache the list in
           // item._codesToExtract so we don't need to look for them when creating Observations.
-          const [codesToExtract,] = self._getExtractedObsCodes(item, true);
-          item._codesToExtract = codesToExtract;
+          self._getExtractedObsCodes(item, true);
           return true;
         } else if (obsExtractValueBoolean === false) {
           return false;
@@ -1130,8 +1122,8 @@ function addCommonSDCExportFns(ns) {
    * @param item an item in Questionnaire
    * @param hasItemLevelObsExtractTrue whether the item is deemed extractable
    * from the item level and above, not considering code-level ObsExtract extensions.
-   * @returns an array of Observation codes to be extracted, and a boolean flag
-   * indicating whether ObsExtract=true extension is found at code level.
+   * @returns a boolean flag indicating whether ObsExtract=true extension is found
+   * at code level.
    */
   self._getExtractedObsCodes = function(item, hasItemLevelObsExtractTrue = false) {
     if (!item.codeList || !item.codeList.length) {
@@ -1156,7 +1148,13 @@ function addCommonSDCExportFns(ns) {
         hasCodeLevelObsExtractTrue = true;
       }
     }
-    return [extractedCodes, hasCodeLevelObsExtractTrue];
+    if (hasItemLevelObsExtractTrue || hasCodeLevelObsExtractTrue) {
+      item._codesToExtract = extractedCodes;
+    }
+    // If any item.code has extension ObsExtract=true, mark it since the item
+    // should be extracted. In this case, ObsExtract=true extension is not
+    // necessary on item level.
+    return hasCodeLevelObsExtractTrue;
   };
 
 
