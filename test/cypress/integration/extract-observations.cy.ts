@@ -98,20 +98,21 @@ describe('Form with extract observation extension', ()=>{
       // Should extract child item if it turns extraction back on again with ObsExtract=true.
       expect(bundle[1].resourceType).to.equal("Observation");
       expect(bundle[1].code.text).to.equal("intItem1");
-      // Should extract more than one item.code into Observation.code.
-      expect(bundle[2].resourceType).to.equal("Observation");
-      expect(bundle[2].code.text).to.equal("codingItem2")
-      expect(bundle[2].code.coding.length).to.equal(2);
       // Should extract only the code with ObsExtract=true if the extension is on code level.
+      expect(bundle[2].resourceType).to.equal("Observation");
+      expect(bundle[2].code.text).to.equal("blItem3")
+      expect(bundle[2].code.coding.length).to.equal(1);
+      expect(bundle[2].code.coding[0].code).to.equal("code5");
+      // Should extract more than one item.code into Observation.code.
       expect(bundle[3].resourceType).to.equal("Observation");
-      expect(bundle[3].code.text).to.equal("blItem3")
-      expect(bundle[3].code.coding.length).to.equal(1);
-      expect(bundle[3].code.coding[0].code).to.equal("code5");
-      // Should skip codes with ObsExtract=false.
+      expect(bundle[3].code.text).to.equal("codingItem2")
+      expect(bundle[3].code.coding.length).to.equal(2);
+      // Should only skip codes with ObsExtract=false if item has ObsExtract=true.
       expect(bundle[4].resourceType).to.equal("Observation");
       expect(bundle[4].code.text).to.equal("blItem4")
-      expect(bundle[4].code.coding.length).to.equal(1);
-      expect(bundle[4].code.coding[0].code).to.equal("code6");
+      expect(bundle[4].code.coding.length).to.equal(2);
+      expect(bundle[4].code.coding[0].code).to.equal("code6"); // code with ObsExtract=true
+      expect(bundle[4].code.coding[1].code).to.equal("code8"); // code without ObsExtract extension
     });
   });
 });

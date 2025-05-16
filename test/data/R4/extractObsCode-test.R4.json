@@ -54,6 +54,32 @@
               "valueInteger": 7
             }
           ]
+        },
+        {
+          "type": "boolean",
+          "linkId": "131135528431",
+          "code": [
+            {
+              "code": "code4",
+              "display": "code4"
+            },
+            {
+              "code": "code5",
+              "display": "code5",
+              "extension": [
+                {
+                  "valueBoolean": true,
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+                }
+              ]
+            }
+          ],
+          "text": "blItem3",
+          "initial": [
+            {
+              "valueBoolean": true
+            }
+          ]
         }
       ],
       "type": "group",
@@ -112,32 +138,6 @@
         },
         {
           "type": "boolean",
-          "linkId": "131135528431",
-          "code": [
-            {
-              "code": "code4",
-              "display": "code4"
-            },
-            {
-              "code": "code5",
-              "display": "code5",
-              "extension": [
-                {
-                  "valueBoolean": true,
-                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
-                }
-              ]
-            }
-          ],
-          "text": "blItem3",
-          "initial": [
-            {
-              "valueBoolean": true
-            }
-          ]
-        },
-        {
-          "type": "boolean",
           "extension": [
             {
               "valueBoolean": true,
@@ -148,7 +148,13 @@
           "code": [
             {
               "code": "code6",
-              "display": "code6"
+              "display": "code6",
+              "extension": [
+                {
+                  "valueBoolean": true,
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+                }
+              ]
             },
             {
               "code": "code7",
@@ -159,6 +165,10 @@
                   "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
                 }
               ]
+            },
+            {
+              "code": "code8",
+              "display": "code8"
             }
           ],
           "text": "blItem4",
