@@ -1118,7 +1118,7 @@ function addCommonSDCExportFns(ns) {
 
   /**
    * Gets the list of Questionnaire.item.code that will be extracted into
-   * Observation.code.coding.
+   * Observation.code.coding, and sets the _codesToExtract property on the item.
    * @param item an item in Questionnaire
    * @param hasItemLevelObsExtractTrue whether the item is deemed extractable
    * from the item level and above, not considering code-level ObsExtract extensions.
@@ -1127,7 +1127,7 @@ function addCommonSDCExportFns(ns) {
    */
   self._getExtractedObsCodes = function(item, hasItemLevelObsExtractTrue = false) {
     if (!item.codeList || !item.codeList.length) {
-      return [[], false];
+      return false;
     }
     let hasCodeLevelObsExtractTrue = false;
     let extractedCodes = [];
