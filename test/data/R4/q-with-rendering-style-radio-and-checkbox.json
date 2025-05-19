@@ -1,0 +1,106 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire with rendering-style extension on checkboxes and radio buttons",
+  "status": "draft",
+  "item": [
+    {
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.1",
+      "text": "radio button",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "code1",
+            "display": "Answer 1",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-weight: bold"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "code2",
+            "display": "Answer 2",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-weight: bold"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.2",
+      "text": "checkbox",
+      "repeats": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "code3",
+            "display": "Answer 3",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-style: italic"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "code4",
+            "display": "Answer 4",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-style: italic"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
