@@ -1134,7 +1134,7 @@ function addCommonSDCExportFns(ns) {
     for (let i = 0; i < item.codeList.length; i++) {
       const code = item.codeList[i];
       const obsExtractBooleanValue = code.extension
-        ?.find(x => x.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract")
+        ?.find(x => x.url === this.fhirExtObsExtract)
         ?.valueBoolean;
       if (hasItemLevelObsExtractTrue && obsExtractBooleanValue !== false) {
         // If the item is deemed extractable, we extract all the codes that
