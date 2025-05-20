@@ -1118,7 +1118,7 @@ function addCommonSDCExportFns(ns) {
 
   /**
    * Gets the list of Questionnaire.item.code that will be extracted into
-   * Observation.code.coding.
+   * Observation.code.coding, and sets the _codesToExtract property on the item.
    * @param item an item in Questionnaire
    * @param hasItemLevelObsExtractTrue whether the item is deemed extractable
    * from the item level and above, not considering code-level ObsExtract extensions.
@@ -1127,14 +1127,14 @@ function addCommonSDCExportFns(ns) {
    */
   self._getExtractedObsCodes = function(item, hasItemLevelObsExtractTrue = false) {
     if (!item.codeList || !item.codeList.length) {
-      return [[], false];
+      return false;
     }
     let hasCodeLevelObsExtractTrue = false;
     let extractedCodes = [];
     for (let i = 0; i < item.codeList.length; i++) {
       const code = item.codeList[i];
       const obsExtractBooleanValue = code.extension
-        ?.find(x => x.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract")
+        ?.find(x => x.url === this.fhirExtObsExtract)
         ?.valueBoolean;
       if (hasItemLevelObsExtractTrue && obsExtractBooleanValue !== false) {
         // If the item is deemed extractable, we extract all the codes that
