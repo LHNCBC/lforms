@@ -87,6 +87,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             cy.byId('help-button-1.1/1').click();
             expect(element(by.id('help-content-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
           });
+
+          it('should work on checkboxes and radio buttons', function() {
+            cy.visit('test/pages/addFormToPageTest.html');
+            util.addFormToPage('q-with-rendering-style-radio-and-checkbox.json', null, {fhirVersion});
+            expect(element(by.id('1.1/1code1')).getAttribute('style')).toBe('font-weight: bold;');
+            expect(element(by.id('1.1/1code2')).getAttribute('style')).toBe('font-weight: bold;');
+            expect(element(by.id('1.2/1code3')).getAttribute('style')).toBe('font-style: italic;');
+            expect(element(by.id('1.2/1code4')).getAttribute('style')).toBe('font-style: italic;');
+          });
         }
       });
 
