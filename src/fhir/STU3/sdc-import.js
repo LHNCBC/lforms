@@ -153,12 +153,17 @@ function addSDCImportFns(ns) {
             if(option[optionKey[0]].system  !== undefined) {
               answer.system = option[optionKey[0]].system;
             }
-            // rendering-xhtml extension under "valueCoding._display".
             if (option[optionKey[0]]._display) {
               answer['obj_valueCoding_display'] = option[optionKey[0]]._display;
+              // rendering-xhtml extension under "valueCoding._display".
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
                 LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+              }
+              // rendering-style extension under "valueCoding._display".
+              const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+              if (renderingStyle) {
+                answer._obj_CSS = renderingStyle.valueString;
               }
             }
           }
