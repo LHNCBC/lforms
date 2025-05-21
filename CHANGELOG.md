@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.19.0] 2025-05-21
+### Added
+- Support for rendering-style on radio buttons and checkboxes.
+
 ## [36.18.0] 2025-04-25
 ### Changed
 - If observationExtract=false on an item, child items are not considered
