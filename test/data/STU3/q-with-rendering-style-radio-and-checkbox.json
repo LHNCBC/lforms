@@ -4,7 +4,7 @@
   "status": "draft",
   "item": [
     {
-      "type": "string",
+      "type": "choice",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -21,27 +21,33 @@
       ],
       "linkId": "1.1",
       "text": "radio button",
-      "answerOption": [
+      "option": [
         {
-          "valueString": "Answer string 1",
-          "_valueString": {
-            "extension": [
-              {
-                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                "valueString": "font-weight: bold"
-              }
-            ]
+          "valueCoding": {
+            "code": "code1",
+            "display": "Answer 1",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-weight: bold"
+                }
+              ]
+            }
           }
         },
         {
-          "valueString": "Answer string 2",
-          "_valueString": {
-            "extension": [
-              {
-                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                "valueString": "font-weight: bold"
-              }
-            ]
+          "valueCoding": {
+            "code": "code2",
+            "display": "Answer 2",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-weight: bold"
+                }
+              ]
+            }
           }
         }
       ]
@@ -65,7 +71,7 @@
       "linkId": "1.2",
       "text": "checkbox",
       "repeats": true,
-      "answerOption": [
+      "option": [
         {
           "valueCoding": {
             "code": "code3",

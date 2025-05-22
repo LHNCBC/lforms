@@ -1,15 +1,10 @@
 {
   "resourceType": "Questionnaire",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/5.0/StructureDefinition/Questionnaire"
-    ]
-  },
-  "title": "q-with-rendering-style-radio-and-checkbox.json",
+  "title": "Test Questionnaire with rendering-style extension on checkboxes and radio buttons",
   "status": "draft",
   "item": [
     {
-      "type": "coding",
+      "type": "integer",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -28,31 +23,25 @@
       "text": "radio button",
       "answerOption": [
         {
-          "valueCoding": {
-            "code": "code1",
-            "display": "Answer 1",
-            "_display": {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-weight: bold"
-                }
-              ]
-            }
+          "valueInteger": 1,
+          "_valueInteger": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
           }
         },
         {
-          "valueCoding": {
-            "code": "code2",
-            "display": "Answer 2",
-            "_display": {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-weight: bold"
-                }
-              ]
-            }
+          "valueInteger": 2,
+          "_valueInteger": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
           }
         }
       ]

@@ -667,13 +667,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             it('should preserve rendering-style extension on radio button and checkbox', function (){
               $.get('test/data/R4/q-with-rendering-style-radio-and-checkbox.json', function(json) {
                 const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                console.log(lfData.items[0].answers[0].obj_valueString.extension);
                 assert.equal(lfData.items[0].answers[0]._obj_CSS, 'font-weight: bold');
                 assert.equal(lfData.items[0].answers[1]._obj_CSS, 'font-weight: bold');
                 assert.equal(lfData.items[1].answers[0]._obj_CSS, 'font-style: italic');
                 assert.equal(lfData.items[1].answers[1]._obj_CSS, 'font-style: italic');
                 const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
-                assert.ok(qData.item[0].answerOption[0].valueCoding._display);
-                assert.deepEqual(qData.item[0].answerOption[0].valueCoding._display, json.item[0].answerOption[0].valueCoding._display);
+                assert.ok(qData.item[0].answerOption[0]._valueString);
+                assert.deepEqual(qData.item[0].answerOption[0]._valueString, json.item[0].answerOption[0]._valueString);
                 assert.ok(qData.item[1].answerOption[0].valueCoding._display);
                 assert.deepEqual(qData.item[1].answerOption[0].valueCoding._display, json.item[1].answerOption[0].valueCoding._display);
               });

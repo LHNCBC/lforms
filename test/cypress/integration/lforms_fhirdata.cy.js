@@ -58,6 +58,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
 
+        it('should work on checkboxes and radio buttons', function() {
+          cy.visit('test/pages/addFormToPageTest.html');
+          util.addFormToPage('q-with-rendering-style-radio-and-checkbox.json', null, {fhirVersion});
+          const radioItemIdPart = fhirVersion === 'STU3' ? 'code' :
+            fhirVersion === 'R5' ? '' : 'Answerstring';
+          expect(element(by.id(`1.1/1${radioItemIdPart}1`)).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id(`1.1/1${radioItemIdPart}2`)).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id('1.2/1code3')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.2/1code4')).getAttribute('style')).toBe('font-style: italic;');
+        });
+
         if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4/R5
           it('should work on question text in horizontal tables', function() {
             util.addFormToPage('tables.json', null, {fhirVersion});
@@ -86,15 +97,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(element(by.id('legal-content-1.1/1')).getAttribute('style')).toBe('font-style: italic;');
             cy.byId('help-button-1.1/1').click();
             expect(element(by.id('help-content-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
-          });
-
-          it('should work on checkboxes and radio buttons', function() {
-            cy.visit('test/pages/addFormToPageTest.html');
-            util.addFormToPage('q-with-rendering-style-radio-and-checkbox.json', null, {fhirVersion});
-            expect(element(by.id('1.1/1code1')).getAttribute('style')).toBe('font-weight: bold;');
-            expect(element(by.id('1.1/1code2')).getAttribute('style')).toBe('font-weight: bold;');
-            expect(element(by.id('1.2/1code3')).getAttribute('style')).toBe('font-style: italic;');
-            expect(element(by.id('1.2/1code4')).getAttribute('style')).toBe('font-style: italic;');
           });
         }
       });
