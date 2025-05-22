@@ -69,6 +69,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(element(by.id('1.2/1code4')).getAttribute('style')).toBe('font-style: italic;');
         });
 
+        if (fhirVersion === 'R4') {
+          it('should work on matrix layout', function() {
+            cy.visit('test/pages/addFormToPageTest.html');
+            util.addFormToPage('answerOption-rendering-style-matrix-layout.json', null, {fhirVersion});
+            expect(element(by.css('th.lhc-form-matrix-cell')).getAttribute('style')).toBe('font-style: italic;');
+          });
+        }
+
         if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4/R5
           it('should work on question text in horizontal tables', function() {
             util.addFormToPage('tables.json', null, {fhirVersion});
