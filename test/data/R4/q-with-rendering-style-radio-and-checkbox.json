@@ -4,6 +4,56 @@
   "status": "draft",
   "item": [
     {
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.1",
+      "text": "checkbox - choice",
+      "repeats": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "code1",
+            "display": "Answer 1",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-style: italic"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "code2",
+            "display": "Answer 2",
+            "_display": {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "font-style: italic"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "type": "string",
       "extension": [
         {
@@ -19,8 +69,8 @@
           }
         }
       ],
-      "linkId": "1.1",
-      "text": "radio button",
+      "linkId": "1.2",
+      "text": "radio button - string",
       "answerOption": [
         {
           "valueString": "Answer string 1",
@@ -47,7 +97,7 @@
       ]
     },
     {
-      "type": "choice",
+      "type": "date",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -55,43 +105,122 @@
             "coding": [
               {
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
-                "code": "check-box",
-                "display": "Check-box"
+                "code": "radio-button",
+                "display": "Radio Button"
               }
             ]
           }
         }
       ],
-      "linkId": "1.2",
-      "text": "checkbox",
-      "repeats": true,
+      "linkId": "1.3",
+      "text": "radio button - date",
       "answerOption": [
         {
-          "valueCoding": {
-            "code": "code3",
-            "display": "Answer 3",
-            "_display": {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-style: italic"
-                }
-              ]
-            }
+          "valueDate": "2025-05-23",
+          "_valueDate": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
           }
         },
         {
-          "valueCoding": {
-            "code": "code4",
-            "display": "Answer 4",
-            "_display": {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-style: italic"
-                }
-              ]
-            }
+          "valueDate": "2025-05-24",
+          "_valueDate": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "time",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.4",
+      "text": "radio button - time",
+      "answerOption": [
+        {
+          "valueTime": "10:30:00",
+          "_valueTime": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
+          }
+        },
+        {
+          "valueTime": "13:30:00",
+          "_valueTime": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "integer",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.5",
+      "text": "radio button - integer",
+      "answerOption": [
+        {
+          "valueInteger": 1,
+          "_valueInteger": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
+          }
+        },
+        {
+          "valueInteger": 2,
+          "_valueInteger": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
           }
         }
       ]

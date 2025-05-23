@@ -123,10 +123,10 @@
         }
       ],
       "linkId": "/matrixTable2",
-      "text": "checkbox - choice",
+      "text": "checkbox - coding",
       "item": [
         {
-          "type": "choice",
+          "type": "coding",
           "repeats": true,
           "linkId": "/matrixTable2/type0",
           "text": "A question",
@@ -162,7 +162,7 @@
           ]
         },
         {
-          "type": "choice",
+          "type": "coding",
           "repeats": true,
           "linkId": "/matrixTable2/type1",
           "text": "Another question",

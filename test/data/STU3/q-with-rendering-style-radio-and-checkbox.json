@@ -12,15 +12,16 @@
             "coding": [
               {
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
-                "code": "radio-button",
-                "display": "Radio Button"
+                "code": "check-box",
+                "display": "Check-box"
               }
             ]
           }
         }
       ],
       "linkId": "1.1",
-      "text": "radio button",
+      "text": "checkbox - choice",
+      "repeats": true,
       "option": [
         {
           "valueCoding": {
@@ -30,7 +31,7 @@
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-weight: bold"
+                  "valueString": "font-style: italic"
                 }
               ]
             }
@@ -44,7 +45,7 @@
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-weight: bold"
+                  "valueString": "font-style: italic"
                 }
               ]
             }
@@ -53,7 +54,7 @@
       ]
     },
     {
-      "type": "choice",
+      "type": "string",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -61,43 +62,165 @@
             "coding": [
               {
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
-                "code": "check-box",
-                "display": "Check-box"
+                "code": "radio-button",
+                "display": "Radio Button"
               }
             ]
           }
         }
       ],
       "linkId": "1.2",
-      "text": "checkbox",
-      "repeats": true,
+      "text": "radio button - string",
       "option": [
         {
-          "valueCoding": {
-            "code": "code3",
-            "display": "Answer 3",
-            "_display": {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-style: italic"
-                }
-              ]
-            }
+          "valueString": "Answer string 1",
+          "_valueString": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
           }
         },
         {
-          "valueCoding": {
-            "code": "code4",
-            "display": "Answer 4",
-            "_display": {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-                  "valueString": "font-style: italic"
-                }
-              ]
-            }
+          "valueString": "Answer string 2",
+          "_valueString": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "date",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.3",
+      "text": "radio button - date",
+      "option": [
+        {
+          "valueDate": "2025-05-23",
+          "_valueDate": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
+          }
+        },
+        {
+          "valueDate": "2025-05-24",
+          "_valueDate": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "time",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.4",
+      "text": "radio button - time",
+      "option": [
+        {
+          "valueTime": "10:30:00",
+          "_valueTime": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
+          }
+        },
+        {
+          "valueTime": "13:30:00",
+          "_valueTime": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-weight: bold"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "integer",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "1.5",
+      "text": "radio button - integer",
+      "option": [
+        {
+          "valueInteger": 1,
+          "_valueInteger": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
+          }
+        },
+        {
+          "valueInteger": 2,
+          "_valueInteger": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                "valueString": "font-style: italic"
+              }
+            ]
           }
         }
       ]
