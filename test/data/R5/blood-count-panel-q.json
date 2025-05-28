@@ -1,0 +1,92 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Blood Count Panel Questionnaire",
+  "status": "draft",
+  "extension": [
+    {
+      "valueBoolean": true,
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+    }
+  ],
+  "code": [
+    {
+      "system": "http://loinc.org",
+      "code": "58410-2",
+      "display": "CBC panel - Blood by Automated count"
+    }
+  ],
+  "item": [
+    {
+      "type": "quantity",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "10*3/uL",
+            "display": "thousand per microliter"
+          }
+        },
+        {
+          "valueCode": "member",
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "linkId": "202279616184",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "6690-2",
+          "display": "White blood cell count (Leukocytes)"
+        }
+      ],
+      "text": "What is your white blood cell count?",
+      "initial": [
+        {
+          "valueQuantity": {
+            "value": 120,
+            "unit": "thousand per microliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "10*3/uL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "quantity",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "10*6/uL",
+            "display": "million per microliter"
+          }
+        },
+        {
+          "valueCode": "member",
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "linkId": "334437031553",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "789-8",
+          "display": "Red blood cell count (Erythrocytes)"
+        }
+      ],
+      "text": "What is your red blood cell count?",
+      "initial": [
+        {
+          "valueQuantity": {
+            "value": 80,
+            "unit": "million per microliter",
+            "system": "http://unitsofmeasure.org",
+            "code": "10*6/uL"
+          }
+        }
+      ]
+    }
+  ]
+}
