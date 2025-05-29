@@ -1097,11 +1097,20 @@ function addCommonSDCExportFns(ns) {
    * observationExtract=false is specified on the nearest parent that has the extension.
    */
   self._getExtractValueFromItemAndParentLevel = function (item) {
+    const obsExtractValueCode = item._fhirExt && item._fhirExt[this.fhirExtObsExtract] && item._fhirExt[this.fhirExtObsExtract][0].valueCode;
     let currentItem = item;
     while (currentItem) {
       if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
         const obsExtractValueBoolean = currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
         if (obsExtractValueBoolean === true) {
+          // If the item has ObsExtract valueCode and it has a parent with ObsExtract=true,
+          // the item and the parent are both to be extracted. Also:
+          // Set _obsExtractParentLinkId on the item to the parent linkId so we will know which
+          // extracted parent Observation to link to.
+          if (obsExtractValueCode === 'component' || obsExtractValueCode === 'member') {
+            item._obsExtractValueCode = obsExtractValueCode;
+            item._obsExtractParentLinkId = currentItem.linkId;
+          }
           // Before returning true (item deemed extractable), cache the list in
           // item._codesToExtract so we don't need to look for them when creating Observations.
           self._getExtractedObsCodes(item, true);

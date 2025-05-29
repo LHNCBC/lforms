@@ -45,9 +45,10 @@ var self = {
     var qrRef = 'QuestionnaireResponse/'+qr.id;
     var rtn = [qr];
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
-    for (var i=0, len=lfData.itemList.length; i<len; ++i) {
-      var item = lfData.itemList[i];
-      if (this._getExtractValue(item) && this._hasItemValue(item)) {
+    for (var i= -1, len=lfData.itemList.length; i<len; ++i) {
+      // Include lfData, the root item in the extraction.
+      var item = i === -1 ? lfData : lfData.itemList[i];
+      if (this._getExtractValue(item)) {
         const categCodeableConcepts = [];
         // Use the categories from the closest ancestor item (including itself)
         var ancestor = item;
@@ -60,26 +61,67 @@ var self = {
           ancestor = ancestor._parentItem;
         }
 
-        var obs = this._commonExport._createObservation(item);
-        for (var j=0, jLen=obs.length; j<jLen; j++) {
-          // Following
-          // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
-          if (qr.basedOn)
-            obs[j].basedOn = qr.basedOn;
-          if (qr.subject)
-            obs[j].subject = qr.subject;
-          if (qr.context)
-            obs[j].context = qr.context;
-          if (qr.authored) {
-            obs[j].effectiveDateTime = qr.authored;
-            obs[j].issued = qr.authored;
+        var obs = this._hasItemValue(item)
+          ? this._commonExport._createObservation(item, item._obsExtractValueCode === 'member')
+          // Create an Observation even if it has no value, since it might be a parent
+          // of an ObsExtract relationship.
+          : this._commonExport._createObservationWithNoValue(item);
+        let parentObs;
+        if (item._obsExtractValueCode === 'component') {
+          parentObs = rtn.find(r => r.resourceType === 'Observation' && r.linkId === item._obsExtractParentLinkId);
+          parentObs.component = parentObs.component || [];
+          for (var j = 0, jLen = obs.length; j < jLen; j++) {
+            // newComponent will only have "code" and "value[x]" properties.
+            const {resourceType, status, meta, ...newComponent} = obs[j];
+            parentObs.component.push(newComponent);
           }
-          if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
-            obs[j].performer = qr.author;
-          if (categCodeableConcepts.length)
-            obs[j].category = categCodeableConcepts;
+        } else {
+          if (item._obsExtractValueCode === 'member') {
+            parentObs = rtn.find(r => r.resourceType === 'Observation' && r.linkId === item._obsExtractParentLinkId);
+            parentObs.hasMember = parentObs.hasMember || [];
+          }
+          for (var j=0, jLen=obs.length; j<jLen; j++) {
+            // linkId is used to find the parent Observation of an ObsExtract relationship.
+            obs[j].linkId = item.linkId;
+            // Following
+            // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+            if (qr.basedOn)
+              obs[j].basedOn = qr.basedOn;
+            if (qr.subject)
+              obs[j].subject = qr.subject;
+            if (qr.context)
+              obs[j].context = qr.context;
+            if (qr.authored) {
+              obs[j].effectiveDateTime = qr.authored;
+              obs[j].issued = qr.authored;
+            }
+            if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
+              obs[j].performer = qr.author;
+            if (categCodeableConcepts.length)
+              obs[j].category = categCodeableConcepts;
 
-          rtn.push(obs[j]);
+            rtn.push(obs[j]);
+            if (item._obsExtractValueCode === 'member') {
+              parentObs.hasMember.push({ reference: obs[j].id });
+            }
+          }
+        }
+      }
+    }
+    // Clean up linkId, _noValue properties, and Observations with no value and no
+    // component or hasMember.
+    for (var i = 0, len = rtn.length; i < len; ++i) {
+      var res = rtn[i];
+      if (res.resourceType === "Observation") {
+        if (res._noValue && !res.component && !res.hasMember) {
+          // This Observation has no value and is not a parent of an ObsExtract relationship.
+          // Remove it.
+          rtn.splice(i, 1);
+          i--;
+          len--;
+        } else {
+          delete res.linkId;
+          delete res._noValue;
         }
       }
     }
