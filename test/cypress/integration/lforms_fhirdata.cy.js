@@ -58,6 +58,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
 
+        it('should work on checkboxes and radio buttons', function() {
+          cy.visit('test/pages/addFormToPageTest.html');
+          util.addFormToPage('q-with-rendering-style-radio-and-checkbox.json', null, {fhirVersion});
+          expect(element(by.id('1.1/1code1')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.1/1code2')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.2/1Answerstring1')).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id('1.2/1Answerstring2')).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id('1.3/12025-05-23')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.3/12025-05-24')).getAttribute('style')).toBe('font-style: italic;');
+          cy.get('#1\\.4\\/110\\:30\\:00').invoke('attr', 'style').should('eq', 'font-weight: bold;');
+          cy.get('#1\\.4\\/113\\:30\\:00').invoke('attr', 'style').should('eq', 'font-weight: bold;');
+          expect(element(by.id('1.5/11')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.5/12')).getAttribute('style')).toBe('font-style: italic;');
+        });
+
         if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4/R5
           it('should work on question text in horizontal tables', function() {
             util.addFormToPage('tables.json', null, {fhirVersion});
@@ -86,6 +101,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(element(by.id('legal-content-1.1/1')).getAttribute('style')).toBe('font-style: italic;');
             cy.byId('help-button-1.1/1').click();
             expect(element(by.id('help-content-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
+          });
+
+          it('should work on matrix layout', function() {
+            cy.visit('test/pages/addFormToPageTest.html');
+            util.addFormToPage('answerOption-rendering-style-matrix-layout.json', null, {fhirVersion});
+            expect(element.all(by.css('th.lhc-form-matrix-cell')).get(0).getAttribute('style')).toBe('font-style: italic;');
+            expect(element.all(by.css('th.lhc-form-matrix-cell')).get(3).getAttribute('style')).toBe('font-style: italic;');
           });
         }
       });

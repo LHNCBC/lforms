@@ -1,6 +1,7 @@
 import {Component, Input, OnInit, OnChanges } from '@angular/core';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-item-choice-radio-button',
@@ -11,7 +12,8 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 export class LhcItemChoiceRadioButtonComponent implements OnChanges {
   @Input() item;
   @Input() acOptions; // item._autocompOptions
-  
+  language = language;
+
   // internal data models
   radioValue: any = null ;
   otherValue: string = null ;
@@ -74,7 +76,7 @@ export class LhcItemChoiceRadioButtonComponent implements OnChanges {
     this.radioValue = value;
     let prevValue = this.item.value;
     this.item.value = value;
-    this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue) 
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue)
   }
 
 

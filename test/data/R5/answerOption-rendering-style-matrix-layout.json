@@ -1,0 +1,203 @@
+{
+  "title": "answerOption rendering-style in matrix layout",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable1",
+      "text": "radio button - string",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "/matrixTable1/type0",
+          "text": "A question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "font-style: italic"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 2",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "font-style: italic"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 3",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "font-style: italic"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "linkId": "/matrixTable1/type1",
+          "text": "Another question",
+          "answerOption": [
+            {
+              "valueString": "Answer 1",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "font-style: italic"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 2",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "font-style: italic"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "Answer 3",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "font-style: italic"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable2",
+      "text": "checkbox - coding",
+      "item": [
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "/matrixTable2/type0",
+          "text": "A question",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "code1",
+                "display": "Answer 1",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                      "valueString": "font-style: italic"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "code2",
+                "display": "Answer 2",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                      "valueString": "font-style: italic"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "/matrixTable2/type1",
+          "text": "Another question",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "code1",
+                "display": "Answer 1",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                      "valueString": "font-style: italic"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "code2",
+                "display": "Answer 2",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                      "valueString": "font-style: italic"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

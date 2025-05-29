@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import deepEqual from "deep-equal";
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-group-matrix',
@@ -13,6 +14,7 @@ export class LhcGroupMatrixComponent {
 
   @Input() item;
   @Input() formLevel: boolean = false;
+  language = language;
 
   isCheckbox: boolean = false;
   _autocompOptions = {

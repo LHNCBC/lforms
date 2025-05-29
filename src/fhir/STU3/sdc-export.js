@@ -3,7 +3,7 @@
  *
  * FHIR Questionnaire:
  * https://hl7.org/fhir/STU3/questionnaire.html
- * 
+ *
  * STU2 SDC Ballot:
  * https://hl7.org/fhir/us/sdc/STU2/
  *
@@ -267,7 +267,7 @@ var self = {
           option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
         }
 
-        // Restore rendering-xhtml extension on valueCoding._display.
+        // Restore rendering-xhtml and rendering-style extensions on valueCoding._display.
         if (answer.obj_valueCoding_display) {
           option.valueCoding._display = answer.obj_valueCoding_display;
         }
@@ -277,9 +277,10 @@ var self = {
           item.dataType === "DT" || item.dataType === "TM") {
         var valueKey = this._getValueKeyByDataType("value", item);
         option[valueKey] = answer.text;
-        // Restore rendering-xhtml extension on _valueString
-        if (valueKey === 'valueString' && answer.obj_valueString) {
-          option._valueString = answer.obj_valueString;
+        // Restore rendering-xhtml and rendering-style extensions on _valueString,
+        // _valueInteger, _valueDate, or _valueTime.
+        if (answer[`obj_${valueKey}`]) {
+          option[`_${valueKey}`] = answer[`obj_${valueKey}`];
         }
       }
 

@@ -62,6 +62,15 @@ you don't accidentally add something that we are also working on.
   directory that is created with a copy of the files in dist/lforms, but that
   is only needed for the tests.
 
+- **If you want to build LForms in a different language**, make sure your desired
+  locale ID is listed under src/languages, e.g. `de_DE.json`. In `package.json`, edit
+  config.localeID to your desired locale, e.g. "de_DE". Then run `npm run build`.
+
+  If your desired language is not yet listed under src/languages, please contact us
+  to have it added, or submit a pull request for adding your own language config file.
+  Please note that LForms cannot support more languages than listed
+  here: https://ng.ant.design/docs/i18n/en.
+
 ## Running tests
 
 1. Run `npm run test` to run unit tests and e2e tests, which also copies the 

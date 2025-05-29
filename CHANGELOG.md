@@ -2,6 +2,24 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.19.0] 2025-05-21
+### Added
+- Support for rendering-style on radio buttons and checkboxes.
+
+## [36.18.0] 2025-04-25
+### Changed
+- If observationExtract=false on an item, child items are not considered
+  for extraction unless they explicitly turn extraction back on again by
+  observationExtract=true.
+- observationExtract can indicate which code or codes should be applied by being on
+  item.code (in which case, having it on the item is not necessary).
+
+## [36.17.0] 2025-04-15
+### Added
+- Support for building into a different language.
+- Currently only German is added. Support for additional languages can be added
+  under src/languages.
+
 ## [36.16.1] 2025-04-14
 ### Fixed
 - Fixed a bug that initial values are not rendered on matrix (itemControl 'table')

@@ -120,7 +120,7 @@ var self = {
         "resourceType": "Observation",
         "status": "final",
         "code": {
-          "coding": item.codeList,
+          "coding": item._codesToExtract || item.codeList,
           "text": item.question
         }
       };

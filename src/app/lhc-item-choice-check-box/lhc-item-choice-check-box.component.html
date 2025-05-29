@@ -8,7 +8,8 @@
         [nzValue]="item.answers[i]"
         [(ngModel)]="checkboxModels[i]"
         [nzDisabled]="item._readOnly"
-        [id]="lhcDataService.getItemAnswerId(item, answer)">
+        [id]="lhcDataService.getItemAnswerId(item, answer)"
+        [style]="answer._obj_CSS">
         <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
           <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
           <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
@@ -25,7 +26,7 @@
         [nzDisabled]="item._readOnly"
         [(ngModel)]="otherCheckboxModel"
         [id]="item._elementId + '_other'">
-        Other
+        {{language.other}}
       </label>
       <input
         type="text"
