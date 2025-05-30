@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.20.0] 2025-05-30
+### Added
+- Support for observationExtract valueCode relationships (component or member).
+
 ## [36.19.0] 2025-05-21
 ### Added
 - Support for rendering-style on radio buttons and checkboxes.
