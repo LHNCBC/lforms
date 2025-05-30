@@ -1,0 +1,84 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Blood Pressure Questionnaire",
+  "status": "draft",
+  "extension": [
+    {
+      "valueBoolean": true,
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+    }
+  ],
+  "code": [
+    {
+      "system": "http://loinc.org",
+      "code": "8532-0",
+      "display": "Blood pressure"
+    }
+  ],
+  "item": [
+    {
+      "type": "quantity",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "mm[Hg]",
+            "display": "millimeter of mercury"
+          }
+        },
+        {
+          "valueCode": "component",
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "linkId": "202279616184",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "8478-0",
+          "display": "Systolic blood pressure"
+        }
+      ],
+      "text": "What is your systolic blood pressure?",
+      "initialQuantity": {
+        "value": 120,
+        "unit": "millimeter of mercury",
+        "system": "http://unitsofmeasure.org",
+        "code": "mm[Hg]"
+      }
+    },
+    {
+      "type": "quantity",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "mm[Hg]",
+            "display": "millimeter of mercury"
+          }
+        },
+        {
+          "valueCode": "component",
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "linkId": "334437031553",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-7",
+          "display": "Diastolic blood pressure"
+        }
+      ],
+      "text": "What is your diastolic blood pressure?",
+      "initialQuantity": {
+        "value": 80,
+        "unit": "millimeter of mercury",
+        "system": "http://unitsofmeasure.org",
+        "code": "mm[Hg]"
+      }
+    }
+  ]
+}

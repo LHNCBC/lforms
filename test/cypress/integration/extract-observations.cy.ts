@@ -1,12 +1,12 @@
 import * as util from "../support/util";
 
-describe('Form with extract observation extension', ()=>{
+describe('Form with extract observation extension', () => {
 
-  it('should be able to set the inital boolean value (true and false), extract observations and get boolean value (true and false) correctly', ()=> {
+  it('should be able to set the inital boolean value (true and false), extract observations and get boolean value (true and false) correctly', () => {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
     // check default values
-    cy.window().then((win)=> {
+    cy.window().then((win) => {
       let formData = win.LForms.Util.getFormData();
       expect(formData.items.length).to.equal(5);
       expect(formData.items[0].value).to.equal(true);
@@ -14,8 +14,8 @@ describe('Form with extract observation extension', ()=>{
       expect(formData.items[4].value).to.equal(undefined);
     })
     // check extracted
-    cy.window().then((win)=> {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
+    cy.window().then((win) => {
+      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
       expect(bundle.length).to.equal(5);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(4);
@@ -37,13 +37,13 @@ describe('Form with extract observation extension', ()=>{
 
   });
 
-  it('should not extract observations from empty items', ()=> {
+  it('should not extract observations from empty items', () => {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
 
     cy.byId('choiceItem2/1').click().clear().type('{enter}');
-    cy.window().then((win)=> {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
+    cy.window().then((win) => {
+      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
       expect(bundle.length).to.equal(4);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(3);
@@ -57,8 +57,8 @@ describe('Form with extract observation extension', ()=>{
     })
 
     cy.byId('choiceItem1/1').click().clear().type('{enter}')
-    cy.window().then((win)=> {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
+    cy.window().then((win) => {
+      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
       expect(bundle.length).to.equal(3);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);
@@ -69,13 +69,13 @@ describe('Form with extract observation extension', ()=>{
     })
   });
 
-  it('should not extract observations from hidden items and should get boolean value (false) correctly', ()=> {
+  it('should not extract observations from hidden items and should get boolean value (false) correctly', () => {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
 
     cy.byId('blItem1/1false').click();
-    cy.window().then((win)=> {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
+    cy.window().then((win) => {
+      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
       expect(bundle.length).to.equal(3);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);
@@ -113,6 +113,117 @@ describe('Form with extract observation extension', ()=>{
       expect(bundle[4].code.coding.length).to.equal(2);
       expect(bundle[4].code.coding[0].code).to.equal("code6"); // code with ObsExtract=true
       expect(bundle[4].code.coding[1].code).to.equal("code8"); // code without ObsExtract extension
+    });
+  });
+
+  ['STU3', 'R4', 'R5'].forEach((fhirVersion) => {
+    it('should extract based on ObservationExtract valueCode relationship - component - ' + fhirVersion, () => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('blood-pressure-q.json', null, {fhirVersion: fhirVersion});
+      cy.window().then((win) => {
+        const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", fhirVersion, null, {extract: true});
+        console.log(bundle[1]);
+        expect(bundle.length).to.equal(2);
+        expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+        expect(bundle[1].resourceType).to.equal("Observation");
+        expect(bundle[1].code.coding).to.deep.equal([
+          {
+            "system": "http://loinc.org",
+            "code": "8532-0",
+            "display": "Blood pressure"
+          }
+        ]);
+        expect(bundle[1].component).to.deep.equal([
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8478-0",
+                  "display": "Systolic blood pressure"
+                }
+              ],
+              "text": "What is your systolic blood pressure?"
+            },
+            "valueQuantity": {
+              "value": "120",
+              "unit": "millimeter of mercury",
+              "code": "mm[Hg]",
+              "system": "http://unitsofmeasure.org"
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "8462-7",
+                  "display": "Diastolic blood pressure"
+                }
+              ],
+              "text": "What is your diastolic blood pressure?"
+            },
+            "valueQuantity": {
+              "value": "80",
+              "unit": "millimeter of mercury",
+              "code": "mm[Hg]",
+              "system": "http://unitsofmeasure.org"
+            }
+          }
+        ]);
+      });
+    });
+
+    it('should extract based on ObservationExtract valueCode relationship - member - ' + fhirVersion, () => {
+      cy.visit('test/pages/addFormToPageTest.html');
+      util.addFormToPage('blood-count-panel-q.json', null, {fhirVersion: fhirVersion});
+      cy.window().then((win) => {
+        const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", fhirVersion, null, {extract: true});
+        expect(bundle.length).to.equal(4);
+        expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+        expect(bundle[1].resourceType).to.equal("Observation");
+        expect(bundle[1].code.coding).to.deep.equal([
+          {
+            "system": "http://loinc.org",
+            "code": "58410-2",
+            "display": "CBC panel - Blood by Automated count"
+          }
+        ]);
+        expect(bundle[2].code).to.deep.equal({
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "6690-2",
+              "display": "White blood cell count (Leukocytes)"
+            }
+          ],
+          "text": "What is your white blood cell count?"
+        });
+        expect(bundle[2].valueQuantity).to.deep.equal({
+          "value": "120",
+          "unit": "thousand per microliter",
+          "code": "10*3/uL",
+          "system": "http://unitsofmeasure.org"
+        });
+        expect(bundle[3].code).to.deep.equal({
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "789-8",
+              "display": "Red blood cell count (Erythrocytes)"
+            }
+          ],
+          "text": "What is your red blood cell count?"
+        });
+        expect(bundle[3].valueQuantity).to.deep.equal({
+          "value": "80",
+          "unit": "million per microliter",
+          "code": "10*6/uL",
+          "system": "http://unitsofmeasure.org"
+        });
+        expect(bundle[1].hasMember[0].reference).to.equal(bundle[2].id);
+        expect(bundle[1].hasMember[1].reference).to.equal(bundle[3].id);
+      });
     });
   });
 });
