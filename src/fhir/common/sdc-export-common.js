@@ -1107,7 +1107,7 @@ function addCommonSDCExportFns(ns) {
           // the item and the parent are both to be extracted. Also:
           // Set _obsExtractParentLinkId on the item to the parent linkId so we will know which
           // extracted parent Observation to link to.
-          if (obsExtractValueCode === 'component' || obsExtractValueCode === 'member') {
+          if (obsExtractValueCode) {
             item._obsExtractValueCode = obsExtractValueCode;
             item._obsExtractParentLinkId = currentItem.linkId;
           }

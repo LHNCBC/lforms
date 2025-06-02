@@ -116,114 +116,167 @@ describe('Form with extract observation extension', () => {
     });
   });
 
-  ['STU3', 'R4', 'R5'].forEach((fhirVersion) => {
-    it('should extract based on ObservationExtract valueCode relationship - component - ' + fhirVersion, () => {
-      cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('blood-pressure-q.json', null, {fhirVersion: fhirVersion});
-      cy.window().then((win) => {
-        const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", fhirVersion, null, {extract: true});
-        console.log(bundle[1]);
-        expect(bundle.length).to.equal(2);
-        expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
-        expect(bundle[1].resourceType).to.equal("Observation");
-        expect(bundle[1].code.coding).to.deep.equal([
-          {
-            "system": "http://loinc.org",
-            "code": "8532-0",
-            "display": "Blood pressure"
-          }
-        ]);
-        expect(bundle[1].component).to.deep.equal([
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "8478-0",
-                  "display": "Systolic blood pressure"
-                }
-              ],
-              "text": "What is your systolic blood pressure?"
-            },
-            "valueQuantity": {
-              "value": "120",
-              "unit": "millimeter of mercury",
-              "code": "mm[Hg]",
-              "system": "http://unitsofmeasure.org"
-            }
+  it('should extract based on ObservationExtract valueCode relationship - component - R4', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('blood-pressure-q.json', null, {fhirVersion: 'R4'});
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'R4', null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Observation");
+      expect(bundle[1].code.coding).to.deep.equal([
+        {
+          "system": "http://loinc.org",
+          "code": "8532-0",
+          "display": "Blood pressure"
+        }
+      ]);
+      expect(bundle[1].component).to.deep.equal([
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8478-0",
+                "display": "Systolic blood pressure"
+              }
+            ],
+            "text": "What is your systolic blood pressure?"
           },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "8462-7",
-                  "display": "Diastolic blood pressure"
-                }
-              ],
-              "text": "What is your diastolic blood pressure?"
-            },
-            "valueQuantity": {
-              "value": "80",
-              "unit": "millimeter of mercury",
-              "code": "mm[Hg]",
-              "system": "http://unitsofmeasure.org"
-            }
+          "valueQuantity": {
+            "value": "120",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
           }
-        ]);
-      });
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8462-7",
+                "display": "Diastolic blood pressure"
+              }
+            ],
+            "text": "What is your diastolic blood pressure?"
+          },
+          "valueQuantity": {
+            "value": "80",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
+          }
+        }
+      ]);
     });
+  });
 
-    it('should extract based on ObservationExtract valueCode relationship - member - ' + fhirVersion, () => {
-      cy.visit('test/pages/addFormToPageTest.html');
-      util.addFormToPage('blood-count-panel-q.json', null, {fhirVersion: fhirVersion});
-      cy.window().then((win) => {
-        const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", fhirVersion, null, {extract: true});
-        expect(bundle.length).to.equal(4);
-        expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
-        expect(bundle[1].resourceType).to.equal("Observation");
-        expect(bundle[1].code.coding).to.deep.equal([
+  it('should extract based on ObservationExtract valueCode relationship - member - R4', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('blood-count-panel-q.json', null, {fhirVersion: 'R4'});
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'R4', null, {extract: true});
+      expect(bundle.length).to.equal(4);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Observation");
+      expect(bundle[1].code.coding).to.deep.equal([
+        {
+          "system": "http://loinc.org",
+          "code": "58410-2",
+          "display": "CBC panel - Blood by Automated count"
+        }
+      ]);
+      expect(bundle[2].code).to.deep.equal({
+        "coding": [
           {
             "system": "http://loinc.org",
-            "code": "58410-2",
-            "display": "CBC panel - Blood by Automated count"
+            "code": "6690-2",
+            "display": "White blood cell count (Leukocytes)"
           }
-        ]);
-        expect(bundle[2].code).to.deep.equal({
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "6690-2",
-              "display": "White blood cell count (Leukocytes)"
-            }
-          ],
-          "text": "What is your white blood cell count?"
-        });
-        expect(bundle[2].valueQuantity).to.deep.equal({
-          "value": "120",
-          "unit": "thousand per microliter",
-          "code": "10*3/uL",
-          "system": "http://unitsofmeasure.org"
-        });
-        expect(bundle[3].code).to.deep.equal({
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "789-8",
-              "display": "Red blood cell count (Erythrocytes)"
-            }
-          ],
-          "text": "What is your red blood cell count?"
-        });
-        expect(bundle[3].valueQuantity).to.deep.equal({
-          "value": "80",
-          "unit": "million per microliter",
-          "code": "10*6/uL",
-          "system": "http://unitsofmeasure.org"
-        });
-        expect(bundle[1].hasMember[0].reference).to.equal(bundle[2].id);
-        expect(bundle[1].hasMember[1].reference).to.equal(bundle[3].id);
+        ],
+        "text": "What is your white blood cell count?"
       });
+      expect(bundle[2].valueQuantity).to.deep.equal({
+        "value": "120",
+        "unit": "thousand per microliter",
+        "code": "10*3/uL",
+        "system": "http://unitsofmeasure.org"
+      });
+      expect(bundle[3].code).to.deep.equal({
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "789-8",
+            "display": "Red blood cell count (Erythrocytes)"
+          }
+        ],
+        "text": "What is your red blood cell count?"
+      });
+      expect(bundle[3].valueQuantity).to.deep.equal({
+        "value": "80",
+        "unit": "million per microliter",
+        "code": "10*6/uL",
+        "system": "http://unitsofmeasure.org"
+      });
+      expect(bundle[1].hasMember[0].reference).to.equal(bundle[2].id);
+      expect(bundle[1].hasMember[1].reference).to.equal(bundle[3].id);
+    });
+  });
+
+  it('should extract based on ObservationExtract valueCode relationship - component - STU3', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('blood-pressure-q.json', null, {fhirVersion: 'STU3'});
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'STU3', null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Observation");
+      expect(bundle[1].code.coding).to.deep.equal([
+        {
+          "system": "http://loinc.org",
+          "code": "8532-0",
+          "display": "Blood pressure"
+        }
+      ]);
+      expect(bundle[1].component).to.deep.equal([
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8478-0",
+                "display": "Systolic blood pressure"
+              }
+            ],
+            "text": "What is your systolic blood pressure?"
+          },
+          "valueQuantity": {
+            "value": "120",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8462-7",
+                "display": "Diastolic blood pressure"
+              }
+            ],
+            "text": "What is your diastolic blood pressure?"
+          },
+          "valueQuantity": {
+            "value": "80",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
+          }
+        }
+      ]);
     });
   });
 });

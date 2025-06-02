@@ -39,6 +39,9 @@ var self = {
 
     var qrRef = "QuestionnaireResponse/" + qr.id;
     var rtn = [qr];
+    // A map from linkId to extracted Observation.
+    // Used to find the parent Observation for ObsExtract relationships.
+    var linkIdObsMap = {};
     for (var i = -1, len = lfData.itemList.length; i < len; ++i) {
       // Include lfData, the root item in the extraction.
       var item = i === -1 ? lfData : lfData.itemList[i];
@@ -61,7 +64,7 @@ var self = {
           : this._commonExport._createObservationWithNoValue(item);
         let parentObs;
         if (item._obsExtractValueCode === 'component') {
-          parentObs = rtn.find(r => r.resourceType === 'Observation' && r.linkId === item._obsExtractParentLinkId);
+          parentObs = linkIdObsMap[item._obsExtractParentLinkId];
           parentObs.component = parentObs.component || [];
           for (var j = 0, jLen = obs.length; j < jLen; j++) {
             // newComponent will only have "code" and "value[x]" properties.
@@ -70,12 +73,10 @@ var self = {
           }
         } else {
           if (item._obsExtractValueCode === 'member') {
-            parentObs = rtn.find(r => r.resourceType === 'Observation' && r.linkId === item._obsExtractParentLinkId);
+            parentObs = linkIdObsMap[item._obsExtractParentLinkId];
             parentObs.hasMember = parentObs.hasMember || [];
           }
           for (var j = 0, jLen = obs.length; j < jLen; j++) {
-            // linkId is used to find the parent Observation of an ObsExtract relationship.
-            obs[j].linkId = item.linkId;
             // Following
             // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
             if (qr.basedOn) obs[j].basedOn = qr.basedOn;
@@ -91,6 +92,7 @@ var self = {
             if (categCodeableConcepts.length)
               obs[j].category = categCodeableConcepts;
 
+            linkIdObsMap[item.linkId] = obs[j];
             rtn.push(obs[j]);
             if (item._obsExtractValueCode === 'member') {
               parentObs.hasMember.push({ reference: obs[j].id });
@@ -99,7 +101,7 @@ var self = {
         }
       }
     }
-    // Clean up linkId, _noValue properties, and Observations with no value and no
+    // Clean up _noValue properties, and Observations with no value and no
     // component or hasMember.
     for (var i = 0, len = rtn.length; i < len; ++i) {
       var res = rtn[i];
@@ -111,7 +113,6 @@ var self = {
           i--;
           len--;
         } else {
-          delete res.linkId;
           delete res._noValue;
         }
       }
