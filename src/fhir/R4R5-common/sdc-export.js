@@ -39,85 +39,102 @@ var self = {
 
     var qrRef = "QuestionnaireResponse/" + qr.id;
     var rtn = [qr];
-    // A map from linkId to extracted Observation.
+    // A map from linkId to a lforms item or an extracted Observation.
     // Used to find the parent Observation for ObsExtract relationships.
-    var linkIdObsMap = {};
+    var linkIdToItemOrObsMap = {};
     for (var i = -1, len = lfData.itemList.length; i < len; ++i) {
       // Include lfData, the root item in the extraction.
       var item = i === -1 ? lfData : lfData.itemList[i];
       if (this._getExtractValue(item)) {
-        const categCodeableConcepts = [];
-        var ancestor = item;
-        while (ancestor && !categCodeableConcepts.length) {
-          if (ancestor.extension) {
-            const categExts = LForms.Util.findObjectInArray(ancestor.extension, 'url',
-              this.fhirExtObsExtractCategory,  0, true);
-            categExts.forEach((x)=>categCodeableConcepts.push(x.valueCodeableConcept));
-          }
-          ancestor = ancestor._parentItem;
-        }
+        linkIdToItemOrObsMap[item.linkId] = item;
 
-        var obs = this._hasItemValue(item)
-          ? this._commonExport._createObservation(item, item._obsExtractValueCode === 'member')
-          // Create an Observation even if it has no value, since it might be a parent
-          // of an ObsExtract relationship.
-          : this._commonExport._createObservationWithNoValue(item);
-        let parentObs;
-        if (item._obsExtractValueCode === 'component') {
-          parentObs = linkIdObsMap[item._obsExtractParentLinkId];
-          parentObs.component = parentObs.component || [];
-          for (var j = 0, jLen = obs.length; j < jLen; j++) {
-            // newComponent will only have "code" and "value[x]" properties.
-            const {resourceType, status, meta, ...newComponent} = obs[j];
-            parentObs.component.push(newComponent);
-          }
-        } else {
-          if (item._obsExtractValueCode === 'member') {
-            parentObs = linkIdObsMap[item._obsExtractParentLinkId];
-            parentObs.hasMember = parentObs.hasMember || [];
-          }
-          for (var j = 0, jLen = obs.length; j < jLen; j++) {
-            // Following
-            // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
-            if (qr.basedOn) obs[j].basedOn = qr.basedOn;
-            if (qr.partOf) obs[j].partOf = qr.partOf;
-            if (qr.subject) obs[j].subject = qr.subject;
-            if (qr.encounter) obs[j].encounter = qr.encounter;
-            if (qr.authored) {
-              obs[j].effectiveDateTime = qr.authored;
-              obs[j].issued = qr.authored;
-            }
-            if (qr.author) obs[j].performer = qr.author;
-            obs[j].derivedFrom = [{reference: qrRef}];
-            if (categCodeableConcepts.length)
-              obs[j].category = categCodeableConcepts;
-
-            linkIdObsMap[item.linkId] = obs[j];
-            rtn.push(obs[j]);
-            if (item._obsExtractValueCode === 'member') {
-              parentObs.hasMember.push({ reference: obs[j].id });
-            }
-          }
-        }
-      }
-    }
-    // Clean up _noValue properties, and Observations with no value and no
-    // component or hasMember.
-    for (var i = 0, len = rtn.length; i < len; ++i) {
-      var res = rtn[i];
-      if (res.resourceType === "Observation") {
-        if (res._noValue && !res.component && !res.hasMember) {
-          // This Observation has no value and is not a parent of an ObsExtract relationship.
-          // Remove it.
-          rtn.splice(i, 1);
-          i--;
-          len--;
-        } else {
-          delete res._noValue;
+        if (this._hasItemValue(item)) {
+          this._processExtractedObservation(rtn, item, qr, qrRef, linkIdToItemOrObsMap);
         }
       }
     }
     return rtn;
+  },
+
+  /**
+   * Creates and processes an Observation resource from an LForms item.
+   * @private
+   * @param rtn an array of FHIR resources to which the Observation will be added
+   * @param item an LForms item object
+   * @param qr the QuestionnaireResponse object
+   * @param qrRef a temporary reference to the QuestionnaireResponse id
+   * @param linkIdToItemOrObsMap a map from linkId to a lforms item or an extracted Observation
+   * @param noValue when set to true, extracts an Observation even the item has no value.
+   */
+  _processExtractedObservation: function(rtn, item, qr, qrRef, linkIdToItemOrObsMap, noValue = false) {
+    var obs = !noValue
+      ? this._commonExport._createObservation(item, item._obsExtractValueCode === 'member')
+      : this._commonExport._createObservationWithNoValue(item);
+
+    const categCodeableConcepts = [];
+    let ancestor = item;
+    while (ancestor && !categCodeableConcepts.length) {
+      if (ancestor.extension) {
+        const categExts = LForms.Util.findObjectInArray(ancestor.extension, 'url',
+          this.fhirExtObsExtractCategory,  0, true);
+        categExts.forEach((x)=>categCodeableConcepts.push(x.valueCodeableConcept));
+      }
+      ancestor = ancestor._parentItem;
+    }
+
+    let parentObs;
+    if (item._obsExtractValueCode === 'component') {
+      parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
+      if (parentObs.resourceType !== 'Observation') {
+        // If the parent item in the map is still a lforms item and not an Observation,
+        // an Observation wasn't created for it because it has no value. Create an
+        // Observation for it now, since a child item of an ObsExtract relationship is found.
+        this._processExtractedObservation(rtn, parentObs, qr, qrRef, linkIdToItemOrObsMap, true);
+        // The item in the map is now an extracted Observation.
+        parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
+      }
+      parentObs.component = parentObs.component || [];
+      for (var j = 0, jLen = obs.length; j < jLen; j++) {
+        // newComponent will only have "code" and "value[x]" properties.
+        const {resourceType, status, meta, ...newComponent} = obs[j];
+        parentObs.component.push(newComponent);
+      }
+    } else {
+      if (item._obsExtractValueCode === 'member') {
+        parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
+        if (parentObs.resourceType !== 'Observation') {
+          // If the parent item in the map is still a lforms item and not an Observation,
+          // an Observation wasn't created for it because it has no value. Create an
+          // Observation for it now, since a child item of an ObsExtract relationship is found.
+          this._processExtractedObservation(rtn, parentObs, qr, qrRef, linkIdToItemOrObsMap);
+          // The item in the map is now an extracted Observation.
+          parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
+        }
+        parentObs.hasMember = parentObs.hasMember || [];
+      }
+      for (var j = 0, jLen = obs.length; j < jLen; j++) {
+        // Following
+        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+        if (qr.basedOn) obs[j].basedOn = qr.basedOn;
+        if (qr.partOf) obs[j].partOf = qr.partOf;
+        if (qr.subject) obs[j].subject = qr.subject;
+        if (qr.encounter) obs[j].encounter = qr.encounter;
+        if (qr.authored) {
+          obs[j].effectiveDateTime = qr.authored;
+          obs[j].issued = qr.authored;
+        }
+        if (qr.author) obs[j].performer = qr.author;
+        obs[j].derivedFrom = [{reference: qrRef}];
+        if (categCodeableConcepts.length)
+          obs[j].category = categCodeableConcepts;
+
+        linkIdToItemOrObsMap[item.linkId] = obs[j];
+        rtn.push(obs[j]);
+        if (item._obsExtractValueCode === 'member') {
+          parentObs.hasMember.push({ reference: obs[j].id });
+        }
+      }
+    }
   },
 
   /**
