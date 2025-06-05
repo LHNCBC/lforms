@@ -145,7 +145,6 @@ var self = {
   _createObservationWithNoValue: function(item) {
     var obxs = [];
     const obx = {
-      "_noValue": true,
       "resourceType": "Observation",
       "status": "final",
       "code": {
