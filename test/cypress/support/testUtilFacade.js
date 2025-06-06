@@ -65,12 +65,9 @@ export const TestUtil = {
    * Wait for LForms to be loaded.
    */
   waitForLFormsLoaded() {
-    cy.window().then(win => {
+    cy.window().should(win => {
       let LForms = win.LForms;
-      cy.wrap({1: 2}).should(()=> {
-        // not sure this wrap is needed, but without it sometimes the expect fails.
-        expect(typeof(LForms) === "object").to.be.true;
-      });
+      expect(typeof(LForms) === "object").to.be.true;
     });
   },
 
