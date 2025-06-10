@@ -43,7 +43,7 @@
           <lhc-item-choice [item]="item" *ngIf="item._hasAnswerList"></lhc-item-choice>
         </ng-container>
         <ng-container *ngSwitchCase="'BL'">
-          <lhc-item-boolean [item]="item"></lhc-item-boolean>
+          <lhc-item-boolean [item]="item" [value]="item.value"></lhc-item-boolean>
         </ng-container>
         <ng-container *ngSwitchCase="'ST'">
           <lhc-input [item]="item" *ngIf="!item._hasAnswerList"></lhc-input>
