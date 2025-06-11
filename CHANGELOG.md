@@ -2,9 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.19.1] 2025-06-11
+## [36.19.2] 2025-06-11
 ### Fixed
 - A boolean field was not updating in UI according to calculated expression.
+
+## [36.19.1] 2025-06-04
+### Fixed
+- Tooltips were shown incorrectly when adding a repeating item.
 
 ## [36.19.0] 2025-05-21
 ### Added
