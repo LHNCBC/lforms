@@ -1319,7 +1319,8 @@ function addCommonSDCImportFns(ns) {
               if (parsedJSON.resourceType === "OperationOutcome") {
                 var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal")
                 if (errorOrFatal) {
-                  throw new Error(errorOrFatal.diagnostics)
+                  item._answerValueSetLoadingError = errorOrFatal.diagnostics;
+                  throw new Error(errorOrFatal.diagnostics);
                 }
               } else {
                 var answers = self.answersFromVS(parsedJSON);
@@ -1330,7 +1331,9 @@ function addCommonSDCImportFns(ns) {
                 return answers;
               }
             }).catch(function (error) {
-              throw new Error(`Unable to load ValueSet ${item.answerValueSet} from ${expURL}`);
+              const msg = `Unable to load ValueSet ${item.answerValueSet} from ${expURL}`;
+              item._answerValueSetLoadingError = msg;
+              throw new Error(msg);
             });
             pendingPromises.push(p);
             LForms._valueSetAnswerCache[vsKey] = p;
