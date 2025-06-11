@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.19.1] 2025-06-04
+### Fixed
+- Tooltips were shown incorrectly when adding a repeating item.
+
 ## [36.19.0] 2025-05-21
 ### Added
 - Support for rendering-style on radio buttons and checkboxes.

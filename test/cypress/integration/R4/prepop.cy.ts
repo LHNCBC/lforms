@@ -10,25 +10,15 @@ const po = new AddFormToPageTestPage();
 
 /**
  *  Sets up a mock server FHIR context.  This will also set the page to do
- *  prepopulation.  (If that is not desired, call setFHIRPrepopulation(false).
+ *  prepopulation.  (If that is not desired, set prepopFHIR to false.)
  * @param fhirVersion the FHIR version number (as a string) for the mock server.
  * @param weightQuantity the quantity to return from a search for a weight.
+ * @param prepopFHIR whether the prepopulation should be enabled.
  */
-function setServerFHIRContext(fhirVersion, weightQuantity = null) {
+function setServerFHIRContext(fhirVersion, weightQuantity = null, prepopFHIR = true) {
   cy.window().then((win) => {
     win.LForms.Util.setFHIRContext(mockFHIRContext(fhirVersion, weightQuantity));
-  });
-  setFHIRPrepopulation(true);
-}
-
-/**
- *  Enables or disables prepopulation (from the mock FHIR context) when a Questionnaire is
- *  loaded.
- * @param enable whether the prepopulation should be enabled.
- */
-function setFHIRPrepopulation(enable) {
-  cy.window().then((win) => {
-    win.prepopulateFHIR = enable;
+    win.prepopulateFHIR = prepopFHIR;
   });
 }
 
@@ -131,14 +121,15 @@ describe('Form pre-population', () => {
         });
 
         it('should not load values from observationLinkPeriod if prepopulation is disabled', () => {
-          setServerFHIRContext(serverFHIRNum);
-          setFHIRPrepopulation(false);
+          setServerFHIRContext(serverFHIRNum, null, false);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           cy.wait(20); // give asynchronous prepopulation a chance to happen
           cy.byId('/29463-7/1').should('have.value', '');
         });
 
         it('should convert values from observationLinkPeriod', () => {
+          tp.openBaseTestPage();
+          TestUtil.waitForFHIRLibsLoaded();
           setServerFHIRContext(serverFHIRNum, {
             value: 140,
             unit: '[lb_av]',
@@ -156,8 +147,7 @@ describe('Form pre-population', () => {
         it('should not load values from observationLinkPeriod if prepopulation ' +
           'is disabled, with server FHIR version ' + serverFHIRNum, () => {
           po.openPage();
-          setServerFHIRContext(serverFHIRNum);
-          setFHIRPrepopulation(false);
+          setServerFHIRContext(serverFHIRNum, null, false);
           cy.get('#fileAnchor').uploadFile('test/data/R4/weightHeightQuestionnaire.json');
           cy.wait(20);
           cy.byId('/29463-7/1').should('have.value', '');
@@ -167,7 +157,6 @@ describe('Form pre-population', () => {
           'is enabled, with server FHIR version ' + serverFHIRNum, () => {
           po.openPage();
           setServerFHIRContext(serverFHIRNum);
-          setFHIRPrepopulation(true);
           cy.get('#fileAnchor').uploadFile('test/data/R4/weightHeightQuestionnaire.json');
           cy.byId('/29463-7/1').should('have.value', '95');
         });
@@ -189,7 +178,7 @@ describe('Form pre-population', () => {
   describe('enableWhen and initialExpression', ()=>{
     it('enableWhen should work on the answer lists populated by initialExpression', ()=>{
       cy.visit('test/pages/addFormToPageTest.html');
-      
+
       util.addFormToPage('expression-on-data-from-prepopulation.json', null, {fhirVersion: 'R4'});
 
       cy.byId('p1.1/1/1').should('have.value','Interventional')
@@ -199,7 +188,7 @@ describe('Form pre-population', () => {
       cy.get('#searchResults li').should('have.length', 4);
 
       cy.byId('p3.1.14/1').should('be.visible');
-      
+
     });
   });
 });
