@@ -1,5 +1,6 @@
 <ng-container *ngIf="item">
   <nz-radio-group
+    [ngModel]="value"
     (ngModelChange)="onModelChange($event)"
     role="radiogroup"
     [nzName]="'radiogroup_' + item._elementId"

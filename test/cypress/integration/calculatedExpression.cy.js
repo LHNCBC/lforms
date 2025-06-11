@@ -12,6 +12,15 @@ describe('calculatedExpression', () => {
     cy.get('#\\/39156-5\\/1').invoke('attr', 'disabled').should('eq', undefined);
   });
 
+  it('should update the boolean field when the calculatedExpression changes', () => {
+    util.addFormToPage('calculatedExpression-on-boolean-item.json', null, {fhirVersion: 'R4'});
+    cy.byId('overweight/1null').should('have.class', 'ant-radio-wrapper-checked');
+    cy.byId('weight/1').type('10');
+    cy.byId('overweight/1false').should('have.class', 'ant-radio-wrapper-checked');
+    cy.byId('weight/1').type('2');
+    cy.byId('overweight/1true').should('have.class', 'ant-radio-wrapper-checked');
+  });
+
   describe('for single-select lists', ()=>{
     it('should be able to set off-list Codings as answers', ()=> {
       util.addFormToPage('calculatedListAnwers.json', null, {fhirVersion: 'R4'});
