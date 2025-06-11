@@ -2,9 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.20.0] 2025-05-30
+## [36.20.0] 2025-06-11
 ### Added
 - Support for observationExtract valueCode relationships (component or member).
+
+## [36.19.1] 2025-06-04
+### Fixed
+- Tooltips were shown incorrectly when adding a repeating item.
 
 ## [36.19.0] 2025-05-21
 ### Added
