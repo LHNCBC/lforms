@@ -9,6 +9,11 @@ describe('addFormToPage Error Message Test', () => {
     // has an error message
     // This also tests that the url parameter gets URL-encoded.
     cy.get("#loadMsg").contains("Unable to load ValueSet");
+    // An error message is shown under the field for which answerValueSet expansion failed.
+    cy.byId('item-/54126-8/54128-4/1/1')
+      .find('.lhc-item-error')
+      .should('be.visible')
+      .should('have.text', 'Unable to load ValueSet http://hl7.org/fhir/ValueSet/yesnodontknow-invalid from https://lforms-fhir.nlm.nih.gov/baseDstu3/ValueSet/$expand?url=http%3A%2F%2Fhl7.org%2Ffhir%2FValueSet%2Fyesnodontknow-invalid&_format=json');
   });
 
   it('show an error when a valueset cannot be loaded because of a wrong fhir context', () => {
