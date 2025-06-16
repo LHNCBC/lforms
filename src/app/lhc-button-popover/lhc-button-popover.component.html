@@ -2,10 +2,10 @@
   <button *ngSwitchCase="'repeating-item'" id="add-{{item._elementId}}" type="button" class="lhc-float-button lhc-button"
           nz-popover
           [disabled]="item._readOnly"
-          [(nzPopoverVisible)]="item._showUnusedItemWarning"
+          [nzPopoverVisible]="item._showUnusedItemWarning"
           [nzPopoverContent]="warningStrTemplate"
-          nzPopoverPlacement="topLeft"
-          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
+          [nzPopoverTrigger]="null"
           (click)="lhcDataService.addOneRepeatingItem(item, append)"
           (blur)="lhcDataService.hideUnusedItemWarning(item)"
           attr.aria-controls="add-button-{{item._elementId}}"
