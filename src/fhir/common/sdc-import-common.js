@@ -1319,7 +1319,7 @@ function addCommonSDCImportFns(ns) {
               if (parsedJSON.resourceType === "OperationOutcome") {
                 var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal")
                 if (errorOrFatal) {
-                  item._answerValueSetLoadingError = errorOrFatal.diagnostics;
+                  item._answerValueSetLoadingError = "Unable to load the answer list for this question.";
                   throw new Error(errorOrFatal.diagnostics);
                 }
               } else {
@@ -1332,7 +1332,7 @@ function addCommonSDCImportFns(ns) {
               }
             }).catch(function (error) {
               const msg = `Unable to load ValueSet ${item.answerValueSet} from ${expURL}`;
-              item._answerValueSetLoadingError = msg;
+              item._answerValueSetLoadingError = "Unable to load the answer list for this question.";
               throw new Error(msg);
             });
             pendingPromises.push(p);

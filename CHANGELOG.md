@@ -3,7 +3,7 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 ## [36.20.0] 2025-06-13
-### Changed
+### Added
 - Show an error message under the field if the answerValueSet expansion fails.
 
 ## [36.19.2] 2025-06-11
