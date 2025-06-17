@@ -1319,7 +1319,10 @@ function addCommonSDCImportFns(ns) {
               if (parsedJSON.resourceType === "OperationOutcome") {
                 var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal")
                 if (errorOrFatal) {
-                  item._answerValueSetLoadingError = "Unable to load the answer list for this question.";
+                  let errors = {};
+                  errorMessages.addMsg(errors, 'answerValueSetLoadingError');
+                  const messages = [{errors}];
+                  LForms.Util._internalUtil.setItemMessagesArray(item, messages, 'loadAnswerValueSets');
                   throw new Error(errorOrFatal.diagnostics);
                 }
               } else {
@@ -1331,8 +1334,11 @@ function addCommonSDCImportFns(ns) {
                 return answers;
               }
             }).catch(function (error) {
+              let errors = {};
+              errorMessages.addMsg(errors, 'answerValueSetLoadingError');
+              const messages = [{errors}];
+              LForms.Util._internalUtil.setItemMessagesArray(item, messages, 'loadAnswerValueSets');
               const msg = `Unable to load ValueSet ${item.answerValueSet} from ${expURL}`;
-              item._answerValueSetLoadingError = "Unable to load the answer list for this question.";
               throw new Error(msg);
             });
             pendingPromises.push(p);

@@ -7,7 +7,6 @@
     </ng-container>
     <!-- <lhc-item-choice-autocomplete *ngSwitchDefault [item]="item"></lhc-item-choice-autocomplete> -->
     <lhc-item-choice-autocomplete *ngSwitchDefault [item]="item" [acOptions]="item._autocompOptions" [readOnly]="item._readOnly"></lhc-item-choice-autocomplete>
-    <div *ngIf="item._answerValueSetLoadingError" class="lhc-item-error">{{item._answerValueSetLoadingError}}</div>
   </ng-container>
 </ng-container>
 

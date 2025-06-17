@@ -13,7 +13,7 @@ describe('addFormToPage Error Message Test', () => {
     cy.byId('item-/54126-8/54128-4/1/1')
       .find('.lhc-item-error')
       .should('be.visible')
-      .should('have.text', 'Unable to load the answer list for this question.');
+      .should('have.text', 'Error: Unable to load the answer list for this question.');
   });
 
   it('show an error when a valueset cannot be loaded because of a wrong fhir context', () => {
