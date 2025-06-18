@@ -22,16 +22,16 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       cy.byId(params.itemIds.g1item1)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g1Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g1Answer3);
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g1Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
       // raidobutoon
@@ -48,16 +48,16 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       cy.byId(params.itemIds.g3item1)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g3Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g3Answer3);
         // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g3Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g3Answer3);
 
       // group 4
       // radiobutton, prefix, score

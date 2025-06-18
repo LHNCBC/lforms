@@ -16,9 +16,9 @@ describe('initialExpression with mulitple values', () => {
 
     cy.byId(answerField).click()
     po.searchResults.should('be.visible');
-    cy.byCss("#searchResults li").its('length').should('eq', 2);
-    cy.byCss("#searchResults li").eq(0).contains('Blue');
-    cy.byCss("#searchResults li").eq(1).contains('Green');
+    cy.byCss("#lhc-tools-searchResults li").its('length').should('eq', 2);
+    cy.byCss("#lhc-tools-searchResults li").eq(0).contains('Blue');
+    cy.byCss("#lhc-tools-searchResults li").eq(1).contains('Green');
   });
 
   describe('initialExpression form', ()=> {

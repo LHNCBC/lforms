@@ -35,7 +35,7 @@ describe('autocomp list', () => {
     cy.get(ff.searchResults).should('be.visible');
     // Check pre-condition
     cy.byId(ff.scoreField).should('have.value', '0');
-    cy.get('#searchResults li:first-child').click();
+    cy.get('#lhc-tools-searchResults li:first-child').click();
     cy.byId(ff.scoreField).should('have.value', '1');
     // Now try using keystrokes to select the third item.
     cy.byId(ff.eyeField).click()
@@ -84,7 +84,7 @@ describe('autocomp list', () => {
   it('should not autofill lists when there is just one answer', () => {
     tp.LoadForm.openRxTerms();
     cy.byId('/X-002/nameAndRoute/1/1').typeAndWait('AZELEX');
-    cy.get('#searchResults tr:first-child').click();
+    cy.get('#lhc-tools-searchResults tr:first-child').click();
     cy.byId('/X-002/strengthAndForm/1/1').should('have.value', '');
   });
 
@@ -98,30 +98,30 @@ describe('autocomp list', () => {
 
       // autofill when the strength has one item in the list
       cy.byId('medication/1/1').typeAndWait('AZELEX')
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       cy.byId('strength/1/1').should('have.value', '20% Cream');
       cy.byId('rxcui/1/1').should('have.value', '1043753');
 
       cy.byId('medication/1/1').clear().typeAndWait('Factor X')
-      cy.get('#searchResults').should('be.visible');
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults').should('be.visible');
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       cy.byId('strength/1/1').should('have.value', '1 unt Injection');
       cy.byId('rxcui/1/1').should('have.value', '1719235');
 
       // no autofill when the strength has more than one item in the list
       cy.byId('medication/1/1').clear().typeAndWait('GAS-X')
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       cy.byId('strength/1/1').should('have.value', '');
       cy.byId('rxcui/1/1').should('have.value', '');
 
       cy.byId('strength/1/1').click()
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       cy.byId('strength/1/1').should('have.value', '80 mg Tab');
       cy.byId('rxcui/1/1').should('have.value', '210273');
 
       // still works: autofill when the strength has one item in the list
       cy.byId('medication/1/1').clear().typeAndWait('Factor X')
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       cy.byId('strength/1/1').should('have.value', '1 unt Injection');
       cy.byId('rxcui/1/1').should('have.value', '1719235');
     });
@@ -132,15 +132,15 @@ describe('autocomp list', () => {
 
     // no sequence number
     cy.byId('/numeric_answer/1').click();
-    cy.get('#searchResults #completionOptions ul li:first-child').should('have.text', '1');
-    cy.get('#searchResults #completionOptions ul li:nth-child(2)').should('have.text', 'Answer 2');
-    cy.get('#searchResults #completionOptions ul li:nth-child(3)').should('have.text', 'Answer 3');
+    cy.get('#lhc-tools-searchResults #completionOptions ul li:first-child').should('have.text', '1');
+    cy.get('#lhc-tools-searchResults #completionOptions ul li:nth-child(2)').should('have.text', 'Answer 2');
+    cy.get('#lhc-tools-searchResults #completionOptions ul li:nth-child(3)').should('have.text', 'Answer 3');
 
     // has sequence number
     cy.byId('/type9/1').click();
-    cy.get('#searchResults #completionOptions ul li:first-child .listNum').should('be.visible').should('have.text', '1:');
-    cy.get('#searchResults #completionOptions ul li:nth-child(2) .listNum').should('be.visible').should('have.text', '2:');
-    cy.get('#searchResults #completionOptions ul li:nth-child(3) .listNum').should('be.visible').should('have.text', '3:');
+    cy.get('#lhc-tools-searchResults #completionOptions ul li:first-child .listNum').should('be.visible').should('have.text', '1:');
+    cy.get('#lhc-tools-searchResults #completionOptions ul li:nth-child(2) .listNum').should('be.visible').should('have.text', '2:');
+    cy.get('#lhc-tools-searchResults #completionOptions ul li:nth-child(3) .listNum').should('be.visible').should('have.text', '3:');
   });
 
 });
