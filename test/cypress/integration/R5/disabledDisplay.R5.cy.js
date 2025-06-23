@@ -1,5 +1,6 @@
 import { AddFormToPageTestPage } from "../../support/addFormToPageTest.po";
 import * as util from "../../support/util";
+const answerId = util.answerId;
 
 const po = new AddFormToPageTestPage();
 
@@ -77,7 +78,7 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-coding1/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byCss("#coding1/1c1 input")
+    cy.byId(answerId('coding1/1', undefined, 'c1')).find('input')
       .eq(0)
       //.should("be.visible") // why it can be seen on the screen but its opacity is 0?
       .should("be.disabled");
@@ -86,7 +87,7 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-coding2/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byCss("#coding2/1c1 input")
+    cy.byId(answerId('coding2/1', undefined, 'c1')).find('input')
       .eq(0)
       //.should("be.visible") // why it can be seen on the screen but its opacity is 0?
       .should("be.disabled");
@@ -108,13 +109,13 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-g5/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byId("g5q1/1/1c1")
+    cy.byId(answerId('g5q1/1/1', undefined, 'c1'))
       .should("be.visible")
       .should("be.disabled");
-    cy.byId("#g5q1/1/1_other")
+    cy.byId(answerId('g5q1/1/1', '_other'))
       .should("be.visible")
       .should("be.disabled");
-    cy.byId("g5q1/1/1_otherValue")
+    cy.byId(answerId('g5q1/1/1', '_otherValue'))
       .should("be.visible")
       .should("be.disabled");
 
@@ -122,13 +123,13 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-g6/1")
       .should("have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byId("g6q1/1/1c1")
+    cy.byId(answerId('g6q1/1/1', undefined, 'c1'))
       .should("be.visible")
       .should("be.disabled");
-    cy.byId("g6q1/1/1_other")
+    cy.byId(answerId('g6q1/1/1', '_other'))
       .should("be.visible")
       .should("be.disabled");
-    cy.byId("g6q1/1/1_otherValue")
+    cy.byId(answerId('g6q1/1/1', '_otherValue'))
       .should("be.visible")
       .should("be.disabled");
   });
@@ -209,7 +210,7 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-coding1/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byCss("#coding1/1c1 input")
+    cy.byId(answerId('coding1/1', undefined, 'c1')).find('input')
       .eq(0)
       //.should("be.visible") // why it can be seen on the screen but its opacity is 0?
       .should("not.be.disabled");
@@ -218,7 +219,7 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-coding2/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byCss("#coding2/1c1 input")
+    cy.byId(answerId('coding2/1', undefined, 'c1')).find('input')
       .eq(0)
       //.should("be.visible") // why it can be seen on the screen but its opacity is 0?
       .should("not.be.disabled");
@@ -240,13 +241,13 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-g5/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byId("g5q1/1/1c1")
+    cy.byId(answerId('g5q1/1/1', undefined, 'c1'))
       .should("be.visible")
       .should("not.be.disabled");
-    cy.byId("g5q1/1/1_other")
+    cy.byId(answerId('g5q1/1/1', '_other'))
       .should("be.visible")
       .should("not.be.disabled");
-    cy.byId("g5q1/1/1_otherValue")
+    cy.byId(answerId('g5q1/1/1', '_otherValue'))
       .should("be.visible")
       .should("not.be.disabled");
 
@@ -254,13 +255,13 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
     cy.byId("item-g6/1")
       .should("not.have.class", "lhc-item-disabled-protected")
       .should("be.visible");
-    cy.byId("g6q1/1/1c1")
+    cy.byId(answerId('g6q1/1/1', undefined, 'c1'))
       .should("be.visible")
       .should("not.be.disabled");
-    cy.byId("g6q1/1/1_other")
+    cy.byId(answerId('g6q1/1/1', '_other'))
       .should("be.visible")
       .should("not.be.disabled");
-    cy.byId("g6q1/1/1_otherValue")
+    cy.byId(answerId('g6q1/1/1', '_otherValue'))
       .should("be.visible")
       .should("not.be.disabled");
 

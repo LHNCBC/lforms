@@ -35,7 +35,7 @@
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="{'text': otherValue, '_notOnList': true}"
       [(ngModel)]="otherRadioModel"
-      [id]="item._elementId + '_other'"
+      [id]="lhcDataService.getItemAnswerId(item, '_other')"
       class="lhc-answer">
       Other
       <input
@@ -43,7 +43,7 @@
         [ngModel]="otherValue"
         (ngModelChange)="onOtherValueChange($event)"
         class="lhc-answer-other-input"
-        [id]="item._elementId + '_otherValue'"
+        [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
         nz-input
         [disabled]="item._readOnly"
         *ngIf="radioValue && radioValue._notOnList"

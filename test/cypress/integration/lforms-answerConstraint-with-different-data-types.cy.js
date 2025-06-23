@@ -26,7 +26,7 @@ function testAnswerConstraintNullOrOptionsOnly(valueType, params, formData, noAn
 
   describe(valueType, () => {
 
-    let desc = noAnswerConstraint ? 
+    let desc = noAnswerConstraint ?
         'should render a questionnaire with '+valueType+' and no answerConstraint' :
         'should render a questionnaire with '+valueType+' and answerConstraint="optionsOnly"'
     it(desc, function() {
@@ -38,15 +38,15 @@ function testAnswerConstraintNullOrOptionsOnly(valueType, params, formData, noAn
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
       // raidobutoon
@@ -64,15 +64,15 @@ function testAnswerConstraintNullOrOptionsOnly(valueType, params, formData, noAn
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
         // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
 
       // group 4
       // radiobutton, prefix, score
@@ -92,7 +92,7 @@ function testAnswerConstraintNullOrOptionsOnly(valueType, params, formData, noAn
       // autocomplete, repeats, initial
       cy.byId(params.itemIds.g5item2)
         .should('be.visible');
-     
+
       cy.byId(`item-${params.itemIds.g5item2}`)
         .byCss('span.autocomp_selected li')
         .should('have.length', 2)
@@ -104,7 +104,7 @@ function testAnswerConstraintNullOrOptionsOnly(valueType, params, formData, noAn
         .byCss('span.autocomp_selected li')
         .eq(1)
         .should('have.text', '×' + params.itemValues.g1Answer3)
-    
+
       // group 6
       // radiobutton, non-repeats, initial
       cy.byId(params.itemIds.g6item1ans2)
@@ -146,15 +146,15 @@ function testAnswerConstraintOptionsOrString(valueType, params, formData) {
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);    
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
       // radiobutoon
@@ -172,15 +172,15 @@ function testAnswerConstraintOptionsOrString(valueType, params, formData) {
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
         // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .should('be.visible')
         .click();
       cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);  
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);  
+      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
 
       // group 4
       // radiobutton, prefix, score
@@ -211,16 +211,16 @@ function testAnswerConstraintOptionsOrString(valueType, params, formData) {
         .byCss('span.autocomp_selected li')
         .eq(1)
         .should('have.text', '×' + 'user typed value')
-      
+
       // group 6
       // radiobutton, non-repeats, initial
       cy.byId(params.itemIds.g6item1ans2)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer2);
-      
+
       cy.byId(`${params.itemIds.g6item1ans2} input`)
         .should('not.be.checked');
-      cy.byId(`${params.itemIds.g6item1ansOther} input`) 
+      cy.byId(`${params.itemIds.g6item1ansOther} input`)
         .should('be.checked');
       cy.byId(`${params.itemIds.g6item1ansOtherValue}`)
         .should('be.visible')
@@ -237,12 +237,12 @@ function testAnswerConstraintOptionsOrString(valueType, params, formData) {
       cy.byId(params.itemIds.g6item2ans3)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer3);
-      
+
       cy.byId(`${params.itemIds.g6item2ans3} input`)
         .should('not.be.checked');
-      cy.byId(`${params.itemIds.g6item2ansOther} input`) 
+      cy.byId(`${params.itemIds.g6item2ansOther} input`)
         .should('be.checked');
-      cy.byId(`${params.itemIds.g6item2ansOtherValue}`) 
+      cy.byId(`${params.itemIds.g6item2ansOtherValue}`)
         .should('be.visible')
         .should('have.value', "user typed value")
 
@@ -250,21 +250,21 @@ function testAnswerConstraintOptionsOrString(valueType, params, formData) {
       // radiobutton, matrix
       cy.byId(`${params.itemIds.g7item1ans2}`)
         .should('be.checked');
-      cy.byId(`${params.itemIds.g7item2ansOther}`) 
+      cy.byId(`${params.itemIds.g7item2ansOther}`)
         .should('be.checked');
       cy.byId(`${params.itemIds.g7item2ansOtherValue}`)
         .should('be.visible')
         .should('have.value', "user typed value")
-      
+
       // group 8
       // checknbox, matrix
       cy.byId(`${params.itemIds.g8item1ans2}`)
         .should('be.checked');
       cy.byId(`${params.itemIds.g8item1ans3}`)
         .should('be.checked');
-      cy.byId(`${params.itemIds.g8item2ans2}`) 
+      cy.byId(`${params.itemIds.g8item2ans2}`)
         .should('be.checked');
-      cy.byId(`${params.itemIds.g8item2ansOther}`) 
+      cy.byId(`${params.itemIds.g8item2ansOther}`)
         .should('be.checked');
       cy.byId(`${params.itemIds.g8item2ansOtherValue}`)
         .should('be.visible')
@@ -330,7 +330,7 @@ describe('answerConstaint with different types', () => {
         g3Answer3 : 'C. Answer 3 - 3'
       }
     };
-    
+
 
     let qrItemValues = {
       'valueString': {
@@ -359,9 +359,9 @@ describe('answerConstaint with different types', () => {
         g1Answer3 : {"valueCoding": {"code": "c3", "display": "Answer 3"}}
       }
     };
-    
+
     let itemIds = ((valueType, itemValues) => {
-      let coding = (valueType === "valueCoding") 
+      let coding = (valueType === "valueCoding")
 
       return {
         g1item1 : `${valueType}-group1-item1/1/1`,
@@ -371,29 +371,29 @@ describe('answerConstaint with different types', () => {
         g5item1 : `${valueType}-group5-item1/1/1`,
         g5item2 : `${valueType}-group5-item2/1/1`,
 
-        g2item1ans2 : `${valueType}-group2-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g2item2ans2 : `${valueType}-group2-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g4item1ans2 : `${valueType}-group4-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g4item2ans2 : `${valueType}-group4-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g6item1ans1 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-        g6item1ans2 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g6item1ans3 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
-        g6item2ans1 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-        g6item2ans2 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g6item2ans3 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
+        g2item1ans2 : `${valueType}-group2-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g2item2ans2 : `${valueType}-group2-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g4item1ans2 : `${valueType}-group4-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g4item2ans2 : `${valueType}-group4-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g6item1ans1 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
+        g6item1ans2 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g6item1ans3 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
+        g6item2ans1 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
+        g6item2ans2 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g6item2ans3 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
 
         g6item1ansOther : `${valueType}-group6-item1/1/1_other`,
         g6item1ansOtherValue : `${valueType}-group6-item1/1/1_otherValue`,
         g6item2ansOther : `${valueType}-group6-item2/1/1_other`,
         g6item2ansOtherValue : `${valueType}-group6-item2/1/1_otherValue`,
 
-        g7item1ans2 : `${valueType}-group7-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g7item1ans2 : `${valueType}-group7-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
         g7item2ansOther : `${valueType}-group7-item2/1/1_other`,
         g7item2ansOtherValue : `${valueType}-group7-item2/1/1_otherValue`,
 
-        g8item1ans2 : `${valueType}-group8-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g8item1ans3 : `${valueType}-group8-item1/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
-        g8item2ans2 : `${valueType}-group8-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g8item1ans2 : `${valueType}-group8-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+        g8item1ans3 : `${valueType}-group8-item1/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
+        g8item2ans2 : `${valueType}-group8-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
         g8item2ansOther : `${valueType}-group8-item2/1/1_other`,
         g8item2ansOtherValue : `${valueType}-group8-item2/1/1_otherValue`,
       };
@@ -425,5 +425,5 @@ describe('answerConstaint with different types', () => {
 });
 
 
-  
+
 

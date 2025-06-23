@@ -3,6 +3,7 @@ var restrictions_lforms = {
   name: 'restrictions example',
   code: 'c0',
   items: [{
+    linkId: 'q1',
     question: 'Ex Q1',
     questionCode: 'Q1',
     dataType: 'REAL',
@@ -14,6 +15,7 @@ var restrictions_lforms = {
       maxLength: '2'
     }
   },{
+    linkId: 'q2',
     question: 'Ex Q2',
     questionCode: 'Q2',
     dataType: 'ST',
@@ -25,6 +27,7 @@ var restrictions_lforms = {
       maxExclusive: '100'
     }
   },{
+    linkId: 'q3',
     question: 'Ex Q3',
     questionCode: 'Q3',
     dataType: 'REAL',
@@ -38,6 +41,7 @@ var restrictions_fhirQ = {
   name: 'restrictions example',
   code: [{code: 'c0'}],
   item: [{
+    linkId: 'q1',
     text: 'Ex Q1',
     code: [{code: 'Q1', display: 'Ex Q1'}],
     linkId: '/Q1',
@@ -53,6 +57,7 @@ var restrictions_fhirQ = {
       }
     ]
   },{
+    linkId: 'q2',
     text: 'Ex Q2',
     code: [{code: 'Q2', display: 'Ex Q2'}],
     linkId: '/Q2',
@@ -69,6 +74,7 @@ var restrictions_fhirQ = {
       }
     ]
   },{
+    linkId: 'q3',
     text: 'Ex Q3',
     code: [{code: 'Q3', display: 'Ex Q3'}],
     linkId: '/Q3',

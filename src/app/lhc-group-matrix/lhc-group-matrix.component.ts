@@ -199,7 +199,7 @@ export class LhcGroupMatrixComponent {
       subItem._checkboxModels = checkboxModels;
     }
     else {
-      subItem._checkboxModels= new Array(subItem.answers.length).fill(false);
+      subItem._checkboxModels= new Array(subItem.answers?.length).fill(false);
       subItem._answerOtherChecked = false;
       delete subItem._answerOther;
     }

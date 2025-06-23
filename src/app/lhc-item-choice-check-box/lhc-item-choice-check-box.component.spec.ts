@@ -4,6 +4,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box.component';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import { getItemAnswerElem } from '../ng-unit-test-helpers';
 
 
 describe('LhcItemChoiceCheckBoxComponent', () => {
@@ -153,7 +154,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     expect(checkboxes.length).toBe(5)
 
     itemCheckboxCNE.answers.forEach(answer => {
-      const radio = element.querySelector('#' + itemCheckboxCNE._elementId + answer.code)
+      const radio = getItemAnswerElem(element, itemCheckboxCNE, answer)
       expect(radio.textContent).toContain(answer.text)
     })
 
@@ -168,11 +169,11 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     expect(checkboxes.length).toBe(6)
 
     itemCheckboxCWE.answers.forEach(answer => {
-      const radio = element.querySelector('#' + itemCheckboxCWE._elementId + answer.code)
+      const radio = getItemAnswerElem(element, itemCheckboxCWE, answer)
       expect(radio.textContent).toContain(answer.text)
     })
 
-    const radio = element.querySelector('#' + itemCheckboxCWE._elementId + '_other')
+    const radio = getItemAnswerElem(element, itemCheckboxCWE, '_other')
     expect(radio.textContent).toContain('Other')
 
   })
@@ -182,7 +183,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     component.acOptions = acOptions;
     fixture.detectChanges();
 
-    let radio:HTMLElement = element.querySelector('#' + itemCheckboxCNE._elementId + itemCheckboxCNE.answers[0].code)
+    let radio:HTMLElement = getItemAnswerElem(element, itemCheckboxCNE, itemCheckboxCNE.answers[0])
     radio.click();
     expect(component.item.value).toEqual([{
       "code": "c1",
@@ -190,7 +191,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     }])
 
     //item.value should change, when a different checkbox is clicked
-    radio = element.querySelector('#' + itemCheckboxCNE._elementId + itemCheckboxCNE.answers[1].code)
+    radio = getItemAnswerElem(element, itemCheckboxCNE, itemCheckboxCNE.answers[1])
     radio.click();
     expect(component.item.value).toEqual([{
       "code": "c1",
@@ -207,7 +208,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     component.acOptions = acOptions;
     fixture.detectChanges();
 
-    let radio:HTMLElement = element.querySelector('#' + itemCheckboxCWE._elementId + itemCheckboxCWE.answers[2].code)
+    let radio:HTMLElement = getItemAnswerElem(element, itemCheckboxCWE, itemCheckboxCWE.answers[2]);
     radio.click();
     expect(component.item.value).toEqual([{
       "code": "c3",
@@ -215,7 +216,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     }])
 
     //item.value should change, when the "other" checkbox is clicked
-    radio = element.querySelector('#' + itemCheckboxCWE._elementId + '_other')
+    radio = getItemAnswerElem(element, itemCheckboxCWE, '_other')
     radio.click();
     fixture.detectChanges();
     expect(component.item.value).toEqual([{
@@ -226,7 +227,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
       "_notOnList": true
     }])
 
-    let otherInput:HTMLInputElement = element.querySelector('#' + itemCheckboxCWE._elementId + '_otherValue')
+    let otherInput:HTMLInputElement = getItemAnswerElem(element, itemCheckboxCWE, '_otherValue');
     otherInput.value = 'some value';
     otherInput.dispatchEvent(new Event('input'));
     otherInput.dispatchEvent(new KeyboardEvent('keyup', {
@@ -243,8 +244,8 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
       }])
 
 //    })
-
   })
+
 
   it('should have lhc-vertical class with column 1', () => {
     component.item = itemCheckboxCNE;
@@ -254,6 +255,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     expect(containerDiv.classList).toContain('lhc-vertical');
   });
 
+
   it('should not have lhc-vertical class with column 0', () => {
     component.item = itemCheckboxCWE;
     component.acOptions = acOptions;
@@ -261,6 +263,5 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     const containerDiv = element.querySelector('div[nz-row]');
     expect(containerDiv.classList).not.toContain('lhc-vertical');
   });
-
 
 });

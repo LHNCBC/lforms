@@ -137,29 +137,29 @@ describe('load saved user data', () => {
   });
 
   it('should display user value and default answers on CWE typed items when answers are displayed as radio buttons and checkboxes', () => {
-    const cwe1Other = '/cwe-checkbox-user-value/1_other',
-      cwe1OtherValue = '/cwe-checkbox-user-value/1_otherValue',
+    const cwe1Other = '/cwe-checkbox-user-value/1|_other',
+      cwe1OtherValue = '/cwe-checkbox-user-value/1|_otherValue',
 
-      cwe2Ans1 = '/cwe-checkbox-user-value-and-answer-code/1c1',
-      cwe2Other = '/cwe-checkbox-user-value-and-answer-code/1_other',
-      cwe2OtherValue = '/cwe-checkbox-user-value-and-answer-code/1_otherValue',
+      cwe2Ans1 = '/cwe-checkbox-user-value-and-answer-code/1||c1',
+      cwe2Other = '/cwe-checkbox-user-value-and-answer-code/1|_other',
+      cwe2OtherValue = '/cwe-checkbox-user-value-and-answer-code/1|_otherValue',
 
-      cwe3Ans2 = '/cwe-checkbox-user-value-and-answer-text/1c2',
-      cwe3Other = '/cwe-checkbox-user-value-and-answer-text/1_other',
-      cwe3OtherValue = '/cwe-checkbox-user-value-and-answer-text/1_otherValue',
+      cwe3Ans2 = '/cwe-checkbox-user-value-and-answer-text/1||c2',
+      cwe3Other = '/cwe-checkbox-user-value-and-answer-text/1|_other',
+      cwe3OtherValue = '/cwe-checkbox-user-value-and-answer-text/1|_otherValue',
 
-      cwe4Ans3 = '/cwe-checkbox-user-value-and-answer/1c3',
-      cwe4Other = '/cwe-checkbox-user-value-and-answer/1_other',
-      cwe4OtherValue = '/cwe-checkbox-user-value-and-answer/1_otherValue',
+      cwe4Ans3 = '/cwe-checkbox-user-value-and-answer/1||c3',
+      cwe4Other = '/cwe-checkbox-user-value-and-answer/1|_other',
+      cwe4OtherValue = '/cwe-checkbox-user-value-and-answer/1|_otherValue',
 
-      cwe5Other = '/cwe-checkbox-default-answer/1_other',
-      cwe5OtherValue = '/cwe-checkbox-default-answer/1_otherValue',
+      cwe5Other = '/cwe-checkbox-default-answer/1|_other',
+      cwe5OtherValue = '/cwe-checkbox-default-answer/1|_otherValue',
 
-      cwe6Other = '/cwe-radio-user-value/1_other',
-      cwe6OtherValue = '/cwe-radio-user-value/1_otherValue',
+      cwe6Other = '/cwe-radio-user-value/1|_other',
+      cwe6OtherValue = '/cwe-radio-user-value/1|_otherValue',
 
-      cwe7Other = '/cwe-radio-default-answer/1_other',
-      cwe7OtherValue = '/cwe-radio-default-answer/1_otherValue';
+      cwe7Other = '/cwe-radio-default-answer/1|_other',
+      cwe7OtherValue = '/cwe-radio-default-answer/1|_otherValue';
 
     // OTHER in checkbox display with the user value not in the answer list
     cy.byId(cwe1Other).find('input').should('be.checked');
@@ -201,8 +201,8 @@ describe('load saved user data, where hasSavedData is set to true', () => {
     tp.LoadForm.openFormWithUserDataWithHasSavedData();
     cy.byId(ff.q5).should('have.value', '');
     // default answer is not in the answer list,
-    cy.byId('/cwe-checkbox-default-answer/1_other').should('not.be.checked');
-    cy.byId('/cwe-radio-default-answer/1_other').should('not.be.checked');
+    cy.byId('/cwe-checkbox-default-answer/1|_other').should('not.be.checked');
+    cy.byId('/cwe-radio-default-answer/1|_other').should('not.be.checked');
   });
 
 });

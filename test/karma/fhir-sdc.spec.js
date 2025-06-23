@@ -470,6 +470,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should preserve extensions on item._prefix & _text', function (){
             var questionnaire = {
               item: [{
+                linkId: 'a',
                 _prefix: {
                   extension: [{
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
@@ -495,6 +496,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should be compatible with the old externallyDefined extension URL but export the new URL', function (){
             var questionnaire = {
               item: [{
+                linkId: 'a',
                 extension: [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",

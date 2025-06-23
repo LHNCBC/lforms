@@ -61,15 +61,25 @@ Cypress.Commands.add(
   'byId',
   { prevSubject: 'optional' },
   (subject, idSelector) => {
-    const escapedSelector = idSelector.replace(/\//g,"\\/").replace(/\./g,"\\.").replace(/:/g,"\\:");
-    const cySelector = escapedSelector[0] === "#" ? escapedSelector : "#" + escapedSelector;
-    // escape the / in the id
-    if (subject) {
-      return cy.wrap(subject).find(cySelector);
-    }
-    else {
-      return cy.get(cySelector);
-    }
+    // idSelector might be a Promise
+    if (!idSelector.then)
+      idSelector = Promise.resolve(idSelector);
+    idSelector.then(idSelVal=> {
+      // escape / and | in the id
+
+//cy.log("typeof isSelVal = "+typeof isSelVal);
+//cy.log("isSelVal = "+isSelVal);
+      const escapedSelector =
+        idSelVal.replace(/\//g,"\\/").replace(/\./g,"\\.").replace(/:/g,"\\:")
+          .replace(/\|/g, '\\|').replace(/%/g, '\\%');
+      const cySelector = escapedSelector[0] === "#" ? escapedSelector : "#" + escapedSelector;
+      if (subject) {
+        return cy.wrap(subject).find(cySelector);
+      }
+      else {
+        return cy.get(cySelector);
+      }
+    });
   }
 );
 

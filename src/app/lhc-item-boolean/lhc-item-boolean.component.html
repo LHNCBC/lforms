@@ -12,7 +12,7 @@
       [disabled]="item._readOnly"
       [nzValue]="true"
       [(ngModel)]="booleanModels[0]"
-      [id]="item._elementId + 'true'"
+      [id]="lhcDataService.getItemAnswerId(item, 'true')"
       >Yes</label>
     <label
       nz-radio
@@ -20,7 +20,7 @@
       [disabled]="item._readOnly"
       [nzValue]="false"
       [(ngModel)]="booleanModels[1]"
-      [id]="item._elementId + 'false'"
+      [id]="lhcDataService.getItemAnswerId(item, 'false')"
       >No</label>
     <label
       nz-radio
@@ -28,7 +28,7 @@
       [disabled]="item._readOnly"
       [nzValue]="null"
       [(ngModel)]="booleanModels[2]"
-      [id]="item._elementId + 'null'"
+      [id]="lhcDataService.getItemAnswerId(item, 'null')"
       >Not Answered</label>
   </nz-radio-group>
 </ng-container>

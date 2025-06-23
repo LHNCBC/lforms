@@ -70,7 +70,7 @@
                 <input
                   type="checkbox"
                   [disabled]="item._readOnly"
-                  id="{{subItem._elementId + '_other'}}"
+                  id="{{lhcDataService.getItemAnswerId(subItem, '_other')}}"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
@@ -81,7 +81,7 @@
                 <input
                   type="text"
                   [disabled]="item._readOnly"
-                  id="{{subItem._elementId + '_otherValue'}}"
+                  id="{{lhcDataService.getItemAnswerId(subItem, '_otherValue')}}"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
@@ -95,7 +95,7 @@
                 <input
                   type="radio"
                   [disabled]="item._readOnly"
-                  id="{{subItem._elementId + '_other'}}"
+                  id="{{lhcDataService.getItemAnswerId(subItem, '_other')}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
                   [value]="true"
@@ -107,7 +107,7 @@
                 <input
                   type="text"
                   [disabled]="item._readOnly"
-                  id="{{subItem._elementId + '_otherValue'}}"
+                  id="{{lhcDataService.getItemAnswerId(subItem, '_otherValue')}}"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"

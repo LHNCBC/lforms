@@ -11,7 +11,6 @@ let fhirVersions = Object.keys(FHIRSupport);
 const po = new AddFormToPageTestPage();
 
 function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionInFile) {
-  // valueString
   describe(fhirVersion + " - " + valueType, () => {
 
     it('should render a questionnaire with '+valueType+' in answerOption', function() {
@@ -34,7 +33,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
-      // raidobutoon
+      // raido button
       cy.byId(params.itemIds.g2item1ans2)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer2);
@@ -543,16 +542,16 @@ describe('AnswerOption with different types', () => {
           g5item1 : `${valueType}-group5-item1/1/1`,
           g5item2 : `${valueType}-group5-item2/1/1`,
 
-          g2item1ans2 : `${valueType}-group2-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g2item2ans2 : `${valueType}-group2-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g4item1ans2 : `${valueType}-group4-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g4item2ans2 : `${valueType}-group4-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item1ans1 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-          g6item1ans2 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item1ans3 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
-          g6item2ans1 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-          g6item2ans2 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item2ans3 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`
+          g2item1ans2 : `${valueType}-group2-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g2item2ans2 : `${valueType}-group2-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g4item1ans2 : `${valueType}-group4-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g4item2ans2 : `${valueType}-group4-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g6item1ans1 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
+          g6item1ans2 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g6item1ans3 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
+          g6item2ans1 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
+          g6item2ans2 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g6item2ans3 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`
         };
       });
 

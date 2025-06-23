@@ -1,5 +1,6 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
 import * as util from "../support/util";
+const answerId = util.answerId;
 
 describe('Visual effect tests', () => {
   const tp: TestPage = new TestPage();
@@ -172,48 +173,48 @@ describe('Visual effect tests', () => {
         .should('have.attr', 'name', 'radiogroup_/type1/1')
         .parent()
         .parent()
-        .should('have.attr', 'id', '/type1/1null')
+        .should('have.attr', 'id', answerId('/type1/1', 'null'))
       // move to radio 'No'
       cy.realPress('{leftarrow}');
       cy.focused()
         .should('have.attr', 'name', 'radiogroup_/type1/1')
         .parent()
         .parent()
-        .should('have.attr', 'id', '/type1/1false')
+        .should('have.attr', 'id', answerId('/type1/1', 'false'))
       // move to radio 'Yes'
       cy.realPress('{leftarrow}');
       cy.focused()
         .should('have.attr', 'name', 'radiogroup_/type1/1')
         .parent()
         .parent()
-        .should('have.attr', 'id', '/type1/1true')
+        .should('have.attr', 'id', answerId('/type1/1', 'true'))
       // back to radio 'No'
       cy.realPress('{rightarrow}');
       cy.focused()
         .should('have.attr', 'name', 'radiogroup_/type1/1')
         .parent()
         .parent()
-        .should('have.attr', 'id', '/type1/1false');
+        .should('have.attr', 'id', answerId('/type1/1', 'false'));
 
       // go to next question
-      cy.byId('/type1/1false')
+      cy.byId(answerId('/type1/1', 'false'))
       // move to radio 'Not Answered'
       cy.realPress("Tab");
       cy.focused()
         .should('have.attr', 'name', 'radiogroup_/type1b/1')
         .parent()
         .parent()
-        .should('have.attr', 'id', '/type1b/1null');
+        .should('have.attr', 'id', answerId('/type1b/1', 'null'));
       // move to radio 'No'
       cy.realPress('{leftarrow}');
       cy.focused()
         .should('have.attr', 'name', 'radiogroup_/type1b/1')
         .parent()
         .parent()
-        .should('have.attr', 'id', '/type1b/1false');
+        .should('have.attr', 'id', answerId('/type1b/1', 'false'));
 
       // go to next question
-      cy.byId('/type1b/1false')
+      cy.byId(answerId('/type1b/1', 'false'))
       cy.realPress("Tab");
       cy.realPress("Tab");
       cy.realPress("Tab");

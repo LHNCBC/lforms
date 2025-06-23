@@ -1,5 +1,7 @@
 // General utility functions for the Cypress tests
 
+import {InternalUtil} from "../../../src/lib/lforms/internal-utils.js";
+
 /**
  *  Goes to addFormToPageTest.html
  */
@@ -47,7 +49,6 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
  *  & prepoulate)
  */
 export function addFormDataToPage(formDefData, container, options) {
-
   return cy.window().then((win) => {
     win.document.getElementById(container).innerHTML = null;
     return new Cypress.Promise((resolve) => {
@@ -86,3 +87,19 @@ export function setFHIRVersion(version) {
   let fhirVersionField = cy.get('#fhirVersion');
   fhirVersionField.select(version);
 }
+
+
+/**
+ *  Constructs and returns the HTML ID of an answer element (e.g., a radio button
+ *  option).
+ * @param elementId the _elementId of the item that has that answer.
+ * @param systemOrOther either the system string for a coded answer, or a string
+ *  to include for an "other" answer element.  (Generally, two such HTML IDs
+ *  with different strings are constructed for an "other" option.)
+ * @param code For a coded answer element, the code value.
+ */
+export function answerId(elementId, systemOrOther, code) {
+  return code ? InternalUtil.getItemAnswerId({_elementId: elementId}, {system: systemOrOther, code}) :
+    InternalUtil.getItemAnswerId({_elementId: elementId}, systemOrOther);
+}
+

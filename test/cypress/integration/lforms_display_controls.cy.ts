@@ -16,17 +16,17 @@ describe('display controls demo', () => {
     tp.LoadForm.openDisplayControlsDemo();
 
     // tslint:disable-next-line:one-variable-per-declaration
-    const item1answer1 = '/q1a/1c1',
-      item1answer3 = '/q1a/1c3',
-      item2answer1 = '/q1b/1c1',
-      item2Other = '/q1b/1_other',
-      item2OtherValue = '/q1b/1_otherValue',
+    const item1answer1 = '/q1a/1||c1',
+      item1answer3 = '/q1a/1||c3',
+      item2answer1 = '/q1b/1||c1',
+      item2Other = '/q1b/1|_other',
+      item2OtherValue = '/q1b/1|_otherValue',
 
       item3answer1 = '/q1c/1c1',
       item3answer3 = '/q1c/1c3',
       item4answer1 = '/q1d/1c1',
-      item4Other = '/q1d/1_other',
-      item4OtherValue = '/q1d/1_otherValue';
+      item4Other = '/q1d/1|_other',
+      item4OtherValue = '/q1d/1|_otherValue';
 
     cy.byId(item1answer1).should('be.visible');
     cy.byId(item4answer1).should('be.visible');
@@ -191,10 +191,10 @@ describe('display controls demo', () => {
   it('section matrix works', () => {
     tp.LoadForm.openDisplayControlsDemo();
 
-    const item1answer1 = '/g4/g1m1/1/1c1',
-      item1answer2 = '/g4/g1m1/1/1c2',
-      item2answer1 = '/g4/g1m2/1/1c1',
-      item2answer3 = '/g4/g1m2/1/1c3';
+    const item1answer1 = '/g4/g1m1/1/1||c1',
+      item1answer2 = '/g4/g1m1/1/1||c2',
+      item2answer1 = '/g4/g1m2/1/1||c1',
+      item2answer3 = '/g4/g1m2/1/1||c3';
 
     cy.byId(item1answer1).should('exist');
     // first row in matrix

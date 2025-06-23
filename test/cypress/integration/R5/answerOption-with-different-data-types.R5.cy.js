@@ -1,5 +1,6 @@
 import { AddFormToPageTestPage } from "../../support/addFormToPageTest.po";
 import * as util from "../../support/util";
+const answerId = util.answerId;
 
 let fhirVersions = ["R5"];
 const po = new AddFormToPageTestPage();
@@ -113,16 +114,17 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
           .should('contain',params.itemValues.g1Answer2);
       // for optionsOrString, the initial value is free text
       if (answerConstraint === "optionsOrString") {
-        cy.byId(`${params.itemIds.g6item1ans2} input`)
+        cy.byId(params.itemIds.g6item1ans2).find('input')
           .should('not.be.checked');
-        cy.byId(`${valueType}-group6-item1/1/1_other input`)
+        cy.byId(answerId(`${valueType}-group6-item1/1/1`, '_other'))
+          .find('input')
           .should('be.checked');
-        cy.byId(`${valueType}-group6-item1/1/1_otherValue`)
+        cy.byId(answerId(`${valueType}-group6-item1/1/1`, '_otherValue'))
           .should('be.visible')
           .should('have.value', "user typed value")
       }
       else {
-        cy.byId(`${params.itemIds.g6item1ans2} input`)
+        cy.byId(params.itemIds.g6item1ans2).find('input')
           .should('be.checked');
       }
 
@@ -130,20 +132,20 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
       cy.byId(params.itemIds.g6item2ans2)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer2);
-      cy.byId(`${params.itemIds.g6item2ans1} input`)
+      cy.byId(params.itemIds.g6item2ans1).find('input')
         .should('not.be.checked');
-      cy.byId(`${params.itemIds.g6item2ans2} input`)
+      cy.byId(params.itemIds.g6item2ans2).find('input')
         .should('be.checked')
       cy.byId(params.itemIds.g6item2ans3)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer3);
 
       if (answerConstraint === "optionsOrString") {
-        cy.byId(`${params.itemIds.g6item2ans3} input`)
+        cy.byId(params.itemIds.g6item2ans3).find('input')
           .should('not.be.checked');
-        cy.byId(`${valueType}-group6-item2/1/1_other input`)
+        cy.byId(answerId(`${valueType}-group6-item2/1/1`, '_other')).find('input')
           .should('be.checked');
-        cy.byId(`${valueType}-group6-item2/1/1_otherValue`)
+        cy.byId(answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))
           .should('be.visible')
           .should('have.value', "user typed value")
       }
@@ -342,9 +344,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
             if (answerConstraint === "optionsOrString") {
             cy.byId(`${params.itemIds.g6item1ans2} input`)
               .should('not.be.checked');
-            cy.byId(`${valueType}-group6-item1/1/1_other input`)
+            cy.byId(answerId(`${valueType}-group6-item1/1/1`, '_other')).find('input')
               .should('be.checked');
-            cy.byId(`${valueType}-group6-item1/1/1_otherValue`)
+            cy.byId(answerId(`${valueType}-group6-item1/1/1`, '_otherValue'))
               .should('be.visible')
               .should('have.value', "user typed value")
           }
@@ -361,9 +363,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, answerConstr
           if (answerConstraint === "optionsOrString") {
             cy.byId(`${params.itemIds.g6item2ans3} input`)
               .should('not.be.checked');
-            cy.byId(`${valueType}-group6-item2/1/1_other input`)
+            cy.byId(answerId(`${valueType}-group6-item2/1/1`, '_other')).find('input')
               .should('be.checked');
-            cy.byId(`${valueType}-group6-item2/1/1_otherValue`)
+            cy.byId(answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))
               .should('be.visible')
               .should('have.value', "user typed value")
           }
@@ -480,16 +482,26 @@ describe('AnswerOption with different types', () => {
           g5item1 : `${valueType}-group5-item1/1/1`,
           g5item2 : `${valueType}-group5-item2/1/1`,
 
-          g2item1ans2 : `${valueType}-group2-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g2item2ans2 : `${valueType}-group2-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g4item1ans2 : `${valueType}-group4-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g4item2ans2 : `${valueType}-group4-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item1ans1 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-          g6item1ans2 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item1ans3 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
-          g6item2ans1 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-          g6item2ans2 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item2ans3 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`
+          g2item1ans2 : answerId(`${valueType}-group2-item1/1/1`, undefined,
+            `${coding? itemValues.g1Code2 : itemValues.g1Answer2}`),
+          g2item2ans2 : answerId(`${valueType}-group2-item2/1/1`, undefined,
+            `${coding? itemValues.g1Code2 : itemValues.g1Answer2}`),
+          g4item1ans2 : answerId(`${valueType}-group4-item1/1/1`, undefined,
+            `${coding? itemValues.g1Code2 : itemValues.g1Answer2}`),
+          g4item2ans2 : answerId(`${valueType}-group4-item2/1/1`, undefined,
+            `${coding? itemValues.g1Code2 : itemValues.g1Answer2}`),
+          g6item1ans1 : answerId(`${valueType}-group6-item1/1/1`, undefined,
+            `${coding? itemValues.g1Code1 : itemValues.g1Answer1}`),
+          g6item1ans2 : answerId(`${valueType}-group6-item1/1/1`, undefined,
+            `${coding? itemValues.g1Code2 : itemValues.g1Answer2}`),
+          g6item1ans3 : answerId(`${valueType}-group6-item1/1/1`, undefined,
+            `${coding? itemValues.g1Code3 : itemValues.g1Answer3}`),
+          g6item2ans1 : answerId(`${valueType}-group6-item2/1/1`, undefined,
+            `${coding? itemValues.g1Code1 : itemValues.g1Answer1}`),
+          g6item2ans2 : answerId(`${valueType}-group6-item2/1/1`, undefined,
+            `${coding? itemValues.g1Code2 : itemValues.g1Answer2}`),
+          g6item2ans3 : answerId(`${valueType}-group6-item2/1/1`, undefined,
+            `${coding? itemValues.g1Code3 : itemValues.g1Answer3}`)
         };
       });
 

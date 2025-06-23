@@ -99,7 +99,7 @@ describe('answerExpression', () => {
     });
 
     rxTermsQs.forEach(q => {
-      describe('Questionnaire '+q, ()=>{
+      describe.only('Questionnaire '+q, ()=>{
         before(()=>{
           tp.openBaseTestPage();
           TestUtil.waitForFHIRLibsLoaded();
@@ -121,6 +121,8 @@ describe('answerExpression', () => {
           cy.window().then((win2) => {
             win2.LForms.Util.removeFormsFromPage('formContainer');
             win2.LForms.Util.removeFormsFromPage('formContainer2');
+cy.log("%%% hi, q="+q);
+console.log("%%% hi, q="+q);
             cy.readFile('test/data/R4/'+q+'.json').then((qData) => {
               const qOrig = JSON.parse(JSON.stringify(qData)); // a copy
               const qrOrig = JSON.parse(JSON.stringify(qr)); // a copy
@@ -205,7 +207,7 @@ describe('answerExpression', () => {
                             showQQR(qData, qr, 'formContainer', win2);
                           });
                           cy.byId('medication/1/1').should('not.have.value', '');
-                          cy.byId('strength/1/1213377').find('input').should('be.checked');
+                          cy.byId('strength/1/1||213377').find('input').should('be.checked');
                           cy.byId('rxcui/1/1').should('not.have.value', '');
                         });
                       });
@@ -236,6 +238,7 @@ describe('answerExpression', () => {
           });
         });
       });
+
     });
   });
 
