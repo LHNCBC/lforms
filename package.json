@@ -61,7 +61,7 @@
     "@angular/router": "^19.1.5",
     "@lhncbc/ucum-lhc": "^5.0.3",
     "@types/jquery": "^3.5.29",
-    "autocomplete-lhc": "^19.3.1",
+    "autocomplete-lhc": "^20.0.0",
     "deep-equal": "^2.2.3",
     "fast-copy": "^3.0.1",
     "fhirpath": "^3.18.0",
