@@ -287,7 +287,7 @@ describe('formdata: ', () => {
     it('should style the heading items', () => {
       tp.LoadForm.openFullFeaturedForm();
       cy.byId('/listWHeaders/1').click();
-      cy.get('#searchResults li').eq(0).should('have.class', 'heading');
+      cy.get('#lhc-tools-searchResults li').eq(0).should('have.class', 'heading');
     });
   });
 

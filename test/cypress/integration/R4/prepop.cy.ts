@@ -185,7 +185,7 @@ describe('Form pre-population', () => {
       cy.byId('p1.2/1/1').should('be.visible');
       cy.byId('p1.2/1/1').should('have.value','');
       cy.byId('p1.2/1/1').click()
-      cy.get('#searchResults li').should('have.length', 4);
+      cy.get('#lhc-tools-searchResults li').should('have.length', 4);
 
       cy.byId('p3.1.14/1').should('be.visible');
 

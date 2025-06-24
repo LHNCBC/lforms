@@ -141,7 +141,7 @@ export class TestPage {
     raceField: '#/54126-8/54134-2/1/1',
     eyeField: '#/9267-6/1',
     scoreField: '#/9269-2/1',
-    searchResults: '#searchResults'
+    searchResults: '#lhc-tools-searchResults'
     // searchResult: this.autoCompHelpers.searchResult, //TODO, probably not working with cypress
     // helpers: this.autoCompHelpers,
     // TODO rewrite in cypress
@@ -188,7 +188,7 @@ export class TestPage {
     dcTarget1: '#/dataControlExamples/controlledItem_LIST/1/1',
     dcTarget2: '#/dataControlExamples/controlledItem_TEXT/1/1',
 
-    searchResults: '#searchResults',
+    searchResults: '#lhc-tools-searchResults',
 
     cneTriggerSrc1: '#/54139-1-cnesrc-1/1',
     dobIfLivingYes: '#/54139-1-cnesrc-1/54124-3/1/1 input',
