@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.20.1] 2025-06-20
+### Changed
+- Update autocomplete-lhc version and use new ID lhc-tools-searchResults
+  in tests.
+
+## [36.20.0] 2025-06-13
+### Added
+- Show an error message under the field if the answerValueSet expansion fails.
+
 ## [36.19.2] 2025-06-11
 ### Fixed
 - A boolean field was not updating in UI according to calculated expression.

@@ -10,7 +10,7 @@ export class AddFormToPageTestPage {
   tp = new TestPage();
   // Fields on the RxTerms Demo form
   rxDrugNameField = this.rxtermsForm.drugName;
-  searchResults = element(by.id('searchResults'));
+  searchResults = element(by.id('lhc-tools-searchResults'));
 
   // Fields on the "full featured" form
   ffDrugNameFieldID = '/dataControlExamples/itemWithExtraData/1/1';
