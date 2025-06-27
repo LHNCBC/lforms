@@ -96,7 +96,7 @@ export default class LhcFormData {
     // whether to hide indentation before each item
     hideIndentation: false,
     // whether to hide repetition numbers next to the item's text
-    hideRepetitionNumber: false,
+    hideRepetitionNumber: true,
     // whether to display score along with text when there scores in answers
     displayScoreWithAnswerText: true,
     // whether to show the filtered html content from the rendering-xhtml extension
