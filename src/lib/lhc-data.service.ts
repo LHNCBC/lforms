@@ -330,32 +330,38 @@ export class LhcDataService {
 
   /**
    * Get CSS classes for the tree line
+   * @param isTopLevelItem whether it's a top level item
    * @returns {string}
    */
-  getTreeLineClass() {
+  getTreeLineClass(isTopLevelItem = false) {
+    if (isTopLevelItem) {
+      return '';
+    }
     const templateOptions = this.getLhcFormData().templateOptions;
     return templateOptions.hideTreeLine || templateOptions.hideIndentation ? '' : 'lhc-tree-line';
   }
 
   /**
    * Get CSS classes for the indentation
+   * @param isTopLevelItem whether it's a top level item
    * @returns {string}
    */
-  getIndentationClass() {
-    return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
+  getIndentationClass(isTopLevelItem = false) {
+    return isTopLevelItem || this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
   }
 
   /**
    * get CSS class list for an item
    * @param item an item in a form
    * @param viewMode view mode of the item
+   * @param isTopLevelItem whether item is a top level item
    */
-  getItemClassList(item, viewMode) {
+  getItemClassList(item, viewMode, isTopLevelItem = false) {
     const classList = [
       'lhc-item',
       this.getItemViewModeClass(item, viewMode),
-      this.getTreeLineClass(),
-      this.getIndentationClass(),
+      this.getTreeLineClass(isTopLevelItem),
+      this.getIndentationClass(isTopLevelItem),
       this.getSiblingStatus(item),
       this.getRowClass(item),
       this.getActiveRowClass(item)
