@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [36.20.2] 2025-06-30
+### Fixed
+- Fixed a bug that the matrix layout ('table' in itemControl extension) 
+  does not always display answers loaded from answerValueSet.
+  
 ## [36.20.1] 2025-06-20
 ### Changed
 - Update autocomplete-lhc version and use new ID lhc-tools-searchResults
