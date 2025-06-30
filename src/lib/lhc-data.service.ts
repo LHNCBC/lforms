@@ -338,7 +338,14 @@ export class LhcDataService {
       return '';
     }
     const templateOptions = this.getLhcFormData().templateOptions;
-    return templateOptions.hideTreeLine || templateOptions.hideIndentation ? '' : 'lhc-tree-line';
+    if (templateOptions.hideIndentation ||
+      templateOptions.hideTreeLine === 'true' ||
+      templateOptions.hideTreeLine === true ||
+      (templateOptions.hideTreeLine === 'auto' && this.getLhcFormData()._levelsOfHierarchy <= 3)) {
+      return '';
+    } else {
+      return 'lhc-tree-line';
+    }
   }
 
   /**

@@ -59,6 +59,11 @@ export default class LhcFormData {
   // active item, where a input field in the row has the focus
   _activeItem = null;
 
+  // How many levels deep the form is.
+  _levelsOfHierarchy = 2;
+  // Level of hierarchy base number on lform level.
+  _levelOfHierarchy = 2;
+
   // default template options
   _defaultTemplateOptions = {
     // whether question code is displayed next to the question
@@ -92,7 +97,7 @@ export default class LhcFormData {
       }
     },
     // whether to hide tree line styles
-    hideTreeLine: false,
+    hideTreeLine: 'auto',
     // whether to hide indentation before each item
     hideIndentation: false,
     // whether to hide repetition numbers next to the item's text
@@ -465,6 +470,7 @@ export default class LhcFormData {
     LhcFormUtils.initializeCodes(this);
     // update internal status
     this._repeatableItems = {};
+    this._levelOfHierarchy = 2;
     this._setTreeNodes(this.items, this);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateItemDisabledDisplayStatus(this.items);
@@ -1307,6 +1313,10 @@ export default class LhcFormData {
 
       // process the sub items
       if (item.items && item.items.length > 0) {
+        item._levelOfHierarchy = parentItem._levelOfHierarchy + 1;
+        if (item._levelOfHierarchy > this._levelsOfHierarchy) {
+          this._levelsOfHierarchy = item._levelOfHierarchy;
+        }
         this._setTreeNodes(item.items, item);
       }
 
