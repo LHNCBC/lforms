@@ -60,7 +60,7 @@ describe('Tests of addFormToPage test page', function() {
   });
 
 
-  it.only('should be able to display a very nested form', function() {
+  it('should be able to display a very nested form', function() {
     util.addFormToPage('very-nested-form.json');
     cy.get('#formContainer').should('contain', 'NestedQ');
     // Make sure the error message div is blank
