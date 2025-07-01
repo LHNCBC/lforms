@@ -99,7 +99,7 @@ describe('answerExpression', () => {
     });
 
     rxTermsQs.forEach(q => {
-      describe.only('Questionnaire '+q, ()=>{
+      describe('Questionnaire '+q, ()=>{
         before(()=>{
           tp.openBaseTestPage();
           TestUtil.waitForFHIRLibsLoaded();
@@ -121,8 +121,6 @@ describe('answerExpression', () => {
           cy.window().then((win2) => {
             win2.LForms.Util.removeFormsFromPage('formContainer');
             win2.LForms.Util.removeFormsFromPage('formContainer2');
-cy.log("%%% hi, q="+q);
-console.log("%%% hi, q="+q);
             cy.readFile('test/data/R4/'+q+'.json').then((qData) => {
               const qOrig = JSON.parse(JSON.stringify(qData)); // a copy
               const qrOrig = JSON.parse(JSON.stringify(qr)); // a copy
