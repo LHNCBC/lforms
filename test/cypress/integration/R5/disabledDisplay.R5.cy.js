@@ -13,7 +13,7 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
 
   it('items should be displayed and disabled when enableWhen returns false', function() {
     // click on source item and select No
-    cy.byId("s1/1false").click();
+    cy.byId(answerId("s1/1", "false")).click();
 
     // check items with disabledDisplay = 'protected'
     // string question
@@ -145,7 +145,7 @@ describe('item.disabledDisplay is "protected" or its inherited disabledDisplay v
 
   it('items should be displayed and enabled when enableWhen returns true', function() {
     // click on source item and select Yes
-    cy.byId("s1/1true").click();
+    cy.byId(answerId('s1/1', 'true')).click();
 
     // check items with disabledDisplay = 'protected'
     // string question

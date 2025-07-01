@@ -139,6 +139,12 @@ describe('Form pre-population', () => {
         });
 
         it('should convert values from observationLinkPeriod', () => {
+          // The previous tests used the same form, which I think might be have
+          // been the cause of this test failing.  (Perhaps the form didn't
+          // reload?  I can't reproduce that by hand, though the test form used
+          // to have that issue.)) Switching to a new form temporarily as below allows the
+          // test to pass.
+          tp.loadFromTestData('multipleCodes.json', 'R4');
           setServerFHIRContext(serverFHIRNum, {
             value: 140,
             unit: '[lb_av]',
@@ -189,7 +195,7 @@ describe('Form pre-population', () => {
   describe('enableWhen and initialExpression', ()=>{
     it('enableWhen should work on the answer lists populated by initialExpression', ()=>{
       cy.visit('test/pages/addFormToPageTest.html');
-      
+
       util.addFormToPage('expression-on-data-from-prepopulation.json', null, {fhirVersion: 'R4'});
 
       cy.byId('p1.1/1/1').should('have.value','Interventional')
@@ -199,7 +205,7 @@ describe('Form pre-population', () => {
       cy.get('#searchResults li').should('have.length', 4);
 
       cy.byId('p3.1.14/1').should('be.visible');
-      
+
     });
   });
 });

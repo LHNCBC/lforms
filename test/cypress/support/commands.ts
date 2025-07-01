@@ -61,16 +61,17 @@ Cypress.Commands.add(
   'byId',
   { prevSubject: 'optional' },
   (subject, idSelector) => {
-    // idSelector might be a Promise
-    if (!idSelector.then)
+    // idSelector might be a Promise-- maybe not needed?  Seems to be causing some issue
+/*    if (!idSelector.then)
       idSelector = Promise.resolve(idSelector);
     idSelector.then(idSelVal=> {
+    */
       // escape / and | in the id
 
 //cy.log("typeof isSelVal = "+typeof isSelVal);
 //cy.log("isSelVal = "+isSelVal);
       const escapedSelector =
-        idSelVal.replace(/\//g,"\\/").replace(/\./g,"\\.").replace(/:/g,"\\:")
+        idSelector.replace(/\//g,"\\/").replace(/\./g,"\\.").replace(/:/g,"\\:")
           .replace(/\|/g, '\\|').replace(/%/g, '\\%');
       const cySelector = escapedSelector[0] === "#" ? escapedSelector : "#" + escapedSelector;
       if (subject) {
@@ -79,7 +80,7 @@ Cypress.Commands.add(
       else {
         return cy.get(cySelector);
       }
-    });
+ //   });
   }
 );
 

@@ -2,6 +2,7 @@ import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 const po = new AddFormToPageTestPage();
 const lfDataTypes = ["ST", "INT", "DT", "TM", "CODING"];
+const answerId = util.answerId;
 
 // function resetAnswerConstraint(formDataOrItem, ansConstraint) {
 //   if (formDataOrItem && formDataOrItem.items) {
@@ -382,20 +383,20 @@ describe('answerConstaint with different types', () => {
         g6item2ans2 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
         g6item2ans3 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
 
-        g6item1ansOther : `${valueType}-group6-item1/1/1_other`,
-        g6item1ansOtherValue : `${valueType}-group6-item1/1/1_otherValue`,
-        g6item2ansOther : `${valueType}-group6-item2/1/1_other`,
-        g6item2ansOtherValue : `${valueType}-group6-item2/1/1_otherValue`,
+        g6item1ansOther : answerId(`${valueType}-group6-item1/1/1`, '_other'),
+        g6item1ansOtherValue : answerId(`${valueType}-group6-item1/1/1`, '_otherValue'),
+        g6item2ansOther : answerId(`${valueType}-group6-item2/1/1`, '_other'),
+        g6item2ansOtherValue : answerId(`${valueType}-group6-item2/1/1`, '_otherValue'),
 
         g7item1ans2 : `${valueType}-group7-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g7item2ansOther : `${valueType}-group7-item2/1/1_other`,
-        g7item2ansOtherValue : `${valueType}-group7-item2/1/1_otherValue`,
+        g7item2ansOther : answerId(`${valueType}-group7-item2/1/1`, '_other'),
+        g7item2ansOtherValue : answerId(`${valueType}-group7-item2/1/1`, '_otherValue'),
 
         g8item1ans2 : `${valueType}-group8-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
         g8item1ans3 : `${valueType}-group8-item1/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
         g8item2ans2 : `${valueType}-group8-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-        g8item2ansOther : `${valueType}-group8-item2/1/1_other`,
-        g8item2ansOtherValue : `${valueType}-group8-item2/1/1_otherValue`,
+        g8item2ansOther : answerId(`${valueType}-group8-item2/1/1`, '_other'),
+        g8item2ansOtherValue : answerId(`${valueType}-group8-item2/1/1`, '_otherValue'),
       };
     });
 
