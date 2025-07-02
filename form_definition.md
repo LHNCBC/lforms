@@ -124,7 +124,7 @@ about the meaning of each key:
     * hideIndentation - a boolean that controls whether to hide indentation. The default is false.
       Note that if this is set true, tree line style will not apply regardless of "hideTreeLine" setting.
     * hideRepetitionNumber - a boolean that controls whether to hide repetition numbers next to the
-      item's text. The default is false.
+      item's text. The default is true.
     * displayScoreWithAnswerText  - a boolean that controls whether to display scores along 
       with answer texts for answers that have scores. The default is true.
     * displayInvalidHTML - a boolean that controls whether to show the escaped html content 

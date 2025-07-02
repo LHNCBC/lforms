@@ -17,7 +17,7 @@
     "valueExpression" : {
       "name": "n1Exists",
       "language": "text/fhirpath",
-      "expression": "%resource.item.where(linkId='n1').answer.value.exists()"
+      "expression": "%resource.item[0].item.where(linkId='n1').answer.value.exists()"
     }
   },
   {
@@ -25,7 +25,7 @@
     "valueExpression" : {
       "name": "n2Exists",
       "language": "text/fhirpath",
-      "expression": "%resource.item.where(linkId='n2').answer.value.exists()"
+      "expression": "%resource.item[0].item.where(linkId='n2').answer.value.exists()"
     }
   },
   {
@@ -33,7 +33,7 @@
     "valueExpression" : {
       "name": "n3Exists",
       "language": "text/fhirpath",
-      "expression": "%resource.item.where(linkId='n3').answer.value.exists()"
+      "expression": "%resource.item[0].item.where(linkId='n3').answer.value.exists()"
     }
   },
   {
@@ -41,7 +41,7 @@
     "valueExpression" : {
       "name": "n1Val",
       "language": "text/fhirpath",
-      "expression": "iif(%n1Exists, %resource.item.where(linkId='n1').answer.value, 0)"
+      "expression": "iif(%n1Exists, %resource.item[0].item.where(linkId='n1').answer.value, 0)"
     }
   },
   {
@@ -49,7 +49,7 @@
     "valueExpression" : {
       "name": "n2Val",
       "language": "text/fhirpath",
-      "expression": "iif(%n2Exists, %resource.item.where(linkId='n2').answer.value, 0)"
+      "expression": "iif(%n2Exists, %resource.item[0].item.where(linkId='n2').answer.value, 0)"
     }
   },
   {
@@ -57,45 +57,52 @@
     "valueExpression" : {
       "name": "n3Val",
       "language": "text/fhirpath",
-      "expression": "iif(%n3Exists, %resource.item.where(linkId='n3').answer.value, 0)"
+      "expression": "iif(%n3Exists, %resource.item[0].item.where(linkId='n3').answer.value, 0)"
     }
   }],
   "item": [
     {
-      "type": "display",
-      "linkId": "instructions",
-      "text": "Enter numbers totaling 5 or more to show a fourth question"
-    },
-    {
-      "type": "decimal",
-      "required": false,
-      "linkId": "n1",
-      "text": "First number"
-    },
-    {
-      "type": "decimal",
-      "required": false,
-      "linkId": "n2",
-      "text": "Second number"
-    },
-    {
-      "type": "decimal",
-      "required": false,
-      "linkId": "n3",
-      "text": "Third number"
-    },
-    {
-      "type": "string",
-      "required": false,
-      "linkId": "q4",
-      "text": "Fourth question, controlled by enableWhenExpression",
-      "extension": [{
-        "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
-        "valueExpression" : {
-          "language": "text/fhirpath",
-          "expression": "%n1Val + %n2Val + %n3Val >= 5"
+      "type": "group",
+      "linkId": "middleGroup",
+      "text": "Middle level group so that tree line can be shown",
+      "item": [
+        {
+          "type": "display",
+          "linkId": "instructions",
+          "text": "Enter numbers totaling 5 or more to show a fourth question"
+        },
+        {
+          "type": "decimal",
+          "required": false,
+          "linkId": "n1",
+          "text": "First number"
+        },
+        {
+          "type": "decimal",
+          "required": false,
+          "linkId": "n2",
+          "text": "Second number"
+        },
+        {
+          "type": "decimal",
+          "required": false,
+          "linkId": "n3",
+          "text": "Third number"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "linkId": "q4",
+          "text": "Fourth question, controlled by enableWhenExpression",
+          "extension": [{
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+            "valueExpression" : {
+              "language": "text/fhirpath",
+              "expression": "%n1Val + %n2Val + %n3Val >= 5"
+            }
+          }]
         }
-      }]
+      ]
     }
   ]
 }
