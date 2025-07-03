@@ -246,7 +246,22 @@ describe('Visual effect tests', () => {
       cy.byId("item-q4/1/1")
         .should('have.class', 'lhc-tree-line')
         .should('have.class', 'lhc-last-item');
+    });
 
+    it('should not show treeline by default if the questionnaire is 3 levels deep', () => {
+      tp.openBaseTestPage();
+      tp.loadFromTestData('q-3-level-deep.json', 'R4');
+      cy.byId('item-level3/1/1')
+        .should('not.have.class', 'lhc-tree-line');
+    });
+
+    it('should show treeline by default if the questionnaire is 4 levels deep', () => {
+      tp.openBaseTestPage();
+      tp.loadFromTestData('q-4-level-deep.json', 'R4');
+      cy.byId('item-level3/1/1')
+        .should('have.class', 'lhc-tree-line');
+      cy.byId('item-level4/1/1/1')
+        .should('have.class', 'lhc-tree-line');
     });
   });
 

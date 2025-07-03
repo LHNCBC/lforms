@@ -1,0 +1,31 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "title": "A Questionnaire that is 3 levels deep",
+  "status": "draft",
+  "item": [
+    {
+      "type": "string",
+      "linkId": "level2",
+      "text": "2nd level",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "level3",
+          "text": "3rd level",
+          "item":[
+            {
+              "type": "string",
+              "linkId": "level4",
+              "text": "4th level"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
