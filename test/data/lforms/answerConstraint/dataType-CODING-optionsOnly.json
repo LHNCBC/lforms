@@ -1,0 +1,574 @@
+{
+  "name": "Answers with CODING type, answerConstraint='optionsOnly'",
+
+  "items": [
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueCoding - autocomplete",
+      "questionCode": "valueCoding-group1",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueCoding-group1",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding",
+          "questionCode": "valueCoding-group1-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group1-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding - repeats",
+          "questionCode": "valueCoding-group1-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group1-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueCoding - radiocheckbox",
+      "questionCode": "valueCoding-group2",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueCoding-group2",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding",
+          "questionCode": "valueCoding-group2-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group2-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding - repeats",
+          "questionCode": "valueCoding-group2-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group2-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueCoding - prefix- score",
+      "questionCode": "valueCoding-group3",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueCoding-group3",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding",
+          "questionCode": "valueCoding-group3-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group3-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding - repeats",
+          "questionCode": "valueCoding-group3-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group3-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueCoding - radiocheckbox - prefix - score",
+      "questionCode": "valueCoding-group4",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueCoding-group4",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding",
+          "questionCode": "valueCoding-group4-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group4-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding - repeats - prefix - score",
+          "questionCode": "valueCoding-group4-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group4-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueCoding - autocomplete - initial",
+      "questionCode": "valueCoding-group5",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueCoding-group5",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding",
+          "questionCode": "valueCoding-group5-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group5-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "defaultAnswer": {
+            "code": "c2",
+            "text": "Answer 2"
+          },
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding - repeats",
+          "questionCode": "valueCoding-group5-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group5-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueCoding - radiocheckbox - initial",
+      "questionCode": "valueCoding-group6",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueCoding-group6",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding",
+          "questionCode": "valueCoding-group6-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group6-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "defaultAnswer": {
+            "code": "c2",
+            "text": "Answer 2"
+          },
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "answerConstraint": "optionsOnly",
+          "dataType": "CODING",
+          "question": "valueCoding - repeats",
+          "questionCode": "valueCoding-group6-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueCoding-group6-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    }
+  ]
+}

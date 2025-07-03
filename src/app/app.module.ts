@@ -1,19 +1,27 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injector,  CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import  { createCustomElement } from '@angular/elements';
+import {
+  NgModule,
+  Injector,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NO_ERRORS_SCHEMA,
+} from '@angular/core';
+import { createCustomElement } from '@angular/elements';
+
+import { LForms } from './lforms';
 
 import { LhcItemChoiceComponent } from './lhc-item-choice/lhc-item-choice.component';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box/lhc-item-choice-check-box.component';
 import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button/lhc-item-choice-radio-button.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
-
-import { LForms } from './lforms';
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -24,10 +32,17 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
-
-import { CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline } from '@ant-design/icons-angular/icons';
+import {
+  CopyrightCircleFill,
+  QuestionCircleFill,
+  CopyrightCircleOutline,
+} from '@ant-design/icons-angular/icons';
 import { IconDefinition } from '@ant-design/icons-angular';
-const icons: IconDefinition[] = [ CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline ];
+const icons: IconDefinition[] = [
+  CopyrightCircleFill,
+  QuestionCircleFill,
+  CopyrightCircleOutline,
+];
 
 import { LhcItemChoiceAutocompleteComponent } from './lhc-item-choice-autocomplete/lhc-item-choice-autocomplete.component';
 import { LhcItemComponent } from './lhc-item/lhc-item.component';
@@ -89,13 +104,16 @@ registerLocaleData(en);
     LhcButtonPopoverComponent,
     LhcItemAttachmentComponent,
     LhcItemMessagesComponent,
-    LhcGroupGridComponent
+  ],
+  bootstrap: [],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA,
+    // NO_ERRORS_SCHEMA
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     BrowserAnimationsModule,
     NzRadioModule,
     NzCheckboxModule,
@@ -105,28 +123,26 @@ registerLocaleData(en);
     NzPopoverModule,
     NzIconModule.forRoot(icons),
     NzSwitchModule,
+    LhcGroupGridComponent,
     NzToolTipModule
   ],
   providers: [
-    { provide: NZ_I18N, useValue: en_US }
-  ],
-  bootstrap: [],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-    // NO_ERRORS_SCHEMA
+    { provide: NZ_I18N, useValue: en_US },
+    provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-
-
 export class AppModule {
   constructor(private injector: Injector) {
-
     window['LForms'] = LForms;
 
-    // define the web component
-    customElements.define('wc-lhc-form', createCustomElement(LhcFormComponent, { injector: this.injector }));
+    if (!customElements.get('wc-lhc-form')) {
+      // define the web component
+      customElements.define(
+        'wc-lhc-form',
+        createCustomElement(LhcFormComponent, { injector: this.injector })
+      );
+    }
   }
 
   ngDoBootstrap() {}
 }
-

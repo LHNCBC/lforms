@@ -287,7 +287,7 @@ describe('formdata: ', () => {
     it('should style the heading items', () => {
       tp.LoadForm.openFullFeaturedForm();
       cy.byId('/listWHeaders/1').click();
-      cy.get('#searchResults li').eq(0).should('have.class', 'heading');
+      cy.get('#lhc-tools-searchResults li').eq(0).should('have.class', 'heading');
     });
   });
 
@@ -295,8 +295,8 @@ describe('formdata: ', () => {
     it('should be displayed', () => {
       tp.LoadForm.openFullFeaturedForm();
       cy.byId('/type0/1').should('exist');
-      cy.byId('label-/with_prefix/1').should('have.text', 'Prefix A:Question display text ');
-      cy.byId('col/horizontalTable/colA/1/1').should('have.text', 'Pre. A:A ST ');
+      cy.byId('label-/with_prefix/1').should('have.text', 'Prefix A:Question display text');
+      cy.byId('col/horizontalTable/colA/1/1').should('have.text', 'Pre. A:A ST');
     });
   });
 });

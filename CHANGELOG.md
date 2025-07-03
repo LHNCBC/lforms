@@ -2,6 +2,391 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.20.1] 2025-06-20
+### Changed
+- Update autocomplete-lhc version and use new ID lhc-tools-searchResults
+  in tests.
+
+## [36.20.0] 2025-06-13
+### Added
+- Show an error message under the field if the answerValueSet expansion fails.
+
+## [36.19.2] 2025-06-11
+### Fixed
+- A boolean field was not updating in UI according to calculated expression.
+
+## [36.19.1] 2025-06-04
+### Fixed
+- Tooltips were shown incorrectly when adding a repeating item.
+
+## [36.19.0] 2025-05-21
+### Added
+- Support for rendering-style on radio buttons and checkboxes.
+
+## [36.18.0] 2025-04-25
+### Changed
+- If observationExtract=false on an item, child items are not considered
+  for extraction unless they explicitly turn extraction back on again by
+  observationExtract=true.
+- observationExtract can indicate which code or codes should be applied by being on
+  item.code (in which case, having it on the item is not necessary).
+
+## [36.17.0] 2025-04-15
+### Added
+- Support for building into a different language.
+- Currently only German is added. Support for additional languages can be added
+  under src/languages.
+
+## [36.16.1] 2025-04-14
+### Fixed
+- Fixed a bug that initial values are not rendered on matrix (itemControl 'table')
+  layout when more than one item has 'initialSelected' or initial values.
+  
+## [36.16.0] 2025-04-04
+### Added
+- Support for rendering-style on 'legal' and 'help' text in the itemControl extension.
+
+## [36.15.3] 2025-03-28
+### Fixed
+- Updated fhirpath.js to version 3.18.0 to update the `weight()` function and
+  added unit tests for this function.
+- Fixed converting R5 FHIR Questionnaire to LForms form definition.
+- Fixed converting LForms form definition to standard STU3 FHIR Questionnaire.
+- Fixed model for R5.
+
+## [36.15.2] 2025-03-27
+### Changed
+- Moved code containing hard-coded SNOMED url out of the lhc-autocomplete
+  component.
+
+## [36.15.1] 2025-03-18
+### Fixed
+- Fixed a bug that item.type 'coding' with answerConstraint 'optionsOrType' 
+  in R5 questionnaire should not be converted to 'choice' or 'open-choice'
+  in R4. An exception should be thrown.
+  
+## [36.15.0] 2025-02-10
+### Changed
+- The promise returned by LForms.Util.addFormToPage, when it fails, will now
+  reject with an array of error messages instead of just a single error message.
+  Likewise the onError event emitted by the web component will now
+  contain an array of errors instead of just a single error message.
+  This is potentially a breaking change, but the impact is unlikely to be
+  harmful given the way error messages are typically used, so we did not change
+  the major version.
+
+## [36.14.0] 2025-03-13
+### Added
+- Support for itemControl 'legal'.
+
+## [36.13.0] 2025-03-06
+### Added
+- Support for rendering-xhtml on externally loaded answerValueSet prefetch/radio/checkbox.
+
+## [36.12.0] 2025-03-06
+### Added
+- Loading answerValueSet for contained ValueSets without an expansion.
+### Fixed
+- Exported Questionnaire should have answerValueSet property but not populated 
+  answerOptions if they are from contained ValueSets.
+
+## [36.11.2] 2025-03-03
+### Fixed
+- Only the new externallyDefined URL should be exported.
+
+## [36.11.1] 2025-02-28
+### Changed
+- New URL for preferredTerminologyServer extension.
+- preferredTerminologyServer extension should work at root level as well as
+  item level.
+
+## [36.11.0] 2025-02-27
+### Changed
+- Upgraded angular to v19
+- Upgraded ng-zorro-antd to v19
+
+## [36.10.5] 2025-02-25
+### Fixed
+- Fixed a display issue for answers, where the display field might
+  not have data.
+
+## [36.10.4] 2025-02-24
+### Fixed
+- Fixed a bug that the repeating numbers are not displayed correctly 
+  on the repeating items when their data are loaded through FHIRPath
+  expressions.
+  
+## [36.10.3] 2025-02-07
+### Changed
+- Changed the meta.profile for STU3, R4 and R5 in the exported 
+  QuestionnaireResponse so that the standard FHIR profiles are used.
+
+## [36.10.2] 2025-02-03
+### Fixed
+- The "url" parameter was not URL-encoded when doing expansions.
+
+## [36.10.1] 2025-01-30
+### Fixed
+- Warning messages were being incorrectly generated for failing to load a value
+  set for an autocomplete field, for which the value set should not be and is
+  not loaded at form initialization time.
+- Improved the timing of the formReady event, so that it is sent after the form
+  has been rendered.
+
+## [36.10.0] 2025-01-30
+### Added
+- Support for rendering-xhtml on contained[valueSet].expansion.contains.display.
+
+## [36.9.0] 2025-01-30
+### Added
+- Support for rendering-xhtml on answerOption.valueCoding.display.
+
+## [36.8.2] 2025-01-17
+### Fixed
+- Fixed a bug that linkIds in help text items were lost in exported
+  Questionnaire.
+
+## [36.8.1] 2024-12-17
+### Fixed
+- Fixed a bug that code.system was not set correctly when exporting 
+  data as DiagnosticReport.
+
+## [36.8.0] 2024-12-12
+### Added
+- Support for rendering-xhtml on item.prefix
+
+## [36.7.4] 2024-12-11
+### Added
+- Added tests for FHIRPath expressions to work with "coding" items in R5.
+
+## [36.7.3] 2024-12-09
+### Fixed
+- Matrix layout radio group tab issue.
+
+## [36.7.2] 2024-12-03
+### Changed
+- Upgraded to nodejs version 22.
+
+## [36.7.1] 2024-12-02
+### Fixed
+- Updated checkForInvalidHtml to allow more tags/attributes.
+- Fixed a bug that help text and copyright text could be out of position
+  if they are too long.
+- Fixed a bug that the QuestionnaireResponse data could be modified 
+  when passed in to the mergeFHIRDataIntoLForms function.
+
+## [36.7.0] 2024-11-20
+### Added
+- Support for rendering-xhtml on answerOption.
+
+## [36.6.1] 2024-10-24
+### Fixed
+- Errors with attempting to access undefined environment variables when
+  evaluating FHIRPath expressions where the variables are evaluated
+  asynchronously.
+
+## [36.6.0] 2024-10-22
+### Added
+- Added support of disabledDisplay in R5 Questionnaire.
+ 
+## [36.5.2] 2024-10-21
+### Added
+- Added a function, 'getSupportedItemControl', to return an object containing a list of supported item controls.
+
+## [36.5.1] 2024-09-19
+### Fixed
+- Fixed a bug that loaded data on repeating, readonly items could be deleted.
+
+## [36.5.0] 2024-07-29
+### Added
+- Support for asynchronous FHIRPath expressions.
+
+## [36.4.0] 2024-07-23
+### Added
+- Support for rendering-xhtml on item.text.
+- Added new template option allowHTML. allowHTMLInInstructions is deprecated.
+
+## [36.3.3] 2024-07-22
+### Added
+- Copy questionnaire-ordinalValue (STU3), ordinalValue (R4) and
+  itemWeight (R5) extensions to questionnaire response.
+
+## [36.3.2] 2024-07-10
+### Changed
+- Allow ValueSets to load without a FHIR Context if a terminology server is 
+  on the form.
+
+## [36.3.1] 2024-07-08
+### Changed
+- Set 500ms delay for SNOMED requests on autocomplete Search instance.
+
+## [36.3.0] 2024-07-08
+### Added
+- support for maxdecimalplaces extension.
+
+## [36.2.0] 2024-07-03
+### Changed
+- addFormToPage() can optionally take a questionnaire response in options
+  to reduce number of lforms API calls.
+- Error message for missing enableWhen.question.
+
+## [36.1.3] 2024-06-09
+### Fixed
+- Removed accidental creation of global variable "self", which caused Google
+  Analytics to throw exceptions when a link was clicked.
+
+## [36.1.2] 2024-06-07
+### Fixed
+- Preserve id field in questionnaire items.
+
+## [36.1.1] 2024-06-07
+### Changed
+- CSS tweaks in attachment fields to align with other fields.
+
+## [36.1.0] 2024-05-24
+### Added
+- Support for the FHIR observation-extract-category extension which sets
+  Observation.category when an Observation is extracted from the Questionnaire.
+  
+## [36.0.7] 2024-05-22
+### Fixed
+- Updated fhirpath.js to version 3.13.2 to get resource node data types using
+  the `fhirpath.types(nodes)` function.
+  
+## [36.0.6] 2024-05-21
+### Changed
+- Remove "Add another" on buttons.
+
+## [36.0.5] 2024-05-09
+### Fixed
+- Fixed a bug that repeating items that have answer list and have child 
+  items are not rendered correctly.
+
+## [36.0.4] 2024-05-01
+### Fixed
+- Fetching of ValueSets needs to specify JSON.
+
+## [36.0.3] 2024-04-26
+### Fixed
+- Fixed a bug to catch and throw an error when an enableWhen field 
+  in Questionnaire points to an invalid linkId.
+
+## [36.0.2] 2024-04-17
+### Fixed
+- Fixed a position issue of the validation messages.
+
+## [36.0.1] 2024-04-08
+### Fixed
+- Guard against loading wc-lhc-form webcomponent more than once.
+
+## [36.0.0] 2024-04-04
+### Changed
+- Removed data types 'CNE' and 'CWE' from the lforms internal data structure, and
+  replaced them with type 'CODING' and an 'answerConstraint' attribute.
+  'CNE' and 'CWE' data types are still supported in legacy data files.
+### Added
+- Added the support of 'answerContraint' in R5.  Only 'optionsOnly' and 
+  'optionsOrString are supported. 'OptionsOrType' is not supported yet.
+- Added the support of item.type changes R5. Added 'coding' and removed
+  'choice' and 'open-choice'.
+
+## [35.2.1] 2024-04-03
+### Fixed
+- Fixed a bug in "npm run start-public"
+
+## [35.2.0] 2024-04-02
+### Updated
+- Upgraded angular to v17
+- Upgraded cypress to v13
+
+## [35.1.0] 2034-03-29
+### Added
+- Added the support for detecting invalid html tags and attributes
+  in the html version of the help text.
+
+## [35.0.4] 2024-03-08
+### Updated
+- Updated autocomplete-lhc version to include loading indicator.
+
+## [35.0.3] 2024-02-20
+### Updated
+- autocomplete-lhc version.
+
+## [35.0.2] 2024-02-16
+### Fixed
+- answerValueSet items in repeated groups was not rendered properly.
+
+## [35.0.1] 2024-02-06
+### Fixed
+- Fixed a bug that enableWhen breaks when there is a loop of references to 
+  the items in enableWhen.question.
+  
+## [35.0.0] 2023-12-21
+### Fixed
+- QuestionnaireResponse no longer contains answers to child questions of
+  unanswered parent questions.  See https://jira.hl7.org/browse/FHIR-32665.
+  Although the change of the cardinality of item.answer.value to 1..1 was an R5
+  change, it was the intention all along, so we have made the change for R4 &
+  STU3 as well.  Although we regard this as a fix, it could be a breaking
+  change for some, which is the reason for the major version increment.
+
+## [34.4.0] 2023-12-05
+### Added
+- Added the support for using image data in the 'contained' when a local ID
+  is used in the 'src' attribute of a 'img' in the value of the 'rendering-xhtml'
+  extension for help text.
+
+## [34.3.1] 2023-12-01
+### Added
+- Added support for regex strings without '/' in validations
+
+## [34.3.0] 2023-11-16
+### Changed
+- Changed the option, showQuestionCode, to control the display of all of the
+  codes of an item, not just the first code.
+- Updated styles to display newlines and spaces in coding instructions.
+
+## [34.2.0] 2023-10-18
+### Added
+- Support for the exporting of QuestionnnaireResponse.questionnaire.
+
+### Fixed
+- Fixed a bug that copyright is not displayed when there is no code.
+## [34.1.0] 2023-10-13
+### Added
+- Added support for FHIR verison R4B.
+
+## [34.0.4] 2023-10-04
+### Fixed
+- The FHIR extension for setting the preferred terminology server now works on
+  the root of the Questionnaire as well as on items.
+
+## [34.0.3] 2023-09-28
+### Fixed
+- Fiex a bug that number 0 in QuestionnaireResponse is not imported when
+  the QuestionnaireResponse is loaded into the corresponding Questionnaire.
+
+## [34.0.2] 2023-09-20
+### Fixed
+- Fixed a bug in LForms.Util.guessFHIRVersion() to detect STU3 when initial
+  fields are specified.
+
+## [34.0.1] 2023-08-18
+### Fixed
+- Fixed a bug that when an item has the sdc-questionnaire-unitOpen extension
+  set to 'optionsOrString', a user typed unit would be cleared in the UI
+  even it is still available in the QuestionnaireResonse.
+
+## [34.0.0] 2023-08-15
+### Fixed
+- jQuery is no longer leaked to the containing app.  This might be a breaking
+  change for users who were relying on jQuery being defined as a result of
+  loading the lforms package.  Apps can either load jQuery themselves or use
+  LForms.jQuery (which is where the lforms jQuery moved to) but note that we
+  would like to remove the jQuery dependency in the future if possible.  If we
+  do that, it will be another major-version increment to signal the
+  breaking change.
+
 ## [33.4.2] 2023-07-25
 ### Fixed
 - The sourcemap file for lhc-forms.js now works.

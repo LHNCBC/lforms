@@ -13,10 +13,10 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   let itemRadioCNE: any =  {
     "questionCode": "q1a",
-    "question": "Answer RADIO_CHECKBOX layout --CNE, --1 column",
+    "question": "Answer RADIO_CHECKBOX layout --CODING, optionsOnly, --1 column",
     "copyrightNotice": "a notice",
     "codingInstructions": "coding instructions",
-    "dataType": "CNE",
+    "dataType": "CODING",
     "displayControl": {
       "answerLayout": {
         "type": "RADIO_CHECKBOX",
@@ -53,10 +53,11 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   let itemRadioCWE:any =  {
     "questionCode": "q1a",
-    "question": "Answer RADIO_CHECKBOX layout --CNE, --0 columns",
+    "question": "Answer RADIO_CHECKBOX layout --CODING, optionsOrString --0 columns",
     "copyrightNotice": "a notice",
     "codingInstructions": "coding instructions",
-    "dataType": "CWE",
+    "dataType": "CODING",
+    "answerConstraint": "optionsOrString",
     "displayControl": {
       "answerLayout": {
         "type": "RADIO_CHECKBOX",

@@ -68,7 +68,7 @@
           "text": "Name",
           "item": [
             {
-              "text": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>",
+              "text": "<code>HTML</code> instructions, with a <button class='testButton'>button</button>. An html instruction on Name",
               "type": "display",
               "linkId": "/54126-8/54125-0-help",
               "extension": [
@@ -141,7 +141,7 @@
           ],
           "item": [
             {
-              "text": "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>",
+              "text": "<code>Text</code> instructions, with a <button class='testButton'>button</button>A plain text instruction on Gender. HTML should be escaped.",
               "type": "display",
               "linkId": "/54126-8/54131-8-help",
               "extension": [
@@ -2280,7 +2280,7 @@
                   }
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+                  "url": "http://lhcforms.nlm.nih.gov/fhir/StructureDefinition/questionnaire-externallydefined",
                   "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
                 }
               ],

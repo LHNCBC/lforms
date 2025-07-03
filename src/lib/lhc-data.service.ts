@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ScreenReaderLog } from './screen-reader-log';
 import CommonUtils from "./lforms/lhc-common-utils.js";
-
+import {InternalUtil} from "./lforms/internal-utils.js";
+import language from '../../language-config.json';
 declare var LForms: any;
 // @Injectable({
 //   providedIn: 'root'
@@ -167,6 +168,26 @@ export class LhcDataService {
 
 
   /**
+   * Check the display type of item.text or an answerOption.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
+   */
+  getTextDisplayType(item) {
+    return this.lhcFormData?.getTextDisplayType(item) || 'plain';
+  }
+
+
+  /**
+   * Check the display type of item.prefix.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
+   */
+  getPrefixDisplayType(item) {
+    return this.lhcFormData?.getPrefixDisplayType(item) || 'plain';
+  }
+
+
+  /**
    * Check the display type of the coding instructions
    * @param item an item in the lforms form items array
    * @returns {string}
@@ -175,11 +196,48 @@ export class LhcDataService {
     var ret ='';
     if (item.codingInstructions && item.codingInstructions.length > 0) {
       var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
-      if (this.lhcFormData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
-        var format = "html";
+      if (this.lhcFormData.templateOptions.allowHTML && item.codingInstructionsFormat === "html") {
+        var format = "html";  // use item.codingInstructions (safe html)
+        if (item.codingInstructionsHasInvalidHtmlTag) {
+          if (this.lhcFormData.templateOptions.displayInvalidHTML) {
+            format = "escaped" // use item.codingInstructions (escaped)
+          }
+          else {
+            format = "plain"; // use item.codingInstructionsPlain
+          }
+        }
       }
       else {
-        format = "escaped";
+        format = "escaped"; // use item.codingInstructions
+      }
+      ret = position + "-" + format;
+    }
+    return ret;
+  }
+
+
+  /**
+   * Check the display type of item.legal
+   * @param item an item in the lforms form items array
+   * @returns {string}
+   */
+  getLegalDisplayType(item) {
+    var ret ='';
+    if (item.legal && item.legal.length > 0) {
+      var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
+      if (this.lhcFormData.templateOptions.allowHTML && item.legalFormat === "html") {
+        var format = "html";  // use item.legal (safe html)
+        if (item.legalHasInvalidHtmlTag) {
+          if (this.lhcFormData.templateOptions.displayInvalidHTML) {
+            format = "escaped" // use item.legal (escaped)
+          }
+          else {
+            format = "plain"; // use item.legalPlain
+          }
+        }
+      }
+      else {
+        format = "escaped"; // use item.legal
       }
       ret = position + "-" + format;
     }
@@ -199,13 +257,32 @@ export class LhcDataService {
 
 
   /**
-   * Check an item's skip logic status to decide if the item should be shown
+   * Check an item's skip logic status to decide if the item is enabled
    * @param item an item
    * @returns {boolean}
    */
+  targetEnabled(item) {
+    return this.lhcFormData ? InternalUtil.targetEnabled(item): false;
+  }
+
+
+  /**
+   * Check an item's skip logic status to decide if the item is enabled and protected (not hidden from view)
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetDisabledAndProtected(item) {
+    return this.lhcFormData ? InternalUtil.targetDisabledAndProtected(item) : false;
+  }
+
+
+  /**
+   * Check if the item should be displayed (enabled or disabled but protected)
+   * @param item an item
+   * @return {boolean}
+  */
   targetShown(item) {
-    return this.lhcFormData ? item._enableWhenExpVal !== false &&
-      this.lhcFormData.getSkipLogicClass(item) !== 'target-disabled' : null;
+    return this.lhcFormData ? InternalUtil.targetShown(item) : false;
   }
 
 
@@ -229,7 +306,7 @@ export class LhcDataService {
    * or a checkbox.
    * @param item an item in lhc-forms
    * @param answer an answer in the item's answer list.
-   * @returns 
+   * @returns
    */
   getItemAnswerId(item, answer) {
     let id = item._elementId + (answer.code || answer.text);
@@ -330,6 +407,9 @@ export class LhcDataService {
     if (item._isHiddenFromView) {
       eleClass += ' lhc-hidden-from-view';
     }
+    if (this.targetDisabledAndProtected(item)) {
+      eleClass += ' lhc-item-disabled-protected'
+    }
     if (Array.isArray(item._validationErrors) && item._validationErrors.length > 0) {
       eleClass += ' lhc-invalid'
     }
@@ -420,8 +500,7 @@ export class LhcDataService {
       anyEmpty = this.lhcFormData.areAnyRepeatingItemsEmpty(item);
       if (anyEmpty && item._showUnusedItemWarning) {
         if (!item._unusedItemWarning)
-          item._unusedItemWarning = 'Please enter info in the blank "' +
-            item._text+'"';
+          item._unusedItemWarning = language.pleaseEnterInfoForTheBlank.replace('{lformsParam}',  item._text);
       }
     }
     if (!anyEmpty) {
@@ -578,16 +657,17 @@ export class LhcDataService {
    * @param skipComparison whether to skip comparision of previous value and current value. defalut is false.
    */
   onItemValueChange(item, currentValue, previousValue, skipComparison=false) {
-    if (this.lhcFormData && 
+    if (this.lhcFormData &&
       (skipComparison || !skipComparison && !CommonUtils.deepEqual(currentValue, previousValue))) {
-      
+
       // run lforms internal changes
       this.lhcFormData.updateOnSourceItemChange(item)
-      
+
       this.sendActionsToScreenReader();
 
     }
   };
+
 }
 
 

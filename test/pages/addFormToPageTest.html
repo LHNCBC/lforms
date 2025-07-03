@@ -26,6 +26,9 @@
         background-color: #337ab7;
         border-color: #2e6da4;
       }
+      .option-checkbox {
+        margin: 2px 8px;
+      }
       .hide {
         display: none;
       }
@@ -37,13 +40,26 @@
 
     <div id="lforms-form">
       <div class="panel panel-default">
-        <div class="panel-heading">LForms Build Test Page with FHIR Context</div>
+        <h3 class="panel-heading">LForms Build Test Page with FHIR Context</h3>
         <div class="panel-body">
           <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
+          <div id="tempOptionList">
+            <div>LHC-Forms options:</div>
+            <div>
+              <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" />
+                  allowHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" />
+                  displayInvalidHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" />
+                  showCodingInstruction</label></span>
+            </div>
+          </div>
           <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
           <select id="fhirVersion">
             <option value="R4">R4</option>
             <option value="STU3">STU3</option>
+            <option value="R4B">R4B</option>
+            <option value="R5">R5</option>
           </select>
         </div>
       </div>
@@ -53,22 +69,36 @@
     <div id="formContainer"></div>
     <div id="formContainer2"></div>
 
-    <script src="/assets/lib/zone.min.js"></script>
+    <script src="/assets/lib/zone.umd.min.js"></script>
     <script src="/runtime.js"></script>
     <script src="/polyfills.js"></script>
-    <script src="/scripts.js"></script>
     <script src="/main.js"></script>
-    <script src="/dist/lforms/fhir/lformsFHIRAll.min.js"></script>
+    <script src="/lforms/fhir/lformsFHIRAll.min.js"></script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
 
     <script>
-
-      window.onload = function() {
-        var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
-        LForms.Util.setFHIRContext(fhirAPI);
+      // Sometimes the tests fail because either FHIR or LForms is not defined.
+      // Not sure why, but maybe waiting will help?
+      let wait = 0, waitInterval = 100, maxWait = 3000;
+      function setFHIRContext() {
+        if (!window.FHIR || !window.LForms || !LForms.FHIR) {
+          if (wait > maxWait) {
+            throw('Could not load ' + (!window.FHIR ? 'FHIR client' : !window.LForms ? 'LForms' :
+              'LForms.FHIR') + ' in ' + maxWait + ' ms');
+          }
+          else {
+            wait += waitInterval;
+            setTimeout(setFHIRContext, waitInterval);
+          }
+        }
+        else {
+          let fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
+          LForms.Util.setFHIRContext(fhirAPI);
+        }
       }
+      window.onload = setFHIRContext;
     </script>
 
     <script>
@@ -97,14 +127,20 @@
       function loadFile(event) {
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
-        var questionnaire;
+        var questionnaire, options = { 'messageLevel': 'info' };
+        var allowHTML = document.querySelector('#allowHTML').checked,
+            displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
+            showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+
         reader.onload = function() {
           var questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
 
           try {
-            LForms.Util.addFormToPage(questionnaire, 'formContainer').then(function() {
+            LForms.Util.addFormToPage(questionnaire, 'formContainer', 
+                {'fhirVersion':getFHIRVersion(), allowHTML, displayInvalidHTML, showCodingInstruction})
+                .then(function() {
               console.log("Form Added successfully")
             })
             .catch(function(e) {
@@ -112,17 +148,17 @@
               console.error(e);
               document.getElementById("loadMsg").innerHTML = e;
             })
-            $('#formContainer wc-lhc-form')[0].addEventListener('onFormReady', ()=>{
+            LForms.jQuery('#formContainer wc-lhc-form')[0].addEventListener('onFormReady', ()=>{
               // Cause the event to bubble, since this element was just created.
-              $('#formContainer')[0].dispatchEvent(new Event('onFormReady'));
+              LForms.jQuery('#formContainer')[0].dispatchEvent(new Event('onFormReady'));
             });
-            $('#formContainer wc-lhc-form')[0].addEventListener('onError', (e)=>{
+            LForms.jQuery('#formContainer wc-lhc-form')[0].addEventListener('onError', (e)=>{
               // Cause the event to bubble, since this element was just created.
-              $('#formContainer')[0].dispatchEvent(new Event('onError', e));
+              LForms.jQuery('#formContainer')[0].dispatchEvent(new Event('onError', e));
             });
             // The prepopulateFHIR variable below is a hack for the test code to signal
             // prepopulation is desired.
-            var formContainer = $('#formContainer wc-lhc-form')[0];
+            var formContainer = LForms.jQuery('#formContainer wc-lhc-form')[0];
             formContainer.prepop = window.prepopulateFHIR;
           }
           catch(e) {

@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import * as util from "../support/util";
 
 describe('Visual effect tests', () => {
   const tp: TestPage = new TestPage();
@@ -19,7 +20,7 @@ describe('Visual effect tests', () => {
         });
     });
 
-    const dataTypes = ['BL', 'INT', 'REAL', 'ST', 'BIN', 'DT', 'DTM', 'TM', 'CNE', 'CWE',
+    const dataTypes = ['BL', 'INT', 'REAL', 'ST', 'BIN', 'DT', 'DTM', 'TM', 'CODING',
       'RTO', 'QTY', 'YEAR', 'MONTH', 'DAY', 'URL', 'EMAIL', 'PHONE', 'TX'];
 
     for (let i = 0, len = dataTypes.length; i < len; ++i) {
@@ -78,7 +79,7 @@ describe('Visual effect tests', () => {
 
       // break points, 600
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(601);
+        win.LForms.jQuery("wc-lhc-form").width(601);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 601);
       cy.get('.lhc-form.lhc-view-lg').should('exist');
@@ -93,7 +94,7 @@ describe('Visual effect tests', () => {
       cy.get('.lhc-item.lhc-item-view-sm').eq(1).should('not.exist');
 
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(598);
+        win.LForms.jQuery("wc-lhc-form").width(598);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 598);
       cy.get('.lhc-form.lhc-view-lg').should('not.exist');
@@ -109,7 +110,7 @@ describe('Visual effect tests', () => {
 
       // break points, 400 //480
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(398);
+        win.LForms.jQuery("wc-lhc-form").width(398);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 398);
       cy.get('.lhc-form.lhc-view-lg').should('not.exist');
@@ -124,7 +125,7 @@ describe('Visual effect tests', () => {
       cy.get('.lhc-item.lhc-item-view-md').eq(1).find('#\\/q_auto\\/1').should('not.exist');
 
       cy.window().then((win) => {
-        win.jQuery("wc-lhc-form").width(401);
+        win.LForms.jQuery("wc-lhc-form").width(401);
       });
       cy.get('wc-lhc-form').invoke('width').should('eq', 401);
       cy.get('.lhc-form.lhc-view-lg').should('not.exist');
@@ -225,12 +226,12 @@ describe('Visual effect tests', () => {
     it('should reset treeline after enableWhenExpression is run', () => {
       tp.openBaseTestPage();
       tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
-  
+
       const n1 = 'n1/1';
       const n2 = 'n2/1';
       const n3 = 'n3/1';
       const q4 = 'q4/1'; // present when n1+n2+n3 >= 5;
-  
+
       cy.byId(n1).should('be.visible');
       cy.byId(q4).should('not.exist');
       cy.byId(n1).click().type('1');
@@ -247,6 +248,43 @@ describe('Visual effect tests', () => {
 
     });
   });
- 
 
+  describe("Questionnaire.code and item.code", ()=> {
+    beforeEach(function() {
+      cy.visit('test/pages/addFormToPageTest.html');
+    });
+
+    it("should not display any code when showQuestionCode is false", ()=>{
+      util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4", "showQuestionCode": false });
+      cy.byCss('.lhc-item-code').should("have.length", 0)
+    })
+
+    it("should not display any code when showQuestionCode is not present", ()=>{
+      util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4" });
+      cy.byCss('.lhc-item-code').should("have.length", 0)
+    })
+
+    it("should display all codes when showQuestionCode is true", ()=>{
+      util.addFormToPage('multipleCodes.json', null, {"fhirVersion": "R4", "showQuestionCode": true });
+
+      cy.byCss('.lhc-item-code').eq(0).contains("[example]")
+        .invoke('attr', 'href')
+        .should('eq', undefined);
+      cy.byCss('.lhc-item-code').eq(1).contains("[85353-1]")
+        .invoke('attr', 'href')
+        .should('eq', 'https://loinc.org/85353-1');
+      cy.byCss('.lhc-item-code').eq(2).contains("[example]")
+        .invoke('attr', 'href')
+        .should('eq', undefined);
+      cy.byCss('.lhc-item-code').eq(3).contains("[29463-7]")
+        .invoke('attr', 'href')
+        .should('eq', 'https://loinc.org/29463-7');
+      cy.byCss('.lhc-item-code').eq(4).contains("[example]");
+      cy.byCss('.lhc-item-code').eq(5).contains("[29463-7]");
+      cy.byCss('.lhc-item-code').eq(6).contains("[example]");
+      cy.byCss('.lhc-item-code').eq(7).contains("[29463-7]");
+    })
+
+
+  } )
 });

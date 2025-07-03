@@ -1,0 +1,253 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "status": "completed",
+  "authored": "2024-04-24T19:17:37.563Z",
+  "item": [
+    {
+      "linkId": "/choice",
+      "text": "a repeating choice item that has child items",
+      "answer": [
+        {
+          "valueCoding": {
+            "code": "C1",
+            "display": "Answer A"
+          },
+          "item": [
+            {
+              "answer": [
+                {
+                  "valueString": "a"
+                }
+              ],
+              "linkId": "/choice/st",
+              "text": "a string item in an item"
+            },
+            {
+              "linkId": "/choice/int",
+              "text": "a repeating integer item in an item",
+              "answer": [
+                {
+                  "valueInteger": 1
+                },
+                {
+                  "valueInteger": 2
+                }
+              ]
+            },
+            {
+              "linkId": "/choice/group",
+              "text": "a sub group item",
+              "item": [
+                {
+                  "answer": [
+                    {
+                      "valueString": "b"
+                    }
+                  ],
+                  "linkId": "/choice/group/st",
+                  "text": "a string item"
+                },
+                {
+                  "linkId": "/choice/group/int",
+                  "text": "a repeating integer item in sub group",
+                  "answer": [
+                    {
+                      "valueInteger": 3
+                    },
+                    {
+                      "valueInteger": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "linkId": "/choice/choice",
+              "text": "a repeating choice sub-item that has child items, and is in another repeating choice item",
+              "answer": [
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer 2"
+                  },
+                  "item": [
+                    {
+                      "answer": [
+                        {
+                          "valueString": "c"
+                        }
+                      ],
+                      "linkId": "/choice/choice/st",
+                      "text": "a string sub-item"
+                    },
+                    {
+                      "linkId": "/choice/choice/int",
+                      "text": "a repeating integer sub-item",
+                      "answer": [
+                        {
+                          "valueInteger": 5
+                        },
+                        {
+                          "valueInteger": 6
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "valueCoding": {
+                    "code": "c3",
+                    "display": "Answer 3"
+                  },
+                  "item": [
+                    {
+                      "answer": [
+                        {
+                          "valueString": "d"
+                        }
+                      ],
+                      "linkId": "/choice/choice/st",
+                      "text": "a string sub-item"
+                    },
+                    {
+                      "linkId": "/choice/choice/int",
+                      "text": "a repeating integer sub-item",
+                      "answer": [
+                        {
+                          "valueInteger": 7
+                        },
+                        {
+                          "valueInteger": 8
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "code": "C2",
+            "display": "Answer B"
+          },
+          "item": [
+            {
+              "answer": [
+                {
+                  "valueString": "aa"
+                }
+              ],
+              "linkId": "/choice/st",
+              "text": "a string item in an item"
+            },
+            {
+              "linkId": "/choice/int",
+              "text": "a repeating integer item in an item",
+              "answer": [
+                {
+                  "valueInteger": 11
+                },
+                {
+                  "valueInteger": 22
+                }
+              ]
+            },
+            {
+              "linkId": "/choice/group",
+              "text": "a sub group item",
+              "item": [
+                {
+                  "answer": [
+                    {
+                      "valueString": "bb"
+                    }
+                  ],
+                  "linkId": "/choice/group/st",
+                  "text": "a string item"
+                },
+                {
+                  "linkId": "/choice/group/int",
+                  "text": "a repeating integer item in sub group",
+                  "answer": [
+                    {
+                      "valueInteger": 33
+                    },
+                    {
+                      "valueInteger": 44
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "linkId": "/choice/choice",
+              "text": "a repeating choice sub-item that has child items, and is in another repeating choice item",
+              "answer": [
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer 2"
+                  },
+                  "item": [
+                    {
+                      "answer": [
+                        {
+                          "valueString": "cc"
+                        }
+                      ],
+                      "linkId": "/choice/choice/st",
+                      "text": "a string sub-item"
+                    },
+                    {
+                      "linkId": "/choice/choice/int",
+                      "text": "a repeating integer sub-item",
+                      "answer": [
+                        {
+                          "valueInteger": 55
+                        },
+                        {
+                          "valueInteger": 66
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "valueCoding": {
+                    "code": "c3",
+                    "display": "Answer 3"
+                  },
+                  "item": [
+                    {
+                      "answer": [
+                        {
+                          "valueString": "dd"
+                        }
+                      ],
+                      "linkId": "/choice/choice/st",
+                      "text": "a string sub-item"
+                    },
+                    {
+                      "linkId": "/choice/choice/int",
+                      "text": "a repeating integer sub-item",
+                      "answer": [
+                        {
+                          "valueInteger": 77
+                        },
+                        {
+                          "valueInteger": 88
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

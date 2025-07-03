@@ -1,11 +1,13 @@
 import {Component, Input, OnInit, OnChanges, ElementRef} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import {CommonUtilsService} from "../../lib/common-utils.service";
+import language from "../../../language-config.json";
 
 @Component({
-  selector: 'lhc-item-time',
-  templateUrl: './lhc-item-time.component.html',
-  styleUrls: ['./lhc-item-time.component.css']
+    selector: 'lhc-item-time',
+    templateUrl: './lhc-item-time.component.html',
+    styleUrls: ['./lhc-item-time.component.css'],
+    standalone: false
 })
 export class LhcItemTimeComponent implements OnChanges {
 
@@ -16,7 +18,7 @@ export class LhcItemTimeComponent implements OnChanges {
               private elRef:ElementRef,
               private commonUtilsService: CommonUtilsService) { }
 
-  
+
   ngOnChanges(): void {
     if (this.item.value) {
       let tempDate:any = new Date('1970-01-01 ' + this.item.value)
@@ -42,7 +44,7 @@ export class LhcItemTimeComponent implements OnChanges {
     }
   }
 
-  
+
   ngAfterViewInit() {
     // Set aria-label attribute of the actual <input> element.
     const input = this.elRef.nativeElement.querySelector('input');
@@ -51,4 +53,5 @@ export class LhcItemTimeComponent implements OnChanges {
     }
   }
 
+    protected readonly language = language;
 }

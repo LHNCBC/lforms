@@ -2,6 +2,9 @@
 // by application code.
 import {ErrorMessages} from "./error-messages.js";
 import CommonUtils from "../lforms/lhc-common-utils.js";
+import CONSTANTS from "./lhc-form-datatypes.js";
+import * as htmlparser2 from "htmlparser2";
+import parse from "style-to-object";
 /**
  *  A default message source identifier (for when the messageSource parameter
  *  below is optional and not provided.
@@ -45,7 +48,7 @@ export const InternalUtil = {
       item.value = val;
       changed = true;
     }
-    
+
     return changed;
   },
 
@@ -56,7 +59,252 @@ export const InternalUtil = {
    * @return an object suitable for item.unit.
    */
   modelForOffListUnit: function(text) {
-    return text ? {name: text} : undefined;
+    return text ? {"name": text, "_displayUnit": text} : undefined;
+  },
+
+
+  /**
+   * Sets answer.textHTML from the rendering-xhtml extension.
+   * @param answer an answer object in Lforms item.
+   * @param xhtmlFormat the "rendering-xhtml" extension from Questionnaire.
+   * @param allowHTML widget option of whether to allow HTML in forms.
+   * @param containedImages contained images info, see buildContainedImageMap() for details.
+   */
+  setAnswerTextHTML: function(answer, xhtmlFormat, allowHTML, containedImages) {
+    answer.textHTML = xhtmlFormat.valueString;
+    if (allowHTML) {
+      // process contained images
+      if (containedImages &&
+        xhtmlFormat.valueString.match(/img/) &&
+        xhtmlFormat.valueString.match(/src/)) {
+        answer.textHTML = this._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
+      }
+      let invalidTagsAttributes = this.checkForInvalidHtmlTags(answer.textHTML);
+      if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+        answer._hasInvalidHTMLTagInText = true;
+        this.printInvalidHtmlToConsole(invalidTagsAttributes);
+      }
+    }
+  },
+
+
+  /**
+   * Check and return not allowed tags within the HTML version of the help text.
+   * See https://build.fhir.org/ig/HL7/sdc/rendering.html and
+   * https://hl7.org/fhir/R4/narrative.html for allowed subset of the HTML tags.
+   * @param {*} htmlNarrative
+   * @return [{array}] an array of invalid tags and attributes
+   */
+  checkForInvalidHtmlTags: function(htmlNarrative) {
+    let invalidTagsAttributes=[];
+    let forbiddenTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
+    let deprecatedTags = ['applet', 'basefont', 'blink', 'center', 'dir', 'embed', 'font',
+      'frame', 'frameset', 'isindex', 'noframes', 'marquee', 'menu', 'plaintext', 's', 'strike', 'u'];
+    const FORBIDDEN_TAGS = forbiddenTags.concat(deprecatedTags);
+    const ALLOWED_URI_REGEXP = /^(?:data:|#|\/)/i;
+    const FORBIDDEN_ATTR = [];
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/url_function
+    const CSS_PROPERTIES_WITH_URL = [
+      "background",
+      "background-image",
+      "border",
+      "border-image",
+      "border-image-source",
+      "content",
+      "cursor",
+      "filter",
+      "list-style",
+      "list-style-image",
+      "mask",
+      "mask-image",
+      "offset-path",
+      "clip-path"
+    ];
+
+    // Tags (not in the FORBIDDEN_TAGS list above) that could have a URL value.
+    // See https://stackoverflow.com/questions/2725156/complete-list-of-html-tag-attributes-which-have-a-url-value
+    // TBD: A full url in 'cite' might not be invalid.
+    const TAGS_WITH_URL = {
+      "a": ["href"],
+      "area": ["href"],
+      "blockquote": ["cite"],
+      "del": ["cite"],
+      "img": ["langdesc","src","usemap"],
+      "input": ["src","usemap"],
+      "ins": ["cite"],
+      "q": ["cite"],
+      "audio": ["src"],
+      "button": ["formaction"],
+      "input": ["formaction"],
+      "source": ["src"],
+      "tract": ["src"],
+      "video": ["poster","src"]
+    }
+    // Some tags have multiple URL values in an attributes. For example:
+    // <img srcset="/image4x.jpg 4x, /image3x.jpg 3x, /image2x.jpg 2x, /image1x.jpg 1x"
+    //      src="/image.jpg">
+    const TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR = {
+      "img": "srcset",
+      "source": "srcset"  //'srcset' has one URL when <source> is included in <picture> and <video> (where multiple <source> tags are used instead).
+    }
+
+    let that = this;
+    const parser = new htmlparser2.Parser({
+      onopentag(name, attributes) {
+        // check tags
+        FORBIDDEN_TAGS.forEach(tag => {
+          if (name.toLocaleLowerCase() === tag) {
+            invalidTagsAttributes.push({"tag": tag});
+          }
+        });
+        // check attributes with one URL value
+        for (const [tag, urlAttrs] of Object.entries(TAGS_WITH_URL)) {
+          if (name.toLocaleLowerCase() === tag) {
+            for (const [attr, value] of Object.entries(attributes)) {
+              urlAttrs.forEach(urlAttr => {
+                if(attr === urlAttr && !value.match(ALLOWED_URI_REGEXP)) {
+                  invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
+                }
+              })
+            }
+          }
+        };
+        // check attributes that could have multiple URL values
+        for (const [tag, urlAttr] of Object.entries(TAGS_WITH_MULTIPLE_URLS_IN_ONE_ATTR)) {
+          if (name.toLocaleLowerCase() === tag) {
+            for (const [attr, value] of Object.entries(attributes)) {
+              if(attr === urlAttr) {
+                let urlValues = value.split(",");
+                urlValues.forEach(urlValue => {
+                  if (!urlValue.trim().match(ALLOWED_URI_REGEXP)) {
+                    invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
+                  }
+                })
+              }
+            }
+          }
+        };
+        // check attributes (not FORBIDDEN_ATTR for now)
+        // for (const [attr, value] of Object.entries(attributes)) {
+        //   FORBIDDEN_ATTR.forEach(forbiddenAttr => {
+        //     if(attr === forbiddenAttr) {
+        //       invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(), "attribute": forbiddenAttr });
+        //     }
+        //   });
+        // }
+
+        // check "style" attribute for URLs
+        for (const [attr, value] of Object.entries(attributes)) {
+          if(attr === "style") {
+            // parse the CSS string
+            let cssObj = parse(value);
+            for (const [cssProp, cssValue] of Object.entries(cssObj)) {
+              CSS_PROPERTIES_WITH_URL.forEach(styleProp => {
+                if (cssProp.toLocaleLowerCase() === styleProp) {
+                  let forbiddenURLs = that._hasForbiddenCssUrl(cssValue);
+                  forbiddenURLs.forEach(urlString => {
+                    invalidTagsAttributes.push({"tag": name.toLocaleLowerCase(),
+                      "attribute": "style", "cssPropertyValue": styleProp + " : " + urlString });
+
+                  })
+                }
+              })
+            }
+          }
+        }
+      }
+      // Do nothing on onclosetag(name, attributes) {}
+    });
+
+    parser.write(htmlNarrative);
+    parser.end();
+
+    return invalidTagsAttributes;
+  },
+
+
+  /** Check if URLs in CSS have values that are not allowed by FHIR specs
+   * (Remote URLs are not allowed)
+   * @param {*} cssValue CSS value on the 'style' attribute of a DOM element
+   * @returns A array of URLs that are not allowed.
+   */
+  _hasForbiddenCssUrl: function(cssValue) {
+    // possible usage of url() in the cssValue
+    // Note: css property name is case-sensitive.
+    //
+    // //No url(\'https://example.com/images/myImg.jpg\');
+    // url("https://example.com/images/myImg.jpg");
+    // url(\"https://example.com/images/myImg.jpg\");
+    // url('https://example.com/images/myImg.jpg');
+    // url(https://example.com/images/myImg.jpg);
+    // url("data:image/jpg;base64,iRxVB0…");
+    // url(\"data:image/jpg;base64,iRxVB0…\");
+    // url('data:image/jpg;base64,iRxVB0…');
+    // url(data:image/jpg;base64,iRxVB0…);
+    // url(myImg.jpg);
+    // url(#IDofSVGpath);
+
+    // Any external URLs are not allowed, including http, https, file
+    // or other protocols.
+    // url("https://...");
+    // url(\"https://...");
+    // url('https://...');
+    // url(https://...);
+    // url("http://...");
+    // url(\"http://...");
+    // url('http://...');
+    // url(http://...);
+    // url("file://...");
+    // url(\"file://...");
+    // url('file://...');
+    // url(file://...);
+
+    // sample output:
+    //  css= "url(\"img_tree.gif\"), url('file://local.jpg'),url('paper.gif'),url(http://google.com), url(\"example_with_url_inside.gif\"),url('url(123.png)')"
+    //  [
+    //   "url(\"img_tree.gif\")",
+    //   "url('paper.gif')",
+    //   "url('file://local.jpg')",
+    //   "url(http://google.com)",
+    //   "url(\"example_with_url_inside.gif\")",
+    //   "url('url(123.png)"
+    //  ]
+
+    let forbiddenURLs = [];
+    const CSS_URL_REGEXP = /url\(\s*["']?(.*?)["']?\s*\)/g;
+    let matched = cssValue.match(CSS_URL_REGEXP)
+
+    const URL_PARAM_REGEXP = /^url\(\s*[\\"']?[A-Za-z0-9]*\:\/\//
+    if (matched) {
+      for(let i=0; i<matched.length; i++) {
+        let urlString = matched[i];
+        if (urlString.match(URL_PARAM_REGEXP)) {
+          forbiddenURLs.push(urlString)
+        }
+      }
+    }
+
+    return forbiddenURLs;
+  },
+
+
+  /**
+   * Prints detailed errors about invalid HTML in console.
+   * @param invalidTagsAttributes object of invalid HTML tag and attributes
+   * returned from checkForInvalidHtmlTags().
+   */
+  printInvalidHtmlToConsole: function(invalidTagsAttributes) {
+    console.log("Possible invalid HTML tags/attributes:");
+    invalidTagsAttributes.forEach(ele => {
+      if (ele.attributeValue) {
+        console.log("  - Attribute value: " + ele.attributeValue +
+          " of " + ele.attribute + " in " + ele.tag);
+      }
+      else if (ele.attribute)
+        console.log("  - Attribute: " + ele.attribute + " in " + ele.tag);
+      else if (ele.tag)
+        console.log("  - Element: " + ele.tag);
+    });
   },
 
 
@@ -162,14 +410,79 @@ export const InternalUtil = {
 
   /**
    *  Check if the lforms item has an answer list
-   * @param {*} item 
-   * @returns 
+   * @param {*} item
+   * @returns
    */
   hasAnswerList: function(item) {
-    return item.dataType === "CNE" || item.dataType === "CWE" || item.answers &&
+    return item.dataType === "CODING" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
+  },
+
+
+  /**
+   * Get the rendering-xhtml string, replacing local ids in the 'src' attributes of
+   * the 'img' tags if the local ids are in the 'contained' with image data,
+   * @param containedImages a hashmap of image data from the "contained" in FHIR questionnaire
+   * @param value an HTML string
+   */
+  _getHtmlStringWithContainedImages: function(containedImages, value) {
+    if (containedImages) {
+      // go though each image in the html string and replace local ids in image source
+      // with contained data
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(value, "text/html");
+
+      let imgs = doc.getElementsByTagName("img");
+      for (let i = 0; i < imgs.length; i++) {
+        let urlValue = imgs[i].getAttribute("src");
+        if (urlValue && urlValue.match(/^#/)) {
+          let localId = urlValue.substring(1);
+          let imageData = containedImages[localId];
+          if (imageData) {
+            imgs[i].setAttribute("src", imageData);
+          }
+        }
+      }
+      return doc.body.innerHTML;
+    } else {
+      return '';
+    }
+  },
+
+
+  /**
+   * Check an item's skip logic status to decide if the item is enabled
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetEnabled: function(item) {
+    return item._enableWhenExpVal !== false &&
+        item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+  },
+
+
+  /**
+   * Check an item's skip logic status to decide if the item is disabled and
+   * protected.
+   * @param item an item
+   * @returns {boolean}
+   */
+  targetDisabledAndProtected: function(item) {
+    return item._disabledDisplayStatus === 'protected' &&
+        !this.targetEnabled(item);
+
+  },
+
+
+  /**
+   * Check if the item should be displayed.
+   * @param item an item
+   * @return {boolean}
+  */
+  targetShown: function(item) {
+    return item._disabledDisplayStatus === 'protected' ||
+        this.targetEnabled(item);
   }
-  
 }
 
 

@@ -3,9 +3,10 @@ import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
 
 @Component({
-  selector: 'lhc-item-question',
-  templateUrl: './lhc-item-question.component.html',
-  styleUrls: ['./lhc-item-question.component.css']
+    selector: 'lhc-item-question',
+    templateUrl: './lhc-item-question.component.html',
+    styleUrls: ['./lhc-item-question.component.css'],
+    standalone: false
 })
 export class LhcItemQuestionComponent implements OnInit {
 

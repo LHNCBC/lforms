@@ -10,7 +10,7 @@ var STU3_cneDataTypeFixture = {
       {"text": "Other","code": "LA46-8","other": "Please Specify"}
     ],
     "answerCardinality": {"min": "1","max": "1"},
-    "dataType": "CNE",
+    "dataType": "CODING",
     "questionCodeSystem": "LOINC",
     "linkId": "/54126-8/54131-8"
   },
@@ -51,7 +51,7 @@ var STU3_alWithCodeSystemFixture = {
     "question": "dummy",
     "questionCardinality": {"min": "1","max": "1"},
     "answers": [{"text": "X","code": "x", "system": "http://loinc.org"},{"text": "Y","code": "y", "system": "LOINC"},{"text": "Z","code": "z","other": "Please Specify", "system": "LOINC"}],
-    "dataType": "CNE",
+    "dataType": "CODING",
     "linkId": "/a/a"
   },
 

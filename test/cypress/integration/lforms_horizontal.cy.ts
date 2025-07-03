@@ -10,7 +10,7 @@ describe('horizontal table', () => {
 
     cy.get(addRemoveButtons).eq(2)
       .should('be.visible')
-      .should('contain', 'Add another row of "This family member\'s history of disease"');
+      .should('contain', '+ This family member\'s history of disease');
   });
 
   it('should have two remove buttons visible after the user adds a row', () => {
@@ -22,7 +22,7 @@ describe('horizontal table', () => {
       // the second row has a '-' button
       expect($buttons.eq(3)).to.have.text('-');
       // and an add button
-      expect($buttons.eq(4)).to.contain('Add another row of "This family member\'s history of disease"');
+      expect($buttons.eq(4)).to.contain('+ This family member\'s history of disease');
     });
   });
 
@@ -37,7 +37,7 @@ describe('horizontal table', () => {
       // the third row has a '-' button
       expect($buttons.eq(4)).to.have.text('-');
       // and an add button
-      expect($buttons.eq(5)).to.contain('Add another row of "This family member\'s history of disease"');
+      expect($buttons.eq(5)).to.contain('+ This family member\'s history of disease');
     });
   });
 
@@ -51,7 +51,7 @@ describe('horizontal table', () => {
       // the second row has a '-' button
       expect($buttons.eq(3)).to.have.text('-');
       // and an add button
-      expect($buttons.eq(4)).to.contain('Add another row of "This family member\'s history of disease"');
+      expect($buttons.eq(4)).to.contain('+ This family member\'s history of disease');
     });
   });
 

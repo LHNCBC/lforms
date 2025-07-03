@@ -7,16 +7,23 @@
       <colgroup>
         <col class="lhc-question">
         <col *ngFor="let answer of item.items[0].answers">
-        <col class="other-answer" *ngIf="item.items[0].dataType ==='CWE'">
+        <col class="other-answer" *ngIf="item.items[0].answerConstraint === 'optionsOrString'">
       </colgroup>
       <thead>
       <tr class="lhc-matrix-table-header-row">
         <th class="lhc-question"></th>
-        <th *ngFor="let answer of item.items[0].answers; index as i;"
+        <th *ngFor="let answer of _autocompOptions.listItems; index as i;"
             class="lhc-form-matrix-cell"
-            id="answer-{{index}}">{{answer.text}}</th>
-        <th class="lhc-form-matrix-cell-other" *ngIf="item.items[0].dataType ==='CWE'"
-         id="otherAnswer">Other</th>
+            id="answer-{{index}}"
+            [style]="answer._obj_CSS">
+          <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
+            <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
+            <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
+            <ng-container *ngSwitchCase="'plain'">{{answer._displayText}}</ng-container>
+          </ng-container>
+        </th>
+        <th class="lhc-form-matrix-cell-other" *ngIf="item.items[0].answerConstraint === 'optionsOrString'"
+         id="otherAnswer">{{language.other}}</th>
       </tr>
       </thead>
       <tbody>
@@ -31,9 +38,12 @@
             <span class="lhc-form-matrix-answer">
               <!--for multiple answers-->
               <label *ngIf="isCheckbox">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
+                  [disabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
                   [(ngModel)]="subItem._checkboxModels[i]"
                   (ngModelChange)="updateCheckboxListValue(subItem)">
@@ -41,31 +51,40 @@
               <!--for single answer-->
               <label *ngIf="!isCheckbox">
                 <input
-                  type="radio" 
+                  type="radio"
+                  [disabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
-                  [ngModel]="subItem.value" 
+                  [checked]="subItem._selectedRadio === i"
                   [value]="answer"
                   name="{{subItem._elementId}}"
-                  (change)="updateRadioListValue(subItem, answer)">
+                  [attr.name]="subItem._elementId"
+                  (change)="updateRadioListValue(subItem, answer, i)">
               </label>
             </span>
           </td>
-          <td class="lhc-form-matrix-cell-other" *ngIf="subItem.dataType ==='CWE'">
+          <td class="lhc-form-matrix-cell-other" *ngIf="subItem.answerConstraint === 'optionsOrString'"
+            aria-labeledby=otherAnswer>
             <!--for multiple answers-->
             <span *ngIf="isCheckbox" class="lhc-form-matrix-answer">
               <label>
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
+                  [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_other'}}"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
                   (ngModelChange)="updateCheckboxListValue(subItem)">
               </label>
               <label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
+                  [disabled]="item._readOnly"
                   id="{{subItem._elementId + '_otherValue'}}"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOther"
                   (ngModelChange)="updateCheckboxListValue(subItem)">
@@ -74,18 +93,24 @@
             <!--for single answer-->
             <span *ngIf="!isCheckbox" class="lhc-form-matrix-answer">
               <label>
-                <input 
-                  type="radio" 
-                  id="{{subItem._elementId + '_other'}}" 
+                <input
+                  type="radio"
+                  [disabled]="item._readOnly"
+                  id="{{subItem._elementId + '_other'}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
-                  [value]="true" name="{{subItem._elementId}}"
+                  [value]="true"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   (change)="updateRadioListValueForOther(subItem, subItem._answerOther)">
               </label>
               <label>
-                <input 
-                  type="text" 
-                  id="{{subItem._elementId + '_otherValue'}}" 
+                <input
+                  type="text"
+                  [disabled]="item._readOnly"
+                  id="{{subItem._elementId + '_otherValue'}}"
+                  name="{{subItem._elementId}}"
+                  [attr.name]="subItem._elementId"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOther"
                   (ngModelChange)="updateRadioListValueForOther(subItem, subItem._answerOther)">

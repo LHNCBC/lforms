@@ -13,14 +13,14 @@
       }
     ]
   },
+  "extension": [{
+    "url": "http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer",
+    "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+  }],
   "item": [
     {
       "type": "group",
       "extension": [
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
-          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
-        },
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {

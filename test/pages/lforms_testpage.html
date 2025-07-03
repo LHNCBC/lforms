@@ -36,7 +36,9 @@
       background-color: #337ab7;
       border-color: #2e6da4;
     }
-
+    .option-checkbox {
+      margin: 2px 8px;
+    }
     .hide {
       display: none;
     }
@@ -58,6 +60,8 @@
         <select id="fhirVersion">
           <option value="R4">R4</option>
           <option value="STU3">STU3</option>
+          <option value="R4B">R4B</option>
+          <option value="R5">R5</option>
         </select>
         <button id="change-option" class="btn btn-primary" onclick="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
         <button id="reset-form-with-same-data" class="btn btn-primary" onclick="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)[&#10004;]</button>
@@ -66,7 +70,6 @@
         <button id="get-fhir-bundle1" class="btn btn-primary" onclick="showDiagnosticReportBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle[&#10004;]</button>
         <button id="get-fhir-bundle2" class="btn btn-primary" onclick="showDiagnosticReportBundle2()">Show FHIR DiagnosticReport in "collection" Bundle[&#10004;]</button>
         <button id="get-sdc-questionnaire" class="btn btn-primary" onclick="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire[&#10004;]</button>
-        <button id="get-questionnaire" class="btn btn-primary" onclick="showFHIRQuestionnaire()">Show FHIR Questionnaire[&#10004;]</button>
         <button id="get-sdc-response" class="btn btn-primary" onclick="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response[&#10004;]</button>
         <button id="change-columns" class="btn btn-primary" onclick="changeObxObr()">Change OBR/OBX Options</button>
         <button id="merge-dr" class="btn btn-primary" onclick="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)[&#10004;]</button>
@@ -77,9 +80,22 @@
         <button id="test" class="btn btn-primary" onclick="testSearchOnFHIRServer()">Search on FHIR Server</button>
 
         <input type="file" id="fileAnchor" onchange="loadFile(event)" class="hide" />
-        <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
         <input type="file" id="convZipFileAnchor" onchange="loadConvertAndSaveZippedForms(event)" class="hide" />
         <button id="convBtn" type="button" class="btn btn-success" onclick="document.querySelector('#convZipFileAnchor').click()">Convert Between LHC-Forms/FHIR (zip file)</button>
+        <div style="border: 1px solid black; padding: 1em" id="loadFromFileSection">
+          <div id="tempOptionList">
+            <div>LHC-Forms options (for uploaded files through the "Load Form From File" button)</div>
+            <div>
+              <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" /> allowHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
+            </div>
+          </div>
+          <div style="margin: 8px">QuestionnaireResponse for the Questionnaire selected below: <input type="file" id="qrFile"/></div>
+          <button id="loadBtn" type="button" class="btn btn-success"
+          onclick="document.querySelector('#fileAnchor').click()">Load Form From File</button>
+        </div>
+
         <div id="formConvStarted" style="display:none; margin:100px; font-size:150%; color:darkred">
           Converting your forms... this may take a while.
           The resulting zip file will be downloaded automatically to your browser's default downloads folder.
@@ -91,6 +107,8 @@
         </div>
       </div>
     </div>
+    <br>
+    <button onclick="getInternalData()">Debug: Get internal data</button>
 
     <br><br>
     <wc-lhc-form id='test-form'></wc-lhc-form>
@@ -107,7 +125,7 @@
         {text: 'Glasgow Coma Score (with score rules)', name: 'glasgow'},
         {text: 'Full-Featured Demo', name: 'allInOne',
             tempOptions: {
-              allowHTMLInInstructions: true,
+              allowHTML: true,
               allowMultipleEmptyRepeatingItems: true
             }},
         {text: 'Form Builder created test form', name: 'formBuilder'},
@@ -158,13 +176,10 @@
        */
       function loadFormList() {
         let formList = document.getElementById("form-list");
-        testForms.forEach(form => {
+        testForms.forEach((form, index) => {
           let option = document.createElement("option");
           option.text = form.text;
-          option.value = JSON.stringify({
-            url: "/test/data/lforms/" + form.name + ".json",
-            tempOptions: form.tempOptions,
-            formOptions: form.formOptions})
+          option.value = index;
           formList.add(option);
         })
       }
@@ -180,17 +195,22 @@
       /**
        * Load and display a form
        */
-      async function fetchAndDisplayForm(strForm) {
-        let jsonForm = JSON.parse(strForm)
-        let formData = await loadJsonFromUrl(jsonForm.url);
+      async function fetchAndDisplayForm(formInfo) {
+        let url = "/test/data/lforms/" + formInfo.name + ".json";
+        let formData = await loadJsonFromUrl(url);
         testForm.questionnaire = formData;
-        if (jsonForm.formOptions) {
-          Object.assign(formData,jsonForm.formOptions)
+        if (formInfo.formOptions) {
+          Object.assign(formData,formInfo.formOptions)
         }
-        if (jsonForm.tempOptions) {
-          testForm.options = jsonForm.tempOptions;
+        if (formInfo.tempOptions) {
+          testForm.options = formInfo.tempOptions;
         }
 
+      }
+
+      function getInternalData() {
+        let lfData = testForm.lhcFormData;
+        console.log(lfData)
       }
 
       /**
@@ -201,7 +221,7 @@
         let fhirVersion = this.getFHIRVersion();
 
         if (formList.value) {
-          fetchAndDisplayForm(formList.value);
+          fetchAndDisplayForm(testForms[formList.value]);
         }
       };
 
@@ -221,7 +241,7 @@
       }
 
       /**
-       * Get FHIR context from the globale object LForms
+       * Get FHIR context from the global object LForms
        */
       function getFHIR() {
         return LForms.FHIR[getFHIRVersion()];
@@ -230,7 +250,7 @@
       // options
       function toggleCodingInstructionFormat() {
         if (testForm.questionnaire) {
-          let options = {allowHTMLInInstructions: !testForm.lhcFormData.templateOptions.allowHTMLInInstructions};
+          let options = {allowHTML: !testForm.lhcFormData.templateOptions.allowHTML};
           testForm.options = options;
         }
       }
@@ -261,20 +281,9 @@
        * Get SDC 'Questionnaire' data from the form and display it in console
        */
       function showFHIRSDCQuestionnaire() {
-        if (testForm.questionnaire) {
+        if (testForm.lhcFormData) {
           var fhir = getFHIR();
-          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.questionnaire);
-          var fhirString = JSON.stringify(sdc, null, 4);
-          console.log(fhirString);
-        }
-      }
-
-      /**
-       * Get 'Questionnaire' data from the form and display it in console
-       */
-      function showFHIRQuestionnaire() {
-        if (testForm.questionnaire) {
-          var sdc = getFHIR().SDC.convertLFormsToQuestionnaire(testForm.questionnaire, true);
+          var sdc = fhir.SDC.convertLFormsToQuestionnaire(testForm.lhcFormData);
           var fhirString = JSON.stringify(sdc, null, 4);
           console.log(fhirString);
         }
@@ -332,8 +341,9 @@
 
         let formUrl = '/test/data/lforms/' + questionnaireFileName;
         let formJson = await loadJsonFromUrl(formUrl);
-
-        let fhirResUrl = '/test/data/' + getFHIRVersion() + '/' + fhirFileName;
+        let fhirVersion = getFHIRVersion();
+        let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+        let fhirResUrl = '/test/data/' + fhirVersionInFile + '/' + fhirFileName;
         let fhirJson = await loadJsonFromUrl(fhirResUrl);
 
         let mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
@@ -390,17 +400,55 @@
       function loadFile(event) {
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
+        var qrFileField = document.querySelector('#qrFile');
         var questionnaire;
+        var allowHTML = document.querySelector('#allowHTML').checked,
+            displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
+            showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+        var questionnaire, qr;
+
         reader.onload = function() {
-          var questionnaire = JSON.parse(reader.result);
+          questionnaire = JSON.parse(reader.result);
           // Reset the field with the filename we can load the same file again if needed.
           fileAnchor.value = '';
+          if (qrFileField.value) {
+            var qrReader = new FileReader();
+            qrReader.onload = function() {
+              qr = JSON.parse(qrReader.result);
+              setWebCompOptions();
+            }
+            qrReader.readAsText(qrFileField.files[0]);
+            qrFileField.value = '';
+          }
+          else
+            setWebCompOptions();
+        }
+
+        function setWebCompOptions() {
           testForm.questionnaire = questionnaire;
           testForm.fhirVersion = getFHIRVersion()
           // The prepopulateFHIR variable below is a hack for the test code to signal
           // prepopulation is desired.
           testForm.prepop = window.prepopulateFHIR;
-          testForm.options = {messageLevel: 'info'};
+          var options = { 'messageLevel': 'info' };
+          // Set the options values when the option checkboxes have non-default values.
+          // Do not set the options with the default values, which will overwrite the
+          // options values within the lform data file (not affecting Questionnaires as options
+          // are not included in Questionnaires).
+          if(allowHTML) {
+            options["allowHTML"] = true;
+          }
+          if (displayInvalidHTML) {
+            options["displayInvalidHTML"] = true;
+          }
+          if (showCodingInstruction) {
+            options["showCodingInstruction"] = true;
+          }
+          if (qr) {
+            options.questionnaireResponse = qr;
+          }
+
+          testForm.options = options
 
         };
         reader.readAsText(event.target.files[0]);
@@ -533,12 +581,11 @@
     <!-- ES2017 files of the LHC-Forms web component -->
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/jszip/vendor/FileSaver.js"></script>
-    <script src="/assets/lib/zone.min.js"></script>
+    <script src="/assets/lib/zone.umd.min.js"></script>
     <script src="/runtime.js"></script>
     <script src="/polyfills.js"></script>
-    <script src="/scripts.js"></script>
     <script src="/main.js"></script>
-    <script src="/dist/lforms/fhir/lformsFHIRAll.min.js"></script>
+    <script src="/lforms/fhir/lformsFHIRAll.min.js"></script>
 
   </body>
 </html>

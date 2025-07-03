@@ -1,0 +1,532 @@
+{
+  "name": "Answers with TM type, answerConstraint='optionsOnly'",
+
+  "items": [
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueTime - autocomplete",
+      "questionCode": "valueTime-group1",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueTime-group1",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime",
+          "questionCode": "valueTime-group1-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group1-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime - repeats",
+          "questionCode": "valueTime-group1-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group1-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueTime - radiocheckbox",
+      "questionCode": "valueTime-group2",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueTime-group2",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime",
+          "questionCode": "valueTime-group2-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group2-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime - repeats",
+          "questionCode": "valueTime-group2-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group2-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueTime - prefix- score",
+      "questionCode": "valueTime-group3",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueTime-group3",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime",
+          "questionCode": "valueTime-group3-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group3-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "text": "13:30:00",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "text": "23:59:59",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime - repeats",
+          "questionCode": "valueTime-group3-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group3-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "text": "13:30:00",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "text": "23:59:59",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueTime - radiocheckbox - prefix - score",
+      "questionCode": "valueTime-group4",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueTime-group4",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime",
+          "questionCode": "valueTime-group4-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group4-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "text": "13:30:00",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "text": "23:59:59",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime - repeats - prefix - score",
+          "questionCode": "valueTime-group4-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group4-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00",
+              "label": "A",
+              "score": 1
+            },
+            {
+              "text": "13:30:00",
+              "label": "B",
+              "score": 2
+            },
+            {
+              "text": "23:59:59",
+              "label": "C",
+              "score": 3
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueTime - autocomplete - initial",
+      "questionCode": "valueTime-group5",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueTime-group5",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime",
+          "questionCode": "valueTime-group5-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group5-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+          "defaultAnswer": {
+            "text": "13:30:00"
+          },
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime - repeats",
+          "questionCode": "valueTime-group5-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group5-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "COMBO_BOX"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "dataType": "SECTION",
+      "question": "answerOption - valueTime - radiocheckbox - initial",
+      "questionCode": "valueTime-group6",
+      "questionCodeSystem": "LinkId",
+      "linkId": "valueTime-group6",
+      "questionCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "items": [
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime",
+          "questionCode": "valueTime-group6-item1",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group6-item1",
+          "answerCardinality": {
+            "max": "1",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "1"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+          "defaultAnswer": {
+            "text": "13:30:00"
+          },
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        },
+        {
+          "dataType": "TM",
+          "answerConstraint": "optionsOnly",
+          "question": "valueTime - repeats",
+          "questionCode": "valueTime-group6-item2",
+          "questionCodeSystem": "LinkId",
+          "linkId": "valueTime-group6-item2",
+          "answerCardinality": {
+            "max": "*",
+            "min": "0"
+          },
+          "displayControl": {
+            "answerLayout": {
+              "type": "RADIO_CHECKBOX",
+              "columns": "0"
+            }
+          },
+          "answers": [
+            {
+              "text": "10:30:00"
+            },
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+          "defaultAnswer": [
+            {
+              "text": "13:30:00"
+            },
+            {
+              "text": "23:59:59"
+            }
+          ],
+
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { TestPage } from "../support/lforms_testpage.po.js";
+import {TestUtil} from "../support/testUtilFacade";
 
 describe('on repeating items', function() {
   const tp: any = new TestPage();
@@ -86,6 +87,64 @@ describe('on repeating items', function() {
     cy.byId(deleteButtonId2).should('not.exist');
     cy.byId(deleteButtonId3).should('not.exist');
     cy.byId(deleteButtonId4).should('be.visible');
+  });
+});
+
+describe('repeating group with answerValueSet items', () => {
+  const tp: any = new TestPage();
+
+  it('should render radio button layout properly after adding a repeating group', () => {
+    tp.openBaseTestPage();
+    TestUtil.waitForFHIRLibsLoaded();
+    tp.loadFromTestData('repeating-group-that-contain-an-item-with-answerValueSet.R4.json', 'R4');
+    // The form has a question with 7 radio button options.
+    cy.get('.ant-radio-input').should('have.length', 7);
+    cy.get('.ant-radio-input').eq(0).click();
+    // Add a repeating group.
+    cy.contains('+ repeating group').click();
+    // The 7 radio button inputs in the repeating group should be rendered.
+    cy.get('.ant-radio-input').should('have.length', 14);
+  });
+
+  it('should render radio button layout properly after adding a nested repeating group', () => {
+    tp.openBaseTestPage();
+    TestUtil.waitForFHIRLibsLoaded();
+    tp.loadFromTestData('nested-repeating-groups-that-contain-an-item-with-answerValueSet.R4.json', 'R4');
+    // The form has a question with 7 radio button options.
+    cy.get('.ant-radio-input').should('have.length', 7);
+    cy.byId('9744363809788/1').type('some text');
+    // Add a repeating group.
+    cy.contains('+ Outer group').click();
+    // The 7 radio button inputs in the repeating group should be rendered.
+    cy.get('.ant-radio-input').should('have.length', 14);
+  });
+});
+
+describe('repeating group with tooltip to show on empty items', () => {
+  const tp: any = new TestPage();
+
+  it('should display tooltips correctly when adding a repeating group', () => {
+    tp.openBaseTestPage();
+    tp.loadFromTestData('test-tooltip-on-repeat-item.json', 'R4');
+    const allergy1 = '/allergies/allergy_name/1/1';
+    const allergy2 = '/allergies/allergy_name/2/1';
+    const allergy3 = '/allergies/allergy_name/3/1';
+    const addButton = 'add-/allergies/1';
+    const addTooltip = 'add-content-/allergies/1';
+    cy.byId(allergy1).click();
+    cy.byId(allergy1).type('{downarrow}').type('{enter}');
+    cy.byId(allergy1).should('have.value', 'Chocolate');
+    cy.byId(addButton).click();
+    cy.byId(allergy2).should('be.visible');
+    cy.byId(addTooltip).should('not.exist');
+    cy.byId(addButton).click();
+    cy.byId(addTooltip).should('be.visible').should('contain', 'Please enter info in the blank ');
+    cy.byId(allergy2).click();
+    cy.byId(allergy2).type('{downarrow}').type('{downarrow}').type('{enter}');
+    cy.byId(allergy2).should('have.value', 'Crab');
+    cy.byId(addButton).click();
+    cy.byId(allergy3).should('be.visible');
+    cy.byId(addTooltip).should('not.exist');
   });
 });
 

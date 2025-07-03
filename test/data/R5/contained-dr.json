@@ -1,0 +1,551 @@
+{
+  "resourceType": "DiagnosticReport",
+  "id": "54127-6N-1665065705545-17-1ab44dbb18ce5",
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "54127-6N",
+        "display": "USSG-FHT, (with mock-up items for skip logic demo)"
+      }
+    ],
+    "text": "USSG-FHT, (with mock-up items for skip logic demo)"
+  },
+  "result": [
+    {
+      "reference": "#54126-8-1665065705545-1-f83aaf10af38f"
+    }
+  ],
+  "contained": [
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54125-0",
+            "display": "Name"
+          }
+        ],
+        "text": "Name"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54125-0-1665065705545-2-07c377f78325e",
+      "valueString": "name 1"
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54125-0",
+            "display": "Name"
+          }
+        ],
+        "text": "Name"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54125-0-1665065705545-3-096e41ed2fcde",
+      "valueString": "name 2"
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54131-8",
+            "display": "Gender"
+          }
+        ],
+        "text": "Gender"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54131-8-1665065705545-4-7a8cdee843df4",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "LA2-8",
+            "display": "Male"
+          }
+        ],
+        "text": "Male"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "21112-8",
+            "display": "Date of Birth"
+          }
+        ],
+        "text": "Date of Birth"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "21112-8-1665065705545-5-1324cec18cd05",
+      "valueDate": "2016-10-27"
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "8302-2",
+            "display": "Height"
+          }
+        ],
+        "text": "Height"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "8302-2-1665065705545-6-1d2c84e909402",
+      "valueQuantity": {
+        "value": 70,
+        "unit": "inches",
+        "code": "inches",
+        "system": "http://unitsofmeasure.org"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "29463-7",
+            "display": "Weight"
+          }
+        ],
+        "text": "Weight"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "29463-7-1665065705545-7-b5ee9f77cda4b",
+      "valueQuantity": {
+        "value": 170,
+        "unit": "lbs",
+        "code": "lbs",
+        "system": "http://unitsofmeasure.org"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "39156-5",
+            "display": "Mock-up item: Body mass index (BMI) [Ratio]"
+          }
+        ],
+        "text": "Mock-up item: Body mass index (BMI) [Ratio]"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "39156-5-1665065705545-8-c3fbdad6732a",
+      "valueString": "24.39"
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54134-2",
+            "display": "Race"
+          }
+        ],
+        "text": "Race"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54134-2-1665065705545-9-450c64663235f",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "LA10608-0",
+            "display": "American Indian or Alaska Native",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "American Indian or Alaska Native"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54134-2",
+            "display": "Race"
+          }
+        ],
+        "text": "Race"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54134-2-1665065705545-10-8ee4881026eb9",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "LA6156-9",
+            "display": "Asian",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Asian"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54140-9",
+            "display": "Disease or Condition",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Disease or Condition"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54140-9-1665065705545-12-9c07505ca7bd",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "LA10533-0",
+            "display": "Blood Clots",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Blood Clots"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54130-0",
+            "display": "Age at Diagnosis"
+          }
+        ],
+        "text": "Age at Diagnosis"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54130-0-1665065705545-13-f124cea32722d",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "LA10403-6",
+            "display": "Newborn",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Newborn"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54137-5",
+            "display": "Your diseases history",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Your diseases history"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54137-5-1665065705545-11-3cb05feeb1ac9",
+      "related": [
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54140-9-1665065705545-12-9c07505ca7bd"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54130-0-1665065705545-13-f124cea32722d"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54140-9",
+            "display": "Disease or Condition",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Disease or Condition"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54140-9-1665065705545-15-bc5bd0ab65002",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "LA10572-8",
+            "display": "-- Blood Clot in Leg",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "-- Blood Clot in Leg"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54130-0",
+            "display": "Age at Diagnosis"
+          }
+        ],
+        "text": "Age at Diagnosis"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54130-0-1665065705545-16-7b6399bfebe33",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "LA10394-7",
+            "display": "Infancy",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Infancy"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54137-5",
+            "display": "Your diseases history",
+            "system": "http://loinc.org"
+          }
+        ],
+        "text": "Your diseases history"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54137-5-1665065705545-14-18cdeaebdc857",
+      "related": [
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54140-9-1665065705545-15-bc5bd0ab65002"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54130-0-1665065705545-16-7b6399bfebe33"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "code": "54126-8",
+            "display": "Your health information"
+          }
+        ],
+        "text": "Your health information"
+      },
+      "meta": {
+        "tag": [
+          {
+            "code": "lformsVersion: 32.1.0"
+          }
+        ]
+      },
+      "id": "54126-8-1665065705545-1-f83aaf10af38f",
+      "related": [
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54125-0-1665065705545-2-07c377f78325e"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54125-0-1665065705545-3-096e41ed2fcde"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54131-8-1665065705545-4-7a8cdee843df4"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#21112-8-1665065705545-5-1324cec18cd05"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#8302-2-1665065705545-6-1d2c84e909402"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#29463-7-1665065705545-7-b5ee9f77cda4b"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#39156-5-1665065705545-8-c3fbdad6732a"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54134-2-1665065705545-9-450c64663235f"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54134-2-1665065705545-10-8ee4881026eb9"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54137-5-1665065705545-11-3cb05feeb1ac9"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#54137-5-1665065705545-14-18cdeaebdc857"
+          }
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "tag": [
+      {
+        "code": "lformsVersion: 32.1.0"
+      }
+    ]
+  },
+  "issued": "2022-10-06T14:15:05.545Z"
+}

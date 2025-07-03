@@ -10,7 +10,8 @@ module.exports = function(config) {
 
     // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
     proxies: {
-      '/test/data/': '/base/test/data/'
+      '/test/data/': '/base/test/data/',
+      '/lib': '/base/src/lib'
     },
 
     plugins: [
@@ -31,15 +32,15 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      {pattern: 'src/lib/item-controls.json', included: false, served: true}, 
       {pattern: 'test/data/**/*.json', included: false, served: true},
       {pattern: 'test/data/**/*.js', included: true, served: true},
       {pattern: 'dist/lforms/webcomponent/*.js.map', included: false, served: true},
       'dist/lforms/webcomponent/assets/lib/zone.min.js',
-      'dist/lforms/webcomponent/scripts.js',
       'dist/lforms/webcomponent/runtime.js',
       'dist/lforms/webcomponent/polyfills.js',
       'dist/lforms/webcomponent/main.js',
-      'src/fhir/*/lformsFHIR.js',
+      'dist/fhir/*/lformsFHIR.js',
       'test/karma/*.js'
     ],
 
@@ -86,7 +87,18 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromeHeadless'],
+//    browsers: ['Chrome_without_password_security'],
+    browsers: ['ChromeHeadless_without_password_security'],
+    customLaunchers: {
+      ChromeHeadless_without_password_security: {
+        base: 'ChromeHeadless',
+        flags: ['--password-store=basic']
+      },
+      Chrome_without_password_security: {
+        base: 'Chrome',
+        flags: ['--password-store=basic']
+      },
+    },
 
 
     // Continuous Integration mode

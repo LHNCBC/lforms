@@ -5,10 +5,11 @@ import { LhcDataService} from '../../../lib/lhc-data.service';
 import CommonUtils from "../../../lib/lforms/lhc-common-utils.js";
 
 @Component({
-  selector: 'lhc-autocomplete',
-  templateUrl: './lhc-autocomplete.component.html',
-  styleUrls: ['./lhc-autocomplete.component.css'],
-  encapsulation: ViewEncapsulation.Emulated
+    selector: 'lhc-autocomplete',
+    templateUrl: './lhc-autocomplete.component.html',
+    styleUrls: ['./lhc-autocomplete.component.css'],
+    encapsulation: ViewEncapsulation.Emulated,
+    standalone: false
 })
 export class LhcAutocompleteComponent implements OnChanges {
 
@@ -206,7 +207,10 @@ export class LhcAutocompleteComponent implements OnChanges {
           for (let i=0, iLen = this.options.acOptions.listItemsForModel.length; i<iLen; i++) {
             if (CommonUtils.deepEqual(answer, this.options.acOptions.listItemsForModel[i])) {
               // get the display text from the modified answer list (listItems)
-              displayValue = this.options.acOptions.listItems[i][this.displayProp]
+              displayValue = this.options.acOptions.listItems[i][this.displayProp];
+              if (this.options.acOptions.isListHTML) {
+                displayValue = displayValue.replace(/(<([^>]+)>)/gi, "").trim();
+              }
               break;
             }
           }
@@ -328,7 +332,7 @@ export class LhcAutocompleteComponent implements OnChanges {
 
       // search autocomplete
       if (acOptions.hasOwnProperty('url') || (acOptions.fhir && acOptions.fhir.search)) {
-        this.acType = 'search'
+        this.acType = 'search';
         this.acInstance = new Def.Autocompleter.Search(this.ac.nativeElement, acOptions.url, acOptions);
       }
       // prefetch autocomplete
@@ -339,7 +343,11 @@ export class LhcAutocompleteComponent implements OnChanges {
         // (autocomplete-lhc requires answer text to be unique)
         acOptions.listItems.forEach((item, index) => {
           listItemsText.push(item[this.displayProp]);
-          this.prefetchTextToItem[item[this.displayProp].trim()] = acOptions.listItemsForModel ? acOptions.listItemsForModel[index] : item;
+          let displayPropText = item[this.displayProp].trim();
+          if (acOptions.isListHTML) {
+            displayPropText = displayPropText.replace(/(<([^>]+)>)/gi, "").trim();
+          }
+          this.prefetchTextToItem[displayPropText] = acOptions.listItemsForModel ? acOptions.listItemsForModel[index] : item;
         }, this);
 
         // acOptions has matchListValue, maxSelected, codes
@@ -437,10 +445,8 @@ export class LhcAutocompleteComponent implements OnChanges {
             return answerItem;
           }
           else if (this.allowNotOnList) {
-            // TBD should use options.display if set, not _displayText
-            var displayKey = this.options.display || '_displayText';
             return this.options.modelForOffListItem ? this.options.modelForOffListItem(text) :
-              {"text" : text, "_notOnList": true, _displayText: text};
+              {"text" : text, "_notOnList": true};
           }
           else {
             // do nothing. this should not happen?
@@ -471,8 +477,8 @@ export class LhcAutocompleteComponent implements OnChanges {
    * Get the selected answer object from a 'search' autocompleter
    * @param itemText answer's text
    * @param onList whether the answer's text matches the answers texts on the list
-   * @returns {{}} an answer object with where 'code_system' is renamed to 'system' if 
-   *               there is a 'code_system', along with 'text', 'code' and 
+   * @returns {{}} an answer object with where 'code_system' is renamed to 'system' if
+   *               there is a 'code_system', along with 'text', 'code' and
    *               an optional 'data'.
    */
 
@@ -488,7 +494,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         rtn._notOnList = true;
       }
       // For answerValueSet, when 'questionnaire-itemControl' is set to be 'autocomplete',
-      // it is a search field in lforms. 
+      // it is a search field in lforms.
       // The 'system' value is returned in 'code_system' from the autocompleter.
       // Convert code_system to system
       if (rtn && rtn.code_system && !rtn.system) {

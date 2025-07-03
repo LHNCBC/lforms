@@ -180,6 +180,16 @@
       "linkId": "/REAL4"
     },
     {
+      "questionCode": "REAL5",
+      "dataType": "REAL",
+      "restrictions": {
+        "maxDecimalPlaces": 2
+      },
+      "answerCardinality": null,
+      "question": "REAL with maxDecimalPlaces restrictions",
+      "linkId": "/REAL5"
+    },
+    {
       "questionCode": "ST1",
       "dataType": "ST",
       "restrictions": {
@@ -242,6 +252,18 @@
       "answerCardinality": null,
       "question": "ST with maxLength, minLength, pattern",
       "linkId": "/STA"
+    },
+    {
+      "questionCode": "STA2",
+      "dataType": "ST",
+      "restrictions": {
+        "maxLength": 10,
+        "minLength": 5,
+        "pattern": "^[a-z]+$"
+      },
+      "answerCardinality": null,
+      "question": "ST with maxLength, minLength, pattern without /",
+      "linkId": "/STA2"
     },
     {
       "questionCode": "STB",

@@ -15,7 +15,7 @@ function addSDCImportFns(ns) {
 
   var self = ns;
 
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
+  self.fhirExtUrlOptionScore = self.fhirExtUrlOptionScoreLookup['STU3'];
   self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue";
 
 
@@ -37,16 +37,15 @@ function addSDCImportFns(ns) {
       questionnaire.contained.forEach(function(vs) {
         if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
           var answers = self.answersFromVS(vs);
-          if (!answers)
-            answers = []; // continuing with previous default; not sure if needed
-
-          // support both id and url based lookup. STU3 reference is quite vague.
-          var lfVS = {answers: answers};
-          if(vs.id) {
-            answersVS['#' + vs.id] = lfVS;
-          }
-          if(vs.url) {
-            answersVS[vs.url] = lfVS;
+          if (answers) {
+            // support both id and url based lookup. STU3 reference is quite vague.
+            var lfVS = {answers: answers};
+            if(vs.id) {
+              answersVS['#' + vs.id] = lfVS;
+            }
+            if(vs.url) {
+              answersVS[vs.url] = lfVS;
+            }
           }
         }
       });
@@ -58,6 +57,8 @@ function addSDCImportFns(ns) {
 
   /**
    * Parse questionnaire object for answer cardinality
+   *
+   * NOT USED!!
    *
    * @param lfItem {object} - LForms item object to assign answer cardinality
    * @param qItem {object} - Questionnaire item object
@@ -94,7 +95,15 @@ function addSDCImportFns(ns) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
-
+        if (!qItem.enableWhen[i].question) {
+          throw new Error("Question with linkId '" + qItem.linkId +
+            "' contains enableWhen but is missing the enableWhen.question field.");
+        }
+        if (!linkIdItemMap[qItem.enableWhen[i].question]) {
+          throw new Error("Question with linkId '" + qItem.linkId +
+              "' contains enableWhen pointing to a question with linkId '" +
+              qItem.enableWhen[i].question  + "' that does not exist.")
+        }
         var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
         var condition = {source: qItem.enableWhen[i].question};
         if(qItem.enableWhen[i].hasOwnProperty('hasAnswer')) {
@@ -102,7 +111,7 @@ function addSDCImportFns(ns) {
         }
         else {
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-          if(dataType === 'CWE' || dataType === 'CNE') {
+          if(dataType === 'CODING') {
             condition.trigger = {value: self._copyTriggerCoding(answer, null, false)};
           }
           else if(dataType === 'QTY') {
@@ -124,9 +133,10 @@ function addSDCImportFns(ns) {
    * @param lfItem {object} - LForms item object to assign answer list
    * @param qItem {object} - Questionnaire item object
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   * @param containedImages contained images info, see buildContainedImageMap() for details.
    * @private
    */
-  self._processAnswers = function (lfItem, qItem, containedVS) {
+  self._processAnswers = function (lfItem, qItem, containedVS, containedImages) {
     if(qItem.option) {
       lfItem.answers = [];
       for(var i = 0; i < qItem.option.length; i++) {
@@ -143,13 +153,50 @@ function addSDCImportFns(ns) {
             if(option[optionKey[0]].system  !== undefined) {
               answer.system = option[optionKey[0]].system;
             }
+            if (option[optionKey[0]]._display) {
+              answer['obj_valueCoding_display'] = option[optionKey[0]]._display;
+              // rendering-xhtml extension under "valueCoding._display".
+              const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+              if (xhtmlFormat) {
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+              }
+              // rendering-style extension under "valueCoding._display".
+              const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+              if (renderingStyle) {
+                answer._obj_CSS = renderingStyle.valueString;
+              }
+            }
           }
-          else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' || 
+          else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' ||
               optionKey[0] === 'valueTime' ){
             answer.text = option[optionKey[0]];
+            // rendering-xhtml extension under "_valueString".
+            if (optionKey[0] === 'valueString' && option._valueString) {
+              answer['obj_valueString'] = option._valueString;
+              const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+              if (xhtmlFormat) {
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+              }
+            }
+            // rendering-style extension under "_valueString", "_valueDate" or "_valueTime".
+            if (option[`_${optionKey[0]}`]) {
+              answer[`obj_${optionKey[0]}`] = answer[`obj_${optionKey[0]}`] || option[`_${optionKey[0]}`];
+              const renderingStyle = LForms.Util.findObjectInArray(answer[`obj_${optionKey[0]}`].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+              if (renderingStyle) {
+                answer._obj_CSS = renderingStyle.valueString;
+              }
+            }
           }
           else if (optionKey[0] === 'valueInteger') {
-            answer.text = parseInt(option[optionKey[0]])
+            answer.text = parseInt(option[optionKey[0]]);
+            // rendering-style extension under "_valueIngeter".
+            if (option._valueInteger) {
+              answer['obj_valueInteger'] = option._valueInteger;
+              const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueInteger'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+              if (renderingStyle) {
+                answer._obj_CSS = renderingStyle.valueString;
+              }
+            }
           }
           else {
             throw new Error('Unable to handle data type in answerOption: ' + optionKey[0]);
@@ -159,11 +206,12 @@ function addSDCImportFns(ns) {
           if(label) {
             answer.label = label.valueString;
           }
-          var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
+          // Any of the URLs in self.fhirExtUrlOptionScoreLookup should work on import regardless of the version of FHIR.
+          var score = option.extension?.find(ext => self.fhirExtUrlOptionScoreUrlSet.has(ext.url));
           // Look for argonaut extension.
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
           if(score) {
-            answer.score = score.valueDecimal.toString();
+            answer.score = parseFloat(score.valueDecimal);
           }
 
         }
@@ -173,8 +221,10 @@ function addSDCImportFns(ns) {
     else if (qItem.options) {
       if (containedVS)
         var vs = containedVS[qItem.options.reference];
-      if(vs) {
+      if(vs && vs.answers) {
         lfItem.answers = vs.answers;
+        // To keep options property during export.
+        lfItem._options = qItem.options;
       }
       else
         lfItem.answerValueSet = qItem.options.reference;
@@ -195,12 +245,20 @@ function addSDCImportFns(ns) {
     var repeats = qItem.repeats;
     var required = qItem.required;
     var answerCardinality, questionCardinality;
-    // CNE/CWE, repeats handled by autocompleter with multiple answers in one question
-    if (lfItem.dataType === 'CNE' || lfItem.dataType === 'CWE' || 
-        qItem.option && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' || 
+    // CODING, repeats handled by autocompleter with multiple answers in one question
+    if (lfItem.dataType === 'CODING' ||
+        qItem.option && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' ||
         lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
       if (repeats) {
-        answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        // if it has sub items that are not 'display'
+        if (qItem.item && qItem.item.length >=0 &&
+            qItem.item.some(item => item.type !== 'display')) {
+          answerCardinality = {max: "1"};
+          questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
+        else {
+          answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+        }
       }
       else {
         answerCardinality = {max: "1"};
@@ -212,7 +270,7 @@ function addSDCImportFns(ns) {
         answerCardinality.min = "0";
       }
     }
-    // no answerOptiopn, question repeats
+    // no answerOption, question repeats
     else {
       // repeats
       if (repeats) {
@@ -307,6 +365,10 @@ function addSDCImportFns(ns) {
    */
   self._processDataType = function (lfItem, qItem) {
     var type = self._getDataType(qItem);
+    // open-choice special handling
+    if (qItem.type === "open-choice") {
+      lfItem.answerConstraint = "optionsOrString";
+    }
     if(type === 'SECTION' || type === 'TITLE') {
       lfItem.header = true;
     }
@@ -316,176 +378,174 @@ function addSDCImportFns(ns) {
 
 
   // QuesitonnaireResponse Import
-  self._mergeQR = {
+  let mergeQr = self._mergeQR;
 
-    /**
-     * Get structure information of a QuestionnaireResponse instance
-     * @param qr a QuestionnaireResponse instance
-     * @returns {{}} a QuestionnaireResponse data structure object
-     * @private
-     */
-    _getQRStructure : function(qr) {
-      var qrInfo = {
-        qrItemsInfo: []
-      };
-      if (qr) {
-        this._checkQRItems(qrInfo, qr);
-      }
-      return qrInfo;
-    },
-
-
-    /**
-     * Get structural info of a QuestionnaireResponse by going though each level of items
-     * @param parentQRItemInfo the structural info of a parent item
-     * @param parentItem a parent item in a QuestionnaireResponse object
-     * @private
-     */
-    _checkQRItems : function(parentQRItemInfo, parentQRItem) {
-
-      var qrItemsInfo = [];
-      var repeatingItemProcessed = {};
-
-      if (parentQRItem && parentQRItem.item) {
-        for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
-          var item = parentQRItem.item[i];
-          var linkId = item.linkId; //code is not necessary included in linkId
-          // first item that has the same code, either repeating or non-repeating
-          if (!repeatingItemProcessed[linkId]) {
-            var repeatingInfo = this._findTotalRepeatingNum(linkId, parentQRItem);
-
-            // create structure info for the item
-            var repeatingItems = repeatingInfo.repeatingItems;
-            for (var j=0, jLen=repeatingItems.length; j<jLen; j++) {
-              var qrItemInfo = {
-                linkId: linkId,
-                item: repeatingItems[j],
-                index: j,
-                total: repeatingInfo.total
-              };
-              // check observation instances in the sub level
-              this._checkQRItems(qrItemInfo, repeatingItems[j]);
-              self._checkQRItemAnswerItems(qrItemInfo, repeatingItems[j]);
-              qrItemsInfo.push(qrItemInfo);
-            }
-            repeatingItemProcessed[linkId] = true;
-          }
-        }
-        parentQRItemInfo.qrItemsInfo = qrItemsInfo;
-      }
-    },
+  /**
+   * Get structure information of a QuestionnaireResponse instance
+   * @param qr a QuestionnaireResponse instance
+   * @returns {{}} a QuestionnaireResponse data structure object
+   * @private
+   */
+  mergeQr._getQRStructure = function(qr) {
+    var qrInfo = {
+      qrItemsInfo: []
+    };
+    if (qr) {
+      this._checkQRItems(qrInfo, qr);
+    }
+    return qrInfo;
+  };
 
 
-    /**
-     * Find the number of the repeating items that have the same code
-     * @param linkId an item's linkId
-     * @param parentQRItem a parent item in a QuestionnaireResponse object
-     * @returns a structural info object for a repeating item
-     * @private
-     */
-    _findTotalRepeatingNum : function(linkId, parentQRItem) {
+  /**
+   * Get structural info of a QuestionnaireResponse by going though each level of items
+   * @param parentQRItemInfo the structural info of a parent item
+   * @param parentItem a parent item in a QuestionnaireResponse object
+   * @private
+   */
+  mergeQr._checkQRItems = function(parentQRItemInfo, parentQRItem) {
 
-      var total = 0;
-      var repeatingItems = [];
+    var qrItemsInfo = [];
+    var repeatingItemProcessed = {};
+
+    if (parentQRItem && parentQRItem.item) {
       for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
         var item = parentQRItem.item[i];
-        if (linkId === item.linkId) {
-          repeatingItems.push(item);
-          if (Array.isArray(item.answer)) {
-            total += item.answer.length; // answers for repeating questions and repeating answers
+        var linkId = item.linkId; //code is not necessary included in linkId
+        // first item that has the same code, either repeating or non-repeating
+        if (!repeatingItemProcessed[linkId]) {
+          var repeatingInfo = this._findTotalRepeatingNum(linkId, parentQRItem);
+
+          // create structure info for the item
+          var repeatingItems = repeatingInfo.repeatingItems;
+          for (var j=0, jLen=repeatingItems.length; j<jLen; j++) {
+            var qrItemInfo = {
+              linkId: linkId,
+              item: repeatingItems[j],
+              index: j,
+              total: repeatingInfo.total
+            };
+            // check observation instances in the sub level
+            this._checkQRItems(qrItemInfo, repeatingItems[j]);
+            self._checkQRItemAnswerItems(qrItemInfo, repeatingItems[j]);
+            qrItemsInfo.push(qrItemInfo);
           }
-          else {
-            total += 1;
-          }
+          repeatingItemProcessed[linkId] = true;
         }
       }
-
-      return {
-        total: total,
-        repeatingItems: repeatingItems
-      };
-    },
+      parentQRItemInfo.qrItemsInfo = qrItemsInfo;
+    }
+  };
 
 
-    /**
-     * Add repeating items into LForms definition data object
-     * @param parentItem a parent item
-     * @param linkId code of a repeating item
-     * @param total total number of the repeating item with the same code
-     * @private
-     */
-    _addRepeatingItems : function(parentItem, linkId, total) {
-      // find the first (and the only one) item
-      var item = null;
-      if (parentItem.items) {
-        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
-          if (linkId === parentItem.items[i].linkId) {
-            item = parentItem.items[i];
-            break;
-          }
+  /**
+   * Find the number of the repeating items that have the same code
+   * @param linkId an item's linkId
+   * @param parentQRItem a parent item in a QuestionnaireResponse object
+   * @returns a structural info object for a repeating item
+   * @private
+   */
+  mergeQr._findTotalRepeatingNum = function(linkId, parentQRItem) {
+
+    var total = 0;
+    var repeatingItems = [];
+    for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
+      var item = parentQRItem.item[i];
+      if (linkId === item.linkId) {
+        repeatingItems.push(item);
+        if (Array.isArray(item.answer)) {
+          total += item.answer.length; // answers for repeating questions and repeating answers
         }
-        // insert new items
-        if (item) {
-          while(total > 1) {
-            var newItem = LForms.Util.deepCopy(item);
-            parentItem.items.splice(i, 0, newItem);
-            total -= 1;
-          }
+        else {
+          total += 1;
         }
       }
-    },
-
-
-    /**
-     * Find a matching repeating item by item code and the index in the items array
-     * @param parentItem a parent item
-     * @param linkId linkId of a repeating (or non-repeating) item
-     * @param index index of the item in the sub item array of the parent item
-     * @returns {{}} a matching item
-     * @private
-     */
-    _findTheMatchingItemByLinkIdAndIndex : function(parentItem, linkId, index) {
-      var item = null;
-      var idx = 0;
-      if (parentItem.items) {
-        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
-          if (linkId === parentItem.items[i].linkId) {
-            if (idx === index) {
-              item = parentItem.items[i];
-              break;
-            }
-            else {
-              idx += 1;
-            }
-          }
-        }
-      }
-      return item;
-    },
-
-
-    /**
-     * Find a matching repeating item by item code alone
-     * When used on the LForms definition data object, there is no repeating items yet.
-     * @param parentItem a parent item
-     * @param linkId linkId of an item
-     * @returns {{}} a matching item
-     * @private
-     */
-    _findTheMatchingItemByLinkId : function(parentItem, linkId) {
-      var item = null;
-      if (parentItem.items) {
-        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
-          if (linkId === parentItem.items[i].linkId) {
-            item = parentItem.items[i];
-            break;
-          }
-        }
-      }
-      return item;
     }
 
-  }
+    return {
+      total: total,
+      repeatingItems: repeatingItems
+    };
+  };
+
+
+  /**
+   * Add repeating items into LForms definition data object
+   * @param parentItem a parent item
+   * @param linkId code of a repeating item
+   * @param total total number of the repeating item with the same code
+   * @private
+   */
+  mergeQr._addRepeatingItems = function(parentItem, linkId, total) {
+    // find the first (and the only one) item
+    var item = null;
+    if (parentItem.items) {
+      for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+        if (linkId === parentItem.items[i].linkId) {
+          item = parentItem.items[i];
+          break;
+        }
+      }
+      // insert new items
+      if (item) {
+        while(total > 1) {
+          var newItem = LForms.Util.deepCopy(item);
+          parentItem.items.splice(i, 0, newItem);
+          total -= 1;
+        }
+      }
+    }
+  };
+
+
+  /**
+   * Find a matching repeating item by item code and the index in the repeating item array
+   * @param parentItem a parent item
+   * @param linkId linkId of a repeating (or non-repeating) item
+   * @param index index of the repeating item
+   * @returns {{}} a matching item
+   * @private
+   */
+  mergeQr._findTheMatchingItemByLinkIdAndIndex = function(parentItem, linkId, index) {
+    var item = null;
+    var idx = 0;
+    if (parentItem.items) {
+      for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+        if (linkId === parentItem.items[i].linkId) {
+          if (idx === index) {
+            item = parentItem.items[i];
+            break;
+          }
+          else {
+            idx += 1;
+          }
+        }
+      }
+    }
+    return item;
+  };
+
+
+  /**
+   * Find a matching repeating item by item code alone
+   * When used on the LForms definition data object, there is no repeating items yet.
+   * @param parentItem a parent item
+   * @param linkId linkId of an item
+   * @returns {{}} a matching item
+   * @private
+   */
+  mergeQr._findTheMatchingItemByLinkId = function(parentItem, linkId) {
+    var item = null;
+    if (parentItem.items) {
+      for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+        if (linkId === parentItem.items[i].linkId) {
+          item = parentItem.items[i];
+          break;
+        }
+      }
+    }
+    return item;
+  };
 
 }
 

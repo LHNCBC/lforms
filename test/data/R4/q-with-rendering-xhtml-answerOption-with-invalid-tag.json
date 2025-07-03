@@ -1,0 +1,580 @@
+{
+  "title": "Questionnaire with answerOptions that contain rendering-xhtml extensions with invalid tags",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "linkId": "valueString-group1",
+      "text": "answerOption - valueString - dropdown",
+      "item": [
+        {
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "valueString-group1-item1",
+          "text": "valueString",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> A"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b"
+            },
+            {
+              "valueString": "bold c",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "bold <b class='testBold'>C</b><img class='testImage' src='/test/data/a-picture.png'>"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "valueString-group2",
+      "text": "answerOption - valueString - radiocheckbox",
+      "item": [
+        {
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "radio-button",
+                    "display": "Radio Button"
+                  }
+                ],
+                "text": "Radio Button"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "vertical"
+            }
+          ],
+          "linkId": "valueString-group2-item1",
+          "text": "valueString",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>A</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>B</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold c",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>C</b>"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "check-box",
+                    "display": "Check-box"
+                  }
+                ],
+                "text": "Check-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "horizontal"
+            }
+          ],
+          "repeats": true,
+          "linkId": "valueString-group2-item2",
+          "text": "valueString - repeats",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>A</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>B</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold c",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>C</b>"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "valueString-group3",
+      "text": "answerOption - valueString - radiocheckbox - prefix - score",
+      "item": [
+        {
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "radio-button",
+                    "display": "Radio Button"
+                  }
+                ],
+                "text": "Radio Button"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "vertical"
+            }
+          ],
+          "linkId": "valueString-group4-item1",
+          "text": "valueString",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "A"
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "valueDecimal": 1
+                }
+              ],
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>A</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "B"
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "valueDecimal": 2
+                }
+              ],
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>B</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold c",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "C"
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "valueDecimal": 3
+                }
+              ],
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>C</b>"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "check-box",
+                    "display": "Check-box"
+                  }
+                ],
+                "text": "Check-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "horizontal"
+            }
+          ],
+          "repeats": true,
+          "linkId": "valueString-group4-item2",
+          "text": "valueString - repeats - prefix - score",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "A"
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "valueDecimal": 1
+                }
+              ],
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>A</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "B"
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "valueDecimal": 2
+                }
+              ],
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>B</b>"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold c",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                  "valueString": "C"
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "valueDecimal": 3
+                }
+              ],
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                    "valueString": "<script>bold</script> <b class='testBold'>C</b>"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "valueCoding-group1",
+      "text": "answerOption - valueCoding - dropdown",
+      "item": [
+        {
+          "type": "choice",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "valueCoding-group1-item1",
+          "text": "valueCoding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "a",
+                "display": "italic a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> A"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "b",
+                "display": "italic b"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c",
+                "display": "italic c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "italic <i class='testItalic'>C</i><img class='testImage' src='/test/data/a-picture.png'>"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "valueCoding-group2",
+      "text": "answerOption - valueCoding - radiocheckbox",
+      "item": [
+        {
+          "type": "choice",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "radio-button",
+                    "display": "Radio Button"
+                  }
+                ],
+                "text": "Radio Button"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "vertical"
+            }
+          ],
+          "linkId": "valueCoding-group2-item1",
+          "text": "valueCoding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "a",
+                "display": "italic a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>A</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "b",
+                "display": "italic b",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>B</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c",
+                "display": "italic c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>C</i>"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "choice",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "check-box",
+                    "display": "Check-box"
+                  }
+                ],
+                "text": "Check-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "horizontal"
+            }
+          ],
+          "repeats": true,
+          "linkId": "valueCoding-group2-item2",
+          "text": "valueCoding - repeats",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "a",
+                "display": "italic a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>A</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "b",
+                "display": "italic b",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>B</i>"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c",
+                "display": "italic c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "<script>italic</script> <i class='testItalic'>C</i>"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

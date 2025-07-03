@@ -4,40 +4,51 @@
  */
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
+import * as htmlparser2 from "htmlparser2";
+import copy from "fast-copy";
+import parse from 'style-to-object';
+
+import itemControls from '../item-controls.json';
 
 const _questionnairePattern =
   new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\.\\d]+)?/StructureDefinition/Questionnaire');
 const _sdcPattern =
   new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
+// The order of FHIR versions to check when detecting a Resource's FHIR version.
+// The version with a larger number has a higher priority.
 const _versionRanks = {
   STU3: 1,
   R4: 2,
-  R5: 3
+  R4B: 3,
+  R5: 4
 };
 
 const FormUtils = {
-  // TODO: need an udpate
   /**
-   *  Adds an LForms form to the page.
+   *  Adds an LForms form or FHIR Questionnaire to the page.
    * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
    *  for backward compatibility, this can be the name of a global-scope variable
    *  (on "window") containing that form definition object. A FHIR Questionnaire can be also be
    *  used as a form definition.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
-   *  This element should be outside the scope of any existing AngularJS app on
+   *  This element should be outside the scope of any existing Angular app on
    *  the page.
-   * @param {Object} [options] A hash of options. See avaialble options under templateOptions in
-   * form_definition.md. 'preppopulate' and 'fhirVersion' are not options in the templateOptions,
+   * @param {Object} [options] A hash of options. See available options under templateOptions in
+   * form_definition.md. 'prepopulate' and 'fhirVersion' are not options in the templateOptions,
    * but are included in the 'options' parameter.
    * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
-   *  the form was an imported FHIR Questionnaire).
-   * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
-   *  Questionnaire. options are: `R4` or `STU3`. If not provided an attempt will be made to determine
-   *  the version from the Questionnaire content.
+   *  formDataDef is or was imported from a FHIR Questionnaire).
+   * @param {string} [options.fhirVersion] (optional) The version of FHIR used
+   *  if formDataDef is a FHIR Questionnaire. options are: 'R5', 'R4B', 'R4', or
+   *  'STU3'. If not provided an attempt will be made to determine
+   *  the version from the Questionnaire content. 'R4B' is treated as 'R4'.
+   * @param {boolean} [options.questionnaireResponse] (optional) A FHIR
+   *  QuestionnaireResponse with a user's answers to the Questionnaire.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
-   *  Questionnaire).
+   *  Questionnaire).  If the needed resources fail, the promise will be
+   *  rejected and will contain an array of error messages.
    */
   addFormToPage: function(formDataDef, formContainer, options) {
 
@@ -84,7 +95,7 @@ const FormUtils = {
           resolve()
         });
         eleLhcForm.addEventListener('onError', function(e){
-          reject(e.detail)
+          reject(e.detail); // e.detail will be an array -- see lhc-form.component.ts
         });
       }
       catch(e) {
@@ -205,7 +216,7 @@ const FormUtils = {
    *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
-   *  * extract:  a flag for QuestionnaireReponse that data should be extracted
+   *  * extract:  a flag for QuestionnaireResponse that data should be extracted
    *    (using the observationExtract extension).  In this case the returned
    *    resource will be an array consisting of the QuestionnaireResponse and any
    *    extracted Observations.
@@ -237,7 +248,7 @@ const FormUtils = {
           break;
         case "QuestionnaireResponse":
           if (options.extract)
-            fhirData = fhir.SDC.convertLFormsToQRAndExtracFHIRData(formData,
+            fhirData = fhir.SDC.convertLFormsToQRAndExtractFHIRData(formData,
               options.noExtensions, options.subject);
           else
             fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
@@ -299,23 +310,25 @@ const FormUtils = {
     }
 
     if (fhirData) {
-      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirData);
+      // make a copy of the fhirData so the original data are not modified.
+      let fhirDataCopy = copy(fhirData);
+      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirDataCopy);
       var fhir = LForms.FHIR[fhirVersion];
-      switch (fhirData.resourceType) {
+      switch (fhirDataCopy.resourceType) {
         case "DiagnosticReport":
-          formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirDataCopy);
           formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
         case "Bundle":
           // Bundle should contain DiagnosticReport
-          if (fhirData.type === "searchset" &&
-              fhirData.entry.find(ele => ele.resource.resourceType === "DiagnosticReport")) {
-            formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          if (fhirDataCopy.type === "searchset" &&
+            fhirDataCopy.entry.find(ele => ele.resource.resourceType === "DiagnosticReport")) {
+            formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirDataCopy);
             formData.hasSavedData = true; // will be used to determine whether to update or save
           }
           break;
         case "QuestionnaireResponse":
-          formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirDataCopy);
           formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
@@ -388,8 +401,11 @@ const FormUtils = {
     if (matchData) {
       const versionNum = parseFloat(matchData[0]);
       // Following http://www.hl7.org/fhir/directory.cfml
-      releaseID = versionNum > 3.0 && versionNum <= 4.0 ?
-        'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 'STU3' : versionStr;
+      releaseID = versionNum >= 5.0 && versionNum < 6.0 || versionNum == 4.2 || (versionNum >=4.4 & versionNum <=4.6) ?
+          'R5' : versionNum == 4.1 || versionNum == 4.3 ?
+          'R4B' : versionNum > 3.0 && versionNum <= 4.0 ?
+          'R4' : versionNum >= 1.1 && versionNum <= 3.0 ?
+          'STU3' : versionStr;
     }
     return releaseID;
   },
@@ -538,11 +554,44 @@ const FormUtils = {
       // See if any items have a property deleted from R4.
       var items = [];
       var foundSTU3 = this._testValues(fhirData, 'item', function(item) {
-        return !!(item.option || item.options ||
-          (item.enableWhen && 'hasAnswer' in item.enableWhen));
+        let ret = !!(
+          item.option ||
+          item.options ||
+          item.initialBoolean ||
+          item.initialDecimal ||
+          item.initialInteger ||
+          item.initialDate ||
+          item.initialDateTime ||
+          item.initialTime ||
+          item.initialString ||
+          item.initialUri ||
+          item.initialAttachment ||
+          item.initialQuantity ||
+          item.initialReference);
+
+        // Check for item.enableWhen[x].hasAnswer
+        if(!ret && item.enableWhen?.length) {
+          ret = item.enableWhen.some((e) => {
+            return 'hasAnswer' in e;
+          });
+        }
+        return ret;
       });
-      version = foundSTU3 ? 'STU3' : 'R4';
+      if (foundSTU3) {
+        version = 'STU3';
+      }
+      else {
+        var foundR5 = this._testValues(fhirData, 'item', function(item) {
+          let ret = !!(
+            item.disabledDisplay ||
+            item.answerConstraint ||
+            item.type === 'coding');
+          return ret;
+        });
+        version = foundR5 ? 'R5' : 'R4';
+      }
     }
+    // R4 and R5 QuestionnaireResponses are too similar
     else if (fhirData.resourceType == 'QuestionnaireResponse') {
       if (fhirData.parent)
         version = 'STU3';
@@ -1004,6 +1053,24 @@ const FormUtils = {
     // definition.
     return item.answerCardinality && item.answerCardinality.max &&
       (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+  },
+
+
+  /**
+   * Escapes a string for safe use as an HTML attribute.
+   * @param val the string to be escaped
+   * @return the escaped version of val
+   */
+  escapeAttribute: function (val) {
+    return val.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g,
+      '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  },
+
+  /**
+   * Get an object that contain a list of Item Control codes
+   */
+  getSupportedFeatures: function() {
+    return itemControls;
   }
 
 };

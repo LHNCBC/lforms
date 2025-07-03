@@ -27,6 +27,24 @@
       ]
     },
     {
+      "linkId": "/type2",
+      "text": "With data type INT",
+      "answer": [
+        {
+          "valueInteger": 0
+        }
+      ]
+    },
+    {
+      "linkId": "/type3",
+      "text": "With data type REAL",
+      "answer": [
+        {
+          "valueDecimal": -1.1
+        }
+      ]
+    },
+    {
       "linkId": "/type10",
       "text": "With data type CWE",
       "answer": [

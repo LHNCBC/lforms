@@ -16,14 +16,14 @@
     },
     {
       "questionCode": "type1",
-      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 1",
       "copyrightNotice": "A Copyright notice of the item 2",
       "question": "no codingInstructionsFormat, html codingInstructions",
       "linkId": "/type1"
-    },   
+    },
     {
       "questionCode": "type2",
-      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2",
       "codingInstructionsFormat": "text",
       "copyrightNotice": "A Copyright notice of the item 3",
       "question": "codingInstructionsFormat='text', html codingInstructions",
@@ -31,7 +31,7 @@
     },
     {
       "questionCode": "type3",
-      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 3",
       "codingInstructionsFormat": "html",
       "copyrightNotice": "A Copyright notice of the item 3",
       "question": "codingInstructionsFormat='html', html codingInstructions",
@@ -47,7 +47,7 @@
       },
       "displayControl": {
         "questionLayout": "horizontal"
-      },        
+      },
       "items": [
         {
           "questionCode": "type0",
@@ -58,15 +58,15 @@
         },
         {
           "questionCode": "type1",
-          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 1",
           "copyrightNotice": "A Copyright notice of the item 2",
           "question": "no codingInstructionsFormat, html codingInstructions",
           "linkId": "/horizontalTable/type1"
         },
-        
+
         {
           "questionCode": "type2",
-          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2",
           "codingInstructionsFormat": "text",
           "copyrightNotice": "A Copyright notice of the item 3",
           "question": "codingInstructionsFormat='text', html codingInstructions",
@@ -74,12 +74,12 @@
         },
         {
           "questionCode": "type3",
-          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 3",
           "codingInstructionsFormat": "html",
           "copyrightNotice": "A Copyright notice of the item 3",
           "question": "codingInstructionsFormat='html', html codingInstructions",
           "linkId": "/horizontalTable/type3"
-        }      
+        }
       ],
       "linkId": "/horizontalTable"
     },
@@ -89,7 +89,7 @@
       "dataType": "SECTION",
       "displayControl": {
         "questionLayout": "matrix"
-      },        
+      },
       "items": [
         {
           "questionCode": "type0",
@@ -114,7 +114,7 @@
         },
         {
           "questionCode": "type1",
-          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 1",
           "copyrightNotice": "A Copyright notice of the item 2",
           "question": "no codingInstructionsFormat, html codingInstructions",
           "linkId": "/matrixTable/type1",
@@ -133,10 +133,10 @@
             }
           ]
         },
-        
+
         {
           "questionCode": "type2",
-          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2",
           "codingInstructionsFormat": "text",
           "copyrightNotice": "A Copyright notice of the item 3",
           "question": "codingInstructionsFormat='text', html codingInstructions",
@@ -158,7 +158,7 @@
         },
         {
           "questionCode": "type3",
-          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button>LForms Demo 3",
           "codingInstructionsFormat": "html",
           "copyrightNotice": "A Copyright notice of the item 3",
           "question": "codingInstructionsFormat='html', html codingInstructions",
@@ -177,7 +177,7 @@
               "text": "Answer 3"
             }
           ]
-        }      
+        }
       ],
       "linkId": "/matrixTable"
     }

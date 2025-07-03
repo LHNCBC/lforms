@@ -62,6 +62,15 @@ you don't accidentally add something that we are also working on.
   directory that is created with a copy of the files in dist/lforms, but that
   is only needed for the tests.
 
+- **If you want to build LForms in a different language**, make sure your desired
+  locale ID is listed under src/languages, e.g. `de_DE.json`. In `package.json`, edit
+  config.localeID to your desired locale, e.g. "de_DE". Then run `npm run build`.
+
+  If your desired language is not yet listed under src/languages, please contact us
+  to have it added, or submit a pull request for adding your own language config file.
+  Please note that LForms cannot support more languages than listed
+  here: https://ng.ant.design/docs/i18n/en.
+
 ## Running tests
 
 1. Run `npm run test` to run unit tests and e2e tests, which also copies the 
@@ -91,13 +100,14 @@ You need to include the following files in your project:
 1. `webcomponent/styles.css`
 2. `webcomponent/assets/lib/zone.min.js` (unless you already have zone.min.js 
    on the page)
-3. `webcomponent/scripts.js`
-4. `webcomponent/runtime.js`
-5. `webcomponent/polyfills.js`
-6. `webcomponent/main.js`
-7. _One_ of the FHIR support library files, assuming you are planning to use
+3. `webcomponent/runtime.js`
+4. `webcomponent/polyfills.js`
+5. `webcomponent/main.js`
+6. _One_ of the FHIR support library files, assuming you are planning to use
    FHIR Questionnaires:
    - `fhir/lformsFHIRAll.min.js`
+   - `fhir/R5/lformsFHIR.min.js`
+   - `fhir/R4B/lformsFHIR.min.js`
    - `fhir/R4/lformsFHIR.min.js`
    - `fhir/STU3/lformsFHIR.min.js`
 

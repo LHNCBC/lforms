@@ -193,7 +193,8 @@
               "valueCoding": {
                 "code": "c3",
                 "display": "Answer c"
-              }
+              },
+              "initialSelected": true
             },
             {
               "valueCoding": {

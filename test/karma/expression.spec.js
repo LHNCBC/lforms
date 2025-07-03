@@ -16,14 +16,13 @@ describe('ExpressionProcessor', function () {
           }]
         }]
       }]});
-      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
-      exp.runCalculations().then(() => {
+      lfData._expressionProcessor.runCalculations().then(() => {
         assert.equal(lfData.items[0].items[0].linkId, '/q2');
         assert.equal(lfData.items[0].items[0].value, 'string');
         done();
       });
     });
-  }),
+  });
 
   describe('_evaluateFHIRPath', function() {
     it('should use the FHIR model', function(done) {
@@ -47,7 +46,7 @@ describe('ExpressionProcessor', function () {
         done();
       });
     });
-  }),
+  });
 
   describe('_addToIDtoQRItemMap', function() {
     it('should handle repeating items with missing data', function() {
@@ -186,7 +185,7 @@ describe('ExpressionProcessor', function () {
     let testQ, testLFData, bmiItem, weightItem, heightItem;
     before(function(done) {
       var file = 'test/data/R4/weightHeightQuestionnaire.json';
-      $.get(file, function (parsedJson) {
+      LForms.jQuery.get(file, function (parsedJson) {
         testQ = parsedJson;
         done();
       });
@@ -440,6 +439,272 @@ describe('ExpressionProcessor', function () {
         }
         catch(e) {done(e)}
       });
+    });
+  });
+
+  describe('application/x-fhir-query', function() {
+    afterEach(() => {
+      restoreOriginalFetch();
+    })
+    it('should be supported', function(done) {
+      mockFetchResults([[
+        /https:\/\/clinicaltables\.nlm\.nih\.gov\/fhir\/R4\/CodeSystem\/\$lookup\?system=https:\/\/clinicaltables\.nlm\.nih\.gov\/fhir\/CodeSystem\/rxterms&code=AR&property=STRENGTHS_AND_FORMS&_format=json/,
+        {
+          "resourceType": "Parameters",
+          "parameter": [
+            {
+              "name": "name",
+              "valueString": "rxterms/ctss"
+            },
+            {
+              "name": "display",
+              "valueString": "AXID AR (Oral Pill)"
+            },
+            {
+              "name": "property",
+              "part": [
+                {
+                  "name": "code",
+                  "valueCode": "STRENGTHS_AND_FORMS"
+                },
+                {
+                  "name": "value",
+                  "valueCoding": {
+                    "code": "211821",
+                    "display": "75 mg Tab"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]]);
+
+      const lfData = new LForms.LFormsData({
+        fhirVersion: 'R4',
+        extension: [{
+          "url" : LForms.FHIR.R4.SDC.fhirExtVariable,
+          "valueExpression" : {
+            "name": "strengthFormLookup",
+            "language": "application/x-fhir-query",
+            "expression": "https://clinicaltables.nlm.nih.gov/fhir/R4/CodeSystem/$lookup?system=https://clinicaltables.nlm.nih.gov/fhir/CodeSystem/rxterms&code={{%resource.item.where(linkId='/q1').answer.value}}&property=STRENGTHS_AND_FORMS"
+          }
+        }],
+        items: [{
+          linkId: '/q1', dataType: 'ST', value: "AR"
+        }, {
+          linkId: '/q2', dataType: 'CODING',
+          answers: [
+            {
+              "code": "211821",
+              "display": "75 mg Tab"
+            }
+          ],
+          extension: [{
+            "url" : LForms.FHIR.R4.SDC.fhirExtCalculatedExp,
+            "valueExpression" : {
+              "language": "text/fhirpath",
+              "expression": "%strengthFormLookup.parameter.where(name='property' and part.where(name='code' and value='STRENGTHS_AND_FORMS').exists()).part.where(name='value').value"
+            }
+          }]
+        }]
+      });
+
+      const exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
+      exp.runCalculations().then(() => {
+        assert.deepStrictEqual(lfData.items[1].value, {
+          "code": "211821",
+          "display": "75 mg Tab"
+        });
+        done();
+      });
+    });
+  });
+
+  describe('asynchronous expression in text/fhirpath', function() {
+    afterEach(() => {
+      restoreOriginalFetch();
+    })
+    it('should be supported', function(done) {
+      mockFetchResults([
+        [/ValueSet\?url=http%3A%2F%2Fhl7\.org%2Ffhir%2FValueSet%2Fobservation-vitalsignresult/, {
+          "resourceType": "Bundle",
+          "entry": [
+            {
+              "resource": {
+                "resourceType": "ValueSet",
+                "compose": {
+                  "include": [
+                    {
+                      "system": "http://loinc.org",
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }],
+        [/code=29463-7&system=http%3A%2F%2Floinc\.org/, {
+          "resourceType": "Parameters",
+          "parameter": [
+            {
+              "name": "result",
+              "valueBoolean": true
+            }
+          ]
+        }]
+      ]);
+
+      const lfData = new LForms.LFormsData({
+        fhirVersion: 'R4',
+        extension: [{
+          "url": "http://hl7.org/fhir/StructureDefinition/preferredTerminologyServer",
+          "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
+        }],
+        items: [{
+          linkId: '/q1', dataType: 'ST',
+          // TODO: I don't know why the LForms.LFormsData constructor doesn't initialize terminologyServer from "extensions"
+          terminologyServer: 'https://lforms-fhir.nlm.nih.gov/baseR4',
+          extension: [
+            // {
+            //   "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
+            //   "valueUrl": "'https://lforms-fhir.nlm.nih.gov/baseR4"
+            // },
+            {
+              "url" : LForms.FHIR.R4.SDC.fhirExtVariable,
+              "valueExpression" : {
+                "name": "someBool",
+                "language": "text/fhirpath",
+                "expression": "'29463-7'.memberOf('http://hl7.org/fhir/ValueSet/observation-vitalsignresult')"
+              }
+            }, {
+            "url" : LForms.FHIR.R4.SDC.fhirExtCalculatedExp,
+            "valueExpression" : {
+              "language": "text/fhirpath",
+              "expression": "iif(%someBool, 'valTrue', 'valFalse')"
+            }
+          }]
+        }]
+      });
+
+      const exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
+      exp.runCalculations().then(() => {
+        assert.equal(lfData.items[0].value, 'valTrue');
+        done();
+      });
+    });
+  });
+
+
+  ['R4', 'R5'].forEach(modelName => {
+    describe(`weight() for ${modelName} questionnaire`, function() {
+      let testQ, testCS1, testCS2, testCS1_lookup, testCS2_lookup;
+
+      describe('with contained ValueSet', function () {
+        before(function(done) {
+          const filename = `test/data/${modelName}/calc-weight/q-with-contained-valueset.json`;
+          LForms.jQuery.get(filename, function (parsedJson) {
+            testQ = parsedJson;
+            done();
+          }).fail(function(e) {
+            console.error(e);
+          });
+        });
+
+        it('should work correctly', function() {
+          let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+            testQ, modelName);
+          const testLFData = new LForms.LFormsData(lformsDef);
+          testLFData.itemList[2].value = {
+            "code": "some-code-1",
+            "system": "some-system-1"
+          };
+          testLFData.itemList[3].value = {
+            "code": "some-code-2",
+            "system": "some-system-2"
+          };
+          assert.equal(testLFData.itemList[4].value, undefined);
+          return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+            assert.equal(testLFData.itemList[4].value, 21);
+          });
+        });
+      });
+
+      describe('with a CodeSystem retrieved from the terminology server', function () {
+        before(function (done) {
+          LForms.jQuery.when(
+            LForms.jQuery.get(`test/data/${modelName}/calc-weight/q-with-a-value-set-from-the-terminology-server.json`),
+            LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-1.json`),
+            LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-2.json`),
+            ...(modelName === 'R5' ? [
+              LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-1-lookup.json`),
+              LForms.jQuery.get(`test/data/${modelName}/calc-weight/some-code-system-2-lookup.json`)
+            ] : [])
+          ).fail(function (e) {
+            console.error(e);
+          }).done(function (...r) {
+            [testQ, testCS1, testCS2, testCS1_lookup, testCS2_lookup] = r.map(i => i?.[0]);
+            done();
+          });
+        });
+
+        it('should work correctly', function () {
+          mockFetchResults([
+            ['CodeSystem?url=some-system-1', testCS1],
+            ['CodeSystem?url=some-system-2', testCS2],
+            ['CodeSystem/$lookup?code=some-code-1&system=some-system-1&property=itemWeight', testCS1_lookup],
+            ['CodeSystem/$lookup?code=some-code-2&system=some-system-2&property=itemWeight', testCS2_lookup]
+          ]);
+          let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+            testQ, modelName);
+          const testLFData = new LForms.LFormsData(lformsDef);
+          testLFData.itemList[2].value = {
+            "code": "some-code-1",
+            "system": "some-system-1"
+          };
+          testLFData.itemList[3].value = {
+            "code": "some-code-2",
+            "system": "some-system-2"
+          };
+          assert.equal(testLFData.itemList[4].value, undefined);
+          return testLFData._expressionProcessor.runCalculations(true).then(() => {
+            assert.equal(testLFData.itemList[4].value, 21);
+          });
+        });
+      });
+
+      if (modelName === 'R4') {
+        describe('phq-9 with weight function', function () {
+          before(function(done) {
+            const filename = `test/data/R4/calc-weight/phq9-with-the-weight-function.json`;
+            LForms.jQuery.get(filename, function (parsedJson) {
+              testQ = parsedJson;
+              done();
+            }).fail(function(e) {
+              console.error(e);
+            });
+          });
+
+          it('should work correctly', function() {
+            let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+              testQ, modelName);
+            const testLFData = new LForms.LFormsData(lformsDef);
+            testLFData.itemList.forEach(item => {
+              if ((item.answers || item.answerValueSet) && item.linkId !== '/69722-7') {
+                item.value = {
+                  code: 'LA6569-3',
+                  system: 'http://loinc.org'
+                };
+              }
+            });
+            assert.equal(testLFData.itemList[9].value, undefined);
+            return testLFData._expressionProcessor.runCalculations(true).then(()=>{
+              assert.equal(testLFData.itemList[9].value, 9);
+            });
+          });
+        });
+      }
+
     });
   });
 

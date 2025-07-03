@@ -29,17 +29,22 @@ const fhirMock = {
 
       request: function(relativeURL) {
         let rtnData, md;
-        relativeURL = decodeURIComponent(relativeURL);
-        if (relativeURL.startsWith('ValueSet')) {
-          // id
-          if (md = relativeURL.match(/ValueSet\/([^/]+)\/\$expand/)) {
-            let vsID = md[1];
-            rtnData = resources.ValueSet[vsID];
-          }
-          // url
-          else if (md = relativeURL.match(/ValueSet\/\$expand\?url=http\:\/\/hl7\.org\/fhir\/ValueSet\/(.+)/)
-          ) {
-            rtnData = resources.ValueSet[md[1]]
+        if (typeof relativeURL === 'object' && relativeURL.method === 'POST' && relativeURL.url.startsWith('ValueSet/$expand')) {
+          // POST request for ValueSet expansion.
+          rtnData = resources.ValueSet['yesnodontknow'];
+        } else {
+          relativeURL = decodeURIComponent(relativeURL.url ? relativeURL.url : relativeURL);
+          if (relativeURL.startsWith('ValueSet')) {
+            // id
+            if (md = relativeURL.match(/ValueSet\/([^/]+)\/\$expand/)) {
+              let vsID = md[1];
+              rtnData = resources.ValueSet[vsID];
+            }
+            // url
+            else if (md = relativeURL.match(/ValueSet\/\$expand\?url=http\:\/\/hl7\.org\/fhir\/ValueSet\/(.+)&_format=json/)
+            ) {
+              rtnData = resources.ValueSet[md[1]]
+            }
           }
         }
         return new Promise((resolve, reject)=>{

@@ -1,6 +1,7 @@
 import { AddFormToPageTestPage } from '../../support/addFormToPageTest.po';
 import { TestUtil } from '../../support/testUtilFacade';
 import * as util from '../../support/util';
+import {TestPage} from "../../support/lforms_testpage.po";
 
 const fhirVersion = 'R4';
 const fhirMock = require('../../support/R4/fhir_context');
@@ -20,7 +21,7 @@ describe('FHIR answerValueSet', () => {
       answerField4 = 'yesno4/1', // open-choice
       answerField5 = 'yesno5/1', // open-choice, repeats
       answerField6 = 'yesno6/1', // open-choice, repeats
-      searchResults = 'searchResults';
+      searchResults = 'lhc-tools-searchResults';
 
     before(() => {
       cy.window().then((win) => {
@@ -47,35 +48,20 @@ describe('FHIR answerValueSet', () => {
       ].forEach((answerField) => {
         cy.byId(answerField).click();
         cy.byId(searchResults).should('be.visible');
-        cy.byCss('#searchResults li').its('length').should('eq', 3);
-        cy.byCss('#searchResults li').eq(0).contains('No');
-        cy.byCss('#searchResults li').eq(1).contains('Yes');
-        cy.byCss('#searchResults li').eq(2).contains("Don't know");
+        cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 3);
+        cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+        cy.byCss('#lhc-tools-searchResults li').eq(1).contains('Yes');
+        cy.byCss('#lhc-tools-searchResults li').eq(2).contains("Don't know");
       });
     });
 
     it('should have expected answer list and saved value when the QuestionnaireReponse is merged to the Questionnaire', () => {
       cy.window().then((win) => {
-        cy.readFile(
-          'test/data/R4/q-with-answerValueSet-autocomplete.json'
-        ).then((q) => {
-          // readFile will parse the JSON
-          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
-            q,
-            fhirVersion
-          );
-          cy.readFile(
-            'test/data/R4/qr-with-answerValueSet-autocomplete.json'
-          ).then((qr) => {
-            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
-              qr,
-              formDef,
-              fhirVersion
-            );
-            win.LForms.Util.addFormToPage(mergedFormData, 'formContainer', {
-              fhirVersion,
-            });
-
+        cy.readFile('test/data/R4/q-with-answerValueSet-autocomplete.json').then((q) => {  // readFile will parse the JSON
+          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+          cy.readFile('test/data/R4/qr-with-answerValueSet-autocomplete.json').then((qr) => {
+            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+            win.LForms.Util.addFormToPage(mergedFormData, "formContainer", {fhirVersion});
             // check saved values
             cy.byId(answerField1).should('have.value', 'Yes');
             cy.byId('item-yesno2/1')
@@ -109,25 +95,25 @@ describe('FHIR answerValueSet', () => {
               (answerField) => {
                 cy.byId(answerField).click();
                 cy.byId(searchResults).should('be.visible');
-                cy.byCss('#searchResults li').its('length').should('eq', 3);
-                cy.byCss('#searchResults li').eq(0).contains('No');
-                cy.byCss('#searchResults li').eq(1).contains('Yes');
-                cy.byCss('#searchResults li').eq(2).contains("Don't know");
+                cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 3);
+                cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+                cy.byCss('#lhc-tools-searchResults li').eq(1).contains('Yes');
+                cy.byCss('#lhc-tools-searchResults li').eq(2).contains("Don't know");
               }
             );
             cy.byId(answerField2).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 1);
-            cy.byCss('#searchResults li').eq(0).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 1);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains("Don't know");
             cy.byId(answerField5).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 1);
-            cy.byCss('#searchResults li').eq(0).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 1);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains("Don't know");
             cy.byId(answerField6).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 2);
-            cy.byCss('#searchResults li').eq(0).contains('No');
-            cy.byCss('#searchResults li').eq(1).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 2);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+            cy.byCss('#lhc-tools-searchResults li').eq(1).contains("Don't know");
           });
         });
       });
@@ -797,5 +783,128 @@ describe('FHIR answerValueSet', () => {
         });
       });
     });
+  });
+});
+
+describe('contained ValueSet without expansion', () => {
+  it('should load contained ValueSet with no expansion from terminology server', () => {
+    const tp: TestPage = new TestPage();
+    tp.openBaseTestPage();
+    cy.intercept('POST', 'https://hapi.fhir.org/baseR4/ValueSet/$expand', {
+      "resourceType": "ValueSet",
+      "id": "test-valueset",
+      "meta": {
+        "extension": [
+          {
+            "url": "http://hapifhir.io/fhir/StructureDefinition/valueset-expansion-message",
+            "valueString": "ValueSet with URL \"ValueSet.id[ValueSet/test-valueset]\" was expanded using an in-memory expansion"
+          }
+        ]
+      },
+      "status": "active",
+      "compose": {
+        "include": [
+          {
+            "system": "lhc.forms.test.code.system",
+            "concept": [{
+              "code": "a",
+              "display": "Answer 1"
+            }, {
+              "code": "b",
+              "display": "Answer 2"
+            }, {
+              "code": "c",
+              "display": "Answer 3"
+            }]
+          }
+        ]
+      },
+      "expansion": {
+        "offset": 0,
+        "parameter": [
+          {
+            "name": "offset",
+            "valueInteger": 0
+          },
+          {
+            "name": "count",
+            "valueInteger": 1000
+          }
+        ],
+        "contains": [
+          {
+            "system": "lhc.forms.test.code.system",
+            "code": "a",
+            "display": "Answer 1"
+          },
+          {
+            "system": "lhc.forms.test.code.system",
+            "code": "b",
+            "display": "Answer 2"
+          },
+          {
+            "system": "lhc.forms.test.code.system",
+            "code": "c",
+            "display": "Answer 3"
+          }
+        ]
+      }
+    })
+    tp.loadFromTestData('q-with-contained-valueset-without-expansion.json', 'R4');
+    // autocomplete
+    cy.byId('#group1-item1/1/1')
+      .focus();
+    cy.get('#completionOptions li')
+      .as('listOptions');
+    cy.get('@listOptions')
+      .should('be.visible')
+      .should('have.length', 3);
+    // radio
+    cy.byId('#group2-item1/1/1a').should('have.text', 'Answer 1');
+    cy.byId('#group2-item1/1/1b').should('have.text', 'Answer 2');
+    cy.byId('#group2-item1/1/1c').should('have.text', 'Answer 3');
+    // checkbox
+    cy.byId('#group2-item2/1/1a').should('have.text', 'Answer 1');
+    cy.byId('#group2-item2/1/1b').should('have.text', 'Answer 2');
+    cy.byId('#group2-item2/1/1c').should('have.text', 'Answer 3');
+  });
+
+  it('should load contained ValueSet with no expansion from FHIR context', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    TestUtil.waitForFHIRLibsLoaded();
+    cy.window().then((win) => {
+      const fhirContext = new Function(
+        'return ' + fhirMock.mockFHIRContext
+      )();
+      win.LForms.Util.setFHIRContext(
+        fhirContext(fhirVersion, null, fhirMock.mockData)
+      );
+    });
+    // Put a form with contained ValueSets without expansion on the page using a FHIR object
+    const file = 'test/data/R4/q-with-contained-valueset-without-expansion.json';
+    cy.readFile(file).then((fhirData) => {
+      // Remove terminology server so we test expansion using FHIR client.
+      delete fhirData.extension;
+      cy.window().then(win=>{
+        win.LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
+      });
+    });
+    cy.get('.lhc-form-title').should('exist');
+    // autocomplete
+    cy.byId('#group1-item1/1/1')
+      .focus();
+    cy.get('#completionOptions li')
+      .as('listOptions');
+    cy.get('@listOptions')
+      .should('be.visible')
+      .should('have.length', 3);
+    // radio
+    cy.byId('#group2-item1/1/1N').should('have.text', 'No');
+    cy.byId('#group2-item1/1/1Y').should('have.text', 'Yes');
+    cy.byId('#group2-item1/1/1asked-unknown').should('have.text', "Don't know");
+    // checkbox
+    cy.byId('#group2-item2/1/1N').should('have.text', 'No');
+    cy.byId('#group2-item2/1/1Y').should('have.text', 'Yes');
+    cy.byId('#group2-item2/1/1asked-unknown').should('have.text', "Don't know");
   });
 });

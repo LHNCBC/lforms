@@ -2,6 +2,10 @@
 import { RxTerms } from "../support/rxterms.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
+// R4B is same as R4 for Questionnaire and QuestionnaireResponse.
+// Only need to test R4B in the test for profile.
+delete FHIRSupport.R4B;
+
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 import {TestUtil} from "../support/testUtilFacade.js";
 import {TestPage} from '../support/lforms_testpage.po.js';
@@ -54,7 +58,22 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
 
-        if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4
+        it('should work on checkboxes and radio buttons', function() {
+          cy.visit('test/pages/addFormToPageTest.html');
+          util.addFormToPage('q-with-rendering-style-radio-and-checkbox.json', null, {fhirVersion});
+          expect(element(by.id('1.1/1code1')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.1/1code2')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.2/1Answerstring1')).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id('1.2/1Answerstring2')).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id('1.3/12025-05-23')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.3/12025-05-24')).getAttribute('style')).toBe('font-style: italic;');
+          cy.get('#1\\.4\\/110\\:30\\:00').invoke('attr', 'style').should('eq', 'font-weight: bold;');
+          cy.get('#1\\.4\\/113\\:30\\:00').invoke('attr', 'style').should('eq', 'font-weight: bold;');
+          expect(element(by.id('1.5/11')).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id('1.5/12')).getAttribute('style')).toBe('font-style: italic;');
+        });
+
+        if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4/R5
           it('should work on question text in horizontal tables', function() {
             util.addFormToPage('tables.json', null, {fhirVersion});
             var idCSS = '#col/g2/g1m1/1/1';
@@ -65,6 +84,30 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var idCSS = '#label-/g4/g1m2/1/1';
             expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
             expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
+          });
+
+          it('should work on legal and help text, inline', function() {
+            tp.openBaseTestPage();
+            cy.get('#showCodingInstruction').click();
+            tp.loadFromTestData('q-with-rendering-style-help-and-legal.json', fhirVersion);
+            expect(element(by.id('help-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
+            expect(element(by.id('legal-1.1/1')).getAttribute('style')).toBe('font-style: italic;');
+          });
+
+          it('should work on legal and help text, popover', function() {
+            cy.visit('test/pages/addFormToPageTest.html');
+            util.addFormToPage('q-with-rendering-style-help-and-legal.json', null, {fhirVersion});
+            cy.byId('legal-button-1.1/1').click();
+            expect(element(by.id('legal-content-1.1/1')).getAttribute('style')).toBe('font-style: italic;');
+            cy.byId('help-button-1.1/1').click();
+            expect(element(by.id('help-content-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
+          });
+
+          it('should work on matrix layout', function() {
+            cy.visit('test/pages/addFormToPageTest.html');
+            util.addFormToPage('answerOption-rendering-style-matrix-layout.json', null, {fhirVersion});
+            expect(element.all(by.css('th.lhc-form-matrix-cell')).get(0).getAttribute('style')).toBe('font-style: italic;');
+            expect(element.all(by.css('th.lhc-form-matrix-cell')).get(3).getAttribute('style')).toBe('font-style: italic;');
           });
         }
       });
@@ -155,6 +198,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 let [error, fhirData] = callbackData;
                 expect(error).toBeNull();
                 expect(fhirData.resourceType).toBe("DiagnosticReport");
+                expect(fhirData.code.coding[0].system).toBe('LOINC');
+                expect(fhirData.code.coding[0].code).toBe('54127-6N');
                 expect(fhirData.result.length).toBe(1);
                 expect(fhirData.result[0].reference).not.toBe(undefined);
                 expect(fhirData.contained.length).toBe(16);
@@ -270,6 +315,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.resourceType).toBe("Bundle");
               expect(fhirData.entry.length).toBe(1);
               expect(fhirData.entry[0].resource.resourceType).toBe("DiagnosticReport");
+              expect(fhirData.entry[0].resource.code.coding[0].system).toBe('LOINC');
+              expect(fhirData.entry[0].resource.code.coding[0].code).toBe('54127-6N');
               expect(fhirData.entry[0].resource.result).toEqual([]);
 
               // #2 has some values
@@ -428,19 +475,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.entry[16].resource.related.length).toBe(11);
 
               });
-            });
-          });
-
-          it('should get a SDC Questionnaire data from a form', function() {
-
-            tp.LoadForm.openUSSGFHTVertical();
-            getFHIRResource("Questionnaire", fhirVersion,
-                ).then(function(callbackData) {
-              let [error, fhirData] = callbackData;
-
-              expect(error).toBeNull();
-              var assertFHTQuestionnaire = require('../support/'+fhirVersion+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
-              assertFHTQuestionnaire(fhirData);
             });
           });
 
@@ -629,7 +663,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr")).click();
-            //browser.waitForAngular();
 
             expect(TestUtil.getAttribute(ff.name,'value')).toBe("name 1");
             expect(TestUtil.getAttribute(ff.name2,'value')).toBe("name 2");
@@ -694,7 +727,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
 
           it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {
-            tp.LoadForm.openUSSGFHTVertical();
+            tp.openBaseTestPage();
             util.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-qr")).click();
@@ -727,10 +760,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should merge FHIR SDC QuestionnaireResponse with User Data on CWE fields back into the form', function() {
-            tp.LoadForm.openFullFeaturedForm();
+            tp.openBaseTestPage();
             util.setFHIRVersion(fhirVersion);
-
             element(by.id("merge-qr-cwe")).click();
+
+            // 0 and non-0 numbers
+            cy.byId('/type2/1').should('have.value', '0');
+            cy.byId('/type3/1').should('have.value', '-1.1');
 
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
@@ -757,20 +793,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               return win.LForms.Util.getUserData(null, false, true);
             }).then(function (formData) {
 
-              expect(formData.itemsData.length).toBe(7);
+              expect(formData.itemsData.length).toBe(9);
               expect(formData.itemsData[0].value).toBe(true);
               expect(formData.itemsData[1].value).toBe(false);
-              expect(formData.itemsData[2].value).toBe("user typed value");
-              expect(formData.itemsData[3].value.length).toBe(4);
-              expect(formData.itemsData[3].value[0].code).toEqual('c1');
-              expect(formData.itemsData[3].value[0].text).toEqual('Answer 1');
-              expect(formData.itemsData[3].value[0].system).toEqual(undefined);
-              expect(formData.itemsData[3].value[1].code).toEqual('c2');
-              expect(formData.itemsData[3].value[1].text).toEqual('Answer 2');
-              expect(formData.itemsData[3].value[1].system).toEqual(undefined);
-              expect(formData.itemsData[3].value[2]).toEqual('user value1');
-              expect(formData.itemsData[3].value[3]).toEqual('user value2');
-
+              expect(formData.itemsData[2].value).toBe(0);
+              expect(formData.itemsData[3].value).toBe(-1.1);
+              expect(formData.itemsData[4].value).toBe("user typed value");
+              expect(formData.itemsData[5].value.length).toBe(4);
+              expect(formData.itemsData[5].value[0].code).toEqual('c1');
+              expect(formData.itemsData[5].value[0].text).toEqual('Answer 1');
+              expect(formData.itemsData[5].value[0].system).toEqual(undefined);
+              expect(formData.itemsData[5].value[1].code).toEqual('c2');
+              expect(formData.itemsData[5].value[1].text).toEqual('Answer 2');
+              expect(formData.itemsData[5].value[1].system).toEqual(undefined);
+              expect(formData.itemsData[5].value[2]).toEqual('user value1');
+              expect(formData.itemsData[5].value[3]).toEqual('user value2');
             })
 
           });
@@ -907,7 +944,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           // NEXT: new boolean implementation
           cy.byCss('#/type-boolean/1true input').should('be.checked')
 
-          if (fhirVersion === "R4") {
+          if (fhirVersion === "R4" || fhirVersion === "R4B") {
 
             expect(TestUtil.getAttribute(typeInteger,'value')).toBe('123');
 
@@ -1007,7 +1044,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         it('should keep the initial[x] values when converted back to Questionnaire', function() {
-          if (fhirVersion === "R4") {
+          if (fhirVersion === "R4" || fhirVersion === "R4B") {
             getFHIRResource("Questionnaire", fhirVersion).
             then(function(callbackData) {
               let [error, fhirData] = callbackData;
@@ -1117,8 +1154,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
       describe('QuestionnaireResponse special case', function () {
 
-        if (fhirVersion === 'R4') {
-          it('should get answers from a question that is under a question that has no answer values', function() {
+        if (fhirVersion === 'R4' || fhirVersion === "R4B") {
+          it('should NOT get answers from a question that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
             util.setFHIRVersion(fhirVersion);
             util.addFormToPage('question-under-question.R4.json', null, {fhirVersion});
@@ -1138,12 +1175,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
-              expect(fhirData.item[0].answer[0].item[0].answer[0].valueString).toBe('123');
+              expect(fhirData.item).toBe(undefined);
             });
 
           });
 
-          it('should get answers from a question in a group that is under a question that has no answer values', function() {
+          it('should NOT get answers from a question in a group that is under a question that has no answer values', function() {
             cy.visit('test/pages/addFormToPageTest.html');
             util.setFHIRVersion(fhirVersion);
             util.addFormToPage('group-under-question.R4.json', null, {fhirVersion});
@@ -1164,7 +1201,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
-              expect(fhirData.item[0].answer[0].item[0].item[0].answer[0].valueString).toBe('123');
+              expect(fhirData.item).toBe(undefined);
             });
           });
         }
@@ -1172,3 +1209,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     });
   })(fhirVersions[i]);
 }
+
+['R4', 'R4B'].forEach(function(fhirVersion){
+  describe("Test R4 and R4B difference in meta.profile", function() {
+    it('should get a SDC Questionnaire data from a form', function() {
+      tp.LoadForm.openUSSGFHTVertical();
+      getFHIRResource("Questionnaire", fhirVersion,
+          ).then(function(callbackData) {
+        let [error, fhirData] = callbackData;
+
+        expect(error).toBeNull();
+        let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+        var assertFHTQuestionnaire = require('../support/'+fhirVersionInFile+'/assert-sdc-questionnaire.js').assertFHTQuestionnaire;
+        assertFHTQuestionnaire(fhirData, fhirVersion);
+      });
+    });
+  })
+});

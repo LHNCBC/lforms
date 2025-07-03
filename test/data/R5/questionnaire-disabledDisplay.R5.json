@@ -1,0 +1,1136 @@
+{
+  "title": "Questionnaire with disabledDisplay (R5 only) ",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "s1",
+      "text": "source item for enableWhen. true=>enable; false|not answered=>disable.",
+      "prefix": "0.",
+      "type": "boolean"
+    },
+    {
+      "linkId": "a1",
+      "text": "disabledDisplay = 'hidden' on a string question item",
+      "prefix": "1.",
+      "type": "string",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "type": "coding",
+      "linkId": "a1a",
+      "prefix": "1a.",
+      "text": "disabledDisplay = 'hidden' on a coding question item",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "a2",
+      "text": "disabledDisplay = 'protected' on a string question item",
+      "prefix": "2.",
+      "type": "string",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "type": "coding",
+      "linkId": "a2a",
+      "prefix": "2a.",
+      "text": "disabledDisplay = 'protected' on a coding question item",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "b1",
+      "text": "disabledDisplay = 'hidden' on display item",
+      "prefix": "3",
+      "type": "display",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "b2",
+      "text": "disabledDisplay = 'protected' on display item",
+      "prefix": "4.",
+      "type": "display",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "g1",
+      "text": "disabledDisplay = 'hidden' on group item",
+      "prefix": "5.",
+      "type": "group",
+      "disabledDisplay": "hidden",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "item": [
+        {
+          "linkId": "g1a1",
+          "text": "a question item in a group",
+          "prefix": "6.",
+          "type": "string"
+        },
+        {
+          "linkId": "g1a1a",
+          "text": "disabledDisplay = 'protected' on a question item in a group",
+          "prefix": "6a.",
+          "type": "string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g1a1b",
+          "prefix": "6b.",
+          "text": "disabledDisplay = 'protected' on a coding question item",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "g1b1",
+          "text": "a display item in a group",
+          "prefix": "7.",
+          "type": "display"
+        },
+        {
+          "linkId": "g1g1",
+          "text": "a sub group item",
+          "prefix": "8.",
+          "type": "group",
+          "item": [
+            {
+              "linkId": "g1g1a1",
+              "text": "a question item in a sub group item",
+              "prefix": "9.",
+              "type": "string"
+            },
+            {
+              "linkId": "g1g1b1",
+              "text": "a display item in a sub group item",
+              "prefix": "10.",
+              "type": "display"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "g2",
+      "text": "disabledDisplay not set on group item",
+      "prefix": "11.",
+      "type": "group",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "item": [
+        {
+          "linkId": "g2a1",
+          "text": "a question item in a group",
+          "prefix": "12.",
+          "type": "string"
+        },
+        {
+          "linkId": "g2a1a",
+          "text": "disabledDisplay = 'protected' on a question item in a group",
+          "prefix": "12a.",
+          "type": "string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g2a1b",
+          "prefix": "12b.",
+          "text": "disabledDisplay = 'protected' on a coding question item",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "g2b1",
+          "text": "a display item in a group",
+          "prefix": "13.",
+          "type": "display"
+        },
+        {
+          "linkId": "g2g1",
+          "text": "a sub group item",
+          "prefix": "14.",
+          "type": "group",
+          "item": [
+            {
+              "linkId": "g2g1a1",
+              "text": "a question item in a sub group item",
+              "prefix": "15.",
+              "type": "string"
+            },
+            {
+              "linkId": "g2g1b1",
+              "text": "a display item in a sub group item",
+              "prefix": "16.",
+              "type": "display"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "g3",
+      "text": "disabledDisplay = 'protected' on group item",
+      "prefix": "17.",
+      "type": "group",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "item": [
+        {
+          "linkId": "g3a1",
+          "text": "disabledDisplay = 'hidden' on question item in a group",
+          "prefix": "18.",
+          "type": "string",
+          "disabledDisplay": "hidden",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3a2",
+          "text": "disabledDisplay = 'protected' on question item in a group",
+          "prefix": "19.",
+          "type": "string",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3a2a",
+          "text": "disabledDisplay = 'protected' on a question item in a group",
+          "prefix": "19a.",
+          "type": "string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g3a2b",
+          "prefix": "19b.",
+          "text": "disabledDisplay = 'protected' on a coding question item",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "g3b1",
+          "text": "disabledDisplay = 'hidden' on display item in a group",
+          "prefix": "20.",
+          "type": "display",
+          "disabledDisplay": "hidden",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3b2",
+          "text": "disabledDisplay = 'protected' on display item in a group",
+          "prefix": "21.",
+          "type": "display",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "g3g1",
+          "text": "disabledDisplay = 'hidden' on group item in a group",
+          "prefix": "22.",
+          "type": "group",
+          "disabledDisplay": "hidden",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "item": [
+            {
+              "linkId": "g3g1a1",
+              "text": "a question item in a sub group",
+              "prefix": "23.",
+              "type": "string"
+            },
+            {
+              "linkId": "g3g1b1",
+              "text": "a display item in a sub group",
+              "prefix": "24.",
+              "type": "display"
+            }
+          ]
+        },
+        {
+          "linkId": "g3g2",
+          "text": "disabledDisplay = 'protected' on group item in a group",
+          "prefix": "25.",
+          "type": "group",
+          "disabledDisplay": "protected",
+          "enableWhen": [
+            {
+              "question": "s1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "item": [
+            {
+              "linkId": "g3g2a1",
+              "text": "a question item in a sub group",
+              "prefix": "26.",
+              "type": "string"
+            },
+            {
+              "linkId": "g3g2b1",
+              "text": "a display item in a sub group",
+              "prefix": "27.",
+              "type": "display"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "coding",
+      "prefix": "28.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "Radio Button"
+          }
+        }
+      ],
+      "linkId": "coding1",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on coding item displayed as radio buttons",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    },
+    {
+      "type": "coding",
+      "prefix": "29.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ],
+            "text": "Check-box"
+          }
+        }
+      ],
+      "repeats": true,
+      "linkId": "coding2",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on coding item displayed as checkboxes",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "30.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "gtable",
+                "display": "Group Table"
+              }
+            ],
+            "text": "Group Table"
+          }
+        }
+      ],
+      "linkId": "g4",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "repeats": true,
+      "text": "disabledDisplay = 'protected' on group item displayed as horizontal table",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "g4col1",
+          "text": "A string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g4col2",
+          "text": "A coding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "31.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g5",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on group item displayed as a matrix (repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g5q1",
+          "text": "Question #1",
+          "answerConstraint": "optionsOrString",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g5q2",
+          "text": "Question #2",
+          "answerConstraint": "optionsOrString",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g5q3",
+          "text": "Question #3",
+          "answerConstraint": "optionsOrString",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "32.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g6",
+      "disabledDisplay": "protected",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay = 'protected' on group item displayed as a matrix (non-repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "linkId": "g6q1",
+          "text": "Question #1",
+          "answerConstraint": "optionsOrString",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g6q2",
+          "text": "Question #2",
+          "answerConstraint": "optionsOrString",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g6q3",
+          "text": "Question #3",
+          "answerConstraint": "optionsOrString",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "33.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "gtable",
+                "display": "Group Table"
+              }
+            ],
+            "text": "Group Table"
+          }
+        }
+      ],
+      "linkId": "g7",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "repeats": true,
+      "text": "disabledDisplay not set on group item displayed as horizontal table",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "g7col1",
+          "text": "A string"
+        },
+        {
+          "type": "coding",
+          "linkId": "g7col2",
+          "text": "A coding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "34.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g8",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay not set on group item displayed as a matrix (repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g8q1",
+          "text": "Question #1",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g8q2",
+          "text": "Question #2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "repeats": true,
+          "linkId": "g8q3",
+          "text": "Question #3",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "prefix": "35.",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "g9",
+      "enableWhen": [
+        {
+          "question": "s1",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ],
+      "text": "disabledDisplay not set on group item displayed as a matrix (non-repeating)",
+      "item": [
+        {
+          "type": "coding",
+          "linkId": "g9q1",
+          "text": "Question #1",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g9q2",
+          "text": "Question #2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "linkId": "g9q3",
+          "text": "Question #3",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

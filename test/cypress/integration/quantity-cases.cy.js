@@ -36,7 +36,14 @@ describe('Quantities with and without unit lists and unit-open', () => {
 
     it('should have a CWE list for a quantity with units list and with unit-open=optionsOrString', ()=>{
       const itemUnitFieldID = '#unit_q6\\/1';
-      cy.get(itemUnitFieldID).click().clear().type('meters').blur().should('have.value', 'meters');
+      const nextInput = '#q7\\/1';
+      cy.get(itemUnitFieldID).click().clear().type('meters1')
+      cy.get(nextInput).click() // itemUnitFieldID.blur() does not work with the autocomplete.
+      cy.get(itemUnitFieldID).should('have.value', 'meters1');      
+      cy.get(itemUnitFieldID).click().clear().type('meters')
+      cy.get(nextInput).click()
+      cy.get(itemUnitFieldID).should('have.value', 'meters');
+      
 
       cy.window().then((win) => {
         cy.get(itemUnitFieldID).should(() => { // force retry to wait for the unit to be updated in the model

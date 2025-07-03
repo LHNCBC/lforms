@@ -5,43 +5,123 @@
     <span class="lhc-question">
       <label id="label-{{ item._elementId }}" for="{{item._elementId}}">
         <!-- prefix -->
-        <span *ngIf="item.prefix" class="prefix" [style]="item._obj_prefixCSS">{{item.prefix}}</span>
+        <ng-container *ngIf="item.prefix">
+          <ng-container [ngSwitch]="lhcDataService.getPrefixDisplayType(item)">
+            <span *ngSwitchCase="'escaped'"
+                 class="prefix"
+                 [style]="item._obj_prefixCSS"
+            >{{item._prefixHTML}}</span>
+            <span *ngSwitchCase="'html'"
+                  class="prefix"
+                  [style]="item._obj_prefixCSS"
+                  [innerHTML]="item._prefixHTML | safeHtml"
+            ></span>
+            <span *ngSwitchCase="'plain'"
+                  class="prefix"
+                  [style]="item._obj_prefixCSS"
+            >{{item.prefix}}</span>
+          </ng-container>
+        </ng-container>
         <!-- question text -->
-        <span class="question" [style]="item._obj_textCSS">
-          {{ item.question }}&nbsp;<span *ngIf="item._answerRequired" class="lhc-required" title="Required">*</span>
-        </span>
+        <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(item)">
+          <span *ngSwitchCase="'escaped'"
+               class="question"
+               [style]="item._obj_textCSS"
+          >{{item._displayTextHTML}}</span>
+          <span *ngSwitchCase="'html'"
+                class="question"
+                [style]="item._obj_textCSS"
+                [innerHTML]="item._displayTextHTML | safeHtml"
+          ></span>
+          <span *ngSwitchCase="'plain'"
+                class="question"
+                [style]="item._obj_textCSS"
+          >{{item.question}}</span>
+        </ng-container>
+        <!-- required -->
+        <span *ngIf="item._answerRequired" class="lhc-required" title="Required">*</span>
       </label>
     </span>
-    <!-- question code -->
-    <span class="lf-item-code" *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode">
-      <a *ngIf="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
-      <span *ngIf="!item._linkToDef">[{{ item.questionCode }}]</span>
+    <!-- code -->
+    <span
+      *ngIf="lhcDataService.getLhcFormData().templateOptions.showQuestionCode && item.codeList && item.codeList.length>0">
+      <span *ngFor="let code of item.codeList">
+        <span *ngIf="code.code">
+          <a *ngIf="code.system == 'http://loinc.org'" href="{{ 'https://loinc.org/' + code.code}}" class="lhc-item-code"
+            target="_blank" rel="noopener noreferrer">
+            [{{ code.code }}]
+          </a>
+          <span *ngIf="code.system != 'http://loinc.org'" class="lhc-item-code">[{{ code.code }}]</span>
+        </span>
+      </span>
     </span>
     <!-- coding instructions / helps -->
     <span [ngSwitch]="lhcDataService.getCodingInstructionsDisplayType(item)" *ngIf="item.codingInstructions">
-      <span *ngSwitchCase="'inline-escaped'"
+      <div *ngSwitchCase="'inline-escaped'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt"
+            class="lhc-inline-help"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
-       >{{item.codingInstructions}}</span>
-      <span *ngSwitchCase="'inline-html'"
+           [style]="item._obj_helpCSS"
+       >{{item.codingInstructions}}</div>
+      <div *ngSwitchCase="'inline-html'"
             id="help-{{ item._elementId }}"
-            class="lf-prompt"
-            [innerHTML]="item.codingInstructions | safeHtml"
+            class="lhc-inline-help"
+            [innerHTML]="item._codingInstructionsWithContainedImages || item.codingInstructions | safeHtml"
             attr.aria-label="Help for question {{item.question}}"
             attr.aria-describedby="label-{{ item._elementId }}"
-       ></span>
+           [style]="item._obj_helpCSS"
+       ></div>
+      <div *ngSwitchCase="'inline-plain'"
+            id="help-{{ item._elementId }}"
+            class="lhc-inline-help"
+            attr.aria-label="Help for question {{item.question}}"
+            attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_helpCSS"
+      >{{item.codingInstructionsPlain}}</div>
       <ng-container *ngSwitchCase="'popover-escaped'">
         <lhc-button-popover [item]="item" [popoverType]="'help-string'"></lhc-button-popover>
        </ng-container>
       <ng-container *ngSwitchCase="'popover-html'">
         <lhc-button-popover [item]="item" [popoverType]="'help-html'"></lhc-button-popover>
       </ng-container>
+      <ng-container *ngSwitchCase="'popover-plain'">
+        <lhc-button-popover [item]="item" [popoverType]="'help-plain'"></lhc-button-popover>
+      </ng-container>
     </span>
-    <!-- copyright -->
-    <ng-container *ngIf="item.copyrightNotice">
-      <lhc-button-popover [item]="item" [popoverType]="'copyright-string'"></lhc-button-popover>
-    </ng-container>
+    <!-- legal -->
+    <span [ngSwitch]="lhcDataService.getLegalDisplayType(item)" *ngIf="item.legal">
+      <div *ngSwitchCase="'inline-escaped'"
+           id="legal-{{ item._elementId }}"
+           class="lhc-inline-legal"
+           attr.aria-label="Legal for question {{item.question}}"
+           attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_legalCSS"
+      >{{item.legal}}</div>
+      <div *ngSwitchCase="'inline-html'"
+           id="legal-{{ item._elementId }}"
+           class="lhc-inline-legal"
+           [innerHTML]="item._legalWithContainedImages || item.legal | safeHtml"
+           attr.aria-label="Legal for question {{item.question}}"
+           attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_legalCSS"
+      ></div>
+      <div *ngSwitchCase="'inline-plain'"
+           id="legal-{{ item._elementId }}"
+           class="lhc-inline-legal"
+           attr.aria-label="Legal for question {{item.question}}"
+           attr.aria-describedby="label-{{ item._elementId }}"
+           [style]="item._obj_legalCSS"
+      >{{item.legalPlain}}</div>
+      <ng-container *ngSwitchCase="'popover-escaped'">
+        <lhc-button-popover [item]="item" [popoverType]="'legal-string'"></lhc-button-popover>
+       </ng-container>
+      <ng-container *ngSwitchCase="'popover-html'">
+        <lhc-button-popover [item]="item" [popoverType]="'legal-html'"></lhc-button-popover>
+      </ng-container>
+      <ng-container *ngSwitchCase="'popover-plain'">
+        <lhc-button-popover [item]="item" [popoverType]="'legal-plain'"></lhc-button-popover>
+      </ng-container>
+    </span>
   </div>
 </ng-container>

@@ -2,6 +2,7 @@
 //const autoCompBasePage = require("autocomplete-lhc/test/protractor/basePage").BasePage;
 //const elementFactory = TestUtil.elementFactory;
 import {setFHIRVersion} from './util';
+import {TestUtil} from './testUtilFacade';
 
 export class TestPage {
 
@@ -140,7 +141,7 @@ export class TestPage {
     raceField: '#/54126-8/54134-2/1/1',
     eyeField: '#/9267-6/1',
     scoreField: '#/9269-2/1',
-    searchResults: '#searchResults'
+    searchResults: '#lhc-tools-searchResults'
     // searchResult: this.autoCompHelpers.searchResult, //TODO, probably not working with cypress
     // helpers: this.autoCompHelpers,
     // TODO rewrite in cypress
@@ -187,7 +188,7 @@ export class TestPage {
     dcTarget1: '#/dataControlExamples/controlledItem_LIST/1/1',
     dcTarget2: '#/dataControlExamples/controlledItem_TEXT/1/1',
 
-    searchResults: '#searchResults',
+    searchResults: '#lhc-tools-searchResults',
 
     cneTriggerSrc1: '#/54139-1-cnesrc-1/1',
     dobIfLivingYes: '#/54139-1-cnesrc-1/54124-3/1/1 input',
@@ -320,6 +321,9 @@ export class TestPage {
    */
   openBaseTestPage() {
     cy.visit(this.testPageUrl);
+    // For some reason, LForms is sometimes not present yet.  Try waiting for
+    // it.
+    TestUtil.waitForLFormsLoaded();
     cy.window().then((win) => {
       // Reduce the duration that validation messages stay, to have faster tests.
       win.LForms.Validations._timeout = 100;
@@ -454,7 +458,8 @@ export class TestPage {
       el[0].addEventListener('onError', formFinishedListener);
     });
 
-    cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersion}/${filepath}`);
+    let fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+    cy.get('#fileAnchor').uploadFile(`test/data/${fhirVersionInFile}/${filepath}`);
 
     // Wait for the form to appear and be "ready" (or error out)
     cy.get('.lhc-form-title').should('be.visible').then(

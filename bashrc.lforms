@@ -7,7 +7,7 @@
 # of it.
 
 # Use the globally installed node and its modules
-NODE_DIR=node-v18.14.2
+NODE_DIR=node-v22.11.0
 # Set path
 PATH=~/${NODE_DIR}/bin:/bin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/etc
 

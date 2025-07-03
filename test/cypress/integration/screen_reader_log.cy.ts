@@ -70,13 +70,13 @@ describe('508', () => {
     it('should add an entry when a question is added or removed', () => {
       // Switch to the first form, which has a repeating question
       tp.LoadForm.openUSSGFHTVertical();
-      cy.contains('Add another "Name"').should('be.visible');
+      cy.contains('+ Name').should('be.visible');
       // Reset the reader log
       tp.resetReaderLog();
       tp.expectReaderLogEntriesEmpty();
       // Add a question
       cy.byId(tp.USSGFHTVertical.name).type('a name');
-      cy.contains('Add another "Name"').click();
+      cy.contains('+ Name').click();
       tp.expectReaderLogEntries(['Added question']);
       // Remove the question
       cy.get('button[title=\'Remove this "Name"\']').first().click();

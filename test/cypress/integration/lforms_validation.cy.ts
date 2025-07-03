@@ -49,12 +49,14 @@ describe('Validations', () => {
     real2 = '/REAL2/1',
     real3 = '/REAL3/1',
     real4 = '/REAL4/1',
+    real5 = '/REAL5/1',
     st1 = '/ST1/1',
     st2 = '/ST2/1',
     st3 = '/ST3/1',
     inta = '/INTA/1',
     reala = '/REALA/1',
     sta = '/STA/1',
+    sta2 = '/STA2/1',
     stb = '/STB/1',
 
     st0 = '/ST0/1',
@@ -79,12 +81,14 @@ describe('Validations', () => {
     lblreal2 = 'label[for=\'/REAL2/1\']',
     lblreal3 = 'label[for=\'/REAL3/1\']',
     lblreal4 = 'label[for=\'/REAL4/1\']',
+    lblreal5 = 'label[for=\'/REAL5/1\']',
     lblst1 = 'label[for=\'/ST1/1\']',
     lblst2 = 'label[for=\'/ST2/1\']',
     lblst3 = 'label[for=\'/ST3/1\']',
     lblinta = 'label[for=\'/INTA/1\']',
     lblreala = 'label[for=\'/REALA/1\']',
     lblsta = 'label[for=\'/STA/1\']',
+    lblsta2 = 'label[for=\'/STA2/1\']',
     lblstb = 'label[for=\'/STB/1\']',
     // lblsta = element(by.id("label-/STA/1",
     // lblstb = element(by.id("label-/STB/1",
@@ -127,6 +131,7 @@ describe('Validations', () => {
     errorMaxLength = 'must have a total length less than or equal to ',
     errorMinLength = 'must have a total length greater than or equal to ',
     errorPattern = 'must match a RegExp pattern of',
+    errorMaxDecimalPlaces = ' decimal places.',
     errorRequire = 'requires a value';
 
   describe('data type validations (table)', () => {
@@ -226,12 +231,28 @@ describe('Validations', () => {
       testOneType(st3, lblst2, errorContainer, errorMaxLength, '12345678901', '1234567890');
     });
 
-    it('should validate pattern', () => {
+    it('should validate pattern, with /', () => {
       testOneType(sta, lblst3, errorContainer, errorPattern, 'AAAAA', 'aaaaa');
+    });
+
+    it('should validate pattern, wihtout /', () => {
+      testOneType(sta2, lblst3, errorContainer, errorPattern, 'AAAAA', 'aaaaa');
     });
 
     it('should validate pattern, with "/" and flags (i, ignore cases)', () => {
       testOneType(stb, lblsta, errorContainer, errorPattern, '2/AAAAA', '/aBBBc');
+    });
+
+    it('should validate maxDecimalPlaces', () => {
+      testOneType(real5, lblreal4, errorContainer, errorMaxDecimalPlaces, '10.123', '10.12');
+    });
+
+    it('should validate maxDecimalPlaces with positive scientific notions', () => {
+      testOneType(real5, lblreal4, errorContainer, errorMaxDecimalPlaces, '1.12345e2', '1.1234e2');
+    });
+
+    it('should validate maxDecimalPlaces with negative scientific notions', () => {
+      testOneType(real5, lblreal4, errorContainer, errorMaxDecimalPlaces, '123.1e-2', '123e-2');
     });
 
     it('should validate "required" on ST', () => {

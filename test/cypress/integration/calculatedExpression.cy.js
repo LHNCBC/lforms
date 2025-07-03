@@ -12,6 +12,15 @@ describe('calculatedExpression', () => {
     cy.get('#\\/39156-5\\/1').invoke('attr', 'disabled').should('eq', undefined);
   });
 
+  it('should update the boolean field when the calculatedExpression changes', () => {
+    util.addFormToPage('calculatedExpression-on-boolean-item.json', null, {fhirVersion: 'R4'});
+    cy.byId('overweight/1null').should('have.class', 'ant-radio-wrapper-checked');
+    cy.byId('weight/1').type('10');
+    cy.byId('overweight/1false').should('have.class', 'ant-radio-wrapper-checked');
+    cy.byId('weight/1').type('2');
+    cy.byId('overweight/1true').should('have.class', 'ant-radio-wrapper-checked');
+  });
+
   describe('for single-select lists', ()=>{
     it('should be able to set off-list Codings as answers', ()=> {
       util.addFormToPage('calculatedListAnwers.json', null, {fhirVersion: 'R4'});
@@ -109,12 +118,12 @@ describe('calculatedExpression', () => {
 
     it('should be able to update the number of selecting codings', ()=>{
       cy.get('#oneCoding\\/1').click();
-      cy.byCss("#searchResults li").eq(0).contains('Yes').click();
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains('Yes').click();
       cy.get("#repeating-open-choice-coding\\/1").prev().find('li:first-child').should('contain', 'Blue');
       cy.get("#repeating-open-choice-coding\\/1").prev().find('li').its('length').should('eq', 1)
       // Now allow both codings.
       cy.get('#oneCoding\\/1').click();
-      cy.byCss("#searchResults li").eq(1).contains('No').click();
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains('No').click();
       cy.get("#repeating-open-choice-coding\\/1").prev().find('li:first-child').should('contain', 'Blue');
       cy.get("#repeating-open-choice-coding\\/1").prev().find('li:nth-child(2)').should('contain', 'Green');
       cy.get("#repeating-open-choice-coding\\/1").prev().find('li').its('length').should('eq', 2);
@@ -139,8 +148,8 @@ describe('calculatedExpression', () => {
 
       // expression works on the first group
       cy.byId('p1.10.1.1/1/1/1/1').click();
-      cy.get('#searchResults li').should('have.length', 2);
-      cy.get('#searchResults li').first().should('be.visible');
+      cy.get('#lhc-tools-searchResults li').should('have.length', 2);
+      cy.get('#lhc-tools-searchResults li').first().should('be.visible');
       cy.byId('p1.10.1.1/1/1/1/1').type('{downArrow}').type('{enter}');
       cy.byId('p1.10.1.1/1/1/1/1').should('have.value', 'NIH');
       cy.byId('p1.10.1.2/1/1/1/1').should('have.value', 'NIH-2021-5678901234567');
@@ -149,8 +158,8 @@ describe('calculatedExpression', () => {
       cy.byId('add-p1.10.1/1/1/1').click();
       // expression works on the second group
       cy.byId('p1.10.1.1/1/1/2/1').click();
-      cy.get('#searchResults li').should('have.length', 2);
-      cy.get('#searchResults li').first().should('be.visible');
+      cy.get('#lhc-tools-searchResults li').should('have.length', 2);
+      cy.get('#lhc-tools-searchResults li').first().should('be.visible');
       cy.byId('p1.10.1.1/1/1/2/1').type('{downArrow}').type('{downArrow}').type('{enter}');
       cy.byId('p1.10.1.1/1/1/2/1').should('have.value', 'Immunotherapy Industry Association');
       cy.byId('p1.10.1.2/1/1/2/1').should('have.value', 'IIA900000');
@@ -159,8 +168,8 @@ describe('calculatedExpression', () => {
       cy.byId('add-p1.10.1/1/1/2').click();
       // expression works on the third group
       cy.byId('p1.10.1.1/1/1/3/1').click();
-      cy.get('#searchResults li').should('have.length', 2);
-      cy.get('#searchResults li').first().should('be.visible');
+      cy.get('#lhc-tools-searchResults li').should('have.length', 2);
+      cy.get('#lhc-tools-searchResults li').first().should('be.visible');
       cy.byId('p1.10.1.1/1/1/3/1').type('{downArrow}').type('{enter}');
       cy.byId('p1.10.1.1/1/1/3/1').should('have.value', 'NIH');
       cy.byId('p1.10.1.2/1/1/3/1').should('have.value', 'NIH-2021-5678901234567');
@@ -174,18 +183,56 @@ describe('calculatedExpression', () => {
       cy.byId('p1.10.1.2/1/1/3/1').should('have.value', 'NIH-2021-5678901234567');
       // expression works in the remaining 2 groups
       cy.byId('p1.10.1.1/1/1/1/1').click();
-      cy.get('#searchResults li').should('have.length', 2);
-      cy.get('#searchResults li').first().should('be.visible');
+      cy.get('#lhc-tools-searchResults li').should('have.length', 2);
+      cy.get('#lhc-tools-searchResults li').first().should('be.visible');
       cy.byId('p1.10.1.1/1/1/1/1').type('{downArrow}').type('{downArrow}').type('{enter}');
       cy.byId('p1.10.1.1/1/1/1/1').should('have.value', 'Immunotherapy Industry Association');
       cy.byId('p1.10.1.2/1/1/1/1').should('have.value', 'IIA900000');
 
       cy.byId('p1.10.1.1/1/1/3/1').click();
-      cy.get('#searchResults li').should('have.length', 2);
-      cy.get('#searchResults li').first().should('be.visible');
+      cy.get('#lhc-tools-searchResults li').should('have.length', 2);
+      cy.get('#lhc-tools-searchResults li').first().should('be.visible');
       cy.byId('p1.10.1.1/1/1/3/1').type('{downArrow}').type('{downArrow}').type('{enter}');
       cy.byId('p1.10.1.1/1/1/3/1').should('have.value', 'Immunotherapy Industry Association');
       cy.byId('p1.10.1.2/1/1/3/1').should('have.value', 'IIA900000');
+    });
+
+    it('should have FHIRPath expressions work with R5 Coding items', ()=>{
+      util.addFormToPage('calculatedListAnswers.R5.json', null, {fhirVersion: 'R5'});
+
+      // input
+      cy.byId('inputList/1').click();
+      cy.get('#lhc-tools-searchResults li').should('have.length', 2);
+      cy.byId('inputList/1').type('{downArrow}').type('{enter}');
+      cy.byId('item-inputList/1')
+        .find('lhc-autocomplete li')
+        .should('have.length', 1);
+      cy.byId('item-inputList/1')
+        .get('lhc-autocomplete li')
+        .eq(0)
+        .should('contain.text', 'blue');
+
+      // single-select output calculated answer
+      cy.byId('calculatedAnswer/1/1').should('have.value', 'blue');
+
+      // single-select output calculated list option
+      cy.byId('calculatedListOption/1/1').click();
+      cy.get('#lhc-tools-searchResults li').should('have.length', 1);
+      cy.get('#lhc-tools-searchResults li').first().should('contain.text', 'blue');
+
+      // multi-select output calculated answers
+      cy.byId('item-calculatedAnswers/1/1')
+        .find('lhc-autocomplete li')
+        .should('have.length', 1);
+      cy.byId('item-calculatedAnswers/1/1')
+        .get('lhc-autocomplete li')
+        .eq(0)
+        .should('contain.text', 'blue');
+
+      // multi-select output calculated list options
+      cy.byId('calculatedListOptions/1/1').click();
+      cy.get('#lhc-tools-searchResults li').should('have.length', 1);
+      cy.get('#lhc-tools-searchResults li').first().should('contain.text', 'blue');
     });
   });
 });

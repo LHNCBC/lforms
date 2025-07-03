@@ -1,0 +1,71 @@
+{
+  "title": "Test form for tooltip on repeat items",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "gtable",
+                "display": "Group Table"
+              }
+            ],
+            "text": "Group Table"
+          }
+        }
+      ],
+      "repeats": true,
+      "linkId": "/allergies",
+      "text": "Allergies and Other Dangerous Reactions",
+      "item": [
+        {
+          "type": "open-choice",
+          "code": [
+            {
+              "code": "allergy_name",
+              "display": "Name",
+              "system": "Custom"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "/allergies/allergy_name",
+          "text": "Name",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "FOOD-2",
+                "display": "Chocolate"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "FOOD-22",
+                "display": "Crab"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

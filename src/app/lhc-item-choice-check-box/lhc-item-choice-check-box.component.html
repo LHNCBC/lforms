@@ -1,36 +1,41 @@
 <nz-checkbox-wrapper style="width: 100%;"  (nzOnChange)="onCheckboxModelChange($event)" *ngIf="item">
   <div nz-row [ngClass]="{'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl)}">
     <div *ngFor="let answer of acOptions.listItems; index as i">
-      <label 
-        nz-checkbox 
+      <label
+        nz-checkbox
         attr.aria-label="Checkbox {{answer._displayText}} for {{item.question}}"
         (click)="lhcDataService.setActiveRow(item)"
-        [nzValue]="item.answers[i]" 
+        [nzValue]="item.answers[i]"
         [(ngModel)]="checkboxModels[i]"
         [nzDisabled]="item._readOnly"
-        [id]="lhcDataService.getItemAnswerId(item, answer)">
-        {{answer._displayText}}
+        [id]="lhcDataService.getItemAnswerId(item, answer)"
+        [style]="answer._obj_CSS">
+        <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
+          <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
+          <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
+          <ng-container *ngSwitchCase="'plain'">{{answer._displayText}}</ng-container>
+        </ng-container>
       </label>
     </div>
-    <div *ngIf="item.dataType=== 'CWE'">
-      <label 
-        nz-checkbox 
+    <div *ngIf="item.answerConstraint === 'optionsOrString'">
+      <label
+        nz-checkbox
         attr.aria-label="Checkbox Other for {{item.question}}"
         (click)="lhcDataService.setActiveRow(item)"
         [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
         [nzDisabled]="item._readOnly"
-        [(ngModel)]="otherCheckboxModel" 
+        [(ngModel)]="otherCheckboxModel"
         [id]="item._elementId + '_other'">
-        Other
+        {{language.other}}
       </label>
-      <input 
-        type="text" 
-        [ngModel]="otherValue" 
-        (ngModelChange)="onOtherValueChange($event)" 
-        class="lhc-answer-other-input" 
-        [id]="item._elementId + '_otherValue'" 
+      <input
+        type="text"
+        [ngModel]="otherValue"
+        (ngModelChange)="onOtherValueChange($event)"
+        class="lhc-answer-other-input"
+        [id]="item._elementId + '_otherValue'"
         nz-input
-        *ngIf="otherCheckboxModel" 
+        *ngIf="otherCheckboxModel"
         [disabled]="item._readOnly"
         (focus)="lhcDataService.setActiveRow(item)"/>
     </div>
