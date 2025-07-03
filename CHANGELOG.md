@@ -2,6 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.21.0] 2025-07-03
+### Changed
+- Not to show the repetition number by default.
+- Never show the treeline or indentation on the first level items.
+- Changed "hideTreeLine" to a string type that accept 'true', 'false' and
+  'auto'. The default is now 'auto', which means to show the treeline when
+  the Q has more than 3 levels of the hierarchy, and hide the treeline
+  when there is up to 3 levels of the hierarchy.
+- Changed the treeline color to a lighter.
+
 ## [36.20.1] 2025-06-20
 ### Changed
 - Update autocomplete-lhc version and use new ID lhc-tools-searchResults
