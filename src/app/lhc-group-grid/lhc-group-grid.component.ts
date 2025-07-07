@@ -5,7 +5,8 @@ import deepEqual from "deep-equal";
 @Component({
   selector: 'lhc-group-grid',
   templateUrl: './lhc-group-grid.component.html',
-  styleUrls: ['./lhc-group-grid.component.css']
+  styleUrls: ['./lhc-group-grid.component.css'],
+  standalone: false,
 })
 export class LhcGroupGridComponent {
   @Input() item;
