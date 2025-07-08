@@ -104,6 +104,7 @@ registerLocaleData(en);
     LhcButtonPopoverComponent,
     LhcItemAttachmentComponent,
     LhcItemMessagesComponent,
+    LhcGroupGridComponent,
   ],
   bootstrap: [],
   schemas: [
@@ -123,8 +124,7 @@ registerLocaleData(en);
     NzPopoverModule,
     NzIconModule.forRoot(icons),
     NzSwitchModule,
-    LhcGroupGridComponent,
-    NzToolTipModule
+    NzToolTipModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US },
