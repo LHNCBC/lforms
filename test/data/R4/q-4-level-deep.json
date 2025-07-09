@@ -5,23 +5,30 @@
       "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
     ]
   },
-  "title": "A Questionnaire that is 3 levels deep",
+  "title": "A Questionnaire that is 4 levels deep",
   "status": "draft",
   "item": [
     {
       "type": "string",
-      "linkId": "level2",
-      "text": "2nd level",
+      "linkId": "level1",
+      "text": "1st level",
       "item": [
         {
           "type": "string",
-          "linkId": "level3",
-          "text": "3rd level",
-          "item":[
+          "linkId": "level2",
+          "text": "2nd level",
+          "item": [
             {
               "type": "string",
-              "linkId": "level4",
-              "text": "4th level"
+              "linkId": "level3",
+              "text": "3rd level",
+              "item":[
+                {
+                  "type": "string",
+                  "linkId": "level4",
+                  "text": "4th level"
+                }
+              ]
             }
           ]
         }

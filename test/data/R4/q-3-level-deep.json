@@ -10,13 +10,20 @@
   "item": [
     {
       "type": "string",
-      "linkId": "level2",
-      "text": "2nd level",
+      "linkId": "level1",
+      "text": "1st level",
       "item": [
         {
           "type": "string",
-          "linkId": "level3",
-          "text": "3rd level"
+          "linkId": "level2",
+          "text": "2nd level",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "level3",
+              "text": "3rd level"
+            }
+          ]
         }
       ]
     }

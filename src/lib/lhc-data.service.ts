@@ -341,7 +341,7 @@ export class LhcDataService {
     if (templateOptions.hideIndentation ||
       templateOptions.hideTreeLine === 'true' ||
       templateOptions.hideTreeLine === true ||
-      (templateOptions.hideTreeLine === 'auto' && this.getLhcFormData()._levelsOfHierarchy <= 3)) {
+      (templateOptions.hideTreeLine === 'auto' && this.getLhcFormData()._totalLevelsOfHierarchy <= 3)) {
       return '';
     } else {
       return 'lhc-tree-line';

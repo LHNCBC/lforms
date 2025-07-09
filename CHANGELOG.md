@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.21.0] 2025-07-03
+## [37.0.0] 2025-07-03
 ### Changed
 - Not to show the repetition number by default.
 - Never show the treeline or indentation on the first level.

@@ -59,10 +59,8 @@ export default class LhcFormData {
   // active item, where a input field in the row has the focus
   _activeItem = null;
 
-  // How many levels deep the form is.
-  _levelsOfHierarchy = 2;
-  // Level of hierarchy base number on lform level.
-  _levelOfHierarchy = 2;
+  // How many levels of items the form has.
+  _totalLevelsOfHierarchy = 0;
 
   // default template options
   _defaultTemplateOptions = {
@@ -470,7 +468,6 @@ export default class LhcFormData {
     LhcFormUtils.initializeCodes(this);
     // update internal status
     this._repeatableItems = {};
-    this._levelOfHierarchy = 2;
     this._setTreeNodes(this.items, this);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateItemDisabledDisplayStatus(this.items);
@@ -945,6 +942,7 @@ export default class LhcFormData {
     this._codePath = "";
     this._idPath = "";
     this._displayLevel = 0;
+    this._totalLevelsOfHierarchy = 0;
     this._activeItem = null;
 
     // template
@@ -1277,6 +1275,9 @@ export default class LhcFormData {
       item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
       item._elementId = item.linkId + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
+      if (item._displayLevel > this._totalLevelsOfHierarchy) {
+        this._totalLevelsOfHierarchy = item._displayLevel;
+      }
 
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
@@ -1313,10 +1314,6 @@ export default class LhcFormData {
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        item._levelOfHierarchy = parentItem._levelOfHierarchy + 1;
-        if (item._levelOfHierarchy > this._levelsOfHierarchy) {
-          this._levelsOfHierarchy = item._levelOfHierarchy;
-        }
         this._setTreeNodes(item.items, item);
       }
 
@@ -1538,6 +1535,9 @@ export default class LhcFormData {
       item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
       item._elementId = item.linkId + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
+      if (item._displayLevel > this._totalLevelsOfHierarchy) {
+        this._totalLevelsOfHierarchy = item._displayLevel;
+      }
       item._parentItem = parentItem;
       item._repeatingSectionList = null;
 
