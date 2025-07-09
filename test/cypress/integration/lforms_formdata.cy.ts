@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import {answerId} from "../support/util";
 
 describe('formdata: ', () => {
   const tp: TestPage = new TestPage();
@@ -84,9 +85,9 @@ describe('formdata: ', () => {
       }
 
       checkBoolFieldVal(undefined);
-      cy.byId(tp.FullFeaturedForm.booleanField + "true").click();
+      cy.byId(answerId(tp.FullFeaturedForm.booleanField, "true")).click();
       checkBoolFieldVal(true);
-      cy.byId(tp.FullFeaturedForm.booleanField + "false").click();
+      cy.byId(answerId(tp.FullFeaturedForm.booleanField, "false")).click();
       checkBoolFieldVal(false);
     });
 
@@ -176,7 +177,7 @@ describe('formdata: ', () => {
   describe('defaultAnswer', () => {
     it('should work for various data types', () => {
       tp.LoadForm.openDefaultAnswerForm();
-      cy.byId('/blField/1true').should('be.visible')
+      cy.byId(answerId('/blField/1', 'true')).should('be.visible')
         .find('input').should('be.checked');
 
       cy.byId('/intField/1').should('have.value', '24');
@@ -206,22 +207,22 @@ describe('formdata: ', () => {
       cy.byId('/ansCodeDefaultNoLabel/1').should('have.value', 'Blue');
 
       // Check a radio button question
-      const radioQCode = '#\\/radioAnsCodeDefault\\/1';
-      cy.get(radioQCode + 'R input').should('not.be.checked');
-      cy.get(radioQCode + 'B input').should('be.checked');
-      cy.get(radioQCode + 'G input').should('not.be.checked');
+      const radioQCode = '#/radioAnsCodeDefault/1';
+      cy.byId(answerId(radioQCode, undefined, 'R')).find('input').should('not.be.checked');
+      cy.byId(answerId(radioQCode, undefined, 'B')).find('input').should('be.checked');
+      cy.byId(answerId(radioQCode, undefined, 'G')).find('input').should('not.be.checked');
 
       // Check a radio button question whose answers do not have labels
-      const radioQCodeNL = '#\\/radioAnsCodeDefaultNoLabel\\/1';
-      cy.get(radioQCodeNL + 'R input').should('not.be.checked');
-      cy.get(radioQCodeNL + 'B input').should('be.checked');
-      cy.get(radioQCodeNL + 'G input').should('not.be.checked');
+      const radioQCodeNL = '#/radioAnsCodeDefaultNoLabel/1';
+      cy.byId(answerId(radioQCodeNL, undefined, 'R')).find('input').should('not.be.checked');
+      cy.byId(answerId(radioQCodeNL, undefined, 'B')).find('input').should('be.checked');
+      cy.byId(answerId(radioQCodeNL, undefined, 'G')).find('input').should('not.be.checked');
 
       // Test a check box question
-      const cbQCode = '#\\/checkBoxAnsCodeDefault\\/1';
-      cy.get(cbQCode + 'R input').should('not.be.checked');
-      cy.get(cbQCode + 'B input').should('be.checked');
-      cy.get(cbQCode + 'G input').should('not.be.checked');
+      const cbQCode = '#/checkBoxAnsCodeDefault/1';
+      cy.byId(answerId(cbQCode, undefined, 'R')).find('input').should('not.be.checked');
+      cy.byId(answerId(cbQCode, undefined, 'B')).find('input').should('be.checked');
+      cy.byId(answerId(cbQCode, undefined, 'G')).find('input').should('not.be.checked');
 
       // Check a multi-select list
       const multiSelID = '/multiSelAnsCodeDefault/1';

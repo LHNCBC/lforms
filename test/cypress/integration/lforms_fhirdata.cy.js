@@ -9,6 +9,7 @@ delete FHIRSupport.R4B;
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 import {TestUtil} from "../support/testUtilFacade.js";
 import {TestPage} from '../support/lforms_testpage.po.js';
+const answerId = util.answerId;
 
 delete FHIRSupport.default; // not sure why that is added now
 let fhirVersions = Object.keys(FHIRSupport);
@@ -757,8 +758,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(TestUtil.getAttribute(cne,'value')).toBe('');
             expect(TestUtil.getAttribute(st,'value')).toBe('');
 
-            cy.byCss('#/type1/1true input').should('be.checked')
-            cy.byCss('#/type1b/1false input').should('be.checked')
+            cy.byId(answerId('/type1/1', 'true')).find('input').should('be.checked')
+            cy.byId(answerId('/type1b/1', 'false')).find('input').should('be.checked')
 
             expect(TestUtil.getAttribute(cwe,'value')).toBe("user typed value");
 
@@ -809,8 +810,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should have functioning skiplogic when codes are not present', function() {
             let packungenField = element(by.id('1.5.4/1/1/1'));
             TestUtil.waitForElementNotPresent(packungenField);
-            let raucherFieldTrue = element(by.id('1.5.1/1/1/1true'));
-            let raucherFieldFalse = element(by.id('1.5.1/1/1/1false'));
+            let raucherFieldTrue = element(by.id(answerId('1.5.1/1/1/1', 'true')));
+            let raucherFieldFalse = element(by.id(answerId('1.5.1/1/1/1', 'false')));
             raucherFieldTrue.click();
             TestUtil.waitForElementPresent(packungenField);
             raucherFieldFalse.click();
@@ -819,8 +820,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should have functioning skiplogic when the codes are present', function() {
-            let progressFieldTrue = element(by.id('4.3.3.1/1/1/1/1true'));
-            let progressFieldFalse = element(by.id('4.3.3.1/1/1/1/1false'));
+            let progressFieldTrue = element(by.id(answerId('4.3.3.1/1/1/1/1', 'true')));
+            let progressFieldFalse = element(by.id(answerId('4.3.3.1/1/1/1/1', 'false')));
             let zeitpunktField = element(by.id('4.3.3.2/1/1/1/1'));
             TestUtil.waitForElementNotPresent(zeitpunktField);
             progressFieldTrue.click();
@@ -920,7 +921,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
 
           // NEXT: new boolean implementation
-          cy.byCss('#/type-boolean/1true input').should('be.checked')
+          cy.byId(answerId('/type-boolean/1', 'true')).find('input').should('be.checked')
 
           if (fhirVersion === "R4" || fhirVersion === "R4B") {
 

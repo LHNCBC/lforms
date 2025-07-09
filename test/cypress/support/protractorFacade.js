@@ -1,5 +1,6 @@
 // A facade for implementing Protractor calls with Cypress.
 
+import {escapeIDSelector} from './util';
 
 // expect functions
 const cypressExpect = expect;
@@ -57,7 +58,7 @@ facadeExpect.prototype = cypressExpect;
 
 
 export const by = {
-  id: (id) => '#'+id.replaceAll(/([\.\/])/g, '\\$1'),
+  id: (id) => '#'+escapeIDSelector(id),
   css: (cssLocator) => cssLocator.replaceAll('/', '\\/'),
   tagName: (tagName)=>tagName
 }

@@ -24,7 +24,6 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
   if (!container)
     container = 'formContainer';
 
-
   if (typeof filePathOrFormDefData === "string") {
     let fhirVersionInFile = options?.fhirVersion && options?.fhirVersion === 'R4B' ? 'R4' : options?.fhirVersion;
     let filePath = fhirVersionInFile ? fhirVersionInFile +'/'+filePathOrFormDefData :
@@ -103,3 +102,11 @@ export function answerId(elementId, systemOrOther, code) {
     InternalUtil.getItemAnswerId({_elementId: elementId}, systemOrOther);
 }
 
+/**
+ *  Escapes an element ID for use in CSS selector.
+ * @param id the element ID to be escaped.
+ * @return the escaped ID string ready to used in a CSS selector.
+ */
+export function escapeIDSelector(id) {
+  return id.replace(/([\.\/:\|%])/g,"\\$1");
+}

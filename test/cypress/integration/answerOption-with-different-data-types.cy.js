@@ -1,6 +1,8 @@
 import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
+const answerId = util.answerId;
+
 delete FHIRSupport.default;
 // R4B is same as R4 for Questionnaire and QuestionnaireResponse.
 // No need to test R4B in this test file.
@@ -125,9 +127,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       if (valueType === "valueCoding.open-choice") {
         cy.byId(`${params.itemIds.g6item1ans2} input`)
           .should('not.be.checked');
-        cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+        cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).find('input')
           .should('be.checked');
-        cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+        cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_otherValue'))
           .should('be.visible')
           .should('have.value', "user typed value")
       }
@@ -151,9 +153,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         if (valueType === "valueCoding.open-choice") {
           cy.byId(`${params.itemIds.g6item2ans3} input`)
             .should('not.be.checked');
-          cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
+          cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).find('input')
             .should('be.checked');
-          cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
+          cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))
             .should('be.visible')
             .should('have.value', "user typed value")
         }
@@ -382,9 +384,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           if (valueType === "valueCoding.open-choice") {
             cy.byId(`${params.itemIds.g6item1ans2} input`)
               .should('not.be.checked');
-            cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+            cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).find('input')
               .should('be.checked');
-            cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+            cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_otherValue'))
               .should('be.visible')
               .should('have.value', "user typed value")
           }
@@ -402,9 +404,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
             if (valueType === "valueCoding.open-choice") {
               cy.byId(`${params.itemIds.g6item2ans3} input`)
                 .should('not.be.checked');
-              cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
+              cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).find('input')
                 .should('be.checked');
-              cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
+              cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))
                 .should('be.visible')
                 .should('have.value', "user typed value")
             }
