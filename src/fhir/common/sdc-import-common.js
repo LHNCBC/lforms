@@ -1323,6 +1323,8 @@ function addCommonSDCImportFns(ns) {
                   errorMessages.addMsg(errors, 'answerValueSetLoadingError');
                   const messages = [{errors}];
                   LForms.Util._internalUtil.setItemMessagesArray(item, messages, 'loadAnswerValueSets');
+                  // Do not cache the result if expansion fails.
+                  delete LForms._valueSetAnswerCache[vsKey];
                   throw new Error(errorOrFatal.diagnostics);
                 }
               } else {
@@ -1339,6 +1341,8 @@ function addCommonSDCImportFns(ns) {
               const messages = [{errors}];
               LForms.Util._internalUtil.setItemMessagesArray(item, messages, 'loadAnswerValueSets');
               const msg = `Unable to load ValueSet ${item.answerValueSet} from ${expURL}`;
+              // Do not cache the result if expansion fails.
+              delete LForms._valueSetAnswerCache[vsKey];
               throw new Error(msg);
             });
             pendingPromises.push(p);
