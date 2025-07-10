@@ -3,11 +3,16 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
-## [36.20.2] 2025-06-30
+## [36.20.3] 2025-07-10
 ### Fixed
 - Fixed a bug that the matrix layout ('table' in itemControl extension) 
   does not always display answers loaded from answerValueSet.
   
+## [36.20.2] 2025-07-09
+### Fixed
+- answerValueSet expansion error under the field should still show
+  when the form is loaded for the second time.
+
 ## [36.20.1] 2025-06-20
 ### Changed
 - Update autocomplete-lhc version and use new ID lhc-tools-searchResults
