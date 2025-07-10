@@ -258,7 +258,7 @@ var self = {
           option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
         }
 
-        // Restore rendering-xhtml extension on valueCoding._display.
+        // Restore rendering-xhtml and rendering-style extensions on valueCoding._display.
         if (answer.obj_valueCoding_display) {
           option.valueCoding._display = answer.obj_valueCoding_display;
         }
@@ -289,9 +289,10 @@ var self = {
       ) {
         var valueKey = this._getValueKeyByDataType("value", item);
         option[valueKey] = answer.text;
-        // Restore rendering-xhtml extension on _valueString
-        if (valueKey === 'valueString' && answer.obj_valueString) {
-          option._valueString = answer.obj_valueString;
+        // Restore rendering-xhtml and rendering-style extensions on _valueString,
+        // _valueInteger, _valueDate, or _valueTime.
+        if (answer[`obj_${valueKey}`]) {
+          option[`_${valueKey}`] = answer[`obj_${valueKey}`];
         }
       }
 

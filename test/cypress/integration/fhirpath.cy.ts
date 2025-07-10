@@ -63,8 +63,8 @@ describe('answerExpression', () => {
 
   it('should be able to populate a list', () => {
     cy.byId('language/1').click();
-    cy.get('#searchResults li').should('have.length', 2);
-    cy.get('#searchResults li').first().should('be.visible');
+    cy.get('#lhc-tools-searchResults li').should('have.length', 2);
+    cy.get('#lhc-tools-searchResults li').first().should('be.visible');
   });
 
   it('should not cause answerOptions to be generated in the Questionnaire', () => {
@@ -88,10 +88,10 @@ describe('answerExpression', () => {
       // Load one of the forms and create a QR
       tp.loadFromTestData('rxterms.R4.json', 'R4');
       cy.byId('medication/1/1').click().typeAndWait('ar');
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       cy.byId('strength/1/1').click();
-      cy.get('#searchResults li').should('have.length.above', 0);
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li').should('have.length.above', 0);
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       cy.byId('rxcui/1/1').should('not.have.value', '');
       // get a QuestionnaireResponse.
       cy.window().then((win) => {
@@ -127,7 +127,7 @@ describe('answerExpression', () => {
               const qrOrig = JSON.parse(JSON.stringify(qr)); // a copy
               showQQR(qData, qr, 'formContainer', win2);
               cy.byId('strength/1/1').click();
-              cy.get('#searchResults li').should('have.length.above', 0);
+              cy.get('#lhc-tools-searchResults li').should('have.length.above', 0);
               checkSavedDataPresent();
               cy.then(() => {
                 // Now confirm that if the value in the strength field does not match its
@@ -135,7 +135,7 @@ describe('answerExpression', () => {
                 qr.item[0].item[1].answer[0].valueCoding.code = 'I am not in the list';
                 showQQR(qData, qr, 'formContainer', win2);
                 cy.byId('strength/1/1').click();
-                cy.get('#searchResults li').should('have.length.above', 0);
+                cy.get('#lhc-tools-searchResults li').should('have.length.above', 0);
                 checkSavedDataPresent();
                 cy.then(() => {
                   // Test the same thing with a vertical layout
@@ -145,7 +145,7 @@ describe('answerExpression', () => {
 
                   showQQR(qData, qr, 'formContainer', win2);
                   cy.byId('strength/1/1').click();
-                  cy.get('#searchResults li').should('have.length.above', 0);
+                  cy.get('#lhc-tools-searchResults li').should('have.length.above', 0);
                   cy.byId('strength/1/1').blur();
                   checkSavedDataPresent();
                   cy.then(() => {
@@ -169,7 +169,7 @@ describe('answerExpression', () => {
                         qr.item[0].item[1].answer[1] = {valueCoding: {display: 'other value'}};
                         showQQR(qData, qr, 'formContainer', win2);
                         cy.byId('strength/1/1').click();
-                        cy.get('#searchResults li').should('have.length.above', 0);
+                        cy.get('#lhc-tools-searchResults li').should('have.length.above', 0);
                         cy.byId('medication/1/1').should('not.have.value', '');
                         // The strength field's values are in the multi-select area.
                         cy.byId('strength/1/1').then((el) => {

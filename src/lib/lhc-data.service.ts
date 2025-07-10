@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ScreenReaderLog } from './screen-reader-log';
 import CommonUtils from "./lforms/lhc-common-utils.js";
 import {InternalUtil} from "./lforms/internal-utils.js";
+import language from '../../language-config.json';
 declare var LForms: any;
 // @Injectable({
 //   providedIn: 'root'
@@ -499,8 +500,7 @@ export class LhcDataService {
       anyEmpty = this.lhcFormData.areAnyRepeatingItemsEmpty(item);
       if (anyEmpty && item._showUnusedItemWarning) {
         if (!item._unusedItemWarning)
-          item._unusedItemWarning = 'Please enter info in the blank "' +
-            item._text+'"';
+          item._unusedItemWarning = language.pleaseEnterInfoForTheBlank.replace('{lformsParam}',  item._text);
       }
     }
     if (!anyEmpty) {

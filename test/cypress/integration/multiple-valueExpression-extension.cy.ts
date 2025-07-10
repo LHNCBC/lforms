@@ -20,7 +20,7 @@ describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   it('should set a answer list on strength field and a value on cui field', () => {
 
     cy.byId(problemId).click().type('AR');
-    cy.get('#searchResults li:first-child').should('have.text', 'ARAVA (Oral Pill)');
+    cy.get('#lhc-tools-searchResults li:first-child').should('have.text', 'ARAVA (Oral Pill)');
     cy.byId(problemId).type('{downarrow}').type('{enter}');
     cy.byId(problemId).should('have.value','ARAVA (Oral Pill)');
 
@@ -43,7 +43,7 @@ describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
 
   it('should set the strength field and the cui field when a new problem is entered', () => {
     cy.byId(problemId).click().type('AB');
-    cy.get('#searchResults li:first-child').should('have.text', 'ABILIFY (Oral Pill)');
+    cy.get('#lhc-tools-searchResults li:first-child').should('have.text', 'ABILIFY (Oral Pill)');
     cy.byId(problemId).type('{downarrow}').type('{enter}');
     cy.byId(problemId).should('have.value','ABILIFY (Oral Pill)');
 

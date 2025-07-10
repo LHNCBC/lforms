@@ -14,7 +14,8 @@
         <th class="lhc-question"></th>
         <th *ngFor="let answer of _autocompOptions.listItems; index as i;"
             class="lhc-form-matrix-cell"
-            id="answer-{{index}}">
+            id="answer-{{index}}"
+            [style]="answer._obj_CSS">
           <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
             <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
             <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
@@ -22,7 +23,7 @@
           </ng-container>
         </th>
         <th class="lhc-form-matrix-cell-other" *ngIf="item.items[0].answerConstraint === 'optionsOrString'"
-         id="otherAnswer">Other</th>
+         id="otherAnswer">{{language.other}}</th>
       </tr>
       </thead>
       <tbody>

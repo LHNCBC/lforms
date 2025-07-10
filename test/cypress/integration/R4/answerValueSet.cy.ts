@@ -22,7 +22,7 @@ describe('FHIR answerValueSet', () => {
       answerField4 = 'yesno4/1', // open-choice
       answerField5 = 'yesno5/1', // open-choice, repeats
       answerField6 = 'yesno6/1', // open-choice, repeats
-      searchResults = 'searchResults';
+      searchResults = 'lhc-tools-searchResults';
 
     before(() => {
       cy.window().then((win) => {
@@ -49,10 +49,10 @@ describe('FHIR answerValueSet', () => {
       ].forEach((answerField) => {
         cy.byId(answerField).click();
         cy.byId(searchResults).should('be.visible');
-        cy.byCss('#searchResults li').its('length').should('eq', 3);
-        cy.byCss('#searchResults li').eq(0).contains('No');
-        cy.byCss('#searchResults li').eq(1).contains('Yes');
-        cy.byCss('#searchResults li').eq(2).contains("Don't know");
+        cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 3);
+        cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+        cy.byCss('#lhc-tools-searchResults li').eq(1).contains('Yes');
+        cy.byCss('#lhc-tools-searchResults li').eq(2).contains("Don't know");
       });
     });
 
@@ -96,25 +96,25 @@ describe('FHIR answerValueSet', () => {
               (answerField) => {
                 cy.byId(answerField).click();
                 cy.byId(searchResults).should('be.visible');
-                cy.byCss('#searchResults li').its('length').should('eq', 3);
-                cy.byCss('#searchResults li').eq(0).contains('No');
-                cy.byCss('#searchResults li').eq(1).contains('Yes');
-                cy.byCss('#searchResults li').eq(2).contains("Don't know");
+                cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 3);
+                cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+                cy.byCss('#lhc-tools-searchResults li').eq(1).contains('Yes');
+                cy.byCss('#lhc-tools-searchResults li').eq(2).contains("Don't know");
               }
             );
             cy.byId(answerField2).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 1);
-            cy.byCss('#searchResults li').eq(0).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 1);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains("Don't know");
             cy.byId(answerField5).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 1);
-            cy.byCss('#searchResults li').eq(0).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 1);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains("Don't know");
             cy.byId(answerField6).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 2);
-            cy.byCss('#searchResults li').eq(0).contains('No');
-            cy.byCss('#searchResults li').eq(1).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 2);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+            cy.byCss('#lhc-tools-searchResults li').eq(1).contains("Don't know");
           });
         });
       });

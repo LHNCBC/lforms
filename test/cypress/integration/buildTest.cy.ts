@@ -10,6 +10,6 @@ describe('build test page', () => {
     btp.openPage();
     cy.byId(btp.drugNameField).should('be.visible')
       .type('ar');
-    cy.get('#searchResults', { timeout: tp.WAIT_TIMEOUT_1 }).should('be.visible');
+    cy.get('#lhc-tools-searchResults', { timeout: tp.WAIT_TIMEOUT_1 }).should('be.visible');
   });
 });

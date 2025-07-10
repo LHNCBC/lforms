@@ -1,6 +1,6 @@
 <ng-container *ngIf="item">
   <nz-radio-group
-    [ngModel]="radioValue"
+    [ngModel]="value"
     (ngModelChange)="onModelChange($event)"
     role="radiogroup"
     [nzName]="'radiogroup_' + item._elementId"
@@ -13,7 +13,7 @@
       [nzValue]="true"
       [(ngModel)]="booleanModels[0]"
       [id]="lhcDataService.getItemAnswerId(item, 'true')"
-      >Yes</label>
+      >{{language.booleanYes}}</label>
     <label
       nz-radio
       [nzDisabled]="item._readOnly"
@@ -21,7 +21,7 @@
       [nzValue]="false"
       [(ngModel)]="booleanModels[1]"
       [id]="lhcDataService.getItemAnswerId(item, 'false')"
-      >No</label>
+      >{{language.booleanNo}}</label>
     <label
       nz-radio
       [nzDisabled]="item._readOnly"
@@ -29,6 +29,6 @@
       [nzValue]="null"
       [(ngModel)]="booleanModels[2]"
       [id]="lhcDataService.getItemAnswerId(item, 'null')"
-      >Not Answered</label>
+      >{{language.booleanNotAnswered}}</label>
   </nz-radio-group>
 </ng-container>

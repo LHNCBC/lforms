@@ -9,6 +9,7 @@ import LhcFormUtils from "./lhc-form-utils.js";
 import CommonUtils from "./lhc-common-utils.js";
 import {InternalUtil} from "./internal-utils.js";
 import version from '../../version.json';
+import language from '../../../language-config.json';
 
 import Validation from "./lhc-form-validation.js"
 
@@ -1353,29 +1354,29 @@ export default class LhcFormData {
       else if (item._hasAnswerList) {
         if (item.answerConstraint === "optionsOrString") {
           if (item.externallyDefined)
-            item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
+            item._placeholder = item._multipleAnswers ? language.placeholderSearchMultiOptionsOrString : language.placeholderSearchSingleOptionsOrString;
           else
-            item._placeholder = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+            item._placeholder = item._multipleAnswers ? language.placeholderSelectMultiOptionsOrString : language.placeholderSelectSingleOptionsOrString;
         }
         // INT, ST, DT, TM and CODING (and answerConstraint == 'optionsOnly')
         else {
           if (item.externallyDefined)
-            item._placeholder = item._multipleAnswers ? "Search for values" : "Search for value";
+            item._placeholder = item._multipleAnswers ? language.placeholderSearchMulti : language.placeholderSearchSingle;
           else
-            item._placeholder = item._multipleAnswers ? "Select one or more" : "Select one";
+            item._placeholder = item._multipleAnswers ? language.placeholderSelectMulti : language.placeholderSelectSingle;
         }
       }
       // other types
       else {
         switch (item.dataType) {
           case CONSTANTS.DATA_TYPE.DT:
-            item._placeholder = "MM/DD/YYYY";
+            item._placeholder = language.placeholderDate;
             break;
           case CONSTANTS.DATA_TYPE.DTM:
-            item._placeholder = "MM/DD/YYYY HH:MM:SS";
+            item._placeholder = language.placeholderDateTime;
             break;
           case CONSTANTS.DATA_TYPE.TM:
-            item._placeholder = "HH:MM:SS";
+            item._placeholder = language.placeholderTime;
             break;
           case CONSTANTS.DATA_TYPE.CODING:
             if (!item.answerConstaint || item.answerConstraint === 'optionsOnly' ) {
@@ -1386,9 +1387,9 @@ export default class LhcFormData {
             }
             else if (item.answerConstraint === 'optionsOrString') {
               if (item.externallyDefined)
-              item._placeholder = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
+              item._placeholder = item._multipleAnswers ? language.placeholderSearchMultiOptionsOrString : language.placeholderSearchSingleOptionsOrString;
             else
-              item._placeholder = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+              item._placeholder = item._multipleAnswers ? language.placeholderSelectMultiOptionsOrString : language.placeholderSelectSingleOptionsOrString;
             }
             break;
           case "SECTION":
@@ -1399,10 +1400,10 @@ export default class LhcFormData {
           case CONSTANTS.DATA_TYPE.INT:
           case CONSTANTS.DATA_TYPE.REAL:
           case CONSTANTS.DATA_TYPE.QTY:
-            item._placeholder = "Type a number";
+            item._placeholder = language.placeholderTypeANumber;
             break;
           default: {
-            item._placeholder = "Type a value";
+            item._placeholder = language.placeholderTypeAValue;
           }
         }
       }
@@ -2266,7 +2267,7 @@ export default class LhcFormData {
 
     this._resetInternalData();
 
-    var readerMsg = 'Added ' + this.itemDescription(item);
+    var readerMsg = language.added + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
     // run FHIRPath expression when a new item is added
@@ -2347,7 +2348,7 @@ export default class LhcFormData {
 
     this._resetInternalData();
 
-    var readerMsg = 'Added ' + this.itemDescription(item);
+    var readerMsg = language.added + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
     return newItem;
@@ -2519,7 +2520,7 @@ export default class LhcFormData {
     }
 
     this._resetInternalData();
-    var readerMsg = 'Removed ' + this.itemDescription(item);
+    var readerMsg = language.removed + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
     // run FHIRPath expression when a new item is removed

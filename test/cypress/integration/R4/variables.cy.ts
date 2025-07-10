@@ -66,7 +66,7 @@ describe('FHIR variables', () => {
       const urlFetchField = 'listViewFromURL/1';
       const contextField = 'listViewFromContext/1';
       cy.byId(listSelField).type('la'); // language
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       // Wait for the other field lists to update
       TestUtil.verifyFieldListLength(urlFetchField, 2);
       TestUtil.verifyFieldListLength(contextField, 2);
@@ -79,7 +79,7 @@ describe('FHIR variables', () => {
       // in fact the problem does not happen when the test code is run), but I
       // am leaving the test here.
       cy.byId(listSelField).clear().type('ve'); // verification
-      cy.get('#searchResults li:first-child').click();
+      cy.get('#lhc-tools-searchResults li:first-child').click();
       // Wait for the other field lists to update
       TestUtil.verifyFieldListLength(urlFetchField, 6);
       TestUtil.verifyFieldListLength(contextField, 0);

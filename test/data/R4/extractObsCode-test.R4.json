@@ -1,0 +1,187 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test form for extracting Observation.code",
+  "status": "draft",
+  "extension": [
+    {
+      "valueBoolean": true,
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+    }
+  ],
+  "item": [
+    {
+      "extension": [
+        {
+          "valueBoolean": false,
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "item": [
+        {
+          "type": "integer",
+          "linkId": "131986609253",
+          "code": [
+            {
+              "code": "code0",
+              "display": "code0"
+            }
+          ],
+          "text": "intItem0",
+          "initial": [
+            {
+              "valueInteger": 6
+            }
+          ]
+        },
+        {
+          "type": "integer",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "131986609254",
+          "code": [
+            {
+              "code": "code1",
+              "display": "code1"
+            }
+          ],
+          "text": "intItem1",
+          "initial": [
+            {
+              "valueInteger": 7
+            }
+          ]
+        },
+        {
+          "type": "boolean",
+          "linkId": "131135528431",
+          "code": [
+            {
+              "code": "code4",
+              "display": "code4"
+            },
+            {
+              "code": "code5",
+              "display": "code5",
+              "extension": [
+                {
+                  "valueBoolean": true,
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+                }
+              ]
+            }
+          ],
+          "text": "blItem3",
+          "initial": [
+            {
+              "valueBoolean": true
+            }
+          ]
+        }
+      ],
+      "type": "group",
+      "linkId": "713489323649",
+      "text": "group1"
+    },
+    {
+      "item": [
+        {
+          "type": "choice",
+          "linkId": "596094357940",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ]
+              }
+            }
+          ],
+          "code": [
+            {
+              "code": "code2",
+              "display": "code2"
+            },
+            {
+              "code": "code3",
+              "display": "code3"
+            }
+          ],
+          "text": "codingItem2",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "answer1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "answer2",
+                "display": "Answer 2"
+              },
+              "initialSelected": true
+            }
+          ]
+        },
+        {
+          "type": "boolean",
+          "extension": [
+            {
+              "valueBoolean": true,
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "131135528432",
+          "code": [
+            {
+              "code": "code6",
+              "display": "code6",
+              "extension": [
+                {
+                  "valueBoolean": true,
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+                }
+              ]
+            },
+            {
+              "code": "code7",
+              "display": "code7",
+              "extension": [
+                {
+                  "valueBoolean": false,
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+                }
+              ]
+            },
+            {
+              "code": "code8",
+              "display": "code8"
+            }
+          ],
+          "text": "blItem4",
+          "initial": [
+            {
+              "valueBoolean": true
+            }
+          ]
+        }
+      ],
+      "type": "group",
+      "linkId": "232614860805",
+      "text": "group2"
+    }
+  ]
+}
