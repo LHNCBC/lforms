@@ -4,7 +4,7 @@
   "status": "draft",
   "item": [
     {
-      "lindId": "g1",
+      "linkId": "g1",
       "type": "group",
       "text": "Matrix with checkboxes (table, choice)",
       "extension": [
@@ -44,7 +44,7 @@
       ]
     },
     {
-      "lindId": "g2",
+      "linkId": "g2",
       "type": "group",
       "text": "Matrix with checkboxes (table, choice, repeats)",
       "extension": [
@@ -87,9 +87,9 @@
       ]
     },
     {
-      "lindId": "g3",
+      "linkId": "g3",
       "type": "group",
-      "text": "Matrix with raido buttons (table, open-choice)",
+      "text": "Matrix with radio buttons (table, open-choice)",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -127,7 +127,7 @@
       ]
     },
     {
-      "lindId": "g4",
+      "linkId": "g4",
       "type": "group",
       "text": "Matrix with checkboxes (table, open-choice, repeats)",
       "extension": [
