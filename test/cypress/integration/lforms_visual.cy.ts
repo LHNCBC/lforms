@@ -258,6 +258,8 @@ describe('Visual effect tests', () => {
     it('should show treeline by default if the questionnaire is 4 levels deep', () => {
       tp.openBaseTestPage();
       tp.loadFromTestData('q-4-level-deep.json', 'R4');
+      cy.byId('item-level2/1/1')
+        .should('have.class', 'lhc-tree-line');
       cy.byId('item-level3/1/1/1')
         .should('have.class', 'lhc-tree-line');
       cy.byId('item-level4/1/1/1/1')
