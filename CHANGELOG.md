@@ -12,6 +12,11 @@ This project follows [Semantic Versioning](http://semver.org/).
   treeline when there are up to 3 levels of the hierarchy.
 - Changed the treeline color to a lighter, less dominant color.
 
+## [36.20.3] 2025-07-10
+### Fixed
+- Fixed a bug that the matrix layout ('table' in itemControl extension) 
+  does not always display answers loaded from answerValueSet.
+  
 ## [36.20.2] 2025-07-09
 ### Fixed
 - answerValueSet expansion error under the field should still show

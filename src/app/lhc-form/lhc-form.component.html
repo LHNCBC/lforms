@@ -27,7 +27,7 @@
           <lhc-group-horizontal [item]="lhcFormData" [formLevel]='true'></lhc-group-horizontal>
         </ng-container>
         <ng-container *ngSwitchCase="'matrix'">
-          <lhc-group-matrix [item]="lhcFormData" [formLevel]='true'></lhc-group-matrix>
+          <lhc-group-matrix [item]="lhcFormData" [formLevel]='true' [acOptions]="lhcFormData.items[0]?._autocompOptions"></lhc-group-matrix>
         </ng-container>
         <!-- vertical -->
         <ng-container *ngSwitchDefault>
