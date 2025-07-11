@@ -13,13 +13,14 @@ import language from '../../../language-config.json';
 export class LhcGroupMatrixComponent {
 
   @Input() item;
+  // item.item[0]._autocompOptions
+  // Use the first child item's autocomplete options, assuming all the child items have the same answer list.
+  // It could be delayed when the answer list is loaded from answerValueSet or answerExpression
+  @Input() acOptions; 
   @Input() formLevel: boolean = false;
   language = language;
 
   isCheckbox: boolean = false;
-  _autocompOptions = {
-    listItems: []
-  };
 
   constructor(
     private commonUtils: CommonUtilsService,
@@ -35,11 +36,6 @@ export class LhcGroupMatrixComponent {
     this.setInitialValue();
     // Set answerOption list items which have _displayText.
     const lhcFormData = this.lhcDataService.getLhcFormData();
-    if (lhcFormData && this.item.items[0]) {
-      const resp =
-        lhcFormData._getAnswerDisplayTextWithLabelAndScore(lhcFormData.templateOptions.displayScoreWithAnswerText, this.item.items[0]);
-      this._autocompOptions.listItems = resp[0];
-    }
   }
 
 
@@ -180,30 +176,34 @@ export class LhcGroupMatrixComponent {
    */
   setCheckboxInitialValue(subItem): void {
 
-    if (subItem.value && Array.isArray(subItem.value) &&
-        subItem.answers && Array.isArray(subItem.answers)) {
-
-      let checkboxModels = new Array(subItem.answers.length).fill(false);
-      for (let i=0, iLen=subItem.value.length; i<iLen; i++) {
-        if (subItem.value[i]._notOnList) {
-          subItem._answerOtherChecked = true;
-          subItem._answerOther = subItem.value[i].text;
-        }
-        else {
-          for (let j=0, jLen=subItem.answers.length; j<jLen; j++) {
-            if (deepEqual(subItem.value[i], subItem.answers[j])) {
-              checkboxModels[j]=true;
-              break;
+    // if there is answer list or the answer list has been loaded 
+    // (from answerValueSet or answerExpression)
+    if (subItem.answers && Array.isArray(subItem.answers)) {
+      // if there is an initial value or an existing value
+      if (subItem.value && Array.isArray(subItem.value)) {
+        let checkboxModels = new Array(subItem.answers.length).fill(false);
+        for (let i=0, iLen=subItem.value.length; i<iLen; i++) {
+          if (subItem.value[i]._notOnList) {
+            subItem._answerOtherChecked = true;
+            subItem._answerOther = subItem.value[i].text;
+          }
+          else {
+            for (let j=0, jLen=subItem.answers.length; j<jLen; j++) {
+              if (deepEqual(subItem.value[i], subItem.answers[j])) {
+                checkboxModels[j]=true;
+                break;
+              }
             }
           }
         }
+        subItem._checkboxModels = checkboxModels;
       }
-      subItem._checkboxModels = checkboxModels;
-    }
-    else {
-      subItem._checkboxModels= new Array(subItem.answers.length).fill(false);
-      subItem._answerOtherChecked = false;
-      delete subItem._answerOther;
+      // reset the data models if there is no values
+      else {
+        subItem._checkboxModels= new Array(subItem.answers.length).fill(false);
+        subItem._answerOtherChecked = false;
+        delete subItem._answerOther;
+      }
     }
   }
 }

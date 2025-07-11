@@ -5,7 +5,7 @@
 
   "item": [
     {
-      "lindId": "g1",
+      "linkId": "g1",
       "type": "group",
       "text": "matrix layout",
       "extension": [
