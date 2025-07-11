@@ -86,6 +86,64 @@ describe('Form with extract observation extension', () => {
     })
   });
 
+  it('should extract multiple Observations for repeated items', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('q-with-obs-extract-repeats-true.json', null, {fhirVersion: 'R4'});
+    // Fill out answers for repeated questions.
+    cy.byId('string/1').type('A');
+    cy.byId('add-string/1').click();
+    cy.byId('string/2').type('B');
+    cy.byId('decimal/1').type('1');
+    cy.byId('add-decimal/1').click();
+    cy.byId('decimal/2').type('2');
+    // Extract an Observation for each repeated item.
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(7);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Observation");
+      expect(bundle[1].valueString).to.equal('A');
+      expect(bundle[2].resourceType).to.equal("Observation");
+      expect(bundle[2].valueString).to.equal('B');
+      expect(bundle[3].resourceType).to.equal("Observation");
+      expect(bundle[3].valueQuantity).to.eql({
+        "value": "1",
+        "unit": "kilogram",
+        "code": "kg",
+        "system": "http://unitsofmeasure.org"
+      });
+      expect(bundle[4].resourceType).to.equal("Observation");
+      expect(bundle[4].valueQuantity).to.eql({
+        "value": "2",
+        "unit": "kilogram",
+        "code": "kg",
+        "system": "http://unitsofmeasure.org"
+      });
+      expect(bundle[5].resourceType).to.equal("Observation");
+      expect(bundle[5].valueCodeableConcept).to.eql({
+        coding: [
+          {
+            code: 'a',
+            display: 'A',
+            system: 's'
+          }
+        ],
+        text: 'A'
+      });
+      expect(bundle[6].resourceType).to.equal("Observation");
+      expect(bundle[6].valueCodeableConcept).to.eql({
+        coding: [
+          {
+            code: 'b',
+            display: 'B',
+            system: 's'
+          }
+        ],
+        text: 'B'
+      });
+    });
+  });
+
   it('should extract Questionnaire.item.code into Observation.code.coding', () => {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObsCode-test.R4.json', null, {fhirVersion: 'R4'});
