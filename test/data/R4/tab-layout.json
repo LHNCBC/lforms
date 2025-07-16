@@ -1,0 +1,49 @@
+{
+  "title": "A simple form with tab layout",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "tab-container",
+                "display": "Tab Container"
+              }
+            ],
+            "text": "Tab Container"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "group",
+          "text": "Tab One",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "q1",
+              "text": "A question in the first tab"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "text": "Tab Two",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "q2",
+              "text": "A question in the second tab"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

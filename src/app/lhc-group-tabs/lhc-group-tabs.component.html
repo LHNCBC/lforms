@@ -1,0 +1,9 @@
+<ng-container *ngIf="item && item.items">
+  <nz-tabset>
+    <ng-container *ngFor="let group of item.items">
+      <nz-tab [nzTitle]="group._text">
+        <lhc-group-vertical [item]="group" [hideGrouptTitle]="true"></lhc-group-vertical>
+      </nz-tab>
+    </ng-container>
+  </nz-tabset>
+</ng-container>
