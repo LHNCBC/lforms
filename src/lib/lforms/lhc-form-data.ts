@@ -1952,7 +1952,7 @@ export default class LhcFormData {
             if (!CommonUtils.isDecimal(value)) {
               this._invalidData = true;
             }
-            retValue = parseFloat(value);
+            retValue = parseFloat(value.replace(language.decimalCharacter, '.'));
             break;
           case CONSTANTS.DATA_TYPE.DT:
             if (hasAnswerList) {
