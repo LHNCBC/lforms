@@ -1,0 +1,109 @@
+{
+  "title": "A form with enableWhen across tabs",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "tab-container",
+                "display": "Tab Container"
+              }
+            ],
+            "text": "Tab Container"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "group",
+          "text": "Tab One",
+          "item": [
+            {
+              "linkId": "Q1",
+              "text": "Q1 Boolean field",
+              "type": "boolean"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "text": "Tab Two",
+          "item": [
+            {
+              "linkId": "Q1-exists",
+              "text": "conditional field - Q1-exists (Q1 exists true)",
+              "type": "string",
+              "enableWhen": [
+                {
+                  "question": "Q1",
+                  "operator": "exists",
+                  "answerBoolean": true
+                }
+              ],
+              "enableBehavior": "any"
+            },
+            {
+              "linkId": "Q1-not-exists",
+              "text": "conditional field - Q1-not-exists (Q1 exists false)",
+              "type": "string",
+              "enableWhen": [
+                {
+                  "question": "Q1",
+                  "operator": "exists",
+                  "answerBoolean": false
+                }
+              ],
+              "enableBehavior": "any"
+            },
+            {
+              "linkId": "Q1-true",
+              "text": "conditional field - Q1-true (Q1 = true)",
+              "type": "string",
+              "enableWhen": [
+                {
+                  "question": "Q1",
+                  "operator": "=",
+                  "answerBoolean": true
+                }
+              ],
+              "enableBehavior": "any"
+            },
+            {
+              "linkId": "Q1-false",
+              "text": "conditional field - Q1-false (Q1 = false)",
+              "type": "string",
+              "enableWhen": [
+                {
+                  "question": "Q1",
+                  "operator": "=",
+                  "answerBoolean": false
+                }
+              ],
+              "enableBehavior": "any"
+            },
+            {
+              "linkId": "Q1-not-true",
+              "text": "conditional field - Q1-not-true (Q1 != true)",
+              "type": "string",
+              "enableWhen": [
+                {
+                  "question": "Q1",
+                  "operator": "!=",
+                  "answerBoolean": true
+                }
+              ],
+              "enableBehavior": "any"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
