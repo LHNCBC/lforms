@@ -2,12 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [36.21.0] 2025-07-18
+### Added
+- Tab layout support.
 
 ## [36.20.3] 2025-07-10
 ### Fixed
 - Fixed a bug that the matrix layout ('table' in itemControl extension) 
   does not always display answers loaded from answerValueSet.
-  
+
 ## [36.20.2] 2025-07-09
 ### Fixed
 - answerValueSet expansion error under the field should still show
