@@ -89,6 +89,13 @@
               <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" /> allowHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="hideRepetitionNumber" checked /> hideRepetitionNumber</label></span>
+              <span class="option-checkbox">
+                hideTreeLine:
+                <input type="radio" id="hideTreeLineTrue" name="hideTreeLine" value="true"><label for="hideTreeLineTrue">true</label>
+                <input type="radio" id="hideTreeLineFalse" name="hideTreeLine" value="false"><label for="hideTreeLineFalse">false</label>
+                <input type="radio" id="hideTreeLineAuto" name="hideTreeLine" value="auto" checked><label for="hideTreeLineAuto">auto</label>
+              </span>
             </div>
           </div>
           <div style="margin: 8px">QuestionnaireResponse for the Questionnaire selected below: <input type="file" id="qrFile"/></div>
@@ -404,7 +411,9 @@
         var questionnaire;
         var allowHTML = document.querySelector('#allowHTML').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
-            showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+            showCodingInstruction = document.querySelector('#showCodingInstruction').checked,
+            hideRepetitionNumber = document.querySelector('#hideRepetitionNumber').checked,
+            hideTreeLine = document.querySelector('input[name="hideTreeLine"]:checked').value;
         var questionnaire, qr;
 
         reader.onload = function() {
@@ -443,6 +452,12 @@
           }
           if (showCodingInstruction) {
             options["showCodingInstruction"] = true;
+          }
+          if (!hideRepetitionNumber) {
+            options["hideRepetitionNumber"] = false;
+          }
+          if (hideTreeLine !== 'auto') {
+            options["hideTreeLine"] = hideTreeLine;
           }
           if (qr) {
             options.questionnaireResponse = qr;

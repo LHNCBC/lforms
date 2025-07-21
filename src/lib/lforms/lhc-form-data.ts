@@ -59,6 +59,9 @@ export default class LhcFormData {
   // active item, where a input field in the row has the focus
   _activeItem = null;
 
+  // How many levels of items the form has.
+  _totalLevelsOfHierarchy = 0;
+
   // default template options
   _defaultTemplateOptions = {
     // whether question code is displayed next to the question
@@ -92,11 +95,11 @@ export default class LhcFormData {
       }
     },
     // whether to hide tree line styles
-    hideTreeLine: false,
+    hideTreeLine: 'auto',
     // whether to hide indentation before each item
     hideIndentation: false,
     // whether to hide repetition numbers next to the item's text
-    hideRepetitionNumber: false,
+    hideRepetitionNumber: true,
     // whether to display score along with text when there scores in answers
     displayScoreWithAnswerText: true,
     // whether to show the filtered html content from the rendering-xhtml extension
@@ -939,6 +942,7 @@ export default class LhcFormData {
     this._codePath = "";
     this._idPath = "";
     this._displayLevel = 0;
+    this._totalLevelsOfHierarchy = 0;
     this._activeItem = null;
 
     // template
@@ -1271,6 +1275,9 @@ export default class LhcFormData {
       item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
       item._elementId = item.linkId + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
+      if (item._displayLevel > this._totalLevelsOfHierarchy) {
+        this._totalLevelsOfHierarchy = item._displayLevel;
+      }
 
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
@@ -1528,6 +1535,9 @@ export default class LhcFormData {
       item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
       item._elementId = item.linkId + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
+      if (item._displayLevel > this._totalLevelsOfHierarchy) {
+        this._totalLevelsOfHierarchy = item._displayLevel;
+      }
       item._parentItem = parentItem;
       item._repeatingSectionList = null;
 

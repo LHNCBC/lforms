@@ -1,7 +1,8 @@
 describe('valueExpression on repeating items', () => {
-  
+
   it('should create repeating items with correct SN.', () => {
     cy.visit('/test/pages/lforms_testpage.html');
+    cy.get('#hideRepetitionNumber').click();
     cy.get("#loadBtn").contains("Load Form From File");
     cy.get('#fileAnchor').uploadFile('test/data/R4/q-repeating-item-calculatedExpression.json');
     cy.get('.lhc-form-title').contains('A list of Observations - for testing only');
@@ -18,7 +19,7 @@ describe('valueExpression on repeating items', () => {
     cy.byId('item-/code/1/20')
       .byCss('.lf-sn')
       .should('have.text', '1.20');
-  
+
     cy.byId('item-/value/1/1')
       .byCss('.lf-sn')
       .should('have.text', '1.1');
@@ -34,5 +35,5 @@ describe('valueExpression on repeating items', () => {
 
   });
 
-  
+
 });
