@@ -4,6 +4,7 @@
   "dateFormat": "dd.MM.YYYY",
   "dateTimeFormat": "dd.MM.YYYY HH:mm:ss",
   "timeFormat": "HH:mm:ss",
+  "decimalCharacter": ",",
   "placeholderSearchMultiOptionsOrString": "Suchen oder Werte eingeben",
   "placeholderSearchSingleOptionsOrString": "Suchen oder Wert eingeben",
   "placeholderSelectMultiOptionsOrString": "Auswählen oder Werte eingeben",
