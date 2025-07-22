@@ -37,6 +37,8 @@ describe('Tab Layout', () => {
     cy.byId('Q1-exists/1/1/1').should('be.visible');
     cy.byId('Q1-true/1/1/1').should('be.visible');
     cy.byId('Q1-false/1/1/1').should('not.exist');
+    cy.byId('nz-tabs-0-tab-2').click();
+    cy.byId('q3/1/1/1').should('be.visible');
 
     cy.byId('nz-tabs-0-tab-0').click();
     cy.byId('Q1/1/1/1false').find('input').click();
@@ -46,6 +48,8 @@ describe('Tab Layout', () => {
     cy.byId('Q1-exists/1/1/1').should('be.visible');
     cy.byId('Q1-true/1/1/1').should('not.exist');
     cy.byId('Q1-false/1/1/1').should('be.visible');
+    cy.byId('nz-tabs-0-tab-2').click();
+    cy.byId('q3/1/1/1').should('not.exist');
   });
 
   it('should render tab layout on nested layouts', () => {

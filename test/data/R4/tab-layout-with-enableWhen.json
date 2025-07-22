@@ -102,6 +102,25 @@
               "enableBehavior": "any"
             }
           ]
+        },
+        {
+          "type": "group",
+          "text": "Tab Three",
+          "enableWhen": [
+            {
+              "question": "Q1",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ],
+          "enableBehavior": "any",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "q3",
+              "text": "Contents in this tab is hidden unless Q1 is true in the first tab"
+            }
+          ]
         }
       ]
     }
