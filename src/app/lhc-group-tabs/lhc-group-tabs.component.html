@@ -1,5 +1,5 @@
 <ng-container *ngIf="item && item.items">
-  <nz-tabset>
+  <nz-tabset nzType="card">
     <ng-container *ngFor="let group of item.items">
       <nz-tab [nzTitle]="group._text">
         <lhc-group-vertical [item]="group" [hideGrouptTitle]="true"></lhc-group-vertical>
