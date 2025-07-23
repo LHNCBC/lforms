@@ -317,6 +317,14 @@
                   }
                 }
               ],
+              "enableWhen": [
+                {
+                  "question": "/g3/g1m1",
+                  "operator": "exists",
+                  "answerBoolean": false
+                }
+              ],
+              "enableBehavior": "any",
               "item": [
                 {
                   "type": "group",

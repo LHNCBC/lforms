@@ -67,5 +67,14 @@ describe('Tab Layout', () => {
     cy.byId('nz-tabs-1-tab-1').click();
     cy.byId('q1/1/1/1/1/1').should('not.be.visible');
     cy.byId('q2/1/1/1/1/1').should('be.visible');
+
+    // Pick something on the first question in the first tab.
+    // enableWhen conditions on the nested tab container item
+    // should hide it in the second main tab.
+    cy.byId('nz-tabs-0-tab-0').click();
+    cy.byId('/g3/g1m1/1/1/1/1').click().type('{downArrow}{enter}');
+    cy.byId('nz-tabs-0-tab-1').click();
+    // The nested tabs are now hidden.
+    cy.byId('q1/1/1/1/1/1').should('not.exist');
   });
 });
