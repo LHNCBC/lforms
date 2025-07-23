@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "36.16.1",
+  "version": "38.0.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -10,7 +10,8 @@
   "license": "See LICENSE.md",
   "config": {
     "testPort": "4200",
-    "testPortFhir": "4201"
+    "testPortFhir": "4201",
+    "localeID": "en_US"
   },
   "scripts": {
     "ng": "ng",
@@ -28,10 +29,11 @@
     "build-dev": "npm run build:init && npm run build:fhir-dev && npm run build:lforms-dev && npm run build:prepare-zip && npm run build:zip",
     "build": "npm run build:init && npm run build:fhir && npm run build:lforms && npm run build:prepare-zip && npm run build:zip",
     "build:clean": "shx rm -rf dist src/test/lib",
-    "build:init": "npm run build:clean && shx mkdir -p dist/$npm_package_name && shx cp src/index.js dist && npm run build:version",
+    "build:init": "npm run build:clean && shx mkdir -p dist/$npm_package_name && shx cp src/index.js dist && npm run build:version && npm run build:language",
     "build:prepare-zip": "node prepare-zip.js",
     "build:zip": "cd dist;  shx mv $npm_package_name $npm_package_name-$npm_package_version; bestzip $npm_package_name-$npm_package_version.zip $npm_package_name-$npm_package_version/*; shx mv $npm_package_name-$npm_package_version $npm_package_name",
     "build:version": "node -e 'require(\"fs\").writeFileSync(\"src/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",
+    "build:language": "node bin/build-locale.js $npm_package_config_localeID",
     "test:fhir-unit": "karma start test/karma.conf.js",
     "test:ng-unit": "ng test --watch=false",
     "test:unit": "npm run test:fhir-unit && npm run test:ng-unit",
@@ -59,7 +61,7 @@
     "@angular/router": "^19.1.5",
     "@lhncbc/ucum-lhc": "^5.0.3",
     "@types/jquery": "^3.5.29",
-    "autocomplete-lhc": "^19.3.1",
+    "autocomplete-lhc": "^20.0.0",
     "deep-equal": "^2.2.3",
     "fast-copy": "^3.0.1",
     "fhirpath": "^3.18.0",

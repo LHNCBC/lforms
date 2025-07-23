@@ -116,11 +116,15 @@ about the meaning of each key:
       "columns" is valid only when "type" is set to be "RADIO_CHECKBOX".
       Here is an example:
       `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "1"}}`
-    * hideTreeLine - a boolean that controls whether to hide tree line styles. The default is false.
+    * hideTreeLine - a string that controls whether to hide tree line styles. Accepts
+      'true', 'false' and 'auto'. Also accepts boolean type true/false for backward
+      compatibility. The default is 'auto', which means to show the treeline when the
+      questionnaire has more than 3 levels of the hierarchy, and hide the treeline
+      when there are up to 3 levels of the hierarchy.
     * hideIndentation - a boolean that controls whether to hide indentation. The default is false.
       Note that if this is set true, tree line style will not apply regardless of "hideTreeLine" setting.
     * hideRepetitionNumber - a boolean that controls whether to hide repetition numbers next to the
-      item's text. The default is false.
+      item's text. The default is true.
     * displayScoreWithAnswerText  - a boolean that controls whether to display scores along 
       with answer texts for answers that have scores. The default is true.
     * displayInvalidHTML - a boolean that controls whether to show the escaped html content 

@@ -9,6 +9,23 @@ describe('addFormToPage Error Message Test', () => {
     // has an error message
     // This also tests that the url parameter gets URL-encoded.
     cy.get("#loadMsg").contains("Unable to load ValueSet");
+    // An error message is shown under the field for which answerValueSet expansion failed.
+    cy.byId('item-/54126-8/54128-4/1/1')
+      .find('.lhc-item-error')
+      .should('be.visible')
+      .should('have.text', 'Error: Unable to load the answer list for this question.');
+    // Load some other file that doesn't have expansion failures.
+    cy.get('#fileAnchor').uploadFile('test/data/R4/fhir-context-q.json');
+    cy.get('.lhc-form-title').contains('A questionnaire for testing code that requires a FHIR context');
+    cy.get('.lhc-item-error')
+      .should('not.exist');
+    // Load the original file again, the error message should still be shown.
+    cy.get('#fileAnchor').uploadFile('test/data/R4/fhir-context-q-wrong-valueset-url.json');
+    cy.get('.lhc-form-title').contains('A questionnaire for testing code that requires a FHIR context 1');
+    cy.byId('item-/54126-8/54128-4/1/1')
+      .find('.lhc-item-error')
+      .should('be.visible')
+      .should('have.text', 'Error: Unable to load the answer list for this question.');
   });
 
   it('show an error when a valueset cannot be loaded because of a wrong fhir context', () => {

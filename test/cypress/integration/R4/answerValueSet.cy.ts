@@ -22,7 +22,7 @@ describe('FHIR answerValueSet', () => {
       answerField4 = 'yesno4/1', // open-choice
       answerField5 = 'yesno5/1', // open-choice, repeats
       answerField6 = 'yesno6/1', // open-choice, repeats
-      searchResults = 'searchResults';
+      searchResults = 'lhc-tools-searchResults';
 
     before(() => {
       cy.window().then((win) => {
@@ -49,14 +49,14 @@ describe('FHIR answerValueSet', () => {
       ].forEach((answerField) => {
         cy.byId(answerField).click();
         cy.byId(searchResults).should('be.visible');
-        cy.byCss('#searchResults li').its('length').should('eq', 3);
-        cy.byCss('#searchResults li').eq(0).contains('No');
-        cy.byCss('#searchResults li').eq(1).contains('Yes');
-        cy.byCss('#searchResults li').eq(2).contains("Don't know");
+        cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 3);
+        cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+        cy.byCss('#lhc-tools-searchResults li').eq(1).contains('Yes');
+        cy.byCss('#lhc-tools-searchResults li').eq(2).contains("Don't know");
       });
     });
 
-    it('should have expected answer list and saved value when the QuestionnaireReponse is merged to the Questionnaire', () => {
+    it('should have expected answer list and saved value when the QuestionnaireResponse is merged to the Questionnaire', () => {
       cy.window().then((win) => {
         cy.readFile('test/data/R4/q-with-answerValueSet-autocomplete.json').then((q) => {  // readFile will parse the JSON
           let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
@@ -96,25 +96,25 @@ describe('FHIR answerValueSet', () => {
               (answerField) => {
                 cy.byId(answerField).click();
                 cy.byId(searchResults).should('be.visible');
-                cy.byCss('#searchResults li').its('length').should('eq', 3);
-                cy.byCss('#searchResults li').eq(0).contains('No');
-                cy.byCss('#searchResults li').eq(1).contains('Yes');
-                cy.byCss('#searchResults li').eq(2).contains("Don't know");
+                cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 3);
+                cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+                cy.byCss('#lhc-tools-searchResults li').eq(1).contains('Yes');
+                cy.byCss('#lhc-tools-searchResults li').eq(2).contains("Don't know");
               }
             );
             cy.byId(answerField2).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 1);
-            cy.byCss('#searchResults li').eq(0).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 1);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains("Don't know");
             cy.byId(answerField5).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 1);
-            cy.byCss('#searchResults li').eq(0).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 1);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains("Don't know");
             cy.byId(answerField6).click();
             cy.byId(searchResults).should('be.visible');
-            cy.byCss('#searchResults li').its('length').should('eq', 2);
-            cy.byCss('#searchResults li').eq(0).contains('No');
-            cy.byCss('#searchResults li').eq(1).contains("Don't know");
+            cy.byCss('#lhc-tools-searchResults li').its('length').should('eq', 2);
+            cy.byCss('#lhc-tools-searchResults li').eq(0).contains('No');
+            cy.byCss('#lhc-tools-searchResults li').eq(1).contains("Don't know");
           });
         });
       });
@@ -414,7 +414,7 @@ describe('FHIR answerValueSet', () => {
       cy.byId(answerId('/g4m3/1/1', '_other')).should('be.visible');
     });
 
-    it('should have expected answer list and saved value when the QuestionnaireReponse is merged to the Questionnaire', () => {
+    it('should have expected answer list and saved value when the QuestionnaireResponse is merged to the Questionnaire', () => {
       cy.window().then((win) => {
         cy.readFile('test/data/R4/q-with-answerValueSet-matrix.json').then(
           (q) => {

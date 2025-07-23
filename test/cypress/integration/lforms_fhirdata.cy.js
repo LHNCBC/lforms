@@ -9,6 +9,7 @@ delete FHIRSupport.R4B;
 import {facadeExpect as expect, protractor, by, element, browser} from "../support/protractorFacade.js";
 import {TestUtil} from "../support/testUtilFacade.js";
 import {TestPage} from '../support/lforms_testpage.po.js';
+const answerId = util.answerId;
 
 delete FHIRSupport.default; // not sure why that is added now
 let fhirVersions = Object.keys(FHIRSupport);
@@ -58,6 +59,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
 
+        it('should work on checkboxes and radio buttons', function() {
+          cy.visit('test/pages/addFormToPageTest.html');
+          util.addFormToPage('q-with-rendering-style-radio-and-checkbox.json', null, {fhirVersion});
+          expect(element(by.id(answerId('1.1/1', undefined, 'code1'))).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id(answerId('1.1/1', undefined, 'code2'))).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id(answerId('1.2/1', undefined, 'Answer string 1'))).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id(answerId('1.2/1', undefined, 'Answer string 2'))).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id(answerId('1.3/1', undefined, '2025-05-23'))).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id(answerId('1.3/1', undefined, '2025-05-24'))).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id(answerId('1.4/1', undefined, '10:30:00'))).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id(answerId('1.4/1', undefined, '13:30:00'))).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.id(answerId('1.5/1', undefined, '1'))).getAttribute('style')).toBe('font-style: italic;');
+          expect(element(by.id(answerId('1.5/1', undefined, '2'))).getAttribute('style')).toBe('font-style: italic;');
+        });
+
         if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4/R5
           it('should work on question text in horizontal tables', function() {
             util.addFormToPage('tables.json', null, {fhirVersion});
@@ -86,6 +102,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(element(by.id('legal-content-1.1/1')).getAttribute('style')).toBe('font-style: italic;');
             cy.byId('help-button-1.1/1').click();
             expect(element(by.id('help-content-1.1/1')).getAttribute('style')).toBe('font-weight: bold;');
+          });
+
+          it('should work on matrix layout', function() {
+            cy.visit('test/pages/addFormToPageTest.html');
+            util.addFormToPage('answerOption-rendering-style-matrix-layout.json', null, {fhirVersion});
+            expect(element.all(by.css('th.lhc-form-matrix-cell')).get(0).getAttribute('style')).toBe('font-style: italic;');
+            expect(element.all(by.css('th.lhc-form-matrix-cell')).get(3).getAttribute('style')).toBe('font-style: italic;');
           });
         }
       });
@@ -757,8 +780,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(TestUtil.getAttribute(cne,'value')).toBe('');
             expect(TestUtil.getAttribute(st,'value')).toBe('');
 
-            cy.byCss('#/type1/1true input').should('be.checked')
-            cy.byCss('#/type1b/1false input').should('be.checked')
+            cy.byId(answerId('/type1/1', 'true')).find('input').should('be.checked')
+            cy.byId(answerId('/type1b/1', 'false')).find('input').should('be.checked')
 
             expect(TestUtil.getAttribute(cwe,'value')).toBe("user typed value");
 
@@ -809,8 +832,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should have functioning skiplogic when codes are not present', function() {
             let packungenField = element(by.id('1.5.4/1/1/1'));
             TestUtil.waitForElementNotPresent(packungenField);
-            let raucherFieldTrue = element(by.id('1.5.1/1/1/1true'));
-            let raucherFieldFalse = element(by.id('1.5.1/1/1/1false'));
+            let raucherFieldTrue = element(by.id(answerId('1.5.1/1/1/1', 'true')));
+            let raucherFieldFalse = element(by.id(answerId('1.5.1/1/1/1', 'false')));
             raucherFieldTrue.click();
             TestUtil.waitForElementPresent(packungenField);
             raucherFieldFalse.click();
@@ -819,8 +842,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should have functioning skiplogic when the codes are present', function() {
-            let progressFieldTrue = element(by.id('4.3.3.1/1/1/1/1true'));
-            let progressFieldFalse = element(by.id('4.3.3.1/1/1/1/1false'));
+            let progressFieldTrue = element(by.id(answerId('4.3.3.1/1/1/1/1', 'true')));
+            let progressFieldFalse = element(by.id(answerId('4.3.3.1/1/1/1/1', 'false')));
             let zeitpunktField = element(by.id('4.3.3.2/1/1/1/1'));
             TestUtil.waitForElementNotPresent(zeitpunktField);
             progressFieldTrue.click();
@@ -920,7 +943,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
 
           // NEXT: new boolean implementation
-          cy.byCss('#/type-boolean/1true input').should('be.checked')
+          cy.byId(answerId('/type-boolean/1', 'true')).find('input').should('be.checked')
 
           if (fhirVersion === "R4" || fhirVersion === "R4B") {
 

@@ -1,0 +1,40 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Weight and overweight",
+  "status": "draft",
+  "description": "A simple questionnaire to update a boolean field based on a calculated expression.",
+  "item": [
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "kg"
+          }
+        }
+      ],
+      "linkId": "weight",
+      "text": "Weight",
+      "type": "decimal",
+      "required": false
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "description": "overweight or not",
+            "language": "text/fhirpath",
+            "expression": "%resource.item.where(linkId='weight').answer.value > 100"
+          }
+        }
+      ],
+      "linkId": "overweight",
+      "text": "Are you overweight?",
+      "type": "boolean",
+      "readOnly": true,
+      "required": false
+    }
+  ]
+}

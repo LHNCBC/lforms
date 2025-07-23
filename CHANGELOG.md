@@ -2,6 +2,68 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.0.0] 2025-07-23
+### Changed
+- HTML Element IDs for answers now include the code system to ensure their
+  uniqueness.  The element IDs are not a part of the public API, so technically
+  this is not a breaking change, but we recognize that some people might have
+  CSS that targets element IDs.
+
+## [37.0.0] 2025-07-10
+### Changed
+- Not to show the repetition number by default.
+- Never show the treeline or indentation on the first level.
+- Changed "hideTreeLine" to a string type that accept 'true', 'false' and
+  'auto'. The default is now 'auto', which means to show the treeline when
+  the questionnaire has more than 3 levels of the hierarchy, and hide the
+  treeline when there are up to 3 levels of the hierarchy.
+- Changed the treeline color to a lighter, less dominant color.
+
+## [36.20.3] 2025-07-10
+### Fixed
+- Fixed a bug that the matrix layout ('table' in itemControl extension) 
+  does not always display answers loaded from answerValueSet.
+  
+## [36.20.2] 2025-07-09
+### Fixed
+- answerValueSet expansion error under the field should still show
+  when the form is loaded for the second time.
+
+## [36.20.1] 2025-06-20
+### Changed
+- Update autocomplete-lhc version and use new ID lhc-tools-searchResults
+  in tests.
+
+## [36.20.0] 2025-06-13
+### Added
+- Show an error message under the field if the answerValueSet expansion fails.
+
+## [36.19.2] 2025-06-11
+### Fixed
+- A boolean field was not updating in UI according to calculated expression.
+
+## [36.19.1] 2025-06-04
+### Fixed
+- Tooltips were shown incorrectly when adding a repeating item.
+
+## [36.19.0] 2025-05-21
+### Added
+- Support for rendering-style on radio buttons and checkboxes.
+
+## [36.18.0] 2025-04-25
+### Changed
+- If observationExtract=false on an item, child items are not considered
+  for extraction unless they explicitly turn extraction back on again by
+  observationExtract=true.
+- observationExtract can indicate which code or codes should be applied by being on
+  item.code (in which case, having it on the item is not necessary).
+
+## [36.17.0] 2025-04-15
+### Added
+- Support for building into a different language.
+- Currently only German is added. Support for additional languages can be added
+  under src/languages.
+
 ## [36.16.1] 2025-04-14
 ### Fixed
 - Fixed a bug that initial values are not rendered on matrix (itemControl 'table')

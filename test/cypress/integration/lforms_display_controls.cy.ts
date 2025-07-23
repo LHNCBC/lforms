@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import {answerId} from "../support/util";
 
 describe('display controls demo', () => {
   const tp: TestPage = new TestPage();
@@ -6,10 +7,10 @@ describe('display controls demo', () => {
   it('should show values as selected radio buttons/checkboxes', () => {
     tp.LoadForm.openDisplayControlsDemo();
 
-    cy.byId('/q1a/1c2').find('input').should('exist').should('not.be.checked');
-    cy.byId('/q1a/1c3').find('input').should('be.checked');
-    cy.byId('/q1c/1c2').find('input').should('be.checked');
-    cy.byId('/q1c/1c3').find('input').should('be.checked');
+    cy.byId(answerId('/q1a/1', undefined, 'c2')).find('input').should('exist').should('not.be.checked');
+    cy.byId(answerId('/q1a/1', undefined, 'c3')).find('input').should('be.checked');
+    cy.byId(answerId('/q1c/1', undefined, 'c2')).find('input').should('be.checked');
+    cy.byId(answerId('/q1c/1', undefined, 'c3')).find('input').should('be.checked');
   });
 
   it('displays 4 different types of answer layouts', () => {
@@ -22,9 +23,9 @@ describe('display controls demo', () => {
       item2Other = '/q1b/1|_other',
       item2OtherValue = '/q1b/1|_otherValue',
 
-      item3answer1 = '/q1c/1c1',
-      item3answer3 = '/q1c/1c3',
-      item4answer1 = '/q1d/1c1',
+      item3answer1 = answerId('/q1c/1', undefined, 'c1'),
+      item3answer3 = answerId('/q1c/1', undefined, 'c3'),
+      item4answer1 = answerId('/q1d/1', undefined, 'c1'),
       item4Other = '/q1d/1|_other',
       item4OtherValue = '/q1d/1|_otherValue';
 
@@ -251,14 +252,14 @@ describe('display controls demo', () => {
     cy.byId('/readonlyST/1').should('exist').should('not.be.enabled');
     cy.byId('/readonlyCNE-s/1').should('not.be.enabled');
     cy.byId('/readonlyCWE-m/1').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c1').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c2').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c3').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c4').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c1').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c2').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c3').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c4').find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c1')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c2')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c3')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c4')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c1')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c2')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c3')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c4')).find('input').should('not.be.enabled');
   });
 
   it('should show changed font color', () => {

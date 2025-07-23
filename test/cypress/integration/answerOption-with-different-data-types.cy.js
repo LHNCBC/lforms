@@ -1,6 +1,8 @@
 import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
+const answerId = util.answerId;
+
 delete FHIRSupport.default;
 // R4B is same as R4 for Questionnaire and QuestionnaireResponse.
 // No need to test R4B in this test file.
@@ -21,16 +23,16 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       cy.byId(params.itemIds.g1item1)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g1Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g1Answer3);
       // autocomplete, repeats
       cy.byId(params.itemIds.g1item2)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g1Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g1Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g1Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g1Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g1Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
       // raido button
@@ -47,16 +49,16 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       cy.byId(params.itemIds.g3item1)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g3Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g3Answer3);
         // autocomplete, repeats, prefix, score
       cy.byId(params.itemIds.g3item2)
         .should('be.visible')
         .click();
-      cy.byCss("#searchResults li").eq(0).contains(params.itemValues.g3Answer1);
-      cy.byCss("#searchResults li").eq(1).contains(params.itemValues.g3Answer2);
-      cy.byCss("#searchResults li").eq(2).contains(params.itemValues.g3Answer3);
+      cy.byCss("#lhc-tools-searchResults li").eq(0).contains(params.itemValues.g3Answer1);
+      cy.byCss("#lhc-tools-searchResults li").eq(1).contains(params.itemValues.g3Answer2);
+      cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g3Answer3);
 
       // group 4
       // radiobutton, prefix, score
@@ -125,9 +127,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       if (valueType === "valueCoding.open-choice") {
         cy.byId(`${params.itemIds.g6item1ans2} input`)
           .should('not.be.checked');
-        cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+        cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).find('input')
           .should('be.checked');
-        cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+        cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_otherValue'))
           .should('be.visible')
           .should('have.value', "user typed value")
       }
@@ -151,9 +153,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         if (valueType === "valueCoding.open-choice") {
           cy.byId(`${params.itemIds.g6item2ans3} input`)
             .should('not.be.checked');
-          cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
+          cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).find('input')
             .should('be.checked');
-          cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
+          cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))
             .should('be.visible')
             .should('have.value', "user typed value")
         }
@@ -382,9 +384,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           if (valueType === "valueCoding.open-choice") {
             cy.byId(`${params.itemIds.g6item1ans2} input`)
               .should('not.be.checked');
-            cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+            cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).find('input')
               .should('be.checked');
-            cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+            cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_otherValue'))
               .should('be.visible')
               .should('have.value', "user typed value")
           }
@@ -402,9 +404,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
             if (valueType === "valueCoding.open-choice") {
               cy.byId(`${params.itemIds.g6item2ans3} input`)
                 .should('not.be.checked');
-              cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
+              cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).find('input')
                 .should('be.checked');
-              cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
+              cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))
                 .should('be.visible')
                 .should('have.value', "user typed value")
             }
