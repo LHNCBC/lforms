@@ -2,9 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [36.21.0] 2025-07-11
+## [37.1.0] 2025-07-23
 ### Added
 - Support for observationExtract valueCode relationships (component or member).
+
+## [37.0.0] 2025-07-10
+### Changed
+- Not to show the repetition number by default.
+- Never show the treeline or indentation on the first level.
+- Changed "hideTreeLine" to a string type that accept 'true', 'false' and
+  'auto'. The default is now 'auto', which means to show the treeline when
+  the questionnaire has more than 3 levels of the hierarchy, and hide the
+  treeline when there are up to 3 levels of the hierarchy.
+- Changed the treeline color to a lighter, less dominant color.
 
 ## [36.20.3] 2025-07-10
 ### Fixed
