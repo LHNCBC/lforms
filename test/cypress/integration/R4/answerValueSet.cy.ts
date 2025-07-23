@@ -56,7 +56,7 @@ describe('FHIR answerValueSet', () => {
       });
     });
 
-    it('should have expected answer list and saved value when the QuestionnaireReponse is merged to the Questionnaire', () => {
+    it('should have expected answer list and saved value when the QuestionnaireResponse is merged to the Questionnaire', () => {
       cy.window().then((win) => {
         cy.readFile('test/data/R4/q-with-answerValueSet-autocomplete.json').then((q) => {  // readFile will parse the JSON
           let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
@@ -414,7 +414,7 @@ describe('FHIR answerValueSet', () => {
       cy.byId(answerId('/g4m3/1/1', '_other')).should('be.visible');
     });
 
-    it('should have expected answer list and saved value when the QuestionnaireReponse is merged to the Questionnaire', () => {
+    it('should have expected answer list and saved value when the QuestionnaireResponse is merged to the Questionnaire', () => {
       cy.window().then((win) => {
         cy.readFile('test/data/R4/q-with-answerValueSet-matrix.json').then(
           (q) => {

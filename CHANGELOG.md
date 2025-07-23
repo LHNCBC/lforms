@@ -2,6 +2,26 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [37.0.0] 2025-07-10
+### Changed
+- Not to show the repetition number by default.
+- Never show the treeline or indentation on the first level.
+- Changed "hideTreeLine" to a string type that accept 'true', 'false' and
+  'auto'. The default is now 'auto', which means to show the treeline when
+  the questionnaire has more than 3 levels of the hierarchy, and hide the
+  treeline when there are up to 3 levels of the hierarchy.
+- Changed the treeline color to a lighter, less dominant color.
+
+## [36.20.3] 2025-07-10
+### Fixed
+- Fixed a bug that the matrix layout ('table' in itemControl extension) 
+  does not always display answers loaded from answerValueSet.
+  
+## [36.20.2] 2025-07-09
+### Fixed
+- answerValueSet expansion error under the field should still show
+  when the form is loaded for the second time.
+
 ## [36.20.1] 2025-06-20
 ### Changed
 - Update autocomplete-lhc version and use new ID lhc-tools-searchResults

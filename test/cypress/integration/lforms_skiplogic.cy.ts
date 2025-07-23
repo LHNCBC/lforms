@@ -15,10 +15,10 @@ describe('skip logic', () => {
     tp.openBaseTestPage();
     tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
 
-    const n1 = 'n1/1';
-    const n2 = 'n2/1';
-    const n3 = 'n3/1';
-    const q4 = 'q4/1'; // present when n1+n2+n3 >= 5;
+    const n1 = 'n1/1/1';
+    const n2 = 'n2/1/1';
+    const n3 = 'n3/1/1';
+    const q4 = 'q4/1/1'; // present when n1+n2+n3 >= 5;
 
     cy.byId(n1).should('be.visible');
     cy.byId(q4).should('not.exist');

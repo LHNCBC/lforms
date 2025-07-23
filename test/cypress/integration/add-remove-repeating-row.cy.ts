@@ -1,6 +1,5 @@
 import { TestPage } from "../support/lforms_testpage.po.js";
 import {TestUtil} from "../support/testUtilFacade";
-import {answerId} from '../../support/util';
 
 describe('on repeating items', function() {
   const tp: any = new TestPage();

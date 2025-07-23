@@ -89,7 +89,7 @@
     {
       "linkId": "g3",
       "type": "group",
-      "text": "Matrix with raido buttons (table, open-choice)",
+      "text": "Matrix with radio buttons (table, open-choice)",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",

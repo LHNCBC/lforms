@@ -27,7 +27,7 @@
           <lhc-group-horizontal [item]="lhcFormData" [formLevel]='true'></lhc-group-horizontal>
         </ng-container>
         <ng-container *ngSwitchCase="'matrix'">
-          <lhc-group-matrix [item]="lhcFormData" [formLevel]='true'></lhc-group-matrix>
+          <lhc-group-matrix [item]="lhcFormData" [formLevel]='true' [acOptions]="lhcFormData.items[0]?._autocompOptions"></lhc-group-matrix>
         </ng-container>
         <!-- vertical -->
         <ng-container *ngSwitchDefault>
@@ -36,7 +36,7 @@
           <ng-container *ngIf="lhcFormData.items">
             <ng-container *ngFor ="let item of lhcFormData.items; trackBy: lhcDataService.trackByElementId">
               <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)"
-                [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}"
+                [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode, true)}}"
                 id="item-{{ item._elementId }}" >
               </lhc-item>
               <!--header item-->
