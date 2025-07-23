@@ -337,4 +337,113 @@ describe('Form with extract observation extension', () => {
       ]);
     });
   });
+
+  it('should find the correct repeatable parents for ObservationExtract valueCode relationship', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('q-with-obs-extract-valueCode-with-repeatable-parents.json', null, {fhirVersion: 'R4'});
+    cy.byId('parentRepeatableItem/1').type('Adam');
+    cy.byId('add-parentRepeatableItem/1').click();
+    cy.byId('parentRepeatableItem/2').type('Ben');
+    cy.byId('childItem1/2/1').type('130');
+    cy.byId('childItem2/2/1').type('90');
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'R4', null, {extract: true});
+      expect(bundle.length).to.equal(3);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Observation");
+      expect(bundle[1].valueString).to.equal('Adam');
+      expect(bundle[1].code.coding).to.deep.equal([
+        {
+          "system": "http://loinc.org",
+          "code": "8532-0",
+          "display": "Blood pressure"
+        }
+      ]);
+      expect(bundle[1].component).to.deep.equal([
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8478-0",
+                "display": "Systolic blood pressure"
+              }
+            ],
+            "text": "What is your systolic blood pressure?"
+          },
+          "valueQuantity": {
+            "value": "120",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8462-7",
+                "display": "Diastolic blood pressure"
+              }
+            ],
+            "text": "What is your diastolic blood pressure?"
+          },
+          "valueQuantity": {
+            "value": "80",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
+          }
+        }
+      ]);
+      expect(bundle[2].resourceType).to.equal("Observation");
+      expect(bundle[2].valueString).to.equal('Ben');
+      expect(bundle[2].code.coding).to.deep.equal([
+        {
+          "system": "http://loinc.org",
+          "code": "8532-0",
+          "display": "Blood pressure"
+        }
+      ]);
+      expect(bundle[2].component).to.deep.equal([
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8478-0",
+                "display": "Systolic blood pressure"
+              }
+            ],
+            "text": "What is your systolic blood pressure?"
+          },
+          "valueQuantity": {
+            "value": "130",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
+          }
+        },
+        {
+          "code": {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "8462-7",
+                "display": "Diastolic blood pressure"
+              }
+            ],
+            "text": "What is your diastolic blood pressure?"
+          },
+          "valueQuantity": {
+            "value": "90",
+            "unit": "millimeter of mercury",
+            "code": "mm[Hg]",
+            "system": "http://unitsofmeasure.org"
+          }
+        }
+      ]);
+    });
+  });
 });
