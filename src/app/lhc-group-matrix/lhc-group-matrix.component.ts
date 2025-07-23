@@ -16,7 +16,7 @@ export class LhcGroupMatrixComponent {
   // item.item[0]._autocompOptions
   // Use the first child item's autocomplete options, assuming all the child items have the same answer list.
   // It could be delayed when the answer list is loaded from answerValueSet or answerExpression
-  @Input() acOptions; 
+  @Input() acOptions;
   @Input() formLevel: boolean = false;
   language = language;
 
@@ -176,7 +176,7 @@ export class LhcGroupMatrixComponent {
    */
   setCheckboxInitialValue(subItem): void {
 
-    // if there is answer list or the answer list has been loaded 
+    // if there is answer list or the answer list has been loaded
     // (from answerValueSet or answerExpression)
     if (subItem.answers && Array.isArray(subItem.answers)) {
       // if there is an initial value or an existing value

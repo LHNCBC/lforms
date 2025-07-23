@@ -37,6 +37,7 @@
   }, {
     "linkId": "g2",
     "text": "Matrix with checkboxes (table, choice, repeats)",
+    "linkId": "g2",
     "item": [ {
       "linkId": "/g2m1",
       "text": "Question #1",

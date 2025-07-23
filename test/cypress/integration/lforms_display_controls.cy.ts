@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import {answerId} from "../support/util";
 
 describe('display controls demo', () => {
   const tp: TestPage = new TestPage();
@@ -6,27 +7,27 @@ describe('display controls demo', () => {
   it('should show values as selected radio buttons/checkboxes', () => {
     tp.LoadForm.openDisplayControlsDemo();
 
-    cy.byId('/q1a/1c2').find('input').should('exist').should('not.be.checked');
-    cy.byId('/q1a/1c3').find('input').should('be.checked');
-    cy.byId('/q1c/1c2').find('input').should('be.checked');
-    cy.byId('/q1c/1c3').find('input').should('be.checked');
+    cy.byId(answerId('/q1a/1', undefined, 'c2')).find('input').should('exist').should('not.be.checked');
+    cy.byId(answerId('/q1a/1', undefined, 'c3')).find('input').should('be.checked');
+    cy.byId(answerId('/q1c/1', undefined, 'c2')).find('input').should('be.checked');
+    cy.byId(answerId('/q1c/1', undefined, 'c3')).find('input').should('be.checked');
   });
 
   it('displays 4 different types of answer layouts', () => {
     tp.LoadForm.openDisplayControlsDemo();
 
     // tslint:disable-next-line:one-variable-per-declaration
-    const item1answer1 = '/q1a/1c1',
-      item1answer3 = '/q1a/1c3',
-      item2answer1 = '/q1b/1c1',
-      item2Other = '/q1b/1_other',
-      item2OtherValue = '/q1b/1_otherValue',
+    const item1answer1 = '/q1a/1||c1',
+      item1answer3 = '/q1a/1||c3',
+      item2answer1 = '/q1b/1||c1',
+      item2Other = '/q1b/1|_other',
+      item2OtherValue = '/q1b/1|_otherValue',
 
-      item3answer1 = '/q1c/1c1',
-      item3answer3 = '/q1c/1c3',
-      item4answer1 = '/q1d/1c1',
-      item4Other = '/q1d/1_other',
-      item4OtherValue = '/q1d/1_otherValue';
+      item3answer1 = answerId('/q1c/1', undefined, 'c1'),
+      item3answer3 = answerId('/q1c/1', undefined, 'c3'),
+      item4answer1 = answerId('/q1d/1', undefined, 'c1'),
+      item4Other = '/q1d/1|_other',
+      item4OtherValue = '/q1d/1|_otherValue';
 
     cy.byId(item1answer1).should('be.visible');
     cy.byId(item4answer1).should('be.visible');
@@ -191,10 +192,10 @@ describe('display controls demo', () => {
   it('section matrix works', () => {
     tp.LoadForm.openDisplayControlsDemo();
 
-    const item1answer1 = '/g4/g1m1/1/1c1',
-      item1answer2 = '/g4/g1m1/1/1c2',
-      item2answer1 = '/g4/g1m2/1/1c1',
-      item2answer3 = '/g4/g1m2/1/1c3';
+    const item1answer1 = '/g4/g1m1/1/1||c1',
+      item1answer2 = '/g4/g1m1/1/1||c2',
+      item2answer1 = '/g4/g1m2/1/1||c1',
+      item2answer3 = '/g4/g1m2/1/1||c3';
 
     cy.byId(item1answer1).should('exist');
     // first row in matrix
@@ -251,14 +252,14 @@ describe('display controls demo', () => {
     cy.byId('/readonlyST/1').should('exist').should('not.be.enabled');
     cy.byId('/readonlyCNE-s/1').should('not.be.enabled');
     cy.byId('/readonlyCWE-m/1').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c1').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c2').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c3').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCNE-sb/1c4').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c1').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c2').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c3').find('input').should('not.be.enabled');
-    cy.byId('/readonlyCWE-mb/1c4').find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c1')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c2')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c3')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCNE-sb/1', undefined, 'c4')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c1')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c2')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c3')).find('input').should('not.be.enabled');
+    cy.byId(answerId('/readonlyCWE-mb/1', undefined, 'c4')).find('input').should('not.be.enabled');
   });
 
   it('should show changed font color', () => {
