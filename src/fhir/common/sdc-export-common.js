@@ -1164,6 +1164,7 @@ function addCommonSDCExportFns(ns) {
    * If the item has ObsExtract valueCode, find the nearest extractable parent and
    * set _obsExtractParentLinkId on the item to the parent linkId so we will know which
    * extracted parent Observation to link to.
+   * @param item an item in Questionnaire
    */
   self._findObsExtractValueCodeParent = function (item) {
     const obsExtractValueCode = item._fhirExt && item._fhirExt[this.fhirExtObsExtract] && item._fhirExt[this.fhirExtObsExtract][0].valueCode;
