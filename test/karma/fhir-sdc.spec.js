@@ -665,6 +665,33 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[0].item[1]._text, json.item[0].item[1]._text);
               });
             });
+
+            it('should preserve rendering-style extension on radio button and checkbox', function (){
+              $.get('test/data/R4/q-with-rendering-style-radio-and-checkbox.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].answers[0]._obj_CSS, 'font-style: italic');
+                assert.equal(lfData.items[0].answers[1]._obj_CSS, 'font-style: italic');
+                assert.equal(lfData.items[1].answers[0]._obj_CSS, 'font-weight: bold');
+                assert.equal(lfData.items[1].answers[1]._obj_CSS, 'font-weight: bold');
+                assert.equal(lfData.items[2].answers[0]._obj_CSS, 'font-style: italic');
+                assert.equal(lfData.items[2].answers[1]._obj_CSS, 'font-style: italic');
+                assert.equal(lfData.items[3].answers[0]._obj_CSS, 'font-weight: bold');
+                assert.equal(lfData.items[3].answers[1]._obj_CSS, 'font-weight: bold');
+                assert.equal(lfData.items[4].answers[0]._obj_CSS, 'font-style: italic');
+                assert.equal(lfData.items[4].answers[1]._obj_CSS, 'font-style: italic');
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].answerOption[0].valueCoding._display);
+                assert.deepEqual(qData.item[0].answerOption[0].valueCoding._display, json.item[0].answerOption[0].valueCoding._display);
+                assert.ok(qData.item[1].answerOption[0]._valueString);
+                assert.deepEqual(qData.item[1].answerOption[0]._valueString, json.item[1].answerOption[0]._valueString);
+                assert.ok(qData.item[2].answerOption[0]._valueDate);
+                assert.deepEqual(qData.item[2].answerOption[0]._valueDate, json.item[2].answerOption[0]._valueDate);
+                assert.ok(qData.item[3].answerOption[0]._valueTime);
+                assert.deepEqual(qData.item[3].answerOption[0]._valueTime, json.item[3].answerOption[0]._valueTime);
+                assert.ok(qData.item[4].answerOption[0]._valueInteger);
+                assert.deepEqual(qData.item[4].answerOption[0]._valueInteger, json.item[4].answerOption[0]._valueInteger);
+              });
+            });
           }
 
           if (fhirVersion === 'STU3') {

@@ -1,26 +1,28 @@
-import {OnChanges, Component, Input } from '@angular/core';
+import {OnChanges, Component, Input} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
+import language from '../../../language-config.json';
 
 @Component({
-    selector: 'lhc-item-boolean',
-    templateUrl: './lhc-item-boolean.component.html',
-    styleUrls: ['./lhc-item-boolean.component.css'],
-    standalone: false
+  selector: 'lhc-item-boolean',
+  templateUrl: './lhc-item-boolean.component.html',
+  styleUrls: ['./lhc-item-boolean.component.css'],
+  standalone: false
 })
 export class LhcItemBooleanComponent implements OnChanges {
   @Input() item: any;
-  booleanModels:  boolean[] = new Array(3);
+  @Input() value: any;
+  booleanModels: boolean[] = new Array(3);
+  language = language;
 
-  constructor(public lhcDataService: LhcDataService) {}
+  constructor(public lhcDataService: LhcDataService) {
+  }
 
   /**
-   * Invokded when the properties change
+   * Invoked when the properties change
    * @param changes changes.prop contains the old and the new value...
    */
-   ngOnChanges(changes) {
-    // changes.prop contains the old and the new value...
-    // reset initial status
-    this.setInitialValue();
+  ngOnChanges(changes) {
+    this.setBooleanModels();
   }
 
   /**
@@ -35,19 +37,17 @@ export class LhcItemBooleanComponent implements OnChanges {
 
 
   /**
-   * Set initial status
+   * Set radio model values based on the item value.
    */
-  setInitialValue(): void {
+  setBooleanModels(): void {
     if (this.item) {
       let booleanValue = this.item.value;
       if (booleanValue === true) {
-        this.booleanModels[0] = true;
-      }
-      else if (booleanValue === false) {
-        this.booleanModels[1] = true;
-      }
-      else if (booleanValue === undefined || booleanValue === null) {
-        this.booleanModels[2] = true;
+        this.booleanModels = [true, false, false];
+      } else if (booleanValue === false) {
+        this.booleanModels = [false, true, false];
+      } else if (booleanValue === undefined || booleanValue === null) {
+        this.booleanModels = [false, false, true];
       }
     }
   }

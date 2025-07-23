@@ -153,12 +153,17 @@ function addSDCImportFns(ns) {
             if(option[optionKey[0]].system  !== undefined) {
               answer.system = option[optionKey[0]].system;
             }
-            // rendering-xhtml extension under "valueCoding._display".
             if (option[optionKey[0]]._display) {
               answer['obj_valueCoding_display'] = option[optionKey[0]]._display;
+              // rendering-xhtml extension under "valueCoding._display".
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
                 LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+              }
+              // rendering-style extension under "valueCoding._display".
+              const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+              if (renderingStyle) {
+                answer._obj_CSS = renderingStyle.valueString;
               }
             }
           }
@@ -173,9 +178,25 @@ function addSDCImportFns(ns) {
                 LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
               }
             }
+            // rendering-style extension under "_valueString", "_valueDate" or "_valueTime".
+            if (option[`_${optionKey[0]}`]) {
+              answer[`obj_${optionKey[0]}`] = answer[`obj_${optionKey[0]}`] || option[`_${optionKey[0]}`];
+              const renderingStyle = LForms.Util.findObjectInArray(answer[`obj_${optionKey[0]}`].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+              if (renderingStyle) {
+                answer._obj_CSS = renderingStyle.valueString;
+              }
+            }
           }
           else if (optionKey[0] === 'valueInteger') {
-            answer.text = parseInt(option[optionKey[0]])
+            answer.text = parseInt(option[optionKey[0]]);
+            // rendering-style extension under "_valueIngeter".
+            if (option._valueInteger) {
+              answer['obj_valueInteger'] = option._valueInteger;
+              const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueInteger'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+              if (renderingStyle) {
+                answer._obj_CSS = renderingStyle.valueString;
+              }
+            }
           }
           else {
             throw new Error('Unable to handle data type in answerOption: ' + optionKey[0]);

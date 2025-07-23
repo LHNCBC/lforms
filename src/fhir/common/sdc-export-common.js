@@ -1068,20 +1068,93 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
-   * Get the extract value for the item or the closest parent
+   * Get the extract value for the item.
+   * If the item is extractable, item._codesToExtract is set which will be used
+   * later when creating extracted Observations.
    * @param item an item in Questionnaire
+   * @return true if self._getExtractValueFromItemAndParentLevel() returns true
+   * for the item, or code-level observationExtract=true is found on the item.
    */
   self._getExtractValue = function (item) {
-    let currentItem = item;
+    if (self._getExtractValueFromItemAndParentLevel(item)) {
+      // Check ObsExtract extension at item level and above. If the item is deemed
+      // extractable and some codes have ObsExtract=false, the item is still
+      // extractable (extracts all codes except those with ObsExtract=false). See
+      // https://chat.fhir.org/#narrow/channel/179255-questionnaire/topic/Observation.20extraction.20with.20both.20item.20and.20item.2Ecode/with/517623297.
+      return true;
+    } else {
+      return self._getExtractedObsCodes(item);
+    }
+  };
 
-    while (true) {
+
+  /**
+   * Get the extract value for the item, not considering code-level extensions.
+   * @param item an item in Questionnaire
+   * @return true if observationExtract=true is found on the item or nearest parent
+   * that has the extension;
+   * false if no observationExtract extension is found in the parent tree, or
+   * observationExtract=false is specified on the nearest parent that has the extension.
+   */
+  self._getExtractValueFromItemAndParentLevel = function (item) {
+    let currentItem = item;
+    while (currentItem) {
       if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
-        return currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
-      } else if (!currentItem._parentItem) {
-        return false;
+        const obsExtractValueBoolean = currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+        if (obsExtractValueBoolean === true) {
+          // Before returning true (item deemed extractable), cache the list in
+          // item._codesToExtract so we don't need to look for them when creating Observations.
+          self._getExtractedObsCodes(item, true);
+          return true;
+        } else if (obsExtractValueBoolean === false) {
+          return false;
+        }
       }
       currentItem = currentItem._parentItem;
     }
+    return false;
+  };
+
+
+  /**
+   * Gets the list of Questionnaire.item.code that will be extracted into
+   * Observation.code.coding, and sets the _codesToExtract property on the item.
+   * @param item an item in Questionnaire
+   * @param hasItemLevelObsExtractTrue whether the item is deemed extractable
+   * from the item level and above, not considering code-level ObsExtract extensions.
+   * @returns a boolean flag indicating whether ObsExtract=true extension is found
+   * at code level.
+   */
+  self._getExtractedObsCodes = function(item, hasItemLevelObsExtractTrue = false) {
+    if (!item.codeList || !item.codeList.length) {
+      return false;
+    }
+    let hasCodeLevelObsExtractTrue = false;
+    let extractedCodes = [];
+    for (let i = 0; i < item.codeList.length; i++) {
+      const code = item.codeList[i];
+      const obsExtractBooleanValue = code.extension
+        ?.find(x => x.url === this.fhirExtObsExtract)
+        ?.valueBoolean;
+      if (hasItemLevelObsExtractTrue && obsExtractBooleanValue !== false) {
+        // If the item is deemed extractable, we extract all the codes that
+        // doesn't explicitly have ObsExtract=false.
+        extractedCodes.push(code);
+      } else if (!hasItemLevelObsExtractTrue && obsExtractBooleanValue === true) {
+        // If the item is not deemed extractable by item level or up, and
+        // a code with ObsExtract=true is found, we only add those codes
+        // explicitly with ObservationExtract=true.
+        extractedCodes.push(code);
+        hasCodeLevelObsExtractTrue = true;
+      }
+    }
+    if (hasItemLevelObsExtractTrue || hasCodeLevelObsExtractTrue) {
+      item._codesToExtract = extractedCodes;
+    }
+    // If any item.code has extension ObsExtract=true, mark it since the item
+    // should be extracted. In this case, ObsExtract=true extension is not
+    // necessary on item level.
+    return hasCodeLevelObsExtractTrue;
   };
 
 

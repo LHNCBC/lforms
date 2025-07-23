@@ -19,7 +19,8 @@
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="item.answers[i]"
       [(ngModel)]="radioModels[i]"
-      [id]="lhcDataService.getItemAnswerId(item, answer)">
+      [id]="lhcDataService.getItemAnswerId(item, answer)"
+      [style]="answer._obj_CSS">
       <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
         <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
         <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
@@ -37,7 +38,7 @@
       [(ngModel)]="otherRadioModel"
       [id]="lhcDataService.getItemAnswerId(item, '_other')"
       class="lhc-answer">
-      Other
+      {{language.other}}
       <input
         type="text"
         [ngModel]="otherValue"
