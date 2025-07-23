@@ -5,6 +5,7 @@
   "item": [
     {
       "type": "group",
+      "linkId": "baseGroup",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -24,6 +25,7 @@
         {
           "type": "group",
           "text": "Tab One",
+          "linkId": "g1",
           "item": [
             {
               "linkId": "Q1",
@@ -35,6 +37,7 @@
         {
           "type": "group",
           "text": "Tab Two",
+          "linkId": "g2",
           "item": [
             {
               "linkId": "Q1-exists",
@@ -106,6 +109,7 @@
         {
           "type": "group",
           "text": "Tab Three",
+          "linkId": "g3",
           "enableWhen": [
             {
               "question": "Q1",
