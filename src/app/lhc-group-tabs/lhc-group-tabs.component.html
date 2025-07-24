@@ -1,9 +1,11 @@
 <ng-container *ngIf="item && item.items">
   <nz-tabset nzType="card">
     <ng-container *ngFor="let group of item.items">
-      <nz-tab [nzTitle]="group._text">
-        <lhc-group-vertical [item]="group" [hideGrouptTitle]="true"></lhc-group-vertical>
-      </nz-tab>
+      <ng-container *ngIf="!group._isHiddenFromView">
+        <nz-tab [nzTitle]="group._text">
+          <lhc-group-vertical [item]="group" [hideGrouptTitle]="true"></lhc-group-vertical>
+        </nz-tab>
+      </ng-container>
     </ng-container>
   </nz-tabset>
 </ng-container>
