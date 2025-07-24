@@ -482,7 +482,43 @@ export const InternalUtil = {
   targetShown: function(item) {
     return item._disabledDisplayStatus === 'protected' ||
         this.targetEnabled(item);
+  },
+
+
+  /**
+   * Construct an id for an answer when it is rendered as a radio button
+   * or a checkbox.
+   * @param item an item in lhc-forms
+   * @param answer an answer in the item's answer list.  If this is a
+   *  string  an id for an "Other" option element is created.
+   * @returns the constructed id
+   */
+  getItemAnswerId(item, answer) {
+    // A code can contain spaces, but an id cannot.
+    // Replace spaces with %20, but first replace % with %25.
+    // We have to do the same replacement with answer.text if the code is
+    // missing.
+    // Also, combine the system with the code as a token (using |).  We will need to
+    // escape the | and \ characters .  (See
+    // https://www.hl7.org/fhir/R4/search.html#escaping)
+    // We should not need to escape the | characters in _elementId for an
+    // answer ID, because, the goal is just to make the IDs unique.  However,
+    // since the format for an "other" element ID is similar (missing the system
+    // component) we do need to escape the | in the element ID in that case.
+    let rtn;
+    const elemId = item._elementId
+    if (typeof answer != 'string') {
+      const system = answer.system ? answer.system.replaceAll('\\', '\\\\').replaceAll('|', '\\|') : '';
+      const answerCodeOrText = (answer.code || answer.text.toString()).replaceAll('%', '%25')
+        .replaceAll(' ', '%20').replaceAll('\\', '\\\\').replaceAll('|', '\\|');
+      rtn = elemId + '|'+ system + '|' + answerCodeOrText;
+    }
+    else
+      rtn = elemId.replaceAll('\\', '\\\\').replaceAll('|', '\\|') + '|' + answer;
+
+    return rtn;
   }
+
 }
 
 

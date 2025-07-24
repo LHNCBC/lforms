@@ -5,6 +5,7 @@ import {TestPage} from "../../support/lforms_testpage.po";
 
 const fhirVersion = 'R4';
 const fhirMock = require('../../support/R4/fhir_context');
+const answerId = util.answerId;
 
 const po: AddFormToPageTestPage = new AddFormToPageTestPage();
 
@@ -188,31 +189,33 @@ describe('FHIR answerValueSet', () => {
     });
   });
 
+
+
   describe('answerValueSet with FHIR context, answers displayed as radion buttons or checkboxes', () => {
-    const f1a1 = 'yesno1/1N',
-      f1a2 = 'yesno1/1Y',
-      f1a3 = 'yesno1/1asked-unknown',
-      f2a1 = 'yesno2/1N',
-      f2a2 = 'yesno2/1Y',
-      f2a3 = 'yesno2/1asked-unknown',
-      f3a1 = 'yesno3/1N',
-      f3a2 = 'yesno3/1Y',
-      f3a3 = 'yesno3/1asked-unknown',
-      f3Other = 'yesno3/1_other',
-      f4a1 = 'yesno4/1N',
-      f4a2 = 'yesno4/1Y',
-      f4a3 = 'yesno4/1asked-unknown',
-      f4Other = 'yesno4/1_other',
-      f5a1 = 'yesno5/1N',
-      f5a2 = 'yesno5/1Y',
-      f5a3 = 'yesno5/1asked-unknown',
-      f5Other = 'yesno5/1_other',
-      f5OtherValue = 'yesno5/1_otherValue',
-      f6a1 = 'yesno6/1N',
-      f6a2 = 'yesno6/1Y',
-      f6a3 = 'yesno6/1asked-unknown',
-      f6Other = 'yesno6/1_other',
-      f6OtherValue = 'yesno6/1_otherValue';
+    let f1a1 = answerId('yesno1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
+      f1a2 = answerId('yesno1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'),
+      f1a3 = answerId('yesno1/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown'),
+      f2a1 = answerId('yesno2/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
+      f2a2 = answerId('yesno2/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'),
+      f2a3 = answerId('yesno2/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown'),
+      f3a1 = answerId('yesno3/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
+      f3a2 = answerId('yesno3/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'),
+      f3a3 = answerId('yesno3/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown'),
+      f3Other = answerId('yesno3/1', '_other'),
+      f4a1 = answerId('yesno4/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
+      f4a2 = answerId('yesno4/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'),
+      f4a3 = answerId('yesno4/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown'),
+      f4Other = answerId('yesno4/1', '_other'),
+      f5a1 = answerId('yesno5/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
+      f5a2 = answerId('yesno5/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'),
+      f5a3 = answerId('yesno5/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown'),
+      f5Other = answerId('yesno5/1', '_other'),
+      f5OtherValue = answerId('yesno5/1', '_otherValue'),
+      f6a1 = answerId('yesno6/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
+      f6a2 = answerId('yesno6/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'),
+      f6a3 = answerId('yesno6/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown'),
+      f6Other = answerId('yesno6/1', '_other'),
+      f6OtherValue = answerId('yesno6/1', '_otherValue');
 
     before(() => {
       cy.window().then((win) => {
@@ -234,9 +237,9 @@ describe('FHIR answerValueSet', () => {
 
       let n = 1;
       while (n < 7) {
-        cy.byId('yesno' + n + '/1N').should('be.visible');
-        cy.byId('yesno' + n + '/1Y').should('be.visible');
-        cy.byId('yesno' + n + '/1asked-unknown').should('be.visible');
+        cy.byId(eval('f'+n+'a1')).should('be.visible');
+        cy.byId(eval('f'+n+'a2')).should('be.visible');
+        cy.byId(eval('f'+n+'a3')).should('be.visible');
         n++;
       }
       cy.byId(f3Other).should('be.visible');
@@ -268,48 +271,35 @@ describe('FHIR answerValueSet', () => {
             });
 
             // check saved values
-            cy.byId(f1a1).find('input').should('not.be.checked');
-            cy.byId(f1a2).find('input').should('be.checked');
-            cy.byId(f1a3).find('input').should('not.be.checked');
+            cy.byId(f1a1).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f1a2).should('be.visible').find('input').should('be.checked');
+            cy.byId(f1a3).should('be.visible').find('input').should('not.be.checked');
 
-            cy.byId(f2a1).find('input').should('be.checked');
-            cy.byId(f2a2).find('input').should('be.checked');
-            cy.byId(f2a3).find('input').should('not.be.checked');
+            cy.byId(f2a1).should('be.visible').find('input').should('be.checked');
+            cy.byId(f2a2).should('be.visible').find('input').should('be.checked');
+            cy.byId(f2a3).should('be.visible').find('input').should('not.be.checked');
 
-            cy.byId(f3a1).find('input').should('not.be.checked');
-            cy.byId(f3a2).find('input').should('be.checked');
-            cy.byId(f3a3).find('input').should('not.be.checked');
-            cy.byId(f3Other).find('input').should('not.be.checked');
+            cy.byId(f3a1).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f3a2).should('be.visible').find('input').should('be.checked');
+            cy.byId(f3a3).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f3Other).should('be.visible').find('input').should('not.be.checked');
 
-            cy.byId(f4a1).find('input').should('be.checked');
-            cy.byId(f4a2).find('input').should('be.checked');
-            cy.byId(f4a3).find('input').should('not.be.checked');
-            cy.byId(f4Other).find('input').should('not.be.checked');
+            cy.byId(f4a1).should('be.visible').find('input').should('be.checked');
+            cy.byId(f4a2).should('be.visible').find('input').should('be.checked');
+            cy.byId(f4a3).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f4Other).should('be.visible').find('input').should('not.be.checked');
 
-            cy.byId(f5a1).find('input').should('not.be.checked');
-            cy.byId(f5a2).find('input').should('not.be.checked');
-            cy.byId(f5a3).find('input').should('not.be.checked');
-            cy.byId(f5Other).find('input').should('be.checked');
-            cy.byId(f5OtherValue).should('have.value', 'offlist answer 1');
+            cy.byId(f5a1).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f5a2).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f5a3).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f5Other).should('be.visible').find('input').should('be.checked');
+            cy.byId(f5OtherValue).should('be.visible').should('have.value', 'offlist answer 1');
 
-            cy.byId(f6a1).find('input').should('not.be.checked');
-            cy.byId(f6a2).find('input').should('be.checked');
-            cy.byId(f6a3).find('input').should('not.be.checked');
-            cy.byId(f6Other).find('input').should('be.checked');
-            cy.byId(f6OtherValue).should('have.value', 'offlist answer 2');
-
-            // check answer list
-            let n = 1;
-            while (n < 7) {
-              cy.byId('yesno' + n + '/1N').should('be.visible');
-              cy.byId('yesno' + n + '/1Y').should('be.visible');
-              cy.byId('yesno' + n + '/1asked-unknown').should('be.visible');
-              n++;
-            }
-            cy.byId(f3Other).should('be.visible');
-            cy.byId(f4Other).should('be.visible');
-            cy.byId(f5Other).should('be.visible');
-            cy.byId(f6Other).should('be.visible');
+            cy.byId(f6a1).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f6a2).should('be.visible').find('input').should('be.checked');
+            cy.byId(f6a3).should('be.visible').find('input').should('not.be.checked');
+            cy.byId(f6Other).should('be.visible').find('input').should('be.checked');
+            cy.byId(f6OtherValue).should('be.visible').should('have.value', 'offlist answer 2');
           });
         });
       });
@@ -385,31 +375,6 @@ describe('FHIR answerValueSet', () => {
   });
 
   describe('answerValueSet with FHIR context, answers displayed as matrix', () => {
-    const f1a1 = '/g1m1/1/1N',
-      f1a2 = '/g1m1/1/1Y',
-      f1a3 = '/g1m1/1/1asked-unknown',
-      f2a1 = 'yesno2/1N',
-      f2a2 = 'yesno2/1Y',
-      f2a3 = 'yesno2/1asked-unknown',
-      f3a1 = 'yesno3/1N',
-      f3a2 = 'yesno3/1Y',
-      f3a3 = 'yesno3/1asked-unknown',
-      f3Other = 'yesno3/1_other',
-      f4a1 = 'yesno4/1N',
-      f4a2 = 'yesno4/1Y',
-      f4a3 = 'yesno4/1asked-unknown',
-      f4Other = 'yesno4/1_other',
-      f5a1 = 'yesno5/1N',
-      f5a2 = 'yesno5/1Y',
-      f5a3 = 'yesno5/1asked-unknown',
-      f5Other = 'yesno5/1_other',
-      f5OtherValue = 'yesno5/1_otherValue',
-      f6a1 = 'yesno6/1N',
-      f6a2 = 'yesno6/1Y',
-      f6a3 = 'yesno6/1asked-unknown',
-      f6Other = 'yesno6/1_other',
-      f6OtherValue = 'yesno6/1_otherValue';
-
     before(() => {
       cy.window().then((win) => {
         const fhirContext = new Function(
@@ -429,22 +394,24 @@ describe('FHIR answerValueSet', () => {
         m = 1;
       while (g < 5) {
         while (m < 4) {
-          cy.byId('/g' + g + 'm' + m + '/1/1N').should('be.visible');
-          cy.byId('/g' + g + 'm' + m + '/1/1Y').should('be.visible');
-          cy.byId('/g' + g + 'm' + m + '/1/1asked-unknown').should(
-            'be.visible'
-          );
+          cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+            'http://terminology.hl7.org/CodeSystem/v2-0136', 'N')).should('be.visible');
+          cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+            'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y')).should('be.visible');
+          cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+            'http://terminology.hl7.org/CodeSystem/data-absent-reason',
+            'asked-unknown')).should('be.visible');
           m++;
         }
         g++;
       }
-      cy.byId('/g3m1/1/1_other').should('be.visible');
-      cy.byId('/g3m2/1/1_other').should('be.visible');
-      cy.byId('/g3m3/1/1_other').should('be.visible');
+      cy.byId(answerId('/g3m1/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g3m2/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g3m3/1/1', '_other')).should('be.visible');
 
-      cy.byId('/g4m1/1/1_other').should('be.visible');
-      cy.byId('/g4m2/1/1_other').should('be.visible');
-      cy.byId('/g4m3/1/1_other').should('be.visible');
+      cy.byId(answerId('/g4m1/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g4m2/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g4m3/1/1', '_other')).should('be.visible');
     });
 
     it('should have expected answer list and saved value when the QuestionnaireResponse is merged to the Questionnaire', () => {
@@ -473,22 +440,24 @@ describe('FHIR answerValueSet', () => {
                   m = 1;
                 while (g < 5) {
                   while (m < 4) {
-                    cy.byId('/g' + g + 'm' + m + '/1/1N').should('be.visible');
-                    cy.byId('/g' + g + 'm' + m + '/1/1Y').should('be.visible');
-                    cy.byId('/g' + g + 'm' + m + '/1/1asked-unknown').should(
-                      'be.visible'
-                    );
+                    cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+                      'http://terminology.hl7.org/CodeSystem/v2-0136', 'N')).should('be.visible');
+                    cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+                      'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y')).should('be.visible');
+                    cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+                      'http://terminology.hl7.org/CodeSystem/data-absent-reason',
+                      'asked-unknown')).should('be.visible');
                     m++;
                   }
                   g++;
                 }
-                cy.byId('/g3m1/1/1_other').should('be.visible');
-                cy.byId('/g3m2/1/1_other').should('be.visible');
-                cy.byId('/g3m3/1/1_other').should('be.visible');
+                cy.byId(answerId('/g3m1/1/1', '_other')).should('be.visible');
+                cy.byId(answerId('/g3m2/1/1', '_other')).should('be.visible');
+                cy.byId(answerId('/g3m3/1/1', '_other')).should('be.visible');
 
-                cy.byId('/g4m1/1/1_other').should('be.visible');
-                cy.byId('/g4m2/1/1_other').should('be.visible');
-                cy.byId('/g4m3/1/1_other').should('be.visible');
+                cy.byId(answerId('/g4m1/1/1', '_other')).should('be.visible');
+                cy.byId(answerId('/g4m2/1/1', '_other')).should('be.visible');
+                cy.byId(answerId('/g4m3/1/1', '_other')).should('be.visible');
               }
             );
           }
@@ -859,14 +828,23 @@ describe('contained ValueSet without expansion', () => {
     cy.get('@listOptions')
       .should('be.visible')
       .should('have.length', 3);
+
     // radio
-    cy.byId('#group2-item1/1/1a').should('have.text', 'Answer 1');
-    cy.byId('#group2-item1/1/1b').should('have.text', 'Answer 2');
-    cy.byId('#group2-item1/1/1c').should('have.text', 'Answer 3');
+    cy.byId(answerId('group2-item1/1/1', 'lhc.forms.test.code.system',
+      'a')).should('have.text', 'Answer 1');
+    cy.byId(answerId('group2-item1/1/1', 'lhc.forms.test.code.system',
+      'b')).should('have.text', 'Answer 2');
+    cy.byId(answerId('group2-item1/1/1', 'lhc.forms.test.code.system',
+      'c')).should('have.text', 'Answer 3');
+
     // checkbox
-    cy.byId('#group2-item2/1/1a').should('have.text', 'Answer 1');
-    cy.byId('#group2-item2/1/1b').should('have.text', 'Answer 2');
-    cy.byId('#group2-item2/1/1c').should('have.text', 'Answer 3');
+    cy.byId(answerId('group2-item2/1/1', 'lhc.forms.test.code.system',
+      'a')).should('have.text', 'Answer 1');
+    cy.byId(answerId('group2-item2/1/1', 'lhc.forms.test.code.system',
+      'b')).should('have.text', 'Answer 2');
+    cy.byId(answerId('group2-item2/1/1', 'lhc.forms.test.code.system',
+      'c')).should('have.text', 'Answer 3');
+
   });
 
   it('should load contained ValueSet with no expansion from FHIR context', () => {
@@ -899,12 +877,18 @@ describe('contained ValueSet without expansion', () => {
       .should('be.visible')
       .should('have.length', 3);
     // radio
-    cy.byId('#group2-item1/1/1N').should('have.text', 'No');
-    cy.byId('#group2-item1/1/1Y').should('have.text', 'Yes');
-    cy.byId('#group2-item1/1/1asked-unknown').should('have.text', "Don't know");
+    cy.byId(answerId('group2-item1/1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'
+      )).should('have.text', 'No');
+    cy.byId(answerId('group2-item1/1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'
+      )).should('have.text', 'Yes');
+    cy.byId(answerId('group2-item1/1/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason',
+      'asked-unknown')).should('have.text', "Don't know");
     // checkbox
-    cy.byId('#group2-item2/1/1N').should('have.text', 'No');
-    cy.byId('#group2-item2/1/1Y').should('have.text', 'Yes');
-    cy.byId('#group2-item2/1/1asked-unknown').should('have.text', "Don't know");
+    cy.byId(answerId('group2-item2/1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'
+      )).should('have.text', 'No');
+    cy.byId(answerId('group2-item2/1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'
+      )).should('have.text', 'Yes');
+    cy.byId(answerId('group2-item2/1/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason',
+      'asked-unknown')).should('have.text', "Don't know");
   });
 });

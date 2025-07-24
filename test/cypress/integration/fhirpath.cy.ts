@@ -1,6 +1,7 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
 import * as FHIRSupport from '../../../src/fhir/versions.js';
 import {TestUtil} from '../support/testUtilFacade.js';
+import {answerId} from "../support/util";
 
 const fhirVersions = Object.keys(FHIRSupport);
 const tp = new TestPage();
@@ -205,7 +206,7 @@ describe('answerExpression', () => {
                             showQQR(qData, qr, 'formContainer', win2);
                           });
                           cy.byId('medication/1/1').should('not.have.value', '');
-                          cy.byId('strength/1/1213377').find('input').should('be.checked');
+                          cy.byId('strength/1/1||213377').find('input').should('be.checked');
                           cy.byId('rxcui/1/1').should('not.have.value', '');
                         });
                       });
@@ -228,14 +229,15 @@ describe('answerExpression', () => {
             cy.window().then((win) => {
               showQQR(qData, qr, 'formContainer', win);
               cy.byId('medication/1/1').should('not.have.value', '');
-              cy.byId('strength/1/1213377').find('input').should('be.checked');
-              cy.byId('strength/1/1_other').find('input').should('be.checked');
-              cy.byId('strength/1/1_otherValue').should('have.value', 'other value');
+              cy.byId(answerId('strength/1/1', undefined, '213377')).find('input').should('be.checked');
+              cy.byId(answerId('strength/1/1', '_other')).find('input').should('be.checked');
+              cy.byId(answerId('strength/1/1', '_otherValue')).should('have.value', 'other value');
               cy.byId('rxcui/1/1').should('not.have.value', '');
             });
           });
         });
       });
+
     });
   });
 

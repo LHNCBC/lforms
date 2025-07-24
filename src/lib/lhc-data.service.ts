@@ -305,12 +305,12 @@ export class LhcDataService {
    * Construct an id for an answer when it is rendered as a radio button
    * or a checkbox.
    * @param item an item in lhc-forms
-   * @param answer an answer in the item's answer list.
-   * @returns
+   * @param answer an answer in the item's answer list.  If this is a
+   *  string  an id for an "Other" option element is created.
+   * @returns the constructed id
    */
   getItemAnswerId(item, answer) {
-    let id = item._elementId + (answer.code || answer.text);
-    return id.replace(/\s+/g, '');
+    return InternalUtil.getItemAnswerId(item, answer);
   }
 
 

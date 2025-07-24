@@ -1273,7 +1273,14 @@ export default class LhcFormData {
       item._id = itemId;
 
       item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
-      item._elementId = item.linkId + item._idPath;
+      // linkId is of type 'string'-- it can be anything.  We need to escape the
+      // PATH_DELEMITER used in _idPath.
+      if (!item.linkId) {
+        throw new Error("linkId is missing for item '"+item.question+
+          "', but it is a required field for items.");
+      }
+      item._elementId = item.linkId.replaceAll('\\', '\\\\')
+        .replaceAll(this.PATH_DELIMITER, '\\'+ this.PATH_DELIMITER) + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
       if (item._displayLevel > this._totalLevelsOfHierarchy) {
         this._totalLevelsOfHierarchy = item._displayLevel;
