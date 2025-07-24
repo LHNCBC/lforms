@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.0.1] 2025-07-24
+### Fixed
+- Some languages use a different decimal character like "," instead
+  of ".". It is now configurable.
+
 ## [38.0.0] 2025-07-23
 ### Changed
 - HTML Element IDs for answers now include the code system to ensure their

@@ -1969,6 +1969,13 @@ export default class LhcFormData {
             if (!CommonUtils.isDecimal(value)) {
               this._invalidData = true;
             }
+            if (typeof value === "string") {
+              // In other languages like German, the decimal character is a comma.
+              // We will allow the German decimal format when it's built into German,
+              // but the comma has to be replaced with a period before being passed
+              // into parseFloat().
+              value = value.replace(language.decimalCharacter, '.');
+            }
             retValue = parseFloat(value);
             break;
           case CONSTANTS.DATA_TYPE.DT:
