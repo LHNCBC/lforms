@@ -1,6 +1,7 @@
 import { AddFormToPageTestPage } from '../../support/addFormToPageTest.po';
 import { TestUtil } from '../../support/testUtilFacade';
 import * as util from '../../support/util';
+const answerId = util.answerId;
 
 const fhirVersion = 'R4';
 const fhirMock = require('../../support/R4/fhir_context');
@@ -27,7 +28,7 @@ describe('FHIR answerValueSet', () => {
     });
 
     it('should have expected answer list when the Questionnaire is loaded', () => {
-      // load the questionnaire for the first time so that the answer list expanded from 
+      // load the questionnaire for the first time so that the answer list expanded from
       // item.answerValueSet is not cached.
       util.addFormToPage('q-with-answerValueSet-matrix.json', null, {
         fhirVersion,
@@ -36,22 +37,25 @@ describe('FHIR answerValueSet', () => {
         m = 1;
       while (g < 5) {
         while (m < 4) {
-          cy.byId('/g' + g + 'm' + m + '/1/1N').should('be.visible');
-          cy.byId('/g' + g + 'm' + m + '/1/1Y').should('be.visible');
-          cy.byId('/g' + g + 'm' + m + '/1/1asked-unknown').should(
+          cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+            'http://terminology.hl7.org/CodeSystem/v2-0136', 'N')).should('be.visible');
+          cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+            'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y')).should('be.visible');
+          cy.byId(answerId('/g' + g + 'm' + m + '/1/1',
+            'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown')).should(
             'be.visible'
           );
           m++;
         }
         g++;
       }
-      cy.byId('/g3m1/1/1_other').should('be.visible');
-      cy.byId('/g3m2/1/1_other').should('be.visible');
-      cy.byId('/g3m3/1/1_other').should('be.visible');
+      cy.byId(answerId('/g3m1/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g3m2/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g3m3/1/1', '_other')).should('be.visible');
 
-      cy.byId('/g4m1/1/1_other').should('be.visible');
-      cy.byId('/g4m2/1/1_other').should('be.visible');
-      cy.byId('/g4m3/1/1_other').should('be.visible');
+      cy.byId(answerId('/g4m1/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g4m2/1/1', '_other')).should('be.visible');
+      cy.byId(answerId('/g4m3/1/1', '_other')).should('be.visible');
 
     });
   });

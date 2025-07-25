@@ -2,6 +2,27 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.0.1] 2025-07-24
+### Fixed
+- Some languages use a different decimal character like "," instead
+  of ".". It is now configurable.
+
+## [38.0.0] 2025-07-23
+### Changed
+- HTML Element IDs for answers now include the code system to ensure their
+  uniqueness.  The element IDs are not a part of the public API, so technically
+  this is not a breaking change, but we recognize that some people might have
+  CSS that targets element IDs.
+
+## [37.0.0] 2025-07-10
+### Changed
+- Not to show the repetition number by default.
+- Never show the treeline or indentation on the first level.
+- Changed "hideTreeLine" to a string type that accept 'true', 'false' and
+  'auto'. The default is now 'auto', which means to show the treeline when
+  the questionnaire has more than 3 levels of the hierarchy, and hide the
+  treeline when there are up to 3 levels of the hierarchy.
+- Changed the treeline color to a lighter, less dominant color.
 
 ## [36.20.3] 2025-07-10
 ### Fixed

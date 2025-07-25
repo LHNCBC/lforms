@@ -1,6 +1,8 @@
 import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 import * as FHIRSupport from "../../../src/fhir/versions.js";
+const answerId = util.answerId;
+
 delete FHIRSupport.default;
 // R4B is same as R4 for Questionnaire and QuestionnaireResponse.
 // No need to test R4B in this test file.
@@ -11,7 +13,6 @@ let fhirVersions = Object.keys(FHIRSupport);
 const po = new AddFormToPageTestPage();
 
 function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionInFile) {
-  // valueString
   describe(fhirVersion + " - " + valueType, () => {
 
     it('should render a questionnaire with '+valueType+' in answerOption', function() {
@@ -34,7 +35,7 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       cy.byCss("#lhc-tools-searchResults li").eq(2).contains(params.itemValues.g1Answer3);
 
       // group 2
-      // raidobutoon
+      // raido button
       cy.byId(params.itemIds.g2item1ans2)
         .should('be.visible')
         .should('contain',params.itemValues.g1Answer2);
@@ -126,9 +127,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
       if (valueType === "valueCoding.open-choice") {
         cy.byId(`${params.itemIds.g6item1ans2} input`)
           .should('not.be.checked');
-        cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+        cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).find('input')
           .should('be.checked');
-        cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+        cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_otherValue'))
           .should('be.visible')
           .should('have.value', "user typed value")
       }
@@ -152,9 +153,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
         if (valueType === "valueCoding.open-choice") {
           cy.byId(`${params.itemIds.g6item2ans3} input`)
             .should('not.be.checked');
-          cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
+          cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).find('input')
             .should('be.checked');
-          cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
+          cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))
             .should('be.visible')
             .should('have.value', "user typed value")
         }
@@ -383,9 +384,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
           if (valueType === "valueCoding.open-choice") {
             cy.byId(`${params.itemIds.g6item1ans2} input`)
               .should('not.be.checked');
-            cy.byId(`valueCoding.open-choice-group6-item1/1/1_other input`)
+            cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).find('input')
               .should('be.checked');
-            cy.byId('valueCoding.open-choice-group6-item1/1/1_otherValue')
+            cy.byId(answerId('valueCoding.open-choice-group6-item1/1/1', '_otherValue'))
               .should('be.visible')
               .should('have.value', "user typed value")
           }
@@ -403,9 +404,9 @@ function testOneValueType(valueType, params, fhirVersion, fileName, fhirVersionI
             if (valueType === "valueCoding.open-choice") {
               cy.byId(`${params.itemIds.g6item2ans3} input`)
                 .should('not.be.checked');
-              cy.byId(`valueCoding.open-choice-group6-item2/1/1_other input`)
+              cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).find('input')
                 .should('be.checked');
-              cy.byId('valueCoding.open-choice-group6-item2/1/1_otherValue')
+              cy.byId(answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))
                 .should('be.visible')
                 .should('have.value', "user typed value")
             }
@@ -543,16 +544,16 @@ describe('AnswerOption with different types', () => {
           g5item1 : `${valueType}-group5-item1/1/1`,
           g5item2 : `${valueType}-group5-item2/1/1`,
 
-          g2item1ans2 : `${valueType}-group2-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g2item2ans2 : `${valueType}-group2-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g4item1ans2 : `${valueType}-group4-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g4item2ans2 : `${valueType}-group4-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item1ans1 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-          g6item1ans2 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item1ans3 : `${valueType}-group6-item1/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
-          g6item2ans1 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
-          g6item2ans2 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
-          g6item2ans3 : `${valueType}-group6-item2/1/1${coding? itemValues.g1Code3 : itemValues.g1Answer3}`
+          g2item1ans2 : `${valueType}-group2-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g2item2ans2 : `${valueType}-group2-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g4item1ans2 : `${valueType}-group4-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g4item2ans2 : `${valueType}-group4-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g6item1ans1 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
+          g6item1ans2 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g6item1ans3 : `${valueType}-group6-item1/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`,
+          g6item2ans1 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code1 : itemValues.g1Answer1}`,
+          g6item2ans2 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code2 : itemValues.g1Answer2}`,
+          g6item2ans3 : `${valueType}-group6-item2/1/1||${coding? itemValues.g1Code3 : itemValues.g1Answer3}`
         };
       });
 

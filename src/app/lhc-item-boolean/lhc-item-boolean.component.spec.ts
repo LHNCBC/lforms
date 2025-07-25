@@ -21,7 +21,7 @@ describe('LhcItemBooleanComponent', () => {
     fixture = TestBed.createComponent(LhcItemBooleanComponent);
     component = fixture.componentInstance;
     component.item = {
-      _elementId: 1,
+      _elementId: "1",
       question: 'question'
     };
     fixture.detectChanges();
