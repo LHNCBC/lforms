@@ -1,4 +1,5 @@
 import {TestPage} from '../../support/lforms_testpage.po.js';
+import {answerId} from '../../support/util';
 
 describe('rendering-xhtml', () => {
   describe('on answerOption', () => {
@@ -47,19 +48,20 @@ describe('rendering-xhtml', () => {
         cy.get('.testBold')
           .should('not.exist');
         // radio
-        cy.byId('#valueString-group2-item1/1/1bolda')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold a'))
           .should('have.text', "bold a");
-        cy.byId('#valueString-group2-item1/1/1boldb')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold b'))
           .should('have.text', "bold b");
-        cy.byId('#valueString-group2-item1/1/1boldc')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold c'))
           .should('have.text', "bold c");
         // checkbox
-        cy.byId('#valueString-group2-item2/1/1bolda')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold a'))
           .should('have.text', "bold a");
-        cy.byId('#valueString-group2-item2/1/1boldb')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold b'))
           .should('have.text', "bold b");
-        cy.byId('#valueString-group2-item2/1/1boldc')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold c'))
           .should('have.text', "bold c");
+
         // autocomplete
         cy.byId('#valueString-group1-item1/1/1')
           .focus();
@@ -110,18 +112,18 @@ describe('rendering-xhtml', () => {
         cy.get('.testItalic')
           .should('not.exist');
         // radio
-        cy.byId('#valueCoding-group2-item1/1/1a')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'a'))
           .should('have.text', "italic a");
-        cy.byId('#valueCoding-group2-item1/1/1b')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'b'))
           .should('have.text', "italic b");
-        cy.byId('#valueCoding-group2-item1/1/1c')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'c'))
           .should('have.text', "italic c");
         // checkbox
-        cy.byId('#valueCoding-group2-item2/1/1a')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'a'))
           .should('have.text', "italic a");
-        cy.byId('#valueCoding-group2-item2/1/1b')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'b'))
           .should('have.text', "italic b");
-        cy.byId('#valueCoding-group2-item2/1/1c')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'c'))
           .should('have.text', "italic c");
         // autocomplete
         cy.byId('#valueCoding-group1-item1/1/1')

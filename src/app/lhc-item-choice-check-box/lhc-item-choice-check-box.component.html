@@ -25,7 +25,7 @@
         [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
         [nzDisabled]="item._readOnly"
         [(ngModel)]="otherCheckboxModel"
-        [id]="item._elementId + '_other'">
+        [id]="lhcDataService.getItemAnswerId(item, '_other')">
         {{language.other}}
       </label>
       <input
@@ -33,7 +33,7 @@
         [ngModel]="otherValue"
         (ngModelChange)="onOtherValueChange($event)"
         class="lhc-answer-other-input"
-        [id]="item._elementId + '_otherValue'"
+        [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
         nz-input
         *ngIf="otherCheckboxModel"
         [disabled]="item._readOnly"

@@ -1,4 +1,6 @@
 import * as util from "../support/util";
+const answerId = util.answerId;
+
 // The project root directory is the root for the cypress server
 describe('"questionnaire-hidden" extension Test', () => {
   it('should hide all kinds of items that have the questionnnaire-hidden extension', () => {
@@ -57,9 +59,9 @@ describe('"questionnaire-hidden" extension Test', () => {
     // hidden question row in a matrix
     const mgroup = 'label-g-displayed-matrix/1'  //displayed matrix
     const row1 = 'label-g-displayed-matrix/q1/1/1' //a hidden question in a matrix
-    const radio1 = 'g-displayed-matrix/q1/1/1LA10427-5'
+    const radio1 = answerId('g-displayed-matrix/q1/1/1', 'http://loinc.org', 'LA10427-5');
     const row2 = 'label-g-displayed-matrix/q2/1/1' //a displayed question in a matrix
-    const radio2 = 'g-displayed-matrix/q2/1/1LA10427-5'
+    const radio2 = answerId('g-displayed-matrix/q2/1/1', 'http://loinc.org', 'LA10427-5');
     cy.byId(mgroup).should('be.visible');
     cy.byId(row1).should('not.exist');
     cy.byId(radio1).should('not.exist');

@@ -65,7 +65,7 @@ const Validation = {
         (value === undefined || value === null || value === '' ||
         (Array.isArray(value) && value.length ===0))) {
       ret = false;
-      errors.push("requires a value");
+      errors.push(language.requiresAValue);
     }
     return ret;
   },

@@ -1,4 +1,5 @@
 import * as util from "../support/util";
+const answerId = util.answerId;
 
 describe('Form with extract observation extension', () => {
 
@@ -73,9 +74,9 @@ describe('Form with extract observation extension', () => {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
 
-    cy.byId('blItem1/1false').click();
-    cy.window().then((win) => {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
+    cy.byId(answerId('blItem1/1', 'false')).click();
+    cy.window().then((win)=> {
+      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
       expect(bundle.length).to.equal(3);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);

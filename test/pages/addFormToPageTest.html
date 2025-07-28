@@ -138,7 +138,7 @@
           fileAnchor.value = '';
 
           try {
-            LForms.Util.addFormToPage(questionnaire, 'formContainer', 
+            LForms.Util.addFormToPage(questionnaire, 'formContainer',
                 {'fhirVersion':getFHIRVersion(), allowHTML, displayInvalidHTML, showCodingInstruction})
                 .then(function() {
               console.log("Form Added successfully")
@@ -156,6 +156,13 @@
               // Cause the event to bubble, since this element was just created.
               LForms.jQuery('#formContainer')[0].dispatchEvent(new Event('onError', e));
             });
+            LForms.jQuery('#formContainer')[0].addEventListener('onError', e => {
+              document.getElementById("loadMsg").innerHTML = e;
+              console.log("onError")
+              console.log(e);
+            });
+
+
             // The prepopulateFHIR variable below is a hack for the test code to signal
             // prepopulation is desired.
             var formContainer = LForms.jQuery('#formContainer wc-lhc-form')[0];

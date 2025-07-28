@@ -42,6 +42,10 @@
     .hide {
       display: none;
     }
+    #error {
+      background-color: yellow;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -118,6 +122,7 @@
     <button onclick="getInternalData()">Debug: Get internal data</button>
 
     <br><br>
+    <div id="error"></div>
     <wc-lhc-form id='test-form'></wc-lhc-form>
     <div id="formContainer"></div>
   </div>
@@ -175,7 +180,24 @@
       testForm.addEventListener('onError', e => {
         console.log("onError")
         console.log(e);
+        showError(e.detail);
       });
+
+
+      /**
+       *  Shows an error message.
+       */
+      function showError(msg) {
+        document.querySelector('#error').innerText = msg;
+      }
+
+
+      /**
+       *  Clears any error message.
+       */
+      function clearErrorMsg() {
+        document.querySelector('#error').innerText = '';
+      }
 
 
       /**
@@ -203,6 +225,7 @@
        * Load and display a form
        */
       async function fetchAndDisplayForm(formInfo) {
+        clearErrorMsg();
         let url = "/test/data/lforms/" + formInfo.name + ".json";
         let formData = await loadJsonFromUrl(url);
         testForm.questionnaire = formData;
@@ -405,6 +428,7 @@
        * Load a data file from local file system
        */
       function loadFile(event) {
+        clearErrorMsg();
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
         var qrFileField = document.querySelector('#qrFile');

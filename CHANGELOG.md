@@ -2,9 +2,21 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [37.1.0] 2025-07-23
+## [38.1.0] 2025-07-28
 ### Added
 - Support for observationExtract valueCode relationships (component or member).
+
+## [38.0.1] 2025-07-24
+### Fixed
+- Some languages use a different decimal character like "," instead
+  of ".". It is now configurable.
+
+## [38.0.0] 2025-07-23
+### Changed
+- HTML Element IDs for answers now include the code system to ensure their
+  uniqueness.  The element IDs are not a part of the public API, so technically
+  this is not a breaking change, but we recognize that some people might have
+  CSS that targets element IDs.
 
 ## [37.0.0] 2025-07-10
 ### Changed
