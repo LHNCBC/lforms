@@ -5,6 +5,7 @@
   "item": [
     {
       "type": "group",
+      "linkId": "tabContainer1",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -24,6 +25,7 @@
         {
           "type": "group",
           "text": "Tab One",
+          "linkId": "tab1",
           "item": [
             {
               "type": "group",
@@ -299,9 +301,11 @@
         {
           "type": "group",
           "text": "Tab Two",
+          "linkId": "tab2",
           "item": [
             {
               "type": "group",
+              "linkId": "tabContainer2",
               "extension": [
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -329,6 +333,7 @@
                 {
                   "type": "group",
                   "text": "Tab One",
+                  "linkId": "tab2tab1",
                   "item": [
                     {
                       "type": "string",
@@ -340,6 +345,7 @@
                 {
                   "type": "group",
                   "text": "Tab Two",
+                  "linkId": "tab2tab2",
                   "item": [
                     {
                       "type": "string",

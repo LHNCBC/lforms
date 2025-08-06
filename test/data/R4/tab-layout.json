@@ -5,6 +5,7 @@
   "item": [
     {
       "type": "group",
+      "linkId": "tabContainer",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -24,6 +25,7 @@
         {
           "type": "group",
           "text": "Tab One",
+          "linkId": "tab1",
           "item": [
             {
               "type": "string",
@@ -35,6 +37,7 @@
         {
           "type": "group",
           "text": "Tab Two",
+          "linkId": "tab2",
           "item": [
             {
               "type": "string",
