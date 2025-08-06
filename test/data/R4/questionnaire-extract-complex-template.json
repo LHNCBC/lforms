@@ -342,7 +342,29 @@
           "linkId": "gender",
           "text": "Gender",
           "type": "choice",
-          "answerValueSet": "http://hl7.org/fhir/ValueSet/administrative-gender"
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA2-8",
+                "display": "Male"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA3-6",
+                "display": "Female"
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA46-8",
+                "display": "Other"
+              }
+            }
+          ]
         },
         {
           "linkId": "dob",
