@@ -1,0 +1,408 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "extract-complex-template",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-extr-template"
+    ]
+  },
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "patTemplate",
+      "identifier": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+              "valueString": "item.where(linkId = 'ihi').answer.value"
+            }
+          ],
+          "type": {
+            "text": "National Identifier (IHI)"
+          },
+          "system": "http://example.org/nhio",
+          "_value": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                "valueString": "first()"
+              }
+            ]
+          }
+        }
+      ],
+      "name": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+              "valueString": "item.where(linkId = 'name')"
+            }
+          ],
+          "_text": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                "valueString": "item.where(linkId='given' or linkId='family').answer.value.join(' ')"
+              }
+            ]
+          },
+          "_family": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                "valueString": "item.where(linkId = 'family').answer.value.first()"
+              }
+            ]
+          },
+          "_given": [
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                  "valueString": "item.where(linkId = 'given').answer.value"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "telecom": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+              "valueString": "item.where(linkId = 'mobile-phone').answer.value"
+            }
+          ],
+          "system": "phone",
+          "_value": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                "valueString": "first()"
+              }
+            ]
+          },
+          "use": "mobile"
+        }
+      ],
+      "gender": "unknown",
+      "_gender": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "item.where(linkId = 'gender').answer.value.first().code"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obsTemplateHeight",
+      "status": "final",
+      "category": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "vital-signs"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8302-2",
+            "display": "Body height"
+          }
+        ]
+      },
+      "subject": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%NewPatientId"
+          }
+        ]
+      },
+      "effectiveDateTime": "1900-01-01",
+      "_effectiveDateTime": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%resource.authored"
+          }
+        ]
+      },
+      "_issued": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%resource.authored"
+          }
+        ]
+      },
+      "performer": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+              "valueString": "%resource.author"
+            }
+          ]
+        }
+      ],
+      "valueQuantity": {
+        "_value": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+              "valueString": "answer.value * 100"
+            }
+          ]
+        },
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      },
+      "derivedFrom": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+              "valueString": "%resource.id"
+            }
+          ],
+          "_reference": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                "valueString": "'QuestionnaireResponse/' + %resource.id"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obsTemplateWeight",
+      "status": "final",
+      "category": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "vital-signs"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "29463-7",
+            "display": "Weight"
+          }
+        ]
+      },
+      "subject": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%NewPatientId"
+          }
+        ]
+      },
+      "effectiveDateTime": "1900-01-01",
+      "_effectiveDateTime": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%resource.authored"
+          }
+        ]
+      },
+      "_issued": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%resource.authored"
+          }
+        ]
+      },
+      "performer": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+              "valueString": "%resource.author"
+            }
+          ]
+        }
+      ],
+      "valueQuantity": {
+        "_value": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+              "valueString": "answer.value"
+            }
+          ]
+        },
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      },
+      "derivedFrom": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+              "valueString": "%resource.id"
+            }
+          ],
+          "_reference": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                "valueString": "'QuestionnaireResponse/' + %resource.id"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-extractAllocateId",
+      "valueString": "NewPatientId"
+    }
+  ],
+  "url": "http://hl7.org/fhir/uv/sdc/Questionnaire/extract-complex-template",
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:2.16.840.1.113883.4.642.40.17.35.34"
+    }
+  ],
+  "name": "ExtractComplexTemplate",
+  "title": "Complex Extract Demonstration - Template",
+  "status": "draft",
+  "description": "Complex template-based extraction example",
+  "item": [
+    {
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "template",
+              "valueReference": {
+                "reference": "#patTemplate"
+              }
+            },
+            {
+              "url": "fullUrl",
+              "valueString": "%NewPatientId"
+            }
+          ],
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract"
+        }
+      ],
+      "linkId": "patient",
+      "text": "Patient Information",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "name",
+          "text": "Name",
+          "type": "group",
+          "repeats": true,
+          "item": [
+            {
+              "linkId": "given",
+              "text": "Given Name(s)",
+              "type": "string",
+              "repeats": true
+            },
+            {
+              "linkId": "family",
+              "text": "Family/Surname",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "linkId": "gender",
+          "text": "Gender",
+          "type": "choice",
+          "answerValueSet": "http://hl7.org/fhir/ValueSet/administrative-gender"
+        },
+        {
+          "linkId": "dob",
+          "text": "Date of Birth",
+          "type": "date"
+        },
+        {
+          "linkId": "ihi",
+          "text": "National Identifier (IHI)",
+          "type": "string"
+        },
+        {
+          "linkId": "mobile-phone",
+          "text": "Mobile Phone number",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "linkId": "obs",
+      "text": "Observations",
+      "type": "group",
+      "item": [
+        {
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "template",
+                  "valueReference": {
+                    "reference": "#obsTemplateHeight"
+                  }
+                }
+              ],
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract"
+            }
+          ],
+          "linkId": "height",
+          "text": "What is your current height (m)",
+          "type": "decimal"
+        },
+        {
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "template",
+                  "valueReference": {
+                    "reference": "#obsTemplateWeight"
+                  }
+                }
+              ],
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract"
+            }
+          ],
+          "linkId": "weight",
+          "text": "What is your current weight (kg)",
+          "type": "decimal"
+        }
+      ]
+    }
+  ]
+}
