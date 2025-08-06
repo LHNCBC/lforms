@@ -5,11 +5,13 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button.component';
 import { EventEmitter } from 'events';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import { getItemAnswerElem } from '../ng-unit-test-helpers';
 
 describe('LhcItemChoiceRadioButtonComponent', () => {
   let component: LhcItemChoiceRadioButtonComponent;
   let fixture: ComponentFixture<LhcItemChoiceRadioButtonComponent>;
   let element: HTMLElement;
+  let lhcDataService;
 
   let itemRadioCNE: any =  {
     "questionCode": "q1a",
@@ -135,6 +137,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     fixture = TestBed.createComponent(LhcItemChoiceRadioButtonComponent);
     component = fixture.componentInstance;
     element = fixture.nativeElement;
+    lhcDataService = TestBed.inject(LhcDataService);
     fixture.detectChanges();
   });
 
@@ -152,7 +155,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     expect(radios.length).toBe(5)
 
     itemRadioCNE.answers.forEach(answer => {
-      const radio = element.querySelector('#' + itemRadioCNE._elementId + answer.code)
+      const radio = getItemAnswerElem(element, itemRadioCNE, answer);
       expect(radio.textContent).toContain(answer.text)
     })
 
@@ -167,11 +170,11 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     expect(radios.length).toBe(6)
 
     itemRadioCWE.answers.forEach(answer => {
-      const radio = element.querySelector('#' + itemRadioCWE._elementId + answer.code)
+      const radio = getItemAnswerElem(element, itemRadioCWE, answer);
       expect(radio.textContent).toContain(answer.text)
     })
 
-    const radio = element.querySelector('#' + itemRadioCWE._elementId + '_other')
+    const radio = getItemAnswerElem(element, itemRadioCWE, '_other');
     expect(radio.textContent).toContain('Other')
 
   })
@@ -181,7 +184,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     component.acOptions = acOptions;
     fixture.detectChanges();
 
-    let radio:HTMLElement = element.querySelector('#' + itemRadioCNE._elementId + itemRadioCNE.answers[0].code)
+    let radio:HTMLElement = getItemAnswerElem(element, itemRadioCNE, itemRadioCNE.answers[0])
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c1",
@@ -189,7 +192,9 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     })
 
     //item.value should change, when a different radio button is clicked
-    radio = element.querySelector('#' + itemRadioCNE._elementId + itemRadioCNE.answers[1].code)
+    console.log('%%% answers');
+    console.log(itemRadioCNE.answers);
+    radio = getItemAnswerElem(element, itemRadioCNE, itemRadioCNE.answers[1])
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",
@@ -203,15 +208,15 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     component.acOptions = acOptions;
     fixture.detectChanges();
 
-    let radio:HTMLElement = element.querySelector('#' + itemRadioCWE._elementId + itemRadioCWE.answers[2].code)
+    let radio:HTMLElement = getItemAnswerElem(element, itemRadioCWE, itemRadioCWE.answers[2]);
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c3",
       "text": "Answer Z"
-    })
+    });
 
     //item.value should change, when the "other" radio button is clicked
-    radio = element.querySelector('#' + itemRadioCWE._elementId + '_other')
+    radio = getItemAnswerElem(element, itemRadioCWE, '_other');
     radio.click();
     fixture.detectChanges();
     expect(component.item.value).toEqual({
@@ -219,7 +224,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
       "_notOnList": true
     })
 
-    let otherInput:HTMLInputElement = element.querySelector('#' + itemRadioCWE._elementId + '_otherValue')
+    let otherInput:HTMLInputElement = getItemAnswerElem(element, itemRadioCWE, '_otherValue');
     otherInput.value = 'some value';
     otherInput.dispatchEvent(new Event('input'));
     otherInput.dispatchEvent(new KeyboardEvent('keyup', {
@@ -252,13 +257,13 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     })
 
     // radio button is selected
-    let radio:HTMLInputElement = element.querySelector('#' + itemRadioCNE._elementId + itemRadioCNE.answers[0].code + ' input[type="radio"]')
+    //let radio:HTMLInputElement = element.querySelector('#' + itemRadioCNE._elementId + itemRadioCNE.answers[0].code + ' input[type="radio"]')
 
     //TODO: radio.checked should be set to true as it is the case in non-test env
 //      expect(radio.checked).toBeTruthy();
 
     //item.value should change, when a different radio button is clicked
-    radio = element.querySelector('#' + itemRadioCNE._elementId + itemRadioCNE.answers[1].code)
+    let radio = getItemAnswerElem(element, itemRadioCNE, itemRadioCNE.answers[1]);
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",
@@ -284,13 +289,13 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     })
 
     // radio button is selected
-    let radio:HTMLInputElement = element.querySelector('#' + itemRadioCWE._elementId + '_other' + ' input[type="radio"]')
+    //let radio:HTMLInputElement = getItemAnswerElem(element.querySelector('#' + itemRadioCWE._elementId + '_other' + ' input[type="radio"]')
 
     //TODO: radio.checked should be set to true as it is the case in non-test env
 //      expect(radio.checked).toBeTruthy();
 
     //item.value should change, when a different radio button is clicked
-    radio = element.querySelector('#' + itemRadioCWE._elementId + itemRadioCWE.answers[1].code)
+    let radio = getItemAnswerElem(element, itemRadioCWE, itemRadioCWE.answers[1]);
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",

@@ -1,4 +1,5 @@
 import {TestPage} from '../../support/lforms_testpage.po.js';
+import {answerId} from "../../support/util";
 
 describe('rendering-xhtml', () => {
   describe('on item.text', () => {
@@ -181,18 +182,18 @@ describe('rendering-xhtml', () => {
         cy.get('.testBold')
           .should('not.exist');
         // radio
-        cy.byId('#valueString-group2-item1/1/1bolda')
+        cy.byId(answerId('#valueString-group2-item1/1/1', undefined, 'bold a'))
           .should('have.text', "bold a");
-        cy.byId('#valueString-group2-item1/1/1boldb')
+        cy.byId(answerId('#valueString-group2-item1/1/1', undefined, 'bold b'))
           .should('have.text', "bold b");
-        cy.byId('#valueString-group2-item1/1/1boldc')
+        cy.byId(answerId('#valueString-group2-item1/1/1', undefined, 'bold c'))
           .should('have.text', "bold c");
         // checkbox
-        cy.byId('#valueString-group2-item2/1/1bolda')
+        cy.byId(answerId('#valueString-group2-item2/1/1', undefined, 'bold a'))
           .should('have.text', "bold a");
-        cy.byId('#valueString-group2-item2/1/1boldb')
+        cy.byId(answerId('#valueString-group2-item2/1/1', undefined, 'bold b'))
           .should('have.text', "bold b");
-        cy.byId('#valueString-group2-item2/1/1boldc')
+        cy.byId(answerId('#valueString-group2-item2/1/1', undefined, 'bold c'))
           .should('have.text', "bold c");
         // autocomplete
         cy.byId('#valueString-group1-item1/1/1')
@@ -217,21 +218,21 @@ describe('rendering-xhtml', () => {
         cy.get('.testBold')
           .should('not.exist');
         // radio
-        cy.byId('#valueString-group2-item1/1/1bolda')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold a'))
           .should('have.text', "<script>bold</script> <b class='testBold'>A</b>");
-        cy.byId('#valueString-group2-item1/1/1boldb')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold b'))
           .should('have.text', "<script>bold</script> <b class='testBold'>B</b>");
-        cy.byId('#valueString-group2-item1/1/1boldc')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold c'))
           .should('have.text', "<script>bold</script> <b class='testBold'>C</b>");
         // checkbox
-        cy.byId('#valueString-group2-item2/1/1bolda')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold a'))
           .should('have.text', "<script>bold</script> <b class='testBold'>A</b>");
-        cy.byId('#valueString-group2-item2/1/1boldb')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold b'))
           .should('have.text', "<script>bold</script> <b class='testBold'>B</b>");
-        cy.byId('#valueString-group2-item2/1/1boldc')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold c'))
           .should('have.text', "<script>bold</script> <b class='testBold'>C</b>");
         // autocomplete
-        cy.byId('#valueString-group1-item1/1/1')
+        cy.byId('valueString-group1-item1/1/1')
           .focus();
         cy.get('#completionOptions li')
           .as('listOptions');
@@ -252,18 +253,18 @@ describe('rendering-xhtml', () => {
         cy.get('.testBold')
           .should('not.exist');
         // radio
-        cy.byId('#valueString-group2-item1/1/1bolda')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold a'))
           .should('have.text', "bold a");
-        cy.byId('#valueString-group2-item1/1/1boldb')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold b'))
           .should('have.text', "bold b");
-        cy.byId('#valueString-group2-item1/1/1boldc')
+        cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold c'))
           .should('have.text', "bold c");
         // checkbox
-        cy.byId('#valueString-group2-item2/1/1bolda')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold a'))
           .should('have.text', "bold a");
-        cy.byId('#valueString-group2-item2/1/1boldb')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold b'))
           .should('have.text', "bold b");
-        cy.byId('#valueString-group2-item2/1/1boldc')
+        cy.byId(answerId('valueString-group2-item2/1/1', undefined, 'bold c'))
           .should('have.text', "bold c");
         // autocomplete
         cy.byId('#valueString-group1-item1/1/1')
@@ -419,18 +420,18 @@ describe('rendering-xhtml', () => {
         cy.get('.testItalic')
           .should('not.exist');
         // radio
-        cy.byId('#valueCoding-group2-item1/1/1a')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'a'))
           .should('have.text', "italic a");
-        cy.byId('#valueCoding-group2-item1/1/1b')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'b'))
           .should('have.text', "italic b");
-        cy.byId('#valueCoding-group2-item1/1/1c')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'c'))
           .should('have.text', "italic c");
         // checkbox
-        cy.byId('#valueCoding-group2-item2/1/1a')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'a'))
           .should('have.text', "italic a");
-        cy.byId('#valueCoding-group2-item2/1/1b')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'b'))
           .should('have.text', "italic b");
-        cy.byId('#valueCoding-group2-item2/1/1c')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'c'))
           .should('have.text', "italic c");
         // autocomplete
         cy.byId('#valueCoding-group1-item1/1/1')
@@ -455,18 +456,18 @@ describe('rendering-xhtml', () => {
         cy.get('.testItalic')
           .should('not.exist');
         // radio
-        cy.byId('#valueCoding-group2-item1/1/1a')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'a'))
           .should('have.text', "<script>italic</script> <i class='testItalic'>A</i>");
-        cy.byId('#valueCoding-group2-item1/1/1b')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'b'))
           .should('have.text', "<script>italic</script> <i class='testItalic'>B</i>");
-        cy.byId('#valueCoding-group2-item1/1/1c')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'c'))
           .should('have.text', "<script>italic</script> <i class='testItalic'>C</i>");
         // checkbox
-        cy.byId('#valueCoding-group2-item2/1/1a')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'a'))
           .should('have.text', "<script>italic</script> <i class='testItalic'>A</i>");
-        cy.byId('#valueCoding-group2-item2/1/1b')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'b'))
           .should('have.text', "<script>italic</script> <i class='testItalic'>B</i>");
-        cy.byId('#valueCoding-group2-item2/1/1c')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'c'))
           .should('have.text', "<script>italic</script> <i class='testItalic'>C</i>");
         // autocomplete
         cy.byId('#valueCoding-group1-item1/1/1')
@@ -490,18 +491,18 @@ describe('rendering-xhtml', () => {
         cy.get('.testItalic')
           .should('not.exist');
         // radio
-        cy.byId('#valueCoding-group2-item1/1/1a')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'a'))
           .should('have.text', "italic a");
-        cy.byId('#valueCoding-group2-item1/1/1b')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'b'))
           .should('have.text', "italic b");
-        cy.byId('#valueCoding-group2-item1/1/1c')
+        cy.byId(answerId('valueCoding-group2-item1/1/1', undefined, 'c'))
           .should('have.text', "italic c");
         // checkbox
-        cy.byId('#valueCoding-group2-item2/1/1a')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'a'))
           .should('have.text', "italic a");
-        cy.byId('#valueCoding-group2-item2/1/1b')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'b'))
           .should('have.text', "italic b");
-        cy.byId('#valueCoding-group2-item2/1/1c')
+        cy.byId(answerId('valueCoding-group2-item2/1/1', undefined, 'c'))
           .should('have.text', "italic c");
         // autocomplete
         cy.byId('#valueCoding-group1-item1/1/1')
@@ -583,18 +584,18 @@ describe('rendering-xhtml', () => {
       cy.get('.testItalic')
         .should('not.exist');
       // radio
-      cy.byId('#group2-item1/1/1a')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'a'))
         .should('have.text', "italic a");
-      cy.byId('#group2-item1/1/1b')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'b'))
         .should('have.text', "italic b");
-      cy.byId('#group2-item1/1/1c')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'c'))
         .should('have.text', "italic c");
       // checkbox
-      cy.byId('#group2-item2/1/1a')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'a'))
         .should('have.text', "italic a");
-      cy.byId('#group2-item2/1/1b')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'b'))
         .should('have.text', "italic b");
-      cy.byId('#group2-item2/1/1c')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'c'))
         .should('have.text', "italic c");
       // autocomplete
       cy.byId('#group1-item1/1/1')
@@ -617,19 +618,19 @@ describe('rendering-xhtml', () => {
       cy.get('#displayInvalidHTML').click();
       tp.loadFromTestData('q-with-rendering-xhtml-contained-valueset-with-invalid-tag.json', 'R4');
       // radio
-      cy.byId('#group2-item1/1/1a')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'a'))
         .should('have.text', "<script>italic</script> A");
-      cy.byId('#group2-item1/1/1b')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'b'))
         .should('have.text', "italic b");
-      cy.byId('#group2-item1/1/1c')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'c'))
         .find('.testItalic')
         .should('have.length', 1);
       // checkbox
-      cy.byId('#group2-item2/1/1a')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'a'))
         .should('have.text', "<script>italic</script> A");  // displays invalid tags
-      cy.byId('#group2-item2/1/1b')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'b'))
         .should('have.text', "italic b"); // displays plain text
-      cy.byId('#group2-item2/1/1c')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'c'))
         .find('.testItalic')
         .should('have.length', 1);  // displays HTML
       // autocomplete
@@ -661,19 +662,19 @@ describe('rendering-xhtml', () => {
       cy.get('#allowHTML').click();
       tp.loadFromTestData('q-with-rendering-xhtml-contained-valueset-with-invalid-tag.json', 'R4');
       // radio
-      cy.byId('#group2-item1/1/1a')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'a'))
         .should('have.text', "italic a"); // displays plain text
-      cy.byId('#group2-item1/1/1b')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'b'))
         .should('have.text', "italic b"); // displays plain text
-      cy.byId('#group2-item1/1/1c')
+      cy.byId(answerId('group2-item1/1/1', 'test', 'c'))
         .find('.testItalic')
         .should('have.length', 1);  // displays HTML
       // checkbox
-      cy.byId('#group2-item2/1/1a')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'a'))
         .should('have.text', "italic a");
-      cy.byId('#group2-item2/1/1b')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'b'))
         .should('have.text', "italic b");
-      cy.byId('#group2-item2/1/1c')
+      cy.byId(answerId('group2-item2/1/1', 'test', 'c'))
         .find('.testItalic')
         .should('have.length', 1);
       // autocomplete

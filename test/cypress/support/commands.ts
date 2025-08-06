@@ -42,6 +42,9 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+
+import {escapeIDSelector} from './util';
+
 // unhide the file input element, upload a file and hide the file input element
 Cypress.Commands.add(
   'uploadFile',
@@ -61,15 +64,24 @@ Cypress.Commands.add(
   'byId',
   { prevSubject: 'optional' },
   (subject, idSelector) => {
-    const escapedSelector = idSelector.replace(/\//g,"\\/").replace(/\./g,"\\.").replace(/:/g,"\\:");
-    const cySelector = escapedSelector[0] === "#" ? escapedSelector : "#" + escapedSelector;
-    // escape the / in the id
-    if (subject) {
-      return cy.wrap(subject).find(cySelector);
-    }
-    else {
-      return cy.get(cySelector);
-    }
+    // idSelector might be a Promise-- maybe not needed?  Seems to be causing some issue
+/*    if (!idSelector.then)
+      idSelector = Promise.resolve(idSelector);
+    idSelector.then(idSelVal=> {
+    */
+      // escape / and | in the id
+
+//cy.log("typeof isSelVal = "+typeof isSelVal);
+//cy.log("isSelVal = "+isSelVal);
+      const escapedSelector = escapeIDSelector(idSelector);
+      const cySelector = escapedSelector[0] === "#" ? escapedSelector : "#" + escapedSelector;
+      if (subject) {
+        return cy.wrap(subject).find(cySelector);
+      }
+      else {
+        return cy.get(cySelector);
+      }
+ //   });
   }
 );
 

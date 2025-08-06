@@ -128,8 +128,12 @@ describe('Form pre-population', () => {
         });
 
         it('should convert values from observationLinkPeriod', () => {
-          tp.openBaseTestPage();
-          TestUtil.waitForFHIRLibsLoaded();
+          // The previous tests used the same form, which I think might be have
+          // been the cause of this test failing.  (Perhaps the form didn't
+          // reload?  I can't reproduce that by hand, though the test form used
+          // to have that issue.)) Switching to a new form temporarily as below allows the
+          // test to pass.
+          tp.loadFromTestData('multipleCodes.json', 'R4');
           setServerFHIRContext(serverFHIRNum, {
             value: 140,
             unit: '[lb_av]',

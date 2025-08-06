@@ -15,7 +15,7 @@ const CommonUtils = {
 
   intRegex: /^\s*(\+|-)?\d+\s*$/,
 
-  decRegex: /^\s*[\+-]?([\+-]?\d+\.?\d*([eE]?[\+|-]?\d+)?|[\+-]?\d*\.?\d+[eE]?([\+|-]?\d+)?)\s*$/,
+  decRegex: new RegExp(language.decimalRegex),
 
   /**
    * Check if two answers can be treated as same

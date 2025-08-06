@@ -305,12 +305,12 @@ export class LhcDataService {
    * Construct an id for an answer when it is rendered as a radio button
    * or a checkbox.
    * @param item an item in lhc-forms
-   * @param answer an answer in the item's answer list.
-   * @returns
+   * @param answer an answer in the item's answer list.  If this is a
+   *  string  an id for an "Other" option element is created.
+   * @returns the constructed id
    */
   getItemAnswerId(item, answer) {
-    let id = item._elementId + (answer.code || answer.text);
-    return id.replace(/\s+/g, '');
+    return InternalUtil.getItemAnswerId(item, answer);
   }
 
 
@@ -330,32 +330,45 @@ export class LhcDataService {
 
   /**
    * Get CSS classes for the tree line
+   * @param isTopLevelItem whether it's a top level item
    * @returns {string}
    */
-  getTreeLineClass() {
+  getTreeLineClass(isTopLevelItem = false) {
+    if (isTopLevelItem) {
+      return '';
+    }
     const templateOptions = this.getLhcFormData().templateOptions;
-    return templateOptions.hideTreeLine || templateOptions.hideIndentation ? '' : 'lhc-tree-line';
+    if (templateOptions.hideIndentation ||
+      templateOptions.hideTreeLine === 'true' ||
+      templateOptions.hideTreeLine === true ||
+      (templateOptions.hideTreeLine === 'auto' && this.getLhcFormData()._totalLevelsOfHierarchy <= 3)) {
+      return '';
+    } else {
+      return 'lhc-tree-line';
+    }
   }
 
   /**
    * Get CSS classes for the indentation
+   * @param isTopLevelItem whether it's a top level item
    * @returns {string}
    */
-  getIndentationClass() {
-    return this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
+  getIndentationClass(isTopLevelItem = false) {
+    return isTopLevelItem || this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
   }
 
   /**
    * get CSS class list for an item
    * @param item an item in a form
    * @param viewMode view mode of the item
+   * @param isTopLevelItem whether item is a top level item
    */
-  getItemClassList(item, viewMode) {
+  getItemClassList(item, viewMode, isTopLevelItem = false) {
     const classList = [
       'lhc-item',
       this.getItemViewModeClass(item, viewMode),
-      this.getTreeLineClass(),
-      this.getIndentationClass(),
+      this.getTreeLineClass(isTopLevelItem),
+      this.getIndentationClass(isTopLevelItem),
       this.getSiblingStatus(item),
       this.getRowClass(item),
       this.getActiveRowClass(item)
