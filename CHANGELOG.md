@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.1.0] 2025-08-07
+### Added
+- Support for observationExtract valueCode relationships (component or member).
+
 ## [38.0.2] 2025-07-31
 ### Fixed
 - Child questions were also highlighted with background color
