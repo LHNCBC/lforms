@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.0.2] 2025-07-31
+### Fixed
+- Child questions were also highlighted with background color
+  when parent question was focused.
+
 ## [38.0.1] 2025-07-24
 ### Fixed
 - Some languages use a different decimal character like "," instead
