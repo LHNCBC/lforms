@@ -370,8 +370,7 @@ export class LhcDataService {
       this.getTreeLineClass(isTopLevelItem),
       this.getIndentationClass(isTopLevelItem),
       this.getSiblingStatus(item),
-      this.getRowClass(item),
-      this.getActiveRowClass(item)
+      this.getRowClass(item)
     ];
     return classList.join(' ');
   }
