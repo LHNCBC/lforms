@@ -10,7 +10,7 @@
       </ng-container>
       <!-- 'question' -->
       <ng-container *ngSwitchDefault>
-        <lhc-item-question [item]="item" class="lhc-de" [ngStyle]="lhcDataService.getItemStyle(item)"></lhc-item-question>
+        <lhc-item-question [item]="item" class="lhc-de {{lhcDataService.getActiveRowClass(item)}}" [ngStyle]="lhcDataService.getItemStyle(item)"></lhc-item-question>
         <!-- question item could have sub items -->
         <div *ngIf="item.items" class="lhc-item-group-body">
           <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">

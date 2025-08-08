@@ -2,9 +2,18 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [38.1.0] 2025-08-06
+## [38.2.0] 2025-08-08
 ### Added
 - Tab layout support.
+
+## [38.1.0] 2025-08-07
+### Added
+- Support for observationExtract valueCode relationships (component or member).
+
+## [38.0.2] 2025-07-31
+### Fixed
+- Child questions were also highlighted with background color
+  when parent question was focused.
 
 ## [38.0.1] 2025-07-24
 ### Fixed

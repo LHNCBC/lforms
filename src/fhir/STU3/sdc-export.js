@@ -45,45 +45,91 @@ var self = {
     var qrRef = 'QuestionnaireResponse/'+qr.id;
     var rtn = [qr];
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
-    for (var i=0, len=lfData.itemList.length; i<len; ++i) {
-      var item = lfData.itemList[i];
-      if (this._getExtractValue(item) && this._hasItemValue(item)) {
-        const categCodeableConcepts = [];
-        // Use the categories from the closest ancestor item (including itself)
-        var ancestor = item;
-        while (ancestor && !categCodeableConcepts.length) {
-          if (ancestor.extension) {
-            const categExts = LForms.Util.findObjectInArray(ancestor.extension, 'url',
-              this.fhirExtObsExtractCategory,  0, true);
-            categExts.forEach((x)=>categCodeableConcepts.push(x.valueCodeableConcept));
-          }
-          ancestor = ancestor._parentItem;
-        }
+    // A map from linkId to a lforms item or an extracted Observation.
+    // Used to find the parent Observation for ObsExtract relationships.
+    var linkIdToItemOrObsMap = {};
+    for (var i= -1, len=lfData.itemList.length; i<len; ++i) {
+      // Include lfData, the root item in the extraction.
+      var item = i === -1 ? lfData : lfData.itemList[i];
+      if (this._getExtractValue(item)) {
+        linkIdToItemOrObsMap[item.linkId] = item;
 
-        var obs = this._commonExport._createObservation(item);
-        for (var j=0, jLen=obs.length; j<jLen; j++) {
-          // Following
-          // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
-          if (qr.basedOn)
-            obs[j].basedOn = qr.basedOn;
-          if (qr.subject)
-            obs[j].subject = qr.subject;
-          if (qr.context)
-            obs[j].context = qr.context;
-          if (qr.authored) {
-            obs[j].effectiveDateTime = qr.authored;
-            obs[j].issued = qr.authored;
-          }
-          if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
-            obs[j].performer = qr.author;
-          if (categCodeableConcepts.length)
-            obs[j].category = categCodeableConcepts;
-
-          rtn.push(obs[j]);
+        if (this._hasItemValue(item)) {
+          this._processExtractedObservation(rtn, item, qr, qrRef, linkIdToItemOrObsMap);
         }
       }
     }
     return rtn;
+  },
+
+
+  /**
+   * Creates and processes an Observation resource from an LForms item.
+   * @private
+   * @param rtn an array of FHIR resources to which the Observation will be added
+   * @param item an LForms item object
+   * @param qr the QuestionnaireResponse object
+   * @param qrRef a temporary reference to the QuestionnaireResponse id
+   * @param linkIdToItemOrObsMap a map from linkId to a lforms item or an extracted Observation
+   * @param noValue when set to true, extracts an Observation even the item has no value.
+   */
+  _processExtractedObservation: function(rtn, item, qr, qrRef, linkIdToItemOrObsMap, noValue = false) {
+    var obs = !noValue
+      ? this._commonExport._createObservation(item, item._obsExtractValueCode === 'member')
+      : this._commonExport._createObservationWithNoValue(item);
+
+    const categCodeableConcepts = [];
+    // Use the categories from the closest ancestor item (including itself)
+    var ancestor = item;
+    while (ancestor && !categCodeableConcepts.length) {
+      if (ancestor.extension) {
+        const categExts = LForms.Util.findObjectInArray(ancestor.extension, 'url',
+          this.fhirExtObsExtractCategory,  0, true);
+        categExts.forEach((x)=>categCodeableConcepts.push(x.valueCodeableConcept));
+      }
+      ancestor = ancestor._parentItem;
+    }
+
+    let parentObs;
+    if (item._obsExtractValueCode === 'component') {
+      parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
+      if (parentObs.resourceType !== 'Observation') {
+        // If the parent item in the map is still a lforms item and not an Observation,
+        // an Observation wasn't created for it because it has no value. Create an
+        // Observation for it now, since a child item of an ObsExtract relationship is found.
+        this._processExtractedObservation(rtn, parentObs, qr, qrRef, linkIdToItemOrObsMap, true);
+        // The item in the map is now an extracted Observation.
+        parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
+      }
+      parentObs.component = parentObs.component || [];
+      for (var j = 0, jLen = obs.length; j < jLen; j++) {
+        // newComponent will only have "code" and "value[x]" properties.
+        const {resourceType, status, meta, ...newComponent} = obs[j];
+        parentObs.component.push(newComponent);
+      }
+    } else {
+      for (var j=0, jLen=obs.length; j<jLen; j++) {
+        // Following
+        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+        if (qr.basedOn)
+          obs[j].basedOn = qr.basedOn;
+        if (qr.subject)
+          obs[j].subject = qr.subject;
+        if (qr.context)
+          obs[j].context = qr.context;
+        if (qr.authored) {
+          obs[j].effectiveDateTime = qr.authored;
+          obs[j].issued = qr.authored;
+        }
+        if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
+          obs[j].performer = qr.author;
+        if (categCodeableConcepts.length)
+          obs[j].category = categCodeableConcepts;
+
+        linkIdToItemOrObsMap[item.linkId] = obs[j];
+        rtn.push(obs[j]);
+      }
+    }
   },
 
 
