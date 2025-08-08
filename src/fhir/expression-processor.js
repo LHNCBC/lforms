@@ -560,9 +560,10 @@ import replaceAsync from 'string-replace-async';
      * @param item either an LFormsData or an item from an LFormsData.
      * @param expression the FHIRPath to evaluate with the context of item's
      *  equivalent node in the QuestionnaireResponse.
+     *  @param context (optional) the context for the FHIRPath evaluation.
      * @returns the result of the expression.
      */
-    _evaluateFHIRPath: function(item, expression) {
+    _evaluateFHIRPath: function(item, expression, context = null) {
       var fhirPathVal;
       // Find the item-level fhirpathVars
       var itemVars = this._itemWithVars(item)._fhirVariables;
@@ -573,7 +574,12 @@ import replaceAsync from 'string-replace-async';
         for (var k in itemVars)
           fVars[k] = itemVars[k];
         let contextNode, base;
-        if (item._elementId) {
+        if (context) {
+          contextNode = context;
+          base = 'QuestionnaireResponse.item';
+          fVars['qitem'] = this._linkIdToQItem[item.linkId];
+        }
+        else if (item._elementId) {
           contextNode = this._elemIDToQRItem[item._elementId];
           contextNode ||= {}; // the item might not be present in the QR if there is no value
           base = 'QuestionnaireResponse.item';

@@ -155,6 +155,7 @@ var self = {
     lfData._expressionProcessor._regenerateFhirVariableQ();
     lfData._expressionProcessor._regenerateQuestionnaireResp();
     this._processLFormsItemForTemplateExtract(lfData, templateExtractResults, lfData.contained, lfData._expressionProcessor);
+    console.log(templateExtractResults);
     return templateExtractResults;
   },
 
@@ -168,7 +169,10 @@ var self = {
       if (templateName) {
         templateName = templateName.substring(1); // Remove the leading '#'.
         const template = contained?.find(c => c.id === templateName);
-        this._processExtractionTemplate(template, lfItem, expressionProcessor);
+        const processedTemplate = this._processExtractionTemplate(template, lfItem, expressionProcessor);
+        if (processedTemplate) {
+          templateExtractResults.push(processedTemplate);
+        }
       }
     }
     if (lfItem.items && Array.isArray(lfItem.items)) {
@@ -195,23 +199,26 @@ var self = {
    * from the lForms item.
    * @returns an extracted resource.
    */
-  _processExtractionTemplate: function (template, item, expressionProcessor) {
-    console.log(template);
-    console.log(item);
+  _processExtractionTemplate: function (template, item, expressionProcessor, fhirPathContext) {
     const templateExtractContextExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractContext);
     if (templateExtractContextExt) {
-      const templateExtractContext = expressionProcessor._evaluateFHIRPath(item, templateExtractContextExt.valueString);
-      console.log(templateExtractContext);
+      const templateExtractContext = expressionProcessor._evaluateFHIRPath(item, templateExtractContextExt.valueString, fhirPathContext);
+      if (templateExtractContext) {
+        fhirPathContext = templateExtractContext;
+      } else {
+        return null;
+      }
     }
     for (const [key, value] of Object.entries(template)) {
       if (Array.isArray(value)) {
         value.forEach((v) => {
-          this._processExtractionTemplate(v, item, expressionProcessor);
+          this._processExtractionTemplate(v, item, expressionProcessor, fhirPathContext);
         });
       } else if (typeof value === 'object' && value !== null) {
-        this._processExtractionTemplate(value, item);
+        this._processExtractionTemplate(value, item, expressionProcessor, fhirPathContext);
       }
     }
+    return template;
   },
 
   /**
