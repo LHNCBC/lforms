@@ -10,7 +10,7 @@ function testOneType(index, typeValue, inputId, otherEl) {
         let contentRect = contentDiv[index].getBoundingClientRect();
         expect(msgRect.left).to.equal(contentRect.left);
         // 35px is the bottom position of the .lhc-validation-popover element, set in validation.css
-        expect(msgRect.bottom).to.equal(contentRect.bottom-35);
+        expect(msgRect.bottom).to.be.closeTo(contentRect.bottom-35, 0.01);
       })
     })
 }

@@ -850,6 +850,11 @@ function addCommonSDCImportFns(ns) {
             displayControl.questionLayout = "matrix";
           }
           break;
+        case 'tab-container':
+          if(lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "tabs";
+          }
+          break;
         default:
           displayControl = null;
       }

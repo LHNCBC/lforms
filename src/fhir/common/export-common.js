@@ -136,6 +136,27 @@ var self = {
     return obxs;
   },
 
+  /**
+   * Creates Observation resources from an LForms item object that
+   *  doesn't have a value.
+   * @param item an LForms item object
+   * @private
+   */
+  _createObservationWithNoValue: function(item) {
+    var obxs = [];
+    const obx = {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": item._codesToExtract || item.codeList,
+        "text": item.question
+      }
+    };
+    this._addVersionTag(obx);
+    obxs.push(obx);
+    return obxs;
+  },
+
 
   /**
    * Generate an almost unique ID for a given Observation code
