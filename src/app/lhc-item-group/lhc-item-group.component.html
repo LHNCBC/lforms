@@ -5,6 +5,9 @@
   <ng-container *ngSwitchCase="'matrix'">
     <lhc-group-matrix [item]="item" [acOptions]="item.items[0]?._autocompOptions"></lhc-group-matrix>
   </ng-container>
+  <ng-container *ngSwitchCase="'tabs'">
+    <lhc-group-tabs [item]="item"></lhc-group-tabs>
+  </ng-container>
   <ng-container *ngSwitchCase="'vertical'">
     <lhc-group-vertical [item]="item"></lhc-group-vertical>
   </ng-container>

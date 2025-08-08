@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.2.0] 2025-08-08
+### Added
+- Tab layout support.
+
 ## [38.1.0] 2025-08-07
 ### Added
 - Support for observationExtract valueCode relationships (component or member).
@@ -37,7 +41,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed a bug that the matrix layout ('table' in itemControl extension) 
   does not always display answers loaded from answerValueSet.
-  
+
 ## [36.20.2] 2025-07-09
 ### Fixed
 - answerValueSet expansion error under the field should still show

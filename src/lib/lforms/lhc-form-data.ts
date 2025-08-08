@@ -73,10 +73,12 @@ export default class LhcFormData {
     // whether to allow HTML content in item.text and the codingInstructions field.
     allowHTML: false,
     displayControl: {
-      // controls the question layout of the form. default value for questionLayout is "vertical".
-      // available value could be "horizontal" when all the items in the form are on the same level,
-      // or "matrix" when all the item are on the same level and all are CODING/INT/TM/DT/ST types items
-      // and all have the same list of answers. not changeable on a rendered form.
+      // Controls the question layout of the form. default value for questionLayout is "vertical".
+      // Available value could be:
+      // "horizontal" when all the items in the form are on the same level, or
+      // "matrix" when all the item are on the same level and all are CODING/INT/TM/DT/ST types items
+      // and all have the same list of answers. not changeable on a rendered form, or
+      // "tabs" when all immediate child items are of type "group" and do not declare any item controls themselves.
       "questionLayout": "vertical"
     },
     // controls the view mode of the form, permitted values are "lg", "md", "sm", and "auto".
