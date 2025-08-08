@@ -138,6 +138,67 @@ var self = {
   },
 
   /**
+   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
+   *  QuestionnaireResponse and perform template-based extraction.
+   *  This technique is called "template-based" because it uses a template resource(s)
+   *  to provide all the "boiler-plate" content for the resource that is to be extracted.
+   *  These templated resources are contained within the Questionnaire resource and referred to
+   *  by either the sdc-questionnaire-templateExtract or sdc-questionnaire-templateExtractBundle extensions.   *
+   * @param lfData a LForms form object
+   * @returns a transaction Bundle containing all the resources that were extracted from the QuestionnaireResponse.
+   */
+  extractFHIRDataByTemplate: function (lfData) {
+    const templateExtractResults = [];
+    if (!lfData) {
+      return templateExtractResults;
+    }
+    this._processLFormsItemForTemplateExtract(lfData, templateExtractResults, lfData.contained);
+    return templateExtractResults;
+  },
+
+  /**
+   * Recursively, process the LForms item and its children for template-based extraction.
+   */
+  _processLFormsItemForTemplateExtract: function(lfItem, templateExtractResults, contained) {
+    this._processExtractAllocateId(lfItem);
+    if (lfItem._fhirExt && lfItem._fhirExt[this.fhirExtTemplateExtract]) {
+      let templateName = lfItem._fhirExt[this.fhirExtTemplateExtract][0].extension?.find(e => e.url === 'template')?.valueReference.reference;
+      if (templateName) {
+        templateName = templateName.substring(1); // Remove the leading '#'.
+        const template = contained?.find(c => c.id === templateName);
+        this._processExtractionTemplate(template, lfItem);
+      }
+    }
+    if (lfItem.items && Array.isArray(lfItem.items)) {
+      lfItem.items.forEach((childItem) => {
+        this._processLFormsItemForTemplateExtract(childItem, templateExtractResults, contained);
+      });
+    }
+  },
+
+  /**
+   * Process the sdc-questionnaire-extractAllocateId extension on the item, if any.
+   */
+  _processExtractAllocateId: function (item) {
+    if (item._fhirExt && item._fhirExt[this.fhirExtExtractAllocateId]) {
+      const fhirPathVariableName = item._fhirExt[this.fhirExtExtractAllocateId][0].valueString;
+      console.log(fhirPathVariableName);
+      item._fhirVariables ||= {};
+      item._fhirVariables[fhirPathVariableName] = this._commonExport._getUniqueId(fhirPathVariableName);
+    }
+  },
+
+  /**
+   * Scan the contained template and fill the FHIRPath expressions with user-entered data
+   * from the lForms item.
+   * @returns an extracted resource.
+   */
+  _processExtractionTemplate: function (template, item) {
+    console.log(template);
+    console.log(item);
+  },
+
+  /**
    *  Proceses the LForms questionCardinality into FHIR.
    * @param targetItem an item in Questionnaire
    * @param item a LForms item
