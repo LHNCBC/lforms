@@ -152,26 +152,28 @@ var self = {
     if (!lfData) {
       return templateExtractResults;
     }
-    this._processLFormsItemForTemplateExtract(lfData, templateExtractResults, lfData.contained);
+    lfData._expressionProcessor._regenerateFhirVariableQ();
+    lfData._expressionProcessor._regenerateQuestionnaireResp();
+    this._processLFormsItemForTemplateExtract(lfData, templateExtractResults, lfData.contained, lfData._expressionProcessor);
     return templateExtractResults;
   },
 
   /**
    * Recursively, process the LForms item and its children for template-based extraction.
    */
-  _processLFormsItemForTemplateExtract: function(lfItem, templateExtractResults, contained) {
+  _processLFormsItemForTemplateExtract: function(lfItem, templateExtractResults, contained, expressionProcessor) {
     this._processExtractAllocateId(lfItem);
     if (lfItem._fhirExt && lfItem._fhirExt[this.fhirExtTemplateExtract]) {
       let templateName = lfItem._fhirExt[this.fhirExtTemplateExtract][0].extension?.find(e => e.url === 'template')?.valueReference.reference;
       if (templateName) {
         templateName = templateName.substring(1); // Remove the leading '#'.
         const template = contained?.find(c => c.id === templateName);
-        this._processExtractionTemplate(template, lfItem);
+        this._processExtractionTemplate(template, lfItem, expressionProcessor);
       }
     }
     if (lfItem.items && Array.isArray(lfItem.items)) {
       lfItem.items.forEach((childItem) => {
-        this._processLFormsItemForTemplateExtract(childItem, templateExtractResults, contained);
+        this._processLFormsItemForTemplateExtract(childItem, templateExtractResults, contained, expressionProcessor);
       });
     }
   },
@@ -193,9 +195,23 @@ var self = {
    * from the lForms item.
    * @returns an extracted resource.
    */
-  _processExtractionTemplate: function (template, item) {
+  _processExtractionTemplate: function (template, item, expressionProcessor) {
     console.log(template);
     console.log(item);
+    const templateExtractContextExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractContext);
+    if (templateExtractContextExt) {
+      const templateExtractContext = expressionProcessor._evaluateFHIRPath(item, templateExtractContextExt.valueString);
+      console.log(templateExtractContext);
+    }
+    for (const [key, value] of Object.entries(template)) {
+      if (Array.isArray(value)) {
+        value.forEach((v) => {
+          this._processExtractionTemplate(v, item, expressionProcessor);
+        });
+      } else if (typeof value === 'object' && value !== null) {
+        this._processExtractionTemplate(value, item);
+      }
+    }
   },
 
   /**

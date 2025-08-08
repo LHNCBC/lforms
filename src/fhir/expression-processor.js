@@ -86,18 +86,7 @@ import replaceAsync from 'string-replace-async';
       else {
         this._pendingRun = false; // clear this because we are running them now
         this._runStart = new Date();
-        // Create an export of Questionnaire for the %questionnaire variable in
-        // FHIRPath.  We only need to do this once per form.
-        var lfData = this._lfData;
-        if (!lfData._fhirVariables.questionnaire) {
-          lfData._fhirVariables.questionnaire =
-            this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
-        }
-        if (!this._linkIdToQItem) {
-          this._linkIdToQItem = {};
-          this._addToLinkIdToQItemMap(lfData._fhirVariables.questionnaire.item,
-            this._linkIdToQItem);
-        }
+        this._regenerateFhirVariableQ();
         this._regenerateQuestionnaireResp();
         const self = this;
         this._currentRunPromise =
@@ -436,6 +425,25 @@ import replaceAsync from 'string-replace-async';
       }
       return fieldChanged;
     },
+
+
+    /**
+     * Create an export of Questionnaire for the %questionnaire variable in
+     * FHIRPath.  We only need to do this once per form.
+     */
+    _regenerateFhirVariableQ: function() {
+      var lfData = this._lfData;
+      if (!lfData._fhirVariables.questionnaire) {
+        lfData._fhirVariables.questionnaire =
+          this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
+      }
+      if (!this._linkIdToQItem) {
+        this._linkIdToQItem = {};
+        this._addToLinkIdToQItemMap(lfData._fhirVariables.questionnaire.item,
+          this._linkIdToQItem);
+      }
+    },
+
 
     /**
      *  Regenerates the QuestionnaireResponse resource and the map from
