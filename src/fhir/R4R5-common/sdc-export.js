@@ -206,16 +206,49 @@ var self = {
       if (templateExtractContext) {
         fhirPathContext = templateExtractContext;
       } else {
+        // If the context evaluates to no result, this templated property will be removed from the extracted resource.
         return null;
       }
     }
+    const templateExtractValueExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractValue);
+    if (templateExtractValueExt) {
+      return expressionProcessor._evaluateFHIRPath(item, templateExtractValueExt.valueString, fhirPathContext);
+    }
+    // Recursively process the template for child properties.
     for (const [key, value] of Object.entries(template)) {
+      if (key === 'extension') {
+        delete template[key];
+        // "extension" property doesn't need to be processed.
+        continue;
+      }
+      let processedValue = [];
       if (Array.isArray(value)) {
         value.forEach((v) => {
-          this._processExtractionTemplate(v, item, expressionProcessor, fhirPathContext);
+          const valueInArray = this._processExtractionTemplate(v, item, expressionProcessor, fhirPathContext);
+          // If the template property is in a collection, simply remove the templated value from the collection, don't clear the entire collection.
+          if (valueInArray) {
+            processedValue.push(valueInArray);
+          }
         });
       } else if (typeof value === 'object' && value !== null) {
-        this._processExtractionTemplate(value, item, expressionProcessor, fhirPathContext);
+        processedValue = this._processExtractionTemplate(value, item, expressionProcessor, fhirPathContext);
+      } else {
+        // Simple properties in the template that are preserved as-is.
+        processedValue = value;
+      }
+      if (processedValue) {
+        // Update the processed value on the key.
+        // If the key starts with "_", e.g. "_key", set the value to property "key" and remove the property "_key".
+        // For primitive properties in json the _key and key represent the same FHIR property and must be considered the same property.
+        if (key.startsWith('_')) {
+          template[key.substring(1)] = processedValue;
+          delete template[key];
+        } else {
+          template[key] = processedValue;
+        }
+      } else {
+        // If it evaluates to no result, this templated property will be removed from the extracted resource.
+        delete template[key];
       }
     }
     return template;
