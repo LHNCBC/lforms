@@ -23,6 +23,7 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 
 import { CopyrightCircleFill, QuestionCircleFill, CopyrightCircleOutline } from '@ant-design/icons-angular/icons';
@@ -50,6 +51,7 @@ import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.com
 import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertical.component';
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
+import { LhcGroupTabsComponent } from "./lhc-group-tabs/lhc-group-tabs.component";
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { LhcButtonPopoverComponent } from './lhc-button-popover/lhc-button-popover.component';
 import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
@@ -83,6 +85,7 @@ registerLocaleData(en);
         LhcGroupVerticalComponent,
         LhcGroupHorizontalComponent,
         LhcGroupMatrixComponent,
+        LhcGroupTabsComponent,
         SafeHtmlPipe,
         LhcButtonPopoverComponent,
         LhcItemAttachmentComponent,
@@ -103,7 +106,8 @@ registerLocaleData(en);
         NzGridModule,
         NzPopoverModule,
         NzIconModule.forRoot(icons),
-        NzSwitchModule], providers: [
+        NzSwitchModule,
+        NzTabsModule], providers: [
         { provide: NZ_I18N, useValue: en_US },
         provideHttpClient(withInterceptorsFromDi())
     ] })

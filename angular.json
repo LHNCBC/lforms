@@ -38,6 +38,7 @@
               "node_modules/ng-zorro-antd/date-picker/style/index.min.css",
               "node_modules/ng-zorro-antd/time-picker/style/index.min.css",
               "node_modules/ng-zorro-antd/switch/style/index.min.css",
+              "node_modules/ng-zorro-antd/tabs/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
             "scripts": [
@@ -196,6 +197,7 @@
               "node_modules/ng-zorro-antd/date-picker/style/index.min.css",
               "node_modules/ng-zorro-antd/time-picker/style/index.min.css",
               "node_modules/ng-zorro-antd/switch/style/index.min.css",
+              "node_modules/ng-zorro-antd/tabs/style/index.min.css",
               "node_modules/autocomplete-lhc/source/auto_completion.css"
             ],
             "scripts": [
