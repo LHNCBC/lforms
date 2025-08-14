@@ -195,6 +195,17 @@ var self = {
   },
 
   /**
+   * Combine the FHIRPath context and expression into the new expression to be evaluated.
+   */
+  _combineFHIRPathExpressionWithContext: function (expression, fhirPathContext) {
+    if (fhirPathContext) {
+      return `${fhirPathContext}.${expression}`;
+    } else {
+      return expression;
+    }
+  },
+
+  /**
    * Scan the contained template and fill the FHIRPath expressions with user-entered data
    * from the lForms item.
    * @returns an extracted resource.
@@ -202,9 +213,10 @@ var self = {
   _processExtractionTemplate: function (template, item, expressionProcessor, fhirPathContext) {
     const templateExtractContextExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractContext);
     if (templateExtractContextExt) {
-      const templateExtractContext = expressionProcessor._evaluateFHIRPath(item, templateExtractContextExt.valueString, fhirPathContext);
+      const newExpression = this._combineFHIRPathExpressionWithContext(templateExtractContextExt.valueString, fhirPathContext);
+      const templateExtractContext = expressionProcessor._evaluateFHIRPath(item, newExpression);
       if (templateExtractContext) {
-        fhirPathContext = templateExtractContext;
+        fhirPathContext = newExpression;
       } else {
         // If the context evaluates to no result, this templated property will be removed from the extracted resource.
         return null;
@@ -212,7 +224,7 @@ var self = {
     }
     const templateExtractValueExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractValue);
     if (templateExtractValueExt) {
-      return expressionProcessor._evaluateFHIRPath(item, templateExtractValueExt.valueString, fhirPathContext);
+      return expressionProcessor._evaluateFHIRPath(item, this._combineFHIRPathExpressionWithContext(templateExtractValueExt.valueString, fhirPathContext));
     }
     // Recursively process the template for child properties.
     for (const [key, value] of Object.entries(template)) {
@@ -224,10 +236,12 @@ var self = {
       let processedValue = [];
       if (Array.isArray(value)) {
         value.forEach((v) => {
-          const valueInArray = this._processExtractionTemplate(v, item, expressionProcessor, fhirPathContext);
-          // If the template property is in a collection, simply remove the templated value from the collection, don't clear the entire collection.
-          if (valueInArray) {
-            processedValue.push(valueInArray);
+          if (typeof v === 'object' && v !== null) {
+            const valueInArray = this._processExtractionTemplate(v, item, expressionProcessor, fhirPathContext);
+            // If the template property is in a collection, simply remove the templated value from the collection, don't clear the entire collection.
+            if (valueInArray) {
+              processedValue.push(valueInArray);
+            }
           }
         });
       } else if (typeof value === 'object' && value !== null) {
