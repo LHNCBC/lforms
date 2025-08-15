@@ -608,6 +608,41 @@ import replaceAsync from 'string-replace-async';
 
 
     /**
+     *  Evaluates the given FHIRPath expression defined in an extension against a given context.
+     * @param context could be a questionnaire item or an evaluated FHIRPath expression.
+     * @param expression the FHIRPath to evaluate.
+     * @param templateItem either an LFormsData or an item from an LFormsData.
+     * @returns the result of the expression.
+     */
+    _evaluateFHIRPathAgainstContext: function (context, expression, templateItem) {
+      var fhirPathVal;
+      var itemVars = this._itemWithVars(templateItem)._fhirVariables;
+      try {
+        var fVars = {};
+        for (var k in itemVars)
+          fVars[k] = itemVars[k];
+        let contextNode = context;
+        if (context._elementId) {
+          // If context is an LForms item instead of an evaluated FHIRPath expression value,
+          // we need to get the corresponding QuestionnaireResponse item.
+          contextNode = this._elemIDToQRItem[context._elementId];
+          contextNode ||= {};
+          const base = 'QuestionnaireResponse.item';
+          expression = {base, expression};
+        }
+        const compiledExpr =
+          this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel, {
+            async: true
+          });
+        fhirPathVal = compiledExpr(contextNode, fVars);
+      } catch (e) {
+        console.log(e);
+      }
+      return fhirPathVal;
+    },
+
+
+    /**
      *  Recursively adds items to a hash from the linkId of each item to the
      *  corresponding Questionnaire item.
      * @param qItems the items to be added the map

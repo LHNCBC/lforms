@@ -155,7 +155,6 @@ var self = {
     lfData._expressionProcessor._regenerateFhirVariableQ();
     lfData._expressionProcessor._regenerateQuestionnaireResp();
     this._processLFormsItemForTemplateExtract(lfData, templateExtractResults, lfData.contained, lfData._expressionProcessor);
-    console.log(templateExtractResults);
     return templateExtractResults;
   },
 
@@ -163,15 +162,21 @@ var self = {
    * Recursively, process the LForms item and its children for template-based extraction.
    */
   _processLFormsItemForTemplateExtract: function(lfItem, templateExtractResults, contained, expressionProcessor) {
-    this._processExtractAllocateId(lfItem);
+    this._processExtractAllocateId(lfItem, expressionProcessor);
     if (lfItem._fhirExt && lfItem._fhirExt[this.fhirExtTemplateExtract]) {
       let templateName = lfItem._fhirExt[this.fhirExtTemplateExtract][0].extension?.find(e => e.url === 'template')?.valueReference.reference;
       if (templateName) {
         templateName = templateName.substring(1); // Remove the leading '#'.
         const template = contained?.find(c => c.id === templateName);
-        const processedTemplate = this._processExtractionTemplate(template, lfItem, expressionProcessor);
-        if (processedTemplate) {
-          templateExtractResults.push(processedTemplate);
+        if (template) {
+          // Pass _fhirVariables into the template as a base for FHIR variables of the template's children.
+          // It includes LFormsData level variables (%resource, %questionnaire) and any variables from AllocateId extension.
+          template._fhirVariables = expressionProcessor._itemWithVars(lfItem)._fhirVariables;
+          // Pass the template's corresponding lfItem as the default context for FHIRPath evaluation for the template.
+          const processedTemplate = this._processExtractionTemplate(template, expressionProcessor, lfItem);
+          if (processedTemplate) {
+            templateExtractResults.push(processedTemplate);
+          }
         }
       }
     }
@@ -185,23 +190,11 @@ var self = {
   /**
    * Process the sdc-questionnaire-extractAllocateId extension on the item, if any.
    */
-  _processExtractAllocateId: function (item) {
+  _processExtractAllocateId: function (item, expressionProcessor) {
     if (item._fhirExt && item._fhirExt[this.fhirExtExtractAllocateId]) {
       const fhirPathVariableName = item._fhirExt[this.fhirExtExtractAllocateId][0].valueString;
-      console.log(fhirPathVariableName);
-      item._fhirVariables ||= {};
+      item._fhirVariables = expressionProcessor._itemWithVars(item)._fhirVariables;
       item._fhirVariables[fhirPathVariableName] = this._commonExport._getUniqueId(fhirPathVariableName);
-    }
-  },
-
-  /**
-   * Combine the FHIRPath context and expression into the new expression to be evaluated.
-   */
-  _combineFHIRPathExpressionWithContext: function (expression, fhirPathContext) {
-    if (fhirPathContext) {
-      return `${fhirPathContext}.${expression}`;
-    } else {
-      return expression;
     }
   },
 
@@ -210,13 +203,12 @@ var self = {
    * from the lForms item.
    * @returns an extracted resource.
    */
-  _processExtractionTemplate: function (template, item, expressionProcessor, fhirPathContext) {
+  _processExtractionTemplate: function (template, expressionProcessor, fhirPathContext) {
     const templateExtractContextExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractContext);
     if (templateExtractContextExt) {
-      const newExpression = this._combineFHIRPathExpressionWithContext(templateExtractContextExt.valueString, fhirPathContext);
-      const templateExtractContext = expressionProcessor._evaluateFHIRPath(item, newExpression);
+      const templateExtractContext = expressionProcessor._evaluateFHIRPathAgainstContext(fhirPathContext, templateExtractContextExt.valueString, template);
       if (templateExtractContext) {
-        fhirPathContext = newExpression;
+        fhirPathContext = templateExtractContext;
       } else {
         // If the context evaluates to no result, this templated property will be removed from the extracted resource.
         return null;
@@ -224,7 +216,7 @@ var self = {
     }
     const templateExtractValueExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractValue);
     if (templateExtractValueExt) {
-      return expressionProcessor._evaluateFHIRPath(item, this._combineFHIRPathExpressionWithContext(templateExtractValueExt.valueString, fhirPathContext));
+      return expressionProcessor._evaluateFHIRPathAgainstContext(fhirPathContext, templateExtractValueExt.valueString, template);
     }
     // Recursively process the template for child properties.
     for (const [key, value] of Object.entries(template)) {
@@ -233,11 +225,15 @@ var self = {
         // "extension" property doesn't need to be processed.
         continue;
       }
+      if (key === '_fhirVariables') {
+        continue;
+      }
       let processedValue = [];
       if (Array.isArray(value)) {
         value.forEach((v) => {
           if (typeof v === 'object' && v !== null) {
-            const valueInArray = this._processExtractionTemplate(v, item, expressionProcessor, fhirPathContext);
+            v._fhirVariables = template._fhirVariables;
+            const valueInArray = this._processExtractionTemplate(v, expressionProcessor, fhirPathContext);
             // If the template property is in a collection, simply remove the templated value from the collection, don't clear the entire collection.
             if (valueInArray) {
               processedValue.push(valueInArray);
@@ -245,7 +241,8 @@ var self = {
           }
         });
       } else if (typeof value === 'object' && value !== null) {
-        processedValue = this._processExtractionTemplate(value, item, expressionProcessor, fhirPathContext);
+        value._fhirVariables = template._fhirVariables;
+        processedValue = this._processExtractionTemplate(value, expressionProcessor, fhirPathContext);
       } else {
         // Simple properties in the template that are preserved as-is.
         processedValue = value;
@@ -265,6 +262,7 @@ var self = {
         delete template[key];
       }
     }
+    delete template._fhirVariables;
     return template;
   },
 
