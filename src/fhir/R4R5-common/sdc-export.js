@@ -164,7 +164,8 @@ var self = {
   _processLFormsItemForTemplateExtract: function(lfItem, templateExtractResults, contained, expressionProcessor) {
     this._processExtractAllocateId(lfItem, expressionProcessor);
     if (lfItem._fhirExt && lfItem._fhirExt[this.fhirExtTemplateExtract]) {
-      let templateName = lfItem._fhirExt[this.fhirExtTemplateExtract][0].extension?.find(e => e.url === 'template')?.valueReference.reference;
+      const templateExtractSubExtensions = lfItem._fhirExt[this.fhirExtTemplateExtract][0].extension;
+      let templateName = templateExtractSubExtensions.find(e => e.url === 'template')?.valueReference.reference;
       if (templateName) {
         templateName = templateName.substring(1); // Remove the leading '#'.
         const template = contained?.find(c => c.id === templateName);
@@ -175,6 +176,17 @@ var self = {
           // Pass the template's corresponding lfItem as the default context for FHIRPath evaluation for the template.
           const processedTemplate = this._processExtractionTemplate(template, expressionProcessor, lfItem);
           if (processedTemplate) {
+            // Assign fullUrl property to the template,if "fullUrl" sub extension is defined in templateExtract.
+            // Generate a new value if the fullUrl expression evaluates to no result.
+            const fullUrlExpression = templateExtractSubExtensions.find(e => e.url === 'fullUrl')?.valueString;
+            if (fullUrlExpression) {
+              processedTemplate.fullUrl =
+                expressionProcessor._evaluateFHIRPathAgainstContext(template, fullUrlExpression, lfItem) ||
+                this._commonExport._getUniqueId(fullUrlExpression);
+            }
+            // Remove the "id" property which only made sense for the contained template.
+            delete processedTemplate.id;
+            // This template is now processed and has value. Push it to the extracted results.
             templateExtractResults.push(processedTemplate);
           }
         }
