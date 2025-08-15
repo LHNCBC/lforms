@@ -146,16 +146,6 @@
           }
         ]
       },
-      "performer": [
-        {
-          "extension": [
-            {
-              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
-              "valueString": "%resource.author"
-            }
-          ]
-        }
-      ],
       "valueQuantity": {
         "_value": {
           "extension": [
@@ -236,16 +226,6 @@
           }
         ]
       },
-      "performer": [
-        {
-          "extension": [
-            {
-              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
-              "valueString": "%resource.author"
-            }
-          ]
-        }
-      ],
       "valueQuantity": {
         "_value": {
           "extension": [

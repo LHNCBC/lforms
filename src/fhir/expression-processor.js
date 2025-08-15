@@ -638,7 +638,7 @@ import replaceAsync from 'string-replace-async';
       } catch (e) {
         console.log(e);
       }
-      return fhirPathVal;
+      return fhirPathVal ? fhirPathVal[0] : null;
     },
 
 
