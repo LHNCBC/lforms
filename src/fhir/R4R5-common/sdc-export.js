@@ -36,7 +36,6 @@ var self = {
         (qr.identifier && qr.identifier.value) || "QR"
       );
     }
-
     var qrRef = "QuestionnaireResponse/" + qr.id;
     var rtn = [qr];
     // A map from linkId to a lforms item or an extracted Observation.
@@ -53,6 +52,9 @@ var self = {
         }
       }
     }
+
+    // Template-based extraction
+    rtn.push(this._extractFHIRDataByTemplate(lfData, qr));
     return rtn;
   },
 
@@ -147,7 +149,7 @@ var self = {
    * @param lfData a LForms form object
    * @returns a transaction Bundle containing all the resources that were extracted from the QuestionnaireResponse.
    */
-  extractFHIRDataByTemplate: function (lfData) {
+  _extractFHIRDataByTemplate: function (lfData, qr) {
     const bundleResult = {
       resourceType: 'Bundle',
       type: 'transaction',
@@ -157,7 +159,7 @@ var self = {
       return bundleResult;
     }
     lfData._expressionProcessor._regenerateFhirVariableQ();
-    lfData._expressionProcessor._regenerateQuestionnaireResp();
+    lfData._expressionProcessor._regenerateQuestionnaireResp(qr);
     this._processLFormsItemForTemplateExtract(lfData, bundleResult, lfData.contained, lfData._expressionProcessor);
     return bundleResult;
   },

@@ -449,8 +449,10 @@ import replaceAsync from 'string-replace-async';
      *  Regenerates the QuestionnaireResponse resource and the map from
      *  LFormsData _elementIDs to items in the QuestionnaireResponse.
      */
-    _regenerateQuestionnaireResp: function() {
-      var questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+    _regenerateQuestionnaireResp: function(questResp = null) {
+      if (!questResp) {
+        questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+      }
       if (!questResp) {
         throw new Error("Invalid data. Cannot generate a QuestionnaireResponse resource.");
       }

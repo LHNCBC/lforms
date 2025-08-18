@@ -247,9 +247,7 @@ const FormUtils = {
             options.noExtensions);
           break;
         case "QuestionnaireResponse":
-          if (options.extract === 'template')
-            fhirData = fhir.SDC.extractFHIRDataByTemplate(formData);
-          else if (options.extract)
+          if (options.extract)
             fhirData = fhir.SDC.convertLFormsToQRAndExtractFHIRData(formData,
               options.noExtensions, options.subject);
           else
