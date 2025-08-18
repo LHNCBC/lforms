@@ -148,20 +148,24 @@ var self = {
    * @returns a transaction Bundle containing all the resources that were extracted from the QuestionnaireResponse.
    */
   extractFHIRDataByTemplate: function (lfData) {
-    const templateExtractResults = [];
+    const bundleResult = {
+      resourceType: 'Bundle',
+      type: 'transaction',
+      entry: []
+    };
     if (!lfData) {
-      return templateExtractResults;
+      return bundleResult;
     }
     lfData._expressionProcessor._regenerateFhirVariableQ();
     lfData._expressionProcessor._regenerateQuestionnaireResp();
-    this._processLFormsItemForTemplateExtract(lfData, templateExtractResults, lfData.contained, lfData._expressionProcessor);
-    return templateExtractResults;
+    this._processLFormsItemForTemplateExtract(lfData, bundleResult, lfData.contained, lfData._expressionProcessor);
+    return bundleResult;
   },
 
   /**
    * Recursively, process the LForms item and its children for template-based extraction.
    */
-  _processLFormsItemForTemplateExtract: function(lfItem, templateExtractResults, contained, expressionProcessor) {
+  _processLFormsItemForTemplateExtract: function(lfItem, bundleResult, contained, expressionProcessor) {
     this._processExtractAllocateId(lfItem, expressionProcessor);
     if (lfItem._fhirExt && lfItem._fhirExt[this.fhirExtTemplateExtract]) {
       const templateExtractSubExtensions = lfItem._fhirExt[this.fhirExtTemplateExtract][0].extension;
@@ -176,27 +180,77 @@ var self = {
           // Pass the template's corresponding lfItem as the default context for FHIRPath evaluation for the template.
           const processedTemplate = this._processExtractionTemplate(template, expressionProcessor, lfItem);
           if (processedTemplate) {
-            // Assign fullUrl property to the template,if "fullUrl" sub extension is defined in templateExtract.
-            // Generate a new value if the fullUrl expression evaluates to no result.
-            const fullUrlExpression = templateExtractSubExtensions.find(e => e.url === 'fullUrl')?.valueString;
-            if (fullUrlExpression) {
-              processedTemplate.fullUrl =
-                expressionProcessor._evaluateFHIRPathAgainstContext(template, fullUrlExpression, lfItem) ||
-                this._commonExport._getUniqueId(fullUrlExpression);
-            }
-            // Remove the "id" property which only made sense for the contained template.
-            delete processedTemplate.id;
-            // This template is now processed and has value. Push it to the extracted results.
-            templateExtractResults.push(processedTemplate);
+            // This template is now processed. Push it to the extracted bundle.
+            bundleResult.entry.push(this._getBundleEntryForProcessedTemplate(processedTemplate, templateExtractSubExtensions, expressionProcessor, lfItem));
           }
         }
       }
     }
     if (lfItem.items && Array.isArray(lfItem.items)) {
       lfItem.items.forEach((childItem) => {
-        this._processLFormsItemForTemplateExtract(childItem, templateExtractResults, contained, expressionProcessor);
+        this._processLFormsItemForTemplateExtract(childItem, bundleResult, contained, expressionProcessor);
       });
     }
+  },
+
+  /**
+   * Assign Bundle.entry properties based on templateExtract sub extensions, and return the Bundle entry.
+   * See https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-templateExtract.html#populating-the-transaction-bundle-entry.
+   */
+  _getBundleEntryForProcessedTemplate: function (processedTemplate, templateExtractSubExtensions, expressionProcessor, lfItem) {
+    const entry = {
+      resource: processedTemplate,
+      request: {}
+    };
+    // Remove the "id" property which only made sense for the contained template.
+    delete processedTemplate.id;
+    // resourceId
+    let resourceId;
+    const resourceIdExpression = templateExtractSubExtensions.find(e => e.url === 'resourceId')?.valueString;
+    if (resourceIdExpression) {
+      resourceId = expressionProcessor._evaluateFHIRPathAgainstContext(processedTemplate, resourceIdExpression, lfItem);
+    }
+    if (resourceId) {
+      processedTemplate.id = resourceId;
+      entry.request.method = 'PUT';
+      entry.request.url = processedTemplate.resourceType + '/' + resourceId;
+    } else {
+      entry.request.method = 'POST';
+      entry.request.url = processedTemplate.resourceType;
+    }
+    // fullUrl
+    const fullUrlExpression = templateExtractSubExtensions.find(e => e.url === 'fullUrl')?.valueString;
+    if (fullUrlExpression) {
+      entry.fullUrl =
+        expressionProcessor._evaluateFHIRPathAgainstContext(processedTemplate, fullUrlExpression, lfItem) ||
+        // Generate a new value if the fullUrl expression evaluates to no result.
+        this._commonExport._getUniqueId(fullUrlExpression);
+    }
+    // request.ifNoneMatch
+    const ifNonMatchExpression = templateExtractSubExtensions.find(e => e.url === 'ifNoneMatch')?.valueString;
+    if (ifNonMatchExpression) {
+      entry.request.ifNoneMatch =
+        expressionProcessor._evaluateFHIRPathAgainstContext(processedTemplate, ifNonMatchExpression, lfItem);
+    }
+    // request.ifModifiedSince
+    const ifModifiedSinceExpression = templateExtractSubExtensions.find(e => e.url === 'ifModifiedSince')?.valueString;
+    if (ifModifiedSinceExpression) {
+      entry.request.ifModifiedSince =
+        expressionProcessor._evaluateFHIRPathAgainstContext(processedTemplate, ifModifiedSinceExpression, lfItem);
+    }
+    // request.ifMatch
+    const ifMatchExpression = templateExtractSubExtensions.find(e => e.url === 'ifMatch')?.valueString;
+    if (ifMatchExpression) {
+      entry.request.ifMatch =
+        expressionProcessor._evaluateFHIRPathAgainstContext(processedTemplate, ifMatchExpression, lfItem);
+    }
+    // request.ifNoneExist
+    const ifNoneExistExpression = templateExtractSubExtensions.find(e => e.url === 'ifNoneExist')?.valueString;
+    if (ifNoneExistExpression) {
+      entry.request.ifNoneExist =
+        expressionProcessor._evaluateFHIRPathAgainstContext(processedTemplate, ifNoneExistExpression, lfItem);
+    }
+    return entry;
   },
 
   /**
