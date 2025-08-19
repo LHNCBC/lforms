@@ -54,7 +54,10 @@ var self = {
     }
 
     // Template-based extraction
-    rtn.push(this._extractFHIRDataByTemplate(lfData, qr));
+    const templateExtractResult = this._extractFHIRDataByTemplate(lfData, qr);
+    if (templateExtractResult) {
+      rtn.push(templateExtractResult);
+    }
     return rtn;
   },
 
@@ -150,18 +153,48 @@ var self = {
    * @returns a transaction Bundle containing all the resources that were extracted from the QuestionnaireResponse.
    */
   _extractFHIRDataByTemplate: function (lfData, qr) {
-    const bundleResult = {
-      resourceType: 'Bundle',
-      type: 'transaction',
-      entry: []
-    };
-    if (!lfData) {
-      return bundleResult;
-    }
     lfData._expressionProcessor._regenerateFhirVariableQ();
     lfData._expressionProcessor._regenerateQuestionnaireResp(qr);
-    this._processLFormsItemForTemplateExtract(lfData, bundleResult, lfData.contained, lfData._expressionProcessor);
-    return bundleResult;
+    const templateExtractBundleResult = this._processLFormsDataForTemplateExtractBundle(lfData);
+    if (templateExtractBundleResult) {
+      return templateExtractBundleResult;
+    } else {
+      const bundleResult = {
+        resourceType: 'Bundle',
+        type: 'transaction',
+        entry: []
+      };
+      this._processLFormsItemForTemplateExtract(lfData, bundleResult, lfData.contained, lfData._expressionProcessor);
+      // Return null if no resource is extracted, otherwise return the bundle containing the extracted resources.
+      if (bundleResult.entry.length) {
+        return bundleResult;
+      } else {
+        return null;
+      }
+    }
+  },
+
+  /**
+   * Template-based extraction based on a contained transaction bundle resource template, if exists.
+   * The templateExtractBundle extension can onlybe at the root level.
+   */
+  _processLFormsDataForTemplateExtractBundle: function (lfData) {
+    if (lfData._fhirExt && lfData._fhirExt[this.fhirExtTemplateExtractBundle]) {
+      let templateName = lfData._fhirExt[this.fhirExtTemplateExtractBundle][0].valueReference?.reference;
+      if (templateName) {
+        templateName = templateName.substring(1); // Remove the leading '#'.
+        const template = lfData.contained?.find(c => c.id === templateName);
+        if (template) {
+          // Pass _fhirVariables into the template as a base for FHIR variables of the template's children.
+          // It includes LFormsData level variables (%resource, %questionnaire).
+          template._fhirVariables = lfData._fhirVariables;
+          // Pass the QR resource as the default context for FHIRPath evaluation for the template.
+          return this._processExtractionTemplate(template, lfData._expressionProcessor, lfData._fhirVariables.resource);
+        }
+      }
+    }
+    // Return null if the templateExtractBundle extension or template is not found.
+    return null;
   },
 
   /**

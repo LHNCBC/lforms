@@ -451,7 +451,7 @@ import replaceAsync from 'string-replace-async';
      */
     _regenerateQuestionnaireResp: function(questResp = null) {
       if (!questResp) {
-        questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+      questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
       }
       if (!questResp) {
         throw new Error("Invalid data. Cannot generate a QuestionnaireResponse resource.");
