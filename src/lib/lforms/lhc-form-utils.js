@@ -217,9 +217,9 @@ const FormUtils = {
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
    *  * extract:  a flag for QuestionnaireResponse that data should be extracted
-   *    (using the observationExtract extension).  In this case the returned
-   *    resource will be an array consisting of the QuestionnaireResponse and any
-   *    extracted Observations.
+   *    (using the observationExtract, templateExtract and templateExtractBundle extensions).
+   *    In this case the returned resource will be an array consisting of the QuestionnaireResponse, any
+   *    extracted Observations and a Bundle containing the extracted resources from templates.
    *  * subject: A local FHIR resource that is the subject of the output resource.
    *    If provided, a reference to this resource will be added to the output FHIR
    *    resource when applicable.

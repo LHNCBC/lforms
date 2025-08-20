@@ -448,6 +448,7 @@ import replaceAsync from 'string-replace-async';
     /**
      *  Regenerates the QuestionnaireResponse resource and the map from
      *  LFormsData _elementIDs to items in the QuestionnaireResponse.
+     *  @param questResp (optional) a QuestionnaireResponse resource to use.
      */
     _regenerateQuestionnaireResp: function(questResp = null) {
       if (!questResp) {

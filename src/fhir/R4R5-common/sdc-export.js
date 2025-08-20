@@ -13,9 +13,8 @@
 var self = {
   /**
    *  Convert LForms captured data to a bundle consisting of a FHIR SDC
-   *  QuestionnaireResponse and any extractable resources. (Currently this means
-   *  any Observations that can be extracted via the observationLinkPeriod
-   *  extension).
+   *  QuestionnaireResponse and any extractable resources. (Currently supported are
+   *  Observation based extraction and template based extraction).
    *
    * @param lfData a LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without
@@ -23,8 +22,8 @@ var self = {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations.  Observations
-   *  will have derivedFrom set to a temporary reference created for the returned
+   * @returns an array of QuestionnaireResponse, Observations and any resources in extraction templates.
+   *  Observations  will have derivedFrom set to a temporary reference created for the returned
    *  QuestionnaireResponse (the first element of the array). The caller may
    *  wish to put all of the returned resources into a transaction Bundle for
    *  creating them on a FHIR server.
@@ -148,8 +147,9 @@ var self = {
    *  This technique is called "template-based" because it uses a template resource(s)
    *  to provide all the "boiler-plate" content for the resource that is to be extracted.
    *  These templated resources are contained within the Questionnaire resource and referred to
-   *  by either the sdc-questionnaire-templateExtract or sdc-questionnaire-templateExtractBundle extensions.   *
+   *  by either the sdc-questionnaire-templateExtract or sdc-questionnaire-templateExtractBundle extensions.
    * @param lfData a LForms form object
+   * @param qr a QuestionnaireResponse object. It is already made available from the Observation based extraction.
    * @returns a transaction Bundle containing all the resources that were extracted from the QuestionnaireResponse.
    */
   _extractFHIRDataByTemplate: function (lfData, qr) {
@@ -176,7 +176,8 @@ var self = {
 
   /**
    * Template-based extraction based on a contained transaction bundle resource template, if exists.
-   * The templateExtractBundle extension can onlybe at the root level.
+   * The templateExtractBundle extension can only be at the root level.
+   * @param lfData a LForms form object
    */
   _processLFormsDataForTemplateExtractBundle: function (lfData) {
     if (lfData._fhirExt && lfData._fhirExt[this.fhirExtTemplateExtractBundle]) {
@@ -199,6 +200,10 @@ var self = {
 
   /**
    * Recursively, process the LForms item and its children for template-based extraction.
+   * @param lfItem a LForms item object
+   * @param bundleResult the temporary Bundle object to which the extracted resources will be added by the templateExtract extension.
+   * @param contained lfData.contained, which contains the extraction templates.
+   * @param expressionProcessor an ExpressionProcessor object that is used to evaluate FHIRPath expressions in the template.
    */
   _processLFormsItemForTemplateExtract: function(lfItem, bundleResult, contained, expressionProcessor) {
     this._processExtractAllocateId(lfItem, expressionProcessor);
@@ -231,6 +236,10 @@ var self = {
   /**
    * Assign Bundle.entry properties based on templateExtract sub extensions, and return the Bundle entry.
    * See https://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-templateExtract.html#populating-the-transaction-bundle-entry.
+   * @param processedTemplate the processed template resource.
+   * @param templateExtractSubExtensions sub extensions of the sdc-questionnaire-templateExtract extension.
+   * @param expressionProcessor an ExpressionProcessor object that is used to evaluate FHIRPath expressions in the template.
+   * @param lfItem the LForms item that has _fhirVariables in its parent tree.
    */
   _getBundleEntryForProcessedTemplate: function (processedTemplate, templateExtractSubExtensions, expressionProcessor, lfItem) {
     const entry = {
@@ -290,6 +299,8 @@ var self = {
 
   /**
    * Process the sdc-questionnaire-extractAllocateId extension on the item, if any.
+   * @param item a LForms item object
+   * @param expressionProcessor an ExpressionProcessor object that is used to evaluate FHIRPath expressions in the template.
    */
   _processExtractAllocateId: function (item, expressionProcessor) {
     if (item._fhirExt && item._fhirExt[this.fhirExtExtractAllocateId]) {
@@ -302,6 +313,9 @@ var self = {
   /**
    * Scan the contained template and fill the FHIRPath expressions with user-entered data
    * from the lForms item.
+   * @param template a template resource or its child item
+   * @param expressionProcessor an ExpressionProcessor object that is used to evaluate FHIRPath expressions in the template.
+   * @param fhirPathContext the context for FHIRPath evaluation. It could be a lfItem or an evaluated FHIRPath expression.
    * @returns an extracted resource.
    */
   _processExtractionTemplate: function (template, expressionProcessor, fhirPathContext) {
