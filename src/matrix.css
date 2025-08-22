@@ -38,6 +38,16 @@
 .lhc-form .lhc-form-matrix-cell-other {
   text-align: center;
 }
+
+@media (max-width: 600px) {
+  .lhc-form .lhc-form-matrix-table th.lhc-form-matrix-cell,
+  .lhc-form .lhc-form-matrix-table th.lhc-form-grid-table-header {
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+}
+
 .lhc-form .lhc-form-matrix-table th {
   padding: 4px;
 }
