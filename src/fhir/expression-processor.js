@@ -633,11 +633,7 @@ import replaceAsync from 'string-replace-async';
           const base = 'QuestionnaireResponse.item';
           expression = {base, expression};
         }
-        const compiledExpr =
-          this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel, {
-            async: true
-          });
-        fhirPathVal = compiledExpr(contextNode, fVars);
+        fhirPathVal = this._fhir.fhirpath.evaluate(contextNode, expression, fVars, this._fhir.fhirpathModel, {});
       } catch (e) {
         console.log(e);
       }
