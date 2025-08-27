@@ -90,6 +90,15 @@ describe('Template based extraction', () => {
       // FHIRPath expression evaluated on %resource.id.
       // Should match the QuestionnaireResponse id.
       expect(weight.derivedFrom[0].reference).to.equal(`QuestionnaireResponse/${bundle[0].id}`);
+      // templateExtractContext extension should have been removed.
+      expect(weight.derivedFrom[0].extension).to.be.undefined;
+      // Other extensions not related to template extract should be kept.
+      expect(weight.extension).to.deep.equal([
+        {
+          "url": "test extension url",
+          "valueString": "test extension value"
+        }
+      ]);
       expect(bundle[1].entry[2].request).to.deep.equal({
         "method": "POST",
         "url": "Observation"

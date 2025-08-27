@@ -324,6 +324,11 @@ var self = {
       const templateExtractContext = expressionProcessor._evaluateFHIRPathAgainstContext(fhirPathContext, templateExtractContextExt.valueString, template);
       if (templateExtractContext) {
         fhirPathContext = templateExtractContext;
+        // Remove the templateExtractContext extension from the extracted output after it is processed.
+        LForms.Util.removeObjectsFromArray(template.extension, 'url', this.fhirExtTemplateExtractContext, 0, true);
+        if (template.extension.length === 0) {
+          delete template.extension;
+        }
       } else {
         // If the context evaluates to no result, this templated property will be removed from the extracted resource.
         return null;
@@ -335,16 +340,12 @@ var self = {
     }
     // Recursively process the template for child properties.
     for (const [key, value] of Object.entries(template)) {
-      if (key === 'extension') {
-        delete template[key];
-        // "extension" property doesn't need to be processed.
-        continue;
-      }
       if (key === '_fhirVariables') {
         continue;
       }
-      let processedValue = [];
+      let processedValue;
       if (Array.isArray(value)) {
+        processedValue = [];
         value.forEach((v) => {
           if (typeof v === 'object' && v !== null) {
             v._fhirVariables = template._fhirVariables;

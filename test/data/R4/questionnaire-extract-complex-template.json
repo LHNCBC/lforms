@@ -182,6 +182,12 @@
       "resourceType": "Observation",
       "id": "obsTemplateWeight",
       "status": "final",
+      "extension": [
+        {
+          "url": "test extension url",
+          "valueString": "test extension value"
+        }
+      ],
       "category": [
         {
           "coding": [
