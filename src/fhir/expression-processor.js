@@ -612,7 +612,7 @@ import replaceAsync from 'string-replace-async';
 
     /**
      *  Evaluates the given FHIRPath expression defined in an extension against a given context.
-     * @param context could be a questionnaire item or an evaluated FHIRPath expression.
+     * @param context could be an LForms item or an evaluated FHIRPath expression.
      * @param expression the FHIRPath to evaluate.
      * @param templateItem either an LFormsData or an item from an LFormsData.
      * @returns the result of the expression.
