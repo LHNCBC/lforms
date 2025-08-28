@@ -184,8 +184,9 @@ var self = {
       let templateName = lfData._fhirExt[this.fhirExtTemplateExtractBundle][0].valueReference?.reference;
       if (templateName) {
         templateName = templateName.substring(1); // Remove the leading '#'.
-        const template = lfData.contained?.find(c => c.id === templateName);
+        let template = lfData.contained?.find(c => c.id === templateName);
         if (template) {
+          template = LForms.Util.deepCopy(template);
           // Pass _fhirVariables into the template as a base for FHIR variables of the template's children.
           // It includes LFormsData level variables (%resource, %questionnaire).
           template._fhirVariables = lfData._fhirVariables;
@@ -212,8 +213,9 @@ var self = {
       let templateName = templateExtractSubExtensions.find(e => e.url === 'template')?.valueReference.reference;
       if (templateName) {
         templateName = templateName.substring(1); // Remove the leading '#'.
-        const template = contained?.find(c => c.id === templateName);
+        let template = contained?.find(c => c.id === templateName);
         if (template) {
+          template = LForms.Util.deepCopy(template);
           // Pass _fhirVariables into the template as a base for FHIR variables of the template's children.
           // It includes LFormsData level variables (%resource, %questionnaire) and any variables from AllocateId extension.
           template._fhirVariables = expressionProcessor._itemWithVars(lfItem)._fhirVariables;
