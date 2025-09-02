@@ -365,7 +365,7 @@ var self = {
         // Simple properties in the template that are preserved as-is.
         processedValue = value;
       }
-      if (processedValue) {
+      if (processedValue && processedValue !== []) {
         // Update the processed value on the key.
         // If the key starts with "_", e.g. "_key", set the value to property "key" and remove the property "_key".
         // For primitive properties in json the _key and key represent the same FHIR property and must be considered the same property.
