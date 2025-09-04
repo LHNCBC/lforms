@@ -27,6 +27,9 @@ export const ErrorMessages = {
     },
     'answerValueSetLoadingError': {
       'en': 'Unable to load the answer list for this question.'
+    },
+    'hasModifierExtension': {
+      'en': 'modifierExtension is found in the Questionnaire resource. The rendered Questionnaire below and any QuestionnaireResponse created from it may not be correct.'
     }
   },
 
