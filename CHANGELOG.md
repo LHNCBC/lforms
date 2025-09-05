@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.3.0] 2025-09-05
+### Added
+- Show message on top of rendered form if modifierExtension is found
+  anywhere in the Questionnaire resource.
+
 ## [38.2.0] 2025-08-08
 ### Added
 - Tab layout support.
