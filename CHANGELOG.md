@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.2.1] 2025-09-09
+### Fixed
+- rendering-xhtml extension was not honored on answerOptions without scores
+  when displayScoreWithAnswerText is set to false.
+
 ## [38.2.0] 2025-08-08
 ### Added
 - Tab layout support.
