@@ -29,7 +29,7 @@ export const ErrorMessages = {
       'en': 'Unable to load the answer list for this question.'
     },
     'hasModifierExtension': {
-      'en': 'modifierExtension is found in the Questionnaire resource. The rendered Questionnaire below and any QuestionnaireResponse created from it may not be correct.'
+      'en': 'One or more modifierExtensions are found in the Questionnaire resource. The rendered Questionnaire below is for display only and may not be correctly rendered, and the QuestionnaireResponse generated from it may not be valid.'
     }
   },
 
