@@ -548,21 +548,21 @@ describe('rendering-xhtml', () => {
       it('should honor rendering-xhtml when displayScoreWithAnswerText is set to false', () => {
         util.addFormToPage('q-with-scores-with-rendering-xhtml.json', null, {fhirVersion: 'R4', allowHTML: true, displayScoreWithAnswerText: false});
         cy.byId('A-1/1/1').click();
-        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'display from rendering-xhtml');
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'A - display from rendering-xhtml');
         cy.byId('A-1/1/1').blur();
         cy.get('#lhc-tools-searchResults li:first-child').should('not.be.visible');
         cy.byId('B-1/1/1').click();
-        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'display from rendering-xhtml');
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'B - display from rendering-xhtml');
       });
 
       it('should honor rendering-xhtml when displayScoreWithAnswerText is set to true', () => {
         util.addFormToPage('q-with-scores-with-rendering-xhtml.json', null, {fhirVersion: 'R4', allowHTML: true, displayScoreWithAnswerText: true});
         cy.byId('A-1/1/1').click();
-        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'display from rendering-xhtml');
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'A - display from rendering-xhtml');
         cy.byId('A-1/1/1').blur();
         cy.get('#lhc-tools-searchResults li:first-child').should('not.be.visible');
         cy.byId('B-1/1/1').click();
-        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'display from rendering-xhtml - 1');
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'B - display from rendering-xhtml - 1');
       });
     });
 
