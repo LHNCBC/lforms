@@ -2085,13 +2085,25 @@ export default class LhcFormData {
 
     var iLen = items.length;
     var prevLinkId = '';
+    let repeatCount = 1;
     // process all items in the array except the last one
     for (var i=0; i<iLen; i++) {
       var item = items[i];
       if (prevLinkId !== '') {
         // it's a different item, and
-        // previous item is a repeating item, set the flag as the last in the repeating set
-        items[i - 1]._lastRepeatingItem = !!(prevLinkId !== item.linkId && items[i - 1]._questionRepeatable);
+        // previous item is a repeating item, and
+        // previous item has questionCardinality.max value of '*' or a number greater than repeatCount,
+        // set the flag as the last in the repeating set
+        items[i - 1]._lastRepeatingItem = (prevLinkId !== item.linkId && items[i - 1]._questionRepeatable &&
+          (items[i - 1].questionCardinality.max === '*' || parseInt(items[i - 1].questionCardinality.max) > repeatCount));
+        if (prevLinkId === item.linkId) {
+          // Keep track of the number of repeating items, to make sure it does not exceed maxOccurs value.
+          repeatCount++;
+        } else {
+          repeatCount = 1;
+        }
+      } else {
+        repeatCount = 1;
       }
       prevLinkId = item.linkId;
       // check sub levels
@@ -2100,7 +2112,8 @@ export default class LhcFormData {
       }
     }
     // the last item in the array
-    items[iLen - 1]._lastRepeatingItem = !!items[iLen - 1]._questionRepeatable;
+    items[iLen - 1]._lastRepeatingItem = !!(items[iLen - 1]._questionRepeatable &&
+      (items[iLen - 1].questionCardinality.max === '*' || parseInt(items[iLen - 1].questionCardinality.max) > repeatCount));
     // check sub levels
     if (items[iLen-1].items && items[iLen-1].items.length > 0) {
       this._updateLastRepeatingItemsStatus(items[iLen-1].items);
