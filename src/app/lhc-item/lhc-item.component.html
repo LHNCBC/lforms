@@ -24,6 +24,7 @@
         <div class="lhc-button-padding {{lhcDataService.getSiblingStatus(item)}}" *ngIf="item._lastRepeatingItem && !item._isHiddenFromView && lhcDataService.targetEnabled(item)">
           <div class="{{lhcDataService.getSkipLogicClass(item)}}">
             <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ {{item._text}}'></lhc-button-popover>
+            <span *ngIf="item._minOccursNotMet" style="color: red;"> This repeatable item should have at least {{item.questionCardinality.min}} occurrences.</span>
           </div>
         </div>
       </ng-container>

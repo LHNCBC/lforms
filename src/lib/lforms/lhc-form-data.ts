@@ -2094,8 +2094,10 @@ export default class LhcFormData {
         // previous item is a repeating item, and
         // previous item has questionCardinality.max value of '*' or a number greater than repeatCount,
         // set the flag as the last in the repeating set
-        items[i - 1]._lastRepeatingItem = (prevLinkId !== item.linkId && items[i - 1]._questionRepeatable &&
+        items[i - 1]._lastRepeatingItem = !!(prevLinkId !== item.linkId && items[i - 1]._questionRepeatable &&
           (items[i - 1].questionCardinality.max === '*' || parseInt(items[i - 1].questionCardinality.max) > repeatCount));
+        // Show a message if previous item has questionCardinality.min value of a number greater than 1 and repeatCount is smaller than it.
+        items[i - 1]._minOccursNotMet = !!(items[i - 1]._lastRepeatingItem && parseInt(items[i - 1].questionCardinality.min) > repeatCount);
         if (prevLinkId === item.linkId) {
           // Keep track of the number of repeating items, to make sure it does not exceed maxOccurs value.
           repeatCount++;
@@ -2114,6 +2116,7 @@ export default class LhcFormData {
     // the last item in the array
     items[iLen - 1]._lastRepeatingItem = !!(items[iLen - 1]._questionRepeatable &&
       (items[iLen - 1].questionCardinality.max === '*' || parseInt(items[iLen - 1].questionCardinality.max) > repeatCount));
+    items[iLen - 1]._minOccursNotMet = !!(items[iLen - 1]._lastRepeatingItem && parseInt(items[iLen - 1].questionCardinality.min) > repeatCount);
     // check sub levels
     if (items[iLen-1].items && items[iLen-1].items.length > 0) {
       this._updateLastRepeatingItemsStatus(items[iLen-1].items);
