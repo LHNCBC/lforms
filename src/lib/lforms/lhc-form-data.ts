@@ -1025,7 +1025,9 @@ export default class LhcFormData {
       if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged) && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           let item = this.itemList[i];
-          if (!!item._hasAnswerList && (!scoreFlagChanged || item._hasScoreInAnswer))
+          // We need to update the autocomp options if the HTML options changed, or,
+          // in the case that only the score display option changed, we want to update only those answers with item._hasScoreInAnswer=true.
+          if (!!item._hasAnswerList && (allowHTMLChanged || displayInvalidHTMLChanged || item._hasScoreInAnswer))
             this._updateAutocompOptions(item);
         }
       }
