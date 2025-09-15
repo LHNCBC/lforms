@@ -1,0 +1,68 @@
+{
+  "resourceType": "Questionnaire",
+  "subjectType": [
+    "Patient"
+  ],
+  "status": "draft",
+  "title": "A Questionnaire with minOccurs and maxOccurs extensions on groups and questions",
+  "item": [
+    {
+      "type": "group",
+      "required": true,
+      "linkId": "1",
+      "text": "A repeatable group",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+          "valueInteger": 2
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          "valueInteger": 3
+        }
+      ],
+      "item": [
+        {
+          "linkId": "1.1",
+          "text": "Choose your fruits",
+          "type": "choice",
+          "required": true,
+          "repeats": true,
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+              "valueInteger": 2
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+              "valueInteger": 3
+            }
+          ],
+          "answerOption": [
+            {
+              "valueString": "Apple"
+            },
+            {
+              "valueString": "Orange"
+            },
+            {
+              "valueString": "Banana"
+            },
+            {
+              "valueString": "Pear"
+            },
+            {
+              "valueString": "Peach"
+            }
+          ]
+        },
+        {
+          "linkId": "1.2",
+          "text": "some other field",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
