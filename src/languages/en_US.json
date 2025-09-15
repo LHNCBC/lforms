@@ -51,6 +51,8 @@
   "mustHaveTotalLengthGreaterOrEqual": "must have a total length greater than or equal to {lformsParam}.",
   "mustMatchRegex": "must match a RegExp pattern of {lformsParam}.",
   "mustNotHaveMoreDecimalPlaces": "must not have more than {lformsParam} decimal places.",
+  "mustNotHaveMoreAnswers": "must not have more than {lformsParam} answers.",
+  "mustNotHaveLessAnswers": "must not have less than {lformsParam} answers.",
   "booleanYes": "Yes",
   "booleanNo": "No",
   "booleanNotAnswered": "Not Answered",
