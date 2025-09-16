@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.4.0] 2025-09-16
+### Added
+- Fully support minOccurs and maxOccurs extensions.
+
 ## [38.3.0] 2025-09-12
 ### Added
 - Show an error message on top of the rendered questionnaire if
