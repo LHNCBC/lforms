@@ -132,7 +132,9 @@ describe('Validations', () => {
     errorMinLength = 'must have a total length greater than or equal to ',
     errorPattern = 'must match a RegExp pattern of',
     errorMaxDecimalPlaces = ' decimal places.',
-    errorRequire = 'requires a value';
+    errorRequire = 'requires a value',
+    errorMinOccurs = 'must not have less than ',
+    errorMaxOccurs = 'must not have more than ';
 
   describe('data type validations (table)', () => {
     beforeEach(() => {
@@ -622,6 +624,67 @@ describe('Validations', () => {
           .should('be.visible')
           .and('contain.text', 'One or more modifierExtensions are found in the Questionnaire resource. The rendered Questionnaire below is for display only and may not be correctly rendered, and the QuestionnaireResponse generated from it may not be valid.');
       });
+    });
+  });
+
+  describe('minOccurs and maxOccurs', () => {
+    beforeEach(() => {
+      tp.openBaseTestPage();
+      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
+    });
+
+    it('should validate minOccurs and maxOccurs on multiselect input', () => {
+      const eleInput = '1.1/1/1',
+        eleAway = '1.2/1/1';
+      // no error messages on first visit
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.get(errorContainer).contains(errorMinOccurs)
+        .should('exist')
+        .should('not.be.visible');
+      // show message when the focus is gone
+      cy.byId(eleAway).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // message disappears after a short period
+      cy.get(errorContainer).contains(errorMinOccurs).should('not.be.visible');
+      // get back focus again and message should be shown
+      cy.byId(eleInput).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // no message on the 2nd time when the focus is lost
+      cy.byId(eleAway).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('not.be.visible');
+      // get back focus the 3rd time and message should be shown
+      cy.byId(eleInput).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // valid value no messages
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.get(errorContainer).should('not.exist');
+      // still no message when the focus is gone
+      cy.byId(eleAway).click();
+      cy.get(errorContainer).should('not.exist');
+
+      // Add too many answers.
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.get(errorContainer).contains(errorMaxOccurs).should('be.visible');
+      // Remove one answer, error should go away.
+      cy.get('.autocomp_selected button').first().click({force: true});
+      cy.get(errorContainer).should('not.exist');
+    });
+
+    it('should limit the number of repeated groups based on minOccurs and maxOccurs', () => {
+      // Initially there is one group, an error message about minOccurs should be shown.
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('be.visible');
+      // Add another repeatable group, the error message should disappear.
+      cy.byId('1.2/1/1').type('a');
+      cy.byId('add-1/1').click();
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('not.exist');
+      // Add another repeatable group, the Add button should disappear.
+      cy.byId('1.2/2/1').type('a');
+      cy.byId('add-1/2').click();
+      cy.byId('add-1/3').should('not.exist');
+      // Remove a group, the Add button should come back.
+      cy.byId('del-1/3').click();
+      cy.byId('add-1/2').should('be.visible');
     });
   });
 
