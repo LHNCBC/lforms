@@ -2,9 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [38.3.0] 2025-08-20
+## [38.4.0] 2025-09-17
 ### Added
 - Support for template-based extraction.
+
+## [38.3.0] 2025-09-12
+### Added
+- Show an error message on top of the rendered questionnaire if
+  a modifierExtension is found.
+
+## [38.2.1] 2025-09-09
+### Fixed
+- rendering-xhtml extension was not honored on answerOptions without scores
+  when displayScoreWithAnswerText is set to false.
 
 ## [38.2.0] 2025-08-08
 ### Added

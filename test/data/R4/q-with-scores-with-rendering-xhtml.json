@@ -1,0 +1,99 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "A Questionnaire with Scores and Rendering XHTML",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "Section-A",
+      "text": "SECTION A: Coding without Ordinal",
+      "type": "group",
+      "item": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop Down"
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "A-1",
+          "text": "Choices for A1",
+          "type": "choice",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA10945-6",
+                "display": "A - original display",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "A - display from rendering-xhtml"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "Section-B",
+      "text": "SECTION B: Coding with Ordinal",
+      "type": "group",
+      "item": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop Down"
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "B-1",
+          "text": "Choices for B1",
+          "type": "choice",
+          "answerOption": [
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                  "valueDecimal": 1
+                }
+              ],
+              "valueCoding": {
+                "system": "http://loinc.org",
+                "code": "LA30914-8",
+                "display": "B - original display",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                      "valueString": "B - display from rendering-xhtml"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

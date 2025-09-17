@@ -205,11 +205,25 @@ function addCommonSDCImportFns(ns) {
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
           var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap, containedImages);
+          // If any child item contains modifierExtension, mark the lfData._hasModifierExtension true.
+          if (!target._hasModifierExtension && item._hasModifierExtension) {
+            target._hasModifierExtension = true;
+            delete item._hasModifierExtension;
+          }
           // no instructions on the questionnaire level
           target.items.push(item);
         }
       }
       target.fhirVersion = self.fhirVersion;
+
+      // If modifierExtension is found in the questionnaire, add a message to the form.
+      if (target._hasModifierExtension) {
+        let errors = {};
+        errorMessages.addMsg(errors, 'hasModifierExtension');
+        const messages = [{errors}];
+        LForms.Util._internalUtil.setItemMessagesArray(target, messages, 'modifierExtension');
+        delete target._hasModifierExtension;
+      }
     }
     return target;
   };
@@ -1746,6 +1760,11 @@ function addCommonSDCImportFns(ns) {
         let isHelpTextItem = self._processCodingInstructionsAndLegal(targetItem, qItem.item[i]);
         if(!isHelpTextItem) {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap, containedImages);
+          // If any child item contains modifierExtension, mark the parent lfItem._hasModifierExtension true.
+          if (!targetItem._hasModifierExtension && item._hasModifierExtension) {
+            targetItem._hasModifierExtension = true;
+            delete item._hasModifierExtension;
+          }
           targetItem.items.push(item);
         }
       }
@@ -1776,6 +1795,11 @@ function addCommonSDCImportFns(ns) {
     }
     if(extensions.length > 0) {
       lfItem.extension = extensions;
+    }
+
+    // Also check for modifierExtension.
+    if (qItem.modifierExtension && Array.isArray(qItem.modifierExtension)) {
+      lfItem._hasModifierExtension = true;
     }
   };
 
