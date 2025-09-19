@@ -630,10 +630,10 @@ describe('Validations', () => {
   describe('minOccurs and maxOccurs', () => {
     beforeEach(() => {
       tp.openBaseTestPage();
-      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
     });
 
     it('should validate minOccurs and maxOccurs on multiselect input', () => {
+      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
       const eleInput = '1.1/1/1',
         eleAway = '1.2/1/1';
       // no error messages on first visit
@@ -672,6 +672,7 @@ describe('Validations', () => {
     });
 
     it('should limit the number of repeated groups based on minOccurs and maxOccurs', () => {
+      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
       // Initially there is one group, an error message about minOccurs should be shown.
       cy.contains('This repeatable item should have at least 2 occurrences.').should('be.visible');
       // Add another repeatable group, the error message should disappear.
@@ -685,6 +686,23 @@ describe('Validations', () => {
       // Remove a group, the Add button should come back.
       cy.byId('del-1/3').click();
       cy.byId('add-1/2').should('be.visible');
+    });
+
+    it('should limit the number of repeated groups based on minOccurs and maxOccurs - horizontal layout', () => {
+      tp.loadFromTestData('q-with-repeating-group-with-horizontal-layout.json', 'R4');
+      // Initially there is one group, an error message about minOccurs should be shown.
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('be.visible');
+      // Add another repeatable group, the error message should disappear.
+      cy.byId('/g3/g1m1/1/1').type('{downArrow}{enter}');
+      cy.byId('add-/g3/1').click();
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('not.exist');
+      // Add another repeatable group, the Add button should disappear.
+      cy.byId('/g3/g1m1/2/1').type('a');
+      cy.byId('add-/g3/1').click();
+      cy.byId('add-/g3/1').should('not.exist');
+      // Remove a group, the Add button should come back.
+      cy.byId('del-/g3/3').click();
+      cy.byId('add-/g3/1').should('be.visible');
     });
   });
 
