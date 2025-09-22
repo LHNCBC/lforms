@@ -133,7 +133,7 @@ describe('Validations', () => {
     errorPattern = 'must match a RegExp pattern of',
     errorMaxDecimalPlaces = ' decimal places.',
     errorRequire = 'requires a value',
-    errorMinOccurs = 'must not have less than ',
+    errorMinOccurs = 'must have at least ',
     errorMaxOccurs = 'must not have more than ';
 
   describe('data type validations (table)', () => {
