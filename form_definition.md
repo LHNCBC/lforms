@@ -146,8 +146,8 @@ about the meaning of each key:
     * questionCardinality - This controls whether the there is a button for
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).
-      If you wish for a question or section to be repeatable, pass in `{"min":
-      "1", "max": "*"}`.  If you wish for a question or section to be repeatable
+      To set a question or section to be repeatable, pass in `{"min":
+      "1", "max": "*"}`.  To set a question or section to be repeatable
       but for no more than 3 times, then set "max" to "3".
     * question - The label for the question, or the title of the section.
     * answerCardinality - The same as <a href="#answerCardinality">above</a>.
