@@ -169,12 +169,13 @@ export class LhcDataService {
 
   /**
    * Get the last repeating item.
+   * Returns null if the item is not repeatable.
    * @param item an item. It may not be the last of the repeating items.
    * @returns {boolean}
    */
   getLastRepeatingItem(item) {
     const repeatingItems = this.lhcFormData._getRepeatingItems(item);
-    return repeatingItems[repeatingItems.length - 1];
+    return repeatingItems.length ? repeatingItems[repeatingItems.length - 1] : null;
   }
 
 

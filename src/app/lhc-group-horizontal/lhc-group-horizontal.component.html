@@ -51,7 +51,7 @@
       <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ {{item._text}}' [append]="true"></lhc-button-popover>
       <span *ngIf="lhcDataService.getLastRepeatingItem(item)._minOccursNotMet" style="color: red;"> This repeatable item should have at least {{item.questionCardinality.min}} occurrences.</span>
     </div>
-    <span *ngIf="lhcDataService.getLastRepeatingItem(item)._maxOccursExcceeded" style="color: red;"> This repeatable item should have at most {{item.questionCardinality.max}} occurrences.</span>
+    <span *ngIf="lhcDataService.getLastRepeatingItem(item)?._maxOccursExcceeded" style="color: red;"> This repeatable item should have at most {{item.questionCardinality.max}} occurrences.</span>
   </div>
 
 </ng-container>
