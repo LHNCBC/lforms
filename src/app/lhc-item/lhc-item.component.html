@@ -27,6 +27,7 @@
             <span *ngIf="item._minOccursNotMet" style="color: red;"> This repeatable item should have at least {{item.questionCardinality.min}} occurrences.</span>
           </div>
         </div>
+        <span *ngIf="item._maxOccursExcceeded" style="color: red;"> This repeatable item should have at most {{item.questionCardinality.max}} occurrences.</span>
       </ng-container>
     </ng-container>
   </ng-container>

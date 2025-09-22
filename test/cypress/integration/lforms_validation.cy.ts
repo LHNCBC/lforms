@@ -697,12 +697,33 @@ describe('Validations', () => {
       cy.byId('add-/g3/1').click();
       cy.contains('This repeatable item should have at least 2 occurrences.').should('not.exist');
       // Add another repeatable group, the Add button should disappear.
-      cy.byId('/g3/g1m1/2/1').type('a');
+      cy.byId('/g3/g1m1/2/1').type('{downArrow}{enter}');
       cy.byId('add-/g3/1').click();
       cy.byId('add-/g3/1').should('not.exist');
       // Remove a group, the Add button should come back.
       cy.byId('del-/g3/3').click();
       cy.byId('add-/g3/1').should('be.visible');
+    });
+
+    it('should load a QuestionnaireResponse with more repeating items than maxOccurs', () => {
+      const fhirVersion = 'R4';
+      cy.window().then((win) => {
+        cy.readFile('test/data/R4/q-with-minOccurs-maxOccurs.json').then((q) => {
+          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+          cy.readFile('test/data/R4/qr-with-repeating-group-exceed-maxOccurs.json').then((qr) => {
+            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+            win.LForms.Util.addFormToPage(mergedFormData, "formContainer", {fhirVersion});
+            // Initially there are 4 groups, an error message about maxOccurs should be shown.
+            cy.contains('This repeatable item should have at most 3 occurrences.').should('be.visible');
+            // Remove a group, the error message should disappear.
+            cy.byId('del-1/4').click();
+            cy.contains('This repeatable item should have at most 3 occurrences.').should('not.exist');
+            // Remove another group, the Add button should appear.
+            cy.byId('del-1/3').click();
+            cy.byId('add-1/2').should('be.visible');
+          });
+        });
+      });
     });
   });
 
