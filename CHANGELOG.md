@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.3.1] 2025-09-24
+### Added
+- Show an error message on the question if invalid HTML tags are found
+  on answerOptions.
+
 ## [38.3.0] 2025-09-12
 ### Added
 - Show an error message on top of the rendered questionnaire if
