@@ -1197,21 +1197,17 @@ function addCommonSDCExportFns(ns) {
     lfData._expressionProcessor._regenerateFhirVariableQ();
     lfData._expressionProcessor._regenerateQuestionnaireResp(qr);
     const templateExtractBundleResult = this._processLFormsDataForTemplateExtractBundle(lfData);
-    if (templateExtractBundleResult) {
-      return templateExtractBundleResult;
+    const bundleResult = templateExtractBundleResult || {
+      resourceType: 'Bundle',
+      type: 'transaction',
+      entry: []
+    };
+    this._processLFormsItemForTemplateExtract(lfData, bundleResult, lfData.contained, lfData._expressionProcessor);
+    // Return null if no resource is extracted, otherwise return the bundle containing the extracted resources.
+    if (bundleResult.entry.length) {
+      return bundleResult;
     } else {
-      const bundleResult = {
-        resourceType: 'Bundle',
-        type: 'transaction',
-        entry: []
-      };
-      this._processLFormsItemForTemplateExtract(lfData, bundleResult, lfData.contained, lfData._expressionProcessor);
-      // Return null if no resource is extracted, otherwise return the bundle containing the extracted resources.
-      if (bundleResult.entry.length) {
-        return bundleResult;
-      } else {
-        return null;
-      }
+      return null;
     }
   };
 
