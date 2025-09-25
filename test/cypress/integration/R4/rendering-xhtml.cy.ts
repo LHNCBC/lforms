@@ -1,5 +1,6 @@
 import {TestPage} from '../../support/lforms_testpage.po.js';
-import {answerId} from "../../support/util";
+import * as util from "../../support/util";
+const answerId = util.answerId;
 
 describe('rendering-xhtml', () => {
   describe('on item.text', () => {
@@ -540,6 +541,28 @@ describe('rendering-xhtml', () => {
           .should('have.length', 2);
         cy.get('@listOptions').eq(0).should('have.html', "<span class=\"listNum\">1:</span>&nbsp; italic <i class=\"testItalic\">A</i>");
         cy.get('@listOptions').eq(1).should('have.html', "<span class=\"listNum\">3:</span>&nbsp; italic <i class=\"testItalic\">C</i>");
+      });
+    });
+
+    describe('displayScoreWithAnswerText', () => {
+      it('should honor rendering-xhtml when displayScoreWithAnswerText is set to false', () => {
+        util.addFormToPage('q-with-scores-with-rendering-xhtml.json', null, {fhirVersion: 'R4', allowHTML: true, displayScoreWithAnswerText: false});
+        cy.byId('A-1/1/1').click();
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'A - display from rendering-xhtml');
+        cy.byId('A-1/1/1').blur();
+        cy.get('#lhc-tools-searchResults li:first-child').should('not.be.visible');
+        cy.byId('B-1/1/1').click();
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'B - display from rendering-xhtml');
+      });
+
+      it('should honor rendering-xhtml when displayScoreWithAnswerText is set to true', () => {
+        util.addFormToPage('q-with-scores-with-rendering-xhtml.json', null, {fhirVersion: 'R4', allowHTML: true, displayScoreWithAnswerText: true});
+        cy.byId('A-1/1/1').click();
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'A - display from rendering-xhtml');
+        cy.byId('A-1/1/1').blur();
+        cy.get('#lhc-tools-searchResults li:first-child').should('not.be.visible');
+        cy.byId('B-1/1/1').click();
+        cy.get('#lhc-tools-searchResults li:first-child').should('contain.text', 'B - display from rendering-xhtml - 1');
       });
     });
 

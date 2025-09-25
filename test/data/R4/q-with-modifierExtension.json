@@ -1,0 +1,18 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "A Questionnaire that contains modifierExtension",
+  "status": "draft",
+  "modifierExtension": [
+    {
+      "url": "http://example.org/fhir/StructureDefinition/anti-prescription",
+      "valueBoolean": true
+    }
+  ],
+  "item": [
+    {
+      "type": "string",
+      "linkId": "level1",
+      "text": "1st level"
+    }
+  ]
+}
