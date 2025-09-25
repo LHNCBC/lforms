@@ -61,6 +61,53 @@
           "linkId": "1.2",
           "text": "some other field",
           "type": "string"
+        },
+        {
+          "linkId": "1.3",
+          "text": "checkboxes for fruits",
+          "type": "choice",
+          "required": true,
+          "repeats": true,
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "check-box",
+                    "display": "Check-box"
+                  }
+                ],
+                "text": "Check-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+              "valueInteger": 2
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+              "valueInteger": 3
+            }
+          ],
+          "answerOption": [
+            {
+              "valueString": "Apple"
+            },
+            {
+              "valueString": "Orange"
+            },
+            {
+              "valueString": "Banana"
+            },
+            {
+              "valueString": "Pear"
+            },
+            {
+              "valueString": "Peach"
+            }
+          ]
         }
       ]
     }

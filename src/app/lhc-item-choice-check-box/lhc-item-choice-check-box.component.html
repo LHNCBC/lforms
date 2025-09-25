@@ -4,7 +4,7 @@
       <label
         nz-checkbox
         attr.aria-label="Checkbox {{answer._displayText}} for {{item.question}}"
-        (click)="lhcDataService.setActiveRow(item)"
+        (click)="lhcDataService.setActiveRow(item); item._visitedBefore = true;"
         [nzValue]="item.answers[i]"
         [(ngModel)]="checkboxModels[i]"
         [nzDisabled]="item._readOnly"
@@ -21,7 +21,7 @@
       <label
         nz-checkbox
         attr.aria-label="Checkbox Other for {{item.question}}"
-        (click)="lhcDataService.setActiveRow(item)"
+        (click)="lhcDataService.setActiveRow(item); item._visitedBefore = true;"
         [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
         [nzDisabled]="item._readOnly"
         [(ngModel)]="otherCheckboxModel"

@@ -671,6 +671,23 @@ describe('Validations', () => {
       cy.get(errorContainer).should('not.exist');
     });
 
+    it('should validate minOccurs and maxOccurs on multiselect input - checkbox layout', () => {
+      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
+      const eleInput = '1.3/1/1';
+      cy.byId(eleInput + '||Apple').click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // valid value no messages
+      cy.byId(eleInput + '||Orange').click();
+      cy.get(errorContainer).should('not.exist');
+      // Add too many answers.
+      cy.byId(eleInput + '||Banana').click();
+      cy.byId(eleInput + '||Pear').click();
+      cy.get(errorContainer).contains(errorMaxOccurs).should('be.visible');
+      // Remove one answer, error should go away.
+      cy.byId(eleInput + '||Apple').click();
+      cy.get(errorContainer).should('not.exist');
+    });
+
     it('should limit the number of repeated groups based on minOccurs and maxOccurs', () => {
       tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
       // Initially there is one group, an error message about minOccurs should be shown.
