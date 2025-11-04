@@ -1,0 +1,32 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "A Questionnaire that contains modifierExtension",
+  "status": "draft",
+  "item": [
+    {
+      "type": "string",
+      "linkId": "level1",
+      "text": "1st level",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "level2",
+          "text": "2nd level",
+          "modifierExtension": [
+            {
+              "url": "http://example.org/fhir/StructureDefinition/anti-prescription",
+              "valueBoolean": true
+            }
+          ],
+          "item": [
+            {
+              "type": "string",
+              "linkId": "level3",
+              "text": "3rd level"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

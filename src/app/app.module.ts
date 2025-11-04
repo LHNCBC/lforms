@@ -31,6 +31,7 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 import {
   CopyrightCircleFill,
@@ -65,6 +66,7 @@ import { LhcItemDisplayComponent } from './lhc-item-display/lhc-item-display.com
 import { LhcGroupVerticalComponent } from './lhc-group-vertical/lhc-group-vertical.component';
 import { LhcGroupHorizontalComponent } from './lhc-group-horizontal/lhc-group-horizontal.component';
 import { LhcGroupMatrixComponent } from './lhc-group-matrix/lhc-group-matrix.component';
+import { LhcGroupTabsComponent } from "./lhc-group-tabs/lhc-group-tabs.component";
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { LhcButtonPopoverComponent } from './lhc-button-popover/lhc-button-popover.component';
 import { LhcItemAttachmentComponent } from './lhc-item-attachment/lhc-item-attachment.component';
@@ -74,63 +76,61 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 registerLocaleData(en);
 
-@NgModule({
-  declarations: [
-    LhcItemChoiceComponent,
-    LhcItemChoiceCheckBoxComponent,
-    LhcItemChoiceRadioButtonComponent,
-    LhcItemChoiceAutocompleteComponent,
-    LhcItemComponent,
-    LhcUnitComponent,
-    LhcItemSimpleTypeComponent,
-    LhcInputComponent,
-    LhcItemQuantityComponent,
-    LhcAutocompleteComponent,
-    LhcValidateComponent,
-    LhcFormComponent,
-    LhcItemGroupComponent,
-    LhcItemBooleanComponent,
-    LhcItemDateComponent,
-    LhcItemTimeComponent,
-    LhcItemDatetimeComponent,
-    LhcItemTextComponent,
-    LhcItemQuestionTextComponent,
-    LhcItemQuestionComponent,
-    LhcItemDisplayComponent,
-    LhcGroupVerticalComponent,
-    LhcGroupHorizontalComponent,
-    LhcGroupMatrixComponent,
-    SafeHtmlPipe,
-    LhcButtonPopoverComponent,
-    LhcItemAttachmentComponent,
-    LhcItemMessagesComponent,
-    LhcGroupGridComponent,
-  ],
-  bootstrap: [],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA,
-    // NO_ERRORS_SCHEMA
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    NzRadioModule,
-    NzCheckboxModule,
-    NzDatePickerModule,
-    NzTimePickerModule,
-    NzGridModule,
-    NzPopoverModule,
-    NzIconModule.forRoot(icons),
-    NzSwitchModule,
-    NzToolTipModule,
-  ],
-  providers: [
-    { provide: NZ_I18N, useValue: en_US },
-    provideHttpClient(withInterceptorsFromDi()),
-  ],
-})
+@NgModule({ declarations: [
+        LhcItemChoiceComponent,
+        LhcItemChoiceCheckBoxComponent,
+        LhcItemChoiceRadioButtonComponent,
+        LhcItemChoiceAutocompleteComponent,
+        LhcItemComponent,
+        LhcUnitComponent,
+        LhcItemSimpleTypeComponent,
+        LhcInputComponent,
+        LhcItemQuantityComponent,
+        LhcAutocompleteComponent,
+        LhcValidateComponent,
+        LhcFormComponent,
+        LhcItemGroupComponent,
+        LhcItemBooleanComponent,
+        LhcItemDateComponent,
+        LhcItemTimeComponent,
+        LhcItemDatetimeComponent,
+        LhcItemTextComponent,
+        LhcItemQuestionTextComponent,
+        LhcItemQuestionComponent,
+        LhcItemDisplayComponent,
+        LhcGroupVerticalComponent,
+        LhcGroupHorizontalComponent,
+        LhcGroupMatrixComponent,
+        LhcGroupTabsComponent,
+        SafeHtmlPipe,
+        LhcButtonPopoverComponent,
+        LhcItemAttachmentComponent,
+        LhcItemMessagesComponent,
+        LhcGroupGridComponent
+    ],
+    bootstrap: [],
+    schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+        // NO_ERRORS_SCHEMA
+    ], imports: [BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        NzRadioModule,
+        NzCheckboxModule,
+        NzDatePickerModule,
+        NzTimePickerModule,
+        NzGridModule,
+        NzPopoverModule,
+        NzIconModule.forRoot(icons),
+        NzSwitchModule,
+        NzToolTipModule,
+        NzTabsModule], providers: [
+        { provide: NZ_I18N, useValue: en_US },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
+
+
 export class AppModule {
   constructor(private injector: Injector) {
     window['LForms'] = LForms;

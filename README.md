@@ -65,6 +65,8 @@ you don't accidentally add something that we are also working on.
 - **If you want to build LForms in a different language**, make sure your desired
   locale ID is listed under src/languages, e.g. `de_DE.json`. In `package.json`, edit
   config.localeID to your desired locale, e.g. "de_DE". Then run `npm run build`.
+  To build on Windows, you may need to refer to the locale ID npm variable as
+  `%npm_package_config_localeID%` instead of `$npm_package_config_localeID` in package.json.
 
   If your desired language is not yet listed under src/languages, please contact us
   to have it added, or submit a pull request for adding your own language config file.

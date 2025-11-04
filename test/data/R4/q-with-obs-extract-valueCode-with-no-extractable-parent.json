@@ -1,0 +1,192 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test form for Observation valueCode extraction with no extractable parent",
+  "status": "draft",
+  "extension": [
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+    }
+  ],
+  "code": [
+    {
+      "system": "test",
+      "code": "test",
+      "display": "Test code"
+    }
+  ],
+  "item": [
+    {
+      "type": "group",
+      "linkId": "1",
+      "text": "Middle level group",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "8532-0",
+          "display": "Blood pressure"
+        }
+      ],
+      "item": [
+        {
+          "type": "quantity",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "mm[Hg]",
+                "display": "millimeter of mercury"
+              }
+            },
+            {
+              "valueCode": "component",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "1.1",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "8478-0",
+              "display": "Systolic blood pressure"
+            }
+          ],
+          "text": "What is your systolic blood pressure?",
+          "initial": [
+            {
+              "valueQuantity": {
+                "value": 120,
+                "unit": "millimeter of mercury",
+                "system": "http://unitsofmeasure.org",
+                "code": "mm[Hg]"
+              }
+            }
+          ]
+        },
+        {
+          "type": "quantity",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "mm[Hg]",
+                "display": "millimeter of mercury"
+              }
+            },
+            {
+              "valueCode": "component",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "1.2",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "8462-7",
+              "display": "Diastolic blood pressure"
+            }
+          ],
+          "text": "What is your diastolic blood pressure?",
+          "initial": [
+            {
+              "valueQuantity": {
+                "value": 80,
+                "unit": "millimeter of mercury",
+                "system": "http://unitsofmeasure.org",
+                "code": "mm[Hg]"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "linkId": "2",
+      "text": "Middle level group",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "58410-2",
+          "display": "CBC panel - Blood by Automated count"
+        }
+      ],
+      "item": [
+        {
+          "type": "quantity",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "10*3/uL",
+                "display": "thousand per microliter"
+              }
+            },
+            {
+              "valueCode": "member",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "2.1",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "6690-2",
+              "display": "White blood cell count (Leukocytes)"
+            }
+          ],
+          "text": "What is your white blood cell count?",
+          "initial": [
+            {
+              "valueQuantity": {
+                "value": 120,
+                "unit": "thousand per microliter",
+                "system": "http://unitsofmeasure.org",
+                "code": "10*3/uL"
+              }
+            }
+          ]
+        },
+        {
+          "type": "quantity",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "10*6/uL",
+                "display": "million per microliter"
+              }
+            },
+            {
+              "valueCode": "member",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+            }
+          ],
+          "linkId": "2.2",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "789-8",
+              "display": "Red blood cell count (Erythrocytes)"
+            }
+          ],
+          "text": "What is your red blood cell count?",
+          "initial": [
+            {
+              "valueQuantity": {
+                "value": 80,
+                "unit": "million per microliter",
+                "system": "http://unitsofmeasure.org",
+                "code": "10*6/uL"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

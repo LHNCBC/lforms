@@ -1,0 +1,8 @@
+:host ::ng-deep .ant-tabs-top>.ant-tabs-nav {
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .ant-tabs-card>.ant-tabs-nav .ant-tabs-tab {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}

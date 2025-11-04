@@ -1,0 +1,86 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "title": "Test form for Observation extraction with repeats=true",
+  "status": "draft",
+  "item": [
+    {
+      "type": "string",
+      "extension": [
+        {
+          "valueBoolean": true,
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "linkId": "string",
+      "text": "A string question",
+      "repeats": true
+    },
+    {
+      "type": "decimal",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "kg",
+            "display": "kilogram"
+          }
+        },
+        {
+          "valueBoolean": true,
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "linkId": "decimal",
+      "text": "A decimal question",
+      "repeats": true
+    },
+    {
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ]
+          }
+        },
+        {
+          "valueBoolean": true,
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract"
+        }
+      ],
+      "linkId": "coding",
+      "text": "A coding question",
+      "repeats": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "s",
+            "code": "a",
+            "display": "A"
+          },
+          "initialSelected": true
+        },
+        {
+          "valueCoding": {
+            "system": "s",
+            "code": "b",
+            "display": "B"
+          },
+          "initialSelected": true
+        }
+      ]
+    }
+  ]
+}
