@@ -1,9 +1,9 @@
-FROM node:18.20.8
+FROM node:20.18.0-alpine
 WORKDIR app
-RUN apt update -y
+RUN apk update
 ARG NPM_TOKEN
 COPY .npmrc .npmrc
-RUN apt install zip -y && apt install apt-utils -y
+RUN apk add --no-cache zip
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
