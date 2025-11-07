@@ -5,10 +5,10 @@ describe('Form level Matrix layout', () => {
 
   it('displays a radio matrix table', () => {
     tp.LoadForm.openMatrixLayout1();
-    const item1answer1 = '/g1m1/1c1',
-      item1answer2 = '/g1m1/1c2',
-      item4answer1 = '/g1m4/1c1',
-      item4answer4 = '/g1m4/1c4';
+    const item1answer1 = '/g1m1/1||c1',
+      item1answer2 = '/g1m1/1||c2',
+      item4answer1 = '/g1m4/1||c1',
+      item4answer4 = '/g1m4/1||c4';
 
     cy.byId(item1answer1).should('be.visible');
     cy.byId(item4answer4).should('be.visible');
@@ -67,14 +67,14 @@ describe('Form level Matrix layout', () => {
 
   it('displays a checkbox matrix table', () => {
     tp.LoadForm.openMatrixLayout2();
-    const item1answer1 = '/g1m1/1c1',
-      item1answer2 = '/g1m1/1c2',
-      item1Other = '/g1m1/1_other',
-      item1OtherValue = '/g1m1/1_otherValue',
-      item4answer1 = '/g1m4/1c1',
-      item4answer4 = '/g1m4/1c4',
-      item4Other = '/g1m4/1_other',
-      item4OtherValue = '/g1m4/1_otherValue';
+    const item1answer1 = '/g1m1/1||c1',
+      item1answer2 = '/g1m1/1||c2',
+      item1Other = '/g1m1/1|_other',
+      item1OtherValue = '/g1m1/1|_otherValue',
+      item4answer1 = '/g1m4/1||c1',
+      item4answer4 = '/g1m4/1||c4',
+      item4Other = '/g1m4/1|_other',
+      item4OtherValue = '/g1m4/1|_otherValue';
 
     cy.byId(item1answer1).should('be.visible');
     cy.byId(item4answer4).should('be.visible');
@@ -229,14 +229,14 @@ describe('Form level Matrix layout', () => {
     it('displays a radio matrix table with initial values displayed', () => {
       tp.openBaseTestPage();
       tp.loadFromTestData('matrixLayoutSingleSelectionWithData.json');
-      const item1answer1 = '/g1m1/1c1',
-        item2answerOther = '/g1m2/1_other',
-        item2answerOtherValue = '/g1m2/1_otherValue';
-  
+      const item1answer1 = '/g1m1/1||c1',
+        item2answerOther = '/g1m2/1|_other',
+        item2answerOtherValue = '/g1m2/1|_otherValue';
+
       cy.byId(item1answer1).should('be.checked');
       cy.byId(item2answerOther).should('be.checked');
       cy.byId(item2answerOtherValue).should('have.value', "User typed string")
-  
+
       // first question
       cy.window().then((win) => {
         const formData = win.LForms.Util.getUserData();
@@ -245,25 +245,25 @@ describe('Form level Matrix layout', () => {
         expect(formData.itemsData[2].value).to.eql({"code": "c3", "text": "Answer c"});
         expect(formData.itemsData[3].value).to.be.undefined;
       });
-  
-      
+
+
     });
-  
+
     it('displays a checkbox matrix table with initial values displayed', () => {
       tp.openBaseTestPage();
       tp.loadFromTestData('matrixLayoutMultipleSelectionWithData.json');
-      const item1answer1 = '/g1m1/1c1',
-        item1answer2 = '/g1m1/1c2',
-        item2answer1 = '/g1m2/1c1',
-        item2answerOther = '/g1m2/1_other',
-        item2answerOtherValue = '/g1m2/1_otherValue';
-  
+      const item1answer1 = '/g1m1/1||c1',
+        item1answer2 = '/g1m1/1||c2',
+        item2answer1 = '/g1m2/1||c1',
+        item2answerOther = '/g1m2/1|_other',
+        item2answerOtherValue = '/g1m2/1|_otherValue';
+
       cy.byId(item1answer1).should('be.checked');
       cy.byId(item1answer2).should('be.checked');
       cy.byId(item2answer1).should('be.checked');
       cy.byId(item2answerOther).should('be.checked');
       cy.byId(item2answerOtherValue).should('have.value', "user typed string")
-  
+
       // first question
       cy.window().then((win) => {
         const formData = win.LForms.Util.getUserData();
@@ -272,7 +272,7 @@ describe('Form level Matrix layout', () => {
         expect(formData.itemsData[2].value).to.eql([{"code": "c3", "text": "Answer 3"}]);
         expect(formData.itemsData[3].value).to.be.undefined;
       });
-  
+
     });
   });
 
@@ -280,14 +280,14 @@ describe('Form level Matrix layout', () => {
     it('displays a radio matrix table with initial values displayed', () => {
       tp.openBaseTestPage();
       tp.loadFromTestData('matrixLayoutSingleSelectionWithData.R4.json', "R4");
-      const item1answer1 = '/g1m1/1/1c1',
-        item2answerOther = '/g1m2/1/1_other',
-        item2answerOtherValue = '/g1m2/1/1_otherValue';
-  
+      const item1answer1 = '/g1m1/1/1||c1',
+        item2answerOther = '/g1m2/1/1|_other',
+        item2answerOtherValue = '/g1m2/1/1|_otherValue';
+
       cy.byId(item1answer1).should('be.checked');
       cy.byId(item2answerOther).should('be.checked');
       cy.byId(item2answerOtherValue).should('have.value', "User typed string")
-  
+
       // first question
       cy.window().then((win) => {
         const formData = win.LForms.Util.getUserData();
@@ -297,22 +297,22 @@ describe('Form level Matrix layout', () => {
         expect(formData.itemsData[0].items[3].value).to.be.undefined;
       });
     });
-  
+
     it('displays a checkbox matrix table with initial values displayed', () => {
       tp.openBaseTestPage();
       tp.loadFromTestData('matrixLayoutMultipleSelectionWithData.R4.json', "R4");
-      const item1answer1 = '/g1m1/1/1c1',
-        item1answer2 = '/g1m1/1/1c2',
-        item2answer1 = '/g1m2/1/1c1',
-        item2answerOther = '/g1m2/1/1_other',
-        item2answerOtherValue = '/g1m2/1/1_otherValue';
-  
+      const item1answer1 = '/g1m1/1/1||c1',
+        item1answer2 = '/g1m1/1/1||c2',
+        item2answer1 = '/g1m2/1/1||c1',
+        item2answerOther = '/g1m2/1/1|_other',
+        item2answerOtherValue = '/g1m2/1/1|_otherValue';
+
       cy.byId(item1answer1).should('be.checked');
       cy.byId(item1answer2).should('be.checked');
       cy.byId(item2answer1).should('be.checked');
       cy.byId(item2answerOther).should('be.checked');
       cy.byId(item2answerOtherValue).should('have.value', "user typed string")
-  
+
       // first question
       cy.window().then((win) => {
         const formData = win.LForms.Util.getUserData();

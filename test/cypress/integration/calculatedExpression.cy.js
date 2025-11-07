@@ -1,4 +1,5 @@
 import * as util from '../support/util.js';
+const answerId = util.answerId;
 
 // Tests of the support for calculatedExpression.
 describe('calculatedExpression', () => {
@@ -14,11 +15,11 @@ describe('calculatedExpression', () => {
 
   it('should update the boolean field when the calculatedExpression changes', () => {
     util.addFormToPage('calculatedExpression-on-boolean-item.json', null, {fhirVersion: 'R4'});
-    cy.byId('overweight/1null').should('have.class', 'ant-radio-wrapper-checked');
+    cy.byId(answerId('overweight/1', 'null')).should('have.class', 'ant-radio-wrapper-checked');
     cy.byId('weight/1').type('10');
-    cy.byId('overweight/1false').should('have.class', 'ant-radio-wrapper-checked');
+    cy.byId(answerId('overweight/1', 'false')).should('have.class', 'ant-radio-wrapper-checked');
     cy.byId('weight/1').type('2');
-    cy.byId('overweight/1true').should('have.class', 'ant-radio-wrapper-checked');
+    cy.byId(answerId('overweight/1', 'true')).should('have.class', 'ant-radio-wrapper-checked');
   });
 
   describe('for single-select lists', ()=>{

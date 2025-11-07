@@ -1,6 +1,7 @@
 {
   "resourceType": "QuestionnaireResponse",
   "item": [ {
+    "linkId": "g1",
     "text": "Matrix with checkboxes (table, choice)",
     "item": [ {
       "linkId": "/g1m1",
@@ -34,7 +35,9 @@
       } ]
     } ]
   }, {
+    "linkId": "g2",
     "text": "Matrix with checkboxes (table, choice, repeats)",
+    "linkId": "g2",
     "item": [ {
       "linkId": "/g2m1",
       "text": "Question #1",
@@ -85,7 +88,8 @@
       } ]
     } ]
   }, {
-    "text": "Matrix with raido buttons (table, open-choice)",
+    "linkId": "g3",
+    "text": "Matrix with radio buttons (table, open-choice)",
     "item": [ {
       "linkId": "/g3m1",
       "text": "Question #1",
@@ -114,6 +118,7 @@
       } ]
     } ]
   }, {
+    "linkId": "g4",
     "text": "Matrix with checkboxes (table, open-choice, repeats)",
     "item": [ {
       "linkId": "/g4m1",

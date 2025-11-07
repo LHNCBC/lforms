@@ -8,7 +8,7 @@ describe('DiagnosticReport', ()=>{
       describe(fhirVersion, function() {
         it('should put lformsVersion in the DiagnosticReport resource', ()=>{
           var lfData = new LForms.LFormsData({name: 'test form', items: [{
-            question: 'q1', dataType: 'ST', value: 'green'
+            linkId: 'A', question: 'q1', dataType: 'ST', value: 'green'
           }]});
           var lfDataVersion = lfData.lformsVersion;
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport', fhirVersion, lfData)
@@ -20,19 +20,19 @@ describe('DiagnosticReport', ()=>{
           assert.equal(typeof obsVersion, 'string');
           assert.equal(obsVersion, 'lformsVersion: '+lfDataVersion);
         });
-      
+
         it('should convert lforms data to DiagnosticReport resource with correct code and code system', ()=>{
           var lfData = new LForms.LFormsData({name: 'test form', code: 'code1', codeSystem: 'code_system',
-            items: [{question: 'q1', dataType: 'ST', value: 'green'
+            items: [{linkId: 'A', question: 'q1', dataType: 'ST', value: 'green'
           }]});
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport', fhirVersion, lfData)
           assert.equal(dr.code.coding[0].system, 'code_system');
-          assert.equal(dr.code.coding[0].code, 'code1');         
+          assert.equal(dr.code.coding[0].code, 'code1');
         });
 
         it('should convert Questionnaire data to DiagnosticReport resource with correct code and code system', ()=>{
-      
-          var q = 
+
+          var q =
           {
             "resourceType": "Questionnaire",
             "title": "A questionnaire with code",
@@ -53,7 +53,7 @@ describe('DiagnosticReport', ()=>{
               }
             ]
           };
-          
+
           var lfData = fhir.SDC.convertQuestionnaireToLForms(q);
           var dr = LForms.Util.getFormFHIRData('DiagnosticReport', fhirVersion, lfData);
           assert.equal(dr.code.coding[0].system, 'http://example.org');
@@ -64,5 +64,5 @@ describe('DiagnosticReport', ()=>{
     })(fhirVersions[i]);
   }
 });
- 
+
 

@@ -42,6 +42,10 @@
     .hide {
       display: none;
     }
+    #error {
+      background-color: yellow;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -89,6 +93,13 @@
               <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" /> allowHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="hideRepetitionNumber" checked /> hideRepetitionNumber</label></span>
+              <span class="option-checkbox">
+                hideTreeLine:
+                <input type="radio" id="hideTreeLineTrue" name="hideTreeLine" value="true"><label for="hideTreeLineTrue">true</label>
+                <input type="radio" id="hideTreeLineFalse" name="hideTreeLine" value="false"><label for="hideTreeLineFalse">false</label>
+                <input type="radio" id="hideTreeLineAuto" name="hideTreeLine" value="auto" checked><label for="hideTreeLineAuto">auto</label>
+              </span>
             </div>
           </div>
           <div style="margin: 8px">QuestionnaireResponse for the Questionnaire selected below: <input type="file" id="qrFile"/></div>
@@ -111,6 +122,7 @@
     <button onclick="getInternalData()">Debug: Get internal data</button>
 
     <br><br>
+    <div id="error"></div>
     <wc-lhc-form id='test-form'></wc-lhc-form>
     <div id="formContainer"></div>
   </div>
@@ -168,7 +180,24 @@
       testForm.addEventListener('onError', e => {
         console.log("onError")
         console.log(e);
+        showError(e.detail);
       });
+
+
+      /**
+       *  Shows an error message.
+       */
+      function showError(msg) {
+        document.querySelector('#error').innerText = msg;
+      }
+
+
+      /**
+       *  Clears any error message.
+       */
+      function clearErrorMsg() {
+        document.querySelector('#error').innerText = '';
+      }
 
 
       /**
@@ -196,6 +225,7 @@
        * Load and display a form
        */
       async function fetchAndDisplayForm(formInfo) {
+        clearErrorMsg();
         let url = "/test/data/lforms/" + formInfo.name + ".json";
         let formData = await loadJsonFromUrl(url);
         testForm.questionnaire = formData;
@@ -398,13 +428,16 @@
        * Load a data file from local file system
        */
       function loadFile(event) {
+        clearErrorMsg();
         var reader = new FileReader();
         var fileAnchor = document.querySelector('#fileAnchor');
         var qrFileField = document.querySelector('#qrFile');
         var questionnaire;
         var allowHTML = document.querySelector('#allowHTML').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
-            showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+            showCodingInstruction = document.querySelector('#showCodingInstruction').checked,
+            hideRepetitionNumber = document.querySelector('#hideRepetitionNumber').checked,
+            hideTreeLine = document.querySelector('input[name="hideTreeLine"]:checked').value;
         var questionnaire, qr;
 
         reader.onload = function() {
@@ -443,6 +476,12 @@
           }
           if (showCodingInstruction) {
             options["showCodingInstruction"] = true;
+          }
+          if (!hideRepetitionNumber) {
+            options["hideRepetitionNumber"] = false;
+          }
+          if (hideTreeLine !== 'auto') {
+            options["hideTreeLine"] = hideTreeLine;
           }
           if (qr) {
             options.questionnaireResponse = qr;

@@ -2,6 +2,61 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.3.0] 2025-09-12
+### Added
+- Show an error message on top of the rendered questionnaire if
+  a modifierExtension is found.
+
+## [38.2.1] 2025-09-09
+### Fixed
+- rendering-xhtml extension was not honored on answerOptions without scores
+  when displayScoreWithAnswerText is set to false.
+
+## [38.2.0] 2025-08-08
+### Added
+- Tab layout support.
+
+## [38.1.0] 2025-08-07
+### Added
+- Support for observationExtract valueCode relationships (component or member).
+
+## [38.0.2] 2025-07-31
+### Fixed
+- Child questions were also highlighted with background color
+  when parent question was focused.
+
+## [38.0.1] 2025-07-24
+### Fixed
+- Some languages use a different decimal character like "," instead
+  of ".". It is now configurable.
+
+## [38.0.0] 2025-07-23
+### Changed
+- HTML Element IDs for answers now include the code system to ensure their
+  uniqueness.  The element IDs are not a part of the public API, so technically
+  this is not a breaking change, but we recognize that some people might have
+  CSS that targets element IDs.
+
+## [37.0.0] 2025-07-10
+### Changed
+- Not to show the repetition number by default.
+- Never show the treeline or indentation on the first level.
+- Changed "hideTreeLine" to a string type that accept 'true', 'false' and
+  'auto'. The default is now 'auto', which means to show the treeline when
+  the questionnaire has more than 3 levels of the hierarchy, and hide the
+  treeline when there are up to 3 levels of the hierarchy.
+- Changed the treeline color to a lighter, less dominant color.
+
+## [36.20.3] 2025-07-10
+### Fixed
+- Fixed a bug that the matrix layout ('table' in itemControl extension) 
+  does not always display answers loaded from answerValueSet.
+
+## [36.20.2] 2025-07-09
+### Fixed
+- answerValueSet expansion error under the field should still show
+  when the form is loaded for the second time.
+
 ## [36.20.1] 2025-06-20
 ### Changed
 - Update autocomplete-lhc version and use new ID lhc-tools-searchResults

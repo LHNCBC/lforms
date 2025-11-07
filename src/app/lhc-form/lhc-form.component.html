@@ -1,3 +1,5 @@
+<lhc-item-messages *ngIf="lhcFormData" [item]="lhcFormData"></lhc-item-messages>
+
 <form *ngIf="lhcFormData" class="lhc-form lf-template-table novalidate {{viewModeClass}}" autocomplete="off" #lhcFormContainer>
 
     <div class="lhc-form-title" role="heading" aria-level=1  *ngIf="lhcFormData?.items[0]?.displayControl?.questionLayout !== 'grid'">
@@ -27,7 +29,7 @@
           <lhc-group-horizontal [item]="lhcFormData" [formLevel]='true'></lhc-group-horizontal>
         </ng-container>
         <ng-container *ngSwitchCase="'matrix'">
-          <lhc-group-matrix [item]="lhcFormData" [formLevel]='true'></lhc-group-matrix>
+          <lhc-group-matrix [item]="lhcFormData" [formLevel]='true' [acOptions]="lhcFormData.items[0]?._autocompOptions"></lhc-group-matrix>
         </ng-container>
         <ng-container *ngSwitchCase="'grid'">
           <lhc-group-grid [item]="lhcFormData" [formLevel]='true'></lhc-group-grid>
@@ -39,7 +41,7 @@
           <ng-container *ngIf="lhcFormData.items">
             <ng-container *ngFor ="let item of lhcFormData.items; trackBy: lhcDataService.trackByElementId">
               <lhc-item *ngIf="item && lhcDataService.targetShown(item) && !item._isHiddenFromView && !lhcDataService.isSubsequentHorizontalTableGroupItem(item)"
-                [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}"
+                [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode, true)}}"
                 id="item-{{ item._elementId }}" >
               </lhc-item>
               <!--header item-->

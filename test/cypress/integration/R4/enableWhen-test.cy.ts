@@ -1,6 +1,7 @@
 import { AddFormToPageTestPage } from "../../support/addFormToPageTest.po";
 import * as util from "../../support/util";
 const po = new AddFormToPageTestPage();
+const answerId = util.answerId;
 
 // Tests of the support for answerExpression on choice, open-choice, and
 // string, date, time and integer
@@ -9,32 +10,32 @@ describe('EnableWhen on different types ', () => {
     cy.visit('test/pages/addFormToPageTest.html');
     util.addFormToPage('enableWhen-test.R4.json', null, {fhirVersion: 'R4'});
   });
-  
+
   it('should work on boolean items', () => {
-    cy.byId('Q1/1/1true').find('input').should('not.be.checked')
-    cy.byId('Q1/1/1false').find('input').should('not.be.checked')
-    cy.byId('Q1/1/1null').find('input').should('be.checked')
-    
+    cy.byId(answerId('Q1/1/1', 'true')).find('input').should('not.be.checked')
+    cy.byId(answerId('Q1/1/1', 'false')).find('input').should('not.be.checked')
+    cy.byId(answerId('Q1/1/1', 'null')).find('input').should('be.checked')
+
     cy.byId('Q1-not-exists/1/1').should('be.visible')
     cy.byId('Q1-not-true/1/1').should('be.visible')
     cy.byId('Q1-exists/1/1').should('not.exist')
     cy.byId('Q1-true/1/1').should('not.exist')
     cy.byId('Q1-false/1/1').should('not.exist')
 
-    cy.byId('Q1/1/1true').find('input').click()
+    cy.byId(answerId('Q1/1/1', 'true')).find('input').click()
     cy.byId('Q1-not-exists/1/1').should('not.exist')
     cy.byId('Q1-not-true/1/1').should('not.exist')
     cy.byId('Q1-exists/1/1').should('be.visible')
     cy.byId('Q1-true/1/1').should('be.visible')
     cy.byId('Q1-false/1/1').should('not.exist')
 
-    cy.byId('Q1/1/1false').find('input').click()
+    cy.byId(answerId('Q1/1/1', 'false')).find('input').click()
     cy.byId('Q1-not-exists/1/1').should('not.exist')
     cy.byId('Q1-not-true/1/1').should('be.visible')
     cy.byId('Q1-exists/1/1').should('be.visible')
     cy.byId('Q1-true/1/1').should('not.exist')
     cy.byId('Q1-false/1/1').should('be.visible')
-    
+
   });
 
   it('should work on string as answerOption items', () => {
@@ -57,7 +58,7 @@ describe('EnableWhen on different types ', () => {
     cy.byId('Q9a-exists/1/1').should('be.visible')
     cy.byId('Q9a-noteq-B/1/1').should('not.exist')
     cy.byId('Q9a-eq-B/1/1').should('be.visible')
- 
+
   });
 
 
@@ -81,7 +82,7 @@ describe('EnableWhen on different types ', () => {
     cy.byId('Q9b-exists/1/1').should('be.visible')
     cy.byId('Q9b-noteq-B/1/1').should('not.exist')
     cy.byId('Q9b-eq-B/1/1').should('be.visible')
- 
+
   });
 
   it('should work on date as answerOption items', () => {
@@ -104,7 +105,7 @@ describe('EnableWhen on different types ', () => {
     cy.byId('Q9c-exists/1/1').should('be.visible')
     cy.byId('Q9c-noteq-B/1/1').should('not.exist')
     cy.byId('Q9c-eq-B/1/1').should('be.visible')
- 
+
   });
 
   it('should work on time as answerOption items', () => {
@@ -127,7 +128,7 @@ describe('EnableWhen on different types ', () => {
     cy.byId('Q9d-exists/1/1').should('be.visible')
     cy.byId('Q9d-noteq-B/1/1').should('not.exist')
     cy.byId('Q9d-eq-B/1/1').should('be.visible')
- 
+
   });
 
 });

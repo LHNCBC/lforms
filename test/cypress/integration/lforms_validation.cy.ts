@@ -613,4 +613,16 @@ describe('Validations', () => {
     });
   });
 
+  describe('modifierExtension', () => {
+    ['R4', 'R5'].forEach((fhirVersion) => {
+      it('should display message if modifierExtension is found in Questionnaire - ' + fhirVersion, () => {
+        tp.openBaseTestPage();
+        tp.loadFromTestData('q-with-modifierExtension.json', fhirVersion);
+        cy.byCss('div.lhc-item-error')
+          .should('be.visible')
+          .and('contain.text', 'One or more modifierExtensions are found in the Questionnaire resource. The rendered Questionnaire below is for display only and may not be correctly rendered, and the QuestionnaireResponse generated from it may not be valid.');
+      });
+    });
+  });
+
 });

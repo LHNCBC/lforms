@@ -207,7 +207,7 @@ span.loading-indicator-container {
 }
 
 /* active row */
-.lhc-item-question.lhc-active-row {
+lhc-item-question.lhc-active-row {
   background-color: #AFEEEE;
 }
 
