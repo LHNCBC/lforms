@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:18.20.8
 WORKDIR app
 RUN apt update -y
 ARG NPM_TOKEN
