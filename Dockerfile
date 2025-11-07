@@ -1,4 +1,4 @@
-FROM node:20.18.0-alpine
+FROM node:24-alpine
 WORKDIR app
 RUN apk update
 ARG NPM_TOKEN
