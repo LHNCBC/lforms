@@ -35,10 +35,10 @@ pipeline {
   }
   post {
     unsuccessful {
-      slackSend color: 'danger', channel: '#product-ops-stage', message: "Pipeline Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+      slackSend color: 'danger', channel: '#product-ops', message: "Pipeline Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
     fixed {
-      slackSend color: 'good', channel: '#product-ops-stage', message: "Pipeline Ran Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+      slackSend color: 'good', channel: '#product-ops', message: "Pipeline Ran Successfully: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
   }
 }
