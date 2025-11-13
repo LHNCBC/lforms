@@ -184,6 +184,10 @@
       "status": "final",
       "extension": [
         {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+          "valueString": "answer.value"
+        },
+        {
           "url": "test extension url",
           "valueString": "test extension value"
         }
