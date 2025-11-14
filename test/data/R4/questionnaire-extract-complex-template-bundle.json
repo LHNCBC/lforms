@@ -364,23 +364,16 @@
           "answerOption": [
             {
               "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA2-8",
+                "system": "http://hl7.org/fhir/administrative-gender",
+                "code": "male",
                 "display": "Male"
               }
             },
             {
               "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA3-6",
+                "system": "http://hl7.org/fhir/administrative-gender",
+                "code": "female",
                 "display": "Female"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA46-8",
-                "display": "Other"
               }
             }
           ]
