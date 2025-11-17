@@ -45,7 +45,7 @@ describe('Template based extraction', () => {
           "value": "123"
         }
       ]);
-      expect(patient.gender).to.equal('LA2-8');
+      expect(patient.gender).to.equal('male');
       // Properties that start with an underscore should have been removed.
       expect(patient._gender).to.be.undefined;
       expect(bundle[1].entry[0].request).to.deep.equal({
@@ -150,7 +150,7 @@ describe('Template based extraction', () => {
           "value": "123"
         }
       ]);
-      expect(patient.gender).to.equal('LA2-8');
+      expect(patient.gender).to.equal('male');
       // Properties that start with an underscore should have been removed.
       expect(patient._gender).to.be.undefined;
       expect(bundle[1].entry[0].request).to.deep.equal({
@@ -200,6 +200,39 @@ describe('Template based extraction', () => {
         "method": "POST",
         "url": "Observation"
       });
+    });
+  });
+
+  it('should work on a questionnaire with both templateExtract and templateExtractBundle', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('q-with-template-extraction.json', null, {fhirVersion: 'STU3'});
+    // Fill out the form before extracting.
+    cy.byId('height/1/1').type('44');
+    cy.byId('weight/1/1').type('55');
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "STU3", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(2);
+      const weight = bundle[1].entry[0].resource;
+      expect(weight.resourceType).to.equal("Observation");
+      expect(weight.valueQuantity).to.deep.equal({
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg",
+        "value": 55
+      });
+      expect(weight._valueQuantity).to.be.undefined;
+      const height = bundle[1].entry[1].resource;
+      expect(height.resourceType).to.equal("Observation");
+      expect(height.valueQuantity).to.deep.equal({
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm",
+        "value": 4400
+      });
+      expect(height._valueQuantity).to.be.undefined;
     });
   });
 });
