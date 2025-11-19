@@ -221,9 +221,12 @@ function addR5ImportFns(ns) {
           answer.score = ordProp.valueDecimal;
         } else {
           // Still, someone could provide us with an R5 ValueSet.expansion that
-          // put score extensions on the contained Codings
+          // put score extensions on the contained Codings.
+          // Both ordinalValue and itemWeight extensions are supported.
           const ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-            self.fhirExtUrlValueSetScore);
+            self.fhirExtUrlValueSetScoreordinalValue) ||
+            LForms.Util.findObjectInArray(vsItem.extension, 'url',
+            self.fhirExtUrlValueSetScoreitemWeight);
           if(ordExt) {
             answer.score = ordExt.valueDecimal;
           }

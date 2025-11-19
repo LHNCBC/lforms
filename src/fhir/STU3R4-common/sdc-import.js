@@ -114,8 +114,16 @@ function addSTU3R4ImportFns(ns) {
             }
           }
         }
-        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-          self.fhirExtUrlValueSetScore);
+        var ordExt;
+        if (self.fhirExtUrlValueSetScore) { // STU3.
+          ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+            self.fhirExtUrlValueSetScore);
+        } else { // R4. Both ordinalValue and itemWeight extensions are supported.
+          ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+              self.fhirExtUrlValueSetScoreordinalValue) ||
+            LForms.Util.findObjectInArray(vsItem.extension, 'url',
+              self.fhirExtUrlValueSetScoreitemWeight);
+        }
         if(ordExt) {
           answer.score = ordExt.valueDecimal;
         }
