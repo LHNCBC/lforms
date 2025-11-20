@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.3.1] 2025-11-20
+### Fixed
+- Support both ordinalValue and itemWeight extensions on ValueSet.expansion
+  for calclatedExpressions.
+
 ## [38.3.0] 2025-09-12
 ### Added
 - Show an error message on top of the rendered questionnaire if
