@@ -7,7 +7,7 @@
         (click)="lhcDataService.setActiveRow(item)"
         [nzValue]="item.answers[i]"
         [(ngModel)]="checkboxModels[i]"
-        [nzDisabled]="item._readOnly"
+        [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
         [id]="lhcDataService.getItemAnswerId(item, answer)"
         [style]="answer._obj_CSS">
         <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
@@ -23,7 +23,7 @@
         attr.aria-label="Checkbox Other for {{item.question}}"
         (click)="lhcDataService.setActiveRow(item)"
         [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
-        [nzDisabled]="item._readOnly"
+        [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
         [(ngModel)]="otherCheckboxModel"
         [id]="lhcDataService.getItemAnswerId(item, '_other')">
         {{language.other}}
@@ -36,7 +36,7 @@
         [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
         nz-input
         *ngIf="otherCheckboxModel"
-        [disabled]="item._readOnly"
+        [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
         (focus)="lhcDataService.setActiveRow(item)"/>
     </div>
   </div>

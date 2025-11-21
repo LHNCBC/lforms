@@ -40,7 +40,7 @@
               <label *ngIf="isCheckbox">
                 <input
                   type="checkbox"
-                  [disabled]="item._readOnly"
+                  [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"
@@ -52,7 +52,7 @@
               <label *ngIf="!isCheckbox">
                 <input
                   type="radio"
-                  [disabled]="item._readOnly"
+                  [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
                   [checked]="subItem._selectedRadio === i"
@@ -70,7 +70,7 @@
               <label>
                 <input
                   type="checkbox"
-                  [disabled]="item._readOnly"
+                  [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
                   id="{{lhcDataService.getItemAnswerId(subItem, '_other')}}"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"
@@ -81,7 +81,7 @@
               <label>
                 <input
                   type="text"
-                  [disabled]="item._readOnly"
+                  [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
                   id="{{lhcDataService.getItemAnswerId(subItem, '_otherValue')}}"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"
@@ -95,7 +95,7 @@
               <label>
                 <input
                   type="radio"
-                  [disabled]="item._readOnly"
+                  [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
                   id="{{lhcDataService.getItemAnswerId(subItem, '_other')}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
@@ -107,7 +107,7 @@
               <label>
                 <input
                   type="text"
-                  [disabled]="item._readOnly"
+                  [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
                   id="{{lhcDataService.getItemAnswerId(subItem, '_otherValue')}}"
                   name="{{subItem._elementId}}"
                   [attr.name]="subItem._elementId"

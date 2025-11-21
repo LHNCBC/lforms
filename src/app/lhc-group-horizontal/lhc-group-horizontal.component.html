@@ -29,7 +29,7 @@
           class="lhc-data-row has-ng-animate">
         <td class="lhc-de-button" *ngIf="item._questionRepeatable && lhcDataService.getHorizontalTableInfo()[item._horizontalTableId].tableRows.length>1">
           <button *ngIf="!lhcDataService.hasOneRepeatingItem(item)" type="button"
-                  id="del-{{row.header._elementId}}" [disabled]="item._readOnly"
+                  id="del-{{row.header._elementId}}" [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
                   class="lhc-float-button lhc-button" (click)="lhcDataService.removeOneRepeatingItem(row.header)"
                   title='Remove this row of "{{ row.header.question }}"'>-</button>
         </td>

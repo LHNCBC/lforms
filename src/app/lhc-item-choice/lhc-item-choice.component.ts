@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import {LhcDataService} from "../../lib/lhc-data.service";
 
 @Component({
     selector: 'lhc-item-choice',
@@ -9,5 +10,7 @@ import { Component, Input, OnInit, OnChanges } from '@angular/core';
 export class LhcItemChoiceComponent {
 
   @Input() item;
+
+  constructor(public lhcDataService: LhcDataService) { }
 
 }

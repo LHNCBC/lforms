@@ -1,7 +1,7 @@
 <ng-container [ngSwitch]="popoverType">
   <button *ngSwitchCase="'repeating-item'" id="add-{{item._elementId}}" type="button" class="lhc-float-button lhc-button"
           nz-popover
-          [disabled]="item._readOnly"
+          [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
           [nzPopoverVisible]="item._showUnusedItemWarning"
           [nzPopoverContent]="warningStrTemplate"
           nzPopoverPlacement="right"

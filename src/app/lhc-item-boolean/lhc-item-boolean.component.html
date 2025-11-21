@@ -8,24 +8,24 @@
     (click)="lhcDataService.setActiveRow(item)">
     <label
       nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
+      [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
+      [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
       [nzValue]="true"
       [(ngModel)]="booleanModels[0]"
       [id]="lhcDataService.getItemAnswerId(item, 'true')"
       >{{language.booleanYes}}</label>
     <label
       nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
+      [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
+      [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
       [nzValue]="false"
       [(ngModel)]="booleanModels[1]"
       [id]="lhcDataService.getItemAnswerId(item, 'false')"
       >{{language.booleanNo}}</label>
     <label
       nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
+      [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
+      [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
       [nzValue]="null"
       [(ngModel)]="booleanModels[2]"
       [id]="lhcDataService.getItemAnswerId(item, 'null')"

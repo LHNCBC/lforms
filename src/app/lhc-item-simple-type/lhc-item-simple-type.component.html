@@ -3,7 +3,7 @@
   <!-- single unit -->
   <div class="lhc-de-unit" *ngIf="hasSingleUnit">
     <input
-      [disabled]="item._readOnly"
+      [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
       type="text"
       id="{{unitElementId}}"
       value="{{item.unit.name||item.unit.code}}"

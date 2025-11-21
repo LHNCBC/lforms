@@ -40,6 +40,14 @@ export class LhcDataService {
 
 
   /**
+   * Get the widget options
+   */
+  getTemplateOptions() {
+    return this.lhcFormData?.templateOptions || {};
+  }
+
+
+  /**
    * The following functions are exposed to components and their templates through a service
    */
 

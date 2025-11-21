@@ -4,7 +4,7 @@
       <input [name]="item._text" type="file" class="lhc-attachment-upload"
              #fileInput
              (change)="onChange($event)"
-             placeholder="{{item._placeholder}}" [disabled]="item._readOnly"
+             placeholder="{{item._placeholder}}" [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
              id="{{'file-'+item._elementId}}" (focus)="lhcDataService.setActiveRow(item)"
              (blur)="lhcDataService.activeRowOnBlur(item)" />
       <button type="button" class="lhc-attachment-button toggle-attachment-fields" title="{{item._useURL ?
@@ -12,10 +12,10 @@
               (click)="item._useURL = !item._useURL">&#x21af;</button>
       <div *ngIf="item._useURL">
         <label>URL for file:</label>
-        <input type="text" [disabled]="item._readOnly" class="lhc-attachment-url"
+        <input type="text" [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode" class="lhc-attachment-url"
                [(ngModel)]="item._attachmentURL" placeholder="URL for retrieving file" (focus)="lhcDataService.setActiveRow(item)"
                (blur)="lhcDataService.activeRowOnBlur(item)" >
-        <input type="text" [disabled]="item._readOnly" class="lhc-attachment-name" (focus)="lhcDataService.setActiveRow(item)"
+        <input type="text" [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode" class="lhc-attachment-name" (focus)="lhcDataService.setActiveRow(item)"
                (blur)="lhcDataService.activeRowOnBlur(item)" [(ngModel)]="item._attachmentName" placeholder="File name (optional)">
         <button type="button" class="lf-float-button attach-button" (click)="createAttachment(item)">
           Attach URL{{item._fileInfo ? ' and file data': ''}}</button><br>
@@ -32,7 +32,7 @@
       >{{item.value.title || item.value.url || 'Unknown filename'}}</a>
       <span *ngIf="item.value._progress"><label>Download progress:
         <progress value="{{item.value._progress}}"></progress></label></span>
-      <button class="lhc-attachment-button lf-remove-attachment" *ngIf="!item._readOnly"
+      <button class="lhc-attachment-button lf-remove-attachment" *ngIf="!item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
        type="button" title="{{'Remove '+item.value.title}}"
        (click)="removeAttachment(item)">&#x2716;</button>
     </span>

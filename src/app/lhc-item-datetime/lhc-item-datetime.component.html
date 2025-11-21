@@ -1,6 +1,6 @@
 <ng-container *ngIf="item">
   <nz-date-picker #nzDatePickerComponent
-    [nzDisabled]="item._readOnly"
+    [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
     id="{{item._elementId}}"
     class="lhc-datetime-picker"
     nzShowTime

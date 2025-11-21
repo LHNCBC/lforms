@@ -1,6 +1,6 @@
 <ng-container *ngIf="item">
   <textarea id="{{item._elementId}}"
-         [disabled]="item._readOnly"
+         [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
          [ngModel]="item.value"
          (ngModelChange)="onModelChange($event)"
          placeholder="{{item._placeholder}}"

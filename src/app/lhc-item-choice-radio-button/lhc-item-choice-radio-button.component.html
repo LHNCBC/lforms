@@ -3,7 +3,7 @@
   <nz-radio-group
     [ngModel]="radioValue"
     (ngModelChange)="onRadioModelChange($event)"
-    [nzDisabled]="item._readOnly"
+    [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
     [nzName]="'radiogroup_' + item._elementId"
     attr.aria-labelledby="label-{{ item._elementId }}"
     role="radiogroup"
@@ -14,8 +14,8 @@
       *ngFor="let answer of acOptions.listItems; index as i"
       class="lhc-answer"
       nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
+      [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
+      [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="item.answers[i]"
       [(ngModel)]="radioModels[i]"
@@ -31,8 +31,8 @@
     <label
       *ngIf="item.answerConstraint === 'optionsOrString'"
       nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
+      [nzDisabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
+      [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
       (click)="lhcDataService.setActiveRow(item)"
       [nzValue]="{'text': otherValue, '_notOnList': true}"
       [(ngModel)]="otherRadioModel"
@@ -46,7 +46,7 @@
         class="lhc-answer-other-input"
         [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
         nz-input
-        [disabled]="item._readOnly"
+        [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
         *ngIf="radioValue && radioValue._notOnList"
         (focus)="lhcDataService.setActiveRow(item)"/>
     </label>

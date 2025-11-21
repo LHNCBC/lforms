@@ -114,7 +114,9 @@ export default class LhcFormData {
     // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
     // 'warning' and 'error' messages. The default value is 'error'.
     // No messages will be displayed if messageLevel is null.
-    messageLevel: "error"
+    messageLevel: "error",
+    // Whether to render the form as readonly
+    readonlyMode: false
   };
 
   // other instance level variables that were not previously listed
