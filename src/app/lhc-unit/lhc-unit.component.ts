@@ -48,7 +48,7 @@ export class LhcUnitComponent implements OnChanges {
       // readOnly = true if:
       //    - the whole item is read-only
       //    - OR there is units list and _unitOpen is set to something other than optionsOrString
-      this.options.readOnly = item._readOnly ||
+      this.options.readOnly = this.lhcDataService.getTemplateOptions().readonlyMode || item._readOnly ||
         !item.units && (item._unitOpen && item._unitOpen != 'optionsOrString');
 
       this.options.elementId = "unit_" + item._elementId

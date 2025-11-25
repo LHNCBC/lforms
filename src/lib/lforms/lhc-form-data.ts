@@ -1512,7 +1512,7 @@ export default class LhcFormData {
     item._multipleAnswers = LhcFormUtils._hasMultipleAnswers(item);
 
     // set up readonly flag
-    item._readOnly = (item.editable === "0") ||
+    item._readOnly = this.templateOptions.readonlyMode || (item.editable === "0") ||
       !!item.calculationMethod || InternalUtil.targetDisabledAndProtected(item);
 
     if (this._fhir) {

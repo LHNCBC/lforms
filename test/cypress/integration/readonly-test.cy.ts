@@ -120,13 +120,7 @@ describe('Questionnaire with readOnly and repeats items', () =>{
 describe('templateOption readonlyMode', () => {
   it('should render the form in readonly mode', function() {
     po.openPage();
-    util.addFormToPage('bit-of-everything.json', null, {fhirVersion: 'R4'});
-    cy.get('input[disabled]').should('have.length', 0);
-    cy.window().then((win) => {
-      const testForm = win.document.getElementsByTagName('wc-lhc-form')[0];
-      // Use spread syntax so we get a new object while maintaining untouched properties
-      testForm.options = {...testForm.options, readonlyMode: true};
-      cy.get('input[disabled]').should('have.length', 20);
-    });
+    util.addFormToPage('bit-of-everything.json', null, {fhirVersion: 'R4', readonlyMode: true});
+    cy.get('input[disabled]').should('have.length', 20);
   });
 });

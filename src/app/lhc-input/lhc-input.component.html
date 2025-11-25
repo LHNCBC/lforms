@@ -1,6 +1,6 @@
 <ng-container *ngIf="item">
   <input id="{{item._elementId}}"
-         [disabled]="item._readOnly || lhcDataService.getTemplateOptions().readonlyMode"
+         [disabled]="item._readOnly"
          [ngModel]="item.value"
          (ngModelChange)="onModelChange($event)"
          placeholder="{{item._placeholder}}"

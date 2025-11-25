@@ -1,6 +1,6 @@
 <div *ngIf="options" class="{{options.readOnly ? 'lhc-item-readyonly' : null}}">
   <input type="text"
-         [disabled]="options.readOnly || lhcDataService.getTemplateOptions().readonlyMode"
+         [disabled]="options.readOnly"
          placeholder="{{options.placeholder}}"
          id="{{options.elementId}}"
          (blur)="onInputBlur()"
