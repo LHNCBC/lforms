@@ -131,6 +131,9 @@ about the meaning of each key:
       from the rendering-xhtml extension if it contains invalid tags or attributes. 
       The default value is false, which means if the HTML content is not valid, 
       the text content will be used/displayed (even if the text is empty).
+    * allowExternalURL  - a boolean that controls whether to allow external href links
+      in rendering-xhtml extension. The default is false. It should only be set to true
+      when the form is used in a trusted environment.
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own

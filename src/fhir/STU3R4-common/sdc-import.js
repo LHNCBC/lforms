@@ -107,7 +107,7 @@ function addSTU3R4ImportFns(ns) {
           const xhtmlFormat = LForms.Util.findObjectInArray(vsItem._display.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
           if (xhtmlFormat) {
             answer.textHTML = xhtmlFormat.valueString;
-            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(answer.textHTML);
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(answer.textHTML, self._widgetOptions.allowExternalURL);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               answer._hasInvalidHTMLTagInText = true;
               LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);

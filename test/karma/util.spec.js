@@ -770,6 +770,13 @@ describe('Util library', function() {
           let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(sourceHTML);
           assert.equal(invalidTagsAttributes.length, 0);
         })
+        if (tag === 'a' && urlAttr === 'href') {
+          it('should allow external url if allowExternalURL is set to true', () => {
+            let sourceHTML = `<a href='https://a_url'>A tag with an attribute whose value is an external url.</a>`;
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(sourceHTML, true);
+            assert.equal(invalidTagsAttributes.length, 0);
+          });
+        }
       })
     };
     // test tags with an attribute that has multiple URL values
