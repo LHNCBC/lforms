@@ -1017,10 +1017,20 @@ export default class LhcFormData {
       // check if displayInvalidHTML is changed
       let displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
         newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
+      // check if readonlyMode is changed
+      let readonlyModeChanged = newOptions.readonlyMode !== undefined &&
+        newOptions.readonlyMode !== existingOptions.readonlyMode;
 
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
 
+      // Update item._readOnly when templateOption.readonlyMode is changed.
+      if (readonlyModeChanged && this.itemList) {
+        for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+          let item = this.itemList[i];
+          this._updateItemAttrs(item);
+        }
+      }
       // recreate the answerOption to add or remove the scores from display texts,
       // or switch between 'html', 'escaped' and 'plain' display types,
       // when the lhcFormData instance has been initialized.
