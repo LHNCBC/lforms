@@ -22,7 +22,7 @@
           "display": "some-display-1-2",
           "extension": [
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
               "valueDecimal": 10
             }
           ]
@@ -32,7 +32,7 @@
           "display": "some-display-2-1",
           "extension": [
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
               "valueDecimal": 2
             }
           ]
@@ -65,7 +65,15 @@
           },{
             "linkId": "link-1.1.2",
             "type": "choice",
-            "answerValueSet": "some-value-set-url-5"
+            "answerValueSet": "some-value-set-url-5",
+            "initial": [
+              {
+                "valueCoding": {
+                  "code": "some-code-1",
+                  "system": "some-system-1"
+                }
+              }
+            ]
           }]
         }
       ]
@@ -92,6 +100,23 @@
         }
       ],
       "text": "Total score"
+    },
+    {
+      "type": "decimal",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression",
+          "valueExpression": {
+            "description": "Initial score calculation",
+            "language": "text/fhirpath",
+            "expression": "%resource.repeat(item).answer.weight().sum()"
+          }
+        }
+      ],
+      "required": false,
+      "readOnly": true,
+      "linkId": "link-3",
+      "text": "Initial score"
     }
   ]
 }

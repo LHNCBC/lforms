@@ -224,9 +224,9 @@ function addR5ImportFns(ns) {
           // put score extensions on the contained Codings.
           // Both ordinalValue and itemWeight extensions are supported.
           const ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-            self.fhirExtUrlValueSetScoreordinalValue) ||
+            self.fhirExtUrlValueSetScoreOrdinalValue) ||
             LForms.Util.findObjectInArray(vsItem.extension, 'url',
-            self.fhirExtUrlValueSetScoreitemWeight);
+            self.fhirExtUrlValueSetScoreItemWeight);
           if(ordExt) {
             answer.score = ordExt.valueDecimal;
           }
