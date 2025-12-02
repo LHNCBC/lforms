@@ -637,7 +637,7 @@ import replaceAsync from 'string-replace-async';
       } catch (e) {
         console.log(e);
       }
-      if (!fhirPathVal || fhirPathVal.length === 0) {
+      if (!fhirPathVal) {
         return [];
       } else {
         return fhirPathVal.length !== 1 ? fhirPathVal : fhirPathVal[0];
