@@ -114,7 +114,9 @@ export default class LhcFormData {
     // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
     // 'warning' and 'error' messages. The default value is 'error'.
     // No messages will be displayed if messageLevel is null.
-    messageLevel: "error"
+    messageLevel: "error",
+    // Whether to render the form as readonly
+    readonlyMode: false
   };
 
   // other instance level variables that were not previously listed
@@ -1015,10 +1017,20 @@ export default class LhcFormData {
       // check if displayInvalidHTML is changed
       let displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
         newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
+      // check if readonlyMode is changed
+      let readonlyModeChanged = newOptions.readonlyMode !== undefined &&
+        newOptions.readonlyMode !== existingOptions.readonlyMode;
 
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
 
+      // Update item._readOnly when templateOption.readonlyMode is changed.
+      if (readonlyModeChanged && this.itemList) {
+        for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+          let item = this.itemList[i];
+          this._updateItemAttrs(item);
+        }
+      }
       // recreate the answerOption to add or remove the scores from display texts,
       // or switch between 'html', 'escaped' and 'plain' display types,
       // when the lhcFormData instance has been initialized.
@@ -1510,7 +1522,7 @@ export default class LhcFormData {
     item._multipleAnswers = LhcFormUtils._hasMultipleAnswers(item);
 
     // set up readonly flag
-    item._readOnly = (item.editable === "0") ||
+    item._readOnly = this.templateOptions.readonlyMode || (item.editable === "0") ||
       !!item.calculationMethod || InternalUtil.targetDisabledAndProtected(item);
 
     if (this._fhir) {

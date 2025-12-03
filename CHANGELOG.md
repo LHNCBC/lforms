@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.5.0] 2025-11-24
+### Added
+- New template option readonlyMode to render the Questionnaire with
+  all the input fields disabled.
+
 ## [38.4.0] 2025-11-21
 ### Changed
 - Updated angular and antd to v20.

@@ -17,7 +17,7 @@
                (blur)="lhcDataService.activeRowOnBlur(item)" >
         <input type="text" [disabled]="item._readOnly" class="lhc-attachment-name" (focus)="lhcDataService.setActiveRow(item)"
                (blur)="lhcDataService.activeRowOnBlur(item)" [(ngModel)]="item._attachmentName" placeholder="File name (optional)">
-        <button type="button" class="lf-float-button attach-button" (click)="createAttachment(item)">
+        <button type="button" [disabled]="item._readOnly" class="lf-float-button attach-button" (click)="createAttachment(item)">
           Attach URL{{item._fileInfo ? ' and file data': ''}}</button><br>
         Note:  The URL you enter will not be downloaded or
         verified, but simply copied into your response.  Please ensure

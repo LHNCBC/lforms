@@ -11,7 +11,7 @@ describe('LhcItemChoiceComponent', () => {
       declarations: [ LhcItemChoiceComponent ],
       imports: [FormsModule]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
