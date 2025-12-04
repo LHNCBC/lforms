@@ -1,0 +1,31 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "name": "A Questionnaire with duplicate variable names - item level",
+  "item": [
+    {
+      "required": false,
+      "linkId": "/fieldA",
+      "text": "Field A",
+      "type": "integer",
+      "extension" : [
+        {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "Y",
+            "language": "text/fhirpath",
+            "expression": "1"
+          }
+        }, {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "Y",
+            "language": "text/fhirpath",
+            "expression": "2"
+          }
+        }
+      ]
+    }
+  ]
+}
+

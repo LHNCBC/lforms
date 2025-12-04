@@ -133,4 +133,17 @@ describe('addFormToPage Error Message Test', () => {
     cy.get("#loadMsg").contains("Unable to load ValueSet from").should('not.exist');
   });
 
+  it('should show errors for duplicate variable names - root level', () => {
+    cy.visit('/test/pages/addFormToPageTest.html');
+    cy.get("#loadBtn").contains("Load From File");
+    cy.get('#fileAnchor').uploadFile('test/data/R4/q-with-duplicate-variable-names-root-level.json');
+    cy.get('#loadMsg').should('have.text', 'Duplicate FHIRPath variable name found: X');
+  });
+
+  it('should show errors for duplicate variable names - item level', () => {
+    cy.visit('/test/pages/addFormToPageTest.html');
+    cy.get("#loadBtn").contains("Load From File");
+    cy.get('#fileAnchor').uploadFile('test/data/R4/q-with-duplicate-variable-names-item-level.json');
+    cy.get('#loadMsg').should('have.text', 'Duplicate FHIRPath variable name found: Y');
+  });
 });

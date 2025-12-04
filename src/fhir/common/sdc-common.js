@@ -237,6 +237,17 @@ function addCommonSDCFns(ns) {
       itemOrLFData._fhirExt = m;
       if (exprExtensions.length)
         itemOrLFData._exprExtensions = exprExtensions;
+      // If any duplicate name is found in FHIRPath variable extensions, throw an error.
+      if (m[self.fhirExtVariable] && m[self.fhirExtVariable].length > 1) {
+        let varNames = {};
+        for (let varExt of m[self.fhirExtVariable]) {
+          let varName = varExt.valueExpression.name;
+          if (varNames[varName]) {
+            throw new Error(`Duplicate FHIRPath variable name found: ${varName}`);
+          }
+          varNames[varName] = true;
+        }
+      }
     }
   };
 

@@ -1,0 +1,32 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "name": "A Questionnaire with duplicate variable names - root level",
+  "extension" : [
+    {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+        "name": "X",
+        "language": "text/fhirpath",
+        "expression": "1"
+      }
+    }, {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+        "name": "X",
+        "language": "text/fhirpath",
+        "expression": "2"
+      }
+    }
+  ],
+  "item": [
+    {
+      "required": false,
+      "linkId": "/groupA",
+      "text": "Group A",
+      "type": "group",
+      "repeats": true
+    }
+  ]
+}
+
