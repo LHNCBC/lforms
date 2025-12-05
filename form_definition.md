@@ -131,6 +131,8 @@ about the meaning of each key:
       from the rendering-xhtml extension if it contains invalid tags or attributes. 
       The default value is false, which means if the HTML content is not valid, 
       the text content will be used/displayed (even if the text is empty).
+    * readonlyMode - a boolean that controls whether to render the Questionnaire as readonly.
+      The default is false. If set to true, all input fields will be disabled/readonly.
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
