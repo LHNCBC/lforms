@@ -131,6 +131,8 @@ about the meaning of each key:
       from the rendering-xhtml extension if it contains invalid tags or attributes. 
       The default value is false, which means if the HTML content is not valid, 
       the text content will be used/displayed (even if the text is empty).
+    * readonlyMode - a boolean that controls whether to render the Questionnaire as readonly.
+      The default is false. If set to true, all input fields will be disabled/readonly.
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
@@ -146,8 +148,9 @@ about the meaning of each key:
     * questionCardinality - This controls whether the there is a button for
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).
-      If you wish for a question or section to be repeatable, pass in `{"min":
-      "1", "max": "*"}`.
+      To set a question or section to be repeatable, pass in `{"min":
+      "1", "max": "*"}`.  To set a question or section to be repeatable
+      but for no more than 3 times, then set "max" to "3".
     * question - The label for the question, or the title of the section.
     * answerCardinality - The same as <a href="#answerCardinality">above</a>.
     * <a name="answers"></a>answers - For questions with answer lists, this is

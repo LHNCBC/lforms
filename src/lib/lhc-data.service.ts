@@ -40,6 +40,14 @@ export class LhcDataService {
 
 
   /**
+   * Get the widget options
+   */
+  getTemplateOptions() {
+    return this.lhcFormData?.templateOptions || {};
+  }
+
+
+  /**
    * The following functions are exposed to components and their templates through a service
    */
 
@@ -164,6 +172,18 @@ export class LhcDataService {
       ret = true;
     }
     return ret;
+  }
+
+
+  /**
+   * Get the last repeating item.
+   * Returns null if the item is not repeatable.
+   * @param item an item. It may not be the last of the repeating items.
+   * @returns {boolean}
+   */
+  getLastRepeatingItem(item) {
+    const repeatingItems = this.lhcFormData._getRepeatingItems(item);
+    return repeatingItems.length ? repeatingItems[repeatingItems.length - 1] : null;
   }
 
 

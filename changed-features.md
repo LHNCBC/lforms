@@ -76,10 +76,10 @@
           `{"colCSS": [{"name":"width","value":"30%"},{"name":"min-width","value":"4em"}]}`
         * <a name="answerCardinality"></a>answerCardinality - For lists, this
           allows you to control whether list is multi-select or not.  It is a hash
-          that takes two keys, "min" and "max".  If you "min" to "1", then the
+          that takes two keys, "min" and "max".  If you set "min" to "1", then the
           user will be required to provide an answer.  If you set "max" to "*",
-          the list becomes multi-select.  (Other possibilities are not yet
-          supported.)
+          the list becomes multi-select.  If you set "max" to a number greater than
+          1, the user will be able to select up to that number of answers.
 
 * **Emitted (AngularJS) Events**
 
