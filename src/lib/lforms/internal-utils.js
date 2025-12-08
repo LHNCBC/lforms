@@ -69,7 +69,7 @@ export const InternalUtil = {
    * @param xhtmlFormat the "rendering-xhtml" extension from Questionnaire.
    * @param allowHTML widget option of whether to allow HTML in forms.
    * @param containedImages contained images info, see buildContainedImageMap() for details.
-   * @param item an item from and lforms form definition
+   * @param item an item from lforms form definition
    */
   setAnswerTextHTML: function(answer, xhtmlFormat, allowHTML, containedImages, item) {
     answer.textHTML = xhtmlFormat.valueString;

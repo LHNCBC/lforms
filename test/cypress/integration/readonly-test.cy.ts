@@ -116,3 +116,11 @@ describe('Questionnaire with readOnly and repeats items', () =>{
     });
   })
 })
+
+describe('templateOption readonlyMode', () => {
+  it('should render the form in readonly mode', function() {
+    po.openPage();
+    util.addFormToPage('bit-of-everything.json', null, {fhirVersion: 'R4', readonlyMode: true});
+    cy.get('input[disabled]').should('have.length', 20);
+  });
+});

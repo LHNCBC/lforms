@@ -1,0 +1,67 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "status": "completed",
+  "authored": "2025-09-19T20:19:59.250Z",
+  "item": [
+    {
+      "linkId": "1",
+      "text": "A repeatable group",
+      "item": [
+        {
+          "answer": [
+            {
+              "valueString": "1"
+            }
+          ],
+          "linkId": "1.2",
+          "text": "some other field"
+        }
+      ]
+    },
+    {
+      "linkId": "1",
+      "text": "A repeatable group",
+      "item": [
+        {
+          "answer": [
+            {
+              "valueString": "2"
+            }
+          ],
+          "linkId": "1.2",
+          "text": "some other field"
+        }
+      ]
+    },
+    {
+      "linkId": "1",
+      "text": "A repeatable group",
+      "item": [
+        {
+          "answer": [
+            {
+              "valueString": "3"
+            }
+          ],
+          "linkId": "1.2",
+          "text": "some other field"
+        }
+      ]
+    },
+    {
+      "linkId": "1",
+      "text": "A repeatable group",
+      "item": [
+        {
+          "answer": [
+            {
+              "valueString": "4"
+            }
+          ],
+          "linkId": "1.2",
+          "text": "some other field"
+        }
+      ]
+    }
+  ]
+}

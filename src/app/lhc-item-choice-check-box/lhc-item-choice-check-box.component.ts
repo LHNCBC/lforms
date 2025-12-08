@@ -80,6 +80,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     this.item.value = value;
     this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
     this.prevCheckBoxValue = this.item.value;
+    this.item._visitedBefore = true;
   }
 
   /**
