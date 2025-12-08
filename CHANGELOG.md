@@ -2,10 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [38.3.1] 2025-11-20
+## [38.5.1] 2025-12-08
 ### Fixed
 - Support both ordinalValue and itemWeight extensions on ValueSet.expansion
   for calclatedExpressions.
+
+## [38.5.0] 2025-11-24
+### Added
+- New template option readonlyMode to render the Questionnaire with
+  all the input fields disabled.
+
+## [38.4.0] 2025-11-21
+### Changed
+- Updated angular and antd to v20.
 
 ## [38.3.0] 2025-09-12
 ### Added
