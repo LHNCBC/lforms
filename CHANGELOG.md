@@ -2,9 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [38.6.0] 2025-12-05
+## [38.7.0] 2025-12-05
 ### Added
 - Support for template-based extraction.
+
+## [38.6.0] 2025-12-05
+### Added
+- Fully support minOccurs and maxOccurs extensions.
 
 ## [38.5.0] 2025-11-24
 ### Added
