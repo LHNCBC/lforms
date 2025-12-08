@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.6.0] 2025-12-05
+### Added
+- Fully support minOccurs and maxOccurs extensions.
+
 ## [38.5.0] 2025-11-24
 ### Added
 - New template option readonlyMode to render the Questionnaire with

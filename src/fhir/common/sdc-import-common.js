@@ -1884,6 +1884,14 @@ function addCommonSDCImportFns(ns) {
       }
     }
 
+    // Restrictions of min/max number of answers.
+     if (lfItem.answerCardinality && lfItem.answerCardinality.max && parseInt(lfItem.answerCardinality.max) > 1) {
+       restrictions['maxOccurs'] = parseInt(lfItem.answerCardinality.max);
+     }
+     if (lfItem.answerCardinality && lfItem.answerCardinality.min && parseInt(lfItem.answerCardinality.min) > 1) {
+       restrictions['minOccurs'] = parseInt(lfItem.answerCardinality.min);
+     }
+
     if(!LForms.jQuery.isEmptyObject(restrictions)) {
       lfItem.restrictions = restrictions;
     }

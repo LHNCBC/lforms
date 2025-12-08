@@ -176,6 +176,18 @@ export class LhcDataService {
 
 
   /**
+   * Get the last repeating item.
+   * Returns null if the item is not repeatable.
+   * @param item an item. It may not be the last of the repeating items.
+   * @returns {boolean}
+   */
+  getLastRepeatingItem(item) {
+    const repeatingItems = this.lhcFormData._getRepeatingItems(item);
+    return repeatingItems.length ? repeatingItems[repeatingItems.length - 1] : null;
+  }
+
+
+  /**
    * Check the display type of item.text or an answerOption.
    * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
    * @returns {string}
