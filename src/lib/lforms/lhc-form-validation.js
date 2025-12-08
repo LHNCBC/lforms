@@ -265,6 +265,24 @@ const Validation = {
               errors.push(language.mustNotHaveMoreDecimalPlaces.replace('{lformsParam}', keyValue));
             }
             break;
+          case "maxOccurs":
+            if (Array.isArray(value) && value.length <= parseInt(keyValue)) {
+              valid = true;
+            }
+            else if (Array.isArray(value)){
+              valid = false;
+              errors.push(language.mustNotHaveMoreAnswers.replace('{lformsParam}', keyValue));
+            }
+            break;
+          case "minOccurs":
+            if (Array.isArray(value) && value.length >= parseInt(keyValue)) {
+              valid = true;
+            }
+            else if (Array.isArray(value)){
+              valid = false;
+              errors.push(language.mustNotHaveLessAnswers.replace('{lformsParam}', keyValue));
+            }
+            break;
           default:
             valid = true;
         }

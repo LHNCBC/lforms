@@ -2,10 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [38.5.1] 2025-12-08
+## [38.6.1] 2025-12-08
 ### Fixed
 - Support both ordinalValue and itemWeight extensions on ValueSet.expansion
-  for calclatedExpressions.
+  for calculatedExpressions.
+
+## [38.6.0] 2025-12-05
+### Added
+- Fully support minOccurs and maxOccurs extensions.
 
 ## [38.5.0] 2025-11-24
 ### Added
