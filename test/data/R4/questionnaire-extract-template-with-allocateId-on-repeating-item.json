@@ -1,0 +1,52 @@
+{
+  "resourceType": "Questionnaire",
+  "contained": [
+    {
+      "resourceType": "Observation",
+      "id": "obsTemplateHeight",
+      "status": "final",
+      "subject": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%NewHeightId"
+          }
+        ]
+      }
+    }
+  ],
+  "title": "Template Extract - extractAllocateId on repeating item",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "obs",
+      "text": "Observations",
+      "type": "group",
+      "item": [
+        {
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "template",
+                  "valueReference": {
+                    "reference": "#obsTemplateHeight"
+                  }
+                }
+              ],
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract"
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-extractAllocateId",
+              "valueString": "NewHeightId"
+            }
+          ],
+          "linkId": "height",
+          "text": "What is your current height (m)",
+          "type": "decimal",
+          "repeats": true
+        }
+      ]
+    }
+  ]
+}

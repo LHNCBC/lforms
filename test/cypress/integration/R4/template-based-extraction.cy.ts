@@ -104,6 +104,16 @@ describe('Template based extraction', () => {
         "url": "Observation"
       });
     });
+    // Clear the weight field and the weight field should be removed from the extracted bundle
+    // due to templateExtractContext extension.
+    cy.byId('weight/1/1').clear();
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(2);
+    });
   });
 
   it('should work on templateExtractBundle', () => {
@@ -233,6 +243,84 @@ describe('Template based extraction', () => {
         "value": 4400
       });
       expect(height._valueQuantity).to.be.undefined;
+    });
+  });
+
+  it('should work if templateExtract extension is at root level', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('questionnaire-extract-template-root-level.json', null, {fhirVersion: 'R4'});
+    // Fill out the form before extracting.
+    cy.byId('height/1').type('44');
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(1);
+      const height = bundle[1].entry[0].resource;
+      expect(height.resourceType).to.equal("Observation");
+      expect(height.valueQuantity).to.deep.equal({
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm",
+        "value": 4400
+      });
+      expect(height._valueQuantity).to.be.undefined;
+    });
+  });
+
+  it('should allocate different values if extractAllocateId extension is defined on a repeating item', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('questionnaire-extract-template-with-allocateId-on-repeating-item.json', null, {fhirVersion: 'R4'});
+    // Fill out the form before extracting.
+    cy.byId('height/1/1').type('44');
+    cy.byId('add-height/1/1').click();
+    cy.byId('height/1/2').type('55');
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(2);
+      const height1 = bundle[1].entry[0].resource;
+      expect(height1.resourceType).to.equal("Observation");
+      expect(height1.subject).not.to.be.null;
+      const height2 = bundle[1].entry[1].resource;
+      expect(height2.resourceType).to.equal("Observation");
+      expect(height2.subject).not.to.be.null;
+      // Different values are allocated to the two repeating items.
+      expect(height1.subject).not.to.equal(height2.subject);
+    });
+  });
+
+  it('should set request properties based on templateExtract subextensions', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('questionnaire-extract-template-with-subextensions.json', null, {fhirVersion: 'R4'});
+    // Fill out the form before extracting.
+    cy.byId('height/1/1').type('44');
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(1);
+      const height = bundle[1].entry[0].resource;
+      expect(height.resourceType).to.equal("Observation");
+      expect(height.valueQuantity).to.deep.equal({
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm",
+        "value": 4400
+      });
+      expect(height.id).not.to.be.null;
+      expect(bundle[1].entry[0].fullUrl).to.equal(height.id);
+      const heightRequest = bundle[1].entry[0].request;
+      expect(heightRequest.method).to.equal("PUT");
+      expect(heightRequest.url).to.equal(`Observation/${height.id}`);
+      expect(heightRequest.ifNoneMatch).to.equal(height.id);
+      expect(heightRequest.ifModifiedSince).to.equal(height.id);
+      expect(heightRequest.ifMatch).to.equal(height.id);
+      expect(heightRequest.ifNoneExist).to.equal(height.id);
     });
   });
 });

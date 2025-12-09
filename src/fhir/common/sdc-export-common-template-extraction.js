@@ -191,16 +191,16 @@ function addCommonSDCExportTemplateExtractionFns(ns) {
     const templateExtractContextExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractContext);
     if (templateExtractContextExt) {
       const templateExtractContext = expressionProcessor._evaluateFHIRPathAgainstContext(fhirPathContext, templateExtractContextExt.valueString, template);
-      if (templateExtractContext) {
+      if (Array.isArray(templateExtractContext) && templateExtractContext.length === 0) {
+        // If the context evaluates to no result, this templated property will be removed from the extracted resource.
+        return null;
+      } else {
         fhirPathContext = templateExtractContext;
         // Remove the templateExtractContext extension from the extracted output after it is processed.
         LForms.Util.removeObjectsFromArray(template.extension, 'url', this.fhirExtTemplateExtractContext, 0, true);
         if (template.extension.length === 0) {
           delete template.extension;
         }
-      } else {
-        // If the context evaluates to no result, this templated property will be removed from the extracted resource.
-        return null;
       }
     }
     const templateExtractValueExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractValue);
