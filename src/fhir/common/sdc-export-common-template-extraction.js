@@ -185,7 +185,7 @@ function addCommonSDCExportTemplateExtractionFns(ns) {
    * @param template a template resource or its child item
    * @param expressionProcessor an ExpressionProcessor object that is used to evaluate FHIRPath expressions in the template.
    * @param fhirPathContext the context for FHIRPath evaluation. It could be a lfItem or an evaluated FHIRPath expression.
-   * @returns an extracted resource.
+   * @returns an extracted resource, or an array of resources if the templateExtractContext evaluates to multiple results.
    */
   self._processExtractionTemplate = function (template, expressionProcessor, fhirPathContext) {
     const templateExtractContextExt = LForms.Util.findObjectInArray(template.extension, 'url', this.fhirExtTemplateExtractContext);
@@ -195,11 +195,26 @@ function addCommonSDCExportTemplateExtractionFns(ns) {
         // If the context evaluates to no result, this templated property will be removed from the extracted resource.
         return null;
       } else {
-        fhirPathContext = templateExtractContext;
         // Remove the templateExtractContext extension from the extracted output after it is processed.
         LForms.Util.removeObjectsFromArray(template.extension, 'url', this.fhirExtTemplateExtractContext, 0, true);
         if (template.extension.length === 0) {
           delete template.extension;
+        }
+        if (!Array.isArray(templateExtractContext)) {
+          fhirPathContext = templateExtractContext;
+        } else {
+          // If the context evaluates to multiple results, process the template for each context and return an array.
+          const processedValue = [];
+          templateExtractContext.forEach((v) => {
+            if (typeof v === 'object' && v !== null) {
+              const templateCopy = LForms.Util.deepCopy(template);
+              const valueInArray = this._processExtractionTemplate(templateCopy, expressionProcessor, v);
+              if (valueInArray) {
+                processedValue.push(valueInArray);
+              }
+            }
+          });
+          return processedValue;
         }
       }
     }
@@ -221,7 +236,11 @@ function addCommonSDCExportTemplateExtractionFns(ns) {
             const valueInArray = this._processExtractionTemplate(v, expressionProcessor, fhirPathContext);
             // If the template property is in a collection, simply remove the templated value from the collection, don't clear the entire collection.
             if (valueInArray) {
-              processedValue.push(valueInArray);
+              if (Array.isArray(valueInArray)) {
+                processedValue.push(...valueInArray);
+              } else {
+                processedValue.push(valueInArray);
+              }
             }
           }
         });

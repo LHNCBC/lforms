@@ -323,4 +323,68 @@ describe('Template based extraction', () => {
       expect(heightRequest.ifNoneExist).to.equal(height.id);
     });
   });
+
+  it('should extract multiple items if templateExtractContext extension evaluates to multiple results', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('questionnaire-extract-complex-template.json', null, {fhirVersion: 'R4'});
+    // Fill out the form before extracting.
+    cy.byId('given/1/1/1').type('a1');
+    cy.byId('add-given/1/1/1').click();
+    cy.byId('given/1/1/2').type('a2');
+    cy.byId('family/1/1/1').type('aa');
+    cy.byId('add-name/1/1').click();
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(2);
+      const patient = bundle[1].entry[0].resource;
+      expect(patient.resourceType).to.equal("Patient");
+      // The second name is added but not filled out, so only one name entry is extracted.
+      expect(patient.name).to.deep.equal([
+        {
+          "text": "a1 a2 aa",
+          "family": "aa",
+          "given": [
+            "a1",
+            "a2"
+          ]
+        }
+      ]);
+    });
+    // Fill out another name entry.
+    cy.byId('given/1/2/1').type('b1');
+    cy.byId('add-given/1/2/1').click();
+    cy.byId('given/1/2/2').type('b2');
+    cy.byId('family/1/2/1').type('bb');
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(2);
+      const patient = bundle[1].entry[0].resource;
+      expect(patient.resourceType).to.equal("Patient");
+      // The second name is now filled out, so a templated "name" property is extracted for each name field.
+      expect(patient.name).to.deep.equal([
+        {
+          "text": "a1 a2 aa",
+          "family": "aa",
+          "given": [
+            "a1",
+            "a2"
+          ]
+        },
+        {
+          "text": "b1 b2 bb",
+          "family": "bb",
+          "given": [
+            "b1",
+            "b2"
+          ]
+        }
+      ]);
+    });
+  });
 });
