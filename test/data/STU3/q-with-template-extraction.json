@@ -1,0 +1,173 @@
+{
+  "resourceType": "Questionnaire",
+  "contained": [
+    {
+      "resourceType": "Observation",
+      "id": "obsTemplateHeight",
+      "status": "final",
+      "category": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "vital-signs"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8302-2",
+            "display": "Body height"
+          }
+        ]
+      },
+      "subject": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%NewPatientId"
+          }
+        ]
+      },
+      "effectiveDateTime": "1900-01-01",
+      "_effectiveDateTime": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%resource.authored"
+          }
+        ]
+      },
+      "_issued": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+            "valueString": "%resource.authored"
+          }
+        ]
+      },
+      "valueQuantity": {
+        "_value": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+              "valueString": "answer.value * 100"
+            }
+          ]
+        },
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      },
+      "derivedFrom": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+              "valueString": "%resource.id"
+            }
+          ],
+          "_reference": {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                "valueString": "'QuestionnaireResponse/' + %resource.id"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Bundle",
+      "id": "bunExtract",
+      "type": "transaction",
+      "entry": [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext",
+              "valueString": "item.where(linkId = 'obs').item.where(linkId = 'weight')"
+            }
+          ],
+          "fullUrl": "urn:uuid:6f6177d2-13ee-4d27-b0e8-3eaf663dd034",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "29463-7",
+                  "display": "Weight"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "_value": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+                    "valueString": "answer.value"
+                  }
+                ]
+              },
+              "unit": "kg",
+              "system": "http://unitsofmeasure.org",
+              "code": "kg"
+            }
+          },
+          "request": {
+            "method": "POST",
+            "url": "Observation"
+          }
+        }
+      ]
+    }
+  ],
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractBundle",
+      "valueReference": {
+        "reference": "#bunExtract"
+      }
+    }
+  ],
+  "status": "draft",
+  "title": "Example Questionnaire with both templateExtract and templateExtractBundle extensions",
+  "item": [
+    {
+      "linkId": "obs",
+      "text": "Observations",
+      "type": "group",
+      "item": [
+        {
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "template",
+                  "valueReference": {
+                    "reference": "#obsTemplateHeight"
+                  }
+                }
+              ],
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract"
+            }
+          ],
+          "linkId": "height",
+          "text": "What is your current height (m)",
+          "type": "decimal"
+        },
+        {
+          "linkId": "weight",
+          "text": "What is your current weight (kg)",
+          "type": "decimal"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "extract-template-root-level",
+  "contained": [
+    {
+      "resourceType": "Observation",
+      "id": "obsTemplateHeight",
+      "status": "final",
+      "valueQuantity": {
+        "_value": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+              "valueString": "%resource.item.where(linkId = 'height').answer.value * 100"
+            }
+          ]
+        },
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    }
+  ],
+  "title": "Template Extract - with templateExtract extension at root level",
+  "status": "draft",
+  "extension": [
+    {
+      "extension": [
+        {
+          "url": "template",
+          "valueReference": {
+            "reference": "#obsTemplateHeight"
+          }
+        }
+      ],
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract"
+    }
+  ],
+  "item": [
+    {
+      "linkId": "height",
+      "text": "What is your current height (m)",
+      "type": "decimal"
+    }
+  ]
+}

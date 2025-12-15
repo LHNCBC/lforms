@@ -22,6 +22,9 @@ export const ErrorMessages = {
     'invalidTagInLegalHTMLContent': {
       'en': 'Invalid HTML tags/attributes found in the legal text.'
     },
+    'invalidTagInAnswerOptionHTMLContent': {
+      'en': 'Invalid HTML tags/attributes found in answerOptions.'
+    },
     'invalidTagInHTMLContent': {
       'en': 'Invalid HTML tags/attributes found in item text/prefix.'
     },
