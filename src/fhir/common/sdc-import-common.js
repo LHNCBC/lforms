@@ -1660,6 +1660,7 @@ function addCommonSDCImportFns(ns) {
       const itemControlCode = ci.valueCodeableConcept?.coding?.[0]?.code;
       if (itemControlCode === 'unit') {
         targetItem.itemControlUnit = qItem.text;
+        targetItem.itemControlUnitLinkId = qItem.linkId;
       } else {
         // true if it's a legal extension, false if it's a help extension.
         let isLegal = itemControlCode === 'legal';

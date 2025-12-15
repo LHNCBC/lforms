@@ -594,6 +594,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
               });
             });
+
+            it('should preserve item-control unit', function (){
+              $.get('test/data/R5/q-with-item-control-unit.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].itemControlUnit, "international inch");
+                assert.equal(lfData.items[0].itemControlUnitLinkId, "/unit");
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].text);
+                assert.deepEqual(qData.item[0].item[0].text, json.item[0].item[0].text);
+                assert.ok(qData.item[0].item[0].linkId);
+                assert.deepEqual(qData.item[0].item[0].linkId, json.item[0].item[0].linkId);
+              });
+            });
           }
 
           if (fhirVersion === 'R4') {

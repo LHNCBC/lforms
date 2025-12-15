@@ -302,6 +302,40 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
+    // The itemControlUnit is a sub item with a "display" type, and an item-control value as "unit"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+    if (item.itemControlUnit) {
+      let unitItem = {
+        "type": "display",
+        "linkId": item.itemControlUnitLinkId || targetItem.linkId + "-unit",
+        "text": item.itemControlUnit,
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+            "valueCodeableConcept": {
+              "text": "Unit",
+              "coding": [
+                {
+                  "code": "unit",
+                  "display": "Unit",
+                  "system": "http://hl7.org/fhir/questionnaire-item-control"
+                }
+              ]
+            }
+          }
+        ]
+      };
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(unitItem);
+      }
+      else {
+        targetItem.item = [
+          unitItem
+        ];
+      }
+    }
+
     if (item.maxAttachmentSize) {
       var exts = (targetItem.extension || (targetItem.extension = []));
       exts.push({url: self.fhirExtMaxSize, valueDecimal: item.maxAttachmentSize});
