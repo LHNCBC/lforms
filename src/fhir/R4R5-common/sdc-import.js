@@ -13,7 +13,8 @@ function addSDCImportFns(ns) {
   var self = ns;
 
   // FHIR extension urls
-  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtUrlValueSetScoreOrdinalValue = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtUrlValueSetScoreItemWeight = "http://hl7.org/fhir/StructureDefinition/itemWeight";
 
 
   /**

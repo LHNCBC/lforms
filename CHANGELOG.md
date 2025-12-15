@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.7.2] 2025-12-15
+### Fixed
+- Support both ordinalValue and itemWeight extensions on ValueSet.expansion
+  for calculatedExpressions.
+
 ## [38.7.1] 2025-12-08
 ### Added
 - Show an error message on the question if invalid HTML tags are found
