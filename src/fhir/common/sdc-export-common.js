@@ -1,3 +1,5 @@
+import addCommonSDCExportTemplateExtractionFns from './sdc-export-common-template-extraction.js';
+
 /**
  *  Defines SDC export functions that are the same across the different FHIR
  *  versions.  The function takes the SDC namespace object defined in the sdc export
@@ -1229,6 +1231,9 @@ function addCommonSDCExportFns(ns) {
            item._skipLogicStatus!== "target-disabled" &&
            !LForms.Util.isItemValueEmpty(item.value) ? true : false;
   };
+
+
+  addCommonSDCExportTemplateExtractionFns(self);
 
 
 }
