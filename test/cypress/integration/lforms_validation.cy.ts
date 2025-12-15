@@ -132,7 +132,9 @@ describe('Validations', () => {
     errorMinLength = 'must have a total length greater than or equal to ',
     errorPattern = 'must match a RegExp pattern of',
     errorMaxDecimalPlaces = ' decimal places.',
-    errorRequire = 'requires a value';
+    errorRequire = 'requires a value',
+    errorMinOccurs = 'must have at least ',
+    errorMaxOccurs = 'must not have more than ';
 
   describe('data type validations (table)', () => {
     beforeEach(() => {
@@ -621,6 +623,123 @@ describe('Validations', () => {
         cy.byCss('div.lhc-item-error')
           .should('be.visible')
           .and('contain.text', 'One or more modifierExtensions are found in the Questionnaire resource. The rendered Questionnaire below is for display only and may not be correctly rendered, and the QuestionnaireResponse generated from it may not be valid.');
+      });
+    });
+  });
+
+  describe('minOccurs and maxOccurs', () => {
+    beforeEach(() => {
+      tp.openBaseTestPage();
+    });
+
+    it('should validate minOccurs and maxOccurs on multiselect input', () => {
+      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
+      const eleInput = '1.1/1/1',
+        eleAway = '1.2/1/1';
+      // no error messages on first visit
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.get(errorContainer).contains(errorMinOccurs)
+        .should('exist')
+        .should('not.be.visible');
+      // show message when the focus is gone
+      cy.byId(eleAway).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // message disappears after a short period
+      cy.get(errorContainer).contains(errorMinOccurs).should('not.be.visible');
+      // get back focus again and message should be shown
+      cy.byId(eleInput).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // no message on the 2nd time when the focus is lost
+      cy.byId(eleAway).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('not.be.visible');
+      // get back focus the 3rd time and message should be shown
+      cy.byId(eleInput).click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // valid value no messages
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.get(errorContainer).should('not.exist');
+      // still no message when the focus is gone
+      cy.byId(eleAway).click();
+      cy.get(errorContainer).should('not.exist');
+
+      // Add too many answers.
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.byId(eleInput).click().type('{downArrow}').type('{enter}');
+      cy.get(errorContainer).contains(errorMaxOccurs).should('be.visible');
+      // Remove one answer, error should go away.
+      cy.get('.autocomp_selected button').first().click({force: true});
+      cy.get(errorContainer).should('not.exist');
+    });
+
+    it('should validate minOccurs and maxOccurs on multiselect input - checkbox layout', () => {
+      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
+      const eleInput = '1.3/1/1';
+      cy.byId(eleInput + '||Apple').click();
+      cy.get(errorContainer).contains(errorMinOccurs).should('be.visible');
+      // valid value no messages
+      cy.byId(eleInput + '||Orange').click();
+      cy.get(errorContainer).should('not.exist');
+      // Add too many answers.
+      cy.byId(eleInput + '||Banana').click();
+      cy.byId(eleInput + '||Pear').click();
+      cy.get(errorContainer).contains(errorMaxOccurs).should('be.visible');
+      // Remove one answer, error should go away.
+      cy.byId(eleInput + '||Apple').click();
+      cy.get(errorContainer).should('not.exist');
+    });
+
+    it('should limit the number of repeated groups based on minOccurs and maxOccurs', () => {
+      tp.loadFromTestData('q-with-minOccurs-maxOccurs.json', 'R4');
+      // Initially there is one group, an error message about minOccurs should be shown.
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('be.visible');
+      // Add another repeatable group, the error message should disappear.
+      cy.byId('1.2/1/1').type('a');
+      cy.byId('add-1/1').click();
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('not.exist');
+      // Add another repeatable group, the Add button should disappear.
+      cy.byId('1.2/2/1').type('a');
+      cy.byId('add-1/2').click();
+      cy.byId('add-1/3').should('not.exist');
+      // Remove a group, the Add button should come back.
+      cy.byId('del-1/3').click();
+      cy.byId('add-1/2').should('be.visible');
+    });
+
+    it('should limit the number of repeated groups based on minOccurs and maxOccurs - horizontal layout', () => {
+      tp.loadFromTestData('q-with-repeating-group-with-horizontal-layout.json', 'R4');
+      // Initially there is one group, an error message about minOccurs should be shown.
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('be.visible');
+      // Add another repeatable group, the error message should disappear.
+      cy.byId('/g3/g1m1/1/1').type('{downArrow}{enter}');
+      cy.byId('add-/g3/1').click();
+      cy.contains('This repeatable item should have at least 2 occurrences.').should('not.exist');
+      // Add another repeatable group, the Add button should disappear.
+      cy.byId('/g3/g1m1/2/1').type('{downArrow}{enter}');
+      cy.byId('add-/g3/1').click();
+      cy.byId('add-/g3/1').should('not.exist');
+      // Remove a group, the Add button should come back.
+      cy.byId('del-/g3/3').click();
+      cy.byId('add-/g3/1').should('be.visible');
+    });
+
+    it('should load a QuestionnaireResponse with more repeating items than maxOccurs', () => {
+      const fhirVersion = 'R4';
+      cy.window().then((win) => {
+        cy.readFile('test/data/R4/q-with-minOccurs-maxOccurs.json').then((q) => {
+          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+          cy.readFile('test/data/R4/qr-with-repeating-group-exceed-maxOccurs.json').then((qr) => {
+            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+            win.LForms.Util.addFormToPage(mergedFormData, "formContainer", {fhirVersion});
+            // Initially there are 4 groups, an error message about maxOccurs should be shown.
+            cy.contains('This repeatable item should have at most 3 occurrences.').should('be.visible');
+            // Remove a group, the error message should disappear.
+            cy.byId('del-1/4').click();
+            cy.contains('This repeatable item should have at most 3 occurrences.').should('not.exist');
+            // Remove another group, the Add button should appear.
+            cy.byId('del-1/3').click();
+            cy.byId('add-1/2').should('be.visible');
+          });
+        });
       });
     });
   });
