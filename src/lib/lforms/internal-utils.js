@@ -69,8 +69,9 @@ export const InternalUtil = {
    * @param xhtmlFormat the "rendering-xhtml" extension from Questionnaire.
    * @param allowHTML widget option of whether to allow HTML in forms.
    * @param containedImages contained images info, see buildContainedImageMap() for details.
+   * @param item an item from lforms form definition
    */
-  setAnswerTextHTML: function(answer, xhtmlFormat, allowHTML, containedImages) {
+  setAnswerTextHTML: function(answer, xhtmlFormat, allowHTML, containedImages, item) {
     answer.textHTML = xhtmlFormat.valueString;
     if (allowHTML) {
       // process contained images
@@ -82,7 +83,11 @@ export const InternalUtil = {
       let invalidTagsAttributes = this.checkForInvalidHtmlTags(answer.textHTML);
       if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
         answer._hasInvalidHTMLTagInText = true;
+        let errors = {};
+        this.errorMessages.addMsg(errors, 'invalidTagInAnswerOptionHTMLContent');
+        let messages = [{errors}];
         this.printInvalidHtmlToConsole(invalidTagsAttributes);
+        this.setItemMessagesArray(item, messages, 'setAnswerTextHTML');
       }
     }
   },

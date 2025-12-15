@@ -253,6 +253,8 @@ describe('rendering-xhtml', () => {
         tp.loadFromTestData('q-with-rendering-xhtml-answerOption-with-invalid-tag.json', 'R4');
         cy.get('.testBold')
           .should('not.exist');
+        // An error message should be shown on each question with invalid HTML tags in answerOptions.
+        cy.contains('Invalid HTML tags/attributes found in answerOptions.').should('be.visible');
         // radio
         cy.byId(answerId('valueString-group2-item1/1/1', undefined, 'bold a'))
           .should('have.text', "bold a");

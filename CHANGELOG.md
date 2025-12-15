@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.7.1] 2025-12-08
+### Added
+- Show an error message on the question if invalid HTML tags are found
+  on answerOptions.
+
 ## [38.7.0] 2025-12-05
 ### Added
 - Support for template-based extraction.

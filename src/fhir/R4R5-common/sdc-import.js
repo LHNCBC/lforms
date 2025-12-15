@@ -132,7 +132,7 @@ function addSDCImportFns(ns) {
               // rendering-xhtml extension under "valueCoding._display".
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
-                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
               }
               // rendering-style extension under "valueCoding._display".
               const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
@@ -149,7 +149,7 @@ function addSDCImportFns(ns) {
               answer['obj_valueString'] = option._valueString;
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
-                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages);
+                LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
               }
             }
             // rendering-style extension under "_valueString", "_valueDate" or "_valueTime".
