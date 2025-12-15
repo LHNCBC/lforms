@@ -267,4 +267,11 @@ describe('display controls demo', () => {
     cy.byId('label-/q_lg/1').should('exist')
       .should('have.css', 'color', 'rgb(255, 0, 0)'); // red
   });
+
+  it('should display unit in item-control sub-item when exists', () => {
+    tp.loadFromTestData('q-with-item-control-unit.json', 'R5');
+    // Should use the unit display from the sub-item with item-control unit,
+    // instead of the Coding display from questionnaire-unit extension.
+    cy.byId('unit_/height/1').should('have.value', 'international inch');
+  });
 });
