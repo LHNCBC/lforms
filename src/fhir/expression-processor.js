@@ -86,18 +86,7 @@ import replaceAsync from 'string-replace-async';
       else {
         this._pendingRun = false; // clear this because we are running them now
         this._runStart = new Date();
-        // Create an export of Questionnaire for the %questionnaire variable in
-        // FHIRPath.  We only need to do this once per form.
-        var lfData = this._lfData;
-        if (!lfData._fhirVariables.questionnaire) {
-          lfData._fhirVariables.questionnaire =
-            this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
-        }
-        if (!this._linkIdToQItem) {
-          this._linkIdToQItem = {};
-          this._addToLinkIdToQItemMap(lfData._fhirVariables.questionnaire.item,
-            this._linkIdToQItem);
-        }
+        this._regenerateFhirVariableQ();
         this._regenerateQuestionnaireResp();
         const self = this;
         this._currentRunPromise =
@@ -437,12 +426,34 @@ import replaceAsync from 'string-replace-async';
       return fieldChanged;
     },
 
+
+    /**
+     * Create an export of Questionnaire for the %questionnaire variable in
+     * FHIRPath.  We only need to do this once per form.
+     */
+    _regenerateFhirVariableQ: function() {
+      var lfData = this._lfData;
+      if (!lfData._fhirVariables.questionnaire) {
+        lfData._fhirVariables.questionnaire =
+          this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
+      }
+      if (!this._linkIdToQItem) {
+        this._linkIdToQItem = {};
+        this._addToLinkIdToQItemMap(lfData._fhirVariables.questionnaire.item,
+          this._linkIdToQItem);
+      }
+    },
+
+
     /**
      *  Regenerates the QuestionnaireResponse resource and the map from
      *  LFormsData _elementIDs to items in the QuestionnaireResponse.
+     *  @param questResp (optional) a QuestionnaireResponse resource to use.
      */
-    _regenerateQuestionnaireResp: function() {
-      var questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+    _regenerateQuestionnaireResp: function (questResp = null) {
+      if (!questResp) {
+        questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+      }
       if (!questResp) {
         throw new Error("Invalid data. Cannot generate a QuestionnaireResponse resource.");
       }
@@ -596,6 +607,41 @@ import replaceAsync from 'string-replace-async';
         console.log(e);
       }
       return fhirPathVal;
+    },
+
+
+    /**
+     *  Evaluates the given FHIRPath expression defined in an extension against a given context.
+     * @param context could be an LForms item or an evaluated FHIRPath expression.
+     * @param expression the FHIRPath to evaluate.
+     * @param templateItem either an LFormsData or an item from an LFormsData.
+     * @returns the result of the expression.
+     */
+    _evaluateFHIRPathAgainstContext: function (context, expression, templateItem) {
+      var fhirPathVal;
+      var itemVars = this._itemWithVars(templateItem)._fhirVariables;
+      try {
+        var fVars = {};
+        for (var k in itemVars)
+          fVars[k] = itemVars[k];
+        let contextNode = context;
+        if (context._elementId) {
+          // If context is an LForms item instead of an evaluated FHIRPath expression value,
+          // we need to get the corresponding QuestionnaireResponse item.
+          contextNode = this._elemIDToQRItem[context._elementId];
+          contextNode ||= {};
+          const base = 'QuestionnaireResponse.item';
+          expression = {base, expression};
+        }
+        fhirPathVal = this._fhir.fhirpath.evaluate(contextNode, expression, fVars, this._fhir.fhirpathModel, {});
+      } catch (e) {
+        console.log(e);
+      }
+      if (!fhirPathVal) {
+        return [];
+      } else {
+        return fhirPathVal.length !== 1 ? fhirPathVal : fhirPathVal[0];
+      }
     },
 
 

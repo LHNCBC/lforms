@@ -1,0 +1,82 @@
+{
+  "resourceType": "Questionnaire",
+  "contained": [
+    {
+      "resourceType": "Observation",
+      "id": "obsTemplateHeight",
+      "status": "final",
+      "valueQuantity": {
+        "_value": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue",
+              "valueString": "answer.value * 100"
+            }
+          ]
+        },
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-extractAllocateId",
+      "valueString": "NewHeightId"
+    }
+  ],
+  "title": "Template Extract - containing templateExtract subextensions",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "obs",
+      "text": "Observations",
+      "type": "group",
+      "item": [
+        {
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "template",
+                  "valueReference": {
+                    "reference": "#obsTemplateHeight"
+                  }
+                },
+                {
+                  "url": "resourceId",
+                  "valueString": "%NewHeightId"
+                },
+                {
+                  "url": "fullUrl",
+                  "valueString": "%NewHeightId"
+                },
+                {
+                  "url": "ifNoneMatch",
+                  "valueString": "%NewHeightId"
+                },
+                {
+                  "url": "ifModifiedSince",
+                  "valueString": "%NewHeightId"
+                },
+                {
+                  "url": "ifMatch",
+                  "valueString": "%NewHeightId"
+                },
+                {
+                  "url": "ifNoneExist",
+                  "valueString": "%NewHeightId"
+                }
+              ],
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract"
+            }
+          ],
+          "linkId": "height",
+          "text": "What is your current height (m)",
+          "type": "decimal"
+        }
+      ]
+    }
+  ]
+}

@@ -13,9 +13,8 @@
 var self = {
   /**
    *  Convert LForms captured data to a bundle consisting of a FHIR SDC
-   *  QuestionnaireResponse and any extractable resources. (Currently this means
-   *  any Observations that can be extracted via the observationLinkPeriod
-   *  extension).
+   *  QuestionnaireResponse and any extractable resources. (Currently supported are
+   *  Observation based extraction and template based extraction).
    *
    * @param lfData a LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without
@@ -23,8 +22,8 @@ var self = {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations.  Observations
-   *  will have derivedFrom set to a temporary reference created for the returned
+   * @returns an array of QuestionnaireResponse, Observations and any resources in extraction templates.
+   *  Observations  will have derivedFrom set to a temporary reference created for the returned
    *  QuestionnaireResponse (the first element of the array). The caller may
    *  wish to put all of the returned resources into a transaction Bundle for
    *  creating them on a FHIR server.
@@ -36,7 +35,6 @@ var self = {
         (qr.identifier && qr.identifier.value) || "QR"
       );
     }
-
     var qrRef = "QuestionnaireResponse/" + qr.id;
     var rtn = [qr];
     // A map from linkId to a lforms item or an extracted Observation.
@@ -52,6 +50,12 @@ var self = {
           this._processExtractedObservation(rtn, item, qr, qrRef, linkIdToItemOrObsMap);
         }
       }
+    }
+
+    // Template-based extraction
+    const templateExtractResult = this._extractFHIRDataByTemplate(lfData, qr);
+    if (templateExtractResult) {
+      rtn.push(templateExtractResult);
     }
     return rtn;
   },
