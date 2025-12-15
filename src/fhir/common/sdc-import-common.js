@@ -38,6 +38,11 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
   self.fhirExtObsExtractCategory =
     "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observation-extract-category";
+  self.fhirExtTemplateExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtract';
+  self.fhirExtTemplateExtractBundle = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractBundle';
+  self.fhirExtTemplateExtractContext = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractContext';
+  self.fhirExtTemplateExtractValue = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-templateExtractValue';
+  self.fhirExtExtractAllocateId = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-extractAllocateId';
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtEnableWhenExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
@@ -1883,6 +1888,14 @@ function addCommonSDCImportFns(ns) {
         }
       }
     }
+
+    // Restrictions of min/max number of answers.
+     if (lfItem.answerCardinality && lfItem.answerCardinality.max && parseInt(lfItem.answerCardinality.max) > 1) {
+       restrictions['maxOccurs'] = parseInt(lfItem.answerCardinality.max);
+     }
+     if (lfItem.answerCardinality && lfItem.answerCardinality.min && parseInt(lfItem.answerCardinality.min) > 1) {
+       restrictions['minOccurs'] = parseInt(lfItem.answerCardinality.min);
+     }
 
     if(!LForms.jQuery.isEmptyObject(restrictions)) {
       lfItem.restrictions = restrictions;

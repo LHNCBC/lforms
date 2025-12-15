@@ -59,6 +59,11 @@ var self = {
         }
       }
     }
+    // Template-based extraction
+    const templateExtractResult = this._extractFHIRDataByTemplate(lfData, qr);
+    if (templateExtractResult) {
+      rtn.push(templateExtractResult);
+    }
     return rtn;
   },
 

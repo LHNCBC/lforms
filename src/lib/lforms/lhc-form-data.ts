@@ -114,7 +114,12 @@ export default class LhcFormData {
     // display 'info', 'warning' and 'error' messages. Selecting the 'warning' level will display
     // 'warning' and 'error' messages. The default value is 'error'.
     // No messages will be displayed if messageLevel is null.
-    messageLevel: "error"
+    messageLevel: "error",
+    // Whether to allow external href links in rendering-xhtml extension. It should
+    // only be set to true when the form is used in a trusted environment.
+    allowExternalURL: false,
+    // Whether to render the form as readonly
+    readonlyMode: false
   };
 
   // other instance level variables that were not previously listed
@@ -1015,10 +1020,20 @@ export default class LhcFormData {
       // check if displayInvalidHTML is changed
       let displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
         newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
+      // check if readonlyMode is changed
+      let readonlyModeChanged = newOptions.readonlyMode !== undefined &&
+        newOptions.readonlyMode !== existingOptions.readonlyMode;
 
       // merge the options
       this.templateOptions = Object.assign({}, existingOptions, newOptions);
 
+      // Update item._readOnly when templateOption.readonlyMode is changed.
+      if (readonlyModeChanged && this.itemList) {
+        for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+          let item = this.itemList[i];
+          this._updateItemAttrs(item);
+        }
+      }
       // recreate the answerOption to add or remove the scores from display texts,
       // or switch between 'html', 'escaped' and 'plain' display types,
       // when the lhcFormData instance has been initialized.
@@ -1510,7 +1525,7 @@ export default class LhcFormData {
     item._multipleAnswers = LhcFormUtils._hasMultipleAnswers(item);
 
     // set up readonly flag
-    item._readOnly = (item.editable === "0") ||
+    item._readOnly = this.templateOptions.readonlyMode || (item.editable === "0") ||
       !!item.calculationMethod || InternalUtil.targetDisabledAndProtected(item);
 
     if (this._fhir) {
@@ -2085,13 +2100,29 @@ export default class LhcFormData {
 
     var iLen = items.length;
     var prevLinkId = '';
+    let repeatCount = 1;
     // process all items in the array except the last one
     for (var i=0; i<iLen; i++) {
       var item = items[i];
       if (prevLinkId !== '') {
         // it's a different item, and
-        // previous item is a repeating item, set the flag as the last in the repeating set
-        items[i - 1]._lastRepeatingItem = !!(prevLinkId !== item.linkId && items[i - 1]._questionRepeatable);
+        // previous item is a repeating item, and
+        // previous item has questionCardinality.max value of '*' or a number greater than repeatCount,
+        // set the flag as the last in the repeating set
+        items[i - 1]._lastRepeatingItem = !!(prevLinkId !== item.linkId && items[i - 1]._questionRepeatable &&
+          (items[i - 1].questionCardinality.max === '*' || parseInt(items[i - 1].questionCardinality.max) > repeatCount));
+        // Show a message if previous item has questionCardinality.min value of a number greater than 1 and repeatCount is smaller than it.
+        items[i - 1]._minOccursNotMet = !!(items[i - 1]._lastRepeatingItem && parseInt(items[i - 1].questionCardinality.min) > repeatCount);
+        // Show a message if previous item has questionCardinality.max value of a number greater than 1 and repeatCount is greater than it.
+        items[i -1]._maxOccursExcceeded = !!(prevLinkId !== item.linkId && items[i - 1]._questionRepeatable && parseInt(items[i - 1].questionCardinality.max) < repeatCount);
+        if (prevLinkId === item.linkId) {
+          // Keep track of the number of repeating items, to make sure it does not exceed maxOccurs value.
+          repeatCount++;
+        } else {
+          repeatCount = 1;
+        }
+      } else {
+        repeatCount = 1;
       }
       prevLinkId = item.linkId;
       // check sub levels
@@ -2100,7 +2131,10 @@ export default class LhcFormData {
       }
     }
     // the last item in the array
-    items[iLen - 1]._lastRepeatingItem = !!items[iLen - 1]._questionRepeatable;
+    items[iLen - 1]._lastRepeatingItem = !!(items[iLen - 1]._questionRepeatable &&
+      (items[iLen - 1].questionCardinality.max === '*' || parseInt(items[iLen - 1].questionCardinality.max) > repeatCount));
+    items[iLen - 1]._minOccursNotMet = !!(items[iLen - 1]._lastRepeatingItem && parseInt(items[iLen - 1].questionCardinality.min) > repeatCount);
+    items[iLen - 1]._maxOccursExcceeded = !!(items[iLen - 1]._questionRepeatable && parseInt(items[iLen - 1].questionCardinality.max) < repeatCount);
     // check sub levels
     if (items[iLen-1].items && items[iLen-1].items.length > 0) {
       this._updateLastRepeatingItemsStatus(items[iLen-1].items);

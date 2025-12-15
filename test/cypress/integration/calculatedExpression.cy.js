@@ -236,4 +236,33 @@ describe('calculatedExpression', () => {
       cy.get('#lhc-tools-searchResults li').first().should('contain.text', 'blue');
     });
   });
+
+  describe('calculatedExpression on valueset.expansion contained codings', () => {
+    it('should support itemWeight extension in R4 for calculating scores', () => {
+      util.addFormToPage('calc-weight/q-with-contained-valueset-with-itemWeight.json', null, {fhirVersion: 'R4'});
+      // ordinalValue
+      cy.byId('link-1.1.1/1/1/1').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('link-1.1.2/1/1/1').type('{downArrow}').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('link-2/1').should('have.value', '12');
+      // itemWeight
+      cy.byId('link-1.1.1/1/1/1').type('{downArrow}').type('{enter}');
+      cy.byId('link-1.1.2/1/1/1').type('{downArrow}').type('{downArrow}').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('link-2/1').should('have.value', '21');
+      // initialExpression should also work with itemWeight.
+      cy.byId('link-3/1').should('have.value', '1');
+    });
+
+    it('should support ordinalValue extension in R5 for calculating scores', () => {
+      util.addFormToPage('calc-weight/q-with-contained-valueset-with-ordinalValue.json', null, {fhirVersion: 'R5'});
+      cy.byId('link-2/1').should('have.value', '');
+      // itemWeight
+      cy.byId('link-1.1.1/1/1/1').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('link-1.1.2/1/1/1').type('{downArrow}').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('link-2/1').should('have.value', '12');
+      // ordinalValue
+      cy.byId('link-1.1.1/1/1/1').type('{downArrow}').type('{enter}');
+      cy.byId('link-1.1.2/1/1/1').type('{downArrow}').type('{downArrow}').type('{downArrow}').type('{downArrow}').type('{enter}');
+      cy.byId('link-2/1').should('have.value', '21');
+    });
+  });
 });
