@@ -146,4 +146,19 @@ describe('addFormToPage Error Message Test', () => {
     cy.get('#fileAnchor').uploadFile('test/data/R4/q-with-duplicate-variable-names-item-level.json');
     cy.get('#loadMsg').should('have.text', 'Duplicate FHIRPath variable name "Y" found. Item linkId: /fieldA.');
   });
+
+  it('should show errors if a duplicate name is found in FHIRPath variable extension and launchContext extension', () => {
+    cy.visit('/test/pages/addFormToPageTest.html');
+    cy.get("#loadBtn").contains("Load From File");
+    // Add a non-standard context variable for launchContext
+    cy.window().then(win => {
+      win.LForms.Util.setFHIRContext(null, {
+        patient: {
+          resourceType: 'Patient'
+        }
+      });
+    });
+    cy.get('#fileAnchor').uploadFile('test/data/R4/q-with-duplicate-variable-name-as-launchContext.json');
+    cy.get('#loadMsg').should('have.text', 'Duplicate FHIRPath variable name "patient" found.');
+  });
 });

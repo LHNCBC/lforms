@@ -1,0 +1,45 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "name": "A Questionnaire with duplicate variable names as launchContext",
+  "extension" : [
+    {
+      "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext",
+      "extension": [
+        {
+          "url": "name",
+          "valueCoding": {
+            "code": "patient",
+            "system": "http://hl7.org/fhir/uv/sdc/CodeSystem/launchContext"
+          }
+        },
+        {
+          "url": "type",
+          "valueCode": "Patient"
+        },
+        {
+          "url": "descripton",
+          "valueString": "For filling in patient information as the subject for the form"
+        }
+      ]
+    },
+    {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+        "name": "patient",
+        "language": "text/fhirpath",
+        "expression": "1"
+      }
+    }
+  ],
+  "item": [
+    {
+      "required": false,
+      "linkId": "/groupA",
+      "text": "Group A",
+      "type": "group",
+      "repeats": true
+    }
+  ]
+}
+

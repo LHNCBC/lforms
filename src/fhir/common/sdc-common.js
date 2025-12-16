@@ -237,20 +237,31 @@ function addCommonSDCFns(ns) {
       itemOrLFData._fhirExt = m;
       if (exprExtensions.length)
         itemOrLFData._exprExtensions = exprExtensions;
-      // If any duplicate name is found in FHIRPath variable extensions, throw an error.
-      if (m[self.fhirExtVariable] && m[self.fhirExtVariable].length > 1) {
-        let varNames = {};
-        for (let varExt of m[self.fhirExtVariable]) {
-          let varName = varExt.valueExpression.name;
-          if (varNames[varName]) {
-            let errMsg = `Duplicate FHIRPath variable name "${varName}" found.`;
-            if (itemOrLFData.linkId) {
-              errMsg += ` Item linkId: ${itemOrLFData.linkId}.`;
-            }
-            throw new Error(errMsg);
+      self._checkForDuplicateVariableNames(itemOrLFData);
+    }
+  };
+
+
+  /**
+   * Checks for name duplicate in FHIRPath variable extensions.
+   * Throws an error if a duplicate is found.
+   */
+  self._checkForDuplicateVariableNames = function(itemOrLFData) {
+    const m = itemOrLFData._fhirExt;
+    if (m[self.fhirExtVariable]) {
+      let varNames = {};
+      for (let varExt of m[self.fhirExtVariable]) {
+        let varName = varExt.valueExpression.name;
+        // It could be a duplicate in FHIRPath variable extensions, or the name already
+        // exists in lfData._fhirVariables, which is populated from launchContext.
+        if (varNames[varName] || itemOrLFData._fhirVariables?.hasOwnProperty(varName)) {
+          let errMsg = `Duplicate FHIRPath variable name "${varName}" found.`;
+          if (itemOrLFData.linkId) {
+            errMsg += ` Item linkId: ${itemOrLFData.linkId}.`;
           }
-          varNames[varName] = true;
+          throw new Error(errMsg);
         }
+        varNames[varName] = true;
       }
     }
   };
@@ -383,6 +394,9 @@ function addCommonSDCFns(ns) {
         }));
       }
     }
+    // Check for duplicate variable names again, after lfData._fhirVariables is populated
+    // from launchContext.
+    self._checkForDuplicateVariableNames(lfData);
     return pendingPromises;
   };
 }
