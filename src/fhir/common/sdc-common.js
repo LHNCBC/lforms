@@ -248,7 +248,7 @@ function addCommonSDCFns(ns) {
    */
   self._checkForDuplicateVariableNames = function(itemOrLFData) {
     const m = itemOrLFData._fhirExt;
-    if (m[self.fhirExtVariable]) {
+    if (m && m[self.fhirExtVariable]) {
       let varNames = {};
       for (let varExt of m[self.fhirExtVariable]) {
         let varName = varExt.valueExpression.name;
