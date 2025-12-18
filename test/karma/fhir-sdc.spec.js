@@ -1692,7 +1692,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               // Also check that it an handle the old URL for backward
               // compatibility.
-              const ext = fhirQ.item[itemIndex].extension[1];
+              const ext = fhirQ.item[itemIndex].extension[0];
               assert.equal(typeof ext.url, 'string');
               assert.equal(ext.url, fhir.SDC.fhirExtUrlExternallyDefined);
               ext.url = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";

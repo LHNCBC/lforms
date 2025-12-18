@@ -129,9 +129,6 @@ function addCommonSDCExportFns(ns) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
     this._processQuestionAndAnswerCardinality(targetItem, item);
 
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
-    this._handleItemControl(targetItem, item);
-
     // check restrictions
     this._handleRestrictions(targetItem, item);
 
@@ -196,147 +193,8 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
-    // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
-    // it is added as a sub item of this item.
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
-    if (item.codingInstructions) {
-      let helpItem = {
-        "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
-        "type": "display",
-        "linkId": item.codingInstructionsLinkId || targetItem.linkId + "-help",
-        "extension": [{
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-          "valueCodeableConcept": {
-            "text": "Help-Button",
-            "coding": [{
-              "code": "help",
-              "display": "Help-Button",
-              "system": "http://hl7.org/fhir/questionnaire-item-control"
-            }]
-          }
-        }]
-      };
-
-      // format could be 'html' or 'text'
-      if (item.codingInstructionsFormat === 'html') {
-        // add a "_text" field to contain the extension for the string value in the 'text' field
-        // see http://hl7.org/fhir/R4/json.html#primitive
-        helpItem._text = {
-          "extension": [{
-            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-            "valueString": item.codingInstructions
-          }]
-        }
-      }
-
-      // rendering-style extension
-      if (item._obj_helpCSS) {
-        helpItem._text = helpItem._text || {
-          "extension": []
-        };
-        helpItem._text.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-          "valueString": item._obj_helpCSS
-        });
-      }
-
-      if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(helpItem)
-      }
-      else {
-        targetItem.item = [
-          helpItem
-        ]
-      }
-    }
-
-    // the legal is a sub item with a "display" type, and an item-control value as "legal"
-    // it is added as a sub item of this item.
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
-    if (item.legal) {
-      let legalItem = {
-        "text": item.legalPlain ? item.legalPlain : item.legal,
-        "type": "display",
-        "linkId": item.legalLinkId || targetItem.linkId + "-legal",
-        "extension": [{
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-          "valueCodeableConcept": {
-            "text": "Legal-Button",
-            "coding": [{
-              "code": "legal",
-              "display": "Legal-Button",
-              "system": "http://hl7.org/fhir/questionnaire-item-control"
-            }]
-          }
-        }]
-      };
-
-      // format could be 'html' or 'text'
-      if (item.legalFormat === 'html') {
-        // add a "_text" field to contain the extension for the string value in the 'text' field
-        // see http://hl7.org/fhir/R4/json.html#primitive
-        legalItem._text = {
-          "extension": [{
-            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-            "valueString": item.legal
-          }]
-        }
-      }
-
-      // rendering-style extension
-      if (item._obj_legalCSS) {
-        legalItem._text = legalItem._text || {
-          "extension": []
-        };
-        legalItem._text.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
-          "valueString": item._obj_legalCSS
-        });
-      }
-
-      if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(legalItem)
-      }
-      else {
-        targetItem.item = [
-          legalItem
-        ]
-      }
-    }
-
-    // The itemControlUnit is a sub item with a "display" type, and an item-control value as "unit"
-    // it is added as a sub item of this item.
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
-    if (item.itemControlUnit) {
-      let unitItem = {
-        "type": "display",
-        "linkId": item.itemControlUnitLinkId || targetItem.linkId + "-unit",
-        "text": item.itemControlUnit,
-        "extension": [
-          {
-            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-            "valueCodeableConcept": {
-              "text": "Unit",
-              "coding": [
-                {
-                  "code": "unit",
-                  "display": "Unit",
-                  "system": "http://hl7.org/fhir/questionnaire-item-control"
-                }
-              ]
-            }
-          }
-        ]
-      };
-      if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(unitItem);
-      }
-      else {
-        targetItem.item = [
-          unitItem
-        ];
-      }
-    }
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    this._handleItemControl(targetItem, item);
 
     if (item.maxAttachmentSize) {
       var exts = (targetItem.extension || (targetItem.extension = []));
@@ -633,6 +491,148 @@ function addCommonSDCExportFns(ns) {
               "valueCode": answerChoiceOrientation
             });
         }
+      }
+    }
+
+    // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+    if (item.codingInstructions) {
+      let helpItem = {
+        "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
+        "type": "display",
+        "linkId": item.codingInstructionsLinkId || targetItem.linkId + "-help",
+        "extension": [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Help-Button",
+            "coding": [{
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      };
+
+      // format could be 'html' or 'text'
+      if (item.codingInstructionsFormat === 'html') {
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        helpItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.codingInstructions
+          }]
+        }
+      }
+
+      // rendering-style extension
+      if (item._obj_helpCSS) {
+        helpItem._text = helpItem._text || {
+          "extension": []
+        };
+        helpItem._text.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+          "valueString": item._obj_helpCSS
+        });
+      }
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(helpItem)
+      }
+      else {
+        targetItem.item = [
+          helpItem
+        ]
+      }
+    }
+
+    // the legal is a sub item with a "display" type, and an item-control value as "legal"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+    if (item.legal) {
+      let legalItem = {
+        "text": item.legalPlain ? item.legalPlain : item.legal,
+        "type": "display",
+        "linkId": item.legalLinkId || targetItem.linkId + "-legal",
+        "extension": [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Legal-Button",
+            "coding": [{
+              "code": "legal",
+              "display": "Legal-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      };
+
+      // format could be 'html' or 'text'
+      if (item.legalFormat === 'html') {
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        legalItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.legal
+          }]
+        }
+      }
+
+      // rendering-style extension
+      if (item._obj_legalCSS) {
+        legalItem._text = legalItem._text || {
+          "extension": []
+        };
+        legalItem._text.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+          "valueString": item._obj_legalCSS
+        });
+      }
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(legalItem)
+      }
+      else {
+        targetItem.item = [
+          legalItem
+        ]
+      }
+    }
+
+    // The itemControlUnit is a sub item with a "display" type, and an item-control value as "unit"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+    if (item.itemControlUnit) {
+      let unitItem = {
+        "type": "display",
+        "linkId": item.itemControlUnitLinkId || targetItem.linkId + "-unit",
+        "text": item.itemControlUnit,
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+            "valueCodeableConcept": {
+              "text": "Unit",
+              "coding": [
+                {
+                  "code": "unit",
+                  "display": "Unit",
+                  "system": "http://hl7.org/fhir/questionnaire-item-control"
+                }
+              ]
+            }
+          }
+        ]
+      };
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(unitItem);
+      }
+      else {
+        targetItem.item = [
+          unitItem
+        ];
       }
     }
   };
