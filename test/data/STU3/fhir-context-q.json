@@ -12,7 +12,7 @@
           "valueCode": "Patient"
         },
         {
-          "url": "descripton",
+          "url": "description",
           "valueString": "For filling in patient information as the subject for the form"
         }
       ]
