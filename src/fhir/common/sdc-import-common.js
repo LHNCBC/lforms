@@ -706,7 +706,7 @@ function addCommonSDCImportFns(ns) {
       if (xhtmlFormat) {
         lfItem[htmlAttrName] = xhtmlFormat.valueString;
         if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions?.allowExternalURL);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             lfItem[invalidFlagName] = true;
             let errors = {};
@@ -1698,7 +1698,7 @@ function addCommonSDCImportFns(ns) {
           };
           // check if html string contains invalid html tags, when the html version needs to be displayed
           if (self._widgetOptions?.allowHTML) {
-            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions.allowExternalURL);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               if (isLegal)
                 helpOrLegal.legalHasInvalidHtmlTag = true;
