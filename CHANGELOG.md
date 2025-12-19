@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.8.0] 2025-12-15
+### Added
+- New template option allowExternalURL to allow external href links in
+  rendering-xhtml extension.
+
 ## [38.7.2] 2025-12-15
 ### Fixed
 - Support both ordinalValue and itemWeight extensions on ValueSet.expansion
