@@ -1,0 +1,45 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "title": "A questionnaire with itemControl unit subitems",
+  "item": [
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "[in_i]",
+            "display": "inch"
+          }
+        }
+      ],
+      "required": false,
+      "linkId": "/height",
+      "text": "Body height",
+      "type": "decimal",
+      "item": [
+        {
+          "type": "display",
+          "linkId": "/unit",
+          "text": "international inch",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "text": "Unit",
+                "coding": [
+                  {
+                    "code": "unit",
+                    "display": "Unit",
+                    "system": "http://hl7.org/fhir/questionnaire-item-control"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

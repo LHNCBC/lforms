@@ -2,10 +2,20 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [39.0.0] 2025-12-15
+## [39.0.0] 2025-12-19
 ### Changed
 - Throw an error if duplicate FHIRPath variable names are found
   on the same Questionnaire item or root.
+
+## [38.9.0] 2025-12-19
+### Changed
+- Use unit display from itemControl "unit" instead of the Coding display,
+  if one exists.
+
+## [38.8.0] 2025-12-15
+### Added
+- New template option allowExternalURL to allow external href links in
+  rendering-xhtml extension.
 
 ## [38.7.2] 2025-12-15
 ### Fixed

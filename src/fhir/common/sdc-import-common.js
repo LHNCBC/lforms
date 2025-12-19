@@ -706,7 +706,7 @@ function addCommonSDCImportFns(ns) {
       if (xhtmlFormat) {
         lfItem[htmlAttrName] = xhtmlFormat.valueString;
         if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
+          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions?.allowExternalURL);
           if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
             lfItem[invalidFlagName] = true;
             let errors = {};
@@ -1662,85 +1662,93 @@ function addCommonSDCImportFns(ns) {
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     let xhtmlFormat;
     if ( qItem.type === "display" && ci) {
-      // true if it's a legal extension, false if it's a help extension.
-      let isLegal = ci.valueCodeableConcept?.coding?.[0]?.code === 'legal';
+      const itemControlCode = ci.valueCodeableConcept?.coding?.[0]?.code;
+      if (itemControlCode === 'unit') {
+        targetItem.itemControlUnit = qItem.text;
+        targetItem.itemControlUnitLinkId = qItem.linkId;
+      } else {
+        // true if it's a legal extension, false if it's a help extension.
+        let isLegal = itemControlCode === 'legal';
 
-      // only "rendering-xhtml" is supported. others are default to text
-      if (qItem._text) {
-        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-        const renderingStyle = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
-        if (renderingStyle) {
+        // only "rendering-xhtml" is supported. others are default to text
+        if (qItem._text) {
+          xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+          const renderingStyle = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+          if (renderingStyle) {
+            if (isLegal) {
+              targetItem._obj_legalCSS = renderingStyle.valueString;
+            } else {
+              targetItem._obj_helpCSS = renderingStyle.valueString;
+            }
+          }
+        }
+
+        // there is a xhtml extension
+        if (xhtmlFormat) {
+          helpOrLegal = isLegal ? {
+            legalFormat: "html",
+            legal: xhtmlFormat.valueString,
+            legalLinkId: qItem.linkId,
+            legalPlain: qItem.text  // this always contains the legal in plain text
+          } : {
+            codingInstructionsFormat: "html",
+            codingInstructions: xhtmlFormat.valueString,
+            codingInstructionsLinkId: qItem.linkId,
+            codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
+          };
+          // check if html string contains invalid html tags, when the html version needs to be displayed
+          if (self._widgetOptions?.allowHTML) {
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions.allowExternalURL);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              if (isLegal)
+                helpOrLegal.legalHasInvalidHtmlTag = true;
+              else
+                helpOrLegal.codingInstructionsHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, isLegal ? 'invalidTagInLegalHTMLContent' : 'invalidTagInHelpHTMLContent');
+              messages = [{errors}];
+              LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+            }
+          }
+        }
+        // no xhtml extension, default to 'text'
+        else {
+          helpOrLegal = isLegal ? {
+            legalFormat: "text",
+            legal: qItem.text,
+            legalinkId: qItem.linkId,
+            legalPlain: qItem.text // this always contains the legal in plain text
+          } : {
+            codingInstructionsFormat: "text",
+            codingInstructions: qItem.text,
+            codingInstructionsLinkId: qItem.linkId,
+            codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+          };
+        }
+
+        if (messages) {
+          LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructionsAndLegal');
+        }
+        if (helpOrLegal) {
           if (isLegal) {
-            targetItem._obj_legalCSS = renderingStyle.valueString;
+            targetItem.legal = helpOrLegal.legal;
+            targetItem.legalFormat = helpOrLegal.legalFormat;
+            targetItem.legalPlain = helpOrLegal.legalPlain;
+            targetItem.legalHasInvalidHtmlTag = helpOrLegal.legalHasInvalidHtmlTag;
+            targetItem.legalLinkId = helpOrLegal.legalLinkId;
           } else {
-            targetItem._obj_helpCSS = renderingStyle.valueString;
+            targetItem.codingInstructions = helpOrLegal.codingInstructions;
+            targetItem.codingInstructionsFormat = helpOrLegal.codingInstructionsFormat;
+            targetItem.codingInstructionsPlain = helpOrLegal.codingInstructionsPlain;
+            targetItem.codingInstructionsHasInvalidHtmlTag = helpOrLegal.codingInstructionsHasInvalidHtmlTag;
+            targetItem.codingInstructionsLinkId = helpOrLegal.codingInstructionsLinkId;
           }
         }
       }
 
-      // there is a xhtml extension
-      if (xhtmlFormat) {
-        helpOrLegal = isLegal ? {
-          legalFormat: "html",
-          legal: xhtmlFormat.valueString,
-          legalLinkId: qItem.linkId,
-          legalPlain: qItem.text  // this always contains the legal in plain text
-        } : {
-          codingInstructionsFormat: "html",
-          codingInstructions: xhtmlFormat.valueString,
-          codingInstructionsLinkId: qItem.linkId,
-          codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
-        };
-        // check if html string contains invalid html tags, when the html version needs to be displayed
-        if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString);
-          if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-            if (isLegal)
-              helpOrLegal.legalHasInvalidHtmlTag = true;
-            else
-              helpOrLegal.codingInstructionsHasInvalidHtmlTag = true;
-            errors = {};
-            errorMessages.addMsg(errors, isLegal ? 'invalidTagInLegalHTMLContent' : 'invalidTagInHelpHTMLContent');
-            messages = [{errors}];
-            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-          }
-        }
-      }
-      // no xhtml extension, default to 'text'
-      else {
-        helpOrLegal = isLegal ? {
-          legalFormat: "text",
-          legal: qItem.text,
-          legalinkId: qItem.linkId,
-          legalPlain: qItem.text // this always contains the legal in plain text
-        } : {
-          codingInstructionsFormat: "text",
-          codingInstructions: qItem.text,
-          codingInstructionsLinkId: qItem.linkId,
-          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
-        };
-      }
-
-      if (messages) {
-        LForms.Util._internalUtil.setItemMessagesArray(targetItem, messages, '_processCodingInstructionsAndLegal');
-      }
-      if (helpOrLegal) {
-        if (isLegal) {
-          targetItem.legal = helpOrLegal.legal;
-          targetItem.legalFormat = helpOrLegal.legalFormat;
-          targetItem.legalPlain = helpOrLegal.legalPlain;
-          targetItem.legalHasInvalidHtmlTag = helpOrLegal.legalHasInvalidHtmlTag;
-          targetItem.legalLinkId = helpOrLegal.legalLinkId;
-        } else {
-          targetItem.codingInstructions = helpOrLegal.codingInstructions;
-          targetItem.codingInstructionsFormat = helpOrLegal.codingInstructionsFormat;
-          targetItem.codingInstructionsPlain = helpOrLegal.codingInstructionsPlain;
-          targetItem.codingInstructionsHasInvalidHtmlTag = helpOrLegal.codingInstructionsHasInvalidHtmlTag;
-          targetItem.codingInstructionsLinkId = helpOrLegal.codingInstructionsLinkId;
-        }
-      }
-
-      return !!helpOrLegal;
+      return true;
+    } else {
+      return false;
     }
   };
 
