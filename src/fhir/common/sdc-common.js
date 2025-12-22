@@ -247,21 +247,39 @@ function addCommonSDCFns(ns) {
    * Throws an error if a duplicate is found.
    */
   self._checkForDuplicateVariableNames = function(itemOrLFData) {
+    let varNames = {};
+
+    // variable extension
     const m = itemOrLFData._fhirExt;
     if (m && m[self.fhirExtVariable]) {
-      let varNames = {};
       for (let varExt of m[self.fhirExtVariable]) {
-        let varName = varExt.valueExpression.name;
-        // It could be a duplicate in FHIRPath variable extensions, or the name already
-        // exists in lfData._fhirVariables, which is populated from launchContext.
-        if (varNames[varName] || itemOrLFData._fhirVariables?.hasOwnProperty(varName)) {
-          let errMsg = `Duplicate FHIRPath variable name "${varName}" found.`;
+        const varName = varExt.valueExpression.name;
+        if (varNames[varName]) {
+          let errMsg = `Duplicate variable name "${varName}" found.`;
           if (itemOrLFData.linkId) {
             errMsg += ` Item linkId: ${itemOrLFData.linkId}.`;
           }
           throw new Error(errMsg);
         }
         varNames[varName] = true;
+      }
+    }
+
+    // launchContext extension
+    var contextItems = LForms.Util.findObjectInArray(itemOrLFData.extension, 'url',
+      self.fhirExtLaunchContext, 0, true);
+    for (let i = 0, len = contextItems.length; i < len; ++i) {
+      const contextItemExt = contextItems[i].extension;
+      for (var j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
+        const fieldExt = contextItemExt[j];
+        if (fieldExt.url === 'name') {
+          const varName = fieldExt.valueCoding?.code;
+          if (varNames[varName]) {
+            const errMsg = `Duplicate variable name "${varName}" found at root level.`;
+            throw new Error(errMsg);
+          }
+          varNames[varName] = true;
+        }
       }
     }
   };
@@ -394,9 +412,6 @@ function addCommonSDCFns(ns) {
         }));
       }
     }
-    // Check for duplicate variable names again, after lfData._fhirVariables is populated
-    // from launchContext.
-    self._checkForDuplicateVariableNames(lfData);
     return pendingPromises;
   };
 }
