@@ -17,7 +17,7 @@ describe('Form with extract observation extension', () => {
     // check extracted
     cy.window().then((win) => {
       let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
-      expect(bundle.length).to.equal(5);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(4);
       expect(bundle[0].item[0].answer).to.eql([{valueBoolean: true}]);
@@ -25,16 +25,22 @@ describe('Form with extract observation extension', () => {
       expect(bundle[0].item[2].answer).to.eql([{valueCoding: {code: 'codea', display: 'answer a'}}]);
       expect(bundle[0].item[3].answer).to.eql([{valueBoolean: false}]);
 
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].valueBoolean).to.equal(true);
-      expect(bundle[2].resourceType).to.equal("Observation");
-      expect(bundle[2].valueCodeableConcept).to.eql({coding: [{code: 'code1', display: 'answer 1'}], text: "answer 1"});
-      expect(bundle[3].resourceType).to.equal("Observation");
-      expect(bundle[3].valueCodeableConcept).to.eql({coding: [{code: 'codea', display: 'answer a'}], text: "answer a"});
-      expect(bundle[4].resourceType).to.equal("Observation");
-      expect(bundle[4].valueBoolean).to.equal(false);
-
-    })
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(4);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.valueBoolean).to.equal(true);
+      expect(obs[1].resource.resourceType).to.equal("Observation");
+      expect(obs[1].resource.valueCodeableConcept).to.eql({coding: [{code: 'code1', display: 'answer 1'}], text: "answer 1"});
+      expect(obs[2].resource.resourceType).to.equal("Observation");
+      expect(obs[2].resource.valueCodeableConcept).to.eql({coding: [{code: 'codea', display: 'answer a'}], text: "answer a"});
+      expect(obs[3].resource.resourceType).to.equal("Observation");
+      expect(obs[3].resource.valueBoolean).to.equal(false);
+      // Default Bundle entry request object, in absence of observationExtractEntry extension.
+      expect(obs[3].request).to.deep.equal({
+        method: 'POST',
+        url: 'Observation'
+      });
+    });
 
   });
 
@@ -45,28 +51,32 @@ describe('Form with extract observation extension', () => {
     cy.byId('choiceItem2/1').click().clear().type('{enter}');
     cy.window().then((win) => {
       let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
-      expect(bundle.length).to.equal(4);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(3);
       expect(bundle[0].item[0].answer).to.eql([{valueBoolean: true}]);
       expect(bundle[0].item[1].answer).to.eql([{valueCoding: {code: 'code1', display: 'answer 1'}}]);
 
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].valueBoolean).to.equal(true);
-      expect(bundle[2].resourceType).to.equal("Observation");
-      expect(bundle[2].valueCodeableConcept).to.eql({coding: [{code: 'code1', display: 'answer 1'}], text: "answer 1"});
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(3);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.valueBoolean).to.equal(true);
+      expect(obs[1].resource.resourceType).to.equal("Observation");
+      expect(obs[1].resource.valueCodeableConcept).to.eql({coding: [{code: 'code1', display: 'answer 1'}], text: "answer 1"});
     })
 
     cy.byId('choiceItem1/1').click().clear().type('{enter}')
     cy.window().then((win) => {
       let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
-      expect(bundle.length).to.equal(3);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);
       expect(bundle[0].item[0].answer).to.eql([{valueBoolean: true}]);
 
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].valueBoolean).to.equal(true);
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(2);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.valueBoolean).to.equal(true);
     })
   });
 
@@ -77,13 +87,15 @@ describe('Form with extract observation extension', () => {
     cy.byId(answerId('blItem1/1', 'false')).click();
     cy.window().then((win)=> {
       let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
-      expect(bundle.length).to.equal(3);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);
       expect(bundle[0].item[0].answer).to.eql([{valueBoolean: false}]);
 
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].valueBoolean).to.equal(false);
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(2);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.valueBoolean).to.equal(false);
     })
   });
 
@@ -100,28 +112,30 @@ describe('Form with extract observation extension', () => {
     // Extract an Observation for each repeated item.
     cy.window().then((win) => {
       const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
-      expect(bundle.length).to.equal(7);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].valueString).to.equal('A');
-      expect(bundle[2].resourceType).to.equal("Observation");
-      expect(bundle[2].valueString).to.equal('B');
-      expect(bundle[3].resourceType).to.equal("Observation");
-      expect(bundle[3].valueQuantity).to.eql({
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(6);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.valueString).to.equal('A');
+      expect(obs[1].resource.resourceType).to.equal("Observation");
+      expect(obs[1].resource.valueString).to.equal('B');
+      expect(obs[2].resource.resourceType).to.equal("Observation");
+      expect(obs[2].resource.valueQuantity).to.eql({
         "value": "1",
         "unit": "kilogram",
         "code": "kg",
         "system": "http://unitsofmeasure.org"
       });
-      expect(bundle[4].resourceType).to.equal("Observation");
-      expect(bundle[4].valueQuantity).to.eql({
+      expect(obs[3].resource.resourceType).to.equal("Observation");
+      expect(obs[3].resource.valueQuantity).to.eql({
         "value": "2",
         "unit": "kilogram",
         "code": "kg",
         "system": "http://unitsofmeasure.org"
       });
-      expect(bundle[5].resourceType).to.equal("Observation");
-      expect(bundle[5].valueCodeableConcept).to.eql({
+      expect(obs[4].resource.resourceType).to.equal("Observation");
+      expect(obs[4].resource.valueCodeableConcept).to.eql({
         coding: [
           {
             code: 'a',
@@ -131,8 +145,8 @@ describe('Form with extract observation extension', () => {
         ],
         text: 'A'
       });
-      expect(bundle[6].resourceType).to.equal("Observation");
-      expect(bundle[6].valueCodeableConcept).to.eql({
+      expect(obs[5].resource.resourceType).to.equal("Observation");
+      expect(obs[5].resource.valueCodeableConcept).to.eql({
         coding: [
           {
             code: 'b',
@@ -150,28 +164,29 @@ describe('Form with extract observation extension', () => {
     util.addFormToPage('extractObsCode-test.R4.json', null, {fhirVersion: 'R4'});
     cy.window().then((win) => {
       const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
-      expect(bundle.length).to.equal(5);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      const obs = bundle[1].entry;
       // Should not extract child items if parent item has obsExtract=false.
-      expect(bundle.some(b => b.resourceType === "Observation" && b.code?.text === "intItem0")).to.equal(false);
+      expect(obs.some(b => b.resource.resourceType === "Observation" && b.resource.code?.text === "intItem0")).to.equal(false);
       // Should extract child item if it turns extraction back on again with ObsExtract=true.
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].code.text).to.equal("intItem1");
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.code.text).to.equal("intItem1");
       // Should extract only the code with ObsExtract=true if the extension is on code level.
-      expect(bundle[2].resourceType).to.equal("Observation");
-      expect(bundle[2].code.text).to.equal("blItem3")
-      expect(bundle[2].code.coding.length).to.equal(1);
-      expect(bundle[2].code.coding[0].code).to.equal("code5");
+      expect(obs[1].resource.resourceType).to.equal("Observation");
+      expect(obs[1].resource.code.text).to.equal("blItem3")
+      expect(obs[1].resource.code.coding.length).to.equal(1);
+      expect(obs[1].resource.code.coding[0].code).to.equal("code5");
       // Should extract more than one item.code into Observation.code.
-      expect(bundle[3].resourceType).to.equal("Observation");
-      expect(bundle[3].code.text).to.equal("codingItem2")
-      expect(bundle[3].code.coding.length).to.equal(2);
+      expect(obs[2].resource.resourceType).to.equal("Observation");
+      expect(obs[2].resource.code.text).to.equal("codingItem2")
+      expect(obs[2].resource.code.coding.length).to.equal(2);
       // Should only skip codes with ObsExtract=false if item has ObsExtract=true.
-      expect(bundle[4].resourceType).to.equal("Observation");
-      expect(bundle[4].code.text).to.equal("blItem4")
-      expect(bundle[4].code.coding.length).to.equal(2);
-      expect(bundle[4].code.coding[0].code).to.equal("code6"); // code with ObsExtract=true
-      expect(bundle[4].code.coding[1].code).to.equal("code8"); // code without ObsExtract extension
+      expect(obs[3].resource.resourceType).to.equal("Observation");
+      expect(obs[3].resource.code.text).to.equal("blItem4")
+      expect(obs[3].resource.code.coding.length).to.equal(2);
+      expect(obs[3].resource.code.coding[0].code).to.equal("code6"); // code with ObsExtract=true
+      expect(obs[3].resource.code.coding[1].code).to.equal("code8"); // code without ObsExtract extension
     });
   });
 
@@ -182,15 +197,17 @@ describe('Form with extract observation extension', () => {
       const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'R4', null, {extract: true});
       expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].code.coding).to.deep.equal([
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(1);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.code.coding).to.deep.equal([
         {
           "system": "http://loinc.org",
           "code": "8532-0",
           "display": "Blood pressure"
         }
       ]);
-      expect(bundle[1].component).to.deep.equal([
+      expect(obs[0].resource.component).to.deep.equal([
         {
           "code": {
             "coding": [
@@ -236,17 +253,19 @@ describe('Form with extract observation extension', () => {
     util.addFormToPage('blood-count-panel-q.json', null, {fhirVersion: 'R4'});
     cy.window().then((win) => {
       const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'R4', null, {extract: true});
-      expect(bundle.length).to.equal(4);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].code.coding).to.deep.equal([
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(3);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.code.coding).to.deep.equal([
         {
           "system": "http://loinc.org",
           "code": "58410-2",
           "display": "CBC panel - Blood by Automated count"
         }
       ]);
-      expect(bundle[2].code).to.deep.equal({
+      expect(obs[1].resource.code).to.deep.equal({
         "coding": [
           {
             "system": "http://loinc.org",
@@ -256,13 +275,13 @@ describe('Form with extract observation extension', () => {
         ],
         "text": "What is your white blood cell count?"
       });
-      expect(bundle[2].valueQuantity).to.deep.equal({
+      expect(obs[1].resource.valueQuantity).to.deep.equal({
         "value": "120",
         "unit": "thousand per microliter",
         "code": "10*3/uL",
         "system": "http://unitsofmeasure.org"
       });
-      expect(bundle[3].code).to.deep.equal({
+      expect(obs[2].resource.code).to.deep.equal({
         "coding": [
           {
             "system": "http://loinc.org",
@@ -272,14 +291,14 @@ describe('Form with extract observation extension', () => {
         ],
         "text": "What is your red blood cell count?"
       });
-      expect(bundle[3].valueQuantity).to.deep.equal({
+      expect(obs[2].resource.valueQuantity).to.deep.equal({
         "value": "80",
         "unit": "million per microliter",
         "code": "10*6/uL",
         "system": "http://unitsofmeasure.org"
       });
-      expect(bundle[1].hasMember[0].reference).to.equal(bundle[2].id);
-      expect(bundle[1].hasMember[1].reference).to.equal(bundle[3].id);
+      expect(obs[0].resource.hasMember[0].reference).to.equal(obs[1].resource.id);
+      expect(obs[0].resource.hasMember[1].reference).to.equal(obs[2].resource.id);
     });
   });
 
@@ -290,15 +309,17 @@ describe('Form with extract observation extension', () => {
       const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'STU3', null, {extract: true});
       expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].code.coding).to.deep.equal([
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(1);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.code.coding).to.deep.equal([
         {
           "system": "http://loinc.org",
           "code": "8532-0",
           "display": "Blood pressure"
         }
       ]);
-      expect(bundle[1].component).to.deep.equal([
+      expect(obs[0].resource.component).to.deep.equal([
         {
           "code": {
             "coding": [
@@ -349,18 +370,20 @@ describe('Form with extract observation extension', () => {
     cy.byId('childItem2/2/1').type('90');
     cy.window().then((win) => {
       const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", 'R4', null, {extract: true});
-      expect(bundle.length).to.equal(3);
+      expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
-      expect(bundle[1].resourceType).to.equal("Observation");
-      expect(bundle[1].valueString).to.equal('Adam');
-      expect(bundle[1].code.coding).to.deep.equal([
+      const obs = bundle[1].entry;
+      expect(obs.length).to.equal(2);
+      expect(obs[0].resource.resourceType).to.equal("Observation");
+      expect(obs[0].resource.valueString).to.equal('Adam');
+      expect(obs[0].resource.code.coding).to.deep.equal([
         {
           "system": "http://loinc.org",
           "code": "8532-0",
           "display": "Blood pressure"
         }
       ]);
-      expect(bundle[1].component).to.deep.equal([
+      expect(obs[0].resource.component).to.deep.equal([
         {
           "code": {
             "coding": [
@@ -398,16 +421,16 @@ describe('Form with extract observation extension', () => {
           }
         }
       ]);
-      expect(bundle[2].resourceType).to.equal("Observation");
-      expect(bundle[2].valueString).to.equal('Ben');
-      expect(bundle[2].code.coding).to.deep.equal([
+      expect(obs[1].resource.resourceType).to.equal("Observation");
+      expect(obs[1].resource.valueString).to.equal('Ben');
+      expect(obs[1].resource.code.coding).to.deep.equal([
         {
           "system": "http://loinc.org",
           "code": "8532-0",
           "display": "Blood pressure"
         }
       ]);
-      expect(bundle[2].component).to.deep.equal([
+      expect(obs[1].resource.component).to.deep.equal([
         {
           "code": {
             "coding": [

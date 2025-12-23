@@ -12,11 +12,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           lfData.items[0].items[1].value = testAnswer+'2';
           const resList = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, lfData,
             {extract: true});
-          assert.equal(resList.length, 3);
+          assert.equal(resList.length, 2);
+          assert.equal(resList[1].entry.length, 2);
           const qr = resList[0];
           assert.equal(qr.resourceType, 'QuestionnaireResponse');
           assert.equal(qr.item[0].item[0].answer[0].valueString, testAnswer);
-          let obs = resList[1];
+          let obs = resList[1].entry[0].resource;
           assert.equal(obs.resourceType, 'Observation');
           assert.equal(obs.category.length, 2);
           const codeable1 = obs.category[0];
@@ -30,7 +31,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           assert.equal(codeable2.coding[0].code, 'vital-signs2');
           assert.equal(codeable2.coding[1].code, '1232');
           assert.equal(qr.item[0].item[1].answer[0].valueString, testAnswer+'2');
-          obs = resList[2];
+          obs = resList[1].entry[1].resource;
           assert.equal(obs.resourceType, 'Observation');
           assert.equal(obs.category.length, 1);
           const codeable = obs.category[0];
