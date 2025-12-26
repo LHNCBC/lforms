@@ -480,4 +480,28 @@ describe('Form with extract observation extension', () => {
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
     });
   });
+
+  it('should set request properties based on observationExtractEntry subextensions', () => {
+    cy.visit('test/pages/addFormToPageTest.html');
+    util.addFormToPage('extractObs-test-with-observationExtractEntry.R4.json', null, {fhirVersion: 'R4'});
+    cy.window().then((win) => {
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true});
+      expect(bundle.length).to.equal(2);
+      expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
+      expect(bundle[1].resourceType).to.equal("Bundle");
+      expect(bundle[1].entry.length).to.equal(1);
+      const resource = bundle[1].entry[0].resource;
+      expect(resource.resourceType).to.equal("Observation");
+      expect(resource.valueBoolean).to.equal(true);
+      expect(resource.id).not.to.be.null;
+      expect(bundle[1].entry[0].fullUrl).to.equal(resource.id);
+      const request = bundle[1].entry[0].request;
+      expect(request.method).to.equal("PUT");
+      expect(request.url).to.equal(`Observation/${resource.id}`);
+      expect(request.ifNoneMatch).to.equal(resource.id);
+      expect(request.ifModifiedSince).to.equal(resource.id);
+      expect(request.ifMatch).to.equal(resource.id);
+      expect(request.ifNoneExist).to.equal(resource.id);
+    });
+  });
 });
