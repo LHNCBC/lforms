@@ -1256,30 +1256,12 @@ function addCommonSDCExportFns(ns) {
           // Generate a new value if the fullUrl expression evaluates to no result.
           this._commonExport._getUniqueId(fullUrlExpression);
       }
-      // request.ifNoneMatch
-      const ifNonMatchExpression = obsExtractEntrySubExtensions.find(e => e.url === 'ifNoneMatch')?.valueString;
-      if (ifNonMatchExpression) {
-        entry.request.ifNoneMatch =
-          expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, ifNonMatchExpression, lfItem);
-      }
-      // request.ifModifiedSince
-      const ifModifiedSinceExpression = obsExtractEntrySubExtensions.find(e => e.url === 'ifModifiedSince')?.valueString;
-      if (ifModifiedSinceExpression) {
-        entry.request.ifModifiedSince =
-          expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, ifModifiedSinceExpression, lfItem);
-      }
-      // request.ifMatch
-      const ifMatchExpression = obsExtractEntrySubExtensions.find(e => e.url === 'ifMatch')?.valueString;
-      if (ifMatchExpression) {
-        entry.request.ifMatch =
-          expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, ifMatchExpression, lfItem);
-      }
-      // request.ifNoneExist
-      const ifNoneExistExpression = obsExtractEntrySubExtensions.find(e => e.url === 'ifNoneExist')?.valueString;
-      if (ifNoneExistExpression) {
-        entry.request.ifNoneExist =
-          expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, ifNoneExistExpression, lfItem);
-      }
+      ['ifNoneMatch', 'ifModifiedSince', 'ifMatch', 'ifNoneExist'].forEach((extUrl) => {
+        const expression = obsExtractEntrySubExtensions.find(e => e.url === extUrl)?.valueString;
+        if(expression) {
+          entry.request[extUrl] = expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, expression, lfItem);
+        }
+      });
     }
     return entry;
   };
