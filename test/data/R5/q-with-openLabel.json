@@ -1,0 +1,113 @@
+{
+  "title": "Answers with open-choice type with openLabel extension",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "linkId": "valueCoding-group2",
+      "text": "answerOption - valueCoding - radiocheckbox",
+      "item": [
+        {
+          "type": "coding",
+          "answerConstraint": "optionsOrString",
+          "extension": [
+            {
+              "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel",
+              "valueString" : "Other event (specify)"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "radio-button",
+                    "display": "Radio Button"
+                  }
+                ],
+                "text": "Radio Button"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "vertical"
+            }
+          ],
+          "linkId": "valueCoding-group2-item1",
+          "text": "valueCoding",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        },
+        {
+          "type": "coding",
+          "answerConstraint": "optionsOrString",
+          "extension": [
+            {
+              "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel",
+              "valueString" : "Other event (specify)"
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "check-box",
+                    "display": "Check-box"
+                  }
+                ],
+                "text": "Check-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+              "valueCode": "horizontal"
+            }
+          ],
+          "repeats": true,
+          "linkId": "valueCoding-group2-item2",
+          "text": "valueCoding - repeats",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "c1",
+                "display": "Answer 1"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c2",
+                "display": "Answer 2"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "c3",
+                "display": "Answer 3"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
