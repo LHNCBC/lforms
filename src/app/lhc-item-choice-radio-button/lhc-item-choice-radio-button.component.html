@@ -38,7 +38,7 @@
       [(ngModel)]="otherRadioModel"
       [id]="lhcDataService.getItemAnswerId(item, '_other')"
       class="lhc-answer">
-      {{language.other}}
+      {{item.openLabel || language.other}}
       <input
         type="text"
         [ngModel]="otherValue"

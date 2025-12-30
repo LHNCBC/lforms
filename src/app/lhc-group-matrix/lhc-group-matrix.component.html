@@ -23,7 +23,7 @@
           </ng-container>
         </th>
         <th class="lhc-form-matrix-cell-other" *ngIf="item.items[0].answerConstraint === 'optionsOrString'"
-         id="otherAnswer">{{language.other}}</th>
+         id="otherAnswer">{{item.items[0].openLabel || language.other}}</th>
       </tr>
       </thead>
       <tbody>
