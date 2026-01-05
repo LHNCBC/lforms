@@ -5,7 +5,7 @@
   "item": [
     {
       "type": "group",
-      "linkId": "valueCoding-group2",
+      "linkId": "group1",
       "text": "answerOption - valueCoding - radiocheckbox",
       "item": [
         {
@@ -34,7 +34,7 @@
               "valueCode": "vertical"
             }
           ],
-          "linkId": "valueCoding-group2-item1",
+          "linkId": "group1-item1",
           "text": "valueCoding",
           "answerOption": [
             {
@@ -84,7 +84,7 @@
             }
           ],
           "repeats": true,
-          "linkId": "valueCoding-group2-item2",
+          "linkId": "group1-item2",
           "text": "valueCoding - repeats",
           "answerOption": [
             {

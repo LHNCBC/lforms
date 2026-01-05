@@ -28,7 +28,7 @@
           "extension": [
             {
               "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel",
-              "valueString" : "Other event (specify)"
+              "valueString" : "Other event (specify) 1"
             }
           ],
           "linkId": "/matrixTable1/type0",
@@ -59,7 +59,7 @@
           "extension": [
             {
               "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel",
-              "valueString" : "Other event (specify)"
+              "valueString" : "Other event (specify) 1"
             }
           ],
           "linkId": "/matrixTable1/type1",
@@ -113,7 +113,7 @@
           "extension": [
             {
               "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel",
-              "valueString" : "Other event (specify)"
+              "valueString" : "Other event (specify) 2"
             }
           ],
           "repeats": true,
@@ -145,7 +145,7 @@
           "extension": [
             {
               "url" : "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel",
-              "valueString" : "Other event (specify)"
+              "valueString" : "Other event (specify) 2"
             }
           ],
           "repeats": true,

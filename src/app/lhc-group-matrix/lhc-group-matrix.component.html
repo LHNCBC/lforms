@@ -23,7 +23,7 @@
           </ng-container>
         </th>
         <th class="lhc-form-matrix-cell-other" *ngIf="item.items[0].answerConstraint === 'optionsOrString'"
-         [id]="lhcDataService.getItemAnswerId(item, '_other')">{{item.items[0].openLabel || language.other}}</th>
+         [id]="item._elementId + '_header_other'">{{item.items[0].openLabel || language.other}}</th>
       </tr>
       </thead>
       <tbody>
@@ -64,7 +64,7 @@
             </span>
           </td>
           <td class="lhc-form-matrix-cell-other" *ngIf="subItem.answerConstraint === 'optionsOrString'"
-            [attr.aria-labeledby]="lhcDataService.getItemAnswerId(item, '_other')">
+            [attr.aria-labeledby]="item._elementId + '_header_other'">
             <!--for multiple answers-->
             <span *ngIf="isCheckbox" class="lhc-form-matrix-answer">
               <label>
