@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.10.0] 2026-01-05
+### Added
+- Support for openLabel extension. It is supported in radio, checkbox and
+  matrix layouts. It is not supported in autocomplete layout.
+
 ## [38.9.0] 2025-12-19
 ### Changed
 - Use unit display from itemControl "unit" instead of the Coding display,
