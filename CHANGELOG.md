@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.9.1] 2026-01-13
+### Changed
+- Updated angular packages to fix vulnerabilities.
+
 ## [38.9.0] 2025-12-19
 ### Changed
 - Use unit display from itemControl "unit" instead of the Coding display,
