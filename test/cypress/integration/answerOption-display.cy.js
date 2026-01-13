@@ -23,6 +23,20 @@ describe('AnswerOption display', () => {
           cy.byCss("#lhc-tools-searchResults li").eq(1).contains('Answer 2');
           cy.byCss("#lhc-tools-searchResults li").eq(2).contains('Answer 3');
         });
+
+        it('should use openLabel for "other" answer option', () => {
+          const fileName = 'q-with-openLabel.json';
+          util.addFormToPage(fileName, null, {fhirVersion});
+          cy.byId('group1-item1/1/1|_other').should('contain.text', 'Other event (specify)');
+          cy.byId('group1-item2/1/1|_other').should('contain.text', 'Other event (specify)');
+        });
+
+        it('should use openLabel for "other" answer option in matrix layout', () => {
+          const fileName = 'q-with-openLabel-matrix-layout.json';
+          util.addFormToPage(fileName, null, {fhirVersion});
+          cy.byId('/matrixTable1/1_header_other').should('contain.text', 'Other event (specify) 1');
+          cy.byId('/matrixTable2/1_header_other').should('contain.text', 'Other event (specify) 2');
+        });
       });
     })(fhirVersions[i]);
   }
