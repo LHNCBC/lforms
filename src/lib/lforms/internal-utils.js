@@ -100,7 +100,7 @@ export const InternalUtil = {
    * @param {*} htmlNarrative
    * @return [{array}] an array of invalid tags and attributes
    */
-  checkForInvalidHtmlTags: function(htmlNarrative) {
+  checkForInvalidHtmlTags: function(htmlNarrative, allowExternalURL = false) {
     let invalidTagsAttributes=[];
     let forbiddenTags = ['html','head', 'body', 'ref', 'script', 'form', 'base', 'link', 'xlink', 'iframe', 'object'];
     let deprecatedTags = ['applet', 'basefont', 'blink', 'center', 'dir', 'embed', 'font',
@@ -167,7 +167,8 @@ export const InternalUtil = {
           if (name.toLocaleLowerCase() === tag) {
             for (const [attr, value] of Object.entries(attributes)) {
               urlAttrs.forEach(urlAttr => {
-                if(attr === urlAttr && !value.match(ALLOWED_URI_REGEXP)) {
+                if(attr === urlAttr && !value.match(ALLOWED_URI_REGEXP) &&
+                  (urlAttr !== 'href' || !allowExternalURL)) {
                   invalidTagsAttributes.push({"tag": tag, "attribute": urlAttr});
                 }
               })

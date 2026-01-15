@@ -594,6 +594,29 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[0].item[0].answerValueSet, json.item[0].item[0].answerValueSet);
               });
             });
+
+            it('should preserve item-control unit', function (){
+              $.get('test/data/R5/q-with-item-control-unit.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].itemControlUnit, "international inch");
+                assert.equal(lfData.items[0].itemControlUnitLinkId, "/unit");
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].text);
+                assert.deepEqual(qData.item[0].item[0].text, json.item[0].item[0].text);
+                assert.ok(qData.item[0].item[0].linkId);
+                assert.deepEqual(qData.item[0].item[0].linkId, json.item[0].item[0].linkId);
+              });
+            });
+
+            it('should preserve openLabel extension', function () {
+              $.get('test/data/R5/q-with-openLabel.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].items[0].openLabel, json.item[0].item[0].extension[0].valueString);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].extension[0]);
+                assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
+              });
+            });
           }
 
           if (fhirVersion === 'R4') {
@@ -690,6 +713,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[3].answerOption[0]._valueTime, json.item[3].answerOption[0]._valueTime);
                 assert.ok(qData.item[4].answerOption[0]._valueInteger);
                 assert.deepEqual(qData.item[4].answerOption[0]._valueInteger, json.item[4].answerOption[0]._valueInteger);
+              });
+            });
+
+            it('should preserve openLabel extension', function () {
+              $.get('test/data/R4/q-with-openLabel.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].items[0].openLabel, json.item[0].item[0].extension[0].valueString);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].extension[0]);
+                assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
               });
             });
           }
@@ -1679,7 +1712,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               // Also check that it an handle the old URL for backward
               // compatibility.
-              const ext = fhirQ.item[itemIndex].extension[1];
+              const ext = fhirQ.item[itemIndex].extension[0];
               assert.equal(typeof ext.url, 'string');
               assert.equal(ext.url, fhir.SDC.fhirExtUrlExternallyDefined);
               ext.url = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";

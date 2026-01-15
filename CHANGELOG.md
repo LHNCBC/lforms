@@ -2,6 +2,25 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.10.1] 2026-01-13
+### Changed
+- Updated angular packages to fix vulnerabilities.
+
+## [38.10.0] 2026-01-05
+### Added
+- Support for openLabel extension. It is supported in radio, checkbox and
+  matrix layouts. It is not supported in autocomplete layout.
+
+## [38.9.0] 2025-12-19
+### Changed
+- Use unit display from itemControl "unit" instead of the Coding display,
+  if one exists.
+
+## [38.8.0] 2025-12-15
+### Added
+- New template option allowExternalURL to allow external href links in
+  rendering-xhtml extension.
+
 ## [38.7.2] 2025-12-15
 ### Fixed
 - Support both ordinalValue and itemWeight extensions on ValueSet.expansion
