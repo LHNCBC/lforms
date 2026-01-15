@@ -55,7 +55,8 @@ function addR5ExportFns(ns) {
     var dataType = this._getAssumedDataTypeForExport(item);
 
     // item.defaultAnswer could be an array of multiple default values or a single value
-    var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+    var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer))  ||
+    (this._questionRepeats(item) && Array.isArray(item.defaultAnswer) && item.defaultAnswer.length > 1)?
       item.defaultAnswer : [item.defaultAnswer];
 
     var valueKey = this._getValueKeyByDataType("value", item);
