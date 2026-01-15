@@ -18,6 +18,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlCardinalityMin = "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs";
   self.fhirExtUrlCardinalityMax = "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs";
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
+  self.fhirExtUrlOpenLabel = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-openLabel";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
@@ -898,6 +899,12 @@ function addCommonSDCImportFns(ns) {
       if(displayControl && !LForms.jQuery.isEmptyObject(displayControl)) {
         lfItem.displayControl = displayControl;
       }
+    }
+
+    // Look for openLabel extension, if applicable.
+    const openLabelExt = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlOpenLabel);
+    if (openLabelExt) {
+      lfItem.openLabel = openLabelExt.valueString;
     }
   };
 

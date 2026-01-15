@@ -607,6 +607,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[0].item[0].linkId, json.item[0].item[0].linkId);
               });
             });
+
+            it('should preserve openLabel extension', function () {
+              $.get('test/data/R5/q-with-openLabel.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].items[0].openLabel, json.item[0].item[0].extension[0].valueString);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].extension[0]);
+                assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
+              });
+            });
           }
 
           if (fhirVersion === 'R4') {
@@ -703,6 +713,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[3].answerOption[0]._valueTime, json.item[3].answerOption[0]._valueTime);
                 assert.ok(qData.item[4].answerOption[0]._valueInteger);
                 assert.deepEqual(qData.item[4].answerOption[0]._valueInteger, json.item[4].answerOption[0]._valueInteger);
+              });
+            });
+
+            it('should preserve openLabel extension', function () {
+              $.get('test/data/R4/q-with-openLabel.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                assert.equal(lfData.items[0].items[0].openLabel, json.item[0].item[0].extension[0].valueString);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].extension[0]);
+                assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
               });
             });
           }

@@ -505,6 +505,14 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
+    // openLabel
+    if (item.openLabel) {
+      targetItem.extension.push({
+        "url": self.fhirExtUrlOpenLabel,
+        "valueString": item.openLabel
+      });
+    }
+
     // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
     // it is added as a sub item of this item.
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
