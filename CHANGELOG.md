@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [38.11.0] 2026-01-16
+### Fixed
+- A Questionnaire with multiple initial values on a repeating question
+  should render multiple questions, each with a single default answer.
+- The same form, when exported back to Questionnaire, should contain
+  only one question with an array of initial values.
+
 ## [38.10.1] 2026-01-13
 ### Changed
 - Updated angular packages to fix vulnerabilities.

@@ -155,6 +155,7 @@ describe('multiple initial values on repeating question', function() {
   it('should render multiple questions, each with a single initial value - R4', function() {
     po.openPage();
     util.addFormToPage('q-with-multiple-initial-values-and-child-items.json', null, {fhirVersion: 'R4'});
+    // Should render two questions, each with a single default answer.
     cy.byId('parent-decimal/1').should('have.value', '10.5');
     cy.byId('parent-decimal/2').should('have.value', '2');
   });
@@ -162,6 +163,7 @@ describe('multiple initial values on repeating question', function() {
   it('should render multiple questions, each with a single initial value - R5', function() {
     po.openPage();
     util.addFormToPage('q-with-multiple-initial-values-on-repeating-question.json', null, {fhirVersion: 'R5'});
+    // Should render two questions, each with a single default answer.
     cy.byId('child-decimal/1/1').should('have.value', '10.5');
     cy.byId('child-decimal/1/2').should('have.value', '2');
   });
