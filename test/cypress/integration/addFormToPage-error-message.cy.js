@@ -137,7 +137,7 @@ describe('addFormToPage Error Message Test', () => {
     cy.visit('/test/pages/addFormToPageTest.html');
     cy.get("#loadBtn").contains("Load From File");
     cy.get('#fileAnchor').uploadFile('test/data/R4/q-with-duplicate-variable-names-root-level.json');
-    cy.get('#loadMsg').should('have.text', 'Duplicate variable name "X" found.');
+    cy.get('#loadMsg').should('have.text', 'Duplicate variable name "X" found at root level.');
   });
 
   it('should show errors for duplicate variable names - item level', () => {

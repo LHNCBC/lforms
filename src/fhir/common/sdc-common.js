@@ -255,9 +255,11 @@ function addCommonSDCFns(ns) {
       for (let varExt of m[self.fhirExtVariable]) {
         const varName = varExt.valueExpression.name;
         if (varNames[varName]) {
-          let errMsg = `Duplicate variable name "${varName}" found.`;
+          let errMsg = `Duplicate variable name "${varName}" found`;
           if (itemOrLFData.linkId) {
-            errMsg += ` Item linkId: ${itemOrLFData.linkId}.`;
+            errMsg += `. Item linkId: ${itemOrLFData.linkId}.`;
+          } else {
+            errMsg += ' at root level.';
           }
           throw new Error(errMsg);
         }
