@@ -2,10 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [39.0.0] 2025-12-19
+## [39.0.0] 2026-01-20
 ### Changed
 - Throw an error if duplicate FHIRPath variable names are found
   on the same Questionnaire item or root.
+
+## [38.10.1] 2026-01-13
+### Changed
+- Updated angular packages to fix vulnerabilities.
+
+## [38.10.0] 2026-01-05
+### Added
+- Support for openLabel extension. It is supported in radio, checkbox and
+  matrix layouts. It is not supported in autocomplete layout.
 
 ## [38.9.0] 2025-12-19
 ### Changed
