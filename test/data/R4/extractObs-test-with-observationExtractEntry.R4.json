@@ -40,7 +40,7 @@
             },
             {
               "url": "ifModifiedSince",
-              "valueString": "%X"
+              "valueString": "today()"
             },
             {
               "url": "ifMatch",

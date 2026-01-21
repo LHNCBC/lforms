@@ -499,7 +499,7 @@ describe('Form with extract observation extension', () => {
       expect(request.method).to.equal("PUT");
       expect(request.url).to.equal(`Observation/${resource.id}`);
       expect(request.ifNoneMatch).to.equal(resource.id);
-      expect(request.ifModifiedSince).to.equal(resource.id);
+      expect(request.ifModifiedSince).to.equal(new Date().toISOString().slice(0, 10));
       expect(request.ifMatch).to.equal(resource.id);
       expect(request.ifNoneExist).to.equal(resource.id);
     });
