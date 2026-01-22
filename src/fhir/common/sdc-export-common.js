@@ -312,23 +312,12 @@ function addCommonSDCExportFns(ns) {
   self._removeRepeatingItems = function(source) {
 
     if (source.items && Array.isArray(source.items)) {
-      let defaultAnswers = [];
       for (var i= source.items.length-1; i>=0; i--) {
         // if it is a repeating item, whose _id is not 1
         if (source.items[i]._id > 1) {
-          if (source.items[i].defaultAnswer) {
-            // If the repeating item has defaultAnswer set, collect it.
-            defaultAnswers.push(source.items[i].defaultAnswer);
-          }
           source.items.splice(i,1);
         }
         else {
-          if (defaultAnswers.length && source.items[i].defaultAnswer) {
-            defaultAnswers.push(source.items[i].defaultAnswer);
-            // Set the collected default answers to the first repeating item.
-            source.items[i].defaultAnswer = defaultAnswers.toReversed();
-          }
-          defaultAnswers = [];
           this._removeRepeatingItems(source.items[i]);
         }
       }

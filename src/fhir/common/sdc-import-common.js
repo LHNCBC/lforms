@@ -218,9 +218,9 @@ function addCommonSDCImportFns(ns) {
           // have set defaultAnswer to an array in _processFHIRValues().
           // Here we create additional repeating items as needed
           // and assign a single default answer to each item.
-          if (ns._questionRepeats(item) && Array.isArray(item.defaultAnswer) && item.defaultAnswer.length > 1) {
-            const total = item.defaultAnswer.length;
-            const defaultAnswersCopy = LForms.Util.deepCopy(item.defaultAnswer);
+          if (ns._questionRepeats(item) && item.defaultAnswers) {
+            const total = item.defaultAnswers.length;
+            const defaultAnswersCopy = LForms.Util.deepCopy(item.defaultAnswers);
             self._mergeQR._addRepeatingItems(target, item.linkId, total);
             for (let j = 0; j < total; j++) {
               const itemToUpdateDefaultAnswer = target.items[target.items.length - 1 - j];
@@ -650,7 +650,9 @@ function addCommonSDCImportFns(ns) {
     let val = LForms.Util._hasMultipleAnswers(lfItem) ? answers : answers[0];
     if (setDefault) {
       if (ns._questionRepeats(lfItem) && answers.length > 1) {
-        lfItem.defaultAnswer = answers;
+        // lfItem.defaultAnswers holds the original initial values array.
+        // lfItem.defaultAnswer will be set on each repeating item, after they are created later.
+        lfItem.defaultAnswers = answers;
       } else {
         lfItem.defaultAnswer = val;
       }
@@ -1803,9 +1805,9 @@ function addCommonSDCImportFns(ns) {
           // have set defaultAnswer to an array in _processFHIRValues().
           // Here we create additional repeating items as needed
           // and assign a single default answer to each item.
-          if (ns._questionRepeats(item) && Array.isArray(item.defaultAnswer) && item.defaultAnswer.length > 1) {
-            const total = item.defaultAnswer.length;
-            const defaultAnswersCopy = LForms.Util.deepCopy(item.defaultAnswer);
+          if (ns._questionRepeats(item) && item.defaultAnswers) {
+            const total = item.defaultAnswers.length;
+            const defaultAnswersCopy = LForms.Util.deepCopy(item.defaultAnswers);
             self._mergeQR._addRepeatingItems(targetItem, item.linkId, total);
             for (let j = 0; j < total; j++) {
               const itemToUpdateDefaultAnswer = targetItem.items[targetItem.items.length - 1 - j];

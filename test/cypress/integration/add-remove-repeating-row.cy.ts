@@ -166,6 +166,20 @@ describe('multiple initial values on repeating question', function() {
     // Should render two questions, each with a single default answer.
     cy.byId('child-decimal/1/1').should('have.value', '10.5');
     cy.byId('child-decimal/1/2').should('have.value', '2');
+    // Adding a repeating question should not affect the initial values on the exported Questionnaire.
+    cy.byId('add-child-decimal/1/2').click();
+    cy.byId('child-decimal/1/3').type('888');
+    cy.window().then((win) => {
+      const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
+      expect(q.item[0].item[0].initial).to.deep.equal([
+        {
+          "valueDecimal": 10.5
+        },
+        {
+          "valueDecimal": 2
+        }
+      ]);
+    });
   });
 });
 
