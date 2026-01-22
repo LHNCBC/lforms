@@ -24,7 +24,7 @@
       "valueCode" : "Basic"
     },
     {
-      "url" : "descripton",
+      "url" : "description",
       "valueString" : "For testing a custom variable"
     }]
   }, {
@@ -38,7 +38,7 @@
       "valueCode" : "Basic"
     },
     {
-      "url" : "descripton",
+      "url" : "description",
       "valueString" : "For testing continued support of valueId for name for backward-compatibility"
     }]
   }],
