@@ -35,8 +35,10 @@ var self = {
         (qr.identifier && qr.identifier.value) || "QR"
       );
     }
+    lfData._expressionProcessor._regenerateFhirVariableQ();
+    lfData._expressionProcessor._regenerateQuestionnaireResp(qr);
     var qrRef = "QuestionnaireResponse/" + qr.id;
-    var rtn = [qr];
+    var rtn = [];
     // A map from linkId to a lforms item or an extracted Observation.
     // Used to find the parent Observation for ObsExtract relationships.
     var linkIdToItemOrObsMap = {};
@@ -45,9 +47,8 @@ var self = {
       var item = i === -1 ? lfData : lfData.itemList[i];
       if (this._getExtractValue(item)) {
         linkIdToItemOrObsMap[item.linkId] = item;
-
         if (this._hasItemValue(item)) {
-          this._processExtractedObservation(rtn, item, qr, qrRef, linkIdToItemOrObsMap);
+          this._processExtractedObservation(rtn, item, qr, qrRef, linkIdToItemOrObsMap, false, lfData._expressionProcessor);
         }
       }
     }
@@ -55,22 +56,27 @@ var self = {
     // Template-based extraction
     const templateExtractResult = this._extractFHIRDataByTemplate(lfData, qr);
     if (templateExtractResult) {
-      rtn.push(templateExtractResult);
+      rtn.push(...templateExtractResult.entry);
     }
-    return rtn;
+    return rtn.length === 0 ? [qr] : [qr, {
+      resourceType: 'Bundle',
+      type: 'transaction',
+      entry: rtn
+    }];
   },
 
   /**
    * Creates and processes an Observation resource from an LForms item.
    * @private
-   * @param rtn an array of FHIR resources to which the Observation will be added
+   * @param rtn an array of Bundle entries to which the Observation will be added
    * @param item an LForms item object
    * @param qr the QuestionnaireResponse object
    * @param qrRef a temporary reference to the QuestionnaireResponse id
    * @param linkIdToItemOrObsMap a map from linkId to a lforms item or an extracted Observation
    * @param noValue when set to true, extracts an Observation even the item has no value.
+   * @param expressionProcessor an ExpressionProcessor object that is used to evaluate FHIRPath expressions.
    */
-  _processExtractedObservation: function(rtn, item, qr, qrRef, linkIdToItemOrObsMap, noValue = false) {
+  _processExtractedObservation: function(rtn, item, qr, qrRef, linkIdToItemOrObsMap, noValue = false, expressionProcessor) {
     var obs = !noValue
       ? this._commonExport._createObservation(item, item._obsExtractValueCode === 'member')
       : this._commonExport._createObservationWithNoValue(item);
@@ -93,7 +99,7 @@ var self = {
         // If the parent item in the map is still a lforms item and not an Observation,
         // an Observation wasn't created for it because it has no value. Create an
         // Observation for it now, since a child item of an ObsExtract relationship is found.
-        this._processExtractedObservation(rtn, parentObs, qr, qrRef, linkIdToItemOrObsMap, true);
+        this._processExtractedObservation(rtn, parentObs, qr, qrRef, linkIdToItemOrObsMap, true, expressionProcessor);
         // The item in the map is now an extracted Observation.
         parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
       }
@@ -110,7 +116,7 @@ var self = {
           // If the parent item in the map is still a lforms item and not an Observation,
           // an Observation wasn't created for it because it has no value. Create an
           // Observation for it now, since a child item of an ObsExtract relationship is found.
-          this._processExtractedObservation(rtn, parentObs, qr, qrRef, linkIdToItemOrObsMap);
+          this._processExtractedObservation(rtn, parentObs, qr, qrRef, linkIdToItemOrObsMap, false, expressionProcessor);
           // The item in the map is now an extracted Observation.
           parentObs = linkIdToItemOrObsMap[item._obsExtractParentLinkId];
         }
@@ -133,7 +139,7 @@ var self = {
           obs[j].category = categCodeableConcepts;
 
         linkIdToItemOrObsMap[item.linkId] = obs[j];
-        rtn.push(obs[j]);
+        rtn.push(this._getExtractedObsBundleEntry(obs[j], item, expressionProcessor));
         if (item._obsExtractValueCode === 'member') {
           parentObs.hasMember.push({ reference: obs[j].id });
         }

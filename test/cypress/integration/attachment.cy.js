@@ -207,7 +207,7 @@ describe('Attachment support', () => {
         expect(typeof answer.data).to.equal('string');
         expect(typeof answer.creation).to.equal('string')
         expect(answer.contentType).to.equal('application/json');
-        answer = fhirData[1].valueAttachment; // answer in the extracted Observation
+        answer = fhirData[1].entry[0].resource.valueAttachment; // answer in the extracted Observation
         expect(answer.title).to.equal('attachmentQ.json');
         expect(typeof answer.data).to.equal('string');
         expect(typeof answer.creation).to.equal('string')

@@ -1236,6 +1236,55 @@ function addCommonSDCExportFns(ns) {
     }
   };
 
+  /**
+   * Takes an extracted Observation and returns the Bundle entry object (format: {resource: {}, request: {}}),
+   * with the request fields filled according to the item's observationExtractEntry extension.
+   * @param obs an extracted Observation resource
+   * @param lfItem the LForms item from which the Observation is extracted
+   * @param expressionProcessor an ExpressionProcessor object that is used to evaluate FHIRPath expressions.
+   * @returns {object} a Bundle entry object
+   */
+  self._getExtractedObsBundleEntry = function(obs, lfItem, expressionProcessor) {
+    const entry = {
+      resource: obs,
+      request: {
+        method: 'POST',
+        url: 'Observation'
+      }
+    };
+    if (lfItem._fhirExt && lfItem._fhirExt[this.fhirExtObservationExtractEntry]) {
+      // Set lfItem._fhirVariables for extractAllocateId.
+      this._processExtractAllocateId(lfItem, expressionProcessor);
+      const obsExtractEntrySubExtensions = lfItem._fhirExt[this.fhirExtObservationExtractEntry][0].extension;
+      // resourceId
+      let resourceId;
+      const resourceIdExpression = obsExtractEntrySubExtensions.find(e => e.url === 'resourceId')?.valueString;
+      if (resourceIdExpression) {
+        resourceId = expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, resourceIdExpression, lfItem);
+      }
+      if (resourceId) {
+        obs.id = resourceId;
+        entry.request.method = 'PUT';
+        entry.request.url = 'Observation/' + resourceId;
+      }
+      // fullUrl
+      const fullUrlExpression = obsExtractEntrySubExtensions.find(e => e.url === 'fullUrl')?.valueString;
+      if (fullUrlExpression) {
+        entry.fullUrl =
+          expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, fullUrlExpression, lfItem) ||
+          // Generate a new value if the fullUrl expression evaluates to no result.
+          this._commonExport._getUniqueId(fullUrlExpression);
+      }
+      ['ifNoneMatch', 'ifModifiedSince', 'ifMatch', 'ifNoneExist'].forEach((extUrl) => {
+        const expression = obsExtractEntrySubExtensions.find(e => e.url === extUrl)?.valueString;
+        if(expression) {
+          entry.request[extUrl] = expressionProcessor._evaluateFHIRPathAgainstContext(lfItem, expression, lfItem);
+        }
+      });
+    }
+    return entry;
+  };
+
 
   /**
    * Check if the item has a value

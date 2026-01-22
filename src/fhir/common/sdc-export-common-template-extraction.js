@@ -19,8 +19,6 @@ function addCommonSDCExportTemplateExtractionFns(ns) {
    * @returns a transaction Bundle containing all the resources that were extracted from the QuestionnaireResponse.
    */
   self._extractFHIRDataByTemplate = function (lfData, qr) {
-    lfData._expressionProcessor._regenerateFhirVariableQ();
-    lfData._expressionProcessor._regenerateQuestionnaireResp(qr);
     const templateExtractBundleResult = this._processLFormsDataForTemplateExtractBundle(lfData);
     const bundleResult = templateExtractBundleResult || {
       resourceType: 'Bundle',
