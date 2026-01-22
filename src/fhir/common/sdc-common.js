@@ -237,6 +237,52 @@ function addCommonSDCFns(ns) {
       itemOrLFData._fhirExt = m;
       if (exprExtensions.length)
         itemOrLFData._exprExtensions = exprExtensions;
+      self._checkForDuplicateVariableNames(itemOrLFData);
+    }
+  };
+
+
+  /**
+   * Checks for name duplicate in FHIRPath variable extensions.
+   * Throws an error if a duplicate is found.
+   */
+  self._checkForDuplicateVariableNames = function(itemOrLFData) {
+    let varNames = {};
+
+    // variable extension
+    const m = itemOrLFData._fhirExt;
+    if (m && m[self.fhirExtVariable]) {
+      for (let varExt of m[self.fhirExtVariable]) {
+        const varName = varExt.valueExpression.name;
+        if (varNames[varName]) {
+          let errMsg = `Duplicate variable name "${varName}" found`;
+          if (itemOrLFData.linkId) {
+            errMsg += `. Item linkId: ${itemOrLFData.linkId}.`;
+          } else {
+            errMsg += ' at root level.';
+          }
+          throw new Error(errMsg);
+        }
+        varNames[varName] = true;
+      }
+    }
+
+    // launchContext extension
+    var contextItems = LForms.Util.findObjectInArray(itemOrLFData.extension, 'url',
+      self.fhirExtLaunchContext, 0, true);
+    for (let i = 0, len = contextItems.length; i < len; ++i) {
+      const contextItemExt = contextItems[i].extension;
+      for (var j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
+        const fieldExt = contextItemExt[j];
+        if (fieldExt.url === 'name') {
+          const varName = fieldExt.valueCoding?.code;
+          if (varNames[varName]) {
+            const errMsg = `Duplicate variable name "${varName}" found at root level.`;
+            throw new Error(errMsg);
+          }
+          varNames[varName] = true;
+        }
+      }
     }
   };
 
