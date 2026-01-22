@@ -58,7 +58,7 @@
                 },
                 {
                   "url": "ifModifiedSince",
-                  "valueString": "%NewHeightId"
+                  "valueString": "today()"
                 },
                 {
                   "url": "ifMatch",

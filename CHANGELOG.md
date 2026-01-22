@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [40.0.0] 2026-01-22
+### Added
+- Support for observationExtractEntry extension in Observation extract.
+- Observation-based extraction will now always return a Bundle.
+
 ## [39.0.0] 2026-01-20
 ### Changed
 - Throw an error if duplicate FHIRPath variable names are found
