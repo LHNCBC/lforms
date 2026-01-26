@@ -92,8 +92,9 @@ describe('Form pre-population', () => {
           const releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
           cy.window().then((win) => {
             const resources = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', releaseVersion, null, {extract: true});
-            expect(resources.length).to.equal(2); // One QR and one observation
-            const obs = resources[1];
+            expect(resources.length).to.equal(2);
+            expect(resources[1].entry.length).to.equal(1); // One QR and one observation
+            const obs = resources[1].entry[0].resource;
             expect(obs.resourceType).to.equal('Observation');
             expect(obs.valueQuantity.value).to.equal(95);
             expect(obs.valueQuantity.code).to.equal('kg');
@@ -111,8 +112,9 @@ describe('Form pre-population', () => {
           let releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
           cy.window().then((win) => {
             const resources = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', releaseVersion, null, {extract: true});
-            expect(resources.length).to.equal(3); // One QR and two observation
-            const obs = resources[1];
+            expect(resources.length).to.equal(2);
+            expect(resources[1].entry.length).to.equal(2); // One QR and two observation
+            const obs = resources[1].entry[0].resource;
             expect(obs.code.coding.length).to.equal(2);
             expect(obs.resourceType).to.equal('Observation');
             expect(obs.valueQuantity.value).to.equal(96);

@@ -318,7 +318,7 @@ describe('Template based extraction', () => {
       expect(heightRequest.method).to.equal("PUT");
       expect(heightRequest.url).to.equal(`Observation/${height.id}`);
       expect(heightRequest.ifNoneMatch).to.equal(height.id);
-      expect(heightRequest.ifModifiedSince).to.equal(height.id);
+      expect(heightRequest.ifModifiedSince).to.equal(new Date().toISOString().slice(0, 10));
       expect(heightRequest.ifMatch).to.equal(height.id);
       expect(heightRequest.ifNoneExist).to.equal(height.id);
     });

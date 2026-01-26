@@ -1,0 +1,59 @@
+{
+  "resourceType": "Questionnaire",
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract",
+      "valueBoolean": true
+    }
+  ],
+  "title": "observationExtract Test Questionnaire with observationExtractEntry",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "blItem1",
+      "text": "boolean with initial value true",
+      "type": "boolean",
+      "required": true,
+      "initial": [
+        {
+          "valueBoolean": true
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-extractAllocateId",
+          "valueString": "X"
+        },
+        {
+          "extension": [
+            {
+              "url": "resourceId",
+              "valueString": "%X"
+            },
+            {
+              "url": "fullUrl",
+              "valueString": "%X"
+            },
+            {
+              "url": "ifNoneMatch",
+              "valueString": "%X"
+            },
+            {
+              "url": "ifModifiedSince",
+              "valueString": "today()"
+            },
+            {
+              "url": "ifMatch",
+              "valueString": "%X"
+            },
+            {
+              "url": "ifNoneExist",
+              "valueString": "%X"
+            }
+          ],
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtractEntry"
+        }
+      ]
+    }
+  ]
+}
