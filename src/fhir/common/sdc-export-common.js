@@ -312,13 +312,15 @@ function addCommonSDCExportFns(ns) {
   self._removeRepeatingItems = function(source) {
 
     if (source.items && Array.isArray(source.items)) {
+      let repeatingItemLinkId = null;
       for (var i= source.items.length-1; i>=0; i--) {
         // if it is a repeating item, whose _id is not 1
-        if (source.items[i]._id > 1) {
+        if (repeatingItemLinkId && source.items[i].linkId === repeatingItemLinkId) {
           source.items.splice(i,1);
         }
         else {
           this._removeRepeatingItems(source.items[i]);
+          repeatingItemLinkId = source.items[i]._questionRepeatable === true ? source.items[i].linkId : null;
         }
       }
     }

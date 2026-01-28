@@ -180,6 +180,19 @@ describe('multiple initial values on repeating question', function() {
         }
       ]);
     });
+    // Deleting the first repeating question should not affect the initial values on the exported Questionnaire.
+    cy.byId('del-child-decimal/1/1').click();
+    cy.window().then((win) => {
+      const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
+      expect(q.item[0].item[0].initial).to.deep.equal([
+        {
+          "valueDecimal": 10.5
+        },
+        {
+          "valueDecimal": 2
+        }
+      ]);
+    });
   });
 });
 
