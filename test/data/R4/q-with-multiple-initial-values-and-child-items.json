@@ -1,0 +1,33 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "title": "Questionnaire with multiple initial values and child items",
+  "item": [
+    {
+      "linkId": "parent-decimal",
+      "type": "decimal",
+      "text": "Parent decimal with initial",
+      "repeats": true,
+      "initial": [
+        {
+          "valueDecimal": 10.5
+        },
+        {
+          "valueDecimal": 2
+        }
+      ],
+      "item": [
+        {
+          "linkId": "child-string",
+          "type": "string",
+          "text": "Child string with initial",
+          "initial": [
+            {
+              "valueString": "child value"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

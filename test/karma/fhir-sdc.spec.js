@@ -617,6 +617,35 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
               });
             });
+
+            it('should preserve multiple initial values on repeating question and generate QR correctly', function () {
+              $.get('test/data/R5/q-with-multiple-initial-values-on-repeating-question.json', function(json) {
+                // Internal format should contain two repeating questions for two initial values.
+                const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, "R5");;
+                assert.equal(lfData.items[0].items.length, 2);
+                assert.equal(lfData.items[0].items[0].linkId, 'child-decimal');
+                assert.equal(lfData.items[0].items[0].defaultAnswer, 10.5);
+                assert.equal(lfData.items[0].items[1].linkId, 'child-decimal');
+                assert.equal(lfData.items[0].items[1].defaultAnswer, 2);
+                // export to Q
+                const qData = LForms.Util._convertLFormsToFHIRData('Questionnaire', 'R5', lfData);
+                assert.deepEqual(qData.item[0].item, json.item[0].item);
+                // export to QR
+                const qrData = LForms.Util._convertLFormsToFHIRData('QuestionnaireResponse', 'R5', lfData)
+                assert.deepEqual(qrData.item[0].answer[0].item[0], {
+                  "linkId": "child-decimal",
+                  "text": "Child decimal with initial",
+                  "answer": [
+                    {
+                      "valueDecimal": 10.5
+                    },
+                    {
+                      "valueDecimal": 2
+                    }
+                  ]
+                });
+              });
+            });
           }
 
           if (fhirVersion === 'R4') {
@@ -723,6 +752,53 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
                 assert.ok(qData.item[0].item[0].extension[0]);
                 assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
+              });
+            });
+
+            it('should preserve multiple initial values on repeating question and generate QR correctly', function () {
+              $.get('test/data/R4/q-with-multiple-initial-values-and-child-items.json', function(json) {
+                // Internal format should contain two repeating questions for two initial values.
+                const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, "R4");
+                assert.equal(lfData.items.length, 2);
+                assert.equal(lfData.items[0].linkId, 'parent-decimal');
+                assert.equal(lfData.items[0].defaultAnswer, 10.5);
+                assert.equal(lfData.items[1].linkId, 'parent-decimal');
+                assert.equal(lfData.items[1].defaultAnswer, 2);
+                // export to Q
+                const qData = LForms.Util._convertLFormsToFHIRData('Questionnaire', 'R4', lfData);
+                assert.deepEqual(qData.item, json.item);
+                // export to QR
+                const qrData = LForms.Util._convertLFormsToFHIRData('QuestionnaireResponse', 'R4', lfData);
+                assert.deepEqual(qrData.item[0].answer, [
+                  {
+                    "valueDecimal": 10.5,
+                    "item": [
+                      {
+                        "answer": [
+                          {
+                            "valueString": "child value"
+                          }
+                        ],
+                        "linkId": "child-string",
+                        "text": "Child string with initial"
+                      }
+                    ]
+                  },
+                  {
+                    "valueDecimal": 2,
+                    "item": [
+                      {
+                        "answer": [
+                          {
+                            "valueString": "child value"
+                          }
+                        ],
+                        "linkId": "child-string",
+                        "text": "Child string with initial"
+                      }
+                    ]
+                  }
+                ]);
               });
             });
           }

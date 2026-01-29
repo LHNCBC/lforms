@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [40.1.0] 2026-01-22
+### Fixed
+- A Questionnaire with multiple initial values on a repeating question
+  should render multiple questions, each with a single default answer.
+- The same form, when exported back to Questionnaire, should contain
+  only one question with an array of initial values.
+
 ## [40.0.0] 2026-01-22
 ### Added
 - Support for observationExtractEntry extension in Observation extract.
