@@ -700,6 +700,18 @@ export class LhcDataService {
     }
   };
 
+
+  /**
+   *
+   */
+  hasSubGroupWithLinkId(item, linkId): boolean {
+    if (item.items && item.items.some(x => x._isSubGroupForCheckbox === true && x.linkId === linkId)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
 }
 
 

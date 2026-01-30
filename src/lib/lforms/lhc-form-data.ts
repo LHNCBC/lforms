@@ -2414,6 +2414,36 @@ export default class LhcFormData {
 
 
   /**
+   *
+   */
+  addSubItemsForCheckbox(item, answer, linkId) {
+    console.log(answer);
+    console.log(linkId);
+    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x._isSubGroupForCheckbox));
+    let newGroupItemForCheckbox = {
+      "_isSubGroupForCheckbox": true,
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "dataType": "",
+      "header": true,
+      "question": "",
+      "linkId": "",
+      "items": []
+    };
+    newGroupItemForCheckbox.question = `Sub items for checkbox option: ${answer._displayText}`;
+    newGroupItemForCheckbox.linkId = linkId;
+    newGroupItemForCheckbox.items = subItemsCopy;
+    this._updateSubItemsHiddenFromView(newGroupItemForCheckbox, false);
+    item.items.push(newGroupItemForCheckbox);
+
+    var readerMsg = language.added + newGroupItemForCheckbox.question;
+    this._actionLogs.push(readerMsg);
+  }
+
+
+  /**
    * Check if any of the repeating item or group has no user input values.
    * @param item a repeating item or a repeating group item
    * @returns {boolean}
