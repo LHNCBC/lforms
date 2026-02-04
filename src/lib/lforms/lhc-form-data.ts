@@ -687,6 +687,10 @@ export default class LhcFormData {
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
+        if (subItem._isSubGroupForCheckbox) {
+          // Skip the checkbox subgroups, if any, so we don't hide checkbox A subitems when checkbox B is checked.
+          continue;
+        }
         let toBeHidden = hidden || this.isItemHidden(subItem) ||
           // Hide the original sub items if item is a checkbox layout question with sub items.
           // New groups of sub items will be added when any checkbox is checked.
@@ -2414,20 +2418,19 @@ export default class LhcFormData {
 
 
   /**
-   *
+   * Adds a subgroup item for a checkbox answer option.
+   * The subgroup will contain the original sub items.
    */
   addSubItemsForCheckbox(item, answer, linkId) {
-    console.log(answer);
-    console.log(linkId);
+    // Make a copy of the original sub items, excluding checkbox subgroups.
     let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x._isSubGroupForCheckbox));
     let newGroupItemForCheckbox = {
       "_isSubGroupForCheckbox": true,
-      "questionCardinality": {
-        "min": "1",
-        "max": "1"
-      },
-      "dataType": "",
       "header": true,
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "vertical"
+      },
       "question": "",
       "linkId": "",
       "items": []

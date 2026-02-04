@@ -77,8 +77,6 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * @param value the selected values of a checkbox group
    */
   onCheckboxModelChange(value: any): void {
-    console.log(value);
-    console.log(this.checkboxModels);
     this.item.value = value;
     this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
     this.prevCheckBoxValue = this.item.value;
@@ -92,12 +90,11 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    */
   addOrRemoveSubGroupsForCheckbox(): void {
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
-      const subGroupLinkId = this.lhcDataService.getItemAnswerId(this.item, this.item.answers[i]);
+      const subGroupLinkId = this.lhcDataService.getItemAnswerId(this.item, this.acOptions.listItems[i]);
       const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && !subGroupExists) {
-        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, this.item.answers[i]);
+        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, this.acOptions.listItems[i], subGroupLinkId);
       } else if (!this.checkboxModels[i] && subGroupExists) {
-        this.lhcDataService.getLhcFormData().removeSubItemsForCheckbox(this.item, this.item.answers[i]);
       }
     }
   }
