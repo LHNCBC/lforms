@@ -2454,6 +2454,22 @@ export default class LhcFormData {
 
 
   /**
+   * Deletes a subgroup item for a checkbox answer option, using the subgroup's linkId.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param checkboxDisplayText the display text of the selected checkbox option.
+   * @param linkId the linkId of the new subgroup item.
+   */
+  deleteSubItemsForCheckbox(item, checkboxDisplayText, linkId) {
+    item.items = item.items.filter(x => x.linkId !== linkId);
+
+    this._resetInternalData();
+
+    var readerMsg = `${language.removed} Sub items for checkbox option: ${checkboxDisplayText}`;
+    this._actionLogs.push(readerMsg);
+  }
+
+
+  /**
    * Check if any of the repeating item or group has no user input values.
    * @param item a repeating item or a repeating group item
    * @returns {boolean}

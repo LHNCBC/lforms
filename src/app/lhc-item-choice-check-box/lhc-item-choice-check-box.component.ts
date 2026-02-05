@@ -86,15 +86,16 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   }
 
   /**
-   *
+   * Add or remove subgroups for the checkbox item, as the selection changes.
    */
   addOrRemoveSubGroupsForCheckbox(): void {
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
-      const subGroupLinkId = this.lhcDataService.getItemAnswerId(this.item, this.acOptions.listItems[i]);
+      const subGroupLinkId = 'checkbox-subgroup-' + this.lhcDataService.getItemAnswerId(this.item, this.acOptions.listItems[i]);
       const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && !subGroupExists) {
         this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, this.acOptions.listItems[i]._displayText, subGroupLinkId);
       } else if (!this.checkboxModels[i] && subGroupExists) {
+        this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, this.acOptions.listItems[i]._displayText, subGroupLinkId);
       }
     }
   }
