@@ -2420,8 +2420,11 @@ export default class LhcFormData {
   /**
    * Adds a subgroup item for a checkbox answer option.
    * The subgroup will contain the original sub items.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param checkboxDisplayText the display text of the selected checkbox option.
+   * @param linkId the linkId of the new subgroup item.
    */
-  addSubItemsForCheckbox(item, answer, linkId) {
+  addSubItemsForCheckbox(item, checkboxDisplayText, linkId) {
     // Make a copy of the original sub items, excluding checkbox subgroups.
     let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x._isSubGroupForCheckbox));
     let newGroupItemForCheckbox = {
@@ -2431,15 +2434,19 @@ export default class LhcFormData {
       "displayControl": {
         "questionLayout": "vertical"
       },
+      "_id": "",
       "question": "",
       "linkId": "",
       "items": []
     };
-    newGroupItemForCheckbox.question = `Sub items for checkbox option: ${answer._displayText}`;
+    newGroupItemForCheckbox.question = `Sub items for checkbox option: ${checkboxDisplayText}`;
     newGroupItemForCheckbox.linkId = linkId;
+    newGroupItemForCheckbox._id = linkId;
     newGroupItemForCheckbox.items = subItemsCopy;
     this._updateSubItemsHiddenFromView(newGroupItemForCheckbox, false);
     item.items.push(newGroupItemForCheckbox);
+
+    this._resetInternalData();
 
     var readerMsg = language.added + newGroupItemForCheckbox.question;
     this._actionLogs.push(readerMsg);

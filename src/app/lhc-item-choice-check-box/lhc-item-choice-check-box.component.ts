@@ -93,7 +93,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       const subGroupLinkId = this.lhcDataService.getItemAnswerId(this.item, this.acOptions.listItems[i]);
       const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && !subGroupExists) {
-        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, this.acOptions.listItems[i], subGroupLinkId);
+        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, this.acOptions.listItems[i]._displayText, subGroupLinkId);
       } else if (!this.checkboxModels[i] && subGroupExists) {
       }
     }
