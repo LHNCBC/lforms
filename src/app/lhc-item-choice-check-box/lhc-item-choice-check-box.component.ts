@@ -32,29 +32,33 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * Set initial status of the component
    */
   setInitialValue(): void {
-
-    if (this.item && this.item.value && Array.isArray(this.item.value) &&
-        this.item.answers && Array.isArray(this.item.answers)) {
+    if (this.item && this.item.answers && Array.isArray(this.item.answers)) {
       let iLen = this.item.answers.length;
       this.checkboxModels = new Array(iLen);
 
-      for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
-        let value = this.item.value[j];
-        if (value._notOnList) {
-          this.otherCheckboxModel = true;
-          this.otherValue = value.text;
-        }
-        else {
-          for (let i = 0; i < iLen; i++) {
-            let answer = this.item.answers[i];
-            if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
-              this.checkboxModels[i] = true;
+      if (this.item.items) {
+        // Remove any existing subgroups for this checkbox item.
+        this.item.items = this.item.items.filter(x => !x._isSubGroupForCheckbox);
+      }
+
+      if (this.item.value && Array.isArray(this.item.value)) {
+        for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
+          let value = this.item.value[j];
+          if (value._notOnList) {
+            this.otherCheckboxModel = true;
+            this.otherValue = value.text;
+          } else {
+            for (let i = 0; i < iLen; i++) {
+              let answer = this.item.answers[i];
+              if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
+                this.checkboxModels[i] = true;
+              }
             }
           }
         }
-      }
 
-      this.prevCheckBoxValue = this.item.value;
+        this.prevCheckBoxValue = this.item.value;
+      }
     }
   }
 
@@ -89,6 +93,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * Add or remove subgroups for the checkbox item, as the selection changes.
    */
   addOrRemoveSubGroupsForCheckbox(): void {
+    if (!this.item.items) {
+      return;
+    }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
       const subGroupLinkId = 'checkbox-subgroup-' + this.lhcDataService.getItemAnswerId(this.item, this.acOptions.listItems[i]);
       const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
