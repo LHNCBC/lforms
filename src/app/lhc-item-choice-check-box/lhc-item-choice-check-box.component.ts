@@ -32,33 +32,31 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * Set initial status of the component
    */
   setInitialValue(): void {
-    if (this.item && this.item.answers && Array.isArray(this.item.answers)) {
+
+    if (this.item && this.item.value && Array.isArray(this.item.value) &&
+        this.item.answers && Array.isArray(this.item.answers)) {
       let iLen = this.item.answers.length;
       this.checkboxModels = new Array(iLen);
 
-      if (this.item.items) {
-        // Remove any existing subgroups for this checkbox item.
-        this.item.items = this.item.items.filter(x => !x._isSubGroupForCheckbox);
-      }
-
-      if (this.item.value && Array.isArray(this.item.value)) {
-        for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
-          let value = this.item.value[j];
-          if (value._notOnList) {
-            this.otherCheckboxModel = true;
-            this.otherValue = value.text;
-          } else {
-            for (let i = 0; i < iLen; i++) {
-              let answer = this.item.answers[i];
-              if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
-                this.checkboxModels[i] = true;
-              }
+      for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
+        let value = this.item.value[j];
+        if (value._notOnList) {
+          this.otherCheckboxModel = true;
+          this.otherValue = value.text;
+        }
+        else {
+          for (let i = 0; i < iLen; i++) {
+            let answer = this.item.answers[i];
+            if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
+              this.checkboxModels[i] = true;
             }
           }
         }
-
-        this.prevCheckBoxValue = this.item.value;
       }
+
+      this.prevCheckBoxValue = this.item.value;
+
+      this.RemoveSubGroupsForNonExistentCheckboxes();
     }
   }
 
@@ -104,6 +102,24 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       } else if (!this.checkboxModels[i] && subGroupExists) {
         this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, this.acOptions.listItems[i]._displayText, subGroupLinkId);
       }
+    }
+  }
+
+  /**
+   * Remove subgroups for non-existent checkbox options.
+   * This could happen when some checkboxes are selected, and then those checkboxes are
+   * removed from the answer options, due to answerExpression. The subgroups for those
+   * removed checkboxes should also be removed.
+   */
+  RemoveSubGroupsForNonExistentCheckboxes(): void {
+    // A list of currently valid subgroup linkIds.
+    const subGroupLinkIds = this.acOptions.listItems.map(x =>
+      'checkbox-subgroup-' + this.lhcDataService.getItemAnswerId(this.item, x));
+    if (this.item.items) {
+      this.item.items = this.item.items.filter(x =>
+        !x._isSubGroupForCheckbox ||
+        subGroupLinkIds.indexOf(x.linkId) !== -1
+      );
     }
   }
 
