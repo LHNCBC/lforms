@@ -1,0 +1,864 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "title": "Vital signs, weight and height panel",
+  "status": "draft",
+  "code": [
+    {
+      "system": "http://loinc.org",
+      "code": "34565-2",
+      "display": "Vital signs, weight and height panel"
+    }
+  ],
+  "item": [
+    {
+      "item": [
+        {
+          "type": "quantity",
+          "code": [
+            {
+              "code": "8867-4",
+              "display": "Heart rate",
+              "system": "http://loinc.org"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "code": "{beats}/min",
+                "display": "{beats}/min",
+                "system": "http://unitsofmeasure.org"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "code": "{counts}/min",
+                "display": "{counts}/min",
+                "system": "http://unitsofmeasure.org"
+              }
+            }
+          ],
+          "linkId": "/34566-0/8867-4",
+          "text": "Heart rate"
+        },
+        {
+          "type": "quantity",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "{breaths}/min",
+                "display": "{breaths}/min"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "{counts}/min",
+                "display": "{counts}/min"
+              }
+            }
+          ],
+          "linkId": "/34566-0/9279-1",
+          "code": [
+            {
+              "system": "http://loinc.org",
+              "code": "9279-1",
+              "display": "Resp rate"
+            }
+          ],
+          "text": "Resp rate",
+          "initial": [
+            {
+              "valueQuantity": {
+                "value": 50,
+                "unit": "{breaths}/minute",
+                "system": "http://unitsofmeasure.org",
+                "code": "{breaths}/min"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "code": [
+            {
+              "code": "35094-2",
+              "display": "BP Pnl",
+              "system": "http://loinc.org"
+            }
+          ],
+          "linkId": "/34566-0/35094-2",
+          "text": "BP Pnl",
+          "item": [
+            {
+              "type": "decimal",
+              "code": [
+                {
+                  "code": "8480-6",
+                  "display": "BP sys",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+                  "valueCoding": {
+                    "code": "mm[Hg]",
+                    "display": "mm[Hg]",
+                    "system": "http://unitsofmeasure.org"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35094-2/8480-6",
+              "text": "BP sys"
+            },
+            {
+              "type": "decimal",
+              "code": [
+                {
+                  "code": "8462-4",
+                  "display": "BP dias",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+                  "valueCoding": {
+                    "code": "mm[Hg]",
+                    "display": "mm[Hg]",
+                    "system": "http://unitsofmeasure.org"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35094-2/8462-4",
+              "text": "BP dias"
+            },
+            {
+              "type": "decimal",
+              "code": [
+                {
+                  "code": "8478-0",
+                  "display": "BP mean",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+                  "valueCoding": {
+                    "code": "mm[Hg]",
+                    "display": "mm[Hg]",
+                    "system": "http://unitsofmeasure.org"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35094-2/8478-0",
+              "text": "BP mean"
+            },
+            {
+              "type": "choice",
+              "code": [
+                {
+                  "code": "8357-6",
+                  "display": "BP method",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35094-2/8357-6",
+              "text": "BP method",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "code": "LA24013-7",
+                    "display": "Auscultation - automatic",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24012-9",
+                    "display": "Auscultation - manual",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24014-5",
+                    "display": "Oscillometry",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24016-0",
+                    "display": "Continuous noninvasive arterial pressure (CNAP)",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24015-2",
+                    "display": "Invasive (intravascular transducer)",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA25780-0",
+                    "display": "Arterial line",
+                    "system": "http://loinc.org"
+                  },
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                      "valueString": "3308001"
+                    }
+                  ]
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA19771-7",
+                    "display": "Doppler",
+                    "system": "http://loinc.org"
+                  },
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                      "valueString": "3308003"
+                    }
+                  ]
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA25782-6",
+                    "display": "Cuff-manual palpated only",
+                    "system": "http://loinc.org"
+                  },
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                      "valueString": "3308009"
+                    }
+                  ]
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA25783-4",
+                    "display": "Venous line",
+                    "system": "http://loinc.org"
+                  },
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+                      "valueString": "3308011"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "choice",
+              "code": [
+                {
+                  "code": "8358-4",
+                  "display": "BP device Cuff size",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35094-2/8358-4",
+              "text": "BP device Cuff size",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "code": "LA11162-7",
+                    "display": "Adult standard",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA11163-5",
+                    "display": "Adult large",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA11164-3",
+                    "display": "Thigh extra large",
+                    "system": "http://loinc.org"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "code": [
+                {
+                  "code": "8359-2",
+                  "display": "Periph a measurement site",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "linkId": "/34566-0/35094-2/8359-2",
+              "text": "Periph a measurement site"
+            },
+            {
+              "type": "string",
+              "code": [
+                {
+                  "code": "9856-6",
+                  "display": "BP device Inventory #",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "linkId": "/34566-0/35094-2/9856-6",
+              "text": "BP device Inventory #"
+            },
+            {
+              "type": "string",
+              "code": [
+                {
+                  "code": "9857-4",
+                  "display": "BP device Model #",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "linkId": "/34566-0/35094-2/9857-4",
+              "text": "BP device Model #"
+            },
+            {
+              "type": "string",
+              "code": [
+                {
+                  "code": "9858-2",
+                  "display": "BP device Serial #",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "linkId": "/34566-0/35094-2/9858-2",
+              "text": "BP device Serial #"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "code": [
+            {
+              "code": "35095-9",
+              "display": "Bdy temp Pnl",
+              "system": "http://loinc.org"
+            }
+          ],
+          "linkId": "/34566-0/35095-9",
+          "text": "Bdy temp Pnl",
+          "item": [
+            {
+              "type": "decimal",
+              "code": [
+                {
+                  "code": "8310-5",
+                  "display": "Body temperature",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+                  "valueCoding": {
+                    "code": "Cel",
+                    "display": "Cel",
+                    "system": "http://unitsofmeasure.org"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35095-9/8310-5",
+              "text": "Body temperature"
+            },
+            {
+              "type": "choice",
+              "code": [
+                {
+                  "code": "8326-1",
+                  "display": "Bdy Temp Device Class",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35095-9/8326-1",
+              "text": "Bdy Temp Device Class",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "code": "LA24040-0",
+                    "display": "Digital thermometer",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24043-4",
+                    "display": "Liquid-crystal temperature-sensitive strip",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24038-4",
+                    "display": "Mercury thermometer",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24037-6",
+                    "display": "Non-contact infrared thermometer (NCIT)",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24042-6",
+                    "display": "Temporal artery infrared thermometer",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24039-2",
+                    "display": "Thermal scanner camera",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA24041-8",
+                    "display": "Tympanic infrared thermometer",
+                    "system": "http://loinc.org"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "choice",
+              "code": [
+                {
+                  "code": "8327-9",
+                  "display": "Bdy temp measurement site",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ],
+                    "text": "Drop down"
+                  }
+                }
+              ],
+              "linkId": "/34566-0/35095-9/8327-9",
+              "text": "Bdy temp measurement site",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "code": "LA9370-3",
+                    "display": "Axillary",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA9367-9",
+                    "display": "Oral",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA21929-7",
+                    "display": "Ear",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA9368-7",
+                    "display": "Tympanic membrane",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA21928-9",
+                    "display": "Temporal artery (forehead)",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA9369-5",
+                    "display": "Rectal",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA9371-1",
+                    "display": "Urinary bladder",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA9263-0",
+                    "display": "Nasal",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA18005-1",
+                    "display": "Nasopharyngeal",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA11862-2",
+                    "display": "Finger",
+                    "system": "http://loinc.org"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "LA21930-5",
+                    "display": "Toe",
+                    "system": "http://loinc.org"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "code": [
+                {
+                  "code": "9849-1",
+                  "display": "Bdy Temp Device Inventory #",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "linkId": "/34566-0/35095-9/9849-1",
+              "text": "Bdy Temp Device Inventory #"
+            },
+            {
+              "type": "string",
+              "code": [
+                {
+                  "code": "9850-9",
+                  "display": "Bdy Temp Device Model #",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "linkId": "/34566-0/35095-9/9850-9",
+              "text": "Bdy Temp Device Model #"
+            },
+            {
+              "type": "string",
+              "code": [
+                {
+                  "code": "9851-7",
+                  "display": "Bdy Temp Device Serial #",
+                  "system": "http://loinc.org"
+                }
+              ],
+              "linkId": "/34566-0/35095-9/9851-7",
+              "text": "Bdy Temp Device Serial #"
+            }
+          ]
+        },
+        {
+          "type": "quantity",
+          "code": [
+            {
+              "code": "8302-2",
+              "display": "Body height",
+              "system": "http://loinc.org"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "display": "centimeters"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "display": "feet"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "display": "inches"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "display": "meters"
+              }
+            }
+          ],
+          "linkId": "/34566-0/8302-2",
+          "text": "Body height"
+        },
+        {
+          "type": "quantity",
+          "code": [
+            {
+              "code": "3141-9",
+              "display": "Weight Measured",
+              "system": "http://loinc.org"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "code": "[lb_av]",
+                "display": "[lb_av]",
+                "system": "http://unitsofmeasure.org"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+              "valueCoding": {
+                "code": "kg",
+                "display": "kg",
+                "system": "http://unitsofmeasure.org"
+              }
+            }
+          ],
+          "linkId": "/34566-0/3141-9",
+          "text": "Weight Measured"
+        },
+        {
+          "type": "choice",
+          "code": [
+            {
+              "code": "8361-8",
+              "display": "Bdy position with respect to gravity",
+              "system": "http://loinc.org"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "/34566-0/8361-8",
+          "text": "Bdy position with respect to gravity",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "LA11868-9",
+                "display": "Sitting",
+                "system": "http://loinc.org"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "LA11869-7",
+                "display": "Lying",
+                "system": "http://loinc.org"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "LA11870-5",
+                "display": "Standing",
+                "system": "http://loinc.org"
+              }
+            }
+          ]
+        },
+        {
+          "type": "choice",
+          "code": [
+            {
+              "code": "8352-7",
+              "display": "Clothing worn during measure",
+              "system": "http://loinc.org"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "/34566-0/8352-7",
+          "text": "Clothing worn during measure",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "LA11871-3",
+                "display": "Underwear or less",
+                "system": "http://loinc.org"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "LA11872-1",
+                "display": "Street clothes, no shoes",
+                "system": "http://loinc.org"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "LA11873-9",
+                "display": "Street clothes & shoes",
+                "system": "http://loinc.org"
+              }
+            }
+          ]
+        },
+        {
+          "type": "choice",
+          "code": [
+            {
+              "code": "80339-5",
+              "display": "Vital signs assessment Imp",
+              "system": "http://loinc.org"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "drop-down",
+                    "display": "Drop down"
+                  }
+                ],
+                "text": "Drop down"
+              }
+            }
+          ],
+          "linkId": "/34566-0/80339-5",
+          "text": "Vital signs assessment Imp",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "code": "LA25085-4",
+                "display": "Within Defined Limits",
+                "system": "http://loinc.org"
+              }
+            },
+            {
+              "valueCoding": {
+                "code": "LA46-8",
+                "display": "Other",
+                "system": "http://loinc.org"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "group",
+      "linkId": "/34566-0",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "34566-0",
+          "display": "Vital Signs Pnl"
+        }
+      ],
+      "text": "Vital Signs Pnl"
+    }
+  ]
+}

@@ -816,14 +816,22 @@ function addCommonSDCImportFns(ns) {
 
     if (qItem.type === 'quantity') {
       let initialQ = this.getFirstInitialQuantity(qItem);
-      if (initialQ && initialQ.unit) {
-        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+      if (initialQ && (initialQ.unit || initialQ.code)) {
+        if (initialQ.code) {
+          lformsDefaultUnit = lformsUnits.find(function(unit) {
+            return unit.code === initialQ.code &&
+              (!initialQ.system || unit.system === initialQ.system);
+          });
+        }
+        if (!lformsDefaultUnit && initialQ.unit) {
+          lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+        }
         if(lformsDefaultUnit) {
           lformsDefaultUnit.default = true;
         }
         else {
           lformsDefaultUnit = {
-            name: initialQ.unit,
+            name: initialQ.unit || initialQ.code,
             code: initialQ.code,
             system: initialQ.system,
             default: true
