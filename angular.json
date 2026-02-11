@@ -211,7 +211,7 @@
             "lintFilePatterns": [
               "src/**/*.ts",
               "src/**/*.html",
-              "cypress/**/*.ts"
+              "test/cypress/**/*.ts"
             ]
           }
         },

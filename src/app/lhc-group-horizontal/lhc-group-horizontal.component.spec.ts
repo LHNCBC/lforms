@@ -7,7 +7,7 @@ describe('LhcGroupHorizontalComponent', () => {
   let fixture: ComponentFixture<LhcGroupHorizontalComponent>;
   let element: HTMLElement;
 
-  let horizontalItem =  {
+  const horizontalItem =  {
     "questionCode": "horizontalTable",
     "linkId":"/horizontalTable",
     "question": "A horizontal table",

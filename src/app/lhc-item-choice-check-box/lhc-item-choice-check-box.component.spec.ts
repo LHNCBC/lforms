@@ -12,7 +12,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
   let fixture: ComponentFixture<LhcItemChoiceCheckBoxComponent>;
   let element: HTMLElement;
 
-  let itemCheckboxCNE:any =  {
+  const itemCheckboxCNE:any =  {
     "questionCode": "q1a",
     "question": "Answer RADIO_CHECKBOX layout --CODING, optionsOnly, --1 column",
     "copyrightNotice": "a notice",
@@ -53,7 +53,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     "linkId": "/q1a"
   };
 
-  let itemCheckboxCWE:any =  {
+  const itemCheckboxCWE:any =  {
     "questionCode": "q1a",
     "question": "Answer RADIO_CHECKBOX layout --CODING, optionsOrString, --0 columns",
     "copyrightNotice": "a notice",
@@ -94,7 +94,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     "linkId": "/q1a"
   };
 
-  let acOptions = {
+  const acOptions = {
     "listItems": [
       {
         "code": "c1",
@@ -227,7 +227,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
       "_notOnList": true
     }])
 
-    let otherInput:HTMLInputElement = getItemAnswerElem(element, itemCheckboxCWE, '_otherValue');
+    const otherInput:HTMLInputElement = getItemAnswerElem(element, itemCheckboxCWE, '_otherValue');
     otherInput.value = 'some value';
     otherInput.dispatchEvent(new Event('input'));
     otherInput.dispatchEvent(new KeyboardEvent('keyup', {

@@ -109,7 +109,7 @@ describe('Form pre-population', () => {
 
         it('should extract observationExtract fields when multiple codes are present', () => {
           // Follows previous test on population
-          let releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
+          const releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
           cy.window().then((win) => {
             const resources = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', releaseVersion, null, {extract: true});
             expect(resources.length).to.equal(2);

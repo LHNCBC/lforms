@@ -12,7 +12,7 @@
    constructor(private logID?:string) {
     if (logID === undefined) {
       logID = 'reader_log';
-      let logEle = document.getElementById(logID)
+      const logEle = document.getElementById(logID)
       // reuse the existing log element 
       if (logEle) {
         this.logElement = logEle
@@ -46,7 +46,7 @@
     // you do that, it reads the log text from the beginning with each add.
     // Putting each entry in p tags solves that, and still works okay in
     // Firefox.
-    let p = document.createElement('p');
+    const p = document.createElement('p');
     p.appendChild(document.createTextNode(text));
     this.logElement.appendChild(p);
   }

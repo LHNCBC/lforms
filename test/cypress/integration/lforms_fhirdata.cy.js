@@ -185,6 +185,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               TestUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
+              TestUtil.waitForElementPresent(ff.disease2);
+              TestUtil.waitForElementPresent(ff.ageAtDiag2);
+
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);

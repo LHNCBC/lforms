@@ -17,7 +17,7 @@ describe('LhcUnitComponent', () => {
   let questionnaire;
 
   beforeAll(async () => {
-    var file = 'base/test/data/R4/quantity-units.json';
+    const file = 'base/test/data/R4/quantity-units.json';
     questionnaire = await fetch(file);
     questionnaire = await questionnaire.json();
   });
@@ -32,10 +32,10 @@ describe('LhcUnitComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LhcUnitComponent);
-    let lhcDataService = TestBed.inject(LhcDataService);
+    const lhcDataService = TestBed.inject(LhcDataService);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    let form = window.LForms.FHIR.R4.SDC.convertQuestionnaireToLForms(questionnaire);
+    const form = window.LForms.FHIR.R4.SDC.convertQuestionnaireToLForms(questionnaire);
     lfData = new LhcFormData(form);
     lhcDataService.setLhcFormData(lfData);
   });

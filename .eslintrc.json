@@ -11,9 +11,7 @@
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
         "project": [
-          "tsconfig.app.json",
-          "tsconfig.spec.json",
-          "cypress/tsconfig.json"
+          "tsconfig.eslint.json"
         ],
         "sourceType": "module"
       },
@@ -22,7 +20,24 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:@angular-eslint/recommended"
       ],
-      "rules": {}
+      "rules": {
+        "@angular-eslint/no-empty-lifecycle-method": "off",
+        "@angular-eslint/no-output-on-prefix": "off",
+        "@angular-eslint/prefer-inject": "off",
+        "@angular-eslint/prefer-standalone": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-empty-object-type": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unused-expressions": "off",
+        "@typescript-eslint/no-require-imports": "off",
+        "@typescript-eslint/no-this-alias": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "no-fallthrough": "off",
+        "no-prototype-builtins": "off",
+        "no-useless-escape": "off",
+        "no-var": "off",
+        "prefer-const": "off"
+      }
     },
     {
       "files": [

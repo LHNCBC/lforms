@@ -9,8 +9,8 @@ import LhcFormData from '../../lib/lforms/lhc-form-data';
 import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
 import copy from "fast-copy";
 
-declare var LForms: any;
-declare var ResizeObserver;
+declare let LForms: any;
+declare let ResizeObserver;
 
 @Component({
     selector: 'lhc-form',
@@ -69,7 +69,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   ngOnInit(): void {
     this.observer = new ResizeObserver(entries => {
       this.zone.run(() => {
-        let width = entries[0].contentRect.width;
+        const width = entries[0].contentRect.width;
         this.changeSize.next(width);
       });
     });
@@ -153,14 +153,14 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
             let q = CommonUtils.deepCopy(self.questionnaire);
             // check if questionnaire is a FHIR Questionnaire
             if (q.resourceType === "Questionnaire") {
-              let fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
+              const fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
                 // convert it to a lforms form data
                 q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.options);
                 // If options.questionnaireResponse is specified, we can utilize it and reduce the number of lforms API calls.
                 if (self.options?.questionnaireResponse) {
                   // make a copy of questionnaireResponse so that the original data are not modified
-                  let qr = copy(self.options.questionnaireResponse);
+                  const qr = copy(self.options.questionnaireResponse);
                   q = LForms.FHIR[fhirVer].SDC.mergeQuestionnaireResponseToLForms(q, qr);
                 }
               }
@@ -218,7 +218,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
     }
     // only options changes
     else if (changes.options) {
-      let lhcFD = this.lhcDataService.getLhcFormData();
+      const lhcFD = this.lhcDataService.getLhcFormData();
       if (lhcFD) {
         lhcFD.setTemplateOptions(this.options);
       }

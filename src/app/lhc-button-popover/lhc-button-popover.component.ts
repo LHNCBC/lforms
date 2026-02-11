@@ -52,7 +52,7 @@ export class LhcButtonPopoverComponent implements OnInit {
 
     setTimeout(() => {
       // get the displayed text instead of possible HTML content
-      let content = document.getElementById(contentId).textContent;
+      const content = document.getElementById(contentId).textContent;
       this.lhcDataService.sendMsgToScreenReader(`${title} ${content}`)
     }, 10)
   }

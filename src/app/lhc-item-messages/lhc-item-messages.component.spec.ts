@@ -39,7 +39,7 @@ describe('LhcItemMessagesComponent', () => {
     })
     .compileComponents();
 
-    let lhcDataService = TestBed.inject(LhcDataService);
+    const lhcDataService = TestBed.inject(LhcDataService);
     initLFData();
     lhcDataService.setLhcFormData(lfData);
     fixture = TestBed.createComponent(LhcItemMessagesComponent);
