@@ -829,6 +829,22 @@ import replaceAsync from 'string-replace-async';
       if (changed) {
         // reset the answer list
         item.answers = newList;
+        // Reset invalid item values in the new answer list
+        // 1) when there are user saved data from QuestionnaireResponse and
+        //    the initial loading (and fhirpath expressions) have run once
+        // 2) when there are no user saved data.
+        if (this._lfData.hasSavedData && this._firstExpressionRunComplete || !this._lfData.hasSavedData) {
+          // Remove previously selected answer (by user or by fhirpath expression) that is not in the new answer list anymore.
+          if (Array.isArray(item.value)) {
+            item.value = item.value.filter(x => newList.some(y => LForms.Util.areTwoAnswersSame(x, y, item)));
+          } else if (item.value && !newList.some(x => LForms.Util.areTwoAnswersSame(item.value, x, item))) {
+            item.value = null;
+          }
+          // reset the cached calculated value
+          this._calculatedValues[this._getRepetitionKey(item)] = [];
+          // user selected/typed value will be reset when the answer list has changed
+          item._userModifiedCalculatedValue = false;
+        }
         item._hasAnswerList = true;
         this._lfData._updateAutocompOptions(item, true);
         this._lfData._resetItemValueWithAnswers(item);
