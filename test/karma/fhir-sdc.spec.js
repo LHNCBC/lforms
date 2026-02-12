@@ -1646,27 +1646,27 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.isOk(convertedLfData.items[0].units[0].default);
             });
 
+            function findItemByCode(items, code) {
+              if (!items) {
+                return null;
+              }
+              for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item.questionCode === code) {
+                  return item;
+                }
+                var nested = findItemByCode(item.items, code);
+                if (nested) {
+                  return nested;
+                }
+              }
+              return null;
+            }
+
             it('should not add initial quantity unit to unitOption list', function(done) {
               if (fhirVersion !== 'R4') {
                 done();
                 return;
-              }
-
-              function findItemByCode(items, code) {
-                if (!items) {
-                  return null;
-                }
-                for (var i = 0; i < items.length; i++) {
-                  var item = items[i];
-                  if (item.questionCode === code) {
-                    return item;
-                  }
-                  var nested = findItemByCode(item.items, code);
-                  if (nested) {
-                    return nested;
-                  }
-                }
-                return null;
               }
 
               $.get('test/data/R4/q-with-unit-in-quantity-and-units.json', function(json) {
@@ -1675,12 +1675,34 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
                 assert.isOk(respRateItem);
                 assert.equal(respRateItem.units.length, 2);
-                assert.isOk(respRateItem.units[0].default || respRateItem.units[1].default);
+                assert.isOk(respRateItem.units[0].default);
 
                 var defaultUnit = respRateItem.units.find(function(unit) {
                   return unit.default;
                 });
                 assert.equal(defaultUnit.code, '{breaths}/min');
+                assert.equal(defaultUnit.system, 'http://unitsofmeasure.org');
+                done();
+              });
+            });
+
+            it('should add initial quantity unit when not in unitOption list', function(done) {
+              if (fhirVersion !== 'R4') {
+                done();
+                return;
+              }
+
+              $.get('test/data/R4/q-with-unit-in-quantity-and-units.json', function(json) {
+                var formData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                var heightItem = findItemByCode(formData.items, '8302-2');
+
+                assert.isOk(heightItem);
+                assert.equal(heightItem.units.length, 3);
+
+                var defaultUnit = heightItem.units.find(function(unit) {
+                  return unit.default;
+                });
+                assert.equal(defaultUnit.code, 'm');
                 assert.equal(defaultUnit.system, 'http://unitsofmeasure.org');
                 done();
               });
