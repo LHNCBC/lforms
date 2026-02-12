@@ -313,8 +313,11 @@ function addCommonSDCExportFns(ns) {
     if (source.items && Array.isArray(source.items)) {
       let repeatingItemLinkId = null;
       for (var i = source.items.length - 1; i >= 0; i--) {
+        if (source.items[i]._isSubGroupForCheckbox) {
+          source.items.splice(i, 1);
+        }
         // If the precious item is a repeating item and this item's linkdId is the same, remove it.
-        if (repeatingItemLinkId && source.items[i].linkId === repeatingItemLinkId) {
+        else if (repeatingItemLinkId && source.items[i].linkId === repeatingItemLinkId) {
           source.items.splice(i, 1);
         } else {
           this._removeRepeatingItems(source.items[i]);
