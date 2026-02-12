@@ -687,7 +687,7 @@ export default class LhcFormData {
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
-        if (subItem._isSubGroupForCheckbox) {
+        if (subItem.isSubGroupForCheckbox) {
           // Skip the checkbox subgroups, if any, so we don't hide checkbox A subitems when checkbox B is checked.
           continue;
         }
@@ -2421,27 +2421,26 @@ export default class LhcFormData {
    * Adds a subgroup item for a checkbox answer option.
    * The subgroup will contain the original sub items.
    * @param item an LForms item with checkbox layout and sub items.
-   * @param checkboxDisplayText the display text of the selected checkbox option.
+   * @param answer the selected checkbox option.
    * @param linkId the linkId of the new subgroup item.
    */
-  addSubItemsForCheckbox(item, checkboxDisplayText, linkId) {
+  addSubItemsForCheckbox(item, answer, linkId) {
     // Make a copy of the original sub items, excluding checkbox subgroups.
-    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x._isSubGroupForCheckbox));
+    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
     let newGroupItemForCheckbox = {
-      "_isSubGroupForCheckbox": true,
+      "isSubGroupForCheckbox": true,
+      "checkboxOption": answer,
       "header": true,
       "dataType": "SECTION",
       "displayControl": {
         "questionLayout": "vertical"
       },
-      "_id": "",
       "question": "",
       "linkId": "",
       "items": []
     };
-    newGroupItemForCheckbox.question = `Sub items for checkbox option: ${checkboxDisplayText}`;
+    newGroupItemForCheckbox.question = `Sub items for checkbox option: ${answer._displayText}`;
     newGroupItemForCheckbox.linkId = linkId;
-    newGroupItemForCheckbox._id = linkId;
     newGroupItemForCheckbox.items = subItemsCopy;
     this._updateSubItemsHiddenFromView(newGroupItemForCheckbox, false);
     item.items.push(newGroupItemForCheckbox);

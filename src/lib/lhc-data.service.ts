@@ -707,7 +707,7 @@ export class LhcDataService {
    * @param linkId the linkId of the checkbox subgroup.
    */
   hasSubGroupWithLinkId(item, linkId): boolean {
-    if (item.items && item.items.some(x => x._isSubGroupForCheckbox === true && x.linkId === linkId)) {
+    if (item.items && item.items.some(x => x.isSubGroupForCheckbox === true && x.linkId === linkId)) {
       return true;
     } else {
       return false;

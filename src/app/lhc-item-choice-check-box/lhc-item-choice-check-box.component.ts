@@ -98,7 +98,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       const subGroupLinkId = 'checkbox-subgroup-' + this.lhcDataService.getItemAnswerId(this.item, this.acOptions.listItems[i]);
       const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && !subGroupExists) {
-        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, this.acOptions.listItems[i]._displayText, subGroupLinkId);
+        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, this.acOptions.listItems[i], subGroupLinkId);
       } else if (!this.checkboxModels[i] && subGroupExists) {
         this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, this.acOptions.listItems[i]._displayText, subGroupLinkId);
       }
@@ -117,7 +117,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       'checkbox-subgroup-' + this.lhcDataService.getItemAnswerId(this.item, x));
     if (this.item.items) {
       this.item.items = this.item.items.filter(x =>
-        !x._isSubGroupForCheckbox ||
+        !x.isSubGroupForCheckbox ||
         subGroupLinkIds.indexOf(x.linkId) !== -1
       );
     }
