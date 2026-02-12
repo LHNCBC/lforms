@@ -834,7 +834,8 @@ function addCommonSDCImportFns(ns) {
             name: initialQ.unit || initialQ.code,
             code: initialQ.code,
             system: initialQ.system,
-            default: true
+            default: true,
+            _fromInitialValue: true  // Mark as added from initial value, not from unitOption
           };
           lformsUnits.push(lformsDefaultUnit);
         }

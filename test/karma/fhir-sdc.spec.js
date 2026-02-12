@@ -1664,12 +1664,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
 
             it('should not add initial quantity unit to unitOption list', function(done) {
-              if (fhirVersion !== 'R4') {
-                done();
-                return;
-              }
+              // R4B uses R4 test data
+              var dataVersion = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
 
-              $.get('test/data/R4/q-with-unit-in-quantity-and-units.json', function(json) {
+              $.get('test/data/' + dataVersion + '/q-with-unit-in-quantity-and-units.json', function(json) {
                 var formData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
                 var respRateItem = findItemByCode(formData.items, '9279-1');
 
@@ -1687,12 +1685,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
 
             it('should add initial quantity unit when not in unitOption list', function(done) {
-              if (fhirVersion !== 'R4') {
-                done();
-                return;
-              }
+              // R4B uses R4 test data
+              var dataVersion = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
 
-              $.get('test/data/R4/q-with-unit-in-quantity-and-units.json', function(json) {
+              $.get('test/data/' + dataVersion + '/q-with-unit-in-quantity-and-units.json', function(json) {
                 var formData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
                 var heightItem = findItemByCode(formData.items, '8302-2');
 
@@ -1704,6 +1700,69 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 });
                 assert.equal(defaultUnit.code, 'm');
                 assert.equal(defaultUnit.system, 'http://unitsofmeasure.org');
+                done();
+              });
+            });
+
+            it('should not export initial quantity unit as unitOption when it was not in original list', function(done) {
+              // R4B uses R4 test data
+              var dataVersion = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+
+              $.get('test/data/' + dataVersion + '/q-with-unit-in-quantity-and-units.json', function(json) {
+                // Import the questionnaire
+                var formData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                // Export it back to FHIR Questionnaire
+                var exportedQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, formData);
+
+                // Find the "Body height" item (code 8302-2)
+                // Original has unitOptions: cm, mm but initial value has unit "m"
+                var heightItem = exportedQ.item.find(function(item) {
+                  return item.linkId === '/body-height';
+                });
+                assert.isOk(heightItem);
+
+                // Get all unitOption extensions
+                var unitOptions = LForms.Util.findObjectInArray(
+                  heightItem.extension, 'url',
+                  'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption', 0, true
+                );
+
+                // Should only have 2 unit options (cm and mm), not 3 (should not include "m")
+                assert.equal(unitOptions.length, 2);
+
+                var unitCodes = unitOptions.map(function(opt) { return opt.valueCoding.code; });
+                assert.include(unitCodes, 'cm');
+                assert.include(unitCodes, 'mm');
+                assert.notInclude(unitCodes, 'm');
+
+                // Verify the initial value is still present with the "m" unit
+                if (fhirVersion === 'STU3') {
+                  assert.isOk(heightItem.initialQuantity);
+                  assert.equal(heightItem.initialQuantity.value, 1.8);
+                  assert.equal(heightItem.initialQuantity.code, 'm');
+                } else {
+                  assert.isOk(heightItem.initial);
+                  assert.equal(heightItem.initial.length, 1);
+                  assert.equal(heightItem.initial[0].valueQuantity.value, 1.8);
+                  assert.equal(heightItem.initial[0].valueQuantity.code, 'm');
+                }
+
+                // Also check that "Resp rate" item preserves its unitOptions correctly
+                var respRateItem = exportedQ.item.find(function(item) {
+                  return item.linkId === '/resp-rate';
+                });
+                assert.isOk(respRateItem);
+
+                var respUnitOptions = LForms.Util.findObjectInArray(
+                  respRateItem.extension, 'url',
+                  'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption', 0, true
+                );
+                assert.equal(respUnitOptions.length, 2);
+
+                var respUnitCodes = respUnitOptions.map(function(opt) { return opt.valueCoding.code; });
+                assert.include(respUnitCodes, '{breaths}/min');
+                assert.include(respUnitCodes, '{counts}/min');
+
                 done();
               });
             });
