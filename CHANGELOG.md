@@ -2,6 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.0.0] 2026-02-13
+### Updated
+- For a checkbox layout question with sub items, the sub items will
+  be rendered for each selected checkbox option.
+- If answerExpression updates the answer list, we do not reset item.value
+  to null. Instead, any values that are still valid with the new answer
+  list will be kept, and any values that are no longer valid will be removed.
+- For a checkbox layout question with sub items, if the answer list is
+  updated by answerExpression, the sub items associated with the now-invalid
+  value will also be removed.
+- When exported to QuestionnaireResponse, each sub item will go under its
+  associated answer, in the format of item.answer.item.
+
 ## [40.1.0] 2026-01-22
 ### Fixed
 - A Questionnaire with multiple initial values on a repeating question
