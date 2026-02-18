@@ -1,6 +1,8 @@
 import { InternalUtil } from '../../lib/lforms/internal-utils.js';
 import {importFHIRQuantity} from './import-common.js';
 const fhirpath = require('fhirpath');
+import markdownit from 'markdown-it'
+const md = markdownit('commonmark')
 
 /**
  *  Defines SDC import functions that are the same across the different FHIR
@@ -721,21 +723,27 @@ function addCommonSDCImportFns(ns) {
       let htmlAttrName = itemAttr == 'obj_text' ? '_displayTextHTML' : '_prefixHTML';
       let invalidFlagName = itemAttr == 'obj_text' ? '_hasInvalidHTMLTagInText' : '_hasInvalidHTMLTagInPrefix';
 
-      // process rendering-xhtml extension
+      // Process rendering-xhtml and rendering-markdown extensions.
       const xhtmlFormat = lfItem[itemAttr] ?
           LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
       if (xhtmlFormat) {
         lfItem[htmlAttrName] = xhtmlFormat.valueString;
-        if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions?.allowExternalURL);
-          if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-            lfItem[invalidFlagName] = true;
-            let errors = {};
-            errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
-            const messages = [{errors}];
-            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-            LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
-          }
+      } else {
+        const markdownFormat = lfItem[itemAttr] ?
+          LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown") : null;
+        if (markdownFormat) {
+          lfItem[htmlAttrName] = md.render(markdownFormat.valueString);
+        }
+      }
+      if (self._widgetOptions?.allowHTML && lfItem[htmlAttrName]) {
+        let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(lfItem[htmlAttrName], self._widgetOptions?.allowExternalURL);
+        if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+          lfItem[invalidFlagName] = true;
+          let errors = {};
+          errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+          const messages = [{errors}];
+          LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+          LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
         }
       }
     }
