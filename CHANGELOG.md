@@ -5,6 +5,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [40.1.1] 2026-02-11
 ### Changed
 - Switched to ESLint, updated npm packages, and adjusted Cypress tests.
+### Fixed
+- Prevent adding duplicate unit options when a quantity initial value
+  unit matches an existing unitOption.
 
 ## [40.1.0] 2026-01-22
 ### Fixed
