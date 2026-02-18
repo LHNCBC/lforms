@@ -67,6 +67,7 @@
     "fhirpath": "^4.8.0",
     "htmlparser2": "^10.0.0",
     "jquery": "^3.7.1",
+    "markdown-it": "^14.1.1",
     "moment": "2.29.4",
     "ng-zorro-antd": "^20.4.1",
     "rxjs": "~7.8.2",
