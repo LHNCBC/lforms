@@ -20,10 +20,10 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
     po.openPage();
     cy.readFile('test/data/R4/questionnaire-calculatedExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
-        let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
+        const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
         qr.item[0].answer[0].valueInteger = '';
         qr.item[1].answer[0].valueString = '';
-        let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
+        const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
         expect(mergedFormData.hasSavedData).to.equal(true)
         win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
         cy.get('.lhc-form-title').contains('Questionnaire for testing calculatedExpression');
@@ -37,10 +37,10 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
     po.openPage();
     cy.readFile('test/data/R4/questionnaire-calculatedExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
-        let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
+        const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
         qr.item[0].answer[0].valueInteger = '456';
         qr.item[1].answer[0].valueString = 'def456';
-        let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
+        const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
         expect(mergedFormData.hasSavedData).to.equal(true)
         win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
         cy.get('.lhc-form-title').contains('Questionnaire for testing calculatedExpression');
@@ -54,10 +54,10 @@ describe('calculatedExpression and hasSavedData=true/false tests', () => {
     po.openPage();
     cy.readFile('test/data/R4/questionnaire-calculatedExpression.json').then((q) => {  // readFile will parse the JSON
       cy.window().then((win) => {
-        let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
+        const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
         qr.item[0].answer[0].valueInteger = '456';
         qr.item[1].answer[0].valueString = 'def456';
-        let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
+        const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
         expect(mergedFormData.hasSavedData).to.equal(true)
 
         mergedFormData.hasSavedData = false;

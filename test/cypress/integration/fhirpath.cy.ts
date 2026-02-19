@@ -76,7 +76,7 @@ describe('answerExpression', () => {
     });
   });
 
-  let rxTermsQs = [ // rxterms Questionnaires
+  const rxTermsQs = [ // rxterms Questionnaires
     "rxterms.R4", // where the strength item has an answerExpression
     "rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp", // where the strength item has an answerExpression then a calculatedExpression (autofill)'
     "rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp2" // where the strength item has a calculatedExpression (autofill) then an answerExpression'
@@ -186,7 +186,7 @@ describe('answerExpression', () => {
                             e=>e.url != "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
 
                           // Replace the strength field drop down with radio buttons
-                          let exts = qData.item[0].item[1].extension;
+                          const exts = qData.item[0].item[1].extension;
                           cy.wrap(exts[0].url).should('equal',
                             "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
                           cy.then(()=>{
@@ -224,7 +224,7 @@ describe('answerExpression', () => {
           // Test with checkboxes and multiple values
           const qFile = q == 'rxterms.R4' ? 'rxtermsAnswerExpTests/' + q : q;
           cy.readFile('test/data/R4/'+qFile+'.checkboxes.json').then((qData) => {
-            let qr = JSON.parse(JSON.stringify(qrData));
+            const qr = JSON.parse(JSON.stringify(qrData));
             qr.item[0].item[1].answer[1] = {valueString: 'other value'};
             cy.window().then((win) => {
               showQQR(qData, qr, 'formContainer', win);

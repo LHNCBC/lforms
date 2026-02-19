@@ -6,7 +6,7 @@ describe('Matrix Initial values on Radio buttons', () => {
 
   it('displays a radio matrix table with initial values displayed --coding', () => {
     tp.openBaseTestPage();
-    let files = ['matrixLayout-initialvalue-coding-non-repeats.R5.json',
+    const files = ['matrixLayout-initialvalue-coding-non-repeats.R5.json',
       'matrixLayout-initialvalue-coding-optionsOrString-non-repeats.R5.json'
     ]
     files.forEach((file) => {
@@ -42,7 +42,7 @@ describe('Matrix Initial values on Radio buttons', () => {
 
   it('displays a radio matrix table with initial values displayed --string', () => {
     tp.openBaseTestPage();
-    let files = ['matrixLayout-initialvalue-string-non-repeats.R5.json',
+    const files = ['matrixLayout-initialvalue-string-non-repeats.R5.json',
       'matrixLayout-initialvalue-string-optionsOrString-non-repeats.R5.json'
     ]
     files.forEach((file) => {
