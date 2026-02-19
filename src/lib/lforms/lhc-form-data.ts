@@ -13,11 +13,11 @@ import language from '../../../language-config.json';
 
 import Validation from "./lhc-form-validation.js"
 
-var errorMessages = InternalUtil.errorMessages;
+const errorMessages = InternalUtil.errorMessages;
 
 //import LForms from "./lforms";
 // const LForms = (window as any).LForms;
-declare var LForms: any;
+declare let LForms: any;
 
 import {Units, Formulas} from "./lhc-form-units.js";
 
@@ -172,8 +172,8 @@ export default class LhcFormData {
     }
 
     if(data && data._initializeInternalData) { // This is already a lformsData object.
-      var props = Object.getOwnPropertyNames(data);
-      for(var i = 0; i < props.length; i++) {
+      const props = Object.getOwnPropertyNames(data);
+      for(let i = 0; i < props.length; i++) {
         if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
           this[props[i]] = data[props[i]];
         }
@@ -233,14 +233,14 @@ export default class LhcFormData {
    */
   _getResourcesFromPackageStore(resType, resIdentifier) {
 
-    var resReturn = null;
+    let resReturn = null;
 
     if (this._packageStore && resIdentifier && resType) {
-      var splited = resIdentifier.split("|");
-      var url = splited[0];
-      var version = splited[1];
-      for (var i=0, iLen=this._packageStore.length; i<iLen; i++) {
-        var resource = this._packageStore[i];
+      const splited = resIdentifier.split("|");
+      const url = splited[0];
+      const version = splited[1];
+      for (let i=0, iLen=this._packageStore.length; i<iLen; i++) {
+        const resource = this._packageStore[i];
         if (resource.resourceType === resType && resource.url === url &&
             (version && resource.version === version || !version) ) {
           resReturn = JSON.parse(JSON.stringify(resource));
@@ -257,9 +257,9 @@ export default class LhcFormData {
    * in 'answerValueSet'
    */
   checkAnswersResourceStatus() {
-    var status = [];
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
+    const status = [];
+    for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+      const item = this.itemList[i];
       if (item.answerValueSet && !item.answers && !item.externallyDefined && !item.isSearchAutocomplete) {
         status.push("Value set not loaded: " + item.answerValueSet)
       }
@@ -287,7 +287,7 @@ export default class LhcFormData {
    */
   _notifyAsyncChangeListeners() {
     if (this._asyncChangeListeners) {
-      for (var i=0, len=this._asyncChangeListeners.length; i<len; ++i)
+      for (let i=0, len=this._asyncChangeListeners.length; i<len; ++i)
         this._asyncChangeListeners[i]();
     }
   }
@@ -300,7 +300,7 @@ export default class LhcFormData {
    * @param data - LForms form definition object (or LFormsData).
    */
   _initializeFormFHIRData(data) {
-    var lfData = this;
+    const lfData = this;
     this.fhirVersion = data.fhirVersion;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
     this._expressionProcessor = new this._fhir.SDC.ExpressionProcessor(this);
@@ -327,9 +327,9 @@ export default class LhcFormData {
    *  used.)  If no fhir support is loaded, then an exception will be thrown.
    */
   _getFHIRSupport() {
-    var rtn = this._fhir;
+    let rtn = this._fhir;
     if (!rtn) {
-      var loadedVersions = Object.keys(LForms.FHIR);
+      const loadedVersions = Object.keys(LForms.FHIR);
       if (loadedVersions.length > 0)
         rtn = LForms.FHIR[loadedVersions[0]];
       if (!rtn)
@@ -357,14 +357,14 @@ export default class LhcFormData {
    *  load.
    */
   loadFHIRResources(prepopulate) {
-    var lfData = this;
-    var sdc = this._fhir.SDC;
+    const lfData = this;
+    const sdc = this._fhir.SDC;
 
     const terminologyServer = sdc._getTerminologyServer(this);
     if (!LForms.fhirContext && !terminologyServer) {
       console.log('Warning: FHIR resources might not be loaded, because loadFHIRResources() was called before LForms.Util.setFHIRContext()');
     }
-    var pendingPromises = LForms.fhirContext ? sdc.loadLaunchContext(this) : [];
+    let pendingPromises = LForms.fhirContext ? sdc.loadLaunchContext(this) : [];
 
     // answerValueSet (for prefetched lists)
     pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
@@ -434,9 +434,9 @@ export default class LhcFormData {
   _loadAnswerValueSetsFromPackage(item) {
 
     if (item.answerValueSet) {
-      var vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet)
+      const vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet)
       if (vs && this._fhir) {
-        var answers = this._fhir.SDC.answersFromVS(vs.fileContent);
+        const answers = this._fhir.SDC.answersFromVS(vs.fileContent);
         if (answers) {
           item.answers = answers;
         }
@@ -555,11 +555,11 @@ export default class LhcFormData {
    * @return {boolean} whether the skip logic status has changed
    */
   updateSkipLogicControlledItems(sourceItem, processItem) {
-    var changed = false;
+    let changed = false;
     // check skip logic
     if(sourceItem._skipLogicTargets) {
-      for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
-        var targetItem = sourceItem._skipLogicTargets[i];
+      for (let i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
+        const targetItem = sourceItem._skipLogicTargets[i];
         changed = this._updateItemSkipLogicStatus(targetItem, null) || changed;
         // check the controlled items in the next level when the skiplogic status changes
         if (changed) {
@@ -577,11 +577,11 @@ export default class LhcFormData {
    * @param sourceItem the controlling/source item
    */
   updateOnSourceItemChange(sourceItem) {
-    var _self = this;
-    var changed = true;
+    const _self = this;
+    let changed = true;
     while(changed) {
       changed = this.updateSkipLogicControlledItems(sourceItem, function(item) {
-        var chged = false;
+        let chged = false;
         // check formula
         if(item._formulaTargets) {
           for (var i= 0, iLen=item._formulaTargets.length; i<iLen; i++) {
@@ -610,7 +610,7 @@ export default class LhcFormData {
 
     // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
-      let self = this;
+      const self = this;
       setTimeout(function(){
         self._expressionProcessor.runCalculations(false).then(()=>{
           self._checkFormControls();
@@ -628,10 +628,10 @@ export default class LhcFormData {
    */
   _checkValidations(item) {
     if (item._hasValidation) {
-      var errors = [];
-      var errorRequired = Validation.checkRequired(item._answerRequired, item.value, errors);
-      var errorDataType = Validation.checkDataType(item.dataType, item.value, errors);
-      var errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
+      const errors = [];
+      const errorRequired = Validation.checkRequired(item._answerRequired, item.value, errors);
+      const errorDataType = Validation.checkDataType(item.dataType, item.value, errors);
+      const errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
       item._validationErrors = errors;
 
     }
@@ -644,12 +644,12 @@ export default class LhcFormData {
    */
   _checkFormControls() {
 
-    var changed = true;
+    let changed = true;
 
     while (changed) {
       changed = false;
-      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-        var item = this.itemList[i];
+      for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+        const item = this.itemList[i];
 
         // run formula
         if (item.calculationMethod) {
@@ -685,9 +685,9 @@ export default class LhcFormData {
   _updateSubItemsHiddenFromView(item, hidden) {
     // process the sub items
     if (item.items && item.items.length > 0) {
-      for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var subItem = item.items[i];
-        let toBeHidden = hidden || this.isItemHidden(subItem);
+      for (let i=0, iLen=item.items.length; i<iLen; i++) {
+        const subItem = item.items[i];
+        const toBeHidden = hidden || this.isItemHidden(subItem);
         // set the sub item's hidden status
         subItem._isHiddenFromView = toBeHidden;
         // process the sub item's sub items
@@ -702,11 +702,11 @@ export default class LhcFormData {
    * @private
    */
   _setupSourceToTargetMap() {
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
+    for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+      const item = this.itemList[i];
       // formula
       if (item.calculationMethod && item.calculationMethod.name) {
-        var sourceItems = this._getFormulaSourceItems(item, item.calculationMethod.value);
+        const sourceItems = this._getFormulaSourceItems(item, item.calculationMethod.value);
         for(var j= 0, jLen=sourceItems.length; j<jLen; j++) {
           if (sourceItems[j]._formulaTargets) {
             sourceItems[j]._formulaTargets.push(item);
@@ -719,7 +719,7 @@ export default class LhcFormData {
       // dataControl
       if (item.dataControl && Array.isArray(item.dataControl)) {
         for (var j= 0, jLen:number=item.dataControl.length; j<jLen; j++) {
-          var source = item.dataControl[j].source;
+          const source = item.dataControl[j].source;
 
           // has a source configuration
           if (source && (!source.sourceType || source.sourceType === CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL) &&
@@ -744,7 +744,7 @@ export default class LhcFormData {
       // skip logic
       if (item.skipLogic) {
         for (var j= 0, jLen:number=item.skipLogic.conditions.length; j<jLen; j++) {
-          var condition = item.skipLogic.conditions[j];
+          const condition = item.skipLogic.conditions[j];
           var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
           if (sourceItem._skipLogicTargets) {
             sourceItem._skipLogicTargets.push(item);
@@ -765,8 +765,8 @@ export default class LhcFormData {
    * @return {boolean} whether the item.value has changed
    */
   _updateItemSkipLogicStatus(item, disabled) {
-    var changed = false;
-    var isDisabled;
+    let changed = false;
+    let isDisabled;
     // if one item is hidden all of its decedents should be hidden.
     // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
     if (disabled) {
@@ -776,7 +776,7 @@ export default class LhcFormData {
     // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
     else {
       if (item.skipLogic) {
-        var takeAction = this._checkSkipLogic(item);
+        const takeAction = this._checkSkipLogic(item);
 
         if (!item.skipLogic.action || item.skipLogic.action === CONSTANTS.SKIP_LOGIC.ACTION_ENABLE) {
           var newStatus = takeAction ? CONSTANTS.SKIP_LOGIC.STATUS_ENABLED : CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
@@ -795,8 +795,8 @@ export default class LhcFormData {
     }
     // process the sub items
     if (item.items && item.items.length > 0) {
-      for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var subItem = item.items[i];
+      for (let i=0, iLen=item.items.length; i<iLen; i++) {
+        const subItem = item.items[i];
         changed = this._updateItemSkipLogicStatus(subItem, isDisabled) || changed;
       }
     }
@@ -815,10 +815,10 @@ export default class LhcFormData {
     // if it has skip logic or one of its ancestors has skip logic
     if (item.skipLogic || disabled) {
       this._setSkipLogicStatusValue(item, CONSTANTS.SKIP_LOGIC.STATUS_DISABLED, true);
-      var isDisabled = true;
+      const isDisabled = true;
       // process the sub items
       if (item.items) {
-        for (var i=0, iLen=item.items.length; i<iLen; i++) {
+        for (let i=0, iLen=item.items.length; i<iLen; i++) {
           this._presetSkipLogicStatus(item.items[i], isDisabled);
         }
       }
@@ -835,10 +835,10 @@ export default class LhcFormData {
    * @private
    */
   _setSkipLogicStatusValue(item, newStatus, noLog=false) {
-    var changed = false;
+    let changed = false;
     if (item._skipLogicStatus !== newStatus) {
       if (item._skipLogicStatus) {
-        var msg = newStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ? 'Hiding ' + item._text : 'Showing ' + item._text;
+        const msg = newStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ? 'Hiding ' + item._text : 'Showing ' + item._text;
         if (!noLog)
           this._actionLogs.push(msg);
       }
@@ -856,8 +856,8 @@ export default class LhcFormData {
    */
   _updateItemReferenceList(items) {
 
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
+    for (let i=0, iLen=items.length; i<iLen; i++) {
+      const item = items[i];
       this.itemList.push(item);
       this.itemHash[item._elementId] = item;
       // process the sub items
@@ -877,8 +877,8 @@ export default class LhcFormData {
   _updateItemDisabledDisplayStatus(items, parentDisabledDisplayStatus=null) {
 
     for (let i=0, iLen=items.length; i<iLen; i++) {
-      let item = items[i];
-      let disabledDisplayStatus = item.disabledDisplay || parentDisabledDisplayStatus;
+      const item = items[i];
+      const disabledDisplayStatus = item.disabledDisplay || parentDisabledDisplayStatus;
       if (disabledDisplayStatus) {
         item._disabledDisplayStatus = disabledDisplayStatus;
         // process the sub items
@@ -896,17 +896,17 @@ export default class LhcFormData {
    */
   _findItemsWithScore() {
 
-    var itemsWithScore = {};
+    const itemsWithScore = {};
 
     // check siblings
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      var sourceItem = this.itemList[i];
+    for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+      const sourceItem = this.itemList[i];
       // it has an answer list
       if ((sourceItem.dataType === CONSTANTS.DATA_TYPE.CODING) &&
           sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
         // check if any one of the answers has a score
-        for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
-          var answer = sourceItem.answers[j];
+        for (let j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
+          const answer = sourceItem.answers[j];
           if (answer && answer.hasOwnProperty('score') && !isNaN(answer.score)) {
             itemsWithScore[sourceItem.linkId] = sourceItem;
             break;
@@ -924,8 +924,8 @@ export default class LhcFormData {
    * @private
    */
   _standardizeScoreRule(itemList) {
-    for (var i=0, iLen=itemList.length; i<iLen; i++) {
-      var totalScoreItem = itemList[i];
+    for (let i=0, iLen=itemList.length; i<iLen; i++) {
+      const totalScoreItem = itemList[i];
 
       if (totalScoreItem.calculationMethod &&
         (totalScoreItem.calculationMethod.name === CONSTANTS.CALCULATION_METHOD.TOTALSCORE ||
@@ -933,7 +933,7 @@ export default class LhcFormData {
         // TBD, if the parameters values are already supplied,
         totalScoreItem.calculationMethod = {"name": CONSTANTS.CALCULATION_METHOD.TOTALSCORE, "value": []};
 
-        var itemsWithScore = this._findItemsWithScore();
+        const itemsWithScore = this._findItemsWithScore();
         totalScoreItem.calculationMethod.value = itemsWithScore;
       }
     }
@@ -960,8 +960,8 @@ export default class LhcFormData {
 
     // templateOptions
     // make a copy of the existing options of the form data
-    var currentOptions = CommonUtils.deepCopy(this.templateOptions);
-    var defaultOptions = CommonUtils.deepCopy(this._defaultTemplateOptions);
+    const currentOptions = CommonUtils.deepCopy(this.templateOptions);
+    const defaultOptions = CommonUtils.deepCopy(this._defaultTemplateOptions);
 
     this.setTemplateOptions(currentOptions, defaultOptions);
 
@@ -977,11 +977,11 @@ export default class LhcFormData {
    * @private
    */
   _mergeTwoArrays(array1, array2) {
-    for (var i= 0, iLen = array2.length; i<iLen; i++) {
+    for (let i= 0, iLen = array2.length; i<iLen; i++) {
       // if the element is not null or undefined
       if (array2[i]) {
-        var fields = Object.keys(array2[i]);
-        for (var j= 0, jLen=fields.length; j<jLen; j++) {
+        const fields = Object.keys(array2[i]);
+        for (let j= 0, jLen=fields.length; j<jLen; j++) {
           // if the value is not null or undefined
           if (array2[i][fields[j]] !== null || array2[i][fields[j]] !==undefined) {
             // update the value on the field in array 1.
@@ -1012,16 +1012,16 @@ export default class LhcFormData {
         existingOptions = CommonUtils.deepCopy(this.templateOptions);
 
       // check if displayScoreWithAnswerText is changed
-      let scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined &&
+      const scoreFlagChanged = newOptions.displayScoreWithAnswerText !== undefined &&
           newOptions.displayScoreWithAnswerText !== existingOptions.displayScoreWithAnswerText;
       // check if allowHTML is changed
-      let allowHTMLChanged = newOptions.allowHTML !== undefined &&
+      const allowHTMLChanged = newOptions.allowHTML !== undefined &&
         newOptions.allowHTML !== existingOptions.allowHTML;
       // check if displayInvalidHTML is changed
-      let displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
+      const displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
         newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
       // check if readonlyMode is changed
-      let readonlyModeChanged = newOptions.readonlyMode !== undefined &&
+      const readonlyModeChanged = newOptions.readonlyMode !== undefined &&
         newOptions.readonlyMode !== existingOptions.readonlyMode;
 
       // merge the options
@@ -1030,7 +1030,7 @@ export default class LhcFormData {
       // Update item._readOnly when templateOption.readonlyMode is changed.
       if (readonlyModeChanged && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
-          let item = this.itemList[i];
+          const item = this.itemList[i];
           this._updateItemAttrs(item);
         }
       }
@@ -1039,7 +1039,7 @@ export default class LhcFormData {
       // when the lhcFormData instance has been initialized.
       if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged) && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
-          let item = this.itemList[i];
+          const item = this.itemList[i];
           // We need to update the autocomp options if the HTML options changed, or,
           // in the case that only the score display option changed, we want to update only those answers with item._hasScoreInAnswer=true.
           if (!!item._hasAnswerList && (allowHTMLChanged || displayInvalidHTMLChanged || item._hasScoreInAnswer))
@@ -1048,7 +1048,7 @@ export default class LhcFormData {
       }
       if (this.templateOptions.allowHTML && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
-          let item = this.itemList[i];
+          const item = this.itemList[i];
           // update and check the html version of question text and prefix
           // when the lhcFormData instance has been initialized.
           ['_displayTextHTML', '_prefixHTML'].forEach(htmlAttrName => {
@@ -1061,7 +1061,7 @@ export default class LhcFormData {
                 // strings in _getHtmlStringWithContainedImages() for repeated questions.
                 // Uses item._displayTextHTMLOriginal to avoid duplicate processing if setTemplateOptions()
                 // is run a second time.
-                let originalHTMLAttrName = htmlAttrName + "Original";
+                const originalHTMLAttrName = htmlAttrName + "Original";
                 if (this._containedImageHtmlMap.has(item[originalHTMLAttrName])) {
                   item[htmlAttrName] = this._containedImageHtmlMap.get(item[originalHTMLAttrName]);
                 } else {
@@ -1071,7 +1071,7 @@ export default class LhcFormData {
                 }
               }
               let errors, messages;
-              let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(item[htmlAttrName], this.templateOptions.allowExternalURL);
+              const invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(item[htmlAttrName], this.templateOptions.allowExternalURL);
               if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
                 if (htmlAttrName === '_displayHTML') {
                   item._hasInvalidHTMLTagInText = true;
@@ -1101,8 +1101,8 @@ export default class LhcFormData {
             }
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
-            let helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
-            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(helpHTML, this.templateOptions.allowExternalURL);
+            const helpHTML = item._codingInstructionsWithContainedImages || item.codingInstructions;
+            const invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(helpHTML, this.templateOptions.allowExternalURL);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               item.codingInstructionsHasInvalidHtmlTag = true;
               errors = {};
@@ -1126,8 +1126,8 @@ export default class LhcFormData {
             }
             let errors, messages;
             // check if html string contains invalid html tags, when the html version needs to be displayed
-            let legalHTML = item._legalWithContainedImages || item.legal;
-            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(legalHTML, this.templateOptions.allowExternalURL);
+            const legalHTML = item._legalWithContainedImages || item.legal;
+            const invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(legalHTML, this.templateOptions.allowExternalURL);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               item.legalHasInvalidHtmlTag = true;
               errors = {};
@@ -1154,7 +1154,7 @@ export default class LhcFormData {
    * @private
    */
   _lfItemValueFromDefaultAnswer(item) {
-    var value = item.defaultAnswer;
+    let value = item.defaultAnswer;
     if(value === undefined || value === null || value === '') {
       return false;
     }
@@ -1178,12 +1178,12 @@ export default class LhcFormData {
    * @private
    */
   _setTreeNodes(items, parentItem) {
-    var iLen=items.length, lastSiblingIndex = iLen -1;
-    var prevSibling = null, itemId = 1;
+    const iLen=items.length, lastSiblingIndex = iLen -1;
+    let prevSibling = null, itemId = 1;
 
     // for each item on this level
-    for (var i=0; i<iLen; i++) {
-      var item = items[i];
+    for (let i=0; i<iLen; i++) {
+      const item = items[i];
 
       // convert CNE to Coding
       if (item.dataType === CONSTANTS.DATA_TYPE.CNE) {
@@ -1349,7 +1349,7 @@ export default class LhcFormData {
       if (item._questionRepeatable && item._id === 1) {
         // remove _parentItem if there is one
         delete item._parentItem;
-        var itemRepeatable = CommonUtils.deepCopy(item);
+        const itemRepeatable = CommonUtils.deepCopy(item);
         // remove user data
         this._removeUserDataAndRepeatingSubItems(itemRepeatable);
         this._repeatableItems[item.linkId] = itemRepeatable;
@@ -1447,8 +1447,8 @@ export default class LhcFormData {
     item.value = null;
     item.unit = null;
     if (item.items && item.items.length > 0) {
-      for (var i=0; i<item.items.length; i++) {
-        var subItem = item.items[i];
+      for (let i=0; i<item.items.length; i++) {
+        const subItem = item.items[i];
         if (subItem._questionRepeatable && subItem._id != 1) {
           item.items.splice(i, 1);
           i--;
@@ -1496,9 +1496,9 @@ export default class LhcFormData {
 
     // process the answer code system
     if (Array.isArray(item.answers) && (item.dataType === CONSTANTS.DATA_TYPE.CODING)) {
-      var answerCodeSystem = item.answerCodeSystem ? LhcFormUtils.getCodeSystem(item.answerCodeSystem) : null;
-      for (var i=0, iLen = item.answers.length; i<iLen; i++) {
-        var answer = item.answers[i];
+      const answerCodeSystem = item.answerCodeSystem ? LhcFormUtils.getCodeSystem(item.answerCodeSystem) : null;
+      for (let i=0, iLen = item.answers.length; i<iLen; i++) {
+        const answer = item.answers[i];
         // if there is a 'system'
         if (answer.system) {
           // convert system to the standard one in case it is 'LOINC'
@@ -1552,8 +1552,8 @@ export default class LhcFormData {
    */
   _updateTreeNodes(items, parentItem) {
     // for each item on this level
-    var iLen=items.length, lastSiblingIndex = iLen -1;
-    var foundLastSibling = false;
+    let iLen=items.length, lastSiblingIndex = iLen -1;
+    let foundLastSibling = false;
     for (var i=iLen-1; i>=0; i--) {
       var item = items[i];
       if (!item._id) item._id = 1;
@@ -1588,7 +1588,7 @@ export default class LhcFormData {
       // before the parentItem is added to avoid circular reference that make the LForms.Util.deepCopy really slow
       if (item._questionRepeatable && item._id === 1 && !this._repeatableItems[item.linkId]) {
         delete item._parentItem;
-        var itemRepeatable = CommonUtils.deepCopy(item);
+        const itemRepeatable = CommonUtils.deepCopy(item);
         // remove user data
         this._removeUserDataAndRepeatingSubItems(itemRepeatable);
         this._repeatableItems[item.linkId] = itemRepeatable;
@@ -1602,8 +1602,8 @@ export default class LhcFormData {
     }
 
     // check first sibling status
-    var foundFirstSibling = false;
-    var firstSiblingIndex = 0;
+    let foundFirstSibling = false;
+    let firstSiblingIndex = 0;
     for (var i=0; i<iLen; i++) {
       var item = items[i];
       // set the first sibling status
@@ -1635,19 +1635,19 @@ export default class LhcFormData {
   getFormData(noEmptyValue, noDisabledItem, keepId) {
 
     // get the form data
-    var formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId);
+    const formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId);
 
     // check if there is user data
-    var hasSavedData = false;
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
+    let hasSavedData = false;
+    for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+      const item = this.itemList[i];
       if (!LhcFormUtils.isItemValueEmpty(item.value)) {
         hasSavedData = true;
         break;
       }
     }
 
-    var defData:any = {
+    const defData:any = {
       lformsVersion: this.lformsVersion,
       PATH_DELIMITER: this.PATH_DELIMITER,
       code: this.code,
@@ -1688,7 +1688,7 @@ export default class LhcFormData {
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
   getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
-    var ret:any = {};
+    const ret:any = {};
     this._invalidData = false;
     // check the value on each item and its subtree
     this._checkSubTreeValues(this.items);
@@ -1734,7 +1734,7 @@ export default class LhcFormData {
    * @param items an array of items
    */
   _checkSubTreeValues(items) {
-    for (var i=0, iLen=items.length; i<iLen; i++) {
+    for (let i=0, iLen=items.length; i<iLen; i++) {
       this._setSubTreeHasValue(items[i]);
     }
   }
@@ -1746,14 +1746,14 @@ export default class LhcFormData {
    * @param item an item
    */
   _setSubTreeHasValue(item) {
-    var hasValue = false;
+    let hasValue = false;
 
     if (!LhcFormUtils.isItemValueEmpty(item.value)) {
       hasValue = true;
     }
     if (item.items && item.items.length > 0) {
-      for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var subHasValue = this._setSubTreeHasValue(item.items[i]);
+      for (let i=0, iLen=item.items.length; i<iLen; i++) {
+        const subHasValue = this._setSubTreeHasValue(item.items[i]);
         if (subHasValue)
           hasValue = true;
       }
@@ -1775,10 +1775,10 @@ export default class LhcFormData {
    * @private
    */
   _processDataInItems(items, noFormDefData, noEmptyValue, noDisabledItem, keepId) {
-    var itemsData = [];
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-      var itemData:any = {};
+    const itemsData = [];
+    for (let i=0, iLen=items.length; i<iLen; i++) {
+      const item = items[i];
+      const itemData:any = {};
       // for user typed data of an item whose answerConstraint is 'optionsOrString',
       // it is in item.value as {text: "some other value", _notOnList: true}.
 
@@ -1805,7 +1805,7 @@ export default class LhcFormData {
           itemData.extension = item.extension;
         }
         // Process other fields
-        for (var field in item) {
+        for (const field in item) {
           // special handling for user input values
           if (field === "value") {
             itemData[field] = this._getOriginalValue(item, item[field], item.dataType, item._hasAnswerList);
@@ -1848,7 +1848,7 @@ export default class LhcFormData {
    * @private
    */
   _filterInternalData(obj, withOffListValue) {
-    var objReturn = {};
+    let objReturn = {};
 
     // special handling for the user-typed value for CODING
     if (withOffListValue && obj._notOnList && !obj.code && !obj.system) {
@@ -1856,7 +1856,7 @@ export default class LhcFormData {
       objReturn = obj.text;
     }
     else {
-      for (var field in obj) {
+      for (const field in obj) {
         if (!field.match(/^[_\$]/)) {
           objReturn[field] = obj[field];
         }
@@ -1874,9 +1874,9 @@ export default class LhcFormData {
    *  item, a value will be returned unless the value is empty.
    */
   getItemValues(lfItem) {
-    var rtn;
+    let rtn;
     if (!lfItem._questionRepeatable) {
-      var itemVal = lfItem.value;
+      const itemVal = lfItem.value;
 
       // Exclude empty values, because FHIRPath will only return the values that
       // are there.  (For example, in the RxTerms form, when there is no strength
@@ -1888,11 +1888,11 @@ export default class LhcFormData {
     }
     else {
       rtn = [];
-      var siblings = lfItem._parentItem.items;
-      var linkId = lfItem.linkId;
-      var foundLinkId = false;
-      for (var i=0, len=siblings.length; i<len; ++i) {
-        var s = siblings[i];
+      const siblings = lfItem._parentItem.items;
+      const linkId = lfItem.linkId;
+      let foundLinkId = false;
+      for (let i=0, len=siblings.length; i<len; ++i) {
+        const s = siblings[i];
         if (s.linkId === linkId) {
           if (!LhcFormUtils.isItemValueEmpty(s.value))
             rtn.push(s.value);
@@ -1918,12 +1918,12 @@ export default class LhcFormData {
    * @private
    */
   _getObjectValue(value, withOffListValue = false) {
-    var retValue =null;
+    let retValue =null;
     if (value) {
       // an array
       if (Array.isArray(value)) {
-        var answers = [];
-        for (var j = 0, jLen = value.length; j < jLen; j++) {
+        const answers = [];
+        for (let j = 0, jLen = value.length; j < jLen; j++) {
           if (typeof value[j] === 'object') {
             answers.push(this._filterInternalData(value[j], withOffListValue));
           }
@@ -1953,7 +1953,7 @@ export default class LhcFormData {
    * @private
    */
   _getOriginalValue(item, value, dataType=null, hasAnswerList=false) {
-    var retValue;
+    let retValue;
     if (value !== undefined && value !== null) {
       // has a data type
       if (dataType) {
@@ -2055,9 +2055,9 @@ export default class LhcFormData {
    * @returns {number}
    */
   getRepeatingItemMaxId(item) {
-    var maxId = item._id;
+    let maxId = item._id;
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
-      for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
+      for (let i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
         if (item._parentItem.items[i].linkId === item.linkId &&
           item._parentItem.items[i]._id > maxId ) {
           maxId = item._parentItem.items[i]._id;
@@ -2074,9 +2074,9 @@ export default class LhcFormData {
    * @returns {number}
    */
   getRepeatingItemCount(item) {
-    var count = 0;
+    let count = 0;
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
-      for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
+      for (let i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
         if (item._parentItem.items[i].linkId === item.linkId) {
           count++;
         }
@@ -2098,12 +2098,12 @@ export default class LhcFormData {
       return;
     }
 
-    var iLen = items.length;
-    var prevLinkId = '';
+    const iLen = items.length;
+    let prevLinkId = '';
     let repeatCount = 1;
     // process all items in the array except the last one
-    for (var i=0; i<iLen; i++) {
-      var item = items[i];
+    for (let i=0; i<iLen; i++) {
+      const item = items[i];
       if (prevLinkId !== '') {
         // it's a different item, and
         // previous item is a repeating item, and
@@ -2150,10 +2150,10 @@ export default class LhcFormData {
    * @private
    */
   _getLastSubItem(item) {
-    var retItem = item;
+    let retItem = item;
     if (item && Array.isArray(item.items) && item.items.length > 0) {
 
-      var lastItem, i = item.items.length, found = false;
+      let lastItem, i = item.items.length, found = false;
       // found the last item that is not hidden
       do {
         lastItem = item.items[--i];
@@ -2200,20 +2200,20 @@ export default class LhcFormData {
 
     this._horizontalTableInfo = {};
 
-    var tableHeaderLinkIdAndParentIdPath = null;
-    var lastHeaderId = null;
+    let tableHeaderLinkIdAndParentIdPath = null;
+    let lastHeaderId = null;
 
-    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
+    for (let i= 0, iLen=this.itemList.length; i<iLen; i++) {
+      const item = this.itemList[i];
       // section item and horizontal layout
       if (item.dataType===CONSTANTS.DATA_TYPE.SECTION && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
         // same methods for repeating items could be used for repeating and non-repeating items.
         // (need to rename function names in those 'repeatable' functions.)
-        var itemsInRow = [];
-        var columnHeaders = [];
+        let itemsInRow = [];
+        const columnHeaders = [];
 
         item._inHorizontalTable = true;
-        var itemLinkIdAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
+        const itemLinkIdAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
         lastHeaderId = item._elementId;
         // if it's the first row (header) of the first table,
         if (tableHeaderLinkIdAndParentIdPath === null ||
@@ -2225,7 +2225,7 @@ export default class LhcFormData {
 
           itemsInRow = item.items;
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-            var itemInRow = itemsInRow[j];
+            const itemInRow = itemsInRow[j];
             columnHeaders.push({item: itemInRow, id: "col" + itemInRow._elementId, displayControl: itemInRow.displayControl});
             // indicate the item is in a horizontal table
             itemsInRow[j]._inHorizontalTable = true;
@@ -2269,15 +2269,15 @@ export default class LhcFormData {
    * @private
    */
   _adjustLastSiblingListForHorizontalLayout() {
-    var horizontalTables = this._horizontalTableInfo;
+    const horizontalTables = this._horizontalTableInfo;
 
-    for (var tableId in horizontalTables) {
-      var tableHeaders = horizontalTables[tableId].tableHeaders;
+    for (const tableId in horizontalTables) {
+      const tableHeaders = horizontalTables[tableId].tableHeaders;
       if (tableHeaders.length > 1) {
         // Pass the last header's last sibling status to the first header,
         // which is used for controlling the tree lines of the horizontal table.
-        var firstTableHeader = tableHeaders[0];
-        var lastTableHeader = tableHeaders[tableHeaders.length -1];
+        const firstTableHeader = tableHeaders[0];
+        const lastTableHeader = tableHeaders[tableHeaders.length -1];
         firstTableHeader._lastSibling = lastTableHeader._lastSibling;
         ////firstTableHeader._lastSiblingList = lastTableHeader._lastSiblingList;
       }
@@ -2293,20 +2293,20 @@ export default class LhcFormData {
    */
   addRepeatingItems(item) {
 
-    var maxRecId = this.getRepeatingItemMaxId(item);
-    var repeatItem = this._repeatableItems[item.linkId];
+    const maxRecId = this.getRepeatingItemMaxId(item);
+    const repeatItem = this._repeatableItems[item.linkId];
     // For a repeating group with answerValueSet items, make sure the "answers"
     // property on items are copied to the repeating group. The radio-button
     // layout of the newly added repeating item was not rendering correctly,
     // since this._repeatableItems was set earlier before the "answers"
     // property was set on items. See LF-2864.
     this._fillAnswersInRepeatItem(repeatItem, item);
-    var newItem = CommonUtils.deepCopy(repeatItem);
+    const newItem = CommonUtils.deepCopy(repeatItem);
     newItem._id = maxRecId + 1;
 
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
-      var insertPosition = 0;
-      for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
+      let insertPosition = 0;
+      for (let i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
         if (item._parentItem.items[i].linkId === item.linkId &&
           item._parentItem.items[i]._id === item._id) {
           insertPosition = i;
@@ -2322,7 +2322,7 @@ export default class LhcFormData {
 
     this._resetInternalData();
 
-    var readerMsg = language.added + this.itemDescription(item);
+    const readerMsg = language.added + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
     // run FHIRPath expression when a new item is added
@@ -2342,7 +2342,7 @@ export default class LhcFormData {
   _fillAnswersInRepeatItem(repeatItem, item) {
     if (repeatItem.items && Array.isArray(repeatItem.items) && repeatItem.items.length > 0) {
       repeatItem.items.forEach((x) => {
-        var matchingItem = item.items.find((y) => y.linkId === x.linkId);
+        const matchingItem = item.items.find((y) => y.linkId === x.linkId);
         if (matchingItem) {
           if (!x.answers && matchingItem.answers) {
             x.answers = matchingItem.answers;
@@ -2361,8 +2361,8 @@ export default class LhcFormData {
    * @return the index at which to add the repeating item.
    */
   _findIndexForNewRepetition(item) {
-    var insertPosition = 0;
-    var inRepeating = false;
+    let insertPosition = 0;
+    let inRepeating = false;
     for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
       if (item._parentItem.items[i].linkId === item.linkId) {
         inRepeating = true;
@@ -2388,12 +2388,12 @@ export default class LhcFormData {
    */
   appendRepeatingItems(item) {
 
-    var maxRecId = this.getRepeatingItemMaxId(item);
-    var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
+    const maxRecId = this.getRepeatingItemMaxId(item);
+    const newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
     newItem._id = maxRecId + 1;
 
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
-      var insertPosition = this._findIndexForNewRepetition(item);
+      const insertPosition = this._findIndexForNewRepetition(item);
       item._parentItem.items.splice(insertPosition, 0, newItem);
       newItem._parentItem = item._parentItem;
 
@@ -2403,7 +2403,7 @@ export default class LhcFormData {
 
     this._resetInternalData();
 
-    var readerMsg = language.added + this.itemDescription(item);
+    const readerMsg = language.added + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
     return newItem;
@@ -2416,13 +2416,13 @@ export default class LhcFormData {
    * @returns {boolean}
    */
   areAnyRepeatingItemsEmpty(item) {
-    var anyEmpty = false;
-    var repeatingItems = this._getRepeatingItems(item);
-    for(var i=0, iLen=repeatingItems.length; i<iLen; i++) {
+    let anyEmpty = false;
+    const repeatingItems = this._getRepeatingItems(item);
+    for(let i=0, iLen=repeatingItems.length; i<iLen; i++) {
       // reset the message flag
       repeatingItems[i]._showUnusedItemWarning = false;
       // check if there is no user input for this item/section
-      var empty = this._isRepeatingItemEmpty(repeatingItems[i]);
+      const empty = this._isRepeatingItemEmpty(repeatingItems[i]);
       if (empty) anyEmpty = true;
     }
     if (anyEmpty) {
@@ -2441,7 +2441,7 @@ export default class LhcFormData {
    */
   _isRepeatingItemEmpty(item) {
 
-    var isEmpty = true;
+    let isEmpty = true;
     //
     if (item.dataType !== CONSTANTS.DATA_TYPE.SECTION) {
       if (item.value === undefined || item.value === null || item.value ==="") {
@@ -2451,8 +2451,8 @@ export default class LhcFormData {
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         // multiple selection answer list (array is also an object)
         if (Array.isArray(item.value) && item.value.length > 0) {
-          var notEmpty = false;
-          for(var i= 0, iLen=item.value.length; i<iLen; i++) {
+          let notEmpty = false;
+          for(let i= 0, iLen=item.value.length; i<iLen; i++) {
             if (item.value[i].text)
             notEmpty = item.value[i].text !== undefined && item.value[i].text !== null && item.value[i].text !=="";
             if (notEmpty) break;
@@ -2476,7 +2476,7 @@ export default class LhcFormData {
 
     // check sub items
     if (isEmpty && item.items) {
-      for (var j= 0, jLen = item.items.length; j<jLen; j++) {
+      for (let j= 0, jLen = item.items.length; j<jLen; j++) {
         isEmpty = this._isRepeatingItemEmpty(item.items[j]);
         if (!isEmpty) break;
       }
@@ -2493,10 +2493,10 @@ export default class LhcFormData {
    * @private
    */
   _getRepeatingItems(item) {
-    var repeatingItems = [];
+    const repeatingItems = [];
     if (item._questionRepeatable && item._parentItem && Array.isArray(item._parentItem.items)) {
-      var items = item._parentItem.items;
-      for (var i = 0, iLen = items.length; i < iLen; i++) {
+      const items = item._parentItem.items;
+      for (let i = 0, iLen = items.length; i < iLen; i++) {
         if (items[i].linkId === item.linkId) {
           repeatingItems.push(items[i]);
         }
@@ -2512,9 +2512,9 @@ export default class LhcFormData {
    * @returns {*} the previous item or null
    */
   getPrevRepeatingItem(item) {
-    var repeatingItems = this._getRepeatingItems(item);
-    var elementIDs = repeatingItems.map(function(it) {return it._elementId});
-    var posIndex = elementIDs.indexOf(item._elementId);
+    const repeatingItems = this._getRepeatingItems(item);
+    const elementIDs = repeatingItems.map(function(it) {return it._elementId});
+    const posIndex = elementIDs.indexOf(item._elementId);
     // return null if there is no items before this one
     return posIndex >0 ? repeatingItems[posIndex - 1] : null;
   }
@@ -2526,9 +2526,9 @@ export default class LhcFormData {
    * @returns {*} the next item or null
    */
   getNextRepeatingItem(item) {
-    var repeatingItems = this._getRepeatingItems(item);
-    var elementIDs = repeatingItems.map(function(it) {return it._elementId});
-    var posIndex = elementIDs.indexOf(item._elementId);
+    const repeatingItems = this._getRepeatingItems(item);
+    const elementIDs = repeatingItems.map(function(it) {return it._elementId});
+    const posIndex = elementIDs.indexOf(item._elementId);
     // return null if there is no items after this one
     return posIndex < repeatingItems.length -1 ? repeatingItems[posIndex + 1] : null;
   }
@@ -2540,7 +2540,7 @@ export default class LhcFormData {
    * @returns {*} the first item
    */
   getFirstRepeatingItem(item) {
-    var repeatingItems = this._getRepeatingItems(item);
+    const repeatingItems = this._getRepeatingItems(item);
     // always return the first one
     return repeatingItems[0];
   }
@@ -2552,7 +2552,7 @@ export default class LhcFormData {
    * @returns {*} the last item
    */
   getLastRepeatingItem(item) {
-    var repeatingItems = this._getRepeatingItems(item);
+    const repeatingItems = this._getRepeatingItems(item);
     // always return the last one
     return repeatingItems[repeatingItems.length - 1];
   }
@@ -2565,7 +2565,7 @@ export default class LhcFormData {
   removeRepeatingItems(item) {
 
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
-      for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
+      for (let i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
         if (item._parentItem.items[i].linkId == item.linkId &&
           item._parentItem.items[i]._id == item._id) {
           item._parentItem.items.splice(i, 1);
@@ -2575,7 +2575,7 @@ export default class LhcFormData {
     }
 
     this._resetInternalData();
-    var readerMsg = language.removed + this.itemDescription(item);
+    const readerMsg = language.removed + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
     // run FHIRPath expression when a new item is removed
@@ -2603,8 +2603,8 @@ export default class LhcFormData {
    *  "last" repetition item; otherwise it will return undefined.
    */
   setRepeatingItems(item, vals, messages, messageSource) {
-    var repetitionCountChanged = false;
-    var repetitions;
+    let repetitionCountChanged = false;
+    let repetitions;
     let messagesChanged = false;
     let valueChanged = false;
     if (!CommonUtils.deepEqual(item._lastComputedMessages, messages)) {
@@ -2617,10 +2617,10 @@ export default class LhcFormData {
       // if it has multiple answers
       if (item._parentItem && Array.isArray(item._parentItem.items)) { // not sure this check is needed
         repetitions = this._getRepeatingItems(item);
-        var numReps = repetitions.length;
-        var newRowsNeeded = vals.length - numReps;
+        const numReps = repetitions.length;
+        let newRowsNeeded = vals.length - numReps;
         repetitionCountChanged = (newRowsNeeded !== 0);
-        var maxRecId, insertPosition;
+        let maxRecId, insertPosition;
         if (newRowsNeeded < 0) {
           // Remove extra rows.
           insertPosition = this._findIndexForNewRepetition(item) + newRowsNeeded;
@@ -2640,9 +2640,9 @@ export default class LhcFormData {
             insertPosition = this._findIndexForNewRepetition(item);
             maxRecId = this.getRepeatingItemMaxId(item);
           }
-          var parentItemDisabled = item._parentItem._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+          const parentItemDisabled = item._parentItem._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
           for (var i=0; i<newRowsNeeded; ++i) {
-            var newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
+            const newItem = CommonUtils.deepCopy(this._repeatableItems[item.linkId]);
             newItem._id = maxRecId + i + 1;
             item._parentItem.items.splice(insertPosition+ i, 0, newItem); // insert at the end
             newItem._parentItem = item._parentItem;
@@ -2678,7 +2678,7 @@ export default class LhcFormData {
 
     if (repetitionCountChanged)
       this._resetInternalData();
-    var readerMsg = 'Set values for ' + this.itemDescription(item);
+    const readerMsg = 'Set values for ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
     if (valueChanged) {
@@ -2709,7 +2709,7 @@ export default class LhcFormData {
         // if it has multiple answers
         if (item._parentItem && Array.isArray(item._parentItem.items)) { // not sure this check is needed
           const repetitions = this._getRepeatingItems(item);
-          for (var i=0, len=repetitions.length; i<len; ++i) {
+          for (let i=0, len=repetitions.length; i<len; ++i) {
             InternalUtil.setItemMessages(repetitions[i], messages[i], messageSource);
           }
         }
@@ -2739,12 +2739,12 @@ export default class LhcFormData {
    * @private
    */
   _getScores(item, formula) {
-    var scores = [];
-    var sourceItems = this._getFormulaSourceItems(item, formula.value);
+    const scores = [];
+    const sourceItems = this._getFormulaSourceItems(item, formula.value);
 
-    for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
+    for (let i= 0, iLen= sourceItems.length; i<iLen; i++) {
       var item = sourceItems[i];
-      var score = 0;
+      let score = 0;
       if (item && item.value && item.value.score &&
           item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         score = item.value.score
@@ -2763,11 +2763,11 @@ export default class LhcFormData {
    * @private
    */
   _getFormulaSourceItems(item, linkIds) {
-    var sourceItems = [];
-    for (var i= 0, iLen=linkIds.length; i<iLen; i++) {
-      var linkId = linkIds[i];
+    const sourceItems = [];
+    for (let i= 0, iLen=linkIds.length; i<iLen; i++) {
+      const linkId = linkIds[i];
 
-      var sourceItem = this._findItemByLinkId(item, linkId);
+      const sourceItem = this._findItemByLinkId(item, linkId);
       sourceItems.push(sourceItem);
     }
     return sourceItems;
@@ -2782,11 +2782,11 @@ export default class LhcFormData {
    * @private
    */
   _getValuesInStandardUnit (item, formula) {
-    var values = [];
-    var sourceItems = this._getFormulaSourceItems(item, formula.value);
+    const values = [];
+    const sourceItems = this._getFormulaSourceItems(item, formula.value);
 
-    for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
-      var valueInStandardUnit = null;
+    for (let i= 0, iLen= sourceItems.length; i<iLen; i++) {
+      let valueInStandardUnit = null;
       var item = sourceItems[i];
       if (item.value && item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         if (item.unit && item.unit.name) {
@@ -2808,10 +2808,10 @@ export default class LhcFormData {
    * @returns {string}
    */
   getFormulaResult(item) {
-    var result ='';
-    var parameterValues = [];
+    let result ='';
+    let parameterValues = [];
     if (item.calculationMethod) {
-      var formula = item.calculationMethod;
+      const formula = item.calculationMethod;
       // run score rule (there should be one score rule only in a form)
       if (formula.name === CONSTANTS.CALCULATION_METHOD.TOTALSCORE) {
         parameterValues = this._getScores(item, formula);
@@ -2834,9 +2834,9 @@ export default class LhcFormData {
    * @return {boolean} whether the item.value has changed
    */
   _processItemFormula(item) {
-    var changed = false;
+    let changed = false;
     if (item.calculationMethod && item.calculationMethod.name) {
-      let newValue = this.getFormulaResult(item);
+      const newValue = this.getFormulaResult(item);
       if (!CommonUtils.deepEqual(newValue, item.value)) {
         item.value = newValue;
         changed = true;
@@ -2852,7 +2852,7 @@ export default class LhcFormData {
    * @return {boolean} whether the item.value has changed
    */
   _processItemDataControl(item) {
-    var changed = false;
+    let changed = false;
     if (item.dataControl && Array.isArray(item.dataControl)) {
       changed = this._updateDataByDataControl(item);
       // Force a reset of answers
@@ -2873,10 +2873,10 @@ export default class LhcFormData {
    * @private
    */
   _constructObjectByDataFormat(dataFormat, sourceItem) {
-    var targetData = {};
+    const targetData = {};
     if (typeof dataFormat === 'object') {
-      var keys = Object.keys(dataFormat);
-      for (var i= 0, iLen=keys.length; i<iLen; i++) {
+      const keys = Object.keys(dataFormat);
+      for (let i= 0, iLen=keys.length; i<iLen; i++) {
         targetData[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
       }
     }
@@ -2893,13 +2893,13 @@ export default class LhcFormData {
    */
   _constructArrayByDataFormat(dataFormat, sourceItem) {
 
-    var targetData = [], abort = false;
+    let targetData = [], abort = false;
     if (typeof dataFormat === 'object') {
-      var keys = Object.keys(dataFormat);
-      var listByKeys = {}, iLen=keys.length;
-      var listLength = -1;
+      const keys = Object.keys(dataFormat);
+      const listByKeys = {}, iLen=keys.length;
+      let listLength = -1;
       for (var i= 0; i<iLen; i++) {
-        var list = listByKeys[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
+        const list = listByKeys[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
         // abort if any data returned is not an array
         if (!Array.isArray(list)) {
           abort = true;
@@ -2916,8 +2916,8 @@ export default class LhcFormData {
       }
 
       if(!abort) {
-        for (var j=0; j<listLength; j++) {
-          var elementData = {};
+        for (let j=0; j<listLength; j++) {
+          const elementData = {};
           for (var i= 0; i<iLen; i++) {
             elementData[keys[i]] = listByKeys[keys[i]][j];
           }
@@ -2936,9 +2936,9 @@ export default class LhcFormData {
    * @private
    */
   _updateDataByDataControl(item) {
-    var changed = false;
-    for (var i= 0, iLen=item.dataControl.length; i<iLen; i++) {
-      var source = item.dataControl[i].source,
+    let changed = false;
+    for (let i= 0, iLen=item.dataControl.length; i<iLen; i++) {
+      let source = item.dataControl[i].source,
           onAttribute = item.dataControl[i].onAttribute,
           constructionType = item.dataControl[i].construction,
           dataFormat = item.dataControl[i].dataFormat;
@@ -2955,7 +2955,7 @@ export default class LhcFormData {
 
       // has a source configuration
       if (source) {
-        var sourceType = source.sourceType;
+        let sourceType = source.sourceType;
         // the default source type is "INTERNAL", which uses "sourceLinkId" to locate the source item
         if (!sourceType)
           sourceType = CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL;
@@ -2963,7 +2963,7 @@ export default class LhcFormData {
         if (sourceType === CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL &&
             source.sourceLinkId) {
           // get the source item object
-          var sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
+          const sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
           if (sourceItem && sourceItem._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
             let newData;
             // check how to create the new data on target
@@ -3009,19 +3009,19 @@ export default class LhcFormData {
    */
   _getDataFromNestedAttributes(strQuery, sourceItem) {
 
-    var levels = strQuery.trim().split('.');
+    const levels = strQuery.trim().split('.');
     var dataSource = sourceItem, iLen = levels.length;
 
     for (var i = 0; i<iLen; i++) {
       if (dataSource) {
-        var query = levels[i];
+        const query = levels[i];
         // query not empty
         if (query) {
           // if it points to an item in an array, such as answers[1]
-          var elementInArray = query.match(/^(.+)\[(\d+)\]$/);
+          const elementInArray = query.match(/^(.+)\[(\d+)\]$/);
           if(elementInArray) {
             var dataSource = dataSource[elementInArray[1]];
-            var index =  parseInt(elementInArray[2]);
+            const index =  parseInt(elementInArray[2]);
             if (Number.isInteger(index)) {
               dataSource = dataSource[index];
             }
@@ -3055,8 +3055,8 @@ export default class LhcFormData {
    * @param items a list items of the form or in the templateOptions.
    */
   _setUpAnswerAndUnitAutoComp(items) {
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
+    for (let i=0, iLen=items.length; i<iLen; i++) {
+      const item = items[i];
       if (item._hasAnswerList) {
         this._updateAutocompOptions(item);
       }
@@ -3089,11 +3089,11 @@ export default class LhcFormData {
       // clean up unit autocomp options
       item._unitAutocompOptions = null;
 
-      var listItems = [], answers = item.units;
+      const listItems = [], answers = item.units;
       // Modify the label for each unit.
-      var defaultUnit;
-      for (var i= 0, iLen = answers.length; i<iLen; i++) {
-        var listItem = CommonUtils.deepCopy(answers[i]);
+      let defaultUnit;
+      for (let i= 0, iLen = answers.length; i<iLen; i++) {
+        const listItem = CommonUtils.deepCopy(answers[i]);
         this._setUnitDisplay(listItem);
         if (answers[i].default) {
           defaultUnit = listItem;
@@ -3125,7 +3125,7 @@ export default class LhcFormData {
       }
 
       if (item.dataType === CONSTANTS.DATA_TYPE.QTY) {
-        var options:any = {
+        const options:any = {
           listItems: listItems,
           // matchListValue:
           //   true if there is a unit list and (no unitOpen extension, or optionsOnly, or optionsOrType)
@@ -3165,22 +3165,22 @@ export default class LhcFormData {
     // whose answerConstraint is 'optionsOrString',
     // convert it to the internal format of {text: 'string value', _notOnList: true}
     if (item._hasAnswerList) {
-      var modifiedValue = null;
+      let modifiedValue = null;
       // item.value has the priority over item.defaultAnswer
       // if this is a saved form with user data, default answers are not to be used.
       // (item.value could be a coding that is no on the answer list, in R5)
-      var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
+      const answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
       if (answerValue) {
         modifiedValue = [];
         // could be an array of multiple default values or a single value
-        var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
+        const answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
             answerValue : [answerValue];
         if (item.answerConstraint !== "optionsOrString") {
           modifiedValue = answerValueArray;
         }
         else {
           // go through each value, there could be multiple not-on-list values
-          for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
+          for (let i=0, iLen=answerValueArray.length; i < iLen; ++i) {
             // string value is allowed if it is CODING and answerConstraint is 'optionsOrString'
             if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
               modifiedValue.push({
@@ -3198,10 +3198,10 @@ export default class LhcFormData {
       }
 
       if (modifiedValue) {
-        var listVals = [];
-        for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
-          var userValue = modifiedValue[k];
-          var found = false;
+        let listVals = [];
+        for (let k=0, kLen=modifiedValue.length; k<kLen; ++k) {
+          const userValue = modifiedValue[k];
+          let found = false;
           // for search field, assume the user values are valid answers
           if (item.externallyDefined) {
             listVals = modifiedValue;
@@ -3210,7 +3210,7 @@ export default class LhcFormData {
           else {
             // item.answers has a list or the answers have been loaded.
             if (Array.isArray(item.answers)) {
-              for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
+              for (let j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
                 if (CommonUtils.areTwoAnswersSame(userValue, item.answers[j], item)) {
                   listVals.push(item.answers[j]);
                   found = true;
@@ -3229,7 +3229,7 @@ export default class LhcFormData {
             }
           }
         }
-        let newValue = item._multipleAnswers ? listVals : listVals[0];
+        const newValue = item._multipleAnswers ? listVals : listVals[0];
         // reset item.value even if item.value and newValue are same (radiobuttons in matrix layout needs this reset)
         item.value = newValue;
       }
@@ -3246,7 +3246,7 @@ export default class LhcFormData {
    * @return a Promise that will resolve to the ValueSet expansion.
    */
   _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
-    var fhirClient = LForms.fhirContext.client;
+    const fhirClient = LForms.fhirContext.client;
     return fhirClient.request(this._buildURL(['ValueSet',valueSetID,'$expand'],
       {count: count, filter: fieldVal}
     ));
@@ -3264,14 +3264,14 @@ export default class LhcFormData {
   _findValueSetIDAndSearch(item, fieldVal, count) {
     // Fetch the ValueSet
     // Fetch the ValueSet
-    var failMsg = "Could not retrieve the ValueSet definition for "+
+    const failMsg = "Could not retrieve the ValueSet definition for "+
           item.answerValueSet;
-    var fhirClient = LForms.fhirContext.client;
+    const fhirClient = LForms.fhirContext.client;
     // Cache the lookup of ValueSet IDs, which should not change.  (A page
     // reload will clear the cache.)
     if (!LForms._valueSetUrlToID)
       LForms._valueSetUrlToID = {}
-    var valueSetID =  LForms._valueSetUrlToID[item.answerValueSet];
+    const valueSetID =  LForms._valueSetUrlToID[item.answerValueSet];
     if (valueSetID) {
       return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
     }
@@ -3280,9 +3280,9 @@ export default class LhcFormData {
       return fhirClient.request(this._buildURL(['ValueSet'],
           {url: item.answerValueSet, _total: 'accurate'})
       ).then(function(response) {
-        var data = response;
+        const data = response;
         if (data.total === 1) {
-          var valueSetID = data.entry[0].resource.id;
+          const valueSetID = data.entry[0].resource.id;
           LForms._valueSetUrlToID[item.answerValueSet] = valueSetID;
           return self._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
         }
@@ -3310,19 +3310,19 @@ export default class LhcFormData {
     // for list only
     if (item._hasAnswerList) {
 
-      var maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
+      let maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
       if (maxSelect !== '*' && typeof maxSelect === 'string') {
         maxSelect = parseInt(maxSelect);
       }
 
-      var options:any = {
+      const options:any = {
         matchListValue: item.answerConstraint !== "optionsOrString", // INT, ST, DT, TM and CODING (answerConstaint == 'optionsOnly') should all match
         maxSelect: maxSelect,
         autoFill: false
       };
 
       // externallyDefined
-      var url = item.externallyDefined; // item.dataType should be CODING
+      const url = item.externallyDefined; // item.dataType should be CODING
       if (url) {
         options.url = url;
         options.autocomp = true;
@@ -3331,7 +3331,7 @@ export default class LhcFormData {
         options.valueCols = [0];
         options.colHeaders = item.displayControl.listColHeaders;
         if (options.colHeaders) {
-          var h = options.colHeaders;
+          const h = options.colHeaders;
           // Escape HTML tags to prevent them from rendering
           for (var i=0, len=h.length; i<len; ++i)
             h[i] = h[i].replace(/</g, '&lt;');
@@ -3343,9 +3343,9 @@ export default class LhcFormData {
       }
       // isSearchAutocomplete && answerValueSet
       else if (item.isSearchAutocomplete && item.answerValueSet) {
-        var valueSetUri = item.answerValueSet;
+        const valueSetUri = item.answerValueSet;
         // See if there is a terminology server for expanding this valueset
-        var expURL = this._getFHIRSupport().SDC._getExpansionURL(item);
+        const expURL = this._getFHIRSupport().SDC._getExpansionURL(item);
         if (expURL) {  // undefined unless there is a terminology server
           // TBD - We might need to log in to some terminology servers.  Not
           // supporting that case yet.
@@ -3360,7 +3360,7 @@ export default class LhcFormData {
             if (LForms.fhirCapabilities.urlExpandBroken)
               return self._findValueSetIDAndSearch(item, fieldVal, count);
             else {
-              var fhirClient =  LForms.fhirContext.client;
+              const fhirClient =  LForms.fhirContext.client;
               return fhirClient.request(self._buildURL(['ValueSet', '$expand'],
                 {count: count, filter: fieldVal, url: item.answerValueSet}
               )).catch((errorData) => {
@@ -3401,15 +3401,15 @@ export default class LhcFormData {
         // is defined on any item.
         // It would be more efficient to have a flag defined on the question
         // level.
-        var answers = options.listItems;
-        var noHeadings = true;
+        const answers = options.listItems;
+        let noHeadings = true;
         for (i=0, len=answers.length; i<len && noHeadings; ++i)
           noHeadings = !!answers[i].parentAnswerCode;
         if (!noHeadings) {
-          var codes = [];
-          var itemToHeading = {}; // list item (answer) to heading
+          const codes = [];
+          const itemToHeading = {}; // list item (answer) to heading
           for (var i=0, len=answers.length; i<len; ++i) {
-            var ans = answers[i];
+            const ans = answers[i];
             codes.push(ans.code);
             if (ans.parentAnswerCode)
               itemToHeading[ans.code] = ans.parentAnswerCode;
@@ -3449,7 +3449,7 @@ export default class LhcFormData {
    * @returns {string}
    */
   getTextDisplayType(item) {
-    var format = 'plain';
+    let format = 'plain';
     if (item._displayTextHTML && item._displayTextHTML.length > 0 && this.templateOptions.allowHTML) {
       if (!item._hasInvalidHTMLTagInText) {
         format = 'html';
@@ -3468,7 +3468,7 @@ export default class LhcFormData {
    * @returns {string}
    */
   getPrefixDisplayType(item) {
-    var format = 'plain';
+    let format = 'plain';
     if (item._prefixHTML && item._prefixHTML.length > 0 && this.templateOptions.allowHTML) {
       if (!item._hasInvalidHTMLTagInPrefix) {
         format = 'html';
@@ -3490,17 +3490,17 @@ export default class LhcFormData {
    */
   _getAnswerDisplayTextWithLabelAndScore(addScoreToText, item) {
     // reset the modified answers (for the display text)
-    var modifiedAnswers = [];
-    var hasOneAnswerLabel = false;
-    var hasOneNumericAnswer = false;
-    let answers = item.answers;
+    const modifiedAnswers = [];
+    let hasOneAnswerLabel = false;
+    let hasOneNumericAnswer = false;
+    const answers = item.answers;
     if (answers && Array.isArray(answers)) {
-      for (var i = 0, iLen = answers.length; i < iLen; i++) {
-        var answerData = CommonUtils.deepCopy(answers[i]);
+      for (let i = 0, iLen = answers.length; i < iLen; i++) {
+        const answerData = CommonUtils.deepCopy(answers[i]);
 
         // convert integer to string when the answerOption is an integer
-        var displayText = (answerData.text || answerData.code) + "";
-        var displayTextHTML = answerData.textHTML;
+        let displayText = (answerData.text || answerData.code) + "";
+        let displayTextHTML = answerData.textHTML;
         // label is a string
         if (answerData.label) {
           displayText = answerData.label + ". " + displayText;
@@ -3534,7 +3534,7 @@ export default class LhcFormData {
       }
     }
     // add seq num when there is no labels and no numeric values as answer
-    var acAddSeq = !hasOneAnswerLabel && !hasOneNumericAnswer;
+    const acAddSeq = !hasOneAnswerLabel && !hasOneNumericAnswer;
 
     return [modifiedAnswers, acAddSeq];
   }
@@ -3550,10 +3550,10 @@ export default class LhcFormData {
    * @private
    */
   _inRange(range, numValue) {
-    var inRange = false;
+    let inRange = false;
 
     if (range && !isNaN(numValue)) {
-      var fields = Object.keys(range);
+      const fields = Object.keys(range);
       // one key
       if (fields.length == 1) {
         switch (fields[0]) {
@@ -3620,11 +3620,11 @@ export default class LhcFormData {
    * @private
    */
   _findItemByLinkId(item, linkId) {
-    var sourceItem = null;
+    let sourceItem = null;
 
     // check 'ancestor' axis
-    var parentItem = item._parentItem;
-    var foundSource = false;
+    let parentItem = item._parentItem;
+    let foundSource = false;
     while (!foundSource && parentItem) {
       // check the ancestor
       if (parentItem.linkId === linkId) {
@@ -3634,10 +3634,10 @@ export default class LhcFormData {
       parentItem = parentItem._parentItem;
     }
 
-    var itemIndex = null;
+    let itemIndex = null;
     if (!sourceItem) {
       // find the item's position in itemList
-      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+      for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
         if(item._elementId === this.itemList[i]._elementId) {
           itemIndex = i;
           break;
@@ -3645,7 +3645,7 @@ export default class LhcFormData {
       }
       if (itemIndex !== null) {
         // check 'preceding' axis
-        for (var j=itemIndex-1; j>=0; j--) {
+        for (let j=itemIndex-1; j>=0; j--) {
           if (this.itemList[j].linkId === linkId) {
             sourceItem = this.itemList[j];
             break;
@@ -3653,7 +3653,7 @@ export default class LhcFormData {
         }
         // check 'following' axis
         if (!sourceItem) {
-          for (var k=itemIndex+1, kLen = this.itemList.length; k<kLen; k++) {
+          for (let k=itemIndex+1, kLen = this.itemList.length; k<kLen; k++) {
             if (this.itemList[k].linkId === linkId) {
               sourceItem = this.itemList[k];
               break;
@@ -3692,7 +3692,7 @@ export default class LhcFormData {
    */
   _codingsEqual(coding1, coding2) {
     let equals = false;
-    let hasValue = (v) => v !== null && v !== undefined && v !== '';
+    const hasValue = (v) => v !== null && v !== undefined && v !== '';
     if(coding1.system === coding2.system || !coding1.system && !coding2.system) {
       if(hasValue(coding1.code) || hasValue(coding2.code)) {
         equals = coding1.code === coding2.code;
@@ -3714,8 +3714,8 @@ export default class LhcFormData {
    * @private
    */
   _checkSkipLogicCondition(item, trigger) {
-    var action = false;
-    var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== ""
+    let action = false;
+    const hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== ""
                     && item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
 
     // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
@@ -3725,7 +3725,7 @@ export default class LhcFormData {
       action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
     }
     else if (hasAnswer) {
-      var currentValue = item.value;
+      const currentValue = item.value;
 
       // if the item has an answer list (of coding, string, integer, date or time)
       if (item._hasAnswerList) {
@@ -3740,7 +3740,7 @@ export default class LhcFormData {
             var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.notEqual : null;
             var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
             var isEqual = false;
-            for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
+            for (let m= 0, mLen = answerValues.length; m<mLen; m++) {
               let answerValue = answerValues[m];
               if (item.dataType === CONSTANTS.DATA_TYPE.CODING) {
                 if(item.answerCodeSystem) {
@@ -3838,18 +3838,18 @@ export default class LhcFormData {
    * @private
    */
   _checkSkipLogic(item) {
-    var takeAction = false;
+    let takeAction = false;
     if (item.skipLogic) {
-      var hasAll = item.skipLogic.logic === "ALL";
-      var hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
+      const hasAll = item.skipLogic.logic === "ALL";
+      const hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
       // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
       // otherwise its value is false, including when the 'logic' value is 'ANY'
       takeAction = hasAll;
 
-      for (var i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
-        var condition = item.skipLogic.conditions[i];
-        var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
-        var conditionMet = this._checkSkipLogicCondition(sourceItem, condition.trigger);
+      for (let i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
+        const condition = item.skipLogic.conditions[i];
+        const sourceItem = this._getSkipLogicSourceItem(item, condition.source);
+        const conditionMet = this._checkSkipLogicCondition(sourceItem, condition.trigger);
         // ALL: check all conditions until one is not met, or all are met.
         if (hasAll && !conditionMet ) {
           takeAction = false;
@@ -3883,7 +3883,7 @@ export default class LhcFormData {
    * @returns {boolean}
    */
   needExtra(item) {
-    var extra = false;
+    let extra = false;
     if (item && item.value) {
       // NOT to support multiple values of 'other' when multiple answers are allowed.
       // if (Array.isArray(item.value)) {
@@ -3916,7 +3916,7 @@ export default class LhcFormData {
    * @returns {string}
    */
   getActiveRowClass(item) {
-    var ret = "";
+    let ret = "";
     if (this._activeItem && this._activeItem._elementId === item._elementId) {
       ret = "lhc-active-row";
     }

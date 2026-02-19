@@ -13,7 +13,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
   let element: HTMLElement;
   let lhcDataService;
 
-  let itemRadioCNE: any =  {
+  const itemRadioCNE: any =  {
     "questionCode": "q1a",
     "question": "Answer RADIO_CHECKBOX layout --CODING, optionsOnly, --1 column",
     "copyrightNotice": "a notice",
@@ -53,7 +53,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     "linkId": "/q1a"
   };
 
-  let itemRadioCWE:any =  {
+  const itemRadioCWE:any =  {
     "questionCode": "q1a",
     "question": "Answer RADIO_CHECKBOX layout --CODING, optionsOrString --0 columns",
     "copyrightNotice": "a notice",
@@ -94,7 +94,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     "linkId": "/q1a"
   };
 
-  let acOptions = {
+  const acOptions = {
     "listItems": [
       {
         "code": "c1",
@@ -224,7 +224,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
       "_notOnList": true
     })
 
-    let otherInput:HTMLInputElement = getItemAnswerElem(element, itemRadioCWE, '_otherValue');
+    const otherInput:HTMLInputElement = getItemAnswerElem(element, itemRadioCWE, '_otherValue');
     otherInput.value = 'some value';
     otherInput.dispatchEvent(new Event('input'));
     otherInput.dispatchEvent(new KeyboardEvent('keyup', {
@@ -263,7 +263,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 //      expect(radio.checked).toBeTruthy();
 
     //item.value should change, when a different radio button is clicked
-    let radio = getItemAnswerElem(element, itemRadioCNE, itemRadioCNE.answers[1]);
+    const radio = getItemAnswerElem(element, itemRadioCNE, itemRadioCNE.answers[1]);
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",
@@ -295,7 +295,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 //      expect(radio.checked).toBeTruthy();
 
     //item.value should change, when a different radio button is clicked
-    let radio = getItemAnswerElem(element, itemRadioCWE, itemRadioCWE.answers[1]);
+    const radio = getItemAnswerElem(element, itemRadioCWE, itemRadioCWE.answers[1]);
     radio.click();
     expect(component.item.value).toEqual({
       "code": "c2",

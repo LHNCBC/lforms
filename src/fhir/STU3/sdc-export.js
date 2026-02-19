@@ -430,7 +430,26 @@ var self = {
       //   "code" : "<code>" // Coded form of the unit
       // }]
       else if (dataType === 'QTY') { // SimpleQuantity (no comparators)
-        var fhirQuantity = this._makeQuantity(item.defaultAnswer, item.units);
+        var fhirQuantity;
+        // defaultAnswer could be a Quantity object (from import) or just a number
+        if (item.defaultAnswer && typeof item.defaultAnswer === 'object' && item.defaultAnswer._type === 'Quantity') {
+          // Use unit from the default answer itself, not from item.units
+          fhirQuantity = {};
+          if (item.defaultAnswer.value !== undefined && item.defaultAnswer.value !== null) {
+            fhirQuantity.value = item.defaultAnswer.value;
+          }
+          if (item.defaultAnswer.name) {
+            fhirQuantity.unit = item.defaultAnswer.name;
+          }
+          if (item.defaultAnswer.code) {
+            fhirQuantity.code = item.defaultAnswer.code;
+          }
+          if (item.defaultAnswer.system) {
+            fhirQuantity.system = item.defaultAnswer.system;
+          }
+        } else {
+          fhirQuantity = this._makeQuantity(item.defaultAnswer, item.units);
+        }
         if(fhirQuantity) {
           targetItem[valueKey] = fhirQuantity;
         }
@@ -485,6 +504,10 @@ var self = {
         }
         for (var i=0, iLen=item.units.length; i<iLen; i++) {
           var unit = item.units[i];
+          // Skip units that were added from initial value during import
+          if (unit._fromInitialValue) {
+            continue;
+          }
           var fhirUnitExt = {
             "url": this.fhirExtUrlUnitOption,
             "valueCoding": this._createFhirUnitCoding(unit)

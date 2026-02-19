@@ -1,0 +1,78 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "quantity",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "9279-1",
+          "display": "Resp rate"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "{breaths}/min",
+            "display": "{breaths}/min"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "{counts}/min",
+            "display": "{counts}/min"
+          }
+        }
+      ],
+      "linkId": "/resp-rate",
+      "text": "Resp rate",
+      "initialQuantity": {
+        "value": 50,
+        "unit": "{breaths}/minute",
+        "system": "http://unitsofmeasure.org",
+        "code": "{breaths}/min"
+      }
+    },
+    {
+      "type": "quantity",
+      "code": [
+        {
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body height"
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "cm",
+            "display": "cm"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": "mm",
+            "display": "mm"
+          }
+        }
+      ],
+      "linkId": "/body-height",
+      "text": "Body height",
+      "initialQuantity": {
+        "value": 1.8,
+        "unit": "m",
+        "system": "http://unitsofmeasure.org",
+        "code": "m"
+      }
+    }
+  ]
+}

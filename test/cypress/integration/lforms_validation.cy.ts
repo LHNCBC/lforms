@@ -726,9 +726,9 @@ describe('Validations', () => {
       const fhirVersion = 'R4';
       cy.window().then((win) => {
         cy.readFile('test/data/R4/q-with-minOccurs-maxOccurs.json').then((q) => {
-          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+          const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
           cy.readFile('test/data/R4/qr-with-repeating-group-exceed-maxOccurs.json').then((qr) => {
-            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+            const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
             win.LForms.Util.addFormToPage(mergedFormData, "formContainer", {fhirVersion});
             // Initially there are 4 groups, an error message about maxOccurs should be shown.
             cy.contains('This repeatable item should have at most 3 occurrences.').should('be.visible');

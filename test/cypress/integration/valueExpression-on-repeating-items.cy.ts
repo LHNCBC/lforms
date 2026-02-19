@@ -20,16 +20,16 @@ describe('valueExpression on repeating items', () => {
       .byCss('.lf-sn')
       .should('have.text', '1.20');
 
-    cy.byId('item-/value/1/1')
+    cy.byId('item-/display/1/1')
       .byCss('.lf-sn')
       .should('have.text', '1.1');
-    cy.byId('item-/value/1/2')
+    cy.byId('item-/display/1/2')
       .byCss('.lf-sn')
       .should('have.text', '1.2');
-    cy.byId('item-/value/1/3')
+    cy.byId('item-/display/1/3')
       .byCss('.lf-sn')
       .should('have.text', '1.3');
-    cy.byId('item-/value/1/20')
+    cy.byId('item-/display/1/20')
       .byCss('.lf-sn')
       .should('have.text', '1.20');
 

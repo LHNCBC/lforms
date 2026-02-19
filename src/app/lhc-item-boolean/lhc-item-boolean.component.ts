@@ -30,7 +30,7 @@ export class LhcItemBooleanComponent implements OnChanges {
    * @param value the new value in model
    */
   onModelChange(value) {
-    let prevValue = this.item.value;
+    const prevValue = this.item.value;
     this.item.value = value;
     this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue)
   }
@@ -41,7 +41,7 @@ export class LhcItemBooleanComponent implements OnChanges {
    */
   setBooleanModels(): void {
     if (this.item) {
-      let booleanValue = this.item.value;
+      const booleanValue = this.item.value;
       if (booleanValue === true) {
         this.booleanModels = [true, false, false];
       } else if (booleanValue === false) {

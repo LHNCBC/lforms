@@ -59,9 +59,9 @@ describe('FHIR answerValueSet', () => {
     it('should have expected answer list and saved value when the QuestionnaireResponse is merged to the Questionnaire', () => {
       cy.window().then((win) => {
         cy.readFile('test/data/R4/q-with-answerValueSet-autocomplete.json').then((q) => {  // readFile will parse the JSON
-          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+          const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
           cy.readFile('test/data/R4/qr-with-answerValueSet-autocomplete.json').then((qr) => {
-            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+            const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
             win.LForms.Util.addFormToPage(mergedFormData, "formContainer", {fhirVersion});
             // check saved values
             cy.byId(answerField1).should('have.value', 'Yes');
@@ -123,7 +123,7 @@ describe('FHIR answerValueSet', () => {
     // using the already loaded questionnaire to get the questionnaire response
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+        const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
         expect(qr.item[0].linkId).to.equal('yesno1');
         expect(qr.item[0].answer[0]).to.eql({
           valueCoding: {
@@ -192,7 +192,7 @@ describe('FHIR answerValueSet', () => {
 
 
   describe('answerValueSet with FHIR context, answers displayed as radion buttons or checkboxes', () => {
-    let f1a1 = answerId('yesno1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
+    const f1a1 = answerId('yesno1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
       f1a2 = answerId('yesno1/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'Y'),
       f1a3 = answerId('yesno1/1', 'http://terminology.hl7.org/CodeSystem/data-absent-reason', 'asked-unknown'),
       f2a1 = answerId('yesno2/1', 'http://terminology.hl7.org/CodeSystem/v2-0136', 'N'),
@@ -254,14 +254,14 @@ describe('FHIR answerValueSet', () => {
           'test/data/R4/q-with-answerValueSet-radiobutton-checkbox.json'
         ).then((q) => {
           // readFile will parse the JSON
-          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
+          const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
             q,
             fhirVersion
           );
           cy.readFile(
             'test/data/R4/qr-with-answerValueSet-radiobutton-checkbox.json'
           ).then((qr) => {
-            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
+            const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
               qr,
               formDef,
               fhirVersion
@@ -308,7 +308,7 @@ describe('FHIR answerValueSet', () => {
     // using the already loaded questionnaire to get the questionnaire response
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+        const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
         expect(qr.item[0].linkId).to.equal('yesno1');
         expect(qr.item[0].answer[0]).to.eql({
           valueCoding: {
@@ -419,13 +419,13 @@ describe('FHIR answerValueSet', () => {
         cy.readFile('test/data/R4/q-with-answerValueSet-matrix.json').then(
           (q) => {
             // readFile will parse the JSON
-            let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
+            const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
               q,
               fhirVersion
             );
             cy.readFile('test/data/R4/qr-with-answerValueSet-matrix.json').then(
               (qr) => {
-                let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
+                const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
                   qr,
                   formDef,
                   fhirVersion
@@ -468,7 +468,7 @@ describe('FHIR answerValueSet', () => {
     // using the already loaded questionnaire to get the questionnaire response
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+        const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
         // first group
         expect(qr.item[0].item[0].linkId).to.equal('/g1m1');
         expect(qr.item[0].item[0].answer[0]).to.eql({
@@ -617,14 +617,14 @@ describe('FHIR answerValueSet', () => {
           'test/data/R4/q-with-answerValueSet-autocomplete-searchfield.json'
         ).then((q) => {
           // readFile will parse the JSON
-          let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
+          const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(
             q,
             fhirVersion
           );
           cy.readFile(
             'test/data/R4/qr-with-answerValueSet-autocomplete-searchfield.json'
           ).then((qr) => {
-            let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
+            const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(
               qr,
               formDef,
               fhirVersion
@@ -673,7 +673,7 @@ describe('FHIR answerValueSet', () => {
     // using the already loaded questionnaire to get the questionnaire response
     it('should export a correct QR again', () => {
       cy.window().then((win) => {
-        let qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+        const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
         expect(qr.item[0].linkId).to.equal('yesno1');
         expect(qr.item[0].answer[0]).to.eql({
           valueCoding: {

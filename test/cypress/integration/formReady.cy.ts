@@ -16,7 +16,7 @@ describe('onFormReady', ()=> {
    * @param filePath the relative path for the form definition under test/data.
    */
   function testFormLoad(filePath) {
-    let container = 'formContainer';
+    const container = 'formContainer';
     cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
       assert(formDef);
       // Do not use util.addFormToPage, which waits for the form to be visible.

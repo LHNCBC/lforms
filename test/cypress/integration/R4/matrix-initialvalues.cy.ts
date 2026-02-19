@@ -6,7 +6,7 @@ describe('Matrix Initial values on Radio buttons', () => {
 
   it('displays a radio matrix table with initial values displayed', () => {
     tp.openBaseTestPage();
-    let files = ['matrixLayout-initialvalue-choice-non-repeats.R4.json',
+    const files = ['matrixLayout-initialvalue-choice-non-repeats.R4.json',
       'matrixLayout-initialvalue-open-choice-non-repeats.R4.json'
     ]
     files.forEach((file) => {

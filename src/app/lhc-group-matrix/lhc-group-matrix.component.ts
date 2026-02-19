@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import deepEqual from "deep-equal";
@@ -10,7 +10,7 @@ import language from '../../../language-config.json';
     styleUrls: ['./lhc-group-matrix.component.css'],
     standalone: false
 })
-export class LhcGroupMatrixComponent {
+export class LhcGroupMatrixComponent implements OnChanges {
 
   @Input() item;
   // item.item[0]._autocompOptions
@@ -46,7 +46,7 @@ export class LhcGroupMatrixComponent {
    */
   updateCheckboxListValue(item): void {
 
-    let newValues = [];
+    const newValues = [];
     for (let i=0, iLen= item._checkboxModels.length; i<iLen; i++) {
       if (item._checkboxModels[i]) {
         newValues.push(item.answers[i])
@@ -132,7 +132,7 @@ export class LhcGroupMatrixComponent {
       // if saved/initial value is on the answer list
       else {
         for(let i=0; i < subItem.answers.length; i++ ) {
-          let answer = subItem.answers[i];
+          const answer = subItem.answers[i];
           if (this.commonUtils.areTwoAnswersSame(subItem.value, answer, subItem)) {
             subItem._selectedRadio = i;
             break;
@@ -156,7 +156,7 @@ export class LhcGroupMatrixComponent {
    * @returns boolean[]
    */
   _getCheckboxModels(initialValues, answers): boolean[] {
-    let checkboxModels = new Array(answers.length).fill(false);
+    const checkboxModels = new Array(answers.length).fill(false);
 
     for (let i=0, iLen=initialValues.length; i<iLen; i++) {
       for (let j=0, jLen=answers.length; j<jLen; j++) {
@@ -181,7 +181,7 @@ export class LhcGroupMatrixComponent {
     if (subItem.answers && Array.isArray(subItem.answers)) {
       // if there is an initial value or an existing value
       if (subItem.value && Array.isArray(subItem.value)) {
-        let checkboxModels = new Array(subItem.answers.length).fill(false);
+        const checkboxModels = new Array(subItem.answers.length).fill(false);
         for (let i=0, iLen=subItem.value.length; i<iLen; i++) {
           if (subItem.value[i]._notOnList) {
             subItem._answerOtherChecked = true;

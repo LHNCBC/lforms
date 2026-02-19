@@ -4,6 +4,10 @@ function commonConfig() {
     output: {
       path: __dirname,
     },
+    performance: {
+      maxAssetSize: 2 * 1024 * 1024,
+      maxEntrypointSize: 2 * 1024 * 1024
+    },
     cache: false,
     optimization: {
       minimizer: [
