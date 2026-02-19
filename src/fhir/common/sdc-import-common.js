@@ -1704,7 +1704,7 @@ function addCommonSDCImportFns(ns) {
     // use one coding instruction if there are multiple ones in Questionnaire.
     let helpOrLegal, legal, errors, messages;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-    let xhtmlFormat;
+    let xhtmlFormat, markdownFormat;
     if ( qItem.type === "display" && ci) {
       const itemControlCode = ci.valueCodeableConcept?.coding?.[0]?.code;
       if (itemControlCode === 'unit') {
@@ -1717,6 +1717,7 @@ function addCommonSDCImportFns(ns) {
         // only "rendering-xhtml" is supported. others are default to text
         if (qItem._text) {
           xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+          markdownFormat = xhtmlFormat || LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
           const renderingStyle = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
           if (renderingStyle) {
             if (isLegal) {
@@ -1727,22 +1728,24 @@ function addCommonSDCImportFns(ns) {
           }
         }
 
-        // there is a xhtml extension
-        if (xhtmlFormat) {
+        // there is a xhtml or markdown extension
+        const htmlString = xhtmlFormat ? xhtmlFormat.valueString :
+          markdownFormat ? md.render(markdownFormat.valueString) : null;
+        if (htmlString) {
           helpOrLegal = isLegal ? {
             legalFormat: "html",
-            legal: xhtmlFormat.valueString,
+            legal: htmlString,
             legalLinkId: qItem.linkId,
             legalPlain: qItem.text  // this always contains the legal in plain text
           } : {
             codingInstructionsFormat: "html",
-            codingInstructions: xhtmlFormat.valueString,
+            codingInstructions: htmlString,
             codingInstructionsLinkId: qItem.linkId,
             codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
           };
           // check if html string contains invalid html tags, when the html version needs to be displayed
           if (self._widgetOptions?.allowHTML) {
-            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions.allowExternalURL);
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(htmlString, self._widgetOptions.allowExternalURL);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               if (isLegal)
                 helpOrLegal.legalHasInvalidHtmlTag = true;

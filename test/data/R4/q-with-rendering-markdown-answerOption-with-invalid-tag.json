@@ -1,5 +1,5 @@
 {
-  "title": "Questionnaire with answerOptions that contain rendering-markdown extensions",
+  "title": "Questionnaire with answerOptions that contain rendering-markdown extensions, with invalid tags",
   "resourceType": "Questionnaire",
   "status": "draft",
   "item": [
