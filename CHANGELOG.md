@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [40.1.2] 2026-02-19
+### Fixed
+- Fixed a cypress test that depends on unreliable data.
+
 ## [40.1.1] 2026-02-11
 ### Fixed
 - Prevent adding duplicate unit options when a quantity initial value
