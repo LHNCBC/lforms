@@ -5,6 +5,9 @@ import CommonUtils from "../lforms/lhc-common-utils.js";
 import CONSTANTS from "./lhc-form-datatypes.js";
 import * as htmlparser2 from "htmlparser2";
 import parse from "style-to-object";
+import markdownit from 'markdown-it'
+const md = markdownit('commonmark')
+
 /**
  *  A default message source identifier (for when the messageSource parameter
  *  below is optional and not provided.
@@ -66,19 +69,20 @@ export const InternalUtil = {
   /**
    * Sets answer.textHTML from the rendering-xhtml extension.
    * @param answer an answer object in Lforms item.
-   * @param xhtmlFormat the "rendering-xhtml" extension from Questionnaire.
+   * @param xhtmlFormat the rendering-xhtml or rendering-markdown extension.
    * @param allowHTML widget option of whether to allow HTML in forms.
    * @param containedImages contained images info, see buildContainedImageMap() for details.
    * @param item an item from lforms form definition
    */
   setAnswerTextHTML: function(answer, xhtmlFormat, allowHTML, containedImages, item) {
-    answer.textHTML = xhtmlFormat.valueString;
+    answer.textHTML = xhtmlFormat.url === "http://hl7.org/fhir/StructureDefinition/rendering-markdown" ?
+      md.render(xhtmlFormat.valueString) : xhtmlFormat.valueString;
     if (allowHTML) {
       // process contained images
       if (containedImages &&
-        xhtmlFormat.valueString.match(/img/) &&
-        xhtmlFormat.valueString.match(/src/)) {
-        answer.textHTML = this._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
+        answer.textHTML.match(/img/) &&
+        answer.textHTML.match(/src/)) {
+        answer.textHTML = this._getHtmlStringWithContainedImages(containedImages, answer.textHTML) || answer.textHTML;
       }
       let invalidTagsAttributes = this.checkForInvalidHtmlTags(answer.textHTML);
       if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
