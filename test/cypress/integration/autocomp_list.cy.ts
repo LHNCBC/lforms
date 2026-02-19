@@ -88,7 +88,7 @@ describe('autocomp list', () => {
     cy.byId('/X-002/strengthAndForm/1/1').should('have.value', '');
   });
 
-  let testFiles = {'rxterms.R4.with-autofill-calexp.json': 'should autofill lists when there is just one answer, on the item that has a calculationExpression (to autofill) listed before an answerExpression',
+  const testFiles = {'rxterms.R4.with-autofill-calexp.json': 'should autofill lists when there is just one answer, on the item that has a calculationExpression (to autofill) listed before an answerExpression',
    'rxterms.R4.with-autofill-calexp2.json': 'should autofill lists when there is just one answer, on the item that has an answerExpressn listed before a calculationExpression (to autofill)'};
 
   Object.keys(testFiles).forEach(qFile=>{

@@ -4,7 +4,7 @@ import * as FHIRSupport from "../../../src/fhir/versions.js";
 const fhirVersions = Object.keys(FHIRSupport);
 
 // Testing that questionnaire-hidden extension works as expected.
-for (var i=0, len=fhirVersions.length; i<len; ++i) {
+for (let i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion + ': questionnaire-hidden extension', function () {
       it('Instructions field G0.d should be hidden', function() {

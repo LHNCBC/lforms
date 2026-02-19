@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, OnChanges, ElementRef} from '@angular/core';
+import {Component, Input, OnInit, OnChanges, ElementRef, AfterViewInit} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import {CommonUtilsService} from "../../lib/common-utils.service";
 import language from "../../../language-config.json";
@@ -9,7 +9,7 @@ import language from "../../../language-config.json";
     styleUrls: ['./lhc-item-time.component.css'],
     standalone: false
 })
-export class LhcItemTimeComponent implements OnChanges {
+export class LhcItemTimeComponent implements OnChanges, AfterViewInit {
 
   @Input() item: any;
   time: Date | null = null;
@@ -21,7 +21,7 @@ export class LhcItemTimeComponent implements OnChanges {
 
   ngOnChanges(): void {
     if (this.item.value) {
-      let tempDate:any = new Date('1970-01-01 ' + this.item.value)
+      const tempDate:any = new Date('1970-01-01 ' + this.item.value)
       if (!isNaN(tempDate)) {
         this.time = tempDate;
       }
@@ -34,9 +34,9 @@ export class LhcItemTimeComponent implements OnChanges {
    * Note: It is triggered twice. One when the "OK" button is clicked, the other when the input field loses focus.
    */
   onModelChange(value: Date): void {
-    let prevValue = this.item.value;
+    const prevValue = this.item.value;
     if (value) {
-      let strTime = value.toTimeString();
+      const strTime = value.toTimeString();
       if (strTime) {
         this.item.value = strTime.slice(0,8); // "hh:mm:ss"
         this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue);

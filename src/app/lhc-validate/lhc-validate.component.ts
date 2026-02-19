@@ -19,7 +19,7 @@ export class LhcValidateComponent implements OnChanges {
    */
   ngOnChanges(changes) {
     if (changes.value && !changes.value.firstChange) {
-      let lfData = this.lhcDataService.getLhcFormData();
+      const lfData = this.lhcDataService.getLhcFormData();
 
       // check validation on the item
       setTimeout(() => {

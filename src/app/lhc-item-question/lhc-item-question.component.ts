@@ -27,8 +27,8 @@ export class LhcItemQuestionComponent implements OnInit {
    */
   ngOnInit(): void {
     this.winService.windowWidth.subscribe(updatedWidth => {
-      let viewMode = this.winService.getViewMode();
-      let viewModeClass = this.lhcDataService.getItemViewModeClass(this.item, viewMode)
+      const viewMode = this.winService.getViewMode();
+      const viewModeClass = this.lhcDataService.getItemViewModeClass(this.item, viewMode)
       this.eleStyle = viewModeClass === "lhc-item-view-lg" ? {"width": updatedWidth/2 + "px"} : null;
     });  
   }
