@@ -56,7 +56,7 @@ export class LhcItemDatetimeComponent implements AfterViewInit {
    *       2) use [ngModel] like in other compoments does not work as expected.
    */
    onModelChange(value: Date): void {
-    let prevValue = this.item.value;
+    const prevValue = this.item.value;
     this.item.value = value;
     // Sometimes changing the time alone will see this.item.value has the latest value already.
     // which will make this.item.value and value having the same value.

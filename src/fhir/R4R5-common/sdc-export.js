@@ -423,6 +423,10 @@ var self = {
         }
         for (var i = 0, iLen = item.units.length; i < iLen; i++) {
           var unit = item.units[i];
+          // Skip units that were added from initial value during import
+          if (unit._fromInitialValue) {
+            continue;
+          }
           var fhirUnitExt = {
             url: this.fhirExtUrlUnitOption,
             valueCoding: this._createFhirUnitCoding(unit),

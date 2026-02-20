@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injector,  CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NgModule, Injector,  CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, DoBootstrap } from '@angular/core';
 import  { createCustomElement } from '@angular/elements';
 
 import { LForms } from './lforms';
@@ -113,7 +113,7 @@ registerLocaleData(en);
     ] })
 
 
-export class AppModule {
+export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {
 
     window['LForms'] = LForms;

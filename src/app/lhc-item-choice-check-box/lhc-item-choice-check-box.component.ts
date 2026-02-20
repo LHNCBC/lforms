@@ -35,18 +35,18 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
 
     if (this.item && this.item.value && Array.isArray(this.item.value) &&
         this.item.answers && Array.isArray(this.item.answers)) {
-      let iLen = this.item.answers.length;
+      const iLen = this.item.answers.length;
       this.checkboxModels = new Array(iLen);
 
       for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
-        let value = this.item.value[j];
+        const value = this.item.value[j];
         if (value._notOnList) {
           this.otherCheckboxModel = true;
           this.otherValue = value.text;
         }
         else {
           for (let i = 0; i < iLen; i++) {
-            let answer = this.item.answers[i];
+            const answer = this.item.answers[i];
             if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
               this.checkboxModels[i] = true;
             }

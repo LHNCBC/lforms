@@ -5,9 +5,9 @@ function testOneType(index, typeValue, inputId, otherEl) {
     cy.byId(otherEl).click();
     cy.byId(inputId).click();
     cy.byCss(".lhc-validation-popover").then(msgDiv=>{
-      let msgRect = msgDiv[index].getBoundingClientRect();
+      const msgRect = msgDiv[index].getBoundingClientRect();
       cy.byCss(".lhc-de-input-unit-content").then(contentDiv => {
-        let contentRect = contentDiv[index].getBoundingClientRect();
+        const contentRect = contentDiv[index].getBoundingClientRect();
         expect(msgRect.left).to.equal(contentRect.left);
         // 35px is the bottom position of the .lhc-validation-popover element, set in validation.css
         expect(msgRect.bottom).to.be.closeTo(contentRect.top, 0.01);

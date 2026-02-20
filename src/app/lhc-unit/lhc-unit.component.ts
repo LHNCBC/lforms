@@ -36,7 +36,7 @@ export class LhcUnitComponent implements OnChanges {
    * @param changes changes.prop contains the old and the new value
    */
   ngOnChanges(changes) {
-    let item = this.item;
+    const item = this.item;
     if (item) {
       this.hasUnitAutocomplete = !!item._unitAutocompOptions;
 
@@ -63,7 +63,7 @@ export class LhcUnitComponent implements OnChanges {
    *  Updates the model in response to a change event on the input (non-autocompleter) field.
    */
   updateModel(event) {
-    let offListUnit = event.target.value;
+    const offListUnit = event.target.value;
     this.item.unit = {name: offListUnit};
   }
 }

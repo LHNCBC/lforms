@@ -1,11 +1,11 @@
 import { TestPage } from "../support/lforms_testpage.po.js";
 
 describe('Unused repeating item/section control', function() {
-  let tp: any = new TestPage();
-  let ff: any = tp.USSGFHTVertical;
+  const tp: any = new TestPage();
+  const ff: any = tp.USSGFHTVertical;
 
   describe('on repeating items', function() {
-    let namePopover1 = '#add-content-/54126-8/54125-0/1/1',
+    const namePopover1 = '#add-content-/54126-8/54125-0/1/1',
         namePopover2 = '#add-content-/54126-8/54125-0/1/2';
 
     it('should not add a new one when there is an unused item', function () {
@@ -34,7 +34,7 @@ describe('Unused repeating item/section control', function() {
   });
 
   describe('on repeating sections', function() {
-    let diseasesPopover1 = '#add-content-/54126-8/54137-5/1/1',
+    const diseasesPopover1 = '#add-content-/54126-8/54137-5/1/1',
         diseasesPopover2 = '#add-content-/54126-8/54137-5/1/2';
 
     it('should not add a new one when all item in the section are empty', function () {
@@ -72,7 +72,7 @@ describe('Unused repeating item/section control', function() {
   });
 
   describe('repeating section within a repeating section', function() {
-    let familyPopover = '#add-content-/54114-4/1',
+    const familyPopover = '#add-content-/54114-4/1',
         diseHistPopover = '#add-content-/54114-4/54117-7/1/1';
 
     it("should not add new section if any previous one is empty", function() {
@@ -86,7 +86,7 @@ describe('Unused repeating item/section control', function() {
 
   describe('repeating section containing date typed questions', function() {
 
-    let dtField1 = '#X11/1/1 input',
+    const dtField1 = '#X11/1/1 input',
         dtField2 = '#X11/2/1 input',
         dtField3 = '#X11/3/1 input',
         dateTimeField2 = '#X12/2/1 input',

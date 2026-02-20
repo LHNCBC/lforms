@@ -94,9 +94,9 @@ describe('Questionnaire with readOnly and repeats items', () =>{
 
     cy.readFile('test/data/R4/qr-with-readonly-repeating-items.json').then((qr) => {
       cy.window().then((win) => {
-        let q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
-        let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
-        let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
+        const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
+        const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, "R4");
+        const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, "R4");
 
         win.LForms.Util.addFormToPage(mergedFormData, "formContainer");
 

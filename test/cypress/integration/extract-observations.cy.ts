@@ -8,7 +8,7 @@ describe('Form with extract observation extension', () => {
     util.addFormToPage('extractObs-test.R4.json', null, {fhirVersion: 'R4'});
     // check default values
     cy.window().then((win) => {
-      let formData = win.LForms.Util.getFormData();
+      const formData = win.LForms.Util.getFormData();
       expect(formData.items.length).to.equal(5);
       expect(formData.items[0].value).to.equal(true);
       expect(formData.items[3].value).to.equal(false);
@@ -16,7 +16,7 @@ describe('Form with extract observation extension', () => {
     })
     // check extracted
     cy.window().then((win) => {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
       expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(4);
@@ -50,7 +50,7 @@ describe('Form with extract observation extension', () => {
 
     cy.byId('choiceItem2/1').click().clear().type('{enter}');
     cy.window().then((win) => {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
       expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(3);
@@ -67,7 +67,7 @@ describe('Form with extract observation extension', () => {
 
     cy.byId('choiceItem1/1').click().clear().type('{enter}')
     cy.window().then((win) => {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4", null, {extract: true})
       expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);
@@ -86,7 +86,7 @@ describe('Form with extract observation extension', () => {
 
     cy.byId(answerId('blItem1/1', 'false')).click();
     cy.window().then((win)=> {
-      let bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
+      const bundle = win.LForms.Util.getFormFHIRData("QuestionnaireResponse","R4", null, {extract: true})
       expect(bundle.length).to.equal(2);
       expect(bundle[0].resourceType).to.equal("QuestionnaireResponse");
       expect(bundle[0].item.length).to.equal(2);

@@ -36,14 +36,17 @@ const fhirMock = {
           relativeURL = decodeURIComponent(relativeURL.url ? relativeURL.url : relativeURL);
           if (relativeURL.startsWith('ValueSet')) {
             // id
-            if (md = relativeURL.match(/ValueSet\/([^/]+)\/\$expand/)) {
-              let vsID = md[1];
+            md = relativeURL.match(/ValueSet\/([^/]+)\/\$expand/);
+            if (md) {
+              const vsID = md[1];
               rtnData = resources.ValueSet[vsID];
             }
             // url
-            else if (md = relativeURL.match(/ValueSet\/\$expand\?url=http\:\/\/hl7\.org\/fhir\/ValueSet\/(.+)&_format=json/)
-            ) {
-              rtnData = resources.ValueSet[md[1]]
+            else {
+              md = relativeURL.match(/ValueSet\/\$expand\?url=http\:\/\/hl7\.org\/fhir\/ValueSet\/(.+)&_format=json/);
+              if (md) {
+                rtnData = resources.ValueSet[md[1]];
+              }
             }
           }
         }
@@ -75,17 +78,17 @@ const fhirMock = {
         },
 
         request: function(relativeURL) {
-          let url = new URL(relativeURL, 'https://example.com');
-          let params = url.searchParams;
+          const url = new URL(relativeURL, 'https://example.com');
+          const params = url.searchParams;
 
-          var entry:any = {
+          let entry:any = {
             "resource": {
               "status": "final",
               "effectiveDateTime": "2016-06-29T19:14:57-04:00",
               "issued": "2016-06-29T19:14:57-04:00",
             }
           };
-          let entries = [];
+          const entries = [];
 
           switch(params.get('code')) {
             case 'http://loinc.org|29463-7':
@@ -159,7 +162,7 @@ const fhirMock = {
 
           return {
             then: function(callback) {
-              var data:any = {
+              const data:any = {
                 "resourceType": "Bundle",
                 "type": "searchset",
               };
@@ -182,9 +185,9 @@ const fhirMock = {
 };
 
 // Populate ValueSet expansions
-let vsID = 'language-preference-type';
+const vsID = 'language-preference-type';
 fhirMock.mockData.ValueSet[vsID] = require('../../../../test/data/R4/ValueSet/'+vsID+'.json');
-let vsURL = 'yesnodontknow';
+const vsURL = 'yesnodontknow';
 fhirMock.mockData.ValueSet[vsURL] = require('../../../../test/data/R4/ValueSet/'+vsURL+'.json');
 
 module.exports = fhirMock;

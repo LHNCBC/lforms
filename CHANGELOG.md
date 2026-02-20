@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [41.0.0] 2026-02-13
+## [41.0.0] 2026-02-20
 ### Updated
 - For a checkbox layout question with sub items, the sub items will
   be rendered for each selected checkbox option.
@@ -14,6 +14,14 @@ This project follows [Semantic Versioning](http://semver.org/).
   value will also be removed.
 - When exported to QuestionnaireResponse, each sub item will go under its
   associated answer, in the format of item.answer.item.
+
+## [40.1.1] 2026-02-19
+### Changed
+- Switched to ESLint, updated npm packages, and adjusted Cypress tests.
+### Fixed
+- Prevent adding duplicate unit options when a quantity initial value
+  unit matches an existing unitOption.
+- Fixed a cypress test that depended on unreliable data.
 
 ## [40.1.0] 2026-01-22
 ### Fixed

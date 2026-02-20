@@ -29,11 +29,11 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
     let filePath = fhirVersionInFile ? fhirVersionInFile +'/'+filePathOrFormDefData :
      'lforms/'+filePathOrFormDefData;
     cy.readFile('test/data/'+filePath).then((formDef) => {  // readFile will parse the JSON
-      this.addFormDataToPage(formDef, container, options);
+      addFormDataToPage(formDef, container, options);
     });
   }
   else if (typeof filePathOrFormDefData === "object") {
-    this.addFormDataToPage(filePathOrFormDefData, container, options);
+    addFormDataToPage(filePathOrFormDefData, container, options);
   }
 
   cy.get('#'+container).find('.lhc-form-title').should('be.visible');
@@ -48,7 +48,9 @@ export function addFormToPage(filePathOrFormDefData, container, options) {
  *  & prepoulate)
  */
 export function addFormDataToPage(formDefData, container, options) {
-  return cy.window().then((win) => {
+  return cy.window().should((win) => {
+    expect(win.LForms && win.LForms.Util, 'LForms.Util').to.exist;
+  }).then((win) => {
     win.document.getElementById(container).innerHTML = null;
     return new Cypress.Promise((resolve) => {
       win.LForms.Util.addFormToPage(formDefData, container, options).then(()=>resolve(), ()=>resolve());

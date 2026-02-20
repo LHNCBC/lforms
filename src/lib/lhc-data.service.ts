@@ -3,7 +3,7 @@ import { ScreenReaderLog } from './screen-reader-log';
 import CommonUtils from "./lforms/lhc-common-utils.js";
 import {InternalUtil} from "./lforms/internal-utils.js";
 import language from '../../language-config.json';
-declare var LForms: any;
+declare let LForms: any;
 // @Injectable({
 //   providedIn: 'root'
 // })
@@ -119,11 +119,11 @@ export class LhcDataService {
    * @returns {{}} CSS style object
    */
   getTableColumnStyle(col) {
-    var ret = {};
+    const ret = {};
     if (col.displayControl && Array.isArray(col.displayControl.colCSS)) {
-      var colCSS = col.displayControl.colCSS;
-      for (var i= 0, iLen= colCSS.length; i<iLen; i++) {
-        var css = colCSS[i];
+      const colCSS = col.displayControl.colCSS;
+      for (let i= 0, iLen= colCSS.length; i<iLen; i++) {
+        const css = colCSS[i];
         ret[ css.name ] = css.value;
       }
     }
@@ -137,10 +137,10 @@ export class LhcDataService {
    * @returns {{}} CSS style object
    */
   getItemStyle(item) {
-    var ret = {};
+    const ret = {};
     if (item.displayControl && Array.isArray(item.displayControl.css)) {
-      for (var i= 0, iLen= item.displayControl.css.length; i<iLen; i++) {
-        var css = item.displayControl.css[i];
+      for (let i= 0, iLen= item.displayControl.css.length; i<iLen; i++) {
+        const css = item.displayControl.css[i];
         ret[ css.name ] = css.value;
       }
     }
@@ -155,7 +155,7 @@ export class LhcDataService {
    * @returns {boolean}
    */
   hasOneRepeatingItem(item) {
-    var recCount = this.lhcFormData.getRepeatingItemCount(item);
+    const recCount = this.lhcFormData.getRepeatingItemCount(item);
     return recCount > 1 ? false : true;
   }
 
@@ -166,8 +166,8 @@ export class LhcDataService {
    * @returns {boolean}
    */
   hasOneRepeatingRow(item) {
-    var ret = false;
-    var tableInfo = this.lhcFormData._horizontalTableInfo[item._codePath + item._parentIdPath_];
+    let ret = false;
+    const tableInfo = this.lhcFormData._horizontalTableInfo[item._codePath + item._parentIdPath_];
     if (tableInfo && tableInfo.tableRows && tableInfo.tableRows.length === 1) {
       ret = true;
     }
@@ -213,9 +213,9 @@ export class LhcDataService {
    * @returns {string}
    */
   getCodingInstructionsDisplayType(item) {
-    var ret ='';
+    let ret ='';
     if (item.codingInstructions && item.codingInstructions.length > 0) {
-      var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
+      const position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
       if (this.lhcFormData.templateOptions.allowHTML && item.codingInstructionsFormat === "html") {
         var format = "html";  // use item.codingInstructions (safe html)
         if (item.codingInstructionsHasInvalidHtmlTag) {
@@ -242,9 +242,9 @@ export class LhcDataService {
    * @returns {string}
    */
   getLegalDisplayType(item) {
-    var ret ='';
+    let ret ='';
     if (item.legal && item.legal.length > 0) {
-      var position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
+      const position = this.lhcFormData.templateOptions.showCodingInstruction ? "inline" : "popover";
       if (this.lhcFormData.templateOptions.allowHTML && item.legalFormat === "html") {
         var format = "html";  // use item.legal (safe html)
         if (item.legalHasInvalidHtmlTag) {
@@ -312,9 +312,9 @@ export class LhcDataService {
    * @returns {string}
    */
   getRepeatingSN(item) {
-    var ret = '';
+    let ret = '';
     if (item._questionRepeatable) {
-      var sn = item._idPath.slice(1);
+      const sn = item._idPath.slice(1);
       ret = sn.replace(/\//g, '.');
     }
     return ret;
@@ -340,7 +340,7 @@ export class LhcDataService {
    * @returns {string}
    */
   getSiblingStatus(item) {
-    var status = "";
+    let status = "";
     if (item._lastSibling)
       status += 'lhc-last-item';
     if (item._firstSibling)
@@ -412,7 +412,7 @@ export class LhcDataService {
    */
   getRowClass(item) {
     //var eleClass = 'level' + item._displayLevel;
-    var eleClass = ' lhc-datatype-' + item.dataType;
+    let eleClass = ' lhc-datatype-' + item.dataType;
     if (item._answerRequired) {
       eleClass += ' lf-answer-required';
     }
@@ -527,7 +527,7 @@ export class LhcDataService {
    * @param append an optional flag indicate if the new item is added to the end of the repeating group
    */
   addOneRepeatingItem(item, append) {
-    var anyEmpty = false;
+    let anyEmpty = false;
     if (this.lhcFormData && !this.lhcFormData.templateOptions.allowMultipleEmptyRepeatingItems) {
       anyEmpty = this.lhcFormData.areAnyRepeatingItemsEmpty(item);
       if (anyEmpty && item._showUnusedItemWarning) {
@@ -536,7 +536,7 @@ export class LhcDataService {
       }
     }
     if (!anyEmpty) {
-      var newItem = append ? this.lhcFormData.appendRepeatingItems(item) : this.lhcFormData.addRepeatingItems(item);
+      const newItem = append ? this.lhcFormData.appendRepeatingItems(item) : this.lhcFormData.addRepeatingItems(item);
       this.sendActionsToScreenReader();
     }
   }
@@ -547,9 +547,9 @@ export class LhcDataService {
    */
   removeOneRepeatingItem(item) {
 
-    var nextItem = this.lhcFormData.getNextRepeatingItem(item);
+    const nextItem = this.lhcFormData.getNextRepeatingItem(item);
 
-    var btnId = '';
+    let btnId = '';
     // move the focus to the next '-' button if there's one displayed
     // ('-' buttons are shown only when there are two repeating items shown).
     if (nextItem) {
@@ -562,7 +562,7 @@ export class LhcDataService {
     }
     // otherwise move the focus to the add button of the previous item
     else {
-      var prevItem = this.lhcFormData.getPrevRepeatingItem(item);
+      const prevItem = this.lhcFormData.getPrevRepeatingItem(item);
       if (prevItem) {
         btnId = 'add-' + prevItem._elementId;
       }
@@ -575,7 +575,7 @@ export class LhcDataService {
 
     // set the focus
     setTimeout(function() {
-      var btn = document.getElementById(btnId);
+      const btn = document.getElementById(btnId);
       if (btn) btn.focus();
     }, 1);
   }

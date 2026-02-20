@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, ViewEncapsulation, EventEmitter, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autocomplete-lhc/docs.html
 import copy from "fast-copy";
 import { LhcDataService} from '../../../lib/lhc-data.service';
@@ -11,7 +11,7 @@ import CommonUtils from "../../../lib/lforms/lhc-common-utils.js";
     encapsulation: ViewEncapsulation.Emulated,
     standalone: false
 })
-export class LhcAutocompleteComponent implements OnChanges {
+export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   // autocomplete-lhc options:
   //   .elementId
@@ -60,7 +60,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       }
       // a new answer list
       else if (changes.options) {
-        let {keep, dataModelChanged}  = this.keepDataModel(changes);
+        const {keep, dataModelChanged}  = this.keepDataModel(changes);
         this.cleanupAutocomplete(keep);
         this.setupAutocomplete();
         dataChanged = dataModelChanged || !keep;
@@ -102,15 +102,15 @@ export class LhcAutocompleteComponent implements OnChanges {
     // model.
 
     // let isFormReady = changes.isFormReady?.previousValue === false && changes.isFormReady?.currentValue === true;
-    let isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
+    const isFormReady = changes.isFormReady?.previousValue !== undefined ? changes.isFormReady.previousValue :
       this.isFormReady ;
     // if we are in the situation described above when form first loads.
 
     if (isFormReady) {
       // The form is ready.  Check whether the list has changed.
-      var prevOpts = changes?.options?.previousValue?.acOptions || {};
-      var currentOpts = changes?.options?.currentValue?.acOptions || {};
-      var prevConfig, currentConfig;
+      const prevOpts = changes?.options?.previousValue?.acOptions || {};
+      const currentOpts = changes?.options?.currentValue?.acOptions || {};
+      let prevConfig, currentConfig;
       if (prevOpts.listItems !== undefined || currentOpts.listItems !== undefined) {
         // First case: prefetched lists, defined with 'listItems'
         prevConfig = prevOpts.listItems;
@@ -166,9 +166,9 @@ export class LhcAutocompleteComponent implements OnChanges {
       if (!itemValue)
         this.acInstance.setFieldVal('', false);
       else {
-        let dispVal = this.updateAutocompSelectionModel(itemValue);
+        const dispVal = this.updateAutocompSelectionModel(itemValue);
         if (typeof dispVal === 'string') {
-          let fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
+          const fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
           this.acInstance.setFieldVal(fieldVal, false);
         }
         else {// handle the case of an empty object as a model
@@ -179,8 +179,8 @@ export class LhcAutocompleteComponent implements OnChanges {
     else {  // multi-select (here handling calculated values)
       this.acInstance.clearStoredSelection();
       if (Array.isArray(itemValue)) {
-        for (let v of itemValue) {
-          let dispVal = this.updateAutocompSelectionModel(v);
+        for (const v of itemValue) {
+          const dispVal = this.updateAutocompSelectionModel(v);
           this.acInstance.addToSelectedArea(dispVal);
         }
       }
@@ -244,7 +244,7 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @return the display text determined for the answer.
    */
   updateAutocompSelectionModel(answer) {
-    let dispVal = this.getDisplayValue(answer);
+    const dispVal = this.getDisplayValue(answer);
     this.acInstance.storeSelectedItem(dispVal, answer.code);
     return dispVal;
   }
@@ -257,7 +257,7 @@ export class LhcAutocompleteComponent implements OnChanges {
    */
   ngAfterViewInit() {
     // initial setup with default/initial value or values from QR
-    let oldDataModel = CommonUtils.deepCopy(this.dataModel);
+    const oldDataModel = CommonUtils.deepCopy(this.dataModel);
     this.setupAutocomplete();
     if (!CommonUtils.deepEqual(oldDataModel, this.dataModel)) {
       this.dataModelChange.emit(this.dataModel);
@@ -323,7 +323,7 @@ export class LhcAutocompleteComponent implements OnChanges {
 
     // if there are options for the autocompleter
     if (this.options && this.options.acOptions) {
-      let acOptions = this.options.acOptions;
+      const acOptions = this.options.acOptions;
       if (acOptions.maxSelect && (acOptions.maxSelect === "*" || parseInt(acOptions.maxSelect) > 1)) {
         this.multipleSelections = true;
       }
@@ -338,7 +338,7 @@ export class LhcAutocompleteComponent implements OnChanges {
       // prefetch autocomplete
       else { // whether or not there are currently list items
         this.acType = 'prefetch';
-        let listItemsText = [];
+        const listItemsText = [];
         // get a list of display text, code and create a answer text to answer item mapping.
         // (autocomplete-lhc requires answer text to be unique)
         acOptions.listItems.forEach((item, index) => {
@@ -358,9 +358,9 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
       }
 
-      let defaultItem =  acOptions.defaultValue
+      const defaultItem =  acOptions.defaultValue
       // set up initial values if there is value
-      let savedValue = this.dataModel || defaultItem;  //boolean is not a valid data type for answerOption
+      const savedValue = this.dataModel || defaultItem;  //boolean is not a valid data type for answerOption
       this.setItemInitValue(savedValue)
 
       // add event handler
@@ -377,9 +377,9 @@ export class LhcAutocompleteComponent implements OnChanges {
   setItemInitValue(itemValue) {
     if (itemValue) {
       if (this.multipleSelections && Array.isArray(itemValue)) {
-        for (var i=0, len=itemValue.length; i<len; ++i) {
-          let v = itemValue[i];
-          let dispVal = this.getDisplayValue(v);
+        for (let i=0, len=itemValue.length; i<len; ++i) {
+          const v = itemValue[i];
+          const dispVal = this.getDisplayValue(v);
           this.acInstance.storeSelectedItem(dispVal, v.code);
           this.acInstance.addToSelectedArea(dispVal);
         }
@@ -389,10 +389,10 @@ export class LhcAutocompleteComponent implements OnChanges {
         this.selectedItems = itemValue;
       }
       else {
-        let dispVal = this.getDisplayValue(itemValue);
+        const dispVal = this.getDisplayValue(itemValue);
         if (typeof dispVal === 'string') {
           this.acInstance.storeSelectedItem(dispVal, itemValue.code);
-          let fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
+          const fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
           this.acInstance.setFieldVal(fieldVal, false);
         }
         else {// handle the case of an empty object as a model
@@ -411,7 +411,7 @@ export class LhcAutocompleteComponent implements OnChanges {
   onSelectionHandler(event) {
     let changed = false;
     if (this.acType === 'prefetch') {
-      let selectedTexts = this.acInstance.getSelectedItems()
+      const selectedTexts = this.acInstance.getSelectedItems()
       changed = this.setItemValueForPrefetchAC(selectedTexts);
     }
     else if (this.acType === 'search') {
@@ -433,14 +433,14 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @return {boolean} whether item's value has changed
    */
   setItemValueForPrefetchAC(selectedTexts: string[]): boolean {
-    let currentValue = copy(this.dataModel);
+    const currentValue = copy(this.dataModel);
     if (selectedTexts) {
       if (selectedTexts.length === 0) {
         this.dataModel = null;
       }
       else {
-        let selectedAnswerItems = selectedTexts.map(text => {
-          let answerItem = this.prefetchTextToItem[text];
+        const selectedAnswerItems = selectedTexts.map(text => {
+          const answerItem = this.prefetchTextToItem[text];
           if (answerItem) {
             return answerItem;
           }
@@ -483,9 +483,9 @@ export class LhcAutocompleteComponent implements OnChanges {
    */
 
   getSearchItemModelData(itemText, onList) {
-    var rtn =null;
+    let rtn =null;
     if (itemText !== '') {
-      let item = this.acInstance.getItemData(itemText);
+      const item = this.acInstance.getItemData(itemText);
       if (onList) {
         rtn = item;
       }
@@ -512,9 +512,9 @@ export class LhcAutocompleteComponent implements OnChanges {
    * @return {boolean} whether the item's value has changed
    */
   setItemValueForSearchAC(eventData):boolean {
-    var itemText = eventData.final_val;
-    var onList = eventData.on_list;
-    let currentValue = copy(this.dataModel);
+    const itemText = eventData.final_val;
+    const onList = eventData.on_list;
+    const currentValue = copy(this.dataModel);
     if (this.acType === 'search') {
       // single selection
       if (!this.multipleSelections) {
@@ -529,7 +529,7 @@ export class LhcAutocompleteComponent implements OnChanges {
         }
         // new item, in the search result
         else {
-          let newItem = this.getSearchItemModelData(itemText, onList);
+          const newItem = this.getSearchItemModelData(itemText, onList);
           if (newItem) {
             // add the new item
             // (create a new array so that change detection is triggered)

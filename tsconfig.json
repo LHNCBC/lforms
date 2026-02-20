@@ -10,9 +10,9 @@
     "module": "es2015",
     "moduleResolution": "bundler",
     "importHelpers": true,
-    "target": "es2017",
+    "target": "es2022",
     "lib": [
-      "es2017",
+      "es2022",
       "dom"
     ],
     "resolveJsonModule": true

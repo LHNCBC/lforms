@@ -2,10 +2,6 @@
   "status": "draft",
   "resourceType": "Questionnaire",
   "title": "A list of Observations - for testing only",
-  "extension": [{
-    "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-preferredTerminologyServer",
-    "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
-  }],
   "item": [
     {
       "type": "group",
@@ -34,14 +30,6 @@
         {
           "url" : "http://hl7.org/fhir/StructureDefinition/variable",
           "valueExpression" : {
-            "name": "firstObx",
-            "language": "text/fhirpath",
-            "expression": "%obxFromUrl.entry.first()"
-          }
-        },
-        {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
             "name": "obx",
             "language": "text/fhirpath",
             "expression": "%obxFromUrl.entry"
@@ -55,8 +43,6 @@
             "expression": "%obxFromUrl.resourceType"
           }
         }
-        
-
       ],
       "required": false,
       "repeats": false,
@@ -66,7 +52,7 @@
         {
           "type": "string",
           "repeats": true,
-          "extension": [            
+          "extension": [
             {
               "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
               "valueExpression": {
@@ -81,25 +67,25 @@
           "linkId": "/code"
         },
         {
-          "type": "decimal",
+          "type": "string",
           "repeats": true,
-          "extension": [            
+          "extension": [
             {
               "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
               "valueExpression": {
                 "description": "Testing",
                 "language" : "text/fhirpath",
-                "expression": "%obx.resource.valueQuantity.value"
+                "expression": "%obx.resource.code.coding.display"
               }
             }
           ],
           "required": false,
-          "text": "Value",
-          "linkId": "/value"
+          "text": "Display",
+          "linkId": "/display"
         },
         {
           "type": "string",
-          "extension": [            
+          "extension": [
             {
               "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
               "valueExpression": {
