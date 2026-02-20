@@ -27,11 +27,11 @@ export class CommonUtilsService {
   str2num(value, dataType) {
     let newValue: number=null;
     if (dataType === "integer") {
-      let intValue = parseInt(value)
+      const intValue = parseInt(value)
       newValue = isNaN(intValue) ? null : intValue;
     }
     else if (dataType === "decimal") {
-      let floatValue = parseFloat(value);
+      const floatValue = parseFloat(value);
       newValue = isNaN(floatValue) ? null : floatValue;
     }
 

@@ -310,15 +310,16 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._removeRepeatingItems = function(source) {
-
     if (source.items && Array.isArray(source.items)) {
-      for (var i= source.items.length-1; i>=0; i--) {
-        // if it is a repeating item, whose _id is not 1
-        if (source.items[i]._id > 1) {
-          source.items.splice(i,1);
-        }
-        else {
+      let repeatingItemLinkId = null;
+      for (var i = source.items.length - 1; i >= 0; i--) {
+        // If the precious item is a repeating item and this item's linkdId is the same, remove it.
+        if (repeatingItemLinkId && source.items[i].linkId === repeatingItemLinkId) {
+          source.items.splice(i, 1);
+        } else {
           this._removeRepeatingItems(source.items[i]);
+          // If this is a repeating item, set repeatingItemLinkId for comparing with the next item.
+          repeatingItemLinkId = source.items[i]._questionRepeatable === true ? source.items[i].linkId : null;
         }
       }
     }

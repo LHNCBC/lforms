@@ -54,9 +54,13 @@ function addR5ExportFns(ns) {
 
     var dataType = this._getAssumedDataTypeForExport(item);
 
-    // item.defaultAnswer could be an array of multiple default values or a single value
-    var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
-      item.defaultAnswer : [item.defaultAnswer];
+    // For repeating questions, use item.defaultAnswers which stores the original initial values array.
+    var defaultAnswers = (this._questionRepeats(item) && item.defaultAnswers) ?
+      item.defaultAnswers :
+      // item.defaultAnswer could be an array of multiple default values or a single value
+      (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+        item.defaultAnswer :
+        [item.defaultAnswer];
 
     var valueKey = this._getValueKeyByDataType("value", item);
     var answer = null;
@@ -104,7 +108,26 @@ function addR5ExportFns(ns) {
       // for Quantity,
       else if (dataType === 'QTY') {  // SimpleQuantity (no comparators)
         answer = {};
-        answer[valueKey] = this._makeQuantity(defaultAnswer, item.units);
+        // defaultAnswer could be a Quantity object (from import) or just a number
+        if (defaultAnswer && typeof defaultAnswer === 'object' && defaultAnswer._type === 'Quantity') {
+          // Use unit from the default answer itself, not from item.units
+          var qty = {};
+          if (defaultAnswer.value !== undefined && defaultAnswer.value !== null) {
+            qty.value = defaultAnswer.value;
+          }
+          if (defaultAnswer.name) {
+            qty.unit = defaultAnswer.name;
+          }
+          if (defaultAnswer.code) {
+            qty.code = defaultAnswer.code;
+          }
+          if (defaultAnswer.system) {
+            qty.system = defaultAnswer.system;
+          }
+          answer[valueKey] = qty;
+        } else {
+          answer[valueKey] = this._makeQuantity(defaultAnswer, item.units);
+        }
         initialValues.push(answer);
       }
       // answerOption is date, time, integer or string

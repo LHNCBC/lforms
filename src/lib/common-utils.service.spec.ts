@@ -15,7 +15,7 @@ describe('CommonUtilsService', () => {
   });
 
   it('should be able to compare two answers', () => {
-    let completeAnswerWithSystem =  {
+    const completeAnswerWithSystem =  {
       "code": "c1",
       "text": "Answer X",
       "_displayText": "Answer X",
@@ -53,7 +53,7 @@ describe('CommonUtilsService', () => {
     };
 
 
-    let itemWithAnswerCodeSystem = {"answerCodeSystem": "loinc"};
+    const itemWithAnswerCodeSystem = {"answerCodeSystem": "loinc"};
 
     // a code
     expect(service.areTwoAnswersSame(a, completeAnswerWithSystem, {})).toBeFalsy();

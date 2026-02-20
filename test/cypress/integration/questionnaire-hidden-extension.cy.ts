@@ -75,11 +75,11 @@ describe('"questionnaire-hidden" extension Test', () => {
 
     cy.window().then((win) => {
       cy.readFile('test/data/R4/hidden-item-questionnaire.R4.json').then((q) => {
-        let fhirVersion = "R4";
-        let formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+        const fhirVersion = "R4";
+        const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
 
         cy.readFile('test/data/R4/hidden-item-questionnaire-response.R4.json').then((qr) => {
-          let mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
+          const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
           util.addFormToPage(mergedFormData, null, {fhirVersion});
 
           // 4 items visible

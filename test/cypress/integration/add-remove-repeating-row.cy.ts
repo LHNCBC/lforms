@@ -1,5 +1,7 @@
 import { TestPage } from "../support/lforms_testpage.po.js";
 import {TestUtil} from "../support/testUtilFacade";
+import {AddFormToPageTestPage} from "../support/addFormToPageTest.po";
+import * as util from "../support/util";
 
 describe('on repeating items', function() {
   const tp: any = new TestPage();
@@ -145,6 +147,52 @@ describe('repeating group with tooltip to show on empty items', () => {
     cy.byId(addButton).click();
     cy.byId(allergy3).should('be.visible');
     cy.byId(addTooltip).should('not.exist');
+  });
+});
+
+describe('multiple initial values on repeating question', function() {
+  const po = new AddFormToPageTestPage();
+  it('should render multiple questions, each with a single initial value - R4', function() {
+    po.openPage();
+    util.addFormToPage('q-with-multiple-initial-values-and-child-items.json', null, {fhirVersion: 'R4'});
+    // Should render two questions, each with a single default answer.
+    cy.byId('parent-decimal/1').should('have.value', '10.5');
+    cy.byId('parent-decimal/2').should('have.value', '2');
+  });
+
+  it('should render multiple questions, each with a single initial value - R5', function() {
+    po.openPage();
+    util.addFormToPage('q-with-multiple-initial-values-on-repeating-question.json', null, {fhirVersion: 'R5'});
+    // Should render two questions, each with a single default answer.
+    cy.byId('child-decimal/1/1').should('have.value', '10.5');
+    cy.byId('child-decimal/1/2').should('have.value', '2');
+    // Adding a repeating question should not affect the initial values on the exported Questionnaire.
+    cy.byId('add-child-decimal/1/2').click();
+    cy.byId('child-decimal/1/3').type('888');
+    cy.window().then((win) => {
+      const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
+      expect(q.item[0].item[0].initial).to.deep.equal([
+        {
+          "valueDecimal": 10.5
+        },
+        {
+          "valueDecimal": 2
+        }
+      ]);
+    });
+    // Deleting the first repeating question should not affect the initial values on the exported Questionnaire.
+    cy.byId('del-child-decimal/1/1').click();
+    cy.window().then((win) => {
+      const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
+      expect(q.item[0].item[0].initial).to.deep.equal([
+        {
+          "valueDecimal": 10.5
+        },
+        {
+          "valueDecimal": 2
+        }
+      ]);
+    });
   });
 });
 

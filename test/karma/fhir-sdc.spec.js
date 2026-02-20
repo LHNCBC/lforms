@@ -617,6 +617,35 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
               });
             });
+
+            it('should preserve multiple initial values on repeating question and generate QR correctly', function () {
+              $.get('test/data/R5/q-with-multiple-initial-values-on-repeating-question.json', function(json) {
+                // Internal format should contain two repeating questions for two initial values.
+                const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, "R5");;
+                assert.equal(lfData.items[0].items.length, 2);
+                assert.equal(lfData.items[0].items[0].linkId, 'child-decimal');
+                assert.equal(lfData.items[0].items[0].defaultAnswer, 10.5);
+                assert.equal(lfData.items[0].items[1].linkId, 'child-decimal');
+                assert.equal(lfData.items[0].items[1].defaultAnswer, 2);
+                // export to Q
+                const qData = LForms.Util._convertLFormsToFHIRData('Questionnaire', 'R5', lfData);
+                assert.deepEqual(qData.item[0].item, json.item[0].item);
+                // export to QR
+                const qrData = LForms.Util._convertLFormsToFHIRData('QuestionnaireResponse', 'R5', lfData)
+                assert.deepEqual(qrData.item[0].answer[0].item[0], {
+                  "linkId": "child-decimal",
+                  "text": "Child decimal with initial",
+                  "answer": [
+                    {
+                      "valueDecimal": 10.5
+                    },
+                    {
+                      "valueDecimal": 2
+                    }
+                  ]
+                });
+              });
+            });
           }
 
           if (fhirVersion === 'R4') {
@@ -723,6 +752,53 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
                 assert.ok(qData.item[0].item[0].extension[0]);
                 assert.deepEqual(qData.item[0].item[0].extension[0], json.item[0].item[0].extension[0]);
+              });
+            });
+
+            it('should preserve multiple initial values on repeating question and generate QR correctly', function () {
+              $.get('test/data/R4/q-with-multiple-initial-values-and-child-items.json', function(json) {
+                // Internal format should contain two repeating questions for two initial values.
+                const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, "R4");
+                assert.equal(lfData.items.length, 2);
+                assert.equal(lfData.items[0].linkId, 'parent-decimal');
+                assert.equal(lfData.items[0].defaultAnswer, 10.5);
+                assert.equal(lfData.items[1].linkId, 'parent-decimal');
+                assert.equal(lfData.items[1].defaultAnswer, 2);
+                // export to Q
+                const qData = LForms.Util._convertLFormsToFHIRData('Questionnaire', 'R4', lfData);
+                assert.deepEqual(qData.item, json.item);
+                // export to QR
+                const qrData = LForms.Util._convertLFormsToFHIRData('QuestionnaireResponse', 'R4', lfData);
+                assert.deepEqual(qrData.item[0].answer, [
+                  {
+                    "valueDecimal": 10.5,
+                    "item": [
+                      {
+                        "answer": [
+                          {
+                            "valueString": "child value"
+                          }
+                        ],
+                        "linkId": "child-string",
+                        "text": "Child string with initial"
+                      }
+                    ]
+                  },
+                  {
+                    "valueDecimal": 2,
+                    "item": [
+                      {
+                        "answer": [
+                          {
+                            "valueString": "child value"
+                          }
+                        ],
+                        "linkId": "child-string",
+                        "text": "Child string with initial"
+                      }
+                    ]
+                  }
+                ]);
               });
             });
           }
@@ -1568,6 +1644,127 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.equal(convertedLfData.items[0].units[i].system, lforms.items[0].units[i].system);
               }
               assert.isOk(convertedLfData.items[0].units[0].default);
+            });
+
+            function findItemByCode(items, code) {
+              if (!items) {
+                return null;
+              }
+              for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item.questionCode === code) {
+                  return item;
+                }
+                var nested = findItemByCode(item.items, code);
+                if (nested) {
+                  return nested;
+                }
+              }
+              return null;
+            }
+
+            it('should not add initial quantity unit to unitOption list', function(done) {
+              // R4B uses R4 test data
+              var dataVersion = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+
+              $.get('test/data/' + dataVersion + '/q-with-unit-in-quantity-and-units.json', function(json) {
+                var formData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                var respRateItem = findItemByCode(formData.items, '9279-1');
+
+                assert.isOk(respRateItem);
+                assert.equal(respRateItem.units.length, 2);
+                assert.isOk(respRateItem.units[0].default);
+
+                var defaultUnit = respRateItem.units.find(function(unit) {
+                  return unit.default;
+                });
+                assert.equal(defaultUnit.code, '{breaths}/min');
+                assert.equal(defaultUnit.system, 'http://unitsofmeasure.org');
+                done();
+              });
+            });
+
+            it('should add initial quantity unit when not in unitOption list', function(done) {
+              // R4B uses R4 test data
+              var dataVersion = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+
+              $.get('test/data/' + dataVersion + '/q-with-unit-in-quantity-and-units.json', function(json) {
+                var formData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                var heightItem = findItemByCode(formData.items, '8302-2');
+
+                assert.isOk(heightItem);
+                assert.equal(heightItem.units.length, 3);
+
+                var defaultUnit = heightItem.units.find(function(unit) {
+                  return unit.default;
+                });
+                assert.equal(defaultUnit.code, 'm');
+                assert.equal(defaultUnit.system, 'http://unitsofmeasure.org');
+                done();
+              });
+            });
+
+            it('should not export initial quantity unit as unitOption when it was not in original list', function(done) {
+              // R4B uses R4 test data
+              var dataVersion = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+
+              $.get('test/data/' + dataVersion + '/q-with-unit-in-quantity-and-units.json', function(json) {
+                // Import the questionnaire
+                var formData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                // Export it back to FHIR Questionnaire
+                var exportedQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, formData);
+
+                // Find the "Body height" item (code 8302-2)
+                // Original has unitOptions: cm, mm but initial value has unit "m"
+                var heightItem = exportedQ.item.find(function(item) {
+                  return item.linkId === '/body-height';
+                });
+                assert.isOk(heightItem);
+
+                // Get all unitOption extensions
+                var unitOptions = LForms.Util.findObjectInArray(
+                  heightItem.extension, 'url',
+                  'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption', 0, true
+                );
+
+                // Should only have 2 unit options (cm and mm), not 3 (should not include "m")
+                assert.equal(unitOptions.length, 2);
+
+                var unitCodes = unitOptions.map(function(opt) { return opt.valueCoding.code; });
+                assert.include(unitCodes, 'cm');
+                assert.include(unitCodes, 'mm');
+                assert.notInclude(unitCodes, 'm');
+
+                // Verify the initial value is still present with the "m" unit
+                if (fhirVersion === 'STU3') {
+                  assert.isOk(heightItem.initialQuantity);
+                  assert.equal(heightItem.initialQuantity.value, 1.8);
+                  assert.equal(heightItem.initialQuantity.code, 'm');
+                } else {
+                  assert.isOk(heightItem.initial);
+                  assert.equal(heightItem.initial.length, 1);
+                  assert.equal(heightItem.initial[0].valueQuantity.value, 1.8);
+                  assert.equal(heightItem.initial[0].valueQuantity.code, 'm');
+                }
+
+                // Also check that "Resp rate" item preserves its unitOptions correctly
+                var respRateItem = exportedQ.item.find(function(item) {
+                  return item.linkId === '/resp-rate';
+                });
+                assert.isOk(respRateItem);
+
+                var respUnitOptions = LForms.Util.findObjectInArray(
+                  respRateItem.extension, 'url',
+                  'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption', 0, true
+                );
+                assert.equal(respUnitOptions.length, 2);
+
+                var respUnitCodes = respUnitOptions.map(function(opt) { return opt.valueCoding.code; });
+                assert.include(respUnitCodes, '{breaths}/min');
+                assert.include(respUnitCodes, '{counts}/min');
+
+                done();
+              });
             });
 
             it('should convert default unit to initial quantity unit', function () {

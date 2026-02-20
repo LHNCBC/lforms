@@ -214,6 +214,19 @@ function addCommonSDCImportFns(ns) {
           }
           // no instructions on the questionnaire level
           target.items.push(item);
+          // For a repeating question with multiple initial values, we
+          // have set defaultAnswer to an array in _processFHIRValues().
+          // Here we create additional repeating items as needed
+          // and assign a single default answer to each item.
+          if (ns._questionRepeats(item) && item.defaultAnswers) {
+            const total = item.defaultAnswers.length;
+            const defaultAnswersCopy = LForms.Util.deepCopy(item.defaultAnswers);
+            self._mergeQR._addRepeatingItems(target, item.linkId, total);
+            for (let j = 0; j < total; j++) {
+              const itemToUpdateDefaultAnswer = target.items[target.items.length - 1 - j];
+              itemToUpdateDefaultAnswer.defaultAnswer = defaultAnswersCopy[total - 1 - j];
+            }
+          }
         }
       }
       target.fhirVersion = self.fhirVersion;
@@ -636,7 +649,13 @@ function addCommonSDCImportFns(ns) {
     let [answers, messages] = this._convertFHIRValues(lfItem, fhirVals, setDefault);
     let val = LForms.Util._hasMultipleAnswers(lfItem) ? answers : answers[0];
     if (setDefault) {
-      lfItem.defaultAnswer = val;
+      if (ns._questionRepeats(lfItem) && answers.length > 1) {
+        // lfItem.defaultAnswers holds the original initial values array.
+        // lfItem.defaultAnswer will be set on each repeating item, after they are created later.
+        lfItem.defaultAnswers = answers;
+      } else {
+        lfItem.defaultAnswer = val;
+      }
       LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, 'default answers');
     }
     else {
@@ -797,17 +816,26 @@ function addCommonSDCImportFns(ns) {
 
     if (qItem.type === 'quantity') {
       let initialQ = this.getFirstInitialQuantity(qItem);
-      if (initialQ && initialQ.unit) {
-        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+      if (initialQ && (initialQ.unit || initialQ.code)) {
+        if (initialQ.code) {
+          lformsDefaultUnit = lformsUnits.find(function(unit) {
+            return unit.code === initialQ.code &&
+              (!initialQ.system || unit.system === initialQ.system);
+          });
+        }
+        if (!lformsDefaultUnit && initialQ.unit) {
+          lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+        }
         if(lformsDefaultUnit) {
           lformsDefaultUnit.default = true;
         }
         else {
           lformsDefaultUnit = {
-            name: initialQ.unit,
+            name: initialQ.unit || initialQ.code,
             code: initialQ.code,
             system: initialQ.system,
-            default: true
+            default: true,
+            _fromInitialValue: true  // Mark as added from initial value, not from unitOption
           };
           lformsUnits.push(lformsDefaultUnit);
         }
@@ -1782,6 +1810,19 @@ function addCommonSDCImportFns(ns) {
             delete item._hasModifierExtension;
           }
           targetItem.items.push(item);
+          // For a repeating question with multiple initial values, we
+          // have set defaultAnswer to an array in _processFHIRValues().
+          // Here we create additional repeating items as needed
+          // and assign a single default answer to each item.
+          if (ns._questionRepeats(item) && item.defaultAnswers) {
+            const total = item.defaultAnswers.length;
+            const defaultAnswersCopy = LForms.Util.deepCopy(item.defaultAnswers);
+            self._mergeQR._addRepeatingItems(targetItem, item.linkId, total);
+            for (let j = 0; j < total; j++) {
+              const itemToUpdateDefaultAnswer = targetItem.items[targetItem.items.length - 1 - j];
+              itemToUpdateDefaultAnswer.defaultAnswer = defaultAnswersCopy[total - 1 - j];
+            }
+          }
         }
       }
     }
