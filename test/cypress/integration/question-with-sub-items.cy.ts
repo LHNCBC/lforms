@@ -12,12 +12,12 @@ describe('Question with sub items', () => {
     cy.byId('parent-checkbox/1||a').click();
     cy.byId('parent-checkbox/1||b').click();
     cy.byId('parent-checkbox/1||o').click();
-    cy.contains('Sub items for checkbox option: Apple').should('be.visible');
-    cy.contains('Sub items for checkbox option: Banana').should('be.visible');
-    cy.contains('Sub items for checkbox option: Orange').should('be.visible');
+    cy.contains('Sub questions for answer: Apple').should('be.visible');
+    cy.contains('Sub questions for answer: Banana').should('be.visible');
+    cy.contains('Sub questions for answer: Orange').should('be.visible');
     // Unchecking an option should remove the sub items for that option.
     cy.byId('parent-checkbox/1||o').click();
-    cy.contains('Sub items for checkbox option: Orange').should('not.be.visible');
+    cy.contains('Sub questions for answer: Orange').should('not.be.visible');
     // Fill out the sub items.
     cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||a/1').type('11');
     cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||b/1').type('22');
@@ -89,8 +89,8 @@ describe('Question with sub items', () => {
     // Select Apple and Banana.
     cy.byId('parent-checkbox/1||Apple').click();
     cy.byId('parent-checkbox/1||Banana').click();
-    cy.contains('Sub items for checkbox option: Apple').should('be.visible');
-    cy.contains('Sub items for checkbox option: Banana').should('be.visible');
+    cy.contains('Sub questions for answer: Apple').should('be.visible');
+    cy.contains('Sub questions for answer: Banana').should('be.visible');
     // Fill out sub items for Apple and Banana.
     cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||Apple/1').type('11');
     cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||Banana/1').type('22');
@@ -98,12 +98,12 @@ describe('Question with sub items', () => {
     cy.byId('del-fruit/2').click();
     // Banana is removed.
     cy.byId('parent-checkbox/1||Banana').should('not.exist');
-    cy.contains('Sub items for checkbox option: Banana').should('not.be.visible');
+    cy.contains('Sub questions for answer: Banana').should('not.be.visible');
     // Apple should still be selected, and its sub items should still be there.
     cy.byId('parent-checkbox/1||Apple').find('input[type="checkbox"]').should('be.checked');
-    cy.contains('Sub items for checkbox option: Apple').should('be.visible');
+    cy.contains('Sub questions for answer: Apple').should('be.visible');
     // Orange should not be selected, and its sub items should not be there.
     cy.byId('parent-checkbox/1||Orange').find('input[type="checkbox"]').should('not.be.checked');
-    cy.contains('Sub items for checkbox option: Orange').should('not.exist');
+    cy.contains('Sub questions for answer: Orange').should('not.exist');
   });
 });

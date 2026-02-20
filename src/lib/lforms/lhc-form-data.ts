@@ -2440,12 +2440,12 @@ export default class LhcFormData {
       "_id": "",
       "items": []
     };
-    newGroupItemForCheckbox.question = `Sub items for checkbox option: ${answer._displayText}`;
+    newGroupItemForCheckbox.question = `Sub questions for answer: ${answer._displayText}`;
     newGroupItemForCheckbox.linkId = linkId;
     newGroupItemForCheckbox._id = linkId;
     newGroupItemForCheckbox.items = subItemsCopy;
     this._updateSubItemsHiddenFromView(newGroupItemForCheckbox, false);
-    item.items.push(newGroupItemForCheckbox);
+    item.items.unshift(newGroupItemForCheckbox);
 
     this._resetInternalData();
 
