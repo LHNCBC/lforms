@@ -3,7 +3,7 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 ## [41.0.0] 2026-02-20
-### Updated
+### Changed
 - For a checkbox layout question with sub items, the sub items will
   be rendered for each selected checkbox option.
 - If answerExpression updates the answer list, we do not reset item.value

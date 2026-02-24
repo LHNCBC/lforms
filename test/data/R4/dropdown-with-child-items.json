@@ -5,7 +5,7 @@
       "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
     ]
   },
-  "title": "Checkbox layout with child item",
+  "title": "Dropdown layout with child item",
   "status": "draft",
   "item": [
     {
