@@ -19,10 +19,10 @@ describe('Question with sub items', () => {
     cy.byId('parent-checkbox/1||o').click();
     cy.contains('Sub questions for answer: Orange').should('not.be.visible');
     // Fill out the sub items.
-    cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||a/1').type('11');
-    cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||b/1').type('22');
-    // Verify the exports.
+    cy.byId('child-integer/1/checkbox-subgroup-a/1').type('11');
+    cy.byId('child-integer/1/checkbox-subgroup-b/1').type('22');
     cy.window().then((win) => {
+      // Verify the exports.
       const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
       const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
       expect(q.item[0].item.length).to.equal(1);
@@ -66,6 +66,16 @@ describe('Question with sub items', () => {
           }
         ]
       });
+      // Load back the merged QR.
+      const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
+      win.document.getElementById('formContainer').innerHTML = null;
+      cy.contains('Sub questions for answer: Apple').should('not.be.visible');
+      win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
+      cy.contains('Sub questions for answer: Apple').should('be.visible');
+      cy.contains('Sub questions for answer: Banana').should('be.visible');
+      cy.byId('item-checkbox-subgroup-a/1/1').byId('child-integer/1/1/1').should('have.value', 11);
+      cy.byId('item-checkbox-subgroup-b/1/1').byId('child-integer/1/1/1').should('have.value', 22);
     });
   });
 
@@ -92,8 +102,8 @@ describe('Question with sub items', () => {
     cy.contains('Sub questions for answer: Apple').should('be.visible');
     cy.contains('Sub questions for answer: Banana').should('be.visible');
     // Fill out sub items for Apple and Banana.
-    cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||Apple/1').type('11');
-    cy.byId('child-integer/1/checkbox-subgroup-parent-checkbox/1||Banana/1').type('22');
+    cy.byId('child-integer/1/checkbox-subgroup-Apple/1').type('11');
+    cy.byId('child-integer/1/checkbox-subgroup-Banana/1').type('22');
     // Delete the option Banana from answerExpression source, which should remove the sub items for Banana.
     cy.byId('del-fruit/2').click();
     // Banana is removed.

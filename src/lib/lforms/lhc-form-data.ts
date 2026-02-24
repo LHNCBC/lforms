@@ -687,14 +687,9 @@ export default class LhcFormData {
     if (item.items && item.items.length > 0) {
       for (let i=0, iLen=item.items.length; i<iLen; i++) {
         const subItem = item.items[i];
-        if (subItem.isSubGroupForCheckbox) {
-          // Skip the checkbox subgroups, if any, so we don't hide checkbox A subitems when checkbox B is checked.
-          continue;
-        }
         const toBeHidden = hidden || this.isItemHidden(subItem) ||
           // Hide the original sub items if item is a checkbox layout question with sub items.
-          // New groups of sub items will be added when any checkbox is checked.
-          InternalUtil.isCheckboxWithSubItems(item);
+          (InternalUtil.isCheckboxWithSubItems(item) && !subItem.isSubGroupForCheckbox);
         // set the sub item's hidden status
         subItem._isHiddenFromView = toBeHidden;
         // process the sub item's sub items
@@ -2467,6 +2462,22 @@ export default class LhcFormData {
 
     var readerMsg = `${language.removed} Sub items for checkbox option: ${checkboxDisplayText}`;
     this._actionLogs.push(readerMsg);
+  }
+
+
+  /**
+   * Updates some properties for a checkbox sub group.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param answer the selected checkbox option, which contains _displayText.
+   * @param linkId the linkId of the subgroup item.
+   */
+  updateSubGroupForCheckbox(item, answer, linkId) {
+    const checkboxSubGroup = item.items.find(x => x.isSubGroupForCheckbox === true && x.linkId === linkId);
+    if (checkboxSubGroup && !checkboxSubGroup.question) {
+      checkboxSubGroup.question = `Sub questions for answer: ${answer._displayText}`;
+      checkboxSubGroup.checkboxOption = answer;
+      this._resetInternalData();
+    }
   }
 
 
