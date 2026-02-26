@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [40.2.0] 2026-02-26
+### Added
+- Support for rendering-markdown extension. Note that rendering-xhtml
+  takes precedence over rendering-markdown if both are present.
+
 ## [40.1.1] 2026-02-19
 ### Changed
 - Switched to ESLint, updated npm packages, and adjusted Cypress tests.
