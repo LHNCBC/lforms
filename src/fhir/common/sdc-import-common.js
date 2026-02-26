@@ -1715,7 +1715,7 @@ function addCommonSDCImportFns(ns) {
         let isLegal = itemControlCode === 'legal';
 
         // only "rendering-xhtml" and "rendering-markdown" is supported. others are default to text
-        if (qItem._text && self._widgetOptions?.allowHTML) {
+        if (qItem._text) {
           xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
           markdownFormat = xhtmlFormat || LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
           const renderingStyle = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
@@ -1744,16 +1744,18 @@ function addCommonSDCImportFns(ns) {
             codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
           };
           // check if html string contains invalid html tags, when the html version needs to be displayed
-          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(htmlString, self._widgetOptions.allowExternalURL);
-          if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
-            if (isLegal)
-              helpOrLegal.legalHasInvalidHtmlTag = true;
-            else
-              helpOrLegal.codingInstructionsHasInvalidHtmlTag = true;
-            errors = {};
-            errorMessages.addMsg(errors, isLegal ? 'invalidTagInLegalHTMLContent' : 'invalidTagInHelpHTMLContent');
-            messages = [{errors}];
-            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+          if (self._widgetOptions?.allowHTML) {
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(htmlString, self._widgetOptions.allowExternalURL);
+            if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+              if (isLegal)
+                helpOrLegal.legalHasInvalidHtmlTag = true;
+              else
+                helpOrLegal.codingInstructionsHasInvalidHtmlTag = true;
+              errors = {};
+              errorMessages.addMsg(errors, isLegal ? 'invalidTagInLegalHTMLContent' : 'invalidTagInHelpHTMLContent');
+              messages = [{errors}];
+              LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+            }
           }
         }
         // no xhtml extension, default to 'text'
