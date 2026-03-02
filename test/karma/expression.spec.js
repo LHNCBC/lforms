@@ -703,6 +703,66 @@ describe('ExpressionProcessor', function () {
             });
           });
         });
+
+        describe('Apgar with itemWeight variable referencing itemWeight URL in %questionnaire', function () {
+          // Regression test: when a Questionnaire uses itemWeight extensions on answerOptions
+          // and variable expressions reference them via %questionnaire...extension.where(url='...itemWeight'),
+          // the re-exported %questionnaire must preserve the original itemWeight URL so the
+          // calculation works correctly after import.
+          let apgarTestQ;
+          before(function(done) {
+            LForms.jQuery.get('test/data/R4/apgar-with-itemWeight-variable.json', function (parsedJson) {
+              apgarTestQ = parsedJson;
+              done();
+            }).fail(function(e) {
+              console.error(e);
+              done(e);
+            });
+          });
+
+          it('should calculate the total score using itemWeight variable expressions', function() {
+            let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(apgarTestQ, modelName);
+            const testLFData = new LForms.LFormsData(lformsDef);
+            // Set score=2 (highest) for all 5 Apgar items → expected total = 10
+            const apgarLinkIds = ['32406-1', '32407-9', '32409-5', '32408-7', '32410-3'];
+            const scoreAnswers = {
+              '32406-1': 'LA6724-4',
+              '32407-9': 'LA6718-6',
+              '32409-5': 'LA6721-0',
+              '32408-7': 'LA6715-2',
+              '32410-3': 'LA6727-7'
+            };
+            testLFData.itemList.forEach(item => {
+              if (apgarLinkIds.includes(item.linkId)) {
+                item.value = {
+                  code: scoreAnswers[item.linkId],
+                  system: 'http://loinc.org'
+                };
+              }
+            });
+            const totalScoreItem = testLFData.itemList.find(item => item.linkId === '9272-6');
+            assert.ok(totalScoreItem, 'Total score item should exist');
+            assert.equal(totalScoreItem.value, undefined);
+            return testLFData._expressionProcessor.runCalculations(true).then(() => {
+              // 5 items × score 2 = 10
+              assert.equal(totalScoreItem.value, 10);
+            });
+          });
+
+          it('should not calculate total score when not all items are answered', function() {
+            let lformsDef = LForms.Util.convertFHIRQuestionnaireToLForms(apgarTestQ, modelName);
+            const testLFData = new LForms.LFormsData(lformsDef);
+            // Only answer 3 of 5 items — total should be empty (iif guard)
+            testLFData.itemList.find(i => i.linkId === '32406-1').value = {code: 'LA6723-6', system: 'http://loinc.org'}; // score 1
+            testLFData.itemList.find(i => i.linkId === '32407-9').value = {code: 'LA6717-8', system: 'http://loinc.org'}; // score 1
+            testLFData.itemList.find(i => i.linkId === '32409-5').value = {code: 'LA6720-2', system: 'http://loinc.org'}; // score 1
+            const totalScoreItem = testLFData.itemList.find(item => item.linkId === '9272-6');
+            return testLFData._expressionProcessor.runCalculations(true).then(() => {
+              // Not all answered → iif returns {} → value should be undefined/empty
+              assert.ok(totalScoreItem.value === undefined || totalScoreItem.value === null || totalScoreItem.value === '');
+            });
+          });
+        });
       }
 
     });
