@@ -448,7 +448,7 @@ describe('ExpressionProcessor', function () {
     })
     it('should be supported', function(done) {
       mockFetchResults([[
-        /https:\/\/clinicaltables\.nlm\.nih\.gov\/fhir\/R4\/CodeSystem\/\$lookup\?system=https:\/\/clinicaltables.nlm\.nih\.gov\/fhir\/CodeSystem\/rxterms&code=AR&property=STRENGTHS_AND_FORMS&_format=json/,
+        /https:\/\/clinicaltables\.nlm\.nih\.gov\/fhir\/R4\/CodeSystem\/\$lookup\?system=https:\/\/clinicaltables\.nlm\.nih\.gov\/fhir\/CodeSystem\/rxterms&code=AR&property=STRENGTHS_AND_FORMS&_format=json/,
         {
           "resourceType": "Parameters",
           "parameter": [
