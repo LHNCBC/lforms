@@ -1,3 +1,5 @@
+import * as util from '../support/util.js';
+
 describe('enableWhen != minimal reproduction', () => {
   it('checks if != on coded answer loops in init', () => {
     cy.visit('/test/pages/addFormToPageTest.html');
@@ -170,5 +172,15 @@ describe('enableWhen != minimal reproduction', () => {
       expect(d.answerValueSet.initError, JSON.stringify(d)).to.equal(null);
       expect(d.nestedGroup.initError, JSON.stringify(d)).to.equal(null);
     });
+  });
+
+  it('should perform enableWhen logic correctly', () => {
+    cy.visit('/test/pages/addFormToPageTest.html');
+    util.addFormToPage('q-with-nested-enableWhen.json', null, {fhirVersion: 'R4'});
+    cy.byId('p1/1').type('{downarrow}{enter}'); // select YES for parent question
+    cy.byId('c1/1/1').type('{downarrow}{downarrow}{enter}'); // select B for inner controller
+    cy.byId('d1/1/1').should('be.visible'); // inner dependent should be visible since c1 != A
+    cy.byId('c1/1/1').clear().type('{downarrow}{enter}'); // change to A for inner controller
+    cy.byId('d1/1/1').should('not.exist'); // inner dependent should be hidden since c1 = A
   });
 });

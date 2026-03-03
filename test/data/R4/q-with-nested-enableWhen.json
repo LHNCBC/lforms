@@ -1,0 +1,54 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "minimal-lforms-skiplogic-loop",
+  "status": "draft",
+  "title": "A form with nested enableWhen skip logic that creates a loop if not handled correctly",
+  "item": [
+    {
+      "linkId": "p1",
+      "text": "Parent controller",
+      "type": "choice",
+      "answerOption": [
+        { "valueCoding": { "code": "YES", "display": "Yes" } },
+        { "valueCoding": { "code": "NO", "display": "No" } }
+      ]
+    },
+    {
+      "linkId": "g1",
+      "text": "Conditional group",
+      "type": "group",
+      "enableBehavior": "all",
+      "enableWhen": [
+        {
+          "question": "p1",
+          "operator": "=",
+          "answerCoding": { "code": "YES" }
+        }
+      ],
+      "item": [
+        {
+          "linkId": "c1",
+          "text": "Inner controller",
+          "type": "choice",
+          "answerOption": [
+            { "valueCoding": { "code": "A", "display": "A" } },
+            { "valueCoding": { "code": "B", "display": "B" } }
+          ]
+        },
+        {
+          "linkId": "d1",
+          "text": "Inner dependent (trigger)",
+          "type": "string",
+          "enableBehavior": "all",
+          "enableWhen": [
+            {
+              "question": "c1",
+              "operator": "!=",
+              "answerCoding": { "code": "A" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
