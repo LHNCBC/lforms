@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [40.1.2] 2026-03-04
+### Fixed
+- Original score extensions (ordinalValue or itemWeight) were not
+  kept in the exported questionnaire.
+
 ## [40.1.1] 2026-02-19
 ### Changed
 - Switched to ESLint, updated npm packages, and adjusted Cypress tests.
