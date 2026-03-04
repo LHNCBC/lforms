@@ -801,6 +801,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 ]);
               });
             });
+
+            it('should preserve score extension url', function (){
+              $.get('test/data/R4/apgar-with-itemWeight-variable.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.deepEqual(qData.item[0].answerOption[0], json.item[0].answerOption[0]);
+              });
+            });
           }
 
           if (fhirVersion === 'STU3') {
