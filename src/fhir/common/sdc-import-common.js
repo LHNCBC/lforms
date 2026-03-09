@@ -55,6 +55,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUnitSuppSystem = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-unitSupplementalSystem";
   self.fhirExtEntryFormat = "http://hl7.org/fhir/StructureDefinition/entryFormat";
   self.fhirExtUrlMaxDecimalPlaces = "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces";
+  self.fhirExtUrlTargetConstraint = "http://hl7.org/fhir/StructureDefinition/targetConstraint";
   self.fhirExtUrlOptionScoreLookup = {
     'STU3': "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
     'R4': "http://hl7.org/fhir/StructureDefinition/ordinalValue",
@@ -312,6 +313,7 @@ function addCommonSDCImportFns(ns) {
     self._processDisplayControl(targetItem, qItem);
     self._processDataControl(targetItem, qItem);
     self._processRestrictions(targetItem, qItem);
+    self._processConstraints(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
     self._processAnswers(targetItem, qItem, containedVS, containedImages);

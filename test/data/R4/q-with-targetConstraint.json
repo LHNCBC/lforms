@@ -2,42 +2,49 @@
   "title": "Test Questionnaire with targetConstraint extension",
   "resourceType": "Questionnaire",
   "status": "draft",
-  "extension": [
-    {
-      "url": "http://hl7.org/fhir/StructureDefinition/targetConstraint",
-      "extension": [
-        {
-          "url": "key",
-          "valueId": "min-max-check"
-        },
-        {
-          "url": "severity",
-          "valueCode": "error"
-        },
-        {
-          "url": "expression",
-          "valueExpression": {
-            "language": "text/fhirpath",
-            "expression": "item.where(linkId='1.1').answer.value <= item.where(linkId='1.2').answer.value"
-          }
-        },
-        {
-          "url": "human",
-          "valueString": "The minimum value must be less than or equal to the maximum value."
-        }
-      ]
-    }
-  ],
   "item": [
     {
-      "linkId": "1.1",
-      "text": "Minimum Value",
-      "type": "integer"
-    },
-    {
-      "linkId": "1.2",
-      "text": "Maximum Value",
-      "type": "integer"
+      "linkId": "1",
+      "text": "Please enter a minimum and maximum value.",
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/targetConstraint",
+          "extension": [
+            {
+              "url": "key",
+              "valueId": "min-max-check"
+            },
+            {
+              "url": "severity",
+              "valueCode": "error"
+            },
+            {
+              "url": "expression",
+              "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "item.where(linkId='1.1').answer.value <= item.where(linkId='1.2').answer.value"
+              }
+            },
+            {
+              "url": "human",
+              "valueString": "The minimum value must be less than or equal to the maximum value."
+            }
+          ]
+        }
+      ],
+      "item": [
+        {
+          "linkId": "1.1",
+          "text": "Minimum Value",
+          "type": "integer"
+        },
+        {
+          "linkId": "1.2",
+          "text": "Maximum Value",
+          "type": "integer"
+        }
+      ]
     }
   ]
 }
