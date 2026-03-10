@@ -47,6 +47,35 @@
               "answerCoding": { "code": "A" }
             }
           ]
+        },
+        {
+          "linkId": "g2",
+          "text": "middle layer group",
+          "type": "group",
+          "item": [
+            {
+              "linkId": "cc1",
+              "text": "Inner controller",
+              "type": "choice",
+              "answerOption": [
+                { "valueCoding": { "code": "A", "display": "A" } },
+                { "valueCoding": { "code": "B", "display": "B" } }
+              ]
+            },
+            {
+              "linkId": "dd1",
+              "text": "Inner dependent (trigger)",
+              "type": "string",
+              "enableBehavior": "all",
+              "enableWhen": [
+                {
+                  "question": "cc1",
+                  "operator": "!=",
+                  "answerCoding": { "code": "A" }
+                }
+              ]
+            }
+          ]
         }
       ]
     }

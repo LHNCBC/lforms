@@ -182,5 +182,10 @@ describe('enableWhen != minimal reproduction', () => {
     cy.byId('d1/1/1').should('be.visible'); // inner dependent should be visible since c1 != A
     cy.byId('c1/1/1').clear().type('{downarrow}{enter}'); // change to A for inner controller
     cy.byId('d1/1/1').should('not.exist'); // inner dependent should be hidden since c1 = A
+    // With another middle layer.
+    cy.byId('cc1/1/1/1').type('{downarrow}{downarrow}{enter}'); // select B for inner controller
+    cy.byId('dd1/1/1/1').should('be.visible'); // inner dependent should be visible since cc1 != A
+    cy.byId('cc1/1/1/1').clear().type('{downarrow}{enter}'); // change to A for inner controller
+    cy.byId('dd1/1/1/1').should('not.exist'); // inner dependent should be hidden since cc1 = A
   });
 });
