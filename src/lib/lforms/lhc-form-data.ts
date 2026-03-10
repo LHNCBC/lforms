@@ -632,6 +632,7 @@ export default class LhcFormData {
       const errorRequired = Validation.checkRequired(item._answerRequired, item.value, errors);
       const errorDataType = Validation.checkDataType(item.dataType, item.value, errors);
       const errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
+      this._checkConstraints(item, errors);
       item._validationErrors = errors;
 
     }
@@ -639,6 +640,33 @@ export default class LhcFormData {
 
 
   /**
+   * Check for constraints (targetConstraint extension) defined on this item, if any.
+   * @param item the question item
+   * @param errors the error messages array that returns
+   * @returns {boolean}
+   */
+  _checkConstraints(item, errors) {
+    if (item.constraints && item.constraints.length > 0) {
+      for (let i=0; i<item.constraints.length; i++) {
+        const constraint = item.constraints[i].extension;
+        console.log(constraint);
+        const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
+        if (expression) {
+          if (!this._expressionProcessor._elemIDToQRItem) {
+            this._expressionProcessor._regenerateQuestionnaireResp();
+          }
+          const valid = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, expression, item);
+          console.log(valid);
+          if (valid === false) {
+            const human = constraint.find(e => e.url === 'human').valueString;
+            console.log(human);
+            errors.push(human);
+          }
+        }
+      }
+    }
+  }
+    /**
    * run all form controls when a form data is initially loaded.
    * @private
    */
