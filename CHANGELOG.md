@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [41.0.0] 2026-02-20
+## [41.0.0] 2026-03-11
 ### Changed
 - For a checkbox layout question with sub items, the sub items will
   be rendered for each selected checkbox option.
@@ -14,6 +14,10 @@ This project follows [Semantic Versioning](http://semver.org/).
   value will also be removed.
 - When exported to QuestionnaireResponse, each sub item will go under its
   associated answer, in the format of item.answer.item.
+
+## [40.1.2] 2026-03-03
+### Fixed
+- Skip-logic infinite loop when evaluating nested conditional items.
 
 ## [40.1.1] 2026-02-19
 ### Changed
