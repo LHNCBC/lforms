@@ -1042,9 +1042,17 @@ function addCommonSDCExportFns(ns) {
               if (fhirItem) {
                 // Find the matching QR answer and put the sub-group item under it instead of under targetItem.item.
                 // Using checkboxOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
-                let matchingAnswer = targetItem.answer && targetItem.answer
-                  .find(x => LForms.Util.areTwoAnswersSame(x.valueCoding || x, lfSubItem.checkboxOption, lfItem));
-                matchingAnswer.item = fhirItem.item;
+                const refindedAnswerList = targetItem.answer.map(a => {
+                  if (!a.valueCoding) {
+                    return a;
+                  } else if (a.valueCoding && a.valueCoding.display) {
+                    // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
+                    // Create a new object with property "text" for matching, since lfSubItem.checkboxOption has "text" but not "display".
+                    return { ...a.valueCoding, text: a.valueCoding.display };
+                  }
+                });
+                let matchingAnswerIndex = refindedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.checkboxOption, lfItem));
+                targetItem.answer[matchingAnswerIndex].item = fhirItem.item;
               }
             }
             else if(repeats) {      // Can only be questions here per _processRepeatingItemValues
