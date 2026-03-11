@@ -2418,13 +2418,22 @@ export default class LhcFormData {
 
 
   /**
+   * Construct a linkId for a checkbox sub group.
+   * @param answer the selected checkbox option.
+   */
+  _getLinkIdForCheckboxSubGroup(answer) {
+    return 'checkbox-subgroup-' + (answer.code || answer.text || answer.toString());
+  }
+
+
+  /**
    * Adds a subgroup item for a checkbox answer option.
    * The subgroup will contain the original sub items.
    * @param item an LForms item with checkbox layout and sub items.
    * @param answer the selected checkbox option.
-   * @param linkId the linkId of the new subgroup item.
    */
-  addSubItemsForCheckbox(item, answer, linkId) {
+  addSubItemsForCheckbox(item, answer) {
+    const linkId = this._getLinkIdForCheckboxSubGroup(answer);
     // Make a copy of the original sub items, excluding checkbox subgroups.
     let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
     let newGroupItemForCheckbox = {
@@ -2458,14 +2467,14 @@ export default class LhcFormData {
    * Deletes a subgroup item for a checkbox answer option, using the subgroup's linkId.
    * @param item an LForms item with checkbox layout and sub items.
    * @param checkboxDisplayText the display text of the selected checkbox option.
-   * @param linkId the linkId of the new subgroup item.
    */
-  deleteSubItemsForCheckbox(item, checkboxDisplayText, linkId) {
+  deleteSubItemsForCheckbox(item, answer) {
+    const linkId = this._getLinkIdForCheckboxSubGroup(answer);
     item.items = item.items.filter(x => x.linkId !== linkId);
 
     this._resetInternalData();
 
-    var readerMsg = `${language.removed} Sub items for checkbox option: ${checkboxDisplayText}`;
+    var readerMsg = `${language.removed} Sub items for checkbox option: ${answer._displayText}`;
     this._actionLogs.push(readerMsg);
   }
 
