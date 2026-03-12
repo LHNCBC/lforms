@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [40.1.2] 2026-03-12
+### Added
+- Support for full list of standard launchContext names and resource types
+  (https://hl7.org/fhir/uv/sdc/ValueSet-launchContext.html)
+
 ## [40.1.1] 2026-02-19
 ### Changed
 - Switched to ESLint, updated npm packages, and adjusted Cypress tests.
