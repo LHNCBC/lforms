@@ -1,6 +1,6 @@
 var $ = LForms.jQuery;
 
-describe('launchContext fhirContextVars', function() {
+describe('launchContext Questionnaire with standard values', function() {
   const launchContextUrl =
     'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext';
   const initialExpressionUrl =
