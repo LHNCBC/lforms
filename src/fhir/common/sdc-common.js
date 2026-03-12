@@ -346,7 +346,7 @@ function addCommonSDCFns(ns) {
       // Validate the "type"
       let permittedTypes = contextsFromServer[name];
       if (permittedTypes && !permittedTypes[resType]) {
-        console.warn("a launch context resource of type "+restype+
+        console.warn("a launch context resource of type "+resType+
           " was found for name "+name+", but the supported types for name "+
           name + " are: "+ Object.keys(permittedTypes).join(", "));
       }
