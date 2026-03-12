@@ -2,10 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [40.1.2] 2026-03-04
+## [40.1.3] 2026-03-12
 ### Fixed
 - Original score extensions (ordinalValue or itemWeight) were not
   kept in the exported questionnaire.
+
+## [40.1.2] 2026-03-03
+### Fixed
+- Skip-logic infinite loop when evaluating nested conditional items.
 
 ## [40.1.1] 2026-02-19
 ### Changed
