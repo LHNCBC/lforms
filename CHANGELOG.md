@@ -2,10 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [40.2.0] 2026-02-26
+## [40.2.0] 2026-03-12
 ### Added
 - Support for rendering-markdown extension. Note that rendering-xhtml
   takes precedence over rendering-markdown if both are present.
+
+## [40.1.2] 2026-03-03
+### Fixed
+- Skip-logic infinite loop when evaluating nested conditional items.
 
 ## [40.1.1] 2026-02-19
 ### Changed
