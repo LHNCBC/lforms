@@ -2449,7 +2449,7 @@ export default class LhcFormData {
       "_id": "",
       "items": []
     };
-    newGroupItemForCheckbox.question = `Sub questions for answer: ${answer._displayText}`;
+    newGroupItemForCheckbox.question = answer._displayText;
     newGroupItemForCheckbox.linkId = linkId;
     newGroupItemForCheckbox._id = linkId;
     newGroupItemForCheckbox.items = subItemsCopy;
@@ -2488,7 +2488,7 @@ export default class LhcFormData {
   updateSubGroupForCheckbox(item, answer, linkId) {
     const checkboxSubGroup = item.items.find(x => x.isSubGroupForCheckbox === true && x.linkId === linkId);
     if (checkboxSubGroup && !checkboxSubGroup.question) {
-      checkboxSubGroup.question = `Sub questions for answer: ${answer._displayText}`;
+      checkboxSubGroup.question = answer._displayText;
       checkboxSubGroup.checkboxOption = answer;
       this._resetInternalData();
     }
