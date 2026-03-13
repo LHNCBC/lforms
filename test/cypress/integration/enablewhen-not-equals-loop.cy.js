@@ -166,7 +166,6 @@ describe('enableWhen != minimal reproduction', () => {
 
     cy.window().then((win) => {
       const d = win.__neqDiag;
-      cy.writeFile('enablewhen-not-equals-minimal.json', d);
       expect(d).to.exist;
       expect(d.answerOption.initError, JSON.stringify(d)).to.equal(null);
       expect(d.answerValueSet.initError, JSON.stringify(d)).to.equal(null);

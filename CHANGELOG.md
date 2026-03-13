@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [41.0.0] 2026-03-11
+## [41.0.0] 2026-03-13
 ### Changed
 - If answerExpression updates the answer list, we do not reset item.value
   to null. Instead, any values that are still valid with the new answer
@@ -16,6 +16,11 @@ This project follows [Semantic Versioning](http://semver.org/).
   be rendered for each selected checkbox option.
 - When exported to QuestionnaireResponse, each sub item will go under its
   associated answer, in the format of item.answer.item.
+
+## [40.1.3] 2026-03-12
+### Added
+- Support for full list of standard launchContext names and resource types
+  (https://hl7.org/fhir/uv/sdc/ValueSet-launchContext.html)
 
 ## [40.1.2] 2026-03-03
 ### Fixed
