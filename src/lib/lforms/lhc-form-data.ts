@@ -1581,7 +1581,7 @@ export default class LhcFormData {
 
       // consider if the last sibling is hidden by skip logic, or is hidden by a FHIR extension
       if (!foundLastSibling) {
-        if (this.isItemHidden(item)) {
+        if (this.isItemHidden(item) || item._isHiddenFromView) {
           item._lastSibling = false;
           lastSiblingIndex -= 1;
         }
