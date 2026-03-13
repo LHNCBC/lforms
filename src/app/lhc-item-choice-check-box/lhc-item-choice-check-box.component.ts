@@ -97,7 +97,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
       const checkboxOption = this.acOptions.listItems[i];
-      const subGroupLinkId = this.lhcDataService.getLhcFormData()._getLinkIdForCheckboxSubGroup(checkboxOption);
+      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(checkboxOption);
       const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && !subGroupExists) {
         this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, checkboxOption);
@@ -118,7 +118,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
       const checkboxOption = this.acOptions.listItems[i];
-      const subGroupLinkId = 'checkbox-subgroup-' + (checkboxOption.code || checkboxOption.text || checkboxOption.toString());
+      const subGroupLinkId = 'checkbox-subgroup-' + (checkboxOption.code || checkboxOption.text);
       const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && subGroupExists) {
         this.lhcDataService.getLhcFormData().updateSubGroupForCheckbox(this.item, checkboxOption, subGroupLinkId);
@@ -135,7 +135,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   removeSubGroupsForNonExistentCheckboxes(): void {
     // A list of currently valid subgroup linkIds.
     const subGroupLinkIds = this.acOptions.listItems.map(x =>
-      'checkbox-subgroup-' + (x.code || x.text || x.toString()));
+      'checkbox-subgroup-' + (x.code || x.text));
     if (this.item.items) {
       this.item.items = this.item.items.filter(x =>
         !x.isSubGroupForCheckbox ||

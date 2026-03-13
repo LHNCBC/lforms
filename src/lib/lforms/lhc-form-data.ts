@@ -2421,8 +2421,8 @@ export default class LhcFormData {
    * Construct a linkId for a checkbox sub group.
    * @param answer the selected checkbox option.
    */
-  _getLinkIdForCheckboxSubGroup(answer) {
-    return 'checkbox-subgroup-' + (answer.code || answer.text || answer.toString());
+  getLinkIdForCheckboxSubGroup(answer) {
+    return 'checkbox-subgroup-' + (answer.code || answer.text);
   }
 
 
@@ -2433,7 +2433,7 @@ export default class LhcFormData {
    * @param answer the selected checkbox option.
    */
   addSubItemsForCheckbox(item, answer) {
-    const linkId = this._getLinkIdForCheckboxSubGroup(answer);
+    const linkId = this.getLinkIdForCheckboxSubGroup(answer);
     // Make a copy of the original sub items, excluding checkbox subgroups.
     let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
     let newGroupItemForCheckbox = {
@@ -2469,7 +2469,7 @@ export default class LhcFormData {
    * @param checkboxDisplayText the display text of the selected checkbox option.
    */
   deleteSubItemsForCheckbox(item, answer) {
-    const linkId = this._getLinkIdForCheckboxSubGroup(answer);
+    const linkId = this.getLinkIdForCheckboxSubGroup(answer);
     item.items = item.items.filter(x => x.linkId !== linkId);
 
     this._resetInternalData();

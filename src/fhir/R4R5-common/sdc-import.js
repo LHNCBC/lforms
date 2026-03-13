@@ -230,7 +230,7 @@ function addSDCImportFns(ns) {
         // mark it as repeating question, not repeating answers.
         if (qItem.item && qItem.item.length >=0 &&
           qItem.item.some(item => item.type !== 'display') &&
-          !(itemControl && itemControl.valueCodeableConcept.coding[0].code === 'check-box')) {
+          itemControl?.valueCodeableConcept?.coding?.[0]?.code !== 'check-box') {
           answerCardinality = {max: "1"};
           questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
         }
