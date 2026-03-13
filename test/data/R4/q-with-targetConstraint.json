@@ -23,12 +23,16 @@
               "url": "expression",
               "valueExpression": {
                 "language": "text/fhirpath",
-                "expression": "item.where(linkId='1.1').answer.value <= item.where(linkId='1.2').answer.value"
+                "expression": "item.where(linkId='1.1').answer.value < item.where(linkId='1.2').answer.value"
               }
             },
             {
               "url": "human",
               "valueString": "The minimum value must be less than or equal to the maximum value."
+            },
+            {
+              "url": "location",
+              "valueString": "item.where(linkId='1.2')"
             }
           ]
         }

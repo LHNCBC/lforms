@@ -649,18 +649,25 @@ export default class LhcFormData {
     if (item.constraints && item.constraints.length > 0) {
       for (let i=0; i<item.constraints.length; i++) {
         const constraint = item.constraints[i].extension;
-        console.log(constraint);
         const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
         if (expression) {
           if (!this._expressionProcessor._elemIDToQRItem) {
             this._expressionProcessor._regenerateQuestionnaireResp();
           }
           const valid = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, expression, item);
-          console.log(valid);
           if (valid === false) {
             const human = constraint.find(e => e.url === 'human').valueString;
-            console.log(human);
             errors.push(human);
+            const location = constraint.find(e => e.url === 'location').valueString;
+            const itemOfLocation = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, location, item);
+            // Use a timeout to add to the validation errors of the location item, lest it be overridden by
+            // the validation of the location item itself which might be processed after the current item.
+            setTimeout(() => {
+              let itemToShowError = this._findItemByLinkId(item, itemOfLocation.linkId);
+              // Add the validation error message (human) to the item._validationErrors array of the item
+              // specified in the constraint's location.
+              itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], human];
+            }, 1);
           }
         }
       }
