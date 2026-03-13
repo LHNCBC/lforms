@@ -286,23 +286,6 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse questionnaire item for targetConstraint extension.
-   * The constraint is in the form of FHIRPath expression. It is different from
-   * other restrictions in that it usually involves multiple child items, and
-   * you can have multiple constraints on the same item.
-   * @param lfItem {object} - LForms item object to assign editable
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processConstraints = function (lfItem, qItem) {
-    const exts = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlTargetConstraint, 0, true);
-    if (exts && exts.length > 0) {
-      lfItem.constraints = exts;
-    }
-  };
-
-
-  /**
    * Parse questionnaire item for default answer
    *
    * @param lfItem {object} - LForms item object to assign default answer
