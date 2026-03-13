@@ -651,9 +651,9 @@ export default class LhcFormData {
         const constraint = item.constraints[i].extension;
         const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
         if (expression) {
-          if (!this._expressionProcessor._elemIDToQRItem) {
-            this._expressionProcessor._regenerateQuestionnaireResp();
-          }
+          // Regenerate _elemIDToQRItem to get a fresh context, otherwise the evaluated result will be cached
+          // even after you change form value and evaluate again.
+          this._expressionProcessor._regenerateQuestionnaireResp();
           const valid = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, expression, item);
           if (valid === false) {
             const human = constraint.find(e => e.url === 'human').valueString;
