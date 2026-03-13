@@ -326,7 +326,7 @@ function addCommonSDCFns(ns) {
     // launchContext
     var contextItems = LForms.Util.findObjectInArray(lfData.extension, 'url',
       self.fhirExtLaunchContext, 0, true);
-    // Define a list of standard context variables and they resources they are allowed to take.
+    // Define a list of standard context variables and the resources they are allowed to take.
     // (https://hl7.org/fhir/uv/sdc/ValueSet-launchContext.html)
     const contextsFromServer = {patient: {Patient: 1}, encounter: {Encounter: 1},
       location: {Location: 1}, study: {ResearchStudy: 1},
