@@ -330,7 +330,7 @@ function addCommonSDCFns(ns) {
     // (https://hl7.org/fhir/uv/sdc/ValueSet-launchContext.html)
     const contextsFromServer = {patient: {Patient: 1}, encounter: {Encounter: 1},
       location: {Location: 1}, study: {ResearchStudy: 1},
-      user: {Device: 1, PractitionerRole: 1, Practitioner: 1, RelatedPerson: 1, Organization:1, Patient:1 }};
+      user: {Device: 1, PractitionerRole: 1, Practitioner: 1, RelatedPerson: 1, Organization :1, Patient: 1}};
     const pendingPromises = [];
 
     /**
