@@ -326,10 +326,11 @@ function addCommonSDCFns(ns) {
     // launchContext
     var contextItems = LForms.Util.findObjectInArray(lfData.extension, 'url',
       self.fhirExtLaunchContext, 0, true);
-    // Define a list of known, supported context variables, which we can get from the FHIR server,
-    // and they resources they are allowed to take.
+    // Define a list of standard context variables and the resources they are allowed to take.
+    // (https://hl7.org/fhir/uv/sdc/ValueSet-launchContext.html)
     const contextsFromServer = {patient: {Patient: 1}, encounter: {Encounter: 1},
-      user: {Patient: 1, Practitioner: 1, PractitionerRole: 1, RelatedPerson: 1}};
+      location: {Location: 1}, study: {ResearchStudy: 1},
+      user: {Device: 1, PractitionerRole: 1, Practitioner: 1, RelatedPerson: 1, Organization :1, Patient: 1}};
     const pendingPromises = [];
 
     /**
@@ -346,7 +347,7 @@ function addCommonSDCFns(ns) {
       // Validate the "type"
       let permittedTypes = contextsFromServer[name];
       if (permittedTypes && !permittedTypes[resType]) {
-        console.warn("a launch context resource of type "+restype+
+        console.warn("a launch context resource of type "+resType+
           " was found for name "+name+", but the supported types for name "+
           name + " are: "+ Object.keys(permittedTypes).join(", "));
       }

@@ -802,6 +802,11 @@ export default class LhcFormData {
   _updateItemSkipLogicStatus(item, disabled) {
     let changed = false;
     let isDisabled;
+    // Enforce ancestor visibility when this function is called on an item directly
+    // (e.g. from flat item iteration), not only when reached via parent recursion.
+    if (!disabled && item?._parentItem?._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+      disabled = true;
+    }
     // if one item is hidden all of its decedents should be hidden.
     // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
     if (disabled) {
