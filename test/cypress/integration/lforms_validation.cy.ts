@@ -744,4 +744,34 @@ describe('Validations', () => {
     });
   });
 
+  describe('targetConstraint', () => {
+    beforeEach(() => {
+      tp.openBaseTestPage();
+    });
+
+    it('should validate targetConstraint', () => {
+      tp.loadFromTestData('q-with-targetConstraint.json', 'R4');
+      cy.byId('1.1/1/1').type('2');
+      cy.byId('1.2/1/1').type('1').blur();
+      cy.window().then((win) => {
+        const errors = win.LForms.Util.checkValidity();
+        expect(errors).to.deep.equal([
+          'Please enter a minimum and maximum value. The minimum value must be less than or equal to the maximum value.'
+        ]);
+      });
+      // The error message should be shown on the Maximum Value field, as defined in the
+      // targetConstraint extension 'location' sub extension.
+      cy.byId('item-1.2/1/1')
+        .contains('The minimum value must be less than or equal to the maximum value.')
+        .should('be.visible');
+      // Change to valid values.
+      cy.byId('1.2/1/1').clear().type('3').blur();
+      cy.window().then((win) => {
+        const errors = win.LForms.Util.checkValidity();
+        expect(errors).to.equal(null);
+      });
+      cy.contains('The minimum value must be less than or equal to the maximum value.').should('not.be.visible');
+    });
+  });
+
 });
