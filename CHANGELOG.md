@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [40.1.3] 2026-03-12
+## [40.1.4] 2026-03-12
 ### Fixed
 - Original score extensions (ordinalValue or itemWeight) were not
   kept in the exported questionnaire.
+
+## [40.1.3] 2026-03-12
+### Added
+- Support for full list of standard launchContext names and resource types
+  (https://hl7.org/fhir/uv/sdc/ValueSet-launchContext.html)
 
 ## [40.1.2] 2026-03-03
 ### Fixed
