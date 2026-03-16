@@ -7,6 +7,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Support for rendering-markdown extension. Note that rendering-xhtml
   takes precedence over rendering-markdown if both are present.
 
+## [40.1.3] 2026-03-12
+### Added
+- Support for full list of standard launchContext names and resource types
+  (https://hl7.org/fhir/uv/sdc/ValueSet-launchContext.html)
+
 ## [40.1.2] 2026-03-03
 ### Fixed
 - Skip-logic infinite loop when evaluating nested conditional items.
