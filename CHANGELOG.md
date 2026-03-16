@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [40.2.0] 2026-03-16
+### Added
+- Support for targetConstraint extension.
+
 ## [40.1.3] 2026-03-12
 ### Added
 - Support for full list of standard launchContext names and resource types
