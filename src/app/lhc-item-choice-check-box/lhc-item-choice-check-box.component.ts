@@ -89,6 +89,19 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Checks if an item has a checkbox subgroup with a specific linkId.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param linkId the linkId of the checkbox subgroup.
+   */
+  hasSubGroupWithLinkId(item, linkId): boolean {
+    if (item.items && item.items.some(x => x.isSubGroupForCheckbox === true && x.linkId === linkId)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Add or remove subgroups for the checkbox item, as the selection changes.
    */
   addOrRemoveSubGroupsForCheckbox(): void {
@@ -98,7 +111,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
       const checkboxOption = this.acOptions.listItems[i];
       const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(checkboxOption);
-      const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
+      const subGroupExists = this.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && !subGroupExists) {
         this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, checkboxOption);
       } else if (!this.checkboxModels[i] && subGroupExists) {
@@ -118,10 +131,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
       const checkboxOption = this.acOptions.listItems[i];
-      const subGroupLinkId = 'checkbox-subgroup-' + (checkboxOption.code || checkboxOption.text);
-      const subGroupExists = this.lhcDataService.hasSubGroupWithLinkId(this.item, subGroupLinkId);
+      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(checkboxOption);
+      const subGroupExists = this.hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && subGroupExists) {
-        this.lhcDataService.getLhcFormData().updateSubGroupForCheckbox(this.item, checkboxOption, subGroupLinkId);
+        this.lhcDataService.getLhcFormData().updateCheckboxSubGroupProperties(this.item, checkboxOption, subGroupLinkId);
       }
     }
   }
@@ -133,9 +146,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * removed checkboxes should also be removed.
    */
   removeSubGroupsForNonExistentCheckboxes(): void {
+    const lhcFormData = this.lhcDataService.getLhcFormData();
     // A list of currently valid subgroup linkIds.
     const subGroupLinkIds = this.acOptions.listItems.map(x =>
-      'checkbox-subgroup-' + (x.code || x.text));
+      lhcFormData.getLinkIdForCheckboxSubGroup(x));
     if (this.item.items) {
       this.item.items = this.item.items.filter(x =>
         !x.isSubGroupForCheckbox ||

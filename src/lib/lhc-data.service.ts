@@ -700,20 +700,6 @@ export class LhcDataService {
     }
   };
 
-
-  /**
-   * Checks if an item has a checkbox subgroup with a specific linkId.
-   * @param item an LForms item with checkbox layout and sub items.
-   * @param linkId the linkId of the checkbox subgroup.
-   */
-  hasSubGroupWithLinkId(item, linkId): boolean {
-    if (item.items && item.items.some(x => x.isSubGroupForCheckbox === true && x.linkId === linkId)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
 }
 
 

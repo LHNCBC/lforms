@@ -2481,11 +2481,12 @@ export default class LhcFormData {
 
   /**
    * Updates some properties for a checkbox sub group.
+   * Used when rendering a merged QR.
    * @param item an LForms item with checkbox layout and sub items.
    * @param answer the selected checkbox option, which contains _displayText.
    * @param linkId the linkId of the subgroup item.
    */
-  updateSubGroupForCheckbox(item, answer, linkId) {
+  updateCheckboxSubGroupProperties(item, answer, linkId) {
     const checkboxSubGroup = item.items.find(x => x.isSubGroupForCheckbox === true && x.linkId === linkId);
     if (checkboxSubGroup && !checkboxSubGroup.question) {
       checkboxSubGroup.question = answer._displayText;
