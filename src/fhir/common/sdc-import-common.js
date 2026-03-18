@@ -1051,7 +1051,7 @@ function addCommonSDCImportFns(ns) {
               if(qrItemInfo.qrAnswersItemsInfo.length === 1) {
                 this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[0], item);
               } else {
-                for (let k=0; k<qrItemInfo.qrAnswersItemsInfo.length; k++) {
+                for (let k = 0; k < qrItemInfo.qrAnswersItemsInfo.length; k++) {
                   let newCheckboxSubGroup = {
                     "isSubGroupForCheckbox": true,
                     "checkboxOption": {},
@@ -1074,7 +1074,9 @@ function addCommonSDCImportFns(ns) {
                   newCheckboxSubGroup._id = linkId;
                   newCheckboxSubGroup.items = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
                   item.items.push(newCheckboxSubGroup);
-                  this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[k], newCheckboxSubGroup);
+                  if (qrItemInfo.qrAnswersItemsInfo[k] && item.value[k]) {
+                    this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[k], newCheckboxSubGroup);
+                  }
                 }
               }
             }

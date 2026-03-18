@@ -1052,7 +1052,9 @@ function addCommonSDCExportFns(ns) {
                   }
                 });
                 let matchingAnswerIndex = refindedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.checkboxOption, lfItem));
-                targetItem.answer[matchingAnswerIndex].item = fhirItem.item;
+                if (matchingAnswerIndex !== -1) {
+                  targetItem.answer[matchingAnswerIndex].item = fhirItem.item;
+                }
               }
             }
             else if(repeats) {      // Can only be questions here per _processRepeatingItemValues
