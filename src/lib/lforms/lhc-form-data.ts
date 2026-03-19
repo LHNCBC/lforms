@@ -1637,12 +1637,13 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
+   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
    * @return {{}} form definition JSON object
    */
-  getFormData(noEmptyValue, noDisabledItem, keepId) {
+  getFormData(noEmptyValue, noDisabledItem, keepId, includeTempItems) {
 
     // get the form data
-    const formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId);
+    const formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId, includeTempItems);
 
     // check if there is user data
     let hasSavedData = false;
@@ -1692,15 +1693,16 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
+   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
+  getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems) {
     const ret:any = {};
     this._invalidData = false;
     // check the value on each item and its subtree
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
-        keepId);
+        keepId, includeTempItems);
     // return a deep copy of the data
     return CommonUtils.deepCopy(ret);
   }
@@ -1778,13 +1780,17 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
+   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
    * @returns {Array} form data on one tree level
    * @private
    */
-  _processDataInItems(items, noFormDefData, noEmptyValue, noDisabledItem, keepId) {
+  _processDataInItems(items, noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems) {
     const itemsData = [];
     for (let i=0, iLen=items.length; i<iLen; i++) {
       const item = items[i];
+      if (!includeTempItems && item.isSubGroupForCheckbox) {
+        continue;
+      }
       const itemData:any = {};
       // for user typed data of an item whose answerConstraint is 'optionsOrString',
       // it is in item.value as {text: "some other value", _notOnList: true}.
@@ -1832,7 +1838,7 @@ export default class LhcFormData {
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noDisabledItem, keepId);
+        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems);
       }
       // not to add the section header if noEmptyValue is set, and
       // all its children has empty value (thus have not been added either) or it has not children, and

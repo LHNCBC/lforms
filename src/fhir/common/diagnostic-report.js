@@ -221,7 +221,7 @@ var dr = {
     var dr = null, contained =[];
     if (formData) {
 
-      var formAndUserData = formData.getFormData(true,true,true);
+      var formAndUserData = formData.getFormData(true,true,true,true);
 
       var drContent = this._createDiagnosticReportContent(formAndUserData, contained);
 

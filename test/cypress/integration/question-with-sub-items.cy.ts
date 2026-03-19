@@ -22,6 +22,11 @@ describe('Question with sub items', () => {
     cy.byId('child-integer/1/checkbox-subgroup-a/1').type('11');
     cy.byId('child-integer/1/checkbox-subgroup-b/1').type('22');
     cy.window().then((win) => {
+      // getFormData() should not include checkbox sub groups by default.
+      const formData1 = win.LForms.Util.getFormData();
+      expect(formData1.items[0].items.length).to.equal(1);
+      const formData2 = win.LForms.Util.getFormData(null, null, null, true);
+      expect(formData2.items[0].items.length).to.equal(3);
       // Verify the exports.
       const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
       const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
