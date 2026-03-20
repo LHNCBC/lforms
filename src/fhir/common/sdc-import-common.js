@@ -722,23 +722,23 @@ function addCommonSDCImportFns(ns) {
       if (extFieldData)
         lfItem['obj'+extField] = extFieldData;
 
-      let htmlAttrName = itemAttr == 'obj_text' ? '_displayTextHTML' : '_prefixHTML';
+      let htmlAttrName = itemAttr == 'obj_text' ? '_displayText' : '_prefix';
       let invalidFlagName = itemAttr == 'obj_text' ? '_hasInvalidHTMLTagInText' : '_hasInvalidHTMLTagInPrefix';
 
       // Process rendering-xhtml and rendering-markdown extensions.
       const xhtmlFormat = lfItem[itemAttr] ?
           LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
       if (xhtmlFormat) {
-        lfItem[htmlAttrName] = xhtmlFormat.valueString;
+        lfItem[htmlAttrName+'HTML'] = xhtmlFormat.valueString;
       } else {
         const markdownFormat = lfItem[itemAttr] ?
           LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown") : null;
         if (markdownFormat) {
-          lfItem[htmlAttrName] = md.render(markdownFormat.valueString);
+          lfItem[htmlAttrName+'Markdown'] = md.render(markdownFormat.valueString);
         }
       }
-      if (self._widgetOptions?.allowHTML && lfItem[htmlAttrName]) {
-        let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(lfItem[htmlAttrName], self._widgetOptions?.allowExternalURL);
+      if (self._widgetOptions?.allowHTML && lfItem[htmlAttrName+'HTML']) {
+        let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(lfItem[htmlAttrName+'HTML'], self._widgetOptions?.allowExternalURL);
         if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
           lfItem[invalidFlagName] = true;
           let errors = {};
@@ -1765,7 +1765,7 @@ function addCommonSDCImportFns(ns) {
           helpOrLegal = isLegal ? {
             legalFormat: "text",
             legal: qItem.text,
-            legalinkId: qItem.linkId,
+            legalLinkId: qItem.linkId,
             legalPlain: qItem.text // this always contains the legal in plain text
           } : {
             codingInstructionsFormat: "text",

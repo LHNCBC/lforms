@@ -16,6 +16,10 @@
                   [style]="item._obj_prefixCSS"
                   [innerHTML]="item._prefixHTML | safeHtml"
             ></span>
+            <span *ngSwitchCase="'markdown'"
+                  class="prefix"
+                  [innerHTML]="item._prefixMarkdown | safeHtml"
+            ></span>
             <span *ngSwitchCase="'plain'"
                   class="prefix"
                   [style]="item._obj_prefixCSS"
@@ -32,6 +36,10 @@
                 class="question"
                 [style]="item._obj_textCSS"
                 [innerHTML]="item._displayTextHTML | safeHtml"
+          ></span>
+          <span *ngSwitchCase="'markdown'"
+                class="question"
+                [innerHTML]="item._displayTextMarkdown | safeHtml"
           ></span>
           <span *ngSwitchCase="'plain'"
                 class="question"
