@@ -3432,12 +3432,14 @@ export default class LhcFormData {
         // and set isListHTML.
         if (!item.displayControl || !item.displayControl.answerLayout || item.displayControl.answerLayout.type !== 'RADIO_CHECKBOX') {
           // Set isListHTML to true if any of the answer options should be displayed as HTML.
-          options.isListHTML = answers.some(a => a._displayType === 'html');
+          options.isListHTML = answers.some(a => a._displayType === 'html' || a._displayType === 'markdown');
           for (let i = 0; i < answers.length; ++i) {
             if (answers[i]._displayType === 'html') {
               answers[i]._displayText = answers[i]._displayTextHTML;
             } else if (answers[i]._displayType === 'escaped') {
               answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayTextHTML);
+            } else if (answers[i]._displayType === 'markdown') {
+              answers[i]._displayText = answers[i]._displayTextMarkdown;
             } else if (options.isListHTML) {
               answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayText);
             }
@@ -3515,12 +3517,16 @@ export default class LhcFormData {
         // convert integer to string when the answerOption is an integer
         let displayText = (answerData.text || answerData.code) + "";
         let displayTextHTML = answerData.textHTML;
+        let displayTextMarkdown = answerData.textMarkdown;
         // label is a string
         if (answerData.label) {
           displayText = answerData.label + ". " + displayText;
           hasOneAnswerLabel = true;
           if (displayTextHTML) {
             displayTextHTML = answerData.label + ". " + displayTextHTML;
+          }
+          if (displayTextMarkdown) {
+            displayTextMarkdown = answerData.label + ". " + displayTextMarkdown;
           }
         }
         // check if one of the values is numeric
@@ -3537,12 +3543,16 @@ export default class LhcFormData {
             if (displayTextHTML) {
               displayTextHTML = displayTextHTML + " - " + answerData.score;
             }
+            if (displayTextMarkdown) {
+              displayTextMarkdown = displayTextMarkdown + " - " + answerData.score;
+            }
           }
         }
 
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
         answerData._displayTextHTML = displayTextHTML;
+        answerData._displayTextMarkdown = displayTextMarkdown;
         answerData._displayType = this.getTextDisplayType(answerData);
         modifiedAnswers.push(answerData);
       }

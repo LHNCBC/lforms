@@ -19,6 +19,7 @@
           <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
             <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
             <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
+            <span *ngSwitchCase="'markdown'" [outerHTML]="answer._displayTextMarkdown | safeHtml"></span>
             <ng-container *ngSwitchCase="'plain'">{{answer._displayText}}</ng-container>
           </ng-container>
         </th>

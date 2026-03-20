@@ -71,14 +71,13 @@ export const InternalUtil = {
   /**
    * Sets answer.textHTML from the rendering-xhtml extension.
    * @param answer an answer object in Lforms item.
-   * @param xhtmlFormat the rendering-xhtml or rendering-markdown extension.
+   * @param xhtmlFormat the rendering-xhtml.
    * @param allowHTML widget option of whether to allow HTML in forms.
    * @param containedImages contained images info, see buildContainedImageMap() for details.
    * @param item an item from lforms form definition
    */
   setAnswerTextHTML: function(answer, xhtmlFormat, allowHTML, containedImages, item) {
-    answer.textHTML = xhtmlFormat.url === "http://hl7.org/fhir/StructureDefinition/rendering-markdown" ?
-      md.render(xhtmlFormat.valueString) : xhtmlFormat.valueString;
+    answer.textHTML = xhtmlFormat.valueString;
     if (allowHTML) {
       // process contained images
       if (containedImages &&
@@ -96,6 +95,16 @@ export const InternalUtil = {
         this.setItemMessagesArray(item, messages, 'setAnswerTextHTML');
       }
     }
+  },
+
+
+  /**
+   * Sets answer.textMarkdown from the rendering-markdown extension.
+   * @param answer an answer object in Lforms item.
+   * @param markdownFormat the rendering-markdown extension.
+   */
+  setAnswerTextMarkdown: function(answer, markdownFormat) {
+    answer.textMarkdown = md.render(markdownFormat.valueString);
   },
 
 

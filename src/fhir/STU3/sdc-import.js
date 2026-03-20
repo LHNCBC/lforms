@@ -163,7 +163,7 @@ function addSDCImportFns(ns) {
                 // rendering-markdown extension under "valueCoding._display".
                 const markdownFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
                 if (markdownFormat) {
-                  LForms.Util._internalUtil.setAnswerTextHTML(answer, markdownFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
+                  LForms.Util._internalUtil.setAnswerTextMarkdown(answer, markdownFormat);
                 }
               }
               // rendering-style extension under "valueCoding._display".
@@ -186,7 +186,7 @@ function addSDCImportFns(ns) {
                 // rendering-markdown extension under "_valueString".
                 const markdownFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
                 if (markdownFormat) {
-                  LForms.Util._internalUtil.setAnswerTextHTML(answer, markdownFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
+                  LForms.Util._internalUtil.setAnswerTextMarkdown(answer, markdownFormat);
                 }
               }
             }
