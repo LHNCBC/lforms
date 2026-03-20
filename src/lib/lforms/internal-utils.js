@@ -5,8 +5,10 @@ import CommonUtils from "../lforms/lhc-common-utils.js";
 import CONSTANTS from "./lhc-form-datatypes.js";
 import * as htmlparser2 from "htmlparser2";
 import parse from "style-to-object";
-import markdownit from 'markdown-it'
-const md = markdownit('commonmark')
+import markdownit from 'markdown-it';
+const md = markdownit('commonmark', {
+  html: false
+});
 
 /**
  *  A default message source identifier (for when the messageSource parameter

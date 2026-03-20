@@ -1,8 +1,10 @@
 import { InternalUtil } from '../../lib/lforms/internal-utils.js';
 import {importFHIRQuantity} from './import-common.js';
 const fhirpath = require('fhirpath');
-import markdownit from 'markdown-it'
-const md = markdownit('commonmark')
+import markdownit from 'markdown-it';
+const md = markdownit('commonmark', {
+  html: false
+});
 
 /**
  *  Defines SDC import functions that are the same across the different FHIR
