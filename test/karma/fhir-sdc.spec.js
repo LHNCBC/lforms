@@ -707,6 +707,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               });
             });
 
+            it('should preserve rendering-markdown extension on help and legal', function (){
+              $.get('test/data/R4/q-with-rendering-markdown-help-and-legal.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.deepEqual(qData.item[0].item[0]._text, json.item[0].item[0]._text);
+                assert.deepEqual(qData.item[1].item[0]._text, json.item[1].item[0]._text);
+              });
+            });
+
             it('should change an old preferredTerminologyServer URL to the new URL at root level', function (){
               $.get('test/data/R4/preferredTerminologyServer-at-root-level.json', function(json) {
                 const lfData = fhir.SDC.convertQuestionnaireToLForms(json);

@@ -524,7 +524,7 @@ function addCommonSDCExportFns(ns) {
         }]
       };
 
-      // format could be 'html' or 'text'
+      // format could be 'html', 'markdown' or 'text'
       if (item.codingInstructionsFormat === 'html') {
         // add a "_text" field to contain the extension for the string value in the 'text' field
         // see http://hl7.org/fhir/R4/json.html#primitive
@@ -532,6 +532,13 @@ function addCommonSDCExportFns(ns) {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
             "valueString": item.codingInstructions
+          }]
+        }
+      } else if (item.codingInstructionsFormat === 'markdown') {
+        helpItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+            "valueString": item.codingInstructionsOriginalMarkdown
           }]
         }
       }
@@ -578,7 +585,7 @@ function addCommonSDCExportFns(ns) {
         }]
       };
 
-      // format could be 'html' or 'text'
+      // format could be 'html', 'markdown' or 'text'
       if (item.legalFormat === 'html') {
         // add a "_text" field to contain the extension for the string value in the 'text' field
         // see http://hl7.org/fhir/R4/json.html#primitive
@@ -586,6 +593,13 @@ function addCommonSDCExportFns(ns) {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
             "valueString": item.legal
+          }]
+        }
+      } else if (item.legalFormat === 'markdown') {
+        legalItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+            "valueString": item.legalOriginalMarkdown
           }]
         }
       }

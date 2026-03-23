@@ -1737,11 +1737,13 @@ function addCommonSDCImportFns(ns) {
           helpOrLegal = isLegal ? {
             legalFormat: xhtmlFormat ? "html" : "markdown",
             legal: htmlString,
+            legalOriginalMarkdown: xhtmlFormat ? null : markdownFormat.valueString, // kept for export use
             legalLinkId: qItem.linkId,
             legalPlain: qItem.text  // this always contains the legal in plain text
           } : {
             codingInstructionsFormat: xhtmlFormat ? "html" : "markdown",
             codingInstructions: htmlString,
+            codingInstructionsOriginalMarkdown: xhtmlFormat ? null : markdownFormat.valueString, // kept for export use
             codingInstructionsLinkId: qItem.linkId,
             codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
           };
@@ -1785,12 +1787,14 @@ function addCommonSDCImportFns(ns) {
             targetItem.legalPlain = helpOrLegal.legalPlain;
             targetItem.legalHasInvalidHtmlTag = helpOrLegal.legalHasInvalidHtmlTag;
             targetItem.legalLinkId = helpOrLegal.legalLinkId;
+            targetItem.legalOriginalMarkdown = helpOrLegal.legalOriginalMarkdown;
           } else {
             targetItem.codingInstructions = helpOrLegal.codingInstructions;
             targetItem.codingInstructionsFormat = helpOrLegal.codingInstructionsFormat;
             targetItem.codingInstructionsPlain = helpOrLegal.codingInstructionsPlain;
             targetItem.codingInstructionsHasInvalidHtmlTag = helpOrLegal.codingInstructionsHasInvalidHtmlTag;
             targetItem.codingInstructionsLinkId = helpOrLegal.codingInstructionsLinkId;
+            targetItem.codingInstructionsOriginalMarkdown = helpOrLegal.codingInstructionsOriginalMarkdown;
           }
         }
       }
