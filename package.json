@@ -38,7 +38,7 @@
     "test:ng-unit": "ng test --watch=false",
     "test:unit": "npm run test:fhir-unit && npm run test:ng-unit",
     "test:e2e:fhir-server": "start-server-and-test start:fhir-dev http://localhost:$npm_package_config_testPortFhir test:e2e:lforms-server",
-    "test:e2e:lforms-server": "start-server-and-test start:lforms-dev http://localhost:$npm_package_config_testPort cy:run",
+    "test:e2e:lforms-server": "start-server-and-test start:lforms-dev http://localhost:$npm_package_config_testPort pw:test",
     "test:e2e": "npm run test:e2e:fhir-server",
     "test:e2e:fhir-server:open": "start-server-and-test start:fhir-dev http://localhost:$npm_package_config_testPortFhir test:e2e:lforms-server:open",
     "test:e2e:lforms-server:open": "start-server-and-test start:lforms-dev http://localhost:$npm_package_config_testPort cy:open",
@@ -47,6 +47,10 @@
     "test-coverage": "ng test --no-watch --code-coverage",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
+    "pw:test": "playwright test",
+    "pw:test:headed": "playwright test --headed --workers=1",
+    "pw:install": "playwright install chromium",
+    "convert:cypress:playwright": "node bin/convert-cypress-to-playwright.js",
     "test-pages": "http-server -o /test/pages/build_test_fhirpath.html"
   },
   "dependencies": {
@@ -88,6 +92,7 @@
     "@types/jasmine": "~5.1.13",
     "@types/jasminewd2": "^2.0.13",
     "@types/node": "^22.13.14",
+    "@playwright/test": "^1.58.2",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
     "babel-loader": "^10.0.0",

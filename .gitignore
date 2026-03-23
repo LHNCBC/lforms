@@ -19,6 +19,8 @@ language-config.json
 /test/cypress/videos
 /cypress
 
+# test output
+/test-results
 # dependencies
 /node_modules
 
