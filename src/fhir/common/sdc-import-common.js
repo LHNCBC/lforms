@@ -1735,18 +1735,18 @@ function addCommonSDCImportFns(ns) {
           markdownFormat ? md.render(markdownFormat.valueString) : null;
         if (htmlString) {
           helpOrLegal = isLegal ? {
-            legalFormat: "html",
+            legalFormat: xhtmlFormat ? "html" : "markdown",
             legal: htmlString,
             legalLinkId: qItem.linkId,
             legalPlain: qItem.text  // this always contains the legal in plain text
           } : {
-            codingInstructionsFormat: "html",
+            codingInstructionsFormat: xhtmlFormat ? "html" : "markdown",
             codingInstructions: htmlString,
             codingInstructionsLinkId: qItem.linkId,
             codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
           };
           // check if html string contains invalid html tags, when the html version needs to be displayed
-          if (self._widgetOptions?.allowHTML) {
+          if (self._widgetOptions?.allowHTML && xhtmlFormat) {
             let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(htmlString, self._widgetOptions.allowExternalURL);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               if (isLegal)
