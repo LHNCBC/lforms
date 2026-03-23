@@ -5,7 +5,7 @@
   "item": [
     {
       "linkId": "1.1",
-      "type": "display",
+      "type": "string",
       "text": "Please answer Yes or No to each of the following questions:",
       "_text": {
         "extension": [
