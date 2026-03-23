@@ -12,15 +12,15 @@ describe('Question with sub items', () => {
     cy.byId('parent-checkbox/1||a').click();
     cy.byId('parent-checkbox/1||b').click();
     cy.byId('parent-checkbox/1||o').click();
-    cy.byId('label-checkbox-subgroup-a/1/checkbox-subgroup-a').should('be.visible');
-    cy.byId('label-checkbox-subgroup-b/1/checkbox-subgroup-b').should('be.visible');
-    cy.byId('label-checkbox-subgroup-o/1/checkbox-subgroup-o').should('be.visible');
+    cy.byId('label-checkbox-subgroup||a/1/checkbox-subgroup||a').should('be.visible');
+    cy.byId('label-checkbox-subgroup||b/1/checkbox-subgroup||b').should('be.visible');
+    cy.byId('label-checkbox-subgroup||o/1/checkbox-subgroup||o').should('be.visible');
     // Unchecking an option should remove the sub items for that option.
     cy.byId('parent-checkbox/1||o').click();
-    cy.byId('label-checkbox-subgroup-o/1/checkbox-subgroup-o').should('not.exist');
+    cy.byId('label-checkbox-subgroup||o/1/checkbox-subgroup||o').should('not.exist');
     // Fill out the sub items.
-    cy.byId('child-integer/1/checkbox-subgroup-a/1').type('11');
-    cy.byId('child-integer/1/checkbox-subgroup-b/1').type('22');
+    cy.byId('child-integer/1/checkbox-subgroup||a/1').type('11');
+    cy.byId('child-integer/1/checkbox-subgroup||b/1').type('22');
     cy.window().then((win) => {
       // getFormData() should not include checkbox sub groups by default.
       const formData1 = win.LForms.Util.getFormData();
@@ -75,12 +75,12 @@ describe('Question with sub items', () => {
       const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
       const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
       win.document.getElementById('formContainer').innerHTML = null;
-      cy.byId('label-checkbox-subgroup-a/1/checkbox-subgroup-a').should('not.exist');
+      cy.byId('label-checkbox-subgroup||a/1/checkbox-subgroup||a').should('not.exist');
       win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
-      cy.byId('label-checkbox-subgroup-a/1/1').should('be.visible');
-      cy.byId('label-checkbox-subgroup-b/1/1').should('be.visible');
-      cy.byId('item-checkbox-subgroup-a/1/1').byId('child-integer/1/1/1').should('have.value', 11);
-      cy.byId('item-checkbox-subgroup-b/1/1').byId('child-integer/1/1/1').should('have.value', 22);
+      cy.byId('label-checkbox-subgroup||a/1/1').should('be.visible');
+      cy.byId('label-checkbox-subgroup||b/1/1').should('be.visible');
+      cy.byId('item-checkbox-subgroup||a/1/1').byId('child-integer/1/1/1').should('have.value', 11);
+      cy.byId('item-checkbox-subgroup||b/1/1').byId('child-integer/1/1/1').should('have.value', 22);
     });
   });
 
@@ -104,22 +104,22 @@ describe('Question with sub items', () => {
     // Select Apple and Banana.
     cy.byId('parent-checkbox/1||Apple').click();
     cy.byId('parent-checkbox/1||Banana').click();
-    cy.byId('label-checkbox-subgroup-Apple/1/checkbox-subgroup-Apple').should('be.visible');
-    cy.byId('label-checkbox-subgroup-Banana/1/checkbox-subgroup-Banana').should('be.visible');
+    cy.byId('label-checkbox-subgroup||Apple/1/checkbox-subgroup||Apple').should('be.visible');
+    cy.byId('label-checkbox-subgroup||Banana/1/checkbox-subgroup||Banana').should('be.visible');
     // Fill out sub items for Apple and Banana.
-    cy.byId('child-integer/1/checkbox-subgroup-Apple/1').type('11');
-    cy.byId('child-integer/1/checkbox-subgroup-Banana/1').type('22');
+    cy.byId('child-integer/1/checkbox-subgroup||Apple/1').type('11');
+    cy.byId('child-integer/1/checkbox-subgroup||Banana/1').type('22');
     // Delete the option Banana from answerExpression source, which should remove the sub items for Banana.
     cy.byId('del-fruit/2').click();
     // Banana is removed.
     cy.byId('parent-checkbox/1||Banana').should('not.exist');
-    cy.byId('label-checkbox-subgroup-Banana/1/checkbox-subgroup-Banana').should('not.exist');
+    cy.byId('label-checkbox-subgroup||Banana/1/checkbox-subgroup||Banana').should('not.exist');
     // Apple should still be selected, and its sub items should still be there.
     cy.byId('parent-checkbox/1||Apple').find('input[type="checkbox"]').should('be.checked');
-    cy.byId('label-checkbox-subgroup-Apple/1/checkbox-subgroup-Apple').should('be.visible');
+    cy.byId('label-checkbox-subgroup||Apple/1/checkbox-subgroup||Apple').should('be.visible');
     // Orange should not be selected, and its sub items should not be there.
     cy.byId('parent-checkbox/1||Orange').find('input[type="checkbox"]').should('not.be.checked');
-    cy.byId('label-checkbox-subgroup-o/1/checkbox-subgroup-o').should('not.exist');
+    cy.byId('label-checkbox-subgroup||o/1/checkbox-subgroup||o').should('not.exist');
   });
 
   it('should load back merged QR, when checkbox options are set by answerExpression', () => {
@@ -132,8 +132,8 @@ describe('Question with sub items', () => {
     cy.byId('parent-checkbox/1||Apple').click();
     cy.byId('parent-checkbox/1||Banana').click();
     // Fill out sub items for Apple and Banana.
-    cy.byId('child-integer/1/checkbox-subgroup-Apple/1').type('11');
-    cy.byId('child-integer/1/checkbox-subgroup-Banana/1').type('22');
+    cy.byId('child-integer/1/checkbox-subgroup||Apple/1').type('11');
+    cy.byId('child-integer/1/checkbox-subgroup||Banana/1').type('22');
     cy.window().then((win) => {
       // Verify the exports.
       const q = win.LForms.Util.getFormFHIRData("Questionnaire", "R4");
@@ -181,12 +181,12 @@ describe('Question with sub items', () => {
       const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
       const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
       win.document.getElementById('formContainer').innerHTML = null;
-      cy.byId('label-checkbox-subgroup-Apple/1/checkbox-subgroup-Apple').should('not.exist');
+      cy.byId('label-checkbox-subgroup||Apple/1/checkbox-subgroup||Apple').should('not.exist');
       win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
-      cy.byId('label-checkbox-subgroup-Apple/1/1').should('be.visible');
-      cy.byId('label-checkbox-subgroup-Banana/1/1').should('be.visible');
-      cy.byId('item-checkbox-subgroup-Apple/1/1').byId('child-integer/1/1/1').should('have.value', 11);
-      cy.byId('item-checkbox-subgroup-Banana/1/1').byId('child-integer/1/1/1').should('have.value', 22);
+      cy.byId('label-checkbox-subgroup||Apple/1/1').should('be.visible');
+      cy.byId('label-checkbox-subgroup||Banana/1/1').should('be.visible');
+      cy.byId('item-checkbox-subgroup||Apple/1/1').byId('child-integer/1/1/1').should('have.value', 11);
+      cy.byId('item-checkbox-subgroup||Banana/1/1').byId('child-integer/1/1/1').should('have.value', 22);
     });
   });
 });

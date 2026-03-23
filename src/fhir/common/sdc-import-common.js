@@ -1066,7 +1066,7 @@ function addCommonSDCImportFns(ns) {
                     "items": []
                   };
                   const checkboxOption = item.value[k];
-                  const linkId = 'checkbox-subgroup-' + (checkboxOption.code || checkboxOption.text);
+                  const linkId = 'checkbox-subgroup|' + (checkboxOption.system || '') + '|' + (checkboxOption.code || checkboxOption.text);
                   // newCheckboxSubGroup.checkboxOption and newCheckboxSubGroup.question could not be set here during import/merge,
                   // because checkboxOption._displayText is set in lhc-form-data.ts. They will be updated later in
                   // lhc-item-choice-check-box.component.ts.

@@ -2428,7 +2428,8 @@ export default class LhcFormData {
    * @param answer the selected checkbox option.
    */
   getLinkIdForCheckboxSubGroup(answer) {
-    return 'checkbox-subgroup-' + (answer.code || answer.text);
+    const system = answer.system || '';
+    return 'checkbox-subgroup|' + system + '|' + (answer.code || answer.text);
   }
 
 
