@@ -104,3 +104,35 @@ export async function openFormByIndex(page: Page, formIndex: number): Promise<vo
     return el && el.querySelector('.lhc-question');
   }, { timeout: 10000 });
 }
+
+/**
+ * Load a form definition file onto the addFormToPageTest page via LForms.Util.addFormToPage.
+ * @param page Playwright page (should already be on addFormToPageTest.html with LForms loaded)
+ * @param fileName The form definition file name under test/data/
+ * @param container The container element ID (default: 'formContainer')
+ * @param options Options passed to LForms.Util.addFormToPage (e.g. { fhirVersion: 'R4' })
+ */
+export async function addFormToPage(
+  page: Page,
+  fileName: string,
+  container = 'formContainer',
+  options?: Record<string, any>
+): Promise<void> {
+  const fhirVersion = options?.fhirVersion;
+  const fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+  const filePath = fhirVersionInFile
+    ? fhirVersionInFile + '/' + fileName
+    : 'lforms/' + fileName;
+  const absPath = path.resolve('test/data/' + filePath);
+  const formDef = JSON.parse(require('fs').readFileSync(absPath, 'utf-8'));
+
+  await page.evaluate(
+    async ({ formDef, container, options }) => {
+      document.getElementById(container)!.innerHTML = '';
+      await (window as any).LForms.Util.addFormToPage(formDef, container, options);
+    },
+    { formDef, container, options }
+  );
+
+  await expect(page.locator('#' + container + ' .lhc-form-title')).toBeVisible({ timeout: 10000 });
+}
