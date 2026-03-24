@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.0.1] 2026-03-24
+### Changed
+- Converted Cypress e2e tests to Playwright.
+
 ## [41.0.0] 2026-03-13
 ### Changed
 - If answerExpression updates the answer list, we do not reset item.value
