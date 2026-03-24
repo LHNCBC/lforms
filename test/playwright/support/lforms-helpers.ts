@@ -136,3 +136,15 @@ export async function addFormToPage(
 
   await expect(page.locator('#' + container + ' .lhc-form-title')).toBeVisible({ timeout: 10000 });
 }
+
+/**
+ * On the lforms_testpage.html, upload a test data file and wait for form to load.
+ * @param page Playwright page (should already be on lforms_testpage.html)
+ * @param fileName File name under test/data/{fhirVersion}/
+ * @param fhirVersion Subdirectory under test/data (default: 'lforms')
+ */
+export async function loadFromTestData(page: Page, fileName: string, fhirVersion = 'lforms'): Promise<void> {
+  const filePath = `test/data/${fhirVersion}/${fileName}`;
+  await uploadFile(page, '#fileAnchor', filePath);
+  await expect(page.locator('.lhc-form-title')).toBeVisible({ timeout: 10000 });
+}
