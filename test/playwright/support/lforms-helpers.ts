@@ -64,3 +64,43 @@ export async function pressCypressKeys(locator: Locator, keys: string): Promise<
 export async function expectLoadButton(page: Page, text: string): Promise<void> {
   await expect(page.locator('#loadBtn')).toContainText(text);
 }
+
+/**
+ * Construct the HTML element ID for an answer option (radio button, checkbox, etc.).
+ * Mirrors InternalUtil.getItemAnswerId from the lforms library.
+ */
+export function answerId(elementId: string, systemOrOther?: string, code?: string): string {
+  if (code !== undefined) {
+    const system = systemOrOther
+      ? systemOrOther.replaceAll('\\', '\\\\').replaceAll('|', '\\|')
+      : '';
+    const answerCode = code
+      .replaceAll('%', '%25')
+      .replaceAll(' ', '%20')
+      .replaceAll('\\', '\\\\')
+      .replaceAll('|', '\\|');
+    return elementId + '|' + system + '|' + answerCode;
+  } else {
+    return (
+      elementId.replaceAll('\\', '\\\\').replaceAll('|', '\\|') +
+      '|' +
+      systemOrOther
+    );
+  }
+}
+
+/**
+ * Open the lforms test page and load a form by its dropdown index.
+ */
+export async function openFormByIndex(page: Page, formIndex: number): Promise<void> {
+  await page.goto('/test/pages/lforms_testpage.html');
+  await waitForLFormsReady(page);
+  await page.selectOption('#form-list', { index: formIndex });
+  await page.click('#load-form-data');
+  await expect(page.locator('.lhc-form-title')).toBeVisible({ timeout: 10000 });
+  // Wait for onFormReady event
+  await page.waitForFunction(() => {
+    const el = document.getElementById('test-form');
+    return el && el.querySelector('.lhc-question');
+  }, { timeout: 10000 });
+}
