@@ -144,11 +144,12 @@ const FormUtils = {
    *        It could either be a DOM element or a CSS selector.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
+   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
    * @returns {{}} Form definition data
    */
-  getFormData: function(element, noEmptyValue, noDisabledItem) {
+  getFormData: function(element, noEmptyValue, noDisabledItem, includeTempItems) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getFormData(noEmptyValue, noDisabledItem) : null;
+    return formObj ? formObj.getFormData(noEmptyValue, noDisabledItem, false, includeTempItems) : null;
   },
 
 
