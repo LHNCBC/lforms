@@ -23,7 +23,7 @@ function addCommonSDCExportFns(ns) {
   self.convertLFormsToQuestionnaireResponse = function(lfData, noExtensions, subject) {
     var target = null;
     if (lfData) {
-      var source = lfData.getFormData(true,true,true);
+      var source = lfData.getFormData(true,true,true,true);
       if (!lfData._invalidData) {
         target = {};
         this._processRepeatingItemValues(source);
@@ -62,7 +62,7 @@ function addCommonSDCExportFns(ns) {
       if(! (source instanceof LForms.LFormsData)) {
         source = new LForms.LFormsData(source);
       }
-      this._removeRepeatingItems(source);
+      this._removeRepeatingItemsAndCheckboxSubGroups(source);
       this._setFormLevelFields(target, source);
 
       if (source.items && Array.isArray(source.items)) {
@@ -305,19 +305,22 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
-   * Remove repeating items in a form data object
+   * Remove repeating items and checkbox sub-groups in a form data object
    * @param source a LForms form data object
    * @private
    */
-  self._removeRepeatingItems = function(source) {
+  self._removeRepeatingItemsAndCheckboxSubGroups = function(source) {
     if (source.items && Array.isArray(source.items)) {
       let repeatingItemLinkId = null;
       for (var i = source.items.length - 1; i >= 0; i--) {
+        if (source.items[i].isSubGroupForCheckbox) {
+          source.items.splice(i, 1);
+        }
         // If the precious item is a repeating item and this item's linkdId is the same, remove it.
-        if (repeatingItemLinkId && source.items[i].linkId === repeatingItemLinkId) {
+        else if (repeatingItemLinkId && source.items[i].linkId === repeatingItemLinkId) {
           source.items.splice(i, 1);
         } else {
-          this._removeRepeatingItems(source.items[i]);
+          this._removeRepeatingItemsAndCheckboxSubGroups(source.items[i]);
           // If this is a repeating item, set repeatingItemLinkId for comparing with the next item.
           repeatingItemLinkId = source.items[i]._questionRepeatable === true ? source.items[i].linkId : null;
         }
@@ -1048,7 +1051,27 @@ function addCommonSDCExportFns(ns) {
           if(! lfSubItem._isProcessed) {
             var linkId = lfSubItem.linkId;
             var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
-            if(repeats) {      // Can only be questions here per _processRepeatingItemValues
+            if (lfSubItem.isSubGroupForCheckbox) {
+              let fhirItem = this._processResponseItem(lfSubItem);
+              if (fhirItem) {
+                // Find the matching QR answer and put the sub-group item under it instead of under targetItem.item.
+                // Using checkboxOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
+                const refindedAnswerList = targetItem.answer.map(a => {
+                  if (!a.valueCoding) {
+                    return a;
+                  } else if (a.valueCoding && a.valueCoding.display) {
+                    // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
+                    // Create a new object with property "text" for matching, since lfSubItem.checkboxOption has "text" but not "display".
+                    return { ...a.valueCoding, text: a.valueCoding.display };
+                  }
+                });
+                let matchingAnswerIndex = refindedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.checkboxOption, lfItem));
+                if (matchingAnswerIndex !== -1) {
+                  targetItem.answer[matchingAnswerIndex].item = fhirItem.item;
+                }
+              }
+            }
+            else if(repeats) {      // Can only be questions here per _processRepeatingItemValues
               let fhirItem = { // one FHIR item for all repeats with the same linkId
                 linkId: linkId,
                 text: lfSubItem.question,
@@ -1082,9 +1105,7 @@ function addCommonSDCExportFns(ns) {
 
         if(fhirItems.length > 0) {
           if(! isForm && lfItem.dataType !== 'SECTION') {
-            // Question repeat is handled at the "parent level"; TODO: not sure how to handle answer repeat here,
-            // assuming it isn't possible for an item to have answer repeat and sub-items at the same time.
-            // (TODO:  The above is an incorrect assumption.)
+            // Question repeat is handled at the "parent level".
             targetItem.answer = targetItem.answer || [];
             targetItem.answer[0] = targetItem.answer[0] || {};
             targetItem.answer[0].item = fhirItems;

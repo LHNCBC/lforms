@@ -54,9 +54,9 @@ describe('AnswerExpression ', () => {
     // added another q1
     cy.byId('add-q1/1').click()
     cy.byId('q1/2').click().type("def");
-    // the existing answer lists on 2 items disappeared (expected behavior)
-    cy.byId('q1ListChoice/1').should('have.value', '');
-    cy.byId('q1ListString/1').should('have.value', '');
+    // The selected answer 'abc' on 2 items should not disappear, as it is still valid.
+    cy.byId('q1ListChoice/1').should('have.value', 'abc');
+    cy.byId('q1ListString/1').should('have.value', 'abc');
 
     cy.byId('q1ListChoice/1').click();
     cy.get('#lhc-tools-searchResults li').should('have.length', 2);
@@ -105,5 +105,14 @@ describe('AnswerExpression ', () => {
         expect(q.item[i].answerOption).to.equal(undefined)
       }
     });
+  });
+
+  it('should reset selected answer when the source item changes and the selected answer becomes invalid', () => {
+    // Delete 'abc' from the answer list.
+    cy.byId('del-q1/1').click();
+    // The selected answer 'abc' should be reset, as it is no longer valid.
+    // The selected answer 'def' should not be affected, as it is still valid.
+    cy.byId('q1ListChoice/1').should('have.value', '');
+    cy.byId('q1ListString/1').should('have.value', 'def');
   });
 });

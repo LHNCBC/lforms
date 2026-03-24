@@ -507,6 +507,17 @@ export const InternalUtil = {
 
 
   /**
+   * Check if the item is a checkbox layout with sub items.
+   */
+  isCheckboxWithSubItems: function(item) {
+    return item.displayControl && item.displayControl.answerLayout &&
+      item.displayControl.answerLayout.type === 'RADIO_CHECKBOX' &&
+      item._multipleAnswers &&
+      item.items && item.items.length > 0;
+  },
+
+
+  /**
    * Construct an id for an answer when it is rendered as a radio button
    * or a checkbox.
    * @param item an item in lhc-forms

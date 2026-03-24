@@ -229,6 +229,7 @@ function addSDCImportFns(ns) {
   self._processFHIRQuestionAndAnswerCardinality = function(lfItem, qItem) {
     var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
     var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
+    var itemControl = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     var repeats = qItem.repeats;
     var required = qItem.required;
     var answerCardinality, questionCardinality;
@@ -237,13 +238,17 @@ function addSDCImportFns(ns) {
         qItem.answerOption && (lfItem.dataType === 'ST' || lfItem.dataType === 'INT' ||
         lfItem.dataType === 'DT' || lfItem.dataType === 'TM')) {
       if (repeats) {
-        // if it has sub items that are not 'display'
+        // If it has sub items that are not 'display', and it's not checkbox layout,
+        // mark it as repeating question, not repeating answers.
         if (qItem.item && qItem.item.length >=0 &&
-            qItem.item.some(item => item.type !== 'display')) {
+          qItem.item.some(item => item.type !== 'display') &&
+          itemControl?.valueCodeableConcept?.coding?.[0]?.code !== 'check-box') {
           answerCardinality = {max: "1"};
           questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
         }
         else {
+          // It's marked as repeating answers if itemControl says checkbox layout,
+          // even if it has sub items.
           answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
         }
       }
