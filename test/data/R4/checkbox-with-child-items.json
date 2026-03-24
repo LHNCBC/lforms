@@ -1,0 +1,59 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "title": "Checkbox layout with child item",
+  "status": "draft",
+  "item": [
+    {
+      "item": [
+        {
+          "type": "integer",
+          "linkId": "child-integer",
+          "text": "How many of this?"
+        }
+      ],
+      "type": "choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "linkId": "parent-checkbox",
+      "text": "Which fruits would you like?",
+      "repeats": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "a",
+            "display": "Apple"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "b",
+            "display": "Banana"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "o",
+            "display": "Orange"
+          }
+        }
+      ]
+    }
+  ]
+}
