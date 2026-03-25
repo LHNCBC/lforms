@@ -5,9 +5,16 @@ export function escapeIdSelector(id: string): string {
   return id.replace(/([.#:[\]/\\|%])/g, '\\$1');
 }
 
+/**
+ * Escape a value for use in a CSS attribute selector string (double-quoted).
+ */
+function escapeAttrValue(val: string): string {
+  return val.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
 export function byId(page: Page, id: string): Locator {
   const rawId = id.startsWith('#') ? id.slice(1) : id;
-  return page.locator('#' + escapeIdSelector(rawId));
+  return page.locator(`[id="${escapeAttrValue(rawId)}"]`);
 }
 
 /**
@@ -144,7 +151,12 @@ export async function addFormToPage(
  * @param fhirVersion Subdirectory under test/data (default: 'lforms')
  */
 export async function loadFromTestData(page: Page, fileName: string, fhirVersion = 'lforms'): Promise<void> {
-  const filePath = `test/data/${fhirVersion}/${fileName}`;
+  if (fhirVersion !== 'lforms') {
+    await page.locator('#fhirVersion').selectOption(fhirVersion);
+  }
+  const fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+  const filePath = `test/data/${fhirVersionInFile}/${fileName}`;
   await uploadFile(page, '#fileAnchor', filePath);
   await expect(page.locator('.lhc-form-title')).toBeVisible({ timeout: 10000 });
+  await page.waitForLoadState('networkidle');
 }
