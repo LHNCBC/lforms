@@ -202,6 +202,34 @@ const FormUtils = {
 
 
   /**
+   * Makes a Questionnaire/$validate call with the given Questionnaire and base FHIR server.
+   * @param questionnaire a FHIR Questionnaire resource to be validated.
+   * @param fhirServerBase the base URL of the FHIR server to which the $validate call should be made.
+   * @return a Promise that resolves to null if the Questionnaire is valid, or an error message if not valid.
+   */
+  validateFHIRQuestionnaire: function(questionnaire, fhirServerBase) {
+    return fetch(fhirServerBase + '/Questionnaire/$validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(questionnaire)
+    }).then(function (response) {
+      return response.json();
+    }).then(function (parsedJSON) {
+      let rtn = null;
+      if (parsedJSON.resourceType === "OperationOutcome") {
+        var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal");
+        if (errorOrFatal) {
+          rtn = errorOrFatal.diagnostics;
+        }
+      }
+      return rtn;
+    });
+  },
+
+
+  /**
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
