@@ -918,5 +918,72 @@ describe('Util library', function() {
       });
     });
   });
+
+  describe('validateFHIRQuestionnaire', function() {
+    it('should resolve to null for a valid questionnaire', function(done) {
+      const q = {
+        "resourceType": "Questionnaire",
+        "title": "Test Questionnaire",
+        "status": "draft"
+      };
+      mockFetchResults([
+        ['Questionnaire/$validate', {
+          "resourceType": "OperationOutcome",
+          "issue": [
+            {
+              "severity": "warning",
+              "code": "processing",
+              "diagnostics": "Some warning message"
+            }
+          ]
+        }]
+      ])
+      LForms.Util.validateFHIRQuestionnaire(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
+        .then((result) => {
+          assert.equal(result, null);
+          done();
+        });
+    });
+
+    it('should resolve to error message for an invalid questionnaire', function(done) {
+      const q = {
+        "resourceType": "Questionnaire",
+        "title": "Test Questionnaire",
+        "status": "draft",
+        "item": []
+      };
+      mockFetchResults([
+        ['Questionnaire/$validate', {
+          "resourceType": "OperationOutcome",
+          "issue": [
+            {
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line",
+                  "valueInteger": 5
+                },
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
+                  "valueInteger": 13
+                }
+              ],
+              "severity": "error",
+              "code": "processing",
+              "diagnostics": "Array cannot be empty - the property should not be present if it has no values",
+              "location": [
+                "Questionnaire.item",
+                "Line[5] Col[13]"
+              ]
+            }
+          ]
+        }]
+      ])
+      LForms.Util.validateFHIRQuestionnaire(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
+        .then((result) => {
+          assert.equal(result, 'Array cannot be empty - the property should not be present if it has no values');
+          done();
+        });
+    });
+  });
 });
 
