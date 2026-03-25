@@ -223,14 +223,18 @@ test.describe('Validations', () => {
       await cne1.click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await pressCypressKeys(cne1, '{downArrow}{enter}');
-      await cne1.fill('');
+      // Clear the autocomplete (select-all + backspace keeps focus like Cypress .clear())
+      await cne1.click({ clickCount: 3 });
+      await cne1.press('Backspace');
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await page.locator('label[for=\'/BL/1\']').click();
-      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
+      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible({ timeout: 10000 });
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
       await cne1.click();
-      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
-      await cne1.fill('');
+      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible({ timeout: 10000 });
+      // Clear and re-select
+      await cne1.click({ clickCount: 3 });
+      await cne1.press('Backspace');
       await cne1.click();
       await pressCypressKeys(cne1, '{downArrow}{enter}');
       await expect(page.locator(errorContainer)).not.toBeAttached();

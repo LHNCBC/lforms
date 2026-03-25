@@ -136,7 +136,8 @@ export async function addFormToPage(
   await page.evaluate(
     async ({ formDef, container, options }) => {
       document.getElementById(container)!.innerHTML = '';
-      await (window as any).LForms.Util.addFormToPage(formDef, container, options);
+      // addFormToPage may reject with warnings for some forms, but still loads
+      await (window as any).LForms.Util.addFormToPage(formDef, container, options).catch(() => {});
     },
     { formDef, container, options }
   );

@@ -1,0 +1,122 @@
+import { test, expect } from '@playwright/test';
+import { addFormToPage, waitForLFormsReady, byId } from '../support/lforms-helpers';
+import * as fs from 'fs';
+
+const fhirVersions = ['R4', 'R5', 'STU3'];
+
+for (const fhirVersion of fhirVersions) {
+  test.describe(`Repeating choice/coding item with child items - ${fhirVersion}`, () => {
+    test('should get the correct QuestionnaireResponse', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'q-items-under-repeating-choice-item.json', 'formContainer', { fhirVersion });
+
+      // a set of items under a choice/coding item
+      await byId(page, '/choice/1').click();
+      await byId(page, '/choice/1').press('ArrowDown');
+      await byId(page, '/choice/1').press('Enter');
+      await byId(page, '/choice/st/1/1').click();
+      await byId(page, '/choice/st/1/1').type('a');
+      await byId(page, '/choice/int/1/1').click();
+      await byId(page, '/choice/int/1/1').type('1');
+      await byId(page, 'add-/choice/int/1/1').click();
+      await byId(page, '/choice/int/1/2').click();
+      await byId(page, '/choice/int/1/2').type('2');
+
+      await byId(page, '/choice/group/st/1/1/1').click();
+      await byId(page, '/choice/group/st/1/1/1').type('b');
+      await byId(page, '/choice/group/int/1/1/1').click();
+      await byId(page, '/choice/group/int/1/1/1').type('3');
+      await byId(page, 'add-/choice/group/int/1/1/1').click();
+      await byId(page, '/choice/group/int/1/1/2').click();
+      await byId(page, '/choice/group/int/1/1/2').type('4');
+
+      // same set under another layer
+      await byId(page, '/choice/choice/1/1').click();
+      await byId(page, '/choice/choice/1/1').press('ArrowDown');
+      await byId(page, '/choice/choice/1/1').press('ArrowDown');
+      await byId(page, '/choice/choice/1/1').press('Enter');
+      await byId(page, '/choice/choice/st/1/1/1').click();
+      await byId(page, '/choice/choice/st/1/1/1').type('c');
+      await byId(page, '/choice/choice/int/1/1/1').click();
+      await byId(page, '/choice/choice/int/1/1/1').type('5');
+      await byId(page, 'add-/choice/choice/int/1/1/1').click();
+      await byId(page, '/choice/choice/int/1/1/2').click();
+      await byId(page, '/choice/choice/int/1/1/2').type('6');
+
+      await byId(page, 'add-/choice/choice/1/1').click();
+      await byId(page, '/choice/choice/1/2').click();
+      await byId(page, '/choice/choice/1/2').press('ArrowDown');
+      await byId(page, '/choice/choice/1/2').press('ArrowDown');
+      await byId(page, '/choice/choice/1/2').press('ArrowDown');
+      await byId(page, '/choice/choice/1/2').press('Enter');
+      await byId(page, '/choice/choice/st/1/2/1').click();
+      await byId(page, '/choice/choice/st/1/2/1').type('d');
+      await byId(page, '/choice/choice/int/1/2/1').click();
+      await byId(page, '/choice/choice/int/1/2/1').type('7');
+      await byId(page, 'add-/choice/choice/int/1/2/1').click();
+      await byId(page, '/choice/choice/int/1/2/2').click();
+      await byId(page, '/choice/choice/int/1/2/2').type('8');
+
+      // add another instance of the parent choice/coding item
+      await byId(page, 'add-/choice/1').click();
+      await byId(page, '/choice/2').click();
+      await byId(page, '/choice/2').press('ArrowDown');
+      await byId(page, '/choice/2').press('ArrowDown');
+      await byId(page, '/choice/2').press('Enter');
+      await byId(page, '/choice/st/2/1').click();
+      await byId(page, '/choice/st/2/1').type('aa');
+      await byId(page, '/choice/int/2/1').click();
+      await byId(page, '/choice/int/2/1').type('11');
+      await byId(page, 'add-/choice/int/2/1').click();
+      await byId(page, '/choice/int/2/2').click();
+      await byId(page, '/choice/int/2/2').type('22');
+
+      await byId(page, '/choice/group/st/2/1/1').click();
+      await byId(page, '/choice/group/st/2/1/1').type('bb');
+      await byId(page, '/choice/group/int/2/1/1').click();
+      await byId(page, '/choice/group/int/2/1/1').type('33');
+      await byId(page, 'add-/choice/group/int/2/1/1').click();
+      await byId(page, '/choice/group/int/2/1/2').click();
+      await byId(page, '/choice/group/int/2/1/2').type('44');
+
+      await byId(page, '/choice/choice/2/1').click();
+      await byId(page, '/choice/choice/2/1').press('ArrowDown');
+      await byId(page, '/choice/choice/2/1').press('ArrowDown');
+      await byId(page, '/choice/choice/2/1').press('Enter');
+      await byId(page, '/choice/choice/st/2/1/1').click();
+      await byId(page, '/choice/choice/st/2/1/1').type('cc');
+      await byId(page, '/choice/choice/int/2/1/1').click();
+      await byId(page, '/choice/choice/int/2/1/1').type('55');
+      await byId(page, 'add-/choice/choice/int/2/1/1').click();
+      await byId(page, '/choice/choice/int/2/1/2').click();
+      await byId(page, '/choice/choice/int/2/1/2').type('66');
+
+      await byId(page, 'add-/choice/choice/2/1').click();
+      await byId(page, '/choice/choice/2/2').click();
+      await byId(page, '/choice/choice/2/2').press('ArrowDown');
+      await byId(page, '/choice/choice/2/2').press('ArrowDown');
+      await byId(page, '/choice/choice/2/2').press('ArrowDown');
+      await byId(page, '/choice/choice/2/2').press('Enter');
+      await byId(page, '/choice/choice/st/2/2/1').click();
+      await byId(page, '/choice/choice/st/2/2/1').type('dd');
+      await byId(page, '/choice/choice/int/2/2/1').click();
+      await byId(page, '/choice/choice/int/2/2/1').type('77');
+      await byId(page, 'add-/choice/choice/int/2/2/1').click();
+      await byId(page, '/choice/choice/int/2/2/2').click();
+      await byId(page, '/choice/choice/int/2/2/2').type('88');
+
+      const fhirQR = await page.evaluate((fv) =>
+        (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', fv), fhirVersion);
+
+      const fhirVersionInFile = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
+      const qrFile = `test/data/${fhirVersionInFile}/qr-items-under-repeating-choice-item.json`;
+      const expectedQR = JSON.parse(fs.readFileSync(qrFile, 'utf-8'));
+      delete expectedQR.meta;
+      delete expectedQR.authored;
+      delete fhirQR.meta;
+      delete fhirQR.authored;
+      expect(fhirQR).toEqual(expectedQR);
+    });
+  });
+}
