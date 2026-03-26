@@ -208,6 +208,12 @@ const FormUtils = {
    * @return a Promise that resolves to null if the Questionnaire is valid, or an error message if not valid.
    */
   validateFHIRQuestionnaire: function(questionnaire, fhirServerBase) {
+    if (!questionnaire || questionnaire.resourceType !== 'Questionnaire') {
+      throw new Error('The provided resource is not a Questionnaire.');
+    }
+    if (!fhirServerBase) {
+      throw new Error('FHIR server base URL is required for validating the Questionnaire.');
+    }
     return fetch(fhirServerBase + '/Questionnaire/$validate', {
       method: 'POST',
       headers: {

@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.1.0] 2026-03-26
+### Added
+- New utility function validateFHIRQuestionnaire() to validate a
+  questionnaire against a FHIR server.
+
 ## [41.0.0] 2026-03-13
 ### Changed
 - If answerExpression updates the answer list, we do not reset item.value
