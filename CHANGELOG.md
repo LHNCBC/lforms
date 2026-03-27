@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.0.1] 2026-03-27
+### Fixed
+- Items with enableWhenExpression extensions were not removed from
+  QuestionnaireResponse when not enabled.
+
 ## [41.0.0] 2026-03-13
 ### Changed
 - If answerExpression updates the answer list, we do not reset item.value
