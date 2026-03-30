@@ -332,5 +332,35 @@ describe('rendering-markdown', () => {
       });
     });
   });
+
+  describe('matrix layout', () => {
+    const tp: TestPage = new TestPage();
+
+    beforeEach(() => {
+      tp.openBaseTestPage();
+    });
+
+    it('should display markdown', () => {
+      cy.get('#allowMarkdown').click();
+      tp.loadFromTestData('q-with-rendering-markdown-matrix-layout.json', 'R4');
+      cy.byId('item-/matrixTable1/1')
+        .find('th.lhc-form-matrix-cell')
+        .as('tableHeaders');
+      cy.get('@tableHeaders')
+        .should('have.length', 3);
+      cy.get('@tableHeaders')
+        .eq(0)
+        .find('strong')
+        .should('exist');
+      cy.get('@tableHeaders')
+        .eq(1)
+        .find('strong')
+        .should('exist');
+      cy.get('@tableHeaders')
+        .eq(2)
+        .find('strong')
+        .should('exist');
+    });
+  });
 });
 
