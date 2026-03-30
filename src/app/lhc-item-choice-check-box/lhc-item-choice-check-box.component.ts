@@ -55,6 +55,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       }
 
       this.prevCheckBoxValue = this.item.value;
+
+      this.removeSubGroupsForNonExistentCheckboxes();
+      this.updateSubGroupsForMergedQR();
     }
   }
 
@@ -81,6 +84,78 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
     this.prevCheckBoxValue = this.item.value;
     this.item._visitedBefore = true;
+
+    this.addOrRemoveSubGroupsForCheckbox();
+  }
+
+  /**
+   * Checks if an item has a checkbox subgroup with a specific linkId.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param linkId the linkId of the checkbox subgroup.
+   */
+  hasSubGroupWithLinkId(item, linkId): boolean {
+    if (item.items && item.items.some(x => x.isSubGroupForCheckbox === true && x.linkId === linkId)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Add or remove subgroups for the checkbox item, as the selection changes.
+   */
+  addOrRemoveSubGroupsForCheckbox(): void {
+    if (!this.item.items) {
+      return;
+    }
+    for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
+      const checkboxOption = this.acOptions.listItems[i];
+      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(checkboxOption);
+      const subGroupExists = this.hasSubGroupWithLinkId(this.item, subGroupLinkId);
+      if (this.checkboxModels[i] === true && !subGroupExists) {
+        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, checkboxOption);
+      } else if (!this.checkboxModels[i] && subGroupExists) {
+        this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, checkboxOption);
+      }
+    }
+  }
+
+  /**
+   * If rendering a merged QR, the subgroups for the checkboxes are missing some properties,
+   * such as "question" and "checkboxOption". This function is to update those properties for
+   * the subgroups of checkboxes, so that they can be rendered correctly.
+   */
+  updateSubGroupsForMergedQR(): void {
+    if (!this.item.items) {
+      return;
+    }
+    for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
+      const checkboxOption = this.acOptions.listItems[i];
+      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(checkboxOption);
+      const subGroupExists = this.hasSubGroupWithLinkId(this.item, subGroupLinkId);
+      if (this.checkboxModels[i] === true && subGroupExists) {
+        this.lhcDataService.getLhcFormData().updateCheckboxSubGroupProperties(this.item, checkboxOption, subGroupLinkId);
+      }
+    }
+  }
+
+  /**
+   * Remove subgroups for non-existent checkbox options.
+   * This could happen when some checkboxes are selected, and then those checkboxes are
+   * removed from the answer options, due to answerExpression. The subgroups for those
+   * removed checkboxes should also be removed.
+   */
+  removeSubGroupsForNonExistentCheckboxes(): void {
+    const lhcFormData = this.lhcDataService.getLhcFormData();
+    // A list of currently valid subgroup linkIds.
+    const subGroupLinkIds = this.acOptions.listItems.map(x =>
+      lhcFormData.getLinkIdForCheckboxSubGroup(x));
+    if (this.item.items) {
+      this.item.items = this.item.items.filter(x =>
+        !x.isSubGroupForCheckbox ||
+        subGroupLinkIds.indexOf(x.linkId) !== -1
+      );
+    }
   }
 
   /**

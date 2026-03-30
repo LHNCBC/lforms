@@ -687,7 +687,9 @@ export default class LhcFormData {
     if (item.items && item.items.length > 0) {
       for (let i=0, iLen=item.items.length; i<iLen; i++) {
         const subItem = item.items[i];
-        const toBeHidden = hidden || this.isItemHidden(subItem);
+        const toBeHidden = hidden || this.isItemHidden(subItem) ||
+          // Hide the original sub items if item is a checkbox layout question with sub items.
+          (InternalUtil.isCheckboxWithSubItems(item) && !subItem.isSubGroupForCheckbox);
         // set the sub item's hidden status
         subItem._isHiddenFromView = toBeHidden;
         // process the sub item's sub items
@@ -1579,7 +1581,7 @@ export default class LhcFormData {
 
       // consider if the last sibling is hidden by skip logic, or is hidden by a FHIR extension
       if (!foundLastSibling) {
-        if (this.isItemHidden(item)) {
+        if (this.isItemHidden(item) || item._isHiddenFromView) {
           item._lastSibling = false;
           lastSiblingIndex -= 1;
         }
@@ -1635,12 +1637,13 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
+   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
    * @return {{}} form definition JSON object
    */
-  getFormData(noEmptyValue, noDisabledItem, keepId) {
+  getFormData(noEmptyValue, noDisabledItem, keepId, includeTempItems) {
 
     // get the form data
-    const formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId);
+    const formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId, includeTempItems);
 
     // check if there is user data
     let hasSavedData = false;
@@ -1690,15 +1693,16 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
+   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
+  getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems) {
     const ret:any = {};
     this._invalidData = false;
     // check the value on each item and its subtree
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
-        keepId);
+        keepId, includeTempItems);
     // return a deep copy of the data
     return CommonUtils.deepCopy(ret);
   }
@@ -1776,13 +1780,17 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
+   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
    * @returns {Array} form data on one tree level
    * @private
    */
-  _processDataInItems(items, noFormDefData, noEmptyValue, noDisabledItem, keepId) {
+  _processDataInItems(items, noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems) {
     const itemsData = [];
     for (let i=0, iLen=items.length; i<iLen; i++) {
       const item = items[i];
+      if (!includeTempItems && item.isSubGroupForCheckbox) {
+        continue;
+      }
       const itemData:any = {};
       // for user typed data of an item whose answerConstraint is 'optionsOrString',
       // it is in item.value as {text: "some other value", _notOnList: true}.
@@ -1790,6 +1798,7 @@ export default class LhcFormData {
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
       // or if the item is hidden and the flag is set to ignore hidden items
       if (noDisabledItem && item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ||
+          noDisabledItem && item._enableWhenExpVal === false ||
           noEmptyValue && !item._itemOrSubtreeHasValue && item.dataType!==CONSTANTS.DATA_TYPE.SECTION &&
           item.dataType!==CONSTANTS.DATA_TYPE.TITLE ) {
         continue;
@@ -1830,7 +1839,7 @@ export default class LhcFormData {
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noDisabledItem, keepId);
+        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems);
       }
       // not to add the section header if noEmptyValue is set, and
       // all its children has empty value (thus have not been added either) or it has not children, and
@@ -2412,6 +2421,86 @@ export default class LhcFormData {
     this._actionLogs.push(readerMsg);
 
     return newItem;
+  }
+
+
+  /**
+   * Construct a linkId for a checkbox sub group.
+   * @param answer the selected checkbox option.
+   */
+  getLinkIdForCheckboxSubGroup(answer) {
+    const system = answer.system || '';
+    return 'checkbox-subgroup|' + system + '|' + (answer.code || answer.text);
+  }
+
+
+  /**
+   * Adds a subgroup item for a checkbox answer option.
+   * The subgroup will contain the original sub items.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param answer the selected checkbox option.
+   */
+  addSubItemsForCheckbox(item, answer) {
+    const linkId = this.getLinkIdForCheckboxSubGroup(answer);
+    // Make a copy of the original sub items, excluding checkbox subgroups.
+    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
+    let newGroupItemForCheckbox = {
+      "isSubGroupForCheckbox": true,
+      "checkboxOption": answer,
+      "header": true,
+      "dataType": "SECTION",
+      "displayControl": {
+        "questionLayout": "vertical"
+      },
+      "question": "",
+      "linkId": "",
+      "_id": "",
+      "items": []
+    };
+    newGroupItemForCheckbox.question = answer._displayText;
+    newGroupItemForCheckbox.linkId = linkId;
+    newGroupItemForCheckbox._id = linkId;
+    newGroupItemForCheckbox.items = subItemsCopy;
+    this._updateSubItemsHiddenFromView(newGroupItemForCheckbox, false);
+    item.items.unshift(newGroupItemForCheckbox);
+
+    this._resetInternalData();
+
+    var readerMsg = language.added + newGroupItemForCheckbox.question;
+    this._actionLogs.push(readerMsg);
+  }
+
+
+  /**
+   * Deletes a subgroup item for a checkbox answer option, using the subgroup's linkId.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param checkboxDisplayText the display text of the selected checkbox option.
+   */
+  deleteSubItemsForCheckbox(item, answer) {
+    const linkId = this.getLinkIdForCheckboxSubGroup(answer);
+    item.items = item.items.filter(x => x.linkId !== linkId);
+
+    this._resetInternalData();
+
+    var readerMsg = `${language.removed} Sub items for checkbox option: ${answer._displayText}`;
+    this._actionLogs.push(readerMsg);
+  }
+
+
+  /**
+   * Updates some properties for a checkbox sub group.
+   * Used when rendering a merged QR.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param answer the selected checkbox option, which contains _displayText.
+   * @param linkId the linkId of the subgroup item.
+   */
+  updateCheckboxSubGroupProperties(item, answer, linkId) {
+    const checkboxSubGroup = item.items.find(x => x.isSubGroupForCheckbox === true && x.linkId === linkId);
+    if (checkboxSubGroup && !checkboxSubGroup.question) {
+      checkboxSubGroup.question = answer._displayText;
+      checkboxSubGroup.checkboxOption = answer;
+      this._resetInternalData();
+    }
   }
 
 

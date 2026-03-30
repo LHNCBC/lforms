@@ -2,6 +2,23 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.0.0] 2026-03-27
+### Changed
+- If answerExpression updates the answer list, we do not reset item.value
+  to null. Instead, any values that are still valid with the new answer
+  list will be kept, and any values that are no longer valid will be removed.
+  This is a breaking change.
+- For a checkbox layout question with sub items, if the answer list is
+  updated by answerExpression, the sub items associated with the now-invalid
+  value will also be removed.
+### Fixed
+- For a checkbox layout question with sub items, the sub items will
+  be rendered for each selected checkbox option.
+- When exported to QuestionnaireResponse, each sub item will go under its
+  associated answer, in the format of item.answer.item.
+- Items with enableWhenExpression extensions were not removed from
+  QuestionnaireResponse when not enabled.
+
 ## [40.1.3] 2026-03-12
 ### Added
 - Support for full list of standard launchContext names and resource types
