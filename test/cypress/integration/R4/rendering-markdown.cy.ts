@@ -84,7 +84,7 @@ describe('rendering-markdown', () => {
     });
   });
 
-  describe('on item.legal and item.codingInstrctions', () => {
+  describe('on item.legal and item.codingInstructions', () => {
     const tp: TestPage = new TestPage();
 
     beforeEach(() => {

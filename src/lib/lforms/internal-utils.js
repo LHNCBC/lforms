@@ -558,3 +558,4 @@ InternalUtil.errorMessages = ErrorMessages;
 // Set the default language for error messages.  Apps can call this with a
 // different language code, if error-messages.js has messages in that language.
 InternalUtil.errorMessages.setLanguage('en');
+InternalUtil.md = md;
