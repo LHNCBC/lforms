@@ -31,6 +31,28 @@ describe('skip logic', () => {
     cy.byId(n1).click().should('be.visible');
   });
 
+  it('should remove enableWhenExpression items from QuestionnaireResponse properly', () => {
+    tp.openBaseTestPage();
+    tp.loadFromTestData('enableWhenExpressionTest.json', 'R4');
+    const n1 = 'n1/1/1';
+    const q4 = 'q4/1/1'; // present when n1+n2+n3 >= 5;
+    cy.byId(n1).should('be.visible');
+    cy.byId(q4).should('not.exist');
+    cy.byId(n1).click().type('5');
+    cy.byId(q4).should('be.visible');
+    cy.byId(q4).click().type('888');
+    cy.window().then((win) => {
+      const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+      expect(qr.item[0].item.length).to.equal(2);
+    });
+    cy.byId(n1).clear().type('4');
+    cy.byId(q4).should('not.exist');
+    cy.window().then((win) => {
+      const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+      expect(qr.item[0].item.length).to.equal(1);
+    });
+  });
+
   it('target items should be hidden initially', () => {
     cy.byId(ff.t1).should('not.exist');
     cy.byId(ff.t2).should('not.exist');

@@ -1798,6 +1798,7 @@ export default class LhcFormData {
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
       // or if the item is hidden and the flag is set to ignore hidden items
       if (noDisabledItem && item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ||
+          noDisabledItem && item._enableWhenExpVal === false ||
           noEmptyValue && !item._itemOrSubtreeHasValue && item.dataType!==CONSTANTS.DATA_TYPE.SECTION &&
           item.dataType!==CONSTANTS.DATA_TYPE.TITLE ) {
         continue;
