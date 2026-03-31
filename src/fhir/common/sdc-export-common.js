@@ -1059,10 +1059,12 @@ function addCommonSDCExportFns(ns) {
                 const refinedAnswerList = targetItem.answer.map(a => {
                   if (!a.valueCoding) {
                     return a;
-                  } else if (a.valueCoding && a.valueCoding.display) {
+                  } else if (a.valueCoding.display) {
                     // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
                     // Create a new object with property "text" for matching, since lfSubItem.checkboxOption has "text" but not "display".
                     return { ...a.valueCoding, text: a.valueCoding.display };
+                  } else {
+                    return a.valueCoding;
                   }
                 });
                 let matchingAnswerIndex = refinedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.checkboxOption, lfItem));
