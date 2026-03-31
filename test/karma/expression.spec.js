@@ -759,7 +759,7 @@ describe('ExpressionProcessor', function () {
             const totalScoreItem = testLFData.itemList.find(item => item.linkId === '9272-6');
             return testLFData._expressionProcessor.runCalculations(true).then(() => {
               // Not all answered → iif returns {} → value should be undefined/empty
-              assert.ok(totalScoreItem.value === undefined || totalScoreItem.value === null || totalScoreItem.value === '');
+              assert.ok(totalScoreItem.value === undefined);
             });
           });
         });
