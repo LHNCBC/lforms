@@ -24,7 +24,7 @@
       "text": "Markdown answer options",
       "item": [
         {
-          "type": "choice",
+          "type": "string",
           "linkId": "/matrixTable1/type0",
           "text": "A question",
           "answerOption": [
@@ -64,7 +64,7 @@
           ]
         },
         {
-          "type": "choice",
+          "type": "string",
           "linkId": "/matrixTable1/type1",
           "text": "Another question",
           "answerOption": [
