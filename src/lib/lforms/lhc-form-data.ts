@@ -657,7 +657,9 @@ export default class LhcFormData {
           const valid = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, expression, item);
           if (valid === false) {
             const human = constraint.find(e => e.url === 'human').valueString;
-            errors.push(human);
+            const constraintKey = constraint.find(e => e.url === 'key').valueId;
+            const errorMsg = constraintKey ? `${human} The targetConstraint key is: ${constraintKey}.` : human;
+            errors.push(errorMsg);
             const location = constraint.find(e => e.url === 'location').valueString;
             const itemOfLocation = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, location, item);
             // Use a timeout to add to the validation errors of the location item, lest it be overridden by
@@ -666,7 +668,7 @@ export default class LhcFormData {
               let itemToShowError = this._findItemByLinkId(item, itemOfLocation.linkId);
               // Add the validation error message (human) to the item._validationErrors array of the item
               // specified in the constraint's location.
-              itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], human];
+              itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], errorMsg];
             }, 1);
           }
         }

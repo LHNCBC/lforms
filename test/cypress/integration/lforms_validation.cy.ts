@@ -756,7 +756,7 @@ describe('Validations', () => {
       cy.window().then((win) => {
         const errors = win.LForms.Util.checkValidity();
         expect(errors).to.deep.equal([
-          'Please enter a minimum and maximum value. The minimum value must be less than or equal to the maximum value.'
+          'Please enter a minimum and maximum value. The minimum value must be less than or equal to the maximum value. The targetConstraint key is: min-max-check.'
         ]);
       });
       // The error message should be shown on the Maximum Value field, as defined in the
