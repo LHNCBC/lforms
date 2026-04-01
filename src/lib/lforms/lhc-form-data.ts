@@ -632,7 +632,6 @@ export default class LhcFormData {
       const errorRequired = Validation.checkRequired(item._answerRequired, item.value, errors);
       const errorDataType = Validation.checkDataType(item.dataType, item.value, errors);
       const errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
-      this._checkConstraints(item, errors);
       item._validationErrors = errors;
 
     }
@@ -646,7 +645,7 @@ export default class LhcFormData {
    * @returns {boolean}
    */
   _checkConstraints(item, errors) {
-    if (item.constraints && item.constraints.length > 0) {
+    if (item._hasValidation && item.constraints && item.constraints.length > 0) {
       for (let i=0; i<item.constraints.length; i++) {
         const constraint = item.constraints[i].extension;
         const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
@@ -1758,6 +1757,7 @@ export default class LhcFormData {
 
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         this._checkValidations(item);
+        this._checkConstraints(item, item._validationErrors);
 
         if (item._validationErrors !== undefined && item._validationErrors.length) {
           const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
