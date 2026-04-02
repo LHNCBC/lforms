@@ -214,23 +214,28 @@ const FormUtils = {
     if (!fhirServerBase) {
       throw new Error('FHIR server base URL is required for validating the Questionnaire.');
     }
-    return fetch(fhirServerBase + '/Questionnaire/$validate', {
+    const fullUrl = new URL('Questionnaire/$validate', fhirServerBase);
+    return fetch(fullUrl.href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(questionnaire)
     }).then(function (response) {
+      if (!response.ok) throw new Error('Server returned ' + response.status);
       return response.json();
     }).then(function (parsedJSON) {
       let rtn = null;
       if (parsedJSON.resourceType === "OperationOutcome") {
-        var errorOrFatal = parsedJSON.issue.find(item => item.severity === "error" || item.severity === "fatal");
+        const errorOrFatal = parsedJSON.issue?.find(item => item.severity === "error" || item.severity === "fatal");
         if (errorOrFatal) {
           rtn = errorOrFatal.diagnostics;
         }
       }
       return rtn;
+    }).catch(function (error) {
+      console.error('Network error occurred:', error);
+      throw new Error('Network error: Unable to validate the Questionnaire.');
     });
   },
 

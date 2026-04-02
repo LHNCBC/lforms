@@ -920,6 +920,10 @@ describe('Util library', function() {
   });
 
   describe('validateQuestionnaireOnFHIRServer', function() {
+    afterEach(() => {
+      restoreOriginalFetch();
+    });
+
     it('should resolve to null for a valid questionnaire', function(done) {
       const q = {
         "resourceType": "Questionnaire",
@@ -984,6 +988,23 @@ describe('Util library', function() {
           done();
         });
     });
+
+    it('should throw for network failure', function(done) {
+      const q = {
+        "resourceType": "Questionnaire",
+        "title": "Test Questionnaire",
+        "status": "draft"
+      };
+      mockFetchResults([
+        ['Questionnaire/$validate', null, { message: "Bad request." }]
+      ]);
+      LForms.Util.validateQuestionnaireOnFHIRServer(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
+        .then(() => {}, (result) => {
+          assert.equal(result, 'Error: Network error: Unable to validate the Questionnaire.');
+          done();
+        });
+    });
+
   });
 });
 
