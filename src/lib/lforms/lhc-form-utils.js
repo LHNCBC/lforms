@@ -207,7 +207,7 @@ const FormUtils = {
    * @param fhirServerBase the base URL of the FHIR server to which the $validate call should be made.
    * @return a Promise that resolves to null if the Questionnaire is valid, or an error message if not valid.
    */
-  validateFHIRQuestionnaire: function(questionnaire, fhirServerBase) {
+  validateQuestionnaireOnFHIRServer: function(questionnaire, fhirServerBase) {
     if (!questionnaire || questionnaire.resourceType !== 'Questionnaire') {
       throw new Error('The provided resource is not a Questionnaire.');
     }

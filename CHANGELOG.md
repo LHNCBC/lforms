@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [41.3.0] 2026-04-02
 ### Added
-- New utility function validateFHIRQuestionnaire() to validate a
+- New utility function validateQuestionnaireOnFHIRServer() to validate a
   questionnaire against a FHIR server.
 
 ## [41.2.0] 2026-04-02

@@ -919,7 +919,7 @@ describe('Util library', function() {
     });
   });
 
-  describe('validateFHIRQuestionnaire', function() {
+  describe('validateQuestionnaireOnFHIRServer', function() {
     it('should resolve to null for a valid questionnaire', function(done) {
       const q = {
         "resourceType": "Questionnaire",
@@ -938,7 +938,7 @@ describe('Util library', function() {
           ]
         }]
       ])
-      LForms.Util.validateFHIRQuestionnaire(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
+      LForms.Util.validateQuestionnaireOnFHIRServer(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
         .then((result) => {
           assert.equal(result, null);
           done();
@@ -978,7 +978,7 @@ describe('Util library', function() {
           ]
         }]
       ])
-      LForms.Util.validateFHIRQuestionnaire(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
+      LForms.Util.validateQuestionnaireOnFHIRServer(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
         .then((result) => {
           assert.equal(result, 'Array cannot be empty - the property should not be present if it has no values');
           done();
