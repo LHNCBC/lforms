@@ -1,0 +1,294 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "1-Minute Apgar Score",
+  "status": "active",
+  "item": [
+    {
+      "linkId": "32406-1",
+      "text": "1-Min-Apgar Hautfarbe",
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6722-8",
+            "display": "Blaugrau oder blass"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 0
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6723-6",
+            "display": "Gute Körperfarbe mit blauen Händen oder Füßen"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6724-4",
+            "display": "Gute Farbe am gesamten Körper"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "32407-9",
+      "text": "1-Min-Apgar Herzfrequenz",
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6716-0",
+            "display": "Keine Herzfrequenz"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 0
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6717-8",
+            "display": "Unter 100 Schläge pro Minute"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6718-6",
+            "display": "Mindestens 100 Schläge pro Minute"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "32409-5",
+      "text": "1-Min-Apgar Reflexreaktion",
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6719-4",
+            "display": "Keine Reaktion"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 0
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6720-2",
+            "display": "Grimasse"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6721-0",
+            "display": "Grimasse und Zurückziehen"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "32408-7",
+      "text": "1-Min-Apgar Muskeltonus",
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6713-7",
+            "display": "Schlaff"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 0
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6714-5",
+            "display": "Etwas Beugung"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6715-2",
+            "display": "Aktive Bewegung"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "32410-3",
+      "text": "1-Min-Apgar Atemanstrengung",
+      "type": "choice",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6725-1",
+            "display": "Keine Atmung"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 0
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6726-9",
+            "display": "Schwacher Schrei"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 1
+            }
+          ]
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6727-7",
+            "display": "Guter, kräftiger Schrei"
+          },
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+              "valueDecimal": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "9272-6",
+      "text": "1-Min-Apgar Gesamtpunktzahl",
+      "type": "decimal",
+      "readOnly": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "a",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = '32406-1').answerOption.where(valueCoding.code=%resource.item.where(linkId = '32406-1').answer.valueCoding.code).extension.where(url='http://hl7.org/fhir/StructureDefinition/itemWeight').valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "b",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = '32407-9').answerOption.where(valueCoding.code=%resource.item.where(linkId = '32407-9').answer.valueCoding.code).extension.where(url='http://hl7.org/fhir/StructureDefinition/itemWeight').valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "c",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = '32409-5').answerOption.where(valueCoding.code=%resource.item.where(linkId = '32409-5').answer.valueCoding.code).extension.where(url='http://hl7.org/fhir/StructureDefinition/itemWeight').valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "d",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = '32408-7').answerOption.where(valueCoding.code=%resource.item.where(linkId = '32408-7').answer.valueCoding.code).extension.where(url='http://hl7.org/fhir/StructureDefinition/itemWeight').valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
+            "name": "e",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.item.where(linkId = '32410-3').answerOption.where(valueCoding.code=%resource.item.where(linkId = '32410-3').answer.valueCoding.code).extension.where(url='http://hl7.org/fhir/StructureDefinition/itemWeight').valueDecimal"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
+          "valueExpression": {
+            "description": "Total score (only when all 5 answered)",
+            "language": "text/fhirpath",
+            "expression": "iif(%a.exists() and %b.exists() and %c.exists() and %d.exists() and %e.exists(), %a + %b + %c + %d + %e, {})"
+          }
+        }
+      ]
+    }
+  ]
+}
+

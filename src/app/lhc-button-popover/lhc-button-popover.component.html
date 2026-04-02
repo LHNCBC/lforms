@@ -39,6 +39,19 @@
           attr.aria-describedby="help-button-{{ item._elementId }}">
     <i nz-icon nzType="question-circle" nzTheme="fill"></i>
   </button>
+  <button *ngSwitchCase="'help-markdown'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"
+          nz-popover
+          [nzPopoverContent]="helpMarkdownTemplate"
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
+          [nzPopoverTitle]="language.helpTitle"
+          nzPopoverOverlayClassName="lhc-popover-help"
+          (click)="onShowingPopover(item)"
+          attr.aria-controls="help-content-{{item._elementId}}"
+          attr.aria-label="Help button for {{item.question}}"
+          attr.aria-describedby="help-button-{{ item._elementId }}">
+    <i nz-icon nzType="question-circle" nzTheme="fill"></i>
+  </button>
   <button *ngSwitchCase="'help-plain'" id="help-button-{{ item._elementId }}" type="button" class="lhc-help-button"
           nz-popover
           [nzPopoverContent]="helpPlainTemplate"
@@ -68,6 +81,19 @@
   <button *ngSwitchCase="'legal-html'" id="legal-button-{{ item._elementId }}" type="button" class="lhc-legal-button"
           nz-popover
           [nzPopoverContent]="legalHtmlTemplate"
+          nzPopoverTrigger="click"
+          nzPopoverPlacement="right"
+          [nzPopoverTitle]="language.legalTitle"
+          nzPopoverOverlayClassName="lhc-popover-legal"
+          (click)="onShowingPopover(item)"
+          attr.aria-controls="legal-content-{{item._elementId}}"
+          attr.aria-label="Legal button for {{item.question}}"
+          attr.aria-describedby="legal-button-{{ item._elementId }}">
+    <i nz-icon nzType="info-circle" nzTheme="fill"></i>
+  </button>
+  <button *ngSwitchCase="'legal-markdown'" id="legal-button-{{ item._elementId }}" type="button" class="lhc-legal-button"
+          nz-popover
+          [nzPopoverContent]="legalMarkdownTemplate"
           nzPopoverTrigger="click"
           nzPopoverPlacement="right"
           [nzPopoverTitle]="language.legalTitle"
@@ -133,6 +159,16 @@
         [innerHTML]="item._codingInstructionsWithContainedImages || item.codingInstructions | safeHtml"
   ></span>
 </ng-template>
+<!-- help popover template with trusted html -->
+<ng-template #helpMarkdownTemplate>
+  <span attr.aria-labelledby="help-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Instruction for {{item.question}}"
+        attr.aria-describedby="help-content-{{item._elementId}}"
+        id="help-content-{{item._elementId}}"
+        [innerHTML]="item.codingInstructions | safeHtml"
+  ></span>
+</ng-template>
 <!-- help popover template with plain text-->
 <ng-template #helpPlainTemplate>
   <span attr.aria-labelledby="help-button-{{item._elementId}}"
@@ -163,6 +199,16 @@
         id="legal-content-{{item._elementId}}"
         [style]="item._obj_legalCSS"
         [innerHTML]="item._legalWithContainedImages || item.legal | safeHtml"
+  ></span>
+</ng-template>
+<!-- legal popover template with trusted html from markdown -->
+<ng-template #legalMarkdownTemplate>
+  <span attr.aria-labelledby="legal-button-{{item._elementId}}"
+        role="region"
+        attr.aria-label="Legal for {{item.question}}"
+        attr.aria-describedby="legal-content-{{item._elementId}}"
+        id="legal-content-{{item._elementId}}"
+        [innerHTML]="item.legal | safeHtml"
   ></span>
 </ng-template>
 <!-- legal popover template with plain text-->

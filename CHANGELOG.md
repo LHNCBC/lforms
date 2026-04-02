@@ -2,12 +2,26 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [41.1.0] 2026-03-26
+## [41.3.0] 2026-04-02
 ### Added
 - New utility function validateFHIRQuestionnaire() to validate a
   questionnaire against a FHIR server.
 
-## [41.0.0] 2026-03-13
+## [41.2.0] 2026-04-02
+### Added
+- Support for targetConstraint extension.
+
+## [41.1.1] 2026-04-02
+### Fixed
+- Original score extensions (ordinalValue or itemWeight) were not
+  kept in the exported questionnaire.
+
+## [41.1.0] 2026-03-30
+### Added
+- Support for rendering-markdown extension. Note that rendering-xhtml
+  takes precedence over rendering-markdown if both are present.
+
+## [41.0.0] 2026-03-27
 ### Changed
 - If answerExpression updates the answer list, we do not reset item.value
   to null. Instead, any values that are still valid with the new answer
@@ -21,6 +35,8 @@ This project follows [Semantic Versioning](http://semver.org/).
   be rendered for each selected checkbox option.
 - When exported to QuestionnaireResponse, each sub item will go under its
   associated answer, in the format of item.answer.item.
+- Items with enableWhenExpression extensions were not removed from
+  QuestionnaireResponse when not enabled.
 
 ## [40.1.3] 2026-03-12
 ### Added

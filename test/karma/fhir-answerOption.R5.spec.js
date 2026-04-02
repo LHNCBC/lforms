@@ -1,5 +1,11 @@
 // Tests for FHIR SDC library
 
+const scoreExtUrlR5 = 'http://hl7.org/fhir/StructureDefinition/itemWeight';
+
+function withScoreExtUrlR5(answers) {
+  return answers.map(a => Object.assign({}, a, {_scoreExtUrl: scoreExtUrlR5}));
+}
+
 function testImportAnswerOption(params, answerConstraint) {
   let fhirVersion = "R5";
   let fhir = LForms.FHIR[fhirVersion];
@@ -18,6 +24,7 @@ function testImportAnswerOption(params, answerConstraint) {
       $.get(file, function (fhirQ) {
         try {
           let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+          let answersWithPrefixScoreAndUrl = withScoreExtUrlR5(params.answersWithPrefixScore);
 
           //answerOption - autocomplete
           assert.deepEqual(lfData.items[0].items[0].answers, params.answers)
@@ -34,17 +41,17 @@ function testImportAnswerOption(params, answerConstraint) {
           assert.deepEqual(lfData.items[1].items[1].displayControl, displayControlRadioCheckboxHorizontal)
           assert.deepEqual(lfData.items[1].items[1].answerCardinality, answerCardinalityRepeats)
           //answerOption - prefix- score
-          assert.deepEqual(lfData.items[2].items[0].answers, params.answersWithPrefixScore)
+          assert.deepEqual(lfData.items[2].items[0].answers, answersWithPrefixScoreAndUrl)
           assert.deepEqual(lfData.items[2].items[0].displayControl, displayControlCombo)
           assert.deepEqual(lfData.items[2].items[0].answerCardinality, answerCardinalityNonRepeats)
-          assert.deepEqual(lfData.items[2].items[1].answers, params.answersWithPrefixScore)
+          assert.deepEqual(lfData.items[2].items[1].answers, answersWithPrefixScoreAndUrl)
           assert.deepEqual(lfData.items[2].items[1].displayControl, displayControlCombo)
           assert.deepEqual(lfData.items[2].items[1].answerCardinality, answerCardinalityRepeats)
           //answerOption - radiocheckbox - prefix - score
-          assert.deepEqual(lfData.items[3].items[0].answers, params.answersWithPrefixScore)
+          assert.deepEqual(lfData.items[3].items[0].answers, answersWithPrefixScoreAndUrl)
           assert.deepEqual(lfData.items[3].items[0].displayControl, displayControlRadioCheckboxVertical)
           assert.deepEqual(lfData.items[3].items[0].answerCardinality, answerCardinalityNonRepeats)
-          assert.deepEqual(lfData.items[3].items[1].answers, params.answersWithPrefixScore)
+          assert.deepEqual(lfData.items[3].items[1].answers, answersWithPrefixScoreAndUrl)
           assert.deepEqual(lfData.items[3].items[1].displayControl, displayControlRadioCheckboxHorizontal)
           assert.deepEqual(lfData.items[3].items[1].answerCardinality, answerCardinalityRepeats)
           //answerOption - autocomplete - initial
@@ -301,7 +308,7 @@ describe('coding in R5 with answerConstraint to choice/open-choice in R4', funct
       let errMessage = "The type 'coding' with answerConstraint 'optionsOrType' in R5 cannot be converted to a valid type in R4 or STU3."
       assert.equal(e.message, errMessage);
     }
-     
+
     // R5 to STU3
     try {
       let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(qR5b, 'R5');

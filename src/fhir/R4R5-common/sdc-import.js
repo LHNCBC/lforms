@@ -134,6 +134,12 @@ function addSDCImportFns(ns) {
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
                 LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
+              } else {
+                // rendering-markdown extension under "valueCoding._display".
+                const markdownFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
+                if (markdownFormat) {
+                  LForms.Util._internalUtil.setAnswerTextMarkdown(answer, markdownFormat);
+                }
               }
               // rendering-style extension under "valueCoding._display".
               const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
@@ -145,12 +151,18 @@ function addSDCImportFns(ns) {
           else if (optionKey[0] === 'valueString' || optionKey[0] === 'valueDate' ||
               optionKey[0] === 'valueTime' ){
             answer.text = option[optionKey[0]];
-            // rendering-xhtml extension under "_valueString".
             if (optionKey[0] === 'valueString' && option._valueString) {
               answer['obj_valueString'] = option._valueString;
+              // rendering-xhtml extension under "_valueString".
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
                 LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
+              } else {
+                // rendering-markdown extension under "_valueString".
+                const markdownFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
+                if (markdownFormat) {
+                  LForms.Util._internalUtil.setAnswerTextMarkdown(answer, markdownFormat);
+                }
               }
             }
             // rendering-style extension under "_valueString", "_valueDate" or "_valueTime".
@@ -187,6 +199,7 @@ function addSDCImportFns(ns) {
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
           if(score) {
             answer.score = parseFloat(score.valueDecimal);
+            answer._scoreExtUrl = score.url;
           }
 
         }
