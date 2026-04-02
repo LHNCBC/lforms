@@ -2,6 +2,18 @@
 //let fhirVers = Object.keys(LForms.Util.FHIRSupport);
 const fhirVers = ["R4", "STU3"];
 
+// Score extension URLs per FHIR version (must match fhirExtUrlOptionScoreLookup in sdc-import-common.js)
+const scoreExtUrlByVersion = {
+  'R4':   'http://hl7.org/fhir/StructureDefinition/ordinalValue',
+  'R4B':  'http://hl7.org/fhir/StructureDefinition/ordinalValue',
+  'STU3': 'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue',
+  'R5':   'http://hl7.org/fhir/StructureDefinition/itemWeight'
+};
+
+function withScoreExtUrl(answers, scoreExtUrl) {
+  return answers.map(a => Object.assign({}, a, {_scoreExtUrl: scoreExtUrl}));
+}
+
 function testImportAnswerOption(params) {
   for (var i=0, len=fhirVers.length; i<len; ++i) {
     (function (fhirVersion) {
@@ -20,6 +32,7 @@ function testImportAnswerOption(params) {
           LForms.jQuery.get(file, function (fhirQ) {
             try {
               let lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+              let answersWithPrefixScoreAndUrl = withScoreExtUrl(params.answersWithPrefixScore, scoreExtUrlByVersion[fhirVersion]);
 
               //answerOption - autocomplete
               assert.deepEqual(lfData.items[0].items[0].answers, params.answers)
@@ -36,17 +49,17 @@ function testImportAnswerOption(params) {
               assert.deepEqual(lfData.items[1].items[1].displayControl, displayControlRadioCheckboxHorizontal)
               assert.deepEqual(lfData.items[1].items[1].answerCardinality, answerCardinalityRepeats)
               //answerOption - prefix- score
-              assert.deepEqual(lfData.items[2].items[0].answers, params.answersWithPrefixScore)
+              assert.deepEqual(lfData.items[2].items[0].answers, answersWithPrefixScoreAndUrl)
               assert.deepEqual(lfData.items[2].items[0].displayControl, displayControlCombo)
               assert.deepEqual(lfData.items[2].items[0].answerCardinality, answerCardinalityNonRepeats)
-              assert.deepEqual(lfData.items[2].items[1].answers, params.answersWithPrefixScore)
+              assert.deepEqual(lfData.items[2].items[1].answers, answersWithPrefixScoreAndUrl)
               assert.deepEqual(lfData.items[2].items[1].displayControl, displayControlCombo)
               assert.deepEqual(lfData.items[2].items[1].answerCardinality, answerCardinalityRepeats)
               //answerOption - radiocheckbox - prefix - score
-              assert.deepEqual(lfData.items[3].items[0].answers, params.answersWithPrefixScore)
+              assert.deepEqual(lfData.items[3].items[0].answers, answersWithPrefixScoreAndUrl)
               assert.deepEqual(lfData.items[3].items[0].displayControl, displayControlRadioCheckboxVertical)
               assert.deepEqual(lfData.items[3].items[0].answerCardinality, answerCardinalityNonRepeats)
-              assert.deepEqual(lfData.items[3].items[1].answers, params.answersWithPrefixScore)
+              assert.deepEqual(lfData.items[3].items[1].answers, answersWithPrefixScoreAndUrl)
               assert.deepEqual(lfData.items[3].items[1].displayControl, displayControlRadioCheckboxHorizontal)
               assert.deepEqual(lfData.items[3].items[1].answerCardinality, answerCardinalityRepeats)
               //answerOption - autocomplete - initial

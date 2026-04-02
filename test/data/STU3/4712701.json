@@ -68,7 +68,7 @@
             "fhir_comments": [
               " das ValueSet müsste ggf. eingeschränkt werden, um nur ambulant/stationär zuzulassen"
             ],
-            "reference": "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode"
+            "reference": "http://terminology.hl7.org/ValueSet/v3-ActEncounterCode"
           }
         },
         {

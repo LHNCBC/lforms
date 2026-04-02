@@ -224,6 +224,7 @@ function addSDCImportFns(ns) {
           score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
           if(score) {
             answer.score = parseFloat(score.valueDecimal);
+            answer._scoreExtUrl = score.url;
           }
 
         }

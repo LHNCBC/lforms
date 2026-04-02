@@ -846,6 +846,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 ]);
               });
             });
+
+            it('should preserve score extension url', function (){
+              $.get('test/data/R4/apgar-with-itemWeight-variable.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.deepEqual(qData.item[0].answerOption[0], json.item[0].answerOption[0]);
+              });
+            });
           }
 
           if (fhirVersion === 'STU3') {
@@ -2098,9 +2106,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
 
                   assert.equal(convertedQ.item[11].item[0].option.length, json.item[11].item[0].option.length);
-                  // The score is changed from argonaut extension to FHIR extension.
+                  // The score extension URL is preserved from the original input (argonaut URL).
                   assert.equal(convertedQ.item[11].item[0].option[0].extension[0].url,
-                      'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue');
+                      json.item[11].item[0].option[0].extension[0].url);
                   assert.equal(convertedQ.item[11].item[0].option[0].extension[0].valueDecimal,
                       json.item[11].item[0].option[0].extension[0].valueDecimal);
                 }).done(function () {

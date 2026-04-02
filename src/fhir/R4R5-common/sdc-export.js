@@ -377,7 +377,7 @@ var self = {
 
       if (answer.score !== null && answer.score !== undefined) {
         ext.push({
-          url: this.fhirExtUrlOptionScore,
+          url: answer._scoreExtUrl || this.fhirExtUrlOptionScore,
           valueDecimal: answer.score,
         });
       }
