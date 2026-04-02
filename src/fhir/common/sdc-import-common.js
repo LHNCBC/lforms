@@ -1,8 +1,7 @@
 import {InternalUtil} from '../../lib/lforms/internal-utils.js';
 import {importFHIRQuantity} from './import-common.js';
 import CommonUtils from "../../lib/lforms/lhc-common-utils";
-
-const fhirpath = require('fhirpath');
+import fhirpath from 'fhirpath';
 
 /**
  *  Defines SDC import functions that are the same across the different FHIR
@@ -722,24 +721,30 @@ function addCommonSDCImportFns(ns) {
       if (extFieldData)
         lfItem['obj'+extField] = extFieldData;
 
-      let htmlAttrName = itemAttr == 'obj_text' ? '_displayTextHTML' : '_prefixHTML';
+      let htmlAttrName = itemAttr == 'obj_text' ? '_displayText' : '_prefix';
       let invalidFlagName = itemAttr == 'obj_text' ? '_hasInvalidHTMLTagInText' : '_hasInvalidHTMLTagInPrefix';
 
-      // process rendering-xhtml extension
+      // Process rendering-xhtml and rendering-markdown extensions.
       const xhtmlFormat = lfItem[itemAttr] ?
           LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml") : null;
       if (xhtmlFormat) {
-        lfItem[htmlAttrName] = xhtmlFormat.valueString;
-        if (self._widgetOptions?.allowHTML) {
-          let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions?.allowExternalURL);
-          if (invalidTagsAttributes && invalidTagsAttributes.length>0) {
-            lfItem[invalidFlagName] = true;
-            let errors = {};
-            errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
-            const messages = [{errors}];
-            LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
-            LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
-          }
+        lfItem[htmlAttrName+'HTML'] = xhtmlFormat.valueString;
+      } else {
+        const markdownFormat = lfItem[itemAttr] ?
+          LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown") : null;
+        if (markdownFormat) {
+          lfItem[htmlAttrName+'Markdown'] = InternalUtil.md.render(markdownFormat.valueString);
+        }
+      }
+      if (self._widgetOptions?.allowHTML && lfItem[htmlAttrName+'HTML']) {
+        let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(lfItem[htmlAttrName+'HTML'], self._widgetOptions?.allowExternalURL);
+        if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
+          lfItem[invalidFlagName] = true;
+          let errors = {};
+          errorMessages.addMsg(errors, 'invalidTagInHTMLContent');
+          const messages = [{errors}];
+          LForms.Util._internalUtil.printInvalidHtmlToConsole(invalidTagsAttributes);
+          LForms.Util._internalUtil.setItemMessagesArray(lfItem, messages, '_processTextAndPrefix');
         }
       }
     }
@@ -1068,6 +1073,9 @@ function addCommonSDCImportFns(ns) {
                     "items": []
                   };
                   const checkboxOption = item.value[k];
+                  if (!checkboxOption) {
+                    throw new Error("qrAnswersItemsInfo[" + k + "] doesn't have a corresponding item value. Please check the QR.");
+                  }
                   const linkId = 'checkbox-subgroup|' + (checkboxOption.system || '') + '|' + (checkboxOption.code || checkboxOption.text);
                   // newCheckboxSubGroup.checkboxOption and newCheckboxSubGroup.question could not be set here during import/merge,
                   // because checkboxOption._displayText is set in lhc-form-data.ts. They will be updated later in
@@ -1727,7 +1735,7 @@ function addCommonSDCImportFns(ns) {
     // use one coding instruction if there are multiple ones in Questionnaire.
     let helpOrLegal, legal, errors, messages;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-    let xhtmlFormat;
+    let xhtmlFormat, markdownFormat;
     if ( qItem.type === "display" && ci) {
       const itemControlCode = ci.valueCodeableConcept?.coding?.[0]?.code;
       if (itemControlCode === 'unit') {
@@ -1737,9 +1745,10 @@ function addCommonSDCImportFns(ns) {
         // true if it's a legal extension, false if it's a help extension.
         let isLegal = itemControlCode === 'legal';
 
-        // only "rendering-xhtml" is supported. others are default to text
+        // only "rendering-xhtml" and "rendering-markdown" is supported. others are default to text
         if (qItem._text) {
           xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+          markdownFormat = xhtmlFormat || LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
           const renderingStyle = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
           if (renderingStyle) {
             if (isLegal) {
@@ -1750,22 +1759,26 @@ function addCommonSDCImportFns(ns) {
           }
         }
 
-        // there is a xhtml extension
-        if (xhtmlFormat) {
+        // there is a xhtml or markdown extension
+        const htmlString = xhtmlFormat ? xhtmlFormat.valueString :
+          markdownFormat ? InternalUtil.md.render(markdownFormat.valueString) : null;
+        if (htmlString) {
           helpOrLegal = isLegal ? {
-            legalFormat: "html",
-            legal: xhtmlFormat.valueString,
+            legalFormat: xhtmlFormat ? "html" : "markdown",
+            legal: htmlString,
+            legalOriginalMarkdown: xhtmlFormat ? null : markdownFormat.valueString, // kept for export use
             legalLinkId: qItem.linkId,
             legalPlain: qItem.text  // this always contains the legal in plain text
           } : {
-            codingInstructionsFormat: "html",
-            codingInstructions: xhtmlFormat.valueString,
+            codingInstructionsFormat: xhtmlFormat ? "html" : "markdown",
+            codingInstructions: htmlString,
+            codingInstructionsOriginalMarkdown: xhtmlFormat ? null : markdownFormat.valueString, // kept for export use
             codingInstructionsLinkId: qItem.linkId,
             codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
           };
           // check if html string contains invalid html tags, when the html version needs to be displayed
-          if (self._widgetOptions?.allowHTML) {
-            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(xhtmlFormat.valueString, self._widgetOptions.allowExternalURL);
+          if (self._widgetOptions?.allowHTML && xhtmlFormat) {
+            let invalidTagsAttributes = LForms.Util._internalUtil.checkForInvalidHtmlTags(htmlString, self._widgetOptions.allowExternalURL);
             if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
               if (isLegal)
                 helpOrLegal.legalHasInvalidHtmlTag = true;
@@ -1783,7 +1796,7 @@ function addCommonSDCImportFns(ns) {
           helpOrLegal = isLegal ? {
             legalFormat: "text",
             legal: qItem.text,
-            legalinkId: qItem.linkId,
+            legalLinkId: qItem.linkId,
             legalPlain: qItem.text // this always contains the legal in plain text
           } : {
             codingInstructionsFormat: "text",
@@ -1803,12 +1816,14 @@ function addCommonSDCImportFns(ns) {
             targetItem.legalPlain = helpOrLegal.legalPlain;
             targetItem.legalHasInvalidHtmlTag = helpOrLegal.legalHasInvalidHtmlTag;
             targetItem.legalLinkId = helpOrLegal.legalLinkId;
+            targetItem.legalOriginalMarkdown = helpOrLegal.legalOriginalMarkdown;
           } else {
             targetItem.codingInstructions = helpOrLegal.codingInstructions;
             targetItem.codingInstructionsFormat = helpOrLegal.codingInstructionsFormat;
             targetItem.codingInstructionsPlain = helpOrLegal.codingInstructionsPlain;
             targetItem.codingInstructionsHasInvalidHtmlTag = helpOrLegal.codingInstructionsHasInvalidHtmlTag;
             targetItem.codingInstructionsLinkId = helpOrLegal.codingInstructionsLinkId;
+            targetItem.codingInstructionsOriginalMarkdown = helpOrLegal.codingInstructionsOriginalMarkdown;
           }
         }
       }

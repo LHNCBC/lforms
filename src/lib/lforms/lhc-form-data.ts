@@ -72,6 +72,8 @@ export default class LhcFormData {
     allowMultipleEmptyRepeatingItems: false,
     // whether to allow HTML content in item.text and the codingInstructions field.
     allowHTML: false,
+    // whether to allow markdown content
+    allowMarkdown: false,
     displayControl: {
       // Controls the question layout of the form. default value for questionLayout is "vertical".
       // Available value could be:
@@ -1063,6 +1065,9 @@ export default class LhcFormData {
       // check if displayInvalidHTML is changed
       const displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
         newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
+      // check if allowMarkdown is changed
+      const allowMarkdownChanged = newOptions.allowMarkdown !== undefined &&
+        newOptions.allowMarkdown !== existingOptions.allowMarkdown;
       // check if readonlyMode is changed
       const readonlyModeChanged = newOptions.readonlyMode !== undefined &&
         newOptions.readonlyMode !== existingOptions.readonlyMode;
@@ -1080,12 +1085,12 @@ export default class LhcFormData {
       // recreate the answerOption to add or remove the scores from display texts,
       // or switch between 'html', 'escaped' and 'plain' display types,
       // when the lhcFormData instance has been initialized.
-      if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged) && this.itemList) {
+      if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged || allowMarkdownChanged) && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           const item = this.itemList[i];
           // We need to update the autocomp options if the HTML options changed, or,
           // in the case that only the score display option changed, we want to update only those answers with item._hasScoreInAnswer=true.
-          if (!!item._hasAnswerList && (allowHTMLChanged || displayInvalidHTMLChanged || item._hasScoreInAnswer))
+          if (!!item._hasAnswerList && (allowHTMLChanged || displayInvalidHTMLChanged || allowMarkdownChanged || item._hasScoreInAnswer))
             this._updateAutocompOptions(item);
         }
       }
@@ -3553,12 +3558,14 @@ export default class LhcFormData {
         // and set isListHTML.
         if (!item.displayControl || !item.displayControl.answerLayout || item.displayControl.answerLayout.type !== 'RADIO_CHECKBOX') {
           // Set isListHTML to true if any of the answer options should be displayed as HTML.
-          options.isListHTML = answers.some(a => a._displayType === 'html');
+          options.isListHTML = answers.some(a => a._displayType === 'html' || a._displayType === 'markdown');
           for (let i = 0; i < answers.length; ++i) {
             if (answers[i]._displayType === 'html') {
               answers[i]._displayText = answers[i]._displayTextHTML;
             } else if (answers[i]._displayType === 'escaped') {
               answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayTextHTML);
+            } else if (answers[i]._displayType === 'markdown') {
+              answers[i]._displayText = answers[i]._displayTextMarkdown;
             } else if (options.isListHTML) {
               answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayText);
             }
@@ -3588,6 +3595,8 @@ export default class LhcFormData {
       else {
         format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
       }
+    } else if (item._displayTextMarkdown && item._displayTextMarkdown.length > 0 && this.templateOptions.allowMarkdown) {
+      format = 'markdown';
     }
     return format;
   }
@@ -3607,6 +3616,8 @@ export default class LhcFormData {
       else {
         format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
       }
+    } else if (item._prefixMarkdown && item._prefixMarkdown.length > 0 && this.templateOptions.allowMarkdown) {
+      format = 'markdown';
     }
     return format;
   }
@@ -3632,12 +3643,16 @@ export default class LhcFormData {
         // convert integer to string when the answerOption is an integer
         let displayText = (answerData.text || answerData.code) + "";
         let displayTextHTML = answerData.textHTML;
+        let displayTextMarkdown = answerData.textMarkdown;
         // label is a string
         if (answerData.label) {
           displayText = answerData.label + ". " + displayText;
           hasOneAnswerLabel = true;
           if (displayTextHTML) {
             displayTextHTML = answerData.label + ". " + displayTextHTML;
+          }
+          if (displayTextMarkdown) {
+            displayTextMarkdown = answerData.label + ". " + displayTextMarkdown;
           }
         }
         // check if one of the values is numeric
@@ -3654,12 +3669,16 @@ export default class LhcFormData {
             if (displayTextHTML) {
               displayTextHTML = displayTextHTML + " - " + answerData.score;
             }
+            if (displayTextMarkdown) {
+              displayTextMarkdown = displayTextMarkdown + " - " + answerData.score;
+            }
           }
         }
 
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
         answerData._displayTextHTML = displayTextHTML;
+        answerData._displayTextMarkdown = displayTextMarkdown;
         answerData._displayType = this.getTextDisplayType(answerData);
         modifiedAnswers.push(answerData);
       }

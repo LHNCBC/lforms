@@ -64,7 +64,7 @@
           "text": "Fallart zum Zeitpunkt dieser Anforderung",
           "type": "coding",
           "required": false,
-          "answerValueSet": "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode"
+          "answerValueSet": "http://terminology.hl7.org/ValueSet/v3-ActEncounterCode"
         },
         {
           "linkId": "1.5",

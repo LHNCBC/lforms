@@ -1,0 +1,21 @@
+{
+  "resourceType": "Questionnaire",
+  "title": "Test Questionnaire with item prefix containing rendering-markdown extension, with invalid tags",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "1.1",
+      "type": "display",
+      "text": "A question display text",
+      "prefix": "A:",
+      "_prefix": {
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+            "valueString": "# This is a <script>Yes</script> markdown heading"
+          }
+        ]
+      }
+    }
+  ]
+}

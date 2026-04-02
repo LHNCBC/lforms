@@ -92,6 +92,7 @@
             <div>
               <span class="option-checkbox"><label><input type="checkbox" id="allowHTML" /> allowHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" /> displayInvalidHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="allowMarkdown" /> allowMarkdown</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" /> showCodingInstruction</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="hideRepetitionNumber" checked /> hideRepetitionNumber</label></span>
               <span class="option-checkbox">
@@ -435,6 +436,7 @@
         var questionnaire;
         var allowHTML = document.querySelector('#allowHTML').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
+            allowMarkdown = document.querySelector('#allowMarkdown').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked,
             hideRepetitionNumber = document.querySelector('#hideRepetitionNumber').checked,
             hideTreeLine = document.querySelector('input[name="hideTreeLine"]:checked').value;
@@ -473,6 +475,9 @@
           }
           if (displayInvalidHTML) {
             options["displayInvalidHTML"] = true;
+          }
+          if(allowMarkdown) {
+            options["allowMarkdown"] = true;
           }
           if (showCodingInstruction) {
             options["showCodingInstruction"] = true;
