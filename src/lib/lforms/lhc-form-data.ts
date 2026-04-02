@@ -641,6 +641,42 @@ export default class LhcFormData {
 
 
   /**
+   * Check for constraints (targetConstraint extension) defined on this item, if any.
+   * @param item the question item
+   * @param errors the error messages array that returns
+   * @returns {boolean}
+   */
+  _checkConstraints(item, errors) {
+    if (item._hasValidation && item.constraints && item.constraints.length > 0) {
+      for (let i=0; i<item.constraints.length; i++) {
+        const constraint = item.constraints[i].extension;
+        const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
+        if (expression) {
+          // Regenerate _elemIDToQRItem to get a fresh context, otherwise the evaluated result will be cached
+          // even after you change form value and evaluate again.
+          this._expressionProcessor._regenerateQuestionnaireResp();
+          const valid = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, expression, item);
+          if (valid === false) {
+            const human = constraint.find(e => e.url === 'human').valueString;
+            const constraintKey = constraint.find(e => e.url === 'key').valueId;
+            const errorMsg = constraintKey ? `${human} The targetConstraint key is: ${constraintKey}.` : human;
+            errors.push(errorMsg);
+            const location = constraint.find(e => e.url === 'location').valueString;
+            const itemOfLocation = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, location, item);
+            // Use a timeout to add to the validation errors of the location item, lest it be overridden by
+            // the validation of the location item itself which might be processed after the current item.
+            setTimeout(() => {
+              let itemToShowError = this._findItemByLinkId(item, itemOfLocation.linkId);
+              // Add the validation error message (human) to the item._validationErrors array of the item
+              // specified in the constraint's location.
+              itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], errorMsg];
+            }, 1);
+          }
+        }
+      }
+    }
+  }
+    /**
    * run all form controls when a form data is initially loaded.
    * @private
    */
@@ -1726,6 +1762,7 @@ export default class LhcFormData {
 
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         this._checkValidations(item);
+        this._checkConstraints(item, item._validationErrors);
 
         if (item._validationErrors !== undefined && item._validationErrors.length) {
           const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.2.0] 2026-04-02
+### Added
+- Support for targetConstraint extension.
+
 ## [41.1.1] 2026-04-02
 ### Fixed
 - Original score extensions (ordinalValue or itemWeight) were not
