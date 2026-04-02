@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [41.0.1] 2026-03-24
+## [41.1.1] 2026-04-02
 ### Fixed
 - Original score extensions (ordinalValue or itemWeight) were not
   kept in the exported questionnaire.
+
+## [41.1.0] 2026-03-30
+### Added
+- Support for rendering-markdown extension. Note that rendering-xhtml
+  takes precedence over rendering-markdown if both are present.
 
 ## [41.0.0] 2026-03-27
 ### Changed

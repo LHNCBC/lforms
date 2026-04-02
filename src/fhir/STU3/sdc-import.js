@@ -159,6 +159,12 @@ function addSDCImportFns(ns) {
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
                 LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
+              } else {
+                // rendering-markdown extension under "valueCoding._display".
+                const markdownFormat = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
+                if (markdownFormat) {
+                  LForms.Util._internalUtil.setAnswerTextMarkdown(answer, markdownFormat);
+                }
               }
               // rendering-style extension under "valueCoding._display".
               const renderingStyle = LForms.Util.findObjectInArray(answer['obj_valueCoding_display'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
@@ -176,6 +182,12 @@ function addSDCImportFns(ns) {
               const xhtmlFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
               if (xhtmlFormat) {
                 LForms.Util._internalUtil.setAnswerTextHTML(answer, xhtmlFormat, self._widgetOptions?.allowHTML, containedImages, lfItem);
+              } else {
+                // rendering-markdown extension under "_valueString".
+                const markdownFormat = LForms.Util.findObjectInArray(answer['obj_valueString'].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown");
+                if (markdownFormat) {
+                  LForms.Util._internalUtil.setAnswerTextMarkdown(answer, markdownFormat);
+                }
               }
             }
             // rendering-style extension under "_valueString", "_valueDate" or "_valueTime".

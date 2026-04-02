@@ -1,0 +1,109 @@
+{
+  "title": "rendering-markdown in matrix layout",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable1",
+      "text": "Markdown answer options",
+      "item": [
+        {
+          "type": "string",
+          "linkId": "/matrixTable1/type0",
+          "text": "A question",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                    "valueString": "**This text is bold A**"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                    "valueString": "**This text is bold B**"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold c",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                    "valueString": "**This text is bold C**"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "linkId": "/matrixTable1/type1",
+          "text": "Another question",
+          "answerOption": [
+            {
+              "valueString": "bold a",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                    "valueString": "**This text is bold A**"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold b",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                    "valueString": "**This text is bold B**"
+                  }
+                ]
+              }
+            },
+            {
+              "valueString": "bold c",
+              "_valueString": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                    "valueString": "**This text is bold C**"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
