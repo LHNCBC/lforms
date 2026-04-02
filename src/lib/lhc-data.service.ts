@@ -227,6 +227,9 @@ export class LhcDataService {
           }
         }
       }
+      else if (this.lhcFormData.templateOptions.allowMarkdown && item.codingInstructionsFormat === "markdown") {
+        format = "markdown"; // use item.legal (markdown)
+      }
       else {
         format = "escaped"; // use item.codingInstructions
       }
@@ -255,6 +258,9 @@ export class LhcDataService {
             format = "plain"; // use item.legalPlain
           }
         }
+      }
+      else if (this.lhcFormData.templateOptions.allowMarkdown && item.legalFormat === "markdown") {
+        format = "markdown"; // use item.legal (markdown)
       }
       else {
         format = "escaped"; // use item.legal

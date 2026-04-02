@@ -1,0 +1,133 @@
+{
+  "title": "rendering-markdown in matrix layout",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "table",
+                "display": "Vertical Answer Table"
+              }
+            ],
+            "text": "Vertical Answer Table"
+          }
+        }
+      ],
+      "linkId": "/matrixTable1",
+      "text": "Markdown answer options",
+      "item": [
+        {
+          "type": "choice",
+          "linkId": "/matrixTable1/type0",
+          "text": "A question",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://example.org/codes",
+                "code": "a",
+                "display": "bold a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                      "valueString": "**This text is bold A**"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://example.org/codes",
+                "code": "b",
+                "display": "bold b",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                      "valueString": "**This text is bold B**"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://example.org/codes",
+                "code": "c",
+                "display": "bold c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                      "valueString": "**This text is bold C**"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "choice",
+          "linkId": "/matrixTable1/type1",
+          "text": "Another question",
+          "answerOption": [
+            {
+              "valueCoding": {
+                "system": "http://example.org/codes",
+                "code": "a",
+                "display": "bold a",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                      "valueString": "**This text is bold A**"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://example.org/codes",
+                "code": "b",
+                "display": "bold b",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                      "valueString": "**This text is bold B**"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "valueCoding": {
+                "system": "http://example.org/codes",
+                "code": "c",
+                "display": "bold c",
+                "_display": {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+                      "valueString": "**This text is bold C**"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
