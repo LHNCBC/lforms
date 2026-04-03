@@ -217,6 +217,10 @@ const FormUtils = {
     }
     let fullUrl;
     try {
+      // Add a trailing slash if it doesn't have one, so the path in fhirServerBase would not be lost.
+      if (!fhirServerBase.endsWith('/')) {
+        fhirServerBase = fhirServerBase + '/';
+      }
       fullUrl = new URL('Questionnaire/$validate', fhirServerBase);
     } catch (error) {
       throw new Error('The URL was malformed!');
