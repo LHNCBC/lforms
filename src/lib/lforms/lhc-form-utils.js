@@ -231,21 +231,27 @@ const FormUtils = {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(questionnaire)
-    }).then(function (response) {
-      if (!response.ok) throw new Error('Server returned ' + response.status);
-      return response.json();
-    }).then(function (parsedJSON) {
-      let rtn = null;
-      if (parsedJSON.resourceType === "OperationOutcome") {
-        const errorOrFatal = parsedJSON.issue?.filter(item => item.severity === "error" || item.severity === "fatal");
-        if (errorOrFatal && errorOrFatal.length) {
-          rtn = errorOrFatal.map(e => e.diagnostics).join(' | ');
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error(`Server returned ${response.status}: ${response.statusText}`);
         }
-      }
-      return rtn;
-    }).catch(function () {
-      throw new Error('Network error: Unable to validate the Questionnaire.');
-    });
+        return response.json();
+      })
+      .then(function (parsedJSON) {
+        let rtn = null;
+        if (parsedJSON.resourceType === "OperationOutcome") {
+          const errorOrFatal = parsedJSON.issue?.filter(item => item.severity === "error" || item.severity === "fatal");
+          if (errorOrFatal && errorOrFatal.length) {
+            rtn = errorOrFatal.map(e => e.diagnostics).join(' | ');
+          }
+        }
+        return rtn;
+      })
+      .catch(function (error) {
+        // Catch network failures and http errors like 404, 500.
+        throw new Error('Fetch error: ' + error.message || error);
+      });
   },
 
 

@@ -1000,7 +1000,7 @@ describe('Util library', function() {
       ]);
       LForms.Util.validateQuestionnaireOnFHIRServer(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
         .then(() => {}, (result) => {
-          assert.equal(result, 'Error: Network error: Unable to validate the Questionnaire.');
+          assert.equal(result, 'Error: Fetch error: Server returned 500: Something went wrong.');
           done();
         });
     });
