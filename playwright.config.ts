@@ -10,12 +10,23 @@ export default defineConfig({
   timeout: 60000,
   fullyParallel: false,
   retries: 0,
-  workers: 4,
+  workers: 10,
   reporter: [['list']],
   use: {
     baseURL: `http://localhost:${config.testPort}`,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off'
-  }
+  },
+  projects: [
+    {
+      name: 'Google Chrome',
+      use: {
+        channel: 'chrome',
+        contextOptions: {
+          permissions: ['clipboard-read']
+        }
+      },
+    },
+  ]
 });

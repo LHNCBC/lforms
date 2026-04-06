@@ -1,17 +1,41 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import path from 'path';
+import FHIRSupport from '../../../src/fhir/versions.js';
 
+/** Supported FHIR version strings derived from src/fhir/versions.js. */
+export const fhirVersions: string[] = Object.keys(FHIRSupport);
+
+
+/** Reusable 30-second timeout option for Playwright assertions and waitFor calls. */
+export const TIMEOUT_30S = { timeout: 30000 };
+
+
+/**
+ * Escape special characters in an ID string for use in a CSS selector.
+ * @param id - The raw element ID to escape.
+ * @returns The escaped ID safe for use in `#id` selectors.
+ */
 export function escapeIdSelector(id: string): string {
   return id.replace(/([.#:[\]/\\|%])/g, '\\$1');
 }
 
+
+/**
+ * Locate an element by its ID, escaping special characters as needed.
+ * @param page - The Playwright page instance.
+ * @param id - The element ID (with or without a leading `#`).
+ * @returns A Playwright Locator for the matching element.
+ */
 export function byId(page: Page, id: string): Locator {
   const rawId = id.startsWith('#') ? id.slice(1) : id;
   return page.locator('#' + escapeIdSelector(rawId));
 }
 
+
 /**
  * Wait for LForms and (optionally) FHIR libs to be fully loaded on the page.
+ * @param page - The Playwright page instance.
+ * @param opts - Options object. Set `fhir` to `false` to skip waiting for FHIR libs (default: `true`).
  */
 export async function waitForLFormsReady(page: Page, opts: { fhir?: boolean } = { fhir: true }): Promise<void> {
   await page.waitForLoadState('networkidle');
@@ -19,15 +43,23 @@ export async function waitForLFormsReady(page: Page, opts: { fhir?: boolean } = 
     await page.waitForFunction(() => {
       const w = window as any;
       return w.LForms && w.LForms.Util && w.LForms.FHIR;
-    }, { timeout: 30000 });
+    }, TIMEOUT_30S);
   } else {
     await page.waitForFunction(() => {
       const w = window as any;
       return w.LForms && w.LForms.Util;
-    }, { timeout: 30000 });
+    }, TIMEOUT_30S);
   }
 }
 
+
+/**
+ * Upload a file via a file input element.
+ * Temporarily unhides the input, sets the file, then re-hides it.
+ * @param page - The Playwright page instance.
+ * @param inputSelector - CSS selector for the `<input type="file">` element.
+ * @param filePath - Relative or absolute path to the file to upload.
+ */
 export async function uploadFile(page: Page, inputSelector: string, filePath: string): Promise<void> {
   const absPath = path.resolve(filePath);
   const input = page.locator(inputSelector);
@@ -37,6 +69,13 @@ export async function uploadFile(page: Page, inputSelector: string, filePath: st
   await input.evaluate(el => el.className = 'hide');
 }
 
+
+/**
+ * Simulate Cypress-style key sequences on a Playwright locator.
+ * Supports special keys in braces (e.g. `{enter}`, `{downarrow}`) and plain text.
+ * @param locator - The Playwright Locator to send keys to.
+ * @param keys - A Cypress-style key string (e.g. `'hello{enter}'`, `'{downarrow}{downarrow}'`).
+ */
 export async function pressCypressKeys(locator: Locator, keys: string): Promise<void> {
   const tokens = keys.match(/\{[^}]+\}|[^{}]+/g) || [];
   for (const token of tokens) {
@@ -56,18 +95,29 @@ export async function pressCypressKeys(locator: Locator, keys: string): Promise<
       await locator.press(map[raw] || raw);
     }
     else {
-      await locator.type(token);
+      await locator.pressSequentially(token);
     }
   }
 }
 
+
+/**
+ * Assert that the load button contains the expected text.
+ * @param page - The Playwright page instance.
+ * @param text - The expected button text.
+ */
 export async function expectLoadButton(page: Page, text: string): Promise<void> {
   await expect(page.locator('#loadBtn')).toContainText(text);
 }
 
+
 /**
  * Construct the HTML element ID for an answer option (radio button, checkbox, etc.).
  * Mirrors InternalUtil.getItemAnswerId from the lforms library.
+ * @param elementId - The base element ID of the question item.
+ * @param systemOrOther - The code system URI, or the "other" label when `code` is omitted.
+ * @param code - The answer code. When provided, builds a `elementId|system|code` ID.
+ * @returns The fully constructed answer element ID.
  */
 export function answerId(elementId: string, systemOrOther?: string, code?: string): string {
   if (code !== undefined) {
@@ -89,8 +139,11 @@ export function answerId(elementId: string, systemOrOther?: string, code?: strin
   }
 }
 
+
 /**
  * Open the lforms test page and load a form by its dropdown index.
+ * @param page - The Playwright page instance.
+ * @param formIndex - The zero-based index in the form dropdown to select.
  */
 export async function openFormByIndex(page: Page, formIndex: number): Promise<void> {
   await page.goto('/test/pages/lforms_testpage.html');
@@ -104,6 +157,7 @@ export async function openFormByIndex(page: Page, formIndex: number): Promise<vo
     return el && el.querySelector('.lhc-question');
   }, { timeout: 10000 });
 }
+
 
 /**
  * Load a form definition file onto the addFormToPageTest page via LForms.Util.addFormToPage.
@@ -136,6 +190,7 @@ export async function addFormToPage(
 
   await expect(page.locator('#' + container + ' .lhc-form-title')).toBeVisible({ timeout: 10000 });
 }
+
 
 /**
  * On the lforms_testpage.html, upload a test data file and wait for form to load.
