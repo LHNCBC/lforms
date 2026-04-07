@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { addFormToPage, byId, waitForLFormsReady } from '../support/lforms-helpers';
-
-const LONG = { timeout: 30000 };
+import { addFormToPage, byId, TIMEOUT_30S, waitForLFormsReady } from '../support/lforms-helpers';
 
 test.describe('initialExpression with multiple values', () => {
   const field1 = 'answersFromParentQR/1/1/1';
@@ -17,7 +15,7 @@ test.describe('initialExpression with multiple values', () => {
     await expect(byId(page, field2)).toHaveValue('Green');
 
     await byId(page, answerField).click();
-    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(LONG);
+    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(TIMEOUT_30S);
     const items = page.locator('#lhc-tools-searchResults li');
     await expect(items).toHaveCount(2);
     await expect(items.nth(0)).toContainText('Blue');

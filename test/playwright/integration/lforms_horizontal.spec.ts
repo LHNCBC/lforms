@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, openFormByIndex } from '../support/lforms-helpers';
-
-const LONG = { timeout: 30000 };
+import { byId, TIMEOUT_30S, openFormByIndex } from '../support/lforms-helpers';
 
 test.describe('horizontal table', () => {
   const addRemoveButtons = '.lhc-float-button';
@@ -47,7 +45,7 @@ test.describe('horizontal table', () => {
 
     await byId(page, drugNameField).click();
     await byId(page, drugNameField).pressSequentially('aspercreme', { delay: 50 });
-    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(LONG);
+    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(TIMEOUT_30S);
     await byId(page, drugNameField).press('ArrowDown');
     await page.keyboard.press('Tab');
     await expect(byId(page, strengthField)).toBeFocused();
@@ -64,15 +62,15 @@ test.describe('horizontal table', () => {
     // Select a drug first
     await byId(page, drugNameField).click();
     await byId(page, drugNameField).pressSequentially('aspercreme', { delay: 50 });
-    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(LONG);
+    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(TIMEOUT_30S);
     await byId(page, drugNameField).press('ArrowDown');
     await page.keyboard.press('Tab');
 
     // Now select a strength
-    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(LONG);
+    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(TIMEOUT_30S);
     await byId(page, strengthField).press('ArrowDown');
     await page.keyboard.press('Tab');
-    await expect(byId(page, strengthField)).toHaveValue('10% Cream', LONG);
-    await expect(byId(page, rxcuiField)).toHaveValue('1101827', LONG);
+    await expect(byId(page, strengthField)).toHaveValue('10% Cream', TIMEOUT_30S);
+    await expect(byId(page, rxcuiField)).toHaveValue('1101827', TIMEOUT_30S);
   });
 });

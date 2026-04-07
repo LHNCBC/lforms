@@ -1,9 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
-import { byId, waitForLFormsReady, addFormToPage } from '../support/lforms-helpers';
+import { addFormToPage, byId, TIMEOUT_30S, waitForLFormsReady } from '../support/lforms-helpers';
 import fs from 'fs';
 import path from 'path';
-
-const LONG = { timeout: 30000 };
 
 test.describe('calculatedExpression and hasSavedData=true/false tests', () => {
   const intFieldId = '/type-integer/1';
@@ -48,7 +46,7 @@ test.describe('calculatedExpression and hasSavedData=true/false tests', () => {
       return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
     }, { q, qr });
 
-    await expect(page.locator('.lhc-form-title')).toContainText('Questionnaire for testing calculatedExpression', LONG);
+    await expect(page.locator('.lhc-form-title')).toContainText('Questionnaire for testing calculatedExpression', TIMEOUT_30S);
     await expect(byId(page, intFieldId)).toHaveValue('');
     await expect(byId(page, strFieldId)).toHaveValue('');
   });
@@ -69,7 +67,7 @@ test.describe('calculatedExpression and hasSavedData=true/false tests', () => {
       return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
     }, { q, qr });
 
-    await expect(page.locator('.lhc-form-title')).toContainText('Questionnaire for testing calculatedExpression', LONG);
+    await expect(page.locator('.lhc-form-title')).toContainText('Questionnaire for testing calculatedExpression', TIMEOUT_30S);
     await expect(byId(page, intFieldId)).toHaveValue('456');
     await expect(byId(page, strFieldId)).toHaveValue('def456');
   });
@@ -91,7 +89,7 @@ test.describe('calculatedExpression and hasSavedData=true/false tests', () => {
       return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
     }, { q, qr });
 
-    await expect(page.locator('.lhc-form-title')).toContainText('Questionnaire for testing calculatedExpression', LONG);
+    await expect(page.locator('.lhc-form-title')).toContainText('Questionnaire for testing calculatedExpression', TIMEOUT_30S);
     await expect(byId(page, intFieldId)).toHaveValue('123');
     await expect(byId(page, strFieldId)).toHaveValue('abc123');
   });

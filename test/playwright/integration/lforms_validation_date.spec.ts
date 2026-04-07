@@ -15,13 +15,13 @@ test.describe('form validation', () => {
 
     let dateStr = '02/032019';
     await dtEl.locator('input').fill('');
-    await dtEl.locator('input').type(dateStr);
+    await dtEl.locator('input').pressSequentially(dateStr);
     await otherEl.click();
     await expect(dtEl.locator('input')).toHaveValue('');
 
     dateStr = '02/03/2019';
     await dtEl.locator('input').fill('');
-    await dtEl.locator('input').type(dateStr);
+    await dtEl.locator('input').pressSequentially(dateStr);
     await otherEl.click();
     await expect(dtEl.locator('input')).toHaveValue(dateStr);
   });

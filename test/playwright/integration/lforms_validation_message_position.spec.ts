@@ -5,7 +5,7 @@ async function testOneType(page: Page, index: number, typeValue: string, inputId
   const input = byId(page, inputId);
   await input.click();
   await input.fill('');
-  await input.type(typeValue);
+  await input.pressSequentially(typeValue);
   await byId(page, otherEl).click();
   await input.click();
 

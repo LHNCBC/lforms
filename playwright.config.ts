@@ -17,5 +17,16 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off'
-  }
+  },
+  projects: [
+    {
+      name: 'Google Chrome',
+      use: {
+        channel: 'chrome',
+        contextOptions: {
+          permissions: ['clipboard-read']
+        }
+      },
+    },
+  ]
 });
