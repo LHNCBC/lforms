@@ -2,6 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.1.0] 2026-04-02
+### Added
+- New utility function LForms.Util.validateQuestionnaireOnFHIRServer()
+  to validate a questionnaire against a FHIR server.
+- Support for targetConstraint extension.
+- Support for rendering-markdown extension. Note that rendering-xhtml
+  takes precedence over rendering-markdown if both are present.
+### Fixed
+- Original score extensions (ordinalValue or itemWeight) were not
+  kept in the exported questionnaire.
+
 ## [41.0.0] 2026-03-27
 ### Changed
 - If answerExpression updates the answer list, we do not reset item.value

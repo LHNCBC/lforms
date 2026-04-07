@@ -5,6 +5,11 @@ import CommonUtils from "../lforms/lhc-common-utils.js";
 import CONSTANTS from "./lhc-form-datatypes.js";
 import * as htmlparser2 from "htmlparser2";
 import parse from "style-to-object";
+import markdownit from 'markdown-it';
+const md = markdownit('commonmark', {
+  html: false
+});
+
 /**
  *  A default message source identifier (for when the messageSource parameter
  *  below is optional and not provided.
@@ -66,7 +71,7 @@ export const InternalUtil = {
   /**
    * Sets answer.textHTML from the rendering-xhtml extension.
    * @param answer an answer object in Lforms item.
-   * @param xhtmlFormat the "rendering-xhtml" extension from Questionnaire.
+   * @param xhtmlFormat the rendering-xhtml.
    * @param allowHTML widget option of whether to allow HTML in forms.
    * @param containedImages contained images info, see buildContainedImageMap() for details.
    * @param item an item from lforms form definition
@@ -76,9 +81,9 @@ export const InternalUtil = {
     if (allowHTML) {
       // process contained images
       if (containedImages &&
-        xhtmlFormat.valueString.match(/img/) &&
-        xhtmlFormat.valueString.match(/src/)) {
-        answer.textHTML = this._getHtmlStringWithContainedImages(containedImages, xhtmlFormat.valueString) || answer.textHTML;
+        answer.textHTML.match(/img/) &&
+        answer.textHTML.match(/src/)) {
+        answer.textHTML = this._getHtmlStringWithContainedImages(containedImages, answer.textHTML) || answer.textHTML;
       }
       let invalidTagsAttributes = this.checkForInvalidHtmlTags(answer.textHTML);
       if (invalidTagsAttributes && invalidTagsAttributes.length > 0) {
@@ -90,6 +95,16 @@ export const InternalUtil = {
         this.setItemMessagesArray(item, messages, 'setAnswerTextHTML');
       }
     }
+  },
+
+
+  /**
+   * Sets answer.textMarkdown from the rendering-markdown extension.
+   * @param answer an answer object in Lforms item.
+   * @param markdownFormat the rendering-markdown extension.
+   */
+  setAnswerTextMarkdown: function(answer, markdownFormat) {
+    answer.textMarkdown = md.render(markdownFormat.valueString);
   },
 
 
@@ -543,3 +558,4 @@ InternalUtil.errorMessages = ErrorMessages;
 // Set the default language for error messages.  Apps can call this with a
 // different language code, if error-messages.js has messages in that language.
 InternalUtil.errorMessages.setLanguage('en');
+InternalUtil.md = md;

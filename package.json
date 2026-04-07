@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "41.0.0",
+  "version": "41.1.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -67,6 +67,7 @@
     "fhirpath": "^4.8.0",
     "htmlparser2": "^10.0.0",
     "jquery": "^3.7.1",
+    "markdown-it": "^14.1.1",
     "moment": "2.29.4",
     "ng-zorro-antd": "^20.4.1",
     "rxjs": "~7.8.2",
@@ -121,6 +122,7 @@
   },
   "overrides": {
     "diff": "^8.0.3",
-    "serialize-javascript": "^7.0.4"
+    "serialize-javascript": "^7.0.4",
+    "vite": "^7.3.2"
   }
 }

@@ -72,6 +72,8 @@ export default class LhcFormData {
     allowMultipleEmptyRepeatingItems: false,
     // whether to allow HTML content in item.text and the codingInstructions field.
     allowHTML: false,
+    // whether to allow markdown content
+    allowMarkdown: false,
     displayControl: {
       // Controls the question layout of the form. default value for questionLayout is "vertical".
       // Available value could be:
@@ -639,6 +641,42 @@ export default class LhcFormData {
 
 
   /**
+   * Check for constraints (targetConstraint extension) defined on this item, if any.
+   * @param item the question item
+   * @param errors the error messages array that returns
+   * @returns {boolean}
+   */
+  _checkConstraints(item, errors) {
+    if (item._hasValidation && item.constraints && item.constraints.length > 0) {
+      for (let i=0; i<item.constraints.length; i++) {
+        const constraint = item.constraints[i].extension;
+        const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
+        if (expression) {
+          // Regenerate _elemIDToQRItem to get a fresh context, otherwise the evaluated result will be cached
+          // even after you change form value and evaluate again.
+          this._expressionProcessor._regenerateQuestionnaireResp();
+          const valid = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, expression, item);
+          if (valid === false) {
+            const human = constraint.find(e => e.url === 'human').valueString;
+            const constraintKey = constraint.find(e => e.url === 'key').valueId;
+            const errorMsg = constraintKey ? `${human} The targetConstraint key is: ${constraintKey}.` : human;
+            errors.push(errorMsg);
+            const location = constraint.find(e => e.url === 'location').valueString;
+            const itemOfLocation = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, location, item);
+            // Use a timeout to add to the validation errors of the location item, lest it be overridden by
+            // the validation of the location item itself which might be processed after the current item.
+            setTimeout(() => {
+              let itemToShowError = this._findItemByLinkId(item, itemOfLocation.linkId);
+              // Add the validation error message (human) to the item._validationErrors array of the item
+              // specified in the constraint's location.
+              itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], errorMsg];
+            }, 1);
+          }
+        }
+      }
+    }
+  }
+    /**
    * run all form controls when a form data is initially loaded.
    * @private
    */
@@ -1027,6 +1065,9 @@ export default class LhcFormData {
       // check if displayInvalidHTML is changed
       const displayInvalidHTMLChanged = newOptions.displayInvalidHTML !== undefined &&
         newOptions.displayInvalidHTML !== existingOptions.displayInvalidHTML;
+      // check if allowMarkdown is changed
+      const allowMarkdownChanged = newOptions.allowMarkdown !== undefined &&
+        newOptions.allowMarkdown !== existingOptions.allowMarkdown;
       // check if readonlyMode is changed
       const readonlyModeChanged = newOptions.readonlyMode !== undefined &&
         newOptions.readonlyMode !== existingOptions.readonlyMode;
@@ -1044,12 +1085,12 @@ export default class LhcFormData {
       // recreate the answerOption to add or remove the scores from display texts,
       // or switch between 'html', 'escaped' and 'plain' display types,
       // when the lhcFormData instance has been initialized.
-      if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged) && this.itemList) {
+      if ((scoreFlagChanged || allowHTMLChanged || displayInvalidHTMLChanged || allowMarkdownChanged) && this.itemList) {
         for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
           const item = this.itemList[i];
           // We need to update the autocomp options if the HTML options changed, or,
           // in the case that only the score display option changed, we want to update only those answers with item._hasScoreInAnswer=true.
-          if (!!item._hasAnswerList && (allowHTMLChanged || displayInvalidHTMLChanged || item._hasScoreInAnswer))
+          if (!!item._hasAnswerList && (allowHTMLChanged || displayInvalidHTMLChanged || allowMarkdownChanged || item._hasScoreInAnswer))
             this._updateAutocompOptions(item);
         }
       }
@@ -1721,6 +1762,7 @@ export default class LhcFormData {
 
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         this._checkValidations(item);
+        this._checkConstraints(item, item._validationErrors);
 
         if (item._validationErrors !== undefined && item._validationErrors.length) {
           const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
@@ -3516,12 +3558,14 @@ export default class LhcFormData {
         // and set isListHTML.
         if (!item.displayControl || !item.displayControl.answerLayout || item.displayControl.answerLayout.type !== 'RADIO_CHECKBOX') {
           // Set isListHTML to true if any of the answer options should be displayed as HTML.
-          options.isListHTML = answers.some(a => a._displayType === 'html');
+          options.isListHTML = answers.some(a => a._displayType === 'html' || a._displayType === 'markdown');
           for (let i = 0; i < answers.length; ++i) {
             if (answers[i]._displayType === 'html') {
               answers[i]._displayText = answers[i]._displayTextHTML;
             } else if (answers[i]._displayType === 'escaped') {
               answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayTextHTML);
+            } else if (answers[i]._displayType === 'markdown') {
+              answers[i]._displayText = answers[i]._displayTextMarkdown;
             } else if (options.isListHTML) {
               answers[i]._displayText = LForms.Util.escapeAttribute(answers[i]._displayText);
             }
@@ -3551,6 +3595,8 @@ export default class LhcFormData {
       else {
         format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
       }
+    } else if (item._displayTextMarkdown && item._displayTextMarkdown.length > 0 && this.templateOptions.allowMarkdown) {
+      format = 'markdown';
     }
     return format;
   }
@@ -3570,6 +3616,8 @@ export default class LhcFormData {
       else {
         format = this.templateOptions.displayInvalidHTML ? 'escaped' : 'plain';
       }
+    } else if (item._prefixMarkdown && item._prefixMarkdown.length > 0 && this.templateOptions.allowMarkdown) {
+      format = 'markdown';
     }
     return format;
   }
@@ -3595,12 +3643,16 @@ export default class LhcFormData {
         // convert integer to string when the answerOption is an integer
         let displayText = (answerData.text || answerData.code) + "";
         let displayTextHTML = answerData.textHTML;
+        let displayTextMarkdown = answerData.textMarkdown;
         // label is a string
         if (answerData.label) {
           displayText = answerData.label + ". " + displayText;
           hasOneAnswerLabel = true;
           if (displayTextHTML) {
             displayTextHTML = answerData.label + ". " + displayTextHTML;
+          }
+          if (displayTextMarkdown) {
+            displayTextMarkdown = answerData.label + ". " + displayTextMarkdown;
           }
         }
         // check if one of the values is numeric
@@ -3617,12 +3669,16 @@ export default class LhcFormData {
             if (displayTextHTML) {
               displayTextHTML = displayTextHTML + " - " + answerData.score;
             }
+            if (displayTextMarkdown) {
+              displayTextMarkdown = displayTextMarkdown + " - " + answerData.score;
+            }
           }
         }
 
         // always uses _displayText in autocomplete-lhc and radio buttons/checkboxes for display
         answerData._displayText = displayText;
         answerData._displayTextHTML = displayTextHTML;
+        answerData._displayTextMarkdown = displayTextMarkdown;
         answerData._displayType = this.getTextDisplayType(answerData);
         modifiedAnswers.push(answerData);
       }

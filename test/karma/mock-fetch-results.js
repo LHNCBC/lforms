@@ -62,7 +62,9 @@ function mockFetchResults(results, {timeout = 0} = {}) {
             headers: {
               get: (name) => name === 'Content-Type' ? 'application/json' : undefined
             },
-            ok: false
+            ok: false,
+            status: 500,
+            statusText: 'Something went wrong.'
           });
         } else {
           console.error(`"${url}" is not mocked.`);
