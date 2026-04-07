@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, TIMEOUT_30S, openFormByIndex } from '../support/lforms-helpers';
+import { byId, TIMEOUT_30S, openFormByIndex, pressSequentiallyThenWait } from '../support/lforms-helpers';
 
 test.describe('horizontal table', () => {
   const addRemoveButtons = '.lhc-float-button';
@@ -44,7 +44,9 @@ test.describe('horizontal table', () => {
     const strengthField = '/X-002/strengthAndForm/1/1';
 
     await byId(page, drugNameField).click();
-    await byId(page, drugNameField).pressSequentially('aspercreme', { delay: 50 });
+    //await byId(page, drugNameField).pressSequentially('aspercreme', { delay: 50 });
+    await pressSequentiallyThenWait(byId(page, drugNameField), 'aspercreme', {delay: 50});
+    
     await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(TIMEOUT_30S);
     await byId(page, drugNameField).press('ArrowDown');
     await page.keyboard.press('Tab');
@@ -61,7 +63,9 @@ test.describe('horizontal table', () => {
 
     // Select a drug first
     await byId(page, drugNameField).click();
-    await byId(page, drugNameField).pressSequentially('aspercreme', { delay: 50 });
+    //await byId(page, drugNameField).pressSequentially('aspercreme', { delay: 50 });
+    await pressSequentiallyThenWait(byId(page, drugNameField), 'aspercreme', {delay: 50});
+    
     await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(TIMEOUT_30S);
     await byId(page, drugNameField).press('ArrowDown');
     await page.keyboard.press('Tab');

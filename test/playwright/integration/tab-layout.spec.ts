@@ -6,11 +6,13 @@ test.describe('Tab Layout', () => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'tab-layout.json', 'formContainer', { fhirVersion: 'R4' });
-    await expect(byId(page, 'q1/1/1/1')).toBeVisible();
-    await expect(byId(page, 'q2/1/1/1')).not.toBeAttached();
+    const q1 = byId(page, 'q1/1/1/1');
+    const q2 = byId(page, 'q2/1/1/1');
+    await expect(q1).toBeVisible();
+    await expect(q2).not.toBeAttached();
     await page.locator('button#nz-tabs-0-tab-1').click();
-    await expect(byId(page, 'q1/1/1/1')).not.toBeVisible();
-    await expect(byId(page, 'q2/1/1/1')).toBeVisible();
+    await expect(q1).not.toBeVisible();
+    await expect(q2).toBeVisible();
   });
 
   test('enableWhen should work across tabs', async ({ page }) => {
@@ -61,14 +63,16 @@ test.describe('Tab Layout', () => {
     await expect(byId(page, '/g3/g1m2/1/1/1/1')).toBeVisible();
     await expect(byId(page, '/g3/g1m3/1/1/1/1')).toBeVisible();
     await expect(byId(page, '/g3/g1m4/1/1/1/1')).toBeVisible();
-    await expect(byId(page, 'q1/1/1/1/1/1')).not.toBeAttached();
+    const nestedQ1 = byId(page, 'q1/1/1/1/1/1');
+    const nestedQ2 = byId(page, 'q2/1/1/1/1/1');
+    await expect(nestedQ1).not.toBeAttached();
     // Nested tabs layout under Tab Two.
     await page.locator('button#nz-tabs-0-tab-1').click();
-    await expect(byId(page, 'q1/1/1/1/1/1')).toBeVisible();
-    await expect(byId(page, 'q2/1/1/1/1/1')).not.toBeAttached();
+    await expect(nestedQ1).toBeVisible();
+    await expect(nestedQ2).not.toBeAttached();
     await page.locator('button#nz-tabs-1-tab-1').click();
-    await expect(byId(page, 'q1/1/1/1/1/1')).not.toBeVisible();
-    await expect(byId(page, 'q2/1/1/1/1/1')).toBeVisible();
+    await expect(nestedQ1).not.toBeVisible();
+    await expect(nestedQ2).toBeVisible();
 
     // Pick something on the first question in the first tab.
     await page.locator('button#nz-tabs-0-tab-0').click();

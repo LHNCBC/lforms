@@ -117,24 +117,27 @@ test.describe('display controls demo', () => {
     await expect(byId(page, '/g1/g1m1/1/1')).toBeVisible();
     await expect(byId(page, '/g1/g1g2/g1g2q1/1/1/1')).toBeVisible();
     await expect(byId(page, '/g2/g1m1/1/1')).toBeVisible();
-    await expect(byId(page, '/g1/g1m1/2/1')).not.toBeAttached();
-    await expect(byId(page, '/g1/g1g2/g1g2q1/1/2/1')).not.toBeAttached();
-    await expect(byId(page, '/g2/g1m1/2/1')).not.toBeAttached();
+    const g1m1_2 = byId(page, '/g1/g1m1/2/1');
+    await expect(g1m1_2).not.toBeAttached();
+    const g1g2q1_2 = byId(page, '/g1/g1g2/g1g2q1/1/2/1');
+    await expect(g1g2q1_2).not.toBeAttached();
+    const g2m1_2 = byId(page, '/g2/g1m1/2/1');
+    await expect(g2m1_2).not.toBeAttached();
 
     await btnAdd1.click();
-    await expect(byId(page, '/g1/g1m1/2/1')).toBeVisible();
+    await expect(g1m1_2).toBeVisible();
     await byId(page, 'del-/g1/2').click();
-    await expect(byId(page, '/g1/g1m1/2/1')).not.toBeAttached();
+    await expect(g1m1_2).not.toBeAttached();
 
     await btnAdd2.click();
-    await expect(byId(page, '/g1/g1g2/g1g2q1/1/2/1')).toBeVisible();
+    await expect(g1g2q1_2).toBeVisible();
     await byId(page, 'del-/g1/g1g2/1/2').click();
-    await expect(byId(page, '/g1/g1g2/g1g2q1/1/2/1')).not.toBeAttached();
+    await expect(g1g2q1_2).not.toBeAttached();
 
     await btnAdd3.click();
-    await expect(byId(page, '/g2/g1m1/2/1')).toBeVisible();
+    await expect(g2m1_2).toBeVisible();
     await byId(page, 'del-/g2/2').click();
-    await expect(byId(page, '/g2/g1m1/2/1')).not.toBeAttached();
+    await expect(g2m1_2).not.toBeAttached();
   });
 
   test('section matrix works', async ({ page }) => {
@@ -183,8 +186,9 @@ test.describe('display controls demo', () => {
 
   test('should show disabled inputs', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
-    await expect(byId(page, '/readonlyST/1')).toBeAttached();
-    await expect(byId(page, '/readonlyST/1')).toBeDisabled();
+    const readonlyST = byId(page, '/readonlyST/1');
+    await expect(readonlyST).toBeAttached();
+    await expect(readonlyST).toBeDisabled();
     await expect(byId(page, '/readonlyCNE-s/1')).toBeDisabled();
     await expect(byId(page, '/readonlyCWE-m/1')).toBeDisabled();
     await expect(byId(page, answerId('/readonlyCNE-sb/1', undefined, 'c1')).locator('input')).toBeDisabled();

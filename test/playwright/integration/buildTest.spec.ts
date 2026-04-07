@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, waitForLFormsReady } from '../support/lforms-helpers';
+import { byId, pressSequentiallyThenWait, waitForLFormsReady } from '../support/lforms-helpers';
 import fs from 'fs';
 
 
@@ -12,7 +12,8 @@ test.describe('build test page', () => {
     await waitForLFormsReady(page, { fhir: false });
     const field = byId(page, drugNameField);
     await expect(field).toBeVisible();
-    await field.pressSequentially('ar', { delay: 50 });
+    //await field.pressSequentially('ar', { delay: 50 });
+    await pressSequentiallyThenWait(field, 'ar', {delay: 50});
     await expect(page.locator('#lhc-tools-searchResults')).toBeVisible({ timeout: 20000 });
   });
 });

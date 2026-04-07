@@ -206,6 +206,24 @@ export async function addFormToPage(
 
 
 /**
+ * Types text into a locator using pressSequentially without inter-key delay,
+ * then waits for a specified duration after all keys are pressed.
+ * @param locator - The Playwright locator to type into.
+ * @param value - The string to type.
+ * @param options - Options object with a `delay` property (in ms) to wait after typing.
+ * @returns A promise that resolves after the post-typing delay.
+ */
+export async function pressSequentiallyThenWait(
+  locator: Locator,
+  value: string,
+  options: { delay: number }
+): Promise<void> {
+  await locator.pressSequentially(value);
+  await locator.page().waitForTimeout(options.delay);
+}
+
+
+/**
  * On the lforms_testpage.html, upload a test data file and wait for form to load.
  * @param page - Playwright page (should already be on lforms_testpage.html).
  * @param fileName - File name under test/data/{fhirVersion}/.

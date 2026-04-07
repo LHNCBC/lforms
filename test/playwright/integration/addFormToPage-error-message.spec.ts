@@ -47,8 +47,9 @@ test.describe('addFormToPage Error Message Test', () => {
     await uploadFile(page, '#fileAnchor', 'test/data/R4/fhir-context-q-wrong-valueset-url-fhircontext.json');
     await expectFormTitle(page, 'A questionnaire for testing code that requires a FHIR context 3');
 
-    await expect(page.locator('#loadMsg')).toContainText('Unable to load ValueSet', TIMEOUT_30S);
-    await expect(page.locator('#loadMsg')).toContainText(/v3-MessageWaitingPriority-invalid|yesnodontknow-invalid/, TIMEOUT_30S);
+    const loadMsg = page.locator('#loadMsg');
+    await expect(loadMsg).toContainText('Unable to load ValueSet', TIMEOUT_30S);
+    await expect(loadMsg).toContainText(/v3-MessageWaitingPriority-invalid|yesnodontknow-invalid/, TIMEOUT_30S);
   });
 
   test('successfully load a form that requests AnswerValueSet', async ({ page }) => {

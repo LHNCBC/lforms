@@ -20,7 +20,7 @@ test.describe('formdata', () => {
       expect(formData.itemsData[0].items[0].value).toBeUndefined();
       expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10);
 
-      await name.type('Not Empty');
+      await name.fill('Not Empty');
       await gender.click();
       await pressCypressKeys(gender, '{downArrow}');
       await gender.blur();
@@ -30,9 +30,9 @@ test.describe('formdata', () => {
       await race.click();
       await pressCypressKeys(race, '{downArrow}');
       await race.blur();
-      await height.type('70');
+      await height.fill('70');
       await expect(bmi).toHaveValue('');
-      await weight.type('170');
+      await weight.fill('170');
       await expect(bmi).toHaveValue('24.39');
 
       formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
@@ -95,15 +95,15 @@ test.describe('formdata', () => {
       const weight = byId(page, '/54126-8/29463-7/1/1');
       const bmi = byId(page, '/54126-8/39156-5/1/1');
 
-      await name.type('Not Empty');
-      await gender.type('');
+      await name.fill('Not Empty');
+      await gender.clear();
       await pressCypressKeys(gender, '{downArrow}');
       await gender.blur();
       await expect(name).toBeVisible();
       await expect(gender).toHaveValue('Male');
-      await height.type('70');
+      await height.fill('70');
       await expect(height).toHaveValue('70');
-      await weight.type('170');
+      await weight.fill('170');
       await expect(bmi).toHaveValue('24.39');
 
       let formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
@@ -236,10 +236,10 @@ test.describe('formdata', () => {
       const strField = byId(page, '/strField/1');
       const listField = byId(page, '/ansCodeDefault/1');
 
-      await intField.fill('');
-      await decField.fill('');
-      await strField.fill('');
-      await listField.fill('');
+      await intField.clear();
+      await decField.clear();
+      await strField.clear();
+      await listField.clear();
       await byId(page, 'add-/strField/1').click();
 
       await expect(intField).toHaveValue('');

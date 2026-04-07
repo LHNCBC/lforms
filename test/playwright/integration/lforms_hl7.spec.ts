@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, openFormByIndex, pressCypressKeys } from '../support/lforms-helpers';
+import { byId, openFormByIndex, pressCypressKeys, pressSequentiallyThenWait } from '../support/lforms-helpers';
 
 test.describe('HL7 data', () => {
   // USSGFHTVertical field CSS selectors (stripped of leading #)
@@ -50,7 +50,7 @@ test.describe('HL7 data', () => {
     await byId(page, ff.btnName2).click();
     await byId(page, ff.name3).fill('name3');
     await byId(page, ff.btnName3).click();
-    await byId(page, ff.name).fill('');
+    await byId(page, ff.name).clear();
     // DT
     await byId(page, ff.dob).locator('input').click();
     await byId(page, ff.dob).locator('input').pressSequentially('10/27/2016');
@@ -82,9 +82,9 @@ test.describe('HL7 data', () => {
     await byId(page, ff.btnDiseasesHist3).click();
 
     // clear up the first instance
-    await byId(page, ff.disease).fill('');
+    await byId(page, ff.disease).clear();
     await byId(page, ff.disease).blur();
-    await byId(page, ff.ageAtDiag).fill('');
+    await byId(page, ff.ageAtDiag).clear();
     await byId(page, ff.ageAtDiag).blur();
 
     // family member
@@ -109,7 +109,9 @@ test.describe('HL7 data', () => {
 
     const drugNameField = byId(page, rxterms.drugName);
     await drugNameField.click();
-    await drugNameField.pressSequentially('aspercreme', { delay: 50 });
+    //await drugNameField.pressSequentially('aspercreme', { delay: 50 });
+    await pressSequentiallyThenWait(drugNameField, 'aspercreme', {delay: 50});
+    
     // Wait for the search results list to have an actual item (RxTerms uses table rows)
     await page.locator('#lhc-tools-searchResults tr').first().waitFor({ state: 'visible', timeout: 30000 });
     await drugNameField.press('ArrowDown');

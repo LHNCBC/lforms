@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, waitForLFormsReady, loadFromTestData, answerId, addFormToPage } from '../support/lforms-helpers';
+import { byId, waitForLFormsReady, loadFromTestData, answerId, addFormToPage, pressSequentiallyThenWait } from '../support/lforms-helpers';
 import * as FHIRSupport from '../../../src/fhir/versions.js';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -15,11 +15,14 @@ for (const fhirVersion of fhirVersions) {
           return w.LForms && w.LForms.FHIR;
         }, { timeout: 30000 });
         await loadFromTestData(page, 'weightHeightQuestionnaire.json', fhirVersion);
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').type('70');
-        await byId(page, '/8302-2/1').click();
-        await byId(page, '/8302-2/1').type('60');
-        await expect(byId(page, '/39156-5/1')).toHaveValue('30.1');
+        const weight = byId(page, '/29463-7/1');
+        const height = byId(page, '/8302-2/1');
+        const bmi = byId(page, '/39156-5/1');
+        await weight.click();
+        await weight.fill('70');
+        await height.click();
+        await height.pressSequentially('60');
+        await expect(bmi).toHaveValue('30.1');
       }
 
       test('work to compute a BMI value', async ({ page }) => {
@@ -42,22 +45,27 @@ for (const fhirVersion of fhirVersions) {
           return w.LForms && w.LForms.FHIR;
         }, { timeout: 30000 });
         await loadFromTestData(page, 'weightHeightQuestionnaire.json', fhirVersion);
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').type('123abc');
-        await byId(page, '/8302-2/1').click();
-        await byId(page, '/8302-2/1').type('60');
-        await expect(byId(page, '/39156-5/1')).toHaveValue('');
+        const weight = byId(page, '/29463-7/1');
+        const height = byId(page, '/8302-2/1');
+        const bmi = byId(page, '/39156-5/1');
+        await weight.click();
+        await weight.fill('123abc');
+        await height.click();
+        await height.pressSequentially('60');
+        await expect(bmi).toHaveValue('');
 
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').press('Control+a');
-        await byId(page, '/29463-7/1').press('Backspace');
-        await byId(page, '/29463-7/1').type('70');
-        await expect(byId(page, '/39156-5/1')).toHaveValue('30.1');
+        await weight.click();
+        await weight.press('Control+a');
+        await weight.press('Backspace');
+        await weight.pressSequentially('70');
+        await expect(bmi).toHaveValue('30.1');
 
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').press('Control+a');
-        await byId(page, '/29463-7/1').press('Backspace');
-        await byId(page, '/29463-7/1').pressSequentially('123abc', { delay: 50 });
+        await weight.click();
+        await weight.press('Control+a');
+        await weight.press('Backspace');
+        //await weight.pressSequentially('123abc', { delay: 50 });
+        await pressSequentiallyThenWait(weight, '123abc', {delay: 50});
+        
         if (fhirVersion === 'R4') {
           await expect(byId(page, '/39156-5/1')).toHaveValue('53');
         } else if (fhirVersion === 'STU3') {
@@ -78,8 +86,9 @@ test.describe('answerExpression', () => {
     }, { timeout: 30000 });
     await loadFromTestData(page, 'answerExpressionTest.json');
     await byId(page, 'language/1').click();
-    await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(2);
-    await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible();
+    const searchResults = page.locator('#lhc-tools-searchResults li');
+    await expect(searchResults).toHaveCount(2);
+    await expect(searchResults.first()).toBeVisible();
   });
 
   test('should not cause answerOptions to be generated in the Questionnaire', async ({ page }) => {
@@ -123,13 +132,18 @@ test.describe('answerExpression', () => {
             return w.LForms && w.LForms.FHIR;
           }, { timeout: 30000 });
           await loadFromTestData(page, 'rxterms.R4.json', 'R4');
-          await byId(page, 'medication/1/1').click();
-          await byId(page, 'medication/1/1').pressSequentially('ar', { delay: 50 });
+          const medication = byId(page, 'medication/1/1');
+          const strength = byId(page, 'strength/1/1');
+          const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
+          await medication.click();
+          //await medication.pressSequentially('ar', { delay: 50 });
+          await pressSequentiallyThenWait(medication, 'ar', {delay: 50});
+          
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
-          await byId(page, 'strength/1/1').click();
+          await firstResult.click();
+          await strength.click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
+          await firstResult.click();
           await expect(byId(page, 'rxcui/1/1')).not.toHaveValue('');
 
           // get QR
@@ -181,9 +195,10 @@ test.describe('answerExpression', () => {
           qDataVert.item[0].extension = qDataVert.item[0].extension.filter(
             (e: any) => e.url !== 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
           await showQQR(qDataVert, qr, 'formContainer');
-          await byId(page, 'strength/1/1').click();
+          const strengthField = byId(page, 'strength/1/1');
+          await strengthField.click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
-          await byId(page, 'strength/1/1').blur();
+          await strengthField.blur();
           await checkSavedDataPresent();
 
           // Test 4: drug code that is off list
@@ -251,13 +266,17 @@ test.describe('answerExpression', () => {
             return w.LForms && w.LForms.FHIR;
           }, { timeout: 30000 });
           await loadFromTestData(page, 'rxterms.R4.json', 'R4');
-          await byId(page, 'medication/1/1').click();
-          await byId(page, 'medication/1/1').pressSequentially('ar', { delay: 50 });
+          const medication = byId(page, 'medication/1/1');
+          const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
+          await medication.click();
+          //await medication.pressSequentially('ar', { delay: 50 });
+          await pressSequentiallyThenWait(medication, 'ar', {delay: 50});
+          
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
+          await firstResult.click();
           await byId(page, 'strength/1/1').click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
+          await firstResult.click();
           await expect(byId(page, 'rxcui/1/1')).not.toHaveValue('');
 
           const qrData = await page.evaluate(() =>

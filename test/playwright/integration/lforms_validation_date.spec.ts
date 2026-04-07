@@ -14,13 +14,13 @@ test.describe('form validation', () => {
     const otherEl = byId(page, '/required_tx/1');
 
     let dateStr = '02/032019';
-    await dtEl.locator('input').fill('');
+    await dtEl.locator('input').clear();
     await dtEl.locator('input').pressSequentially(dateStr);
     await otherEl.click();
     await expect(dtEl.locator('input')).toHaveValue('');
 
     dateStr = '02/03/2019';
-    await dtEl.locator('input').fill('');
+    await dtEl.locator('input').clear();
     await dtEl.locator('input').pressSequentially(dateStr);
     await otherEl.click();
     await expect(dtEl.locator('input')).toHaveValue(dateStr);

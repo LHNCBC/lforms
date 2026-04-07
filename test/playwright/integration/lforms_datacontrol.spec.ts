@@ -25,7 +25,7 @@ test.describe('data control', () => {
     expect(dcTarget2Val).toBe('0.5 mg Tab');
 
     // pick a different value on source field
-    await dcSource.fill('');
+    await dcSource.clear();
     await dcSource.pressSequentially('Haloperidol');
     await expect(searchResults).toBeVisible();
     await pressCypressKeys(dcSource, '{downArrow}{downArrow}');
@@ -126,8 +126,9 @@ test.describe('data control', () => {
     await dst.click();
     await pressCypressKeys(dst, '{downArrow}');
     await dst.blur();
-    await expect(byId(page, 'item-/test_changing_repeats/1').locator('span.autocomp_selected li').nth(0)).toHaveText('×Answer 1');
-    await expect(byId(page, 'item-/test_changing_repeats/1').locator('span.autocomp_selected li').nth(1)).toHaveText('×Answer 2');
+    const selectedItems = byId(page, 'item-/test_changing_repeats/1').locator('span.autocomp_selected li');
+    await expect(selectedItems.nth(0)).toHaveText('×Answer 1');
+    await expect(selectedItems.nth(1)).toHaveText('×Answer 2');
 
     // change back to non-repeating table
     await src.click();
@@ -208,7 +209,7 @@ test.describe('data control', () => {
 
     // search another drug
     await drugName.click();
-    await drugName.fill('');
+    await drugName.clear();
     await drugName.pressSequentially('AS');
     await expect(searchResults).toBeVisible();
     await pressCypressKeys(drugName, '{downArrow}{enter}');
@@ -224,7 +225,7 @@ test.describe('data control', () => {
 
     // clean up the drug field
     await drugName.click();
-    await drugName.fill('');
+    await drugName.clear();
     await strengthAndForm.click(); // need to click this item and then click away to trigger a change
     await rxcui.click();
     await expect(drugName).toHaveValue('');
