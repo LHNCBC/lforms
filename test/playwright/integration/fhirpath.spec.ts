@@ -134,8 +134,8 @@ test.describe('answerExpression', () => {
           const strength = byId(page, 'strength/1/1');
           const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
           await medication.click();
-          //await medication.pressSequentially('ar', { delay: 50 });
-          await pressSequentiallyThenWait(medication, 'ar', {delay: 50});
+          await medication.pressSequentially('ar', { delay: 50 });
+          //await pressSequentiallyThenWait(medication, 'ar', {delay: 50}); // this didn't work either sometimes.
           
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
           await firstResult.click();
@@ -267,8 +267,8 @@ test.describe('answerExpression', () => {
           const medication = byId(page, 'medication/1/1');
           const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
           await medication.click();
-          //await medication.pressSequentially('ar', { delay: 50 });
-          await pressSequentiallyThenWait(medication, 'ar', {delay: 50});
+          await medication.pressSequentially('ar', { delay: 50 });
+          //await pressSequentiallyThenWait(medication, 'ar', {delay: 50}); // this didn't work sometimes.
           
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
           await firstResult.click();

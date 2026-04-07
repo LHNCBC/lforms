@@ -18,8 +18,8 @@ test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   async function chooseMedication(page: Page, prefix: string, firstOptionText: string) {
     const problem = byId(page, problemId);
     await problem.click();
-    //await problem.pressSequentially(prefix, { delay: 50 });
-    await pressSequentiallyThenWait(problem, prefix, {delay: 50});
+    await problem.pressSequentially(prefix, { delay: 50 });
+    //await pressSequentiallyThenWait(problem, prefix, {delay: 50}); // this didn't work either sometimes.
     
     await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText(firstOptionText, TIMEOUT_30S);
     await pressCypressKeys(problem, '{downarrow}{enter}');
