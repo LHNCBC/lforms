@@ -55,16 +55,14 @@ for (const fhirVersion of fhirVersions) {
         await expect(bmi).toHaveValue('');
 
         await weight.click();
-        await weight.press('Control+a');
-        await weight.press('Backspace');
+        await weight.clear();
         await weight.pressSequentially('70');
         await expect(bmi).toHaveValue('30.1');
 
         await weight.click();
-        await weight.press('Control+a');
-        await weight.press('Backspace');
-        //await weight.pressSequentially('123abc', { delay: 50 });
-        await pressSequentiallyThenWait(weight, '123abc', {delay: 50});
+        await weight.clear();
+        await weight.pressSequentially('123abc', { delay: 50 });
+        //await pressSequentiallyThenWait(weight, '123abc', {delay: 50}); // this didn't work here. bmi value was not correct.
         
         if (fhirVersion === 'R4') {
           await expect(byId(page, '/39156-5/1')).toHaveValue('53');
