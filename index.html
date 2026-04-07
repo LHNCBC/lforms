@@ -96,7 +96,8 @@
       <div id=versionList>
         <p>Documentation by version:</p>
         <ul>
-          <li>Current (>=38.8.x)</li>
+          <li>Current (>=41.3.0)</li>
+          <li><a href="versions/38.8.x/index.html">38.8-41.2</a></li>
           <li><a href="versions/36.2.x/index.html">36.2-38.7.2</a></li>
           <li><a href="versions/34.x/index.html">34-36.1</a></li>
           <li><a href="versions/30.x/index.html">30-33</a></li>
@@ -186,12 +187,12 @@ LHC-Forms is by linking to the prebuilt version hosted on
 lhcforms-static.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
 </p>
 <dl>
-  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/webcomponent/styles.css</dd>
+  <dt>CSS</dt><dd>https://lhcforms-static.nlm.nih.gov/lforms-versions/41.3.0/webcomponent/styles.css</dd>
   <dt>JavaScript</dt>
   <dd>
     <ol style="padding-left: 0">
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/webcomponent/assets/lib/zone.min.js</li>
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/webcomponent/lhc-forms.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/41.3.0/webcomponent/assets/lib/zone.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/41.3.0/webcomponent/lhc-forms.js</li>
     </ol>
     <p>The zone.min.js file should be left out if you already have that in your
     page (e.g. if the page contains an Angular app).</p>
@@ -201,16 +202,16 @@ lhcforms-static.nlm.nih.gov.  The URLs for the CSS and JavaScript are:
   support.  The first file provides support for the STU3, R4, and R5 versions of FHIR,
   and the others provide support for one specific version.
     <ul style="padding-left: 0">
-      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/lformsFHIRAll.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/R5/lformsFHIR.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/R4/lformsFHIR.min.js</li>
-      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/36.3.2/fhir/STU3/lformsFHIR.min.js</li>
+      <li>https://lhcforms-static.nlm.nih.gov/lforms-versions/41.3.0/fhir/lformsFHIRAll.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/41.3.0/fhir/R5/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/41.3.0/fhir/R4/lformsFHIR.min.js</li>
+      <li><b>OR</b> https://lhcforms-static.nlm.nih.gov/lforms-versions/41.3.0/fhir/STU3/lformsFHIR.min.js</li>
     </ul>
   </dd>
 </dl>
 
-<p>Note that the URLs contain a release version number, 36.3.2, for which you
-can substitute any of the other prebuilt versions (36.3.2 or higher) available at
+<p>Note that the URLs contain a release version number, 41.3.0, for which you
+can substitute any of the other prebuilt versions (41.3.0 or higher) available at
 https://lhcforms-static.nlm.nih.gov/lforms-versions.</p>
 
 <p>For production applications, if you would prefer to download these files
@@ -411,6 +412,20 @@ should be visible).</p>
     <li><b>formElement</b> - (optional) an HTML element that includes the rendered form. If
     this is omitted, the "body" tag will be used.  If there is more than one
     LHC-Forms form within formElement, the first found will be used.</li>
+  </ul>
+
+  <p>API to validate a questionnaire against a FHIR server:</p>
+
+  <pre><code>LForms.Util.validateQuestionnaireOnFHIRServer(questionnaire, fhirServerBase)</code></pre>
+
+  <p>It returns a Promise that resolves to null if the Questionnaire is valid, or an error message if not valid.
+  If multiple errors are returned from server, they will be concatenated into a single string with " | " as separator.
+  </p>
+
+  <b>Parameters:</b>
+  <ul>
+    <li><b>questionnaire</b> - a FHIR Questionnaire resource to be validated.</li>
+    <li><b>fhirServerBase</b> - the base URL of the FHIR server to which the $validate call should be made.</li>
   </ul>
 
 
