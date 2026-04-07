@@ -109,8 +109,8 @@ test.describe('HL7 data', () => {
 
     const drugNameField = byId(page, rxterms.drugName);
     await drugNameField.click();
-    //await drugNameField.pressSequentially('aspercreme', { delay: 50 });
-    await pressSequentiallyThenWait(drugNameField, 'aspercreme', {delay: 50});
+    await drugNameField.pressSequentially('aspercreme', { delay: 50 });
+    //await pressSequentiallyThenWait(drugNameField, 'aspercreme', {delay: 50}); // this didn't work sometimes.
     
     // Wait for the search results list to have an actual item (RxTerms uses table rows)
     await page.locator('#lhc-tools-searchResults tr').first().waitFor({ state: 'visible', timeout: 30000 });

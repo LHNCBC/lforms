@@ -19,7 +19,7 @@ async function testOneType(page: Page, eleInput: string, eleAway: string, eleCon
   // no initial validations
   await expect(page.locator(eleContainer)).not.toBeAttached();
   // no error messages on first visit
-  await byId(page, eleInput).fill(value1);
+  await byId(page, eleInput).pressSequentially(value1);
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeAttached();
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).not.toBeVisible();
   // show message when the focus is gone
@@ -40,7 +40,7 @@ async function testOneType(page: Page, eleInput: string, eleAway: string, eleCon
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeVisible();
   // valid value no messages
   await byId(page, eleInput).clear();
-  await byId(page, eleInput).fill(value2);
+  await byId(page, eleInput).pressSequentially(value2);
   await expect(page.locator(eleContainer)).not.toBeAttached();
   // still no message when the focus is gone
   await page.locator(eleAway).click();
