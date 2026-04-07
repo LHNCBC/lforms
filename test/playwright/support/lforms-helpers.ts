@@ -36,6 +36,7 @@ export function byId(page: Page, id: string): Locator {
  * Wait for LForms and (optionally) FHIR libs to be fully loaded on the page.
  * @param page - The Playwright page instance.
  * @param opts - Options object. Set `fhir` to `false` to skip waiting for FHIR libs (default: `true`).
+ * @returns A promise that resolves when LForms (and optionally FHIR) libraries are ready.
  */
 export async function waitForLFormsReady(page: Page, opts: { fhir?: boolean } = { fhir: true }): Promise<void> {
   await page.waitForLoadState('networkidle');
@@ -59,6 +60,7 @@ export async function waitForLFormsReady(page: Page, opts: { fhir?: boolean } = 
  * @param page - The Playwright page instance.
  * @param inputSelector - CSS selector for the `<input type="file">` element.
  * @param filePath - Relative or absolute path to the file to upload.
+ * @returns A promise that resolves once the file has been set on the input.
  */
 export async function uploadFile(page: Page, inputSelector: string, filePath: string): Promise<void> {
   const absPath = path.resolve(filePath);
@@ -75,6 +77,7 @@ export async function uploadFile(page: Page, inputSelector: string, filePath: st
  * Supports special keys in braces (e.g. `{enter}`, `{downarrow}`) and plain text.
  * @param locator - The Playwright Locator to send keys to.
  * @param keys - A Cypress-style key string (e.g. `'hello{enter}'`, `'{downarrow}{downarrow}'`).
+ * @returns A promise that resolves after all keys have been pressed.
  */
 export async function pressCypressKeys(locator: Locator, keys: string): Promise<void> {
   const tokens = keys.match(/\{[^}]+\}|[^{}]+/g) || [];
@@ -105,6 +108,7 @@ export async function pressCypressKeys(locator: Locator, keys: string): Promise<
  * Assert that the load button contains the expected text.
  * @param page - The Playwright page instance.
  * @param text - The expected button text.
+ * @returns A promise that resolves when the assertion passes.
  */
 export async function expectLoadButton(page: Page, text: string): Promise<void> {
   await expect(page.locator('#loadBtn')).toContainText(text);
@@ -144,6 +148,7 @@ export function answerId(elementId: string, systemOrOther?: string, code?: strin
  * Open the lforms test page and load a form by its dropdown index.
  * @param page - The Playwright page instance.
  * @param formIndex - The zero-based index in the form dropdown to select.
+ * @returns A promise that resolves when the form is fully loaded and visible.
  */
 export async function openFormByIndex(page: Page, formIndex: number): Promise<void> {
   await page.goto('/test/pages/lforms_testpage.html');
@@ -161,10 +166,11 @@ export async function openFormByIndex(page: Page, formIndex: number): Promise<vo
 
 /**
  * Load a form definition file onto the addFormToPageTest page via LForms.Util.addFormToPage.
- * @param page Playwright page (should already be on addFormToPageTest.html with LForms loaded)
- * @param fileName The form definition file name under test/data/
- * @param container The container element ID (default: 'formContainer')
- * @param options Options passed to LForms.Util.addFormToPage (e.g. { fhirVersion: 'R4' })
+ * @param page - Playwright page (should already be on addFormToPageTest.html with LForms loaded).
+ * @param fileName - The form definition file name under test/data/.
+ * @param container - The container element ID (default: `'formContainer'`).
+ * @param options - Options passed to LForms.Util.addFormToPage (e.g. `{ fhirVersion: 'R4' }`).
+ * @returns A promise that resolves when the form is rendered and visible in the container.
  */
 export async function addFormToPage(
   page: Page,
@@ -194,9 +200,10 @@ export async function addFormToPage(
 
 /**
  * On the lforms_testpage.html, upload a test data file and wait for form to load.
- * @param page Playwright page (should already be on lforms_testpage.html)
- * @param fileName File name under test/data/{fhirVersion}/
- * @param fhirVersion Subdirectory under test/data (default: 'lforms')
+ * @param page - Playwright page (should already be on lforms_testpage.html).
+ * @param fileName - File name under test/data/{fhirVersion}/.
+ * @param fhirVersion - Subdirectory under test/data (default: `'lforms'`).
+ * @returns A promise that resolves when the form title is visible.
  */
 export async function loadFromTestData(page: Page, fileName: string, fhirVersion = 'lforms'): Promise<void> {
   const filePath = `test/data/${fhirVersion}/${fileName}`;
