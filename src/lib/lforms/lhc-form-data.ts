@@ -121,7 +121,9 @@ export default class LhcFormData {
     // only be set to true when the form is used in a trusted environment.
     allowExternalURL: false,
     // Whether to render the form as readonly
-    readonlyMode: false
+    readonlyMode: false,
+    // Whether to show a "clear selection" button next to radio buttons.
+    showRadioClearSelectionButton: false
   };
 
   // other instance level variables that were not previously listed
