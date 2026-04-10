@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 const answerId = util.answerId;
 
@@ -220,6 +221,38 @@ describe('Visual effect tests', () => {
       cy.realPress("Tab");
       cy.focused()
         .should('have.attr', 'id', '/type2/1')
+    });
+
+    it('should clear radio selection when "clear selection" button is clicked', () => {
+      const po = new AddFormToPageTestPage();
+      po.openPage();
+      util.addFormToPage('answerOption/answerOption-valueCoding.open-choice.R4.json', null, {fhirVersion: 'R4', showRadioClearSelectionButton: true});
+      // Select a radio option.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1||c3').click();
+      cy.byId('valueCoding.open-choice-group2-item1/1/1||c3 input').should('be.checked');
+      // Clear selection.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      // Radio option should be unselected.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1||c3 input').should('not.be.checked');
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_other').click();
+      // Check Other option and type in Other value.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_other input').should('be.checked');
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_otherValue').type('abc');
+      // Exported QR has 3 items.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item.length).to.equal(3);
+      });
+      // Clear selection.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      // Other option should be unselected, and Other value should be gone.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_other input').should('not.be.checked');
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_otherValue').should('not.exist');
+      // Exported QR now has 2 items because the radio selection is cleared.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item.length).to.equal(2);
+      });
     });
   });
 
