@@ -2,11 +2,13 @@ import { test, expect } from '@playwright/test';
 import { byId, addFormToPage, answerId, pressCypressKeys, waitForLFormsReady } from '../../support/lforms-helpers';
 
 test.describe('EnableWhen on different types', () => {
-  test('should work on boolean items', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'enableWhen-test.R4.json', 'formContainer', { fhirVersion: 'R4' });
+  });
 
+  test('should work on boolean items', async ({ page }) => {
     await expect(byId(page, answerId('Q1/1/1', 'true')).locator('input')).not.toBeChecked();
     await expect(byId(page, answerId('Q1/1/1', 'false')).locator('input')).not.toBeChecked();
     await expect(byId(page, answerId('Q1/1/1', 'null')).locator('input')).toBeChecked();
@@ -33,10 +35,6 @@ test.describe('EnableWhen on different types', () => {
   });
 
   test('should work on string as answerOption items', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'enableWhen-test.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await expect(byId(page, 'Q9a-not-exists/1/1')).toBeVisible();
     await expect(byId(page, 'Q9a-exists/1/1')).not.toBeAttached();
     await expect(byId(page, 'Q9a-noteq-B/1/1')).toBeVisible();
@@ -61,10 +59,6 @@ test.describe('EnableWhen on different types', () => {
   });
 
   test('should work on integer as answerOption items', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'enableWhen-test.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await expect(byId(page, 'Q9b-not-exists/1/1')).toBeVisible();
     await expect(byId(page, 'Q9b-exists/1/1')).not.toBeAttached();
     await expect(byId(page, 'Q9b-noteq-B/1/1')).toBeVisible();
@@ -89,10 +83,6 @@ test.describe('EnableWhen on different types', () => {
   });
 
   test('should work on date as answerOption items', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'enableWhen-test.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await expect(byId(page, 'Q9c-not-exists/1/1')).toBeVisible();
     await expect(byId(page, 'Q9c-exists/1/1')).not.toBeAttached();
     await expect(byId(page, 'Q9c-noteq-B/1/1')).toBeVisible();
@@ -117,10 +107,6 @@ test.describe('EnableWhen on different types', () => {
   });
 
   test('should work on time as answerOption items', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'enableWhen-test.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await expect(byId(page, 'Q9d-not-exists/1/1')).toBeVisible();
     await expect(byId(page, 'Q9d-exists/1/1')).not.toBeAttached();
     await expect(byId(page, 'Q9d-noteq-B/1/1')).toBeVisible();

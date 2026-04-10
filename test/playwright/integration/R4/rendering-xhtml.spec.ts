@@ -3,10 +3,13 @@ import { byId, answerId, addFormToPage, waitForLFormsReady, loadFromTestData } f
 
 test.describe('rendering-xhtml', () => {
 
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/test/pages/lforms_testpage.html');
+    await waitForLFormsReady(page);
+  });
+
   test.describe('on item.text', () => {
     test('should display question html if allowed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-text.json', 'R4');
       await expect(page.locator('.testPlease')).toBeVisible();
@@ -16,16 +19,12 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display question text if not allowed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await loadFromTestData(page, 'q-with-rendering-xhtml-text.json', 'R4');
       await expect(page.locator('.testPlease')).not.toBeAttached();
       await expect(page.locator('.question').first()).toHaveText('Please answer Yes or No to each of the following questions:');
     });
 
     test('should display question escaped html, if invalid tags are displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await page.click('#displayInvalidHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-text-with-invalid-tag.json', 'R4');
@@ -34,8 +33,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display question text, if invalid tags are not displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-text-with-invalid-tag.json', 'R4');
       await expect(page.locator('.testPlease')).not.toBeAttached();
@@ -45,8 +42,6 @@ test.describe('rendering-xhtml', () => {
 
   test.describe('on item.prefix', () => {
     test('should display prefix html if allowed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-prefix.json', 'R4');
       await expect(page.locator('.testPlease')).toBeVisible();
@@ -55,16 +50,12 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display prefix text if not allowed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await loadFromTestData(page, 'q-with-rendering-xhtml-prefix.json', 'R4');
       await expect(page.locator('.testPlease')).not.toBeAttached();
       await expect(page.locator('.prefix').first()).toHaveText('A:');
     });
 
     test('should display prefix escaped html, if invalid tags are displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await page.click('#displayInvalidHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-prefix-with-invalid-tag.json', 'R4');
@@ -73,8 +64,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display prefix text, if invalid tags are not displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-prefix-with-invalid-tag.json', 'R4');
       await expect(page.locator('.testPlease')).not.toBeAttached();
@@ -84,8 +73,6 @@ test.describe('rendering-xhtml', () => {
 
   test.describe('on item.legal and item.codingInstructions', () => {
     test('should display help and legal html if allowed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-help-and-legal.json', 'R4');
       await byId(page, 'help-button-1.1/1').click();
@@ -95,8 +82,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display help and legal escaped html, if invalid tags are displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await page.click('#displayInvalidHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-help-and-legal-with-invalid-tag.json', 'R4');
@@ -107,8 +92,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display help and legal text, if invalid tags are not displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-help-and-legal-with-invalid-tag.json', 'R4');
       await byId(page, 'help-button-1.1/1').click();
@@ -121,8 +104,6 @@ test.describe('rendering-xhtml', () => {
   test.describe('on answerOption', () => {
     test.describe('valueString', () => {
       test('should display answerOption html if allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'R4');
         // radio
@@ -145,8 +126,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display answerOption text if not allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'R4');
         await expect(page.locator('.testBold')).not.toBeAttached();
         // radio
@@ -170,8 +149,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display answerOption escaped html, if invalid tags are displayed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await page.click('#displayInvalidHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption-with-invalid-tag.json', 'R4');
@@ -197,8 +174,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display answerOption text, if invalid tags are not displayed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption-with-invalid-tag.json', 'R4');
         await expect(page.locator('.testBold')).not.toBeAttached();
@@ -225,8 +200,6 @@ test.describe('rendering-xhtml', () => {
 
     test.describe('matrix layout', () => {
       test('should display plain text', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await loadFromTestData(page, 'answerOption-html-matrix-layout.json', 'R4');
         // Plain text
         const headers0 = byId(page, 'item-/matrixTable0/1').locator('th.lhc-form-matrix-cell');
@@ -249,8 +222,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display HTML', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'answerOption-html-matrix-layout.json', 'R4');
         const headers1 = byId(page, 'item-/matrixTable1/1').locator('th.lhc-form-matrix-cell');
@@ -267,8 +238,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display escaped HTML', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await page.click('#displayInvalidHTML');
         await loadFromTestData(page, 'answerOption-html-matrix-layout.json', 'R4');
@@ -282,8 +251,6 @@ test.describe('rendering-xhtml', () => {
 
     test.describe('valueCoding.display', () => {
       test('should display answerOption html if allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'R4');
         // radio
@@ -303,8 +270,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display answerOption text if not allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'R4');
         await expect(page.locator('.testItalic')).not.toBeAttached();
         // radio
@@ -328,8 +293,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display answerOption escaped html, if invalid tags are displayed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await page.click('#displayInvalidHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption-with-invalid-tag.json', 'R4');
@@ -355,8 +318,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display answerOption text, if invalid tags are not displayed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption-with-invalid-tag.json', 'R4');
         await expect(page.locator('.testItalic')).not.toBeAttached();
@@ -379,8 +340,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should remove the option after user selects it in multi-select list', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'R4');
         // autocomplete multi-select
@@ -402,9 +361,12 @@ test.describe('rendering-xhtml', () => {
     });
 
     test.describe('displayScoreWithAnswerText', () => {
-      test('should honor rendering-xhtml when displayScoreWithAnswerText is set to false', async ({ page }) => {
+      test.beforeEach(async ({ page }) => {
         await page.goto('/test/pages/addFormToPageTest.html');
         await waitForLFormsReady(page);
+      });
+
+      test('should honor rendering-xhtml when displayScoreWithAnswerText is set to false', async ({ page }) => {
         await addFormToPage(page, 'q-with-scores-with-rendering-xhtml.json', 'formContainer', { fhirVersion: 'R4', allowHTML: true, displayScoreWithAnswerText: false });
         await byId(page, 'A-1/1/1').click();
         await expect(page.locator('#lhc-tools-searchResults li').first()).toContainText('A - display from rendering-xhtml');
@@ -415,8 +377,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should honor rendering-xhtml when displayScoreWithAnswerText is set to true', async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
         await addFormToPage(page, 'q-with-scores-with-rendering-xhtml.json', 'formContainer', { fhirVersion: 'R4', allowHTML: true, displayScoreWithAnswerText: true });
         await byId(page, 'A-1/1/1').click();
         await expect(page.locator('#lhc-tools-searchResults li').first()).toContainText('A - display from rendering-xhtml');
@@ -430,8 +390,6 @@ test.describe('rendering-xhtml', () => {
 
   test.describe('on contained valueset', () => {
     test('should display html if allowed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-contained-valueset.json', 'R4');
       // radio
@@ -451,8 +409,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display text if not allowed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await loadFromTestData(page, 'q-with-rendering-xhtml-contained-valueset.json', 'R4');
       await expect(page.locator('.testItalic')).not.toBeAttached();
       // radio
@@ -476,8 +432,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display escaped html, if invalid tags are displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await page.click('#displayInvalidHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-contained-valueset-with-invalid-tag.json', 'R4');
@@ -509,8 +463,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display text, if invalid tags are not displayed in template options', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       await loadFromTestData(page, 'q-with-rendering-xhtml-contained-valueset-with-invalid-tag.json', 'R4');
       // radio
@@ -534,8 +486,6 @@ test.describe('rendering-xhtml', () => {
     });
 
     test('should display html on externally loaded answerValueSet', async ({ page }) => {
-      await page.goto('/test/pages/lforms_testpage.html');
-      await waitForLFormsReady(page);
       await page.click('#allowHTML');
       const expandResponse = {
         resourceType: 'ValueSet',
@@ -589,8 +539,6 @@ test.describe('rendering-xhtml', () => {
 
     test.describe('contained valueset matrix layout', () => {
       test('should display plain text', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await loadFromTestData(page, 'contained-valueset-html-matrix-layout.json', 'R4');
         const headers0 = byId(page, 'item-/matrixTable0/1').locator('th.lhc-form-matrix-cell');
         await expect(headers0).toHaveCount(3);
@@ -610,8 +558,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display HTML', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'contained-valueset-html-matrix-layout.json', 'R4');
         const headers1 = byId(page, 'item-/matrixTable1/1').locator('th.lhc-form-matrix-cell');
@@ -627,8 +573,6 @@ test.describe('rendering-xhtml', () => {
       });
 
       test('should display escaped HTML', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await page.click('#displayInvalidHTML');
         await loadFromTestData(page, 'contained-valueset-html-matrix-layout.json', 'R4');

@@ -14,15 +14,17 @@ async function setFHIRContext(page) {
 }
 
 test.describe('FHIR answerValueSet', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await setFHIRContext(page);
+  });
 
   test.describe('answerValueSet with FHIR context, answers displayed as drop-down list (autocomplete)', () => {
     const answerFields = ['yesno1/1', 'yesno2/1', 'yesno3/1', 'yesno4/1', 'yesno5/1', 'yesno6/1'];
     const searchResults = 'lhc-tools-searchResults';
 
     test('should have expected answer list when the Questionnaire is loaded', async ({ page }) => {
-      await page.goto('/test/pages/addFormToPageTest.html');
-      await waitForLFormsReady(page);
-      await setFHIRContext(page);
       await addFormToPage(page, 'q-with-answerValueSet-autocomplete.json', 'formContainer', { fhirVersion });
 
       for (const answerField of answerFields) {
@@ -36,10 +38,6 @@ test.describe('FHIR answerValueSet', () => {
     });
 
     test('should have expected answer list and saved value when the QR is merged to the Questionnaire', async ({ page }) => {
-      await page.goto('/test/pages/addFormToPageTest.html');
-      await waitForLFormsReady(page);
-      await setFHIRContext(page);
-
       const q = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/q-with-answerValueSet-autocomplete.json'), 'utf-8'));
       const qr = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/qr-with-answerValueSet-autocomplete.json'), 'utf-8'));
 
@@ -134,9 +132,6 @@ test.describe('FHIR answerValueSet', () => {
       f6OtherValue = answerId('yesno6/1', '_otherValue');
 
     test('should have expected answer list displayed as radio buttons or checkboxes when the Questionnaire is loaded', async ({ page }) => {
-      await page.goto('/test/pages/addFormToPageTest.html');
-      await waitForLFormsReady(page);
-      await setFHIRContext(page);
       await addFormToPage(page, 'q-with-answerValueSet-radiobutton-checkbox.json', 'formContainer', { fhirVersion });
 
       const allAnswers = [
@@ -159,10 +154,6 @@ test.describe('FHIR answerValueSet', () => {
     });
 
     test('should have expected answer list and saved value when the QR is merged to the Questionnaire', async ({ page }) => {
-      await page.goto('/test/pages/addFormToPageTest.html');
-      await waitForLFormsReady(page);
-      await setFHIRContext(page);
-
       const q = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/q-with-answerValueSet-radiobutton-checkbox.json'), 'utf-8'));
       const qr = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/qr-with-answerValueSet-radiobutton-checkbox.json'), 'utf-8'));
 
@@ -229,9 +220,6 @@ test.describe('FHIR answerValueSet', () => {
 
   test.describe('answerValueSet with FHIR context, answers displayed as matrix', () => {
     test('should have expected answer list when the Questionnaire is loaded', async ({ page }) => {
-      await page.goto('/test/pages/addFormToPageTest.html');
-      await waitForLFormsReady(page);
-      await setFHIRContext(page);
       await addFormToPage(page, 'q-with-answerValueSet-matrix.json', 'formContainer', { fhirVersion });
 
       for (let g = 1; g < 5; g++) {
@@ -250,10 +238,6 @@ test.describe('FHIR answerValueSet', () => {
     });
 
     test('should have expected answer list and saved value when the QR is merged, and export QR', async ({ page }) => {
-      await page.goto('/test/pages/addFormToPageTest.html');
-      await waitForLFormsReady(page);
-      await setFHIRContext(page);
-
       const q = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/q-with-answerValueSet-matrix.json'), 'utf-8'));
       const qr = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/qr-with-answerValueSet-matrix.json'), 'utf-8'));
 
@@ -321,10 +305,6 @@ test.describe('FHIR answerValueSet', () => {
 
   test.describe('answerValueSet with FHIR context, answers displayed as search field (autocomplete)', () => {
     test('should have expected answer list and saved value when the QR is merged, and export QR', async ({ page }) => {
-      await page.goto('/test/pages/addFormToPageTest.html');
-      await waitForLFormsReady(page);
-      await setFHIRContext(page);
-
       const q = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/q-with-answerValueSet-autocomplete-searchfield.json'), 'utf-8'));
       const qr = JSON.parse(fs.readFileSync(path.resolve('test/data/R4/qr-with-answerValueSet-autocomplete-searchfield.json'), 'utf-8'));
 

@@ -2,20 +2,23 @@ import { test, expect } from '@playwright/test';
 import { byId, addFormToPage, pressCypressKeys, waitForLFormsReady } from '../../support/lforms-helpers';
 
 test.describe('Template based extraction', () => {
-  test('should work on templateExtract', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
+  });
+
+  test('should work on templateExtract', async ({ page }) => {
     await addFormToPage(page, 'questionnaire-extract-complex-template.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'given/1/1/1').type('Adam');
-    await byId(page, 'family/1/1/1').type('Xie');
+    await byId(page, 'given/1/1/1').fill('Adam');
+    await byId(page, 'family/1/1/1').fill('Xie');
     const gender = byId(page, 'gender/1/1');
     await gender.click();
     await pressCypressKeys(gender, '{downArrow}{enter}');
-    await byId(page, 'ihi/1/1').type('111');
-    await byId(page, 'mobile-phone/1/1').type('123');
-    await byId(page, 'height/1/1').type('44');
-    await byId(page, 'weight/1/1').type('55');
+    await byId(page, 'ihi/1/1').fill('111');
+    await byId(page, 'mobile-phone/1/1').fill('123');
+    await byId(page, 'height/1/1').fill('44');
+    await byId(page, 'weight/1/1').fill('55');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -86,19 +89,17 @@ test.describe('Template based extraction', () => {
   });
 
   test('should work on templateExtractBundle', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
     await addFormToPage(page, 'questionnaire-extract-complex-template-bundle.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'given/1/1/1').type('Adam');
-    await byId(page, 'family/1/1/1').type('Xie');
+    await byId(page, 'given/1/1/1').fill('Adam');
+    await byId(page, 'family/1/1/1').fill('Xie');
     const gender = byId(page, 'gender/1/1');
     await gender.click();
     await pressCypressKeys(gender, '{downArrow}{enter}');
-    await byId(page, 'ihi/1/1').type('111');
-    await byId(page, 'mobile-phone/1/1').type('123');
-    await byId(page, 'height/1/1').type('44');
-    await byId(page, 'weight/1/1').type('55');
+    await byId(page, 'ihi/1/1').fill('111');
+    await byId(page, 'mobile-phone/1/1').fill('123');
+    await byId(page, 'height/1/1').fill('44');
+    await byId(page, 'weight/1/1').fill('55');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -147,12 +148,10 @@ test.describe('Template based extraction', () => {
   });
 
   test('should work on a questionnaire with both templateExtract and templateExtractBundle', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
     await addFormToPage(page, 'q-with-template-extraction.json', 'formContainer', { fhirVersion: 'STU3' });
 
-    await byId(page, 'height/1/1').type('44');
-    await byId(page, 'weight/1/1').type('55');
+    await byId(page, 'height/1/1').fill('44');
+    await byId(page, 'weight/1/1').fill('55');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'STU3', null, { extract: true })
@@ -172,11 +171,9 @@ test.describe('Template based extraction', () => {
   });
 
   test('should work if templateExtract extension is at root level', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
     await addFormToPage(page, 'questionnaire-extract-template-root-level.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'height/1').type('44');
+    await byId(page, 'height/1').fill('44');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -192,13 +189,11 @@ test.describe('Template based extraction', () => {
   });
 
   test('should allocate different values if extractAllocateId extension is defined on a repeating item', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
     await addFormToPage(page, 'questionnaire-extract-template-with-allocateId-on-repeating-item.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'height/1/1').type('44');
+    await byId(page, 'height/1/1').fill('44');
     await byId(page, 'add-height/1/1').click();
-    await byId(page, 'height/1/2').type('55');
+    await byId(page, 'height/1/2').fill('55');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -217,11 +212,9 @@ test.describe('Template based extraction', () => {
   });
 
   test('should set request properties based on templateExtract subextensions', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
     await addFormToPage(page, 'questionnaire-extract-template-with-subextensions.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'height/1/1').type('44');
+    await byId(page, 'height/1/1').fill('44');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -245,14 +238,12 @@ test.describe('Template based extraction', () => {
   });
 
   test('should extract multiple items if templateExtractContext extension evaluates to multiple results', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
     await addFormToPage(page, 'questionnaire-extract-complex-template.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'given/1/1/1').type('a1');
+    await byId(page, 'given/1/1/1').fill('a1');
     await byId(page, 'add-given/1/1/1').click();
-    await byId(page, 'given/1/1/2').type('a2');
-    await byId(page, 'family/1/1/1').type('aa');
+    await byId(page, 'given/1/1/2').fill('a2');
+    await byId(page, 'family/1/1/1').fill('aa');
     await byId(page, 'add-name/1/1').click();
 
     let bundle = await page.evaluate(() =>
@@ -265,10 +256,10 @@ test.describe('Template based extraction', () => {
     expect(patient1.name).toEqual([{ text: 'a1 a2 aa', family: 'aa', given: ['a1', 'a2'] }]);
 
     // Fill out another name entry
-    await byId(page, 'given/1/2/1').type('b1');
+    await byId(page, 'given/1/2/1').fill('b1');
     await byId(page, 'add-given/1/2/1').click();
-    await byId(page, 'given/1/2/2').type('b2');
-    await byId(page, 'family/1/2/1').type('bb');
+    await byId(page, 'given/1/2/2').fill('b2');
+    await byId(page, 'family/1/2/1').fill('bb');
 
     bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })

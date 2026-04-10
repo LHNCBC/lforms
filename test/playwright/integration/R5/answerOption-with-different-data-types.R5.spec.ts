@@ -100,12 +100,13 @@ test.describe('AnswerOption with different types', () => {
       const fileName = `answerOption/answerOption-${valueType}.${answerConstraint}.${fhirVersion}.json`;
 
       test.describe(`${fhirVersion} - ${valueType} - ${answerConstraint}`, () => {
-
-        test(`should render a questionnaire with answerOption where item.type=${valueType} and item.answerConstraint=${answerConstraint}`, async ({ page }) => {
+        test.beforeEach(async ({ page }) => {
           await page.goto('/test/pages/addFormToPageTest.html');
           await waitForLFormsReady(page);
           await addFormToPage(page, fileName, 'formContainer', { fhirVersion });
+        });
 
+        test(`should render a questionnaire with answerOption where item.type=${valueType} and item.answerConstraint=${answerConstraint}`, async ({ page }) => {
           // group 1 - autocomplete, non-repeats
           await expect(byId(page, ids.g1item1)).toBeVisible();
           await byId(page, ids.g1item1).click();
@@ -199,10 +200,6 @@ test.describe('AnswerOption with different types', () => {
         });
 
         test(`should get a correct QR from a questionnaire with answerOption where item.type=${valueType} and item.answerConstraint=${answerConstraint}, and should merge back`, async ({ page }) => {
-          await page.goto('/test/pages/addFormToPageTest.html');
-          await waitForLFormsReady(page);
-          await addFormToPage(page, fileName, 'formContainer', { fhirVersion });
-
           // group 1 - autocomplete, non-repeats: select 2nd item
           await byId(page, ids.g1item1).click();
           await byId(page, ids.g1item1).press('ArrowDown');
