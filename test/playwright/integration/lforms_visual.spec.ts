@@ -183,11 +183,11 @@ test.describe('Visual effect tests', () => {
       await expect(n1).toBeVisible();
       await expect(q4).not.toBeAttached();
       await n1.click();
-      await n1.fill('1');
+      await n1.pressSequentially('1');
       await n2.click();
-      await n2.fill('2');
+      await n2.pressSequentially('2');
       await n3.click();
-      await n3.fill('3');
+      await n3.pressSequentially('3');
       await expect(q4).toBeVisible();
 
       const itemN3 = byId(page, 'item-n3/1/1');

@@ -117,16 +117,16 @@ test.describe('load saved user data', () => {
     const rpAdd = byId(page, 'add-/repeatingSection1/1');
 
     await rpSrc2.clear();
-    await rpSrc2.fill('1');
+    await rpSrc2.pressSequentially('1');
     await expect(rpTarget2a).not.toBeAttached();
     await rpSrc2.clear();
-    await rpSrc2.fill('2');
+    await rpSrc2.pressSequentially('2');
     await expect(rpTarget2a).toBeVisible();
     await rpAdd.click();
     await expect(rpTarget2a).toBeVisible();
     await expect(rpTarget2b).toBeVisible();
     await rpSrc2.clear();
-    await rpSrc2.fill('1');
+    await rpSrc2.pressSequentially('1');
     await expect(rpTarget2a).not.toBeAttached();
     await expect(rpTarget2b).not.toBeAttached();
   });

@@ -55,11 +55,12 @@ test.describe('display controls demo', () => {
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[2].value == null).toBe(true);
 
-    await byId(page, item2OtherValue).fill('other values');
+    await byId(page, item2OtherValue).pressSequentially('other values');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[2].value).toBe('other values');
 
-    await byId(page, item2OtherValue).fill('other values again');
+    await byId(page, item2OtherValue).clear();
+    await byId(page, item2OtherValue).pressSequentially('other values again');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[2].value).toBe('other values again');
 
@@ -85,14 +86,15 @@ test.describe('display controls demo', () => {
     expect(formData.items[4].value[0]).toEqual({code: 'c1', text: 'Answer X'});
     expect(formData.items[4].value[1] == null).toBe(true);
 
-    await byId(page, item4OtherValue).fill('other values');
+    await byId(page, item4OtherValue).pressSequentially('other values');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[4].value.length).toBe(2);
     expect(formData.items[4].value[0].code).toBe('c1');
     expect(formData.items[4].value[0].text).toBe('Answer X');
     expect(formData.items[4].value[1]).toBe('other values');
 
-    await byId(page, item4OtherValue).fill('other values again');
+    await byId(page, item4OtherValue).clear();
+    await byId(page, item4OtherValue).pressSequentially('other values again');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[4].value.length).toBe(2);
     expect(formData.items[4].value[0].code).toBe('c1');

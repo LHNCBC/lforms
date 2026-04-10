@@ -75,14 +75,15 @@ test.describe('Form level Matrix layout', () => {
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value[2]).toBeUndefined();
 
-    await byId(page, item1OtherValue).fill('other values');
+    await byId(page, item1OtherValue).pressSequentially('other values');
     await byId(page, item1OtherValue).blur();
     await byId(page, item1OtherValue).click();
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value[2]).toBe('other values');
 
     // change the other value alone
-    await byId(page, item1OtherValue).fill('other values again');
+    await byId(page, item1OtherValue).clear();
+    await byId(page, item1OtherValue).pressSequentially('other values again');
     await byId(page, item1OtherValue).blur();
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value[2]).toBe('other values again');
@@ -97,7 +98,7 @@ test.describe('Form level Matrix layout', () => {
     expect(formData.itemsData[3].value[0].code).toBe('c1');
     expect(formData.itemsData[3].value[1].code).toBe('c4');
 
-    await byId(page, item4OtherValue).fill('others');
+    await byId(page, item4OtherValue).pressSequentially('others');
     // model value does not change when the checkbox is not checked
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[3].value.length).toBe(2);

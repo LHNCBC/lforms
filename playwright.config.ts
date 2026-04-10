@@ -16,7 +16,10 @@ export default defineConfig({
     baseURL: `http://localhost:${config.testPort}`,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'off'
+    video: 'off',
+    // launchOptions: {
+    //   slowMo: 50
+    // }
   },
   projects: [
     {

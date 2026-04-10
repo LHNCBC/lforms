@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { addFormToPage, byId, escapeIdSelector, fhirVersions, TIMEOUT_30S, waitForLFormsReady, pressSequentiallyThenWait } from '../support/lforms-helpers';
+import { addFormToPage, byId, escapeIdSelector, fhirVersions, TIMEOUT_30S, waitForLFormsReady } from '../support/lforms-helpers';
 
 // Field IDs from the USSG-FHT form
 const ethnicityId = '/54126-8/54133-4/1/1';
@@ -40,15 +40,13 @@ for (const fhirVersion of fhirVersions) {
       test('should be able to search via ValueSet expansion', async ({ page }) => {
         const ethnicity = byId(page, ethnicityId);
         await ethnicity.click();
-        //await ethnicity.pressSequentially('arg', { delay: 50 });
-        await pressSequentiallyThenWait(ethnicity, 'arg', {delay: 50});
+        await ethnicity.pressSequentially('arg');
         await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText('Argentinean', TIMEOUT_30S);
         await ethnicity.press('Escape');
 
         const disease = byId(page, diseaseId);
         await disease.click();
-        //await disease.pressSequentially('arm', { delay: 50 });
-        await pressSequentiallyThenWait(disease, 'arm', {delay: 50});
+        await disease.pressSequentially('arm');
         await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText('Arm pain', TIMEOUT_30S);
         await page.locator('#lhc-tools-searchResults li').first().click();
         await expect(disease).toHaveValue('Arm pain', TIMEOUT_30S);

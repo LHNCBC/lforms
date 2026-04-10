@@ -214,7 +214,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await st0.click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await st0.fill('abc');
+      await st0.pressSequentially('abc');
       await st0.clear();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
@@ -225,7 +225,7 @@ test.describe('Validations', () => {
       await st0.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
       await st0.clear();
-      await st0.fill('abcde');
+      await st0.pressSequentially('abcde');
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await page.locator('label[for=\'/ST3/1\']').click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
@@ -281,7 +281,7 @@ test.describe('Validations', () => {
       // valid user input no message
       await cwe1.press('Control+a');
       await cwe1.press('Backspace');
-      await cwe1.fill('user input');
+      await cwe1.pressSequentially('user input');
       await cwe1.blur();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
@@ -291,7 +291,7 @@ test.describe('Validations', () => {
       const inta = byId(page, '/INTA/1');
       const lblbl = 'label[for=\'/BL/1\']';
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await inta.fill('1');
+      await inta.pressSequentially('1');
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).not.toBeAttached();
@@ -302,7 +302,7 @@ test.describe('Validations', () => {
       await inta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
       await inta.clear();
-      await inta.fill('10');
+      await inta.pressSequentially('10');
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await page.locator(lblbl).click();
@@ -310,7 +310,7 @@ test.describe('Validations', () => {
       await inta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await inta.clear();
-      await inta.fill('9');
+      await inta.pressSequentially('9');
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
@@ -321,7 +321,7 @@ test.describe('Validations', () => {
       const reala = byId(page, '/REALA/1');
       const lblbl = 'label[for=\'/BL/1\']';
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await reala.fill('1.0');
+      await reala.pressSequentially('1.0');
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
       await page.locator(lblbl).click();
@@ -331,14 +331,14 @@ test.describe('Validations', () => {
       await reala.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
       await reala.clear();
-      await reala.fill('10.0');
+      await reala.pressSequentially('10.0');
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).not.toBeVisible();
       await reala.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await reala.clear();
-      await reala.fill('9.999');
+      await reala.pressSequentially('9.999');
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
@@ -349,7 +349,7 @@ test.describe('Validations', () => {
       const sta = byId(page, '/STA/1');
       const lblbl = 'label[for=\'/BL/1\']';
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await sta.fill('123');
+      await sta.pressSequentially('123');
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxLength })).not.toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).not.toBeVisible();
@@ -366,7 +366,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
       await sta.clear();
-      await sta.fill('abcde678901');
+      await sta.pressSequentially('abcde678901');
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxLength })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).not.toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
@@ -417,7 +417,7 @@ test.describe('Validations', () => {
         'Required ST field requires a value'
       ]);
 
-      await byId(page, '/sl_source_to_test_required/1').fill('1');
+      await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
       errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toEqual([
         'Required DT field requires a value',
@@ -431,21 +431,21 @@ test.describe('Validations', () => {
 
     test('should validate when required inputs are entered', async ({ page }) => {
       await openFormByIndex(page, 4); // FullFeaturedForm
-      await byId(page, '/sl_source_to_test_required/1').fill('1');
+      await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
 
       const requiredDtInput = byId(page, '/required_dt/1').locator('input');
       const requiredDtmInput = byId(page, '/required_dtm/1').locator('input');
       const requiredTx = byId(page, '/required_tx/1');
       await requiredDtInput.click();
-      await requiredDtInput.fill('10/16/2020');
+      await requiredDtInput.pressSequentially('10/16/2020');
       await requiredTx.click();
       await requiredDtmInput.click();
-      await requiredDtmInput.fill('10/16/2020 16:00:00');
+      await requiredDtmInput.pressSequentially('10/16/2020 16:00:00');
       await requiredTx.click();
-      await requiredTx.fill('test');
-      await byId(page, '/required_st/1').fill('test');
-      await byId(page, '/sl_target_to_test_required1/1').fill('test');
-      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').fill('test');
+      await requiredTx.pressSequentially('test');
+      await byId(page, '/required_st/1').pressSequentially('test');
+      await byId(page, '/sl_target_to_test_required1/1').pressSequentially('test');
+      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').pressSequentially('test');
 
       const errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toBeNull();
@@ -456,20 +456,20 @@ test.describe('Validations', () => {
       await waitForLFormsReady(page);
       await loadFromTestData(page, 'test-date-validation.json');
 
-      await byId(page, '/sl_source_to_test_required/1').fill('1');
+      await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
       const requiredDtInput = byId(page, '/required_dt/1').locator('input');
       const requiredDtmInput = byId(page, '/required_dtm/1').locator('input');
       const requiredTx = byId(page, '/required_tx/1');
       await requiredDtInput.click();
-      await requiredDtInput.fill('10/16/2020');
+      await requiredDtInput.pressSequentially('10/16/2020');
       await requiredTx.click();
       await requiredDtmInput.click();
-      await requiredDtmInput.fill('10/16/2020 16:00:00');
+      await requiredDtmInput.pressSequentially('10/16/2020 16:00:00');
       await requiredTx.click();
-      await requiredTx.fill('test');
-      await byId(page, '/required_st/1').fill('test');
-      await byId(page, '/sl_target_to_test_required1/1').fill('test');
-      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').fill('test');
+      await requiredTx.pressSequentially('test');
+      await byId(page, '/required_st/1').pressSequentially('test');
+      await byId(page, '/sl_target_to_test_required1/1').pressSequentially('test');
+      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').pressSequentially('test');
 
       const error = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(error).toBeNull();
@@ -550,10 +550,10 @@ test.describe('Validations', () => {
       await loadFromTestData(page, 'q-with-minOccurs-maxOccurs.json', 'R4');
       const minOccursMsg = page.locator('text=This repeatable item should have at least 2 occurrences.');
       await expect(minOccursMsg).toBeVisible();
-      await byId(page, '1.2/1/1').fill('a');
+      await byId(page, '1.2/1/1').pressSequentially('a');
       await byId(page, 'add-1/1').click();
       await expect(minOccursMsg).not.toBeAttached();
-      await byId(page, '1.2/2/1').fill('a');
+      await byId(page, '1.2/2/1').pressSequentially('a');
       await byId(page, 'add-1/2').click();
       await expect(byId(page, 'add-1/3')).not.toBeAttached();
       await byId(page, 'del-1/3').click();

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { byId, expectLoadButton, TIMEOUT_30S, pressCypressKeys, uploadFile, waitForLFormsReady, pressSequentiallyThenWait } from '../support/lforms-helpers';
+import { byId, expectLoadButton, TIMEOUT_30S, pressCypressKeys, uploadFile, waitForLFormsReady } from '../support/lforms-helpers';
 
 test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   const problemId = 'medication/1/1';
@@ -18,8 +18,7 @@ test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   async function chooseMedication(page: Page, prefix: string, firstOptionText: string) {
     const problem = byId(page, problemId);
     await problem.click();
-    await problem.pressSequentially(prefix, { delay: 50 });
-    //await pressSequentiallyThenWait(problem, prefix, {delay: 50}); // this didn't work either sometimes.
+    await problem.pressSequentially(prefix);
     
     await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText(firstOptionText, TIMEOUT_30S);
     await pressCypressKeys(problem, '{downarrow}{enter}');

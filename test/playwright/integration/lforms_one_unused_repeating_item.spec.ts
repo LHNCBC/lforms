@@ -12,7 +12,7 @@ test.describe('Unused repeating item/section control', () => {
       await expect(byId(page, 'add-content-/54126-8/54125-0/1/1').first()).toBeVisible();
 
       // should add a new one when there is no unused item
-      await byId(page, '/54126-8/54125-0/1/1').fill('a name');
+      await byId(page, '/54126-8/54125-0/1/1').pressSequentially('a name');
       await byId(page, 'add-/54126-8/54125-0/1/1').click();
       await expect(byId(page, 'add-content-/54126-8/54125-0/1/1')).not.toBeAttached();
 
@@ -21,7 +21,7 @@ test.describe('Unused repeating item/section control', () => {
       await expect(byId(page, 'add-content-/54126-8/54125-0/1/2').first()).toBeVisible();
 
       // should not add a new one when a previous used item becomes unused
-      await byId(page, '/54126-8/54125-0/1/2').fill('another name');
+      await byId(page, '/54126-8/54125-0/1/2').pressSequentially('another name');
       await byId(page, '/54126-8/54125-0/1/1').clear();
       await byId(page, 'add-/54126-8/54125-0/1/2').click();
       await expect(byId(page, 'add-content-/54126-8/54125-0/1/2').first()).toBeVisible();
@@ -50,7 +50,7 @@ test.describe('Unused repeating item/section control', () => {
       const subItem = byId(page, '/54126-8/54137-5/54137-5XA/54140-9XA/1/2/1/1');
       await expect(subItem).toBeVisible();
 
-      await subItem.fill('a value');
+      await subItem.pressSequentially('a value');
       await otherDisease.clear();
       await otherDisease.blur();
       await expect(subItem).not.toBeAttached();

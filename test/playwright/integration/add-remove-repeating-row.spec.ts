@@ -102,7 +102,7 @@ test.describe('repeating group with answerValueSet items', () => {
     await loadFromTestData(page, 'nested-repeating-groups-that-contain-an-item-with-answerValueSet.R4.json', 'R4');
     // The form has a question with 7 radio button options.
     await expect(page.locator('.ant-radio-input')).toHaveCount(7);
-    await page.locator('[id="9744363809788/1"]').fill('some text');
+    await page.locator('[id="9744363809788/1"]').pressSequentially('some text');
     // Add a repeating group.
     await page.getByText('+ Outer group').click();
     // The 7 radio button inputs in the repeating group should be rendered.
@@ -157,7 +157,7 @@ test.describe('multiple initial values on repeating question', () => {
     await expect(byId(page, 'child-decimal/1/2')).toHaveValue('2');
     // Adding a repeating question should not affect the initial values on the exported Questionnaire.
     await byId(page, 'add-child-decimal/1/2').click();
-    await byId(page, 'child-decimal/1/3').fill('888');
+    await byId(page, 'child-decimal/1/3').pressSequentially('888');
 
     const q = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('Questionnaire', 'R4'));
     expect(q.item[0].item[0].initial).toEqual([

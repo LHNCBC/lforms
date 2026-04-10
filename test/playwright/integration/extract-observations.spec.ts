@@ -93,12 +93,12 @@ test.describe('Form with extract observation extension', () => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'q-with-obs-extract-repeats-true.json', 'formContainer', { fhirVersion: 'R4' });
-    await byId(page, 'string/1').fill('A');
+    await byId(page, 'string/1').pressSequentially('A');
     await byId(page, 'add-string/1').click();
-    await byId(page, 'string/2').fill('B');
-    await byId(page, 'decimal/1').fill('1');
+    await byId(page, 'string/2').pressSequentially('B');
+    await byId(page, 'decimal/1').pressSequentially('1');
     await byId(page, 'add-decimal/1').click();
-    await byId(page, 'decimal/2').fill('2');
+    await byId(page, 'decimal/2').pressSequentially('2');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -222,11 +222,11 @@ test.describe('Form with extract observation extension', () => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'q-with-obs-extract-valueCode-with-repeatable-parents.json', 'formContainer', { fhirVersion: 'R4' });
-    await byId(page, 'parentRepeatableItem/1').fill('Adam');
+    await byId(page, 'parentRepeatableItem/1').pressSequentially('Adam');
     await byId(page, 'add-parentRepeatableItem/1').click();
-    await byId(page, 'parentRepeatableItem/2').fill('Ben');
-    await byId(page, 'childItem1/2/1').fill('130');
-    await byId(page, 'childItem2/2/1').fill('90');
+    await byId(page, 'parentRepeatableItem/2').pressSequentially('Ben');
+    await byId(page, 'childItem1/2/1').pressSequentially('130');
+    await byId(page, 'childItem2/2/1').pressSequentially('90');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })

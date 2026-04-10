@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, waitForLFormsReady, loadFromTestData, answerId, addFormToPage, pressSequentiallyThenWait } from '../support/lforms-helpers';
+import { byId, waitForLFormsReady, loadFromTestData, answerId, addFormToPage } from '../support/lforms-helpers';
 import * as FHIRSupport from '../../../src/fhir/versions.js';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -19,7 +19,7 @@ for (const fhirVersion of fhirVersions) {
         const height = byId(page, '/8302-2/1');
         const bmi = byId(page, '/39156-5/1');
         await weight.click();
-        await weight.fill('70');
+        await weight.pressSequentially('70');
         await height.click();
         await height.pressSequentially('60');
         await expect(bmi).toHaveValue('30.1');
@@ -49,7 +49,7 @@ for (const fhirVersion of fhirVersions) {
         const height = byId(page, '/8302-2/1');
         const bmi = byId(page, '/39156-5/1');
         await weight.click();
-        await weight.fill('123abc');
+        await weight.pressSequentially('123abc');
         await height.click();
         await height.pressSequentially('60');
         await expect(bmi).toHaveValue('');
@@ -61,9 +61,13 @@ for (const fhirVersion of fhirVersions) {
 
         await weight.click();
         await weight.clear();
-        await weight.pressSequentially('123abc', { delay: 50 });
-        //await pressSequentiallyThenWait(weight, '123abc', {delay: 50}); // this didn't work here. bmi value was not correct.
-        
+        await weight.pressSequentially('123');
+        if (fhirVersion === 'R4') {
+          await expect(byId(page, '/39156-5/1')).toHaveValue('53');
+        } else if (fhirVersion === 'STU3') {
+          await expect(byId(page, '/39156-5/1')).toHaveValue('52.9');
+        }
+        await weight.pressSequentially('abc');
         if (fhirVersion === 'R4') {
           await expect(byId(page, '/39156-5/1')).toHaveValue('53');
         } else if (fhirVersion === 'STU3') {
@@ -134,9 +138,7 @@ test.describe('answerExpression', () => {
           const strength = byId(page, 'strength/1/1');
           const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
           await medication.click();
-          await medication.pressSequentially('ar', { delay: 50 });
-          //await pressSequentiallyThenWait(medication, 'ar', {delay: 50}); // this didn't work either sometimes.
-          
+          await medication.pressSequentially('ar');
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
           await firstResult.click();
           await strength.click();
@@ -267,9 +269,7 @@ test.describe('answerExpression', () => {
           const medication = byId(page, 'medication/1/1');
           const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
           await medication.click();
-          await medication.pressSequentially('ar', { delay: 50 });
-          //await pressSequentiallyThenWait(medication, 'ar', {delay: 50}); // this didn't work sometimes.
-          
+          await medication.pressSequentially('ar');
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
           await firstResult.click();
           await byId(page, 'strength/1/1').click();
