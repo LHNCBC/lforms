@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.2.0] 2026-04-10
+### Added
+- New template option showRadioClearSelectionButton to show a
+  "clear selection" button next to radio buttons. Defaults to false.
+
 ## [41.1.0] 2026-04-02
 ### Added
 - New utility function LForms.Util.validateQuestionnaireOnFHIRServer()
