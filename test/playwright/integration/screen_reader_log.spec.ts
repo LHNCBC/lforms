@@ -39,7 +39,7 @@ test.describe('508', () => {
       await expectReaderLogEntriesEmpty(page);
 
       // should contain an entry when skip logic shows a field
-      await byId(page, heightField).fill('10');
+      await byId(page, heightField).pressSequentially('10');
       await expectReaderLogEntries(page,
         ['Showing Mock-up item: Shown when Height >= 10']);
 
@@ -100,7 +100,7 @@ test.describe('508', () => {
       await expectReaderLogEntriesEmpty(page);
 
       // Add a question
-      await byId(page, '/54126-8/54125-0/1/1').fill('a name');
+      await byId(page, '/54126-8/54125-0/1/1').pressSequentially('a name');
       await addNameBtn.click();
       await expectReaderLogEntries(page, ['Added question']);
       // Remove the question

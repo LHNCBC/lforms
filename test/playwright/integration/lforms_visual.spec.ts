@@ -16,10 +16,12 @@ test.describe('Visual effect tests', () => {
       test('should be the same for data type ' + d, async ({ page }) => {
         await openFormByIndex(page, 4); // FullFeaturedForm
         // Get background color of the empty data type field when focused
-        await byId(page, '/type0/1').focus();
-        await byId(page, '/type0/1').blur();
-        await byId(page, '/type0/1').click();
-        const color = await byId(page, '/type0/1').evaluate(
+        const type0 = byId(page, '/type0/1');
+        await type0.focus();
+        await type0.blur();
+        await type0.click();
+
+        const color = await type0.evaluate(
           el => getComputedStyle(el).backgroundColor
         );
         await byId(page, otherField).click();
@@ -131,30 +133,38 @@ test.describe('Visual effect tests', () => {
       await byId(page, '/type0/1').click();
       await page.keyboard.press('Tab'); // focus on help button
       await page.keyboard.press('Tab'); // move to radio 'Not Answered'
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      const focused = page.locator(':focus');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'null'));
       // move to radio 'No'
       await page.keyboard.press('ArrowLeft');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'false'));
       // move to radio 'Yes'
       await page.keyboard.press('ArrowLeft');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'true'));
       // back to radio 'No'
       await page.keyboard.press('ArrowRight');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'false'));
 
       // go to next question
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1b/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1b/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1b/1', 'null'));
       // move to radio 'No'
       await page.keyboard.press('ArrowLeft');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1b/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1b/1', 'false'));
 
       // go to next question
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveAttribute('id', '/type2/1');
+      await expect(focused).toHaveAttribute('id', '/type2/1');
     });
   });
 
@@ -173,17 +183,19 @@ test.describe('Visual effect tests', () => {
       await expect(n1).toBeVisible();
       await expect(q4).not.toBeAttached();
       await n1.click();
-      await n1.type('1');
+      await n1.pressSequentially('1');
       await n2.click();
-      await n2.type('2');
+      await n2.pressSequentially('2');
       await n3.click();
-      await n3.type('3');
+      await n3.pressSequentially('3');
       await expect(q4).toBeVisible();
 
-      await expect(byId(page, 'item-n3/1/1')).toHaveClass(/lhc-tree-line/);
-      await expect(byId(page, 'item-n3/1/1')).not.toHaveClass(/lhc-last-item/);
-      await expect(byId(page, 'item-q4/1/1')).toHaveClass(/lhc-tree-line/);
-      await expect(byId(page, 'item-q4/1/1')).toHaveClass(/lhc-last-item/);
+      const itemN3 = byId(page, 'item-n3/1/1');
+      await expect(itemN3).toHaveClass(/lhc-tree-line/);
+      await expect(itemN3).not.toHaveClass(/lhc-last-item/);
+      const itemQ4 = byId(page, 'item-q4/1/1');
+      await expect(itemQ4).toHaveClass(/lhc-tree-line/);
+      await expect(itemQ4).toHaveClass(/lhc-last-item/);
     });
 
     test('should not show treeline by default if the questionnaire is 3 levels deep', async ({ page }) => {
@@ -222,17 +234,19 @@ test.describe('Visual effect tests', () => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
       await addFormToPage(page, 'multipleCodes.json', 'formContainer', { fhirVersion: 'R4', showQuestionCode: true });
-
-      await expect(page.locator('.lhc-item-code').nth(0)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(1)).toContainText('[85353-1]');
-      await expect(page.locator('.lhc-item-code').nth(1)).toHaveAttribute('href', 'https://loinc.org/85353-1');
-      await expect(page.locator('.lhc-item-code').nth(2)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(3)).toContainText('[29463-7]');
-      await expect(page.locator('.lhc-item-code').nth(3)).toHaveAttribute('href', 'https://loinc.org/29463-7');
-      await expect(page.locator('.lhc-item-code').nth(4)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(5)).toContainText('[29463-7]');
-      await expect(page.locator('.lhc-item-code').nth(6)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(7)).toContainText('[29463-7]');
+      const itemCodes = page.locator('.lhc-item-code');
+      await expect(itemCodes.nth(0)).toContainText('[example]');
+      await expect(itemCodes.nth(0)).not.toHaveAttribute('href');
+      await expect(itemCodes.nth(1)).toContainText('[85353-1]');
+      await expect(itemCodes.nth(1)).toHaveAttribute('href', 'https://loinc.org/85353-1');
+      await expect(itemCodes.nth(2)).toContainText('[example]');
+      await expect(itemCodes.nth(2)).not.toHaveAttribute('href');
+      await expect(itemCodes.nth(3)).toContainText('[29463-7]');
+      await expect(itemCodes.nth(3)).toHaveAttribute('href', 'https://loinc.org/29463-7');
+      await expect(itemCodes.nth(4)).toContainText('[example]');
+      await expect(itemCodes.nth(5)).toContainText('[29463-7]');
+      await expect(itemCodes.nth(6)).toContainText('[example]');
+      await expect(itemCodes.nth(7)).toContainText('[29463-7]');
     });
   });
 });

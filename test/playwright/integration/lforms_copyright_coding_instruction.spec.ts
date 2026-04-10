@@ -8,15 +8,17 @@ test.describe('popover buttons', () => {
       await openFormByIndex(page, 4); // FullFeaturedForm
       await expect(byId(page, '/type0/1')).toBeVisible();
       await byId(page, 'copyright-button-all-in-one').click();
-      await expect(byId(page, 'copyright-content-all-in-one')).toBeVisible();
-      await expect(byId(page, 'copyright-content-all-in-one')).toHaveText('A Copyright notice of the form');
+      const copyrightContent = byId(page, 'copyright-content-all-in-one');
+      await expect(copyrightContent).toBeVisible();
+      await expect(copyrightContent).toHaveText('A Copyright notice of the form');
     });
 
     test('should show a copyright popover message on an item', async ({ page }) => {
       await openFormByIndex(page, 4); // FullFeaturedForm
       await byId(page, 'legal-button-/type0/1').click();
-      await expect(byId(page, 'legal-content-/type0/1')).toBeVisible();
-      await expect(byId(page, 'legal-content-/type0/1')).toHaveText('A Copyright notice of the item');
+      const legalContent = byId(page, 'legal-content-/type0/1');
+      await expect(legalContent).toBeVisible();
+      await expect(legalContent).toHaveText('A Copyright notice of the item');
     });
 
     test('should show a copyright popover message on the form title when there is no codes', async ({ page }) => {
@@ -27,8 +29,9 @@ test.describe('popover buttons', () => {
       await uploadFile(page, '#fileAnchor', filePath);
       await expect(page.locator('.lhc-form-title')).toBeVisible({ timeout: 10000 });
       await byId(page, 'copyright-button-Test-Questionnaire-with-a-copyright-and-no-code').click();
-      await expect(byId(page, 'copyright-content-Test-Questionnaire-with-a-copyright-and-no-code')).toBeVisible();
-      await expect(byId(page, 'copyright-content-Test-Questionnaire-with-a-copyright-and-no-code')).toHaveText('A copyright notice');
+      const copyrightNoCode = byId(page, 'copyright-content-Test-Questionnaire-with-a-copyright-and-no-code');
+      await expect(copyrightNoCode).toBeVisible();
+      await expect(copyrightNoCode).toHaveText('A copyright notice');
     });
   });
 
@@ -328,10 +331,12 @@ test.describe('invalid html tags/attributes in coding instructions', () => {
       await addFormToPage(page, 'q-with-invalid-xhtml.json', 'formContainer', {
         fhirVersion: 'R4', messageLevel: 'error', allowHTML: true, displayInvalidHTML: false, showCodingInstruction: true });
 
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toBeVisible();
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
-      await expect(page.locator('#help-item1\\/1').first()).toBeVisible();
-      await expect(page.locator('#help-item1\\/1').first()).toHaveText('A plain text instruction.');
+      const itemError1 = page.locator('#item-item1\\/1 .lhc-item-error').first();
+      await expect(itemError1).toBeVisible();
+      await expect(itemError1).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
+      const helpText1 = page.locator('#help-item1\\/1').first();
+      await expect(helpText1).toBeVisible();
+      await expect(helpText1).toHaveText('A plain text instruction.');
     });
   });
 
@@ -342,10 +347,12 @@ test.describe('invalid html tags/attributes in coding instructions', () => {
       await addFormToPage(page, 'q-with-invalid-xhtml.json', 'formContainer', {
         fhirVersion: 'R4', messageLevel: 'error', allowHTML: true, displayInvalidHTML: true, showCodingInstruction: true });
 
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toBeVisible();
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
-      await expect(page.locator('#help-item1\\/1').first()).toBeVisible();
-      await expect(page.locator('#help-item1\\/1').first()).toHaveText("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
+      const itemError2 = page.locator('#item-item1\\/1 .lhc-item-error').first();
+      await expect(itemError2).toBeVisible();
+      await expect(itemError2).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
+      const helpText2 = page.locator('#help-item1\\/1').first();
+      await expect(helpText2).toBeVisible();
+      await expect(helpText2).toHaveText("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
     });
   });
 
@@ -356,11 +363,15 @@ test.describe('invalid html tags/attributes in coding instructions', () => {
       await addFormToPage(page, 'q-with-invalid-xhtml.json', 'formContainer', {
         fhirVersion: 'R4', messageLevel: 'error', allowHTML: true, displayInvalidHTML: false, showCodingInstruction: false });
 
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toBeVisible();
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
+      const itemError3 = page.locator('#item-item1\\/1 .lhc-item-error').first();
+      await expect(itemError3).toBeAttached();
+      await expect(itemError3).toBeVisible();
+      await expect(itemError3).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
       await byId(page, 'help-button-item1/1').click();
-      await expect(page.locator('#help-content-item1\\/1').first()).toBeVisible();
-      await expect(page.locator('#help-content-item1\\/1').first()).toHaveText('A plain text instruction.');
+      const helpContent3 = page.locator('#help-content-item1\\/1').first();
+      await expect(helpContent3).toBeAttached();
+      await expect(helpContent3).toBeVisible();
+      await expect(helpContent3).toHaveText('A plain text instruction.');
     });
   });
 
@@ -371,11 +382,15 @@ test.describe('invalid html tags/attributes in coding instructions', () => {
       await addFormToPage(page, 'q-with-invalid-xhtml.json', 'formContainer', {
         fhirVersion: 'R4', messageLevel: 'error', allowHTML: true, displayInvalidHTML: true, showCodingInstruction: false });
 
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toBeVisible();
-      await expect(page.locator('#item-item1\\/1 .lhc-item-error').first()).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
+      const itemError4 = page.locator('#item-item1\\/1 .lhc-item-error').first();
+      await expect(itemError4).toBeAttached();
+      await expect(itemError4).toBeVisible();
+      await expect(itemError4).toHaveText('Error: Invalid HTML tags/attributes found in the help text.');
       await byId(page, 'help-button-item1/1').click();
-      await expect(page.locator('#help-content-item1\\/1').first()).toBeVisible();
-      await expect(page.locator('#help-content-item1\\/1').first()).toHaveText("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
+      const helpContent4 = page.locator('#help-content-item1\\/1').first();
+      await expect(helpContent4).toBeAttached();
+      await expect(helpContent4).toBeVisible();
+      await expect(helpContent4).toHaveText("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>.</a>");
     });
   });
 });

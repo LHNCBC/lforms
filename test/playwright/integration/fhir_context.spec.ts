@@ -1,8 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { addFormToPage, byId, escapeIdSelector, waitForLFormsReady } from '../support/lforms-helpers';
-
-const LONG = { timeout: 30000 };
-const fhirVersions = ['STU3', 'R4', 'R4B', 'R5'];
+import { addFormToPage, byId, escapeIdSelector, fhirVersions, TIMEOUT_30S, waitForLFormsReady } from '../support/lforms-helpers';
 
 // Field IDs from the USSG-FHT form
 const ethnicityId = '/54126-8/54133-4/1/1';
@@ -18,16 +15,18 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should be retrieved when a terminology server is specified', async ({ page }) => {
-        await expect(page.locator('#label-' + escapeIdSelector('54127-6'))).toBeVisible(LONG);
-        await byId(page, '/54126-8/54128-4/1/1').click();
+        await expect(page.locator('#label-' + escapeIdSelector('54127-6'))).toBeVisible(TIMEOUT_30S);
+        const field = byId(page, '/54126-8/54128-4/1/1');
+        await field.click();
         await page.locator('#lhc-tools-searchResults li:nth-child(3)').click();
-        await expect(byId(page, '/54126-8/54128-4/1/1')).not.toHaveValue('', LONG);
+        await expect(field).not.toHaveValue('', TIMEOUT_30S);
       });
 
       test('should be retrieved when a terminology server is not specified', async ({ page }) => {
-        await byId(page, '/54114-4/54122-7/1/1').click();
+        const field = byId(page, '/54114-4/54122-7/1/1');
+        await field.click();
         await page.locator('#lhc-tools-searchResults li:nth-child(3)').click();
-        await expect(byId(page, '/54114-4/54122-7/1/1')).not.toHaveValue('', LONG);
+        await expect(field).not.toHaveValue('', TIMEOUT_30S);
       });
     });
 
@@ -41,16 +40,16 @@ for (const fhirVersion of fhirVersions) {
       test('should be able to search via ValueSet expansion', async ({ page }) => {
         const ethnicity = byId(page, ethnicityId);
         await ethnicity.click();
-        await ethnicity.pressSequentially('arg', { delay: 50 });
-        await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText('Argentinean', LONG);
+        await ethnicity.pressSequentially('arg');
+        await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText('Argentinean', TIMEOUT_30S);
         await ethnicity.press('Escape');
 
         const disease = byId(page, diseaseId);
         await disease.click();
-        await disease.pressSequentially('arm', { delay: 50 });
-        await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText('Arm pain', LONG);
+        await disease.pressSequentially('arm');
+        await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText('Arm pain', TIMEOUT_30S);
         await page.locator('#lhc-tools-searchResults li').first().click();
-        await expect(disease).toHaveValue('Arm pain', LONG);
+        await expect(disease).toHaveValue('Arm pain', TIMEOUT_30S);
       });
     });
 
@@ -67,9 +66,10 @@ for (const fhirVersion of fhirVersions) {
 
         test('should be retrieved when a terminology server is specified', async ({ page }) => {
           await addFormToPage(page, 'bit-of-everything.json', 'formContainer', { fhirVersion });
-          await byId(page, 'Item10/1/1').click();
+          const item10 = byId(page, 'Item10/1/1');
+          await item10.click();
           await page.locator('#lhc-tools-searchResults li:nth-child(4)').click();
-          await expect(byId(page, 'Item10/1/1')).not.toHaveValue('', LONG);
+          await expect(item10).not.toHaveValue('', TIMEOUT_30S);
         });
       });
     }

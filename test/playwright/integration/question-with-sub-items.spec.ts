@@ -17,8 +17,8 @@ test.describe('Question with sub items', () => {
     await byId(page, 'parent-checkbox/1||o').click();
     await expect(byId(page, 'label-checkbox-subgroup||o/1/checkbox-subgroup||o')).not.toBeAttached();
     // Fill out the sub items.
-    await byId(page, 'child-integer/1/checkbox-subgroup||a/1').fill('11');
-    await byId(page, 'child-integer/1/checkbox-subgroup||b/1').fill('22');
+    await byId(page, 'child-integer/1/checkbox-subgroup||a/1').pressSequentially('11');
+    await byId(page, 'child-integer/1/checkbox-subgroup||b/1').pressSequentially('22');
 
     // getFormData() should not include checkbox sub groups by default.
     const formData1 = await page.evaluate(() => (window as any).LForms.Util.getFormData());
@@ -82,19 +82,19 @@ test.describe('Question with sub items', () => {
     await addFormToPage(page, 'checkbox-answerExpression-with-child-items.json', 'formContainer', { fhirVersion: 'R4' });
 
     // Build the answer options list for the checkbox question.
-    await byId(page, 'fruit/1').fill('Apple');
+    await byId(page, 'fruit/1').pressSequentially('Apple');
     await byId(page, 'add-fruit/1').click();
-    await byId(page, 'fruit/2').fill('Banana');
+    await byId(page, 'fruit/2').pressSequentially('Banana');
     await byId(page, 'add-fruit/2').click();
-    await byId(page, 'fruit/3').fill('Orange');
+    await byId(page, 'fruit/3').pressSequentially('Orange');
     // Select Apple and Banana.
     await byId(page, 'parent-checkbox/1||Apple').click();
     await byId(page, 'parent-checkbox/1||Banana').click();
     await expect(byId(page, 'label-checkbox-subgroup||Apple/1/checkbox-subgroup||Apple')).toBeVisible();
     await expect(byId(page, 'label-checkbox-subgroup||Banana/1/checkbox-subgroup||Banana')).toBeVisible();
     // Fill out sub items for Apple and Banana.
-    await byId(page, 'child-integer/1/checkbox-subgroup||Apple/1').fill('11');
-    await byId(page, 'child-integer/1/checkbox-subgroup||Banana/1').fill('22');
+    await byId(page, 'child-integer/1/checkbox-subgroup||Apple/1').pressSequentially('11');
+    await byId(page, 'child-integer/1/checkbox-subgroup||Banana/1').pressSequentially('22');
     // Delete the option Banana from answerExpression source.
     await byId(page, 'del-fruit/2').click();
     // Banana is removed.
@@ -114,15 +114,15 @@ test.describe('Question with sub items', () => {
     await addFormToPage(page, 'checkbox-answerExpression-with-child-items.json', 'formContainer', { fhirVersion: 'R4' });
 
     // Build the answer options list.
-    await byId(page, 'fruit/1').fill('Apple');
+    await byId(page, 'fruit/1').pressSequentially('Apple');
     await byId(page, 'add-fruit/1').click();
-    await byId(page, 'fruit/2').fill('Banana');
+    await byId(page, 'fruit/2').pressSequentially('Banana');
     // Select Apple and Banana.
     await byId(page, 'parent-checkbox/1||Apple').click();
     await byId(page, 'parent-checkbox/1||Banana').click();
     // Fill out sub items.
-    await byId(page, 'child-integer/1/checkbox-subgroup||Apple/1').fill('11');
-    await byId(page, 'child-integer/1/checkbox-subgroup||Banana/1').fill('22');
+    await byId(page, 'child-integer/1/checkbox-subgroup||Apple/1').pressSequentially('11');
+    await byId(page, 'child-integer/1/checkbox-subgroup||Banana/1').pressSequentially('22');
 
     const { q, qr } = await page.evaluate(() => {
       const win = window as any;

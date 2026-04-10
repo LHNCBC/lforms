@@ -68,13 +68,16 @@ test.describe('"questionnaire-hidden" extension Test', () => {
     }, { q, qr });
 
     // 4 items visible
-    await expect(byId(page, 'CE-VISIBLE/1')).toBeVisible();
-    await expect(byId(page, 'CE-VISIBLE/1')).toHaveValue('2');
-    await expect(byId(page, 'ITEM-VISIBLE/1')).toBeVisible();
-    await expect(byId(page, 'ITEM-VISIBLE/1')).toHaveValue('2');
+    const ceVisible = byId(page, 'CE-VISIBLE/1');
+    await expect(ceVisible).toBeVisible();
+    await expect(ceVisible).toHaveValue('2');
+    const itemVisible = byId(page, 'ITEM-VISIBLE/1');
+    await expect(itemVisible).toBeVisible();
+    await expect(itemVisible).toHaveValue('2');
     await expect(byId(page, 'label-GROUP-VISIBLE/1')).toBeVisible();
-    await expect(byId(page, 'GROUP-VISIBLE/CE-VISIBLE/1/1')).toBeVisible();
-    await expect(byId(page, 'GROUP-VISIBLE/CE-VISIBLE/1/1')).toHaveValue('2');
+    const groupCeVisible = byId(page, 'GROUP-VISIBLE/CE-VISIBLE/1/1');
+    await expect(groupCeVisible).toBeVisible();
+    await expect(groupCeVisible).toHaveValue('2');
 
     // others are hidden
     await expect(byId(page, 'CE-HIDDEN/1')).not.toBeAttached();

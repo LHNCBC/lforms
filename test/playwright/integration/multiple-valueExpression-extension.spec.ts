@@ -1,7 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { byId, expectLoadButton, pressCypressKeys, uploadFile, waitForLFormsReady } from '../support/lforms-helpers';
-
-const LONG = { timeout: 30000 };
+import { byId, expectLoadButton, TIMEOUT_30S, pressCypressKeys, uploadFile, waitForLFormsReady } from '../support/lforms-helpers';
 
 test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   const problemId = 'medication/1/1';
@@ -13,15 +11,16 @@ test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
     await waitForLFormsReady(page);
     await expectLoadButton(page, 'Load Form From File');
     await uploadFile(page, '#fileAnchor', 'test/data/R4/rxterms.R4.json');
-    await expect(page.locator('.lhc-form-title')).toContainText('RxTerms Lookup', LONG);
-    await expect(byId(page, problemId)).toBeVisible(LONG);
+    await expect(page.locator('.lhc-form-title')).toContainText('RxTerms Lookup', TIMEOUT_30S);
+    await expect(byId(page, problemId)).toBeVisible(TIMEOUT_30S);
   }
 
   async function chooseMedication(page: Page, prefix: string, firstOptionText: string) {
     const problem = byId(page, problemId);
     await problem.click();
-    await problem.pressSequentially(prefix, { delay: 50 });
-    await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText(firstOptionText, LONG);
+    await problem.pressSequentially(prefix);
+    
+    await expect(page.locator('#lhc-tools-searchResults li').first()).toHaveText(firstOptionText, TIMEOUT_30S);
     await pressCypressKeys(problem, '{downarrow}{enter}');
   }
 
@@ -37,18 +36,18 @@ test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
     await loadRxTermsForm(page);
 
     await chooseMedication(page, 'AR', 'ARAVA (Oral Pill)');
-    await expect(byId(page, problemId)).toHaveValue('ARAVA (Oral Pill)', LONG);
+    await expect(byId(page, problemId)).toHaveValue('ARAVA (Oral Pill)', TIMEOUT_30S);
 
     const strength = byId(page, strengthId);
     await strength.click();
     await pressCypressKeys(strength, '{downarrow}{enter}');
-    await expect(strength).toHaveValue('10 mg Tab', LONG);
-    await expect(byId(page, cuiId)).toHaveValue('213377', LONG);
+    await expect(strength).toHaveValue('10 mg Tab', TIMEOUT_30S);
+    await expect(byId(page, cuiId)).toHaveValue('213377', TIMEOUT_30S);
 
     await strength.click();
     await pressCypressKeys(strength, '{downarrow}{downarrow}{enter}');
-    await expect(strength).toHaveValue('20 mg Tab', LONG);
-    await expect(byId(page, cuiId)).toHaveValue('213379', LONG);
+    await expect(strength).toHaveValue('20 mg Tab', TIMEOUT_30S);
+    await expect(byId(page, cuiId)).toHaveValue('213379', TIMEOUT_30S);
   });
 
   test('should reset the strength field and the cui field when the problem field is cleared', async ({ page }) => {
@@ -58,27 +57,27 @@ test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
     const strength = byId(page, strengthId);
     await strength.click();
     await pressCypressKeys(strength, '{downarrow}{enter}');
-    await expect(strength).toHaveValue('10 mg Tab', LONG);
+    await expect(strength).toHaveValue('10 mg Tab', TIMEOUT_30S);
 
     const problem = byId(page, problemId);
-    await problem.fill('');
+    await problem.clear();
     await problem.blur();
 
-    await expect(problem).toHaveValue('', LONG);
-    await expect(strength).toHaveValue('', LONG);
-    await expect(byId(page, cuiId)).toHaveValue('', LONG);
+    await expect(problem).toHaveValue('', TIMEOUT_30S);
+    await expect(strength).toHaveValue('', TIMEOUT_30S);
+    await expect(byId(page, cuiId)).toHaveValue('', TIMEOUT_30S);
   });
 
   test('should set the strength field and the cui field when a new problem is entered', async ({ page }) => {
     await loadRxTermsForm(page);
 
     await chooseMedication(page, 'AB', 'ABILIFY (Oral Pill)');
-    await expect(byId(page, problemId)).toHaveValue('ABILIFY (Oral Pill)', LONG);
+    await expect(byId(page, problemId)).toHaveValue('ABILIFY (Oral Pill)', TIMEOUT_30S);
 
     const strength = byId(page, strengthId);
     await strength.click();
     await pressCypressKeys(strength, '{downarrow}{enter}');
-    await expect(strength).toHaveValue('2 mg Sensor Tab', LONG);
-    await expect(byId(page, cuiId)).toHaveValue('1998457', LONG);
+    await expect(strength).toHaveValue('2 mg Sensor Tab', TIMEOUT_30S);
+    await expect(byId(page, cuiId)).toHaveValue('1998457', TIMEOUT_30S);
   });
 });

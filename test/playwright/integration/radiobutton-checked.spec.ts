@@ -19,7 +19,7 @@ test.describe('Radio button checked/unchecked', () => {
     await expect(byId(page, item2answer1).locator('span.ant-radio')).not.toHaveClass(/ant-radio-checked/);
 
     // the 'other' radio should remain checked when other value is typed
-    await byId(page, item2OtherValue).type('other values');
+    await byId(page, item2OtherValue).pressSequentially('other values');
     await expect(byId(page, item2Other).locator('span.ant-radio')).toHaveClass(/ant-radio-checked/);
 
     // click away

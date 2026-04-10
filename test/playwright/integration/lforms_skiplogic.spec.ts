@@ -19,16 +19,17 @@ test.describe('skip logic', () => {
     await expect(n1).toBeVisible();
     await expect(q4).not.toBeAttached();
     await n1.click();
-    await n1.type('5');
+    await n1.pressSequentially('5');
     await n2.click();
-    await n1.fill('');
+    await expect(n1).toBeVisible();
+    await n1.clear();
     await n1.click();
-    await n1.type('1');
+    await n1.pressSequentially('1');
     await n2.click();
-    await n2.type('2');
+    await n2.pressSequentially('2');
     await expect(q4).not.toBeAttached();
     await n3.click();
-    await n3.type('3');
+    await n3.pressSequentially('3');
     await n1.click();
     await expect(n1).toBeVisible();
   });
@@ -78,7 +79,7 @@ test.describe('skip logic', () => {
   test('should show/hide elements per CNE/exists trigger settings if answer cleared', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const cneTriggerSrc1 = byId(page, '/54139-1-cnesrc-1/1');
-    await cneTriggerSrc1.fill('');
+    await cneTriggerSrc1.clear();
     await expect(byId(page, '/54139-1-cnesrc-1/54124-3/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-1/54124-3b/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-1/54141-7/1/1')).not.toBeAttached();
@@ -107,7 +108,7 @@ test.describe('skip logic', () => {
 
   test('should show a sibling and two items in a sibling section', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
-    await byId(page, '/slSource1/1').type('1');
+    await byId(page, '/slSource1/1').pressSequentially('1');
     await expect(byId(page, '/slTargetItem1/1')).toBeVisible();
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem1/1/1')).toBeVisible();
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem2/1/1')).toBeVisible();
@@ -121,7 +122,7 @@ test.describe('skip logic', () => {
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem1/1/1')).not.toBeAttached();
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem2/1/1')).not.toBeAttached();
 
-    await src.type('2');
+    await src.pressSequentially('2');
     await expect(byId(page, '/slTargetItem1/1')).not.toBeAttached();
     await expect(byId(page, '/slTargetItem2/1')).toBeVisible();
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem1/1/1')).toBeVisible();
@@ -131,12 +132,13 @@ test.describe('skip logic', () => {
   test('should show/hide a sibling controlled by notEqual', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const src = byId(page, '/slSource1/1');
-    await expect(byId(page, '/slTargetItem6/1')).toBeVisible();
-    await src.type('2');
-    await expect(byId(page, '/slTargetItem6/1')).not.toBeAttached();
-    await src.fill('');
-    await src.type('6');
-    await expect(byId(page, '/slTargetItem6/1')).toBeVisible();
+    const target6 = byId(page, '/slTargetItem6/1');
+    await expect(target6).toBeVisible();
+    await src.pressSequentially('2');
+    await expect(target6).not.toBeAttached();
+    await src.clear();
+    await src.pressSequentially('6');
+    await expect(target6).toBeVisible();
   });
 
   test('should show another sibling and hide two items in a sibling section', async ({ page }) => {
@@ -146,7 +148,7 @@ test.describe('skip logic', () => {
     await expect(byId(page, '/slTargetItem2/1')).not.toBeAttached();
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem1/1/1')).not.toBeAttached();
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem2/1/1')).not.toBeAttached();
-    await src.type('6');
+    await src.pressSequentially('6');
     await expect(byId(page, '/slTargetItem1/1')).not.toBeAttached();
     await expect(byId(page, '/slTargetItem2/1')).toBeVisible();
     await expect(byId(page, '/slTargetHeader1/slTargetSubItem1/1/1')).not.toBeAttached();
@@ -157,68 +159,74 @@ test.describe('skip logic', () => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const allSrc1 = byId(page, '/slALLSource1/1');
     const allSrc2 = byId(page, '/slALLSource2/1');
+    const allTarget = byId(page, '/slALLTargetItem/1');
 
-    await allSrc1.fill('');
-    await allSrc2.fill('');
-    await allSrc1.type('1');
-    await expect(byId(page, '/slALLTargetItem/1')).not.toBeAttached();
-    await allSrc2.type('2');
-    await expect(byId(page, '/slALLTargetItem/1')).toBeVisible();
-    await byId(page, '/slANYSource1/1').fill('');
-    await allSrc1.type('2');
-    await expect(byId(page, '/slALLTargetItem/1')).not.toBeAttached();
+    await allSrc1.clear();
+    await allSrc2.clear();
+    await allSrc1.pressSequentially('1');
+    await expect(allTarget).not.toBeAttached();
+    await allSrc2.pressSequentially('2');
+    await expect(allTarget).toBeVisible();
+    await byId(page, '/slANYSource1/1').clear();
+    await allSrc1.clear();
+    await allSrc1.pressSequentially('2');
+    await expect(allTarget).not.toBeAttached();
   });
 
   test('should work with logic ANY from two different sources', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const anySrc1 = byId(page, '/slANYSource1/1');
     const anySrc2 = byId(page, '/slANYSource2/1');
+    const anyTarget = byId(page, '/slANYTargetItem/1');
 
-    await anySrc1.fill('');
-    await anySrc2.fill('');
-    await anySrc1.type('1');
-    await expect(byId(page, '/slANYTargetItem/1')).toBeVisible();
-    await anySrc2.type('1');
-    await expect(byId(page, '/slANYTargetItem/1')).toBeVisible();
-    await anySrc1.type('2');
-    await anySrc1.fill('');
-    await expect(byId(page, '/slANYTargetItem/1')).not.toBeAttached();
-    await anySrc2.fill('');
-    await anySrc2.type('2');
-    await expect(byId(page, '/slANYTargetItem/1')).toBeVisible();
+    await anySrc1.clear();
+    await anySrc2.clear();
+    await anySrc1.pressSequentially('1');
+    await expect(anyTarget).toBeVisible();
+    await anySrc2.pressSequentially('1');
+    await expect(anyTarget).toBeVisible();
+    await anySrc1.clear();
+    await anySrc1.pressSequentially('2');
+    await anySrc1.clear();
+    await expect(anyTarget).not.toBeAttached();
+    await anySrc2.clear();
+    await anySrc2.pressSequentially('2');
+    await expect(anyTarget).toBeVisible();
   });
 
   test('should be able to be controlled by an ancestors sibling', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const rpSrc2 = byId(page, '/rpSource2/1');
+    const rpTarget2_1 = byId(page, '/repeatingSection1/rpTargetItem2/1/1');
+    const rpTarget2_2 = byId(page, '/repeatingSection1/rpTargetItem2/2/1');
 
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/1/1')).not.toBeAttached();
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/2/1')).not.toBeAttached();
-    await rpSrc2.fill('');
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/1/1')).not.toBeAttached();
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/2/1')).not.toBeAttached();
-    await rpSrc2.type('1');
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/1/1')).not.toBeAttached();
-    await rpSrc2.fill('');
-    await rpSrc2.type('2');
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/1/1')).toBeVisible();
+    await expect(rpTarget2_1).not.toBeAttached();
+    await expect(rpTarget2_2).not.toBeAttached();
+    await rpSrc2.clear();
+    await rpSrc2.pressSequentially('1');
+    await expect(rpTarget2_1).not.toBeAttached();
+    await rpSrc2.clear();
+    await rpSrc2.pressSequentially('2');
+    await expect(rpTarget2_1).toBeVisible();
 
-    await expect(byId(page, '/repeatingSection1/rpTargetItem1/1/1')).not.toBeAttached();
-    await expect(byId(page, '/repeatingSection1/rpTargetHeader1/rpTargetSubItem1/1/1/1')).not.toBeAttached();
-    await byId(page, '/repeatingSection1/rpSource1/1/1').type('1');
-    await expect(byId(page, '/repeatingSection1/rpTargetItem1/1/1')).toBeVisible();
-    await expect(byId(page, '/repeatingSection1/rpTargetHeader1/rpTargetSubItem1/1/1/1')).toBeVisible();
+    const rpTarget1_1 = byId(page, '/repeatingSection1/rpTargetItem1/1/1');
+    const rpSubItem1_1 = byId(page, '/repeatingSection1/rpTargetHeader1/rpTargetSubItem1/1/1/1');
+    await expect(rpTarget1_1).not.toBeAttached();
+    await expect(rpSubItem1_1).not.toBeAttached();
+    await byId(page, '/repeatingSection1/rpSource1/1/1').pressSequentially('1');
+    await expect(rpTarget1_1).toBeVisible();
+    await expect(rpSubItem1_1).toBeVisible();
 
     // add a new section
     await byId(page, 'add-/repeatingSection1/1').click();
     await expect(byId(page, '/repeatingSection1/rpTargetItem1/2/1')).not.toBeAttached();
     await expect(byId(page, '/repeatingSection1/rpTargetHeader1/rpTargetSubItem1/2/1/1')).not.toBeAttached();
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/1/1')).toBeVisible();
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/2/1')).toBeVisible();
-    await rpSrc2.fill('');
-    await rpSrc2.type('1');
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/1/1')).not.toBeAttached();
-    await expect(byId(page, '/repeatingSection1/rpTargetItem2/2/1')).not.toBeAttached();
+    await expect(rpTarget2_1).toBeVisible();
+    await expect(rpTarget2_2).toBeVisible();
+    await rpSrc2.clear();
+    await rpSrc2.pressSequentially('1');
+    await expect(rpTarget2_1).not.toBeAttached();
+    await expect(rpTarget2_2).not.toBeAttached();
   });
 
   test.describe('Skip logic equal and notEqual operators', () => {
@@ -272,8 +280,8 @@ test.describe('skip logic', () => {
         await expect(targetWithSklSourceNotExists).toBeVisible();
         // Value entered in the item.
         await targetEqual.click();
-        await targetEqual.fill('');
-        await targetEqual.type('xxx');
+        await targetEqual.clear();
+        await targetEqual.pressSequentially('xxx');
         await expect(targetWithSklSourceExists).toBeVisible();
         await expect(targetWithSklSourceNotExists).not.toBeAttached();
       });
@@ -292,18 +300,18 @@ test.describe('skip logic', () => {
       await expect(dataControlItemWithSourceHavingSkipLogic).not.toBeAttached();
 
       await source.click();
-      await source.type('xxx');
+      await source.pressSequentially('xxx');
       await expect(skipLogicItem).not.toBeAttached();
       await expect(dataControlItemWithSourceHavingSkipLogic).not.toBeAttached();
 
       await source.click();
-      await source.fill('');
-      await source.type('show 2');
+      await source.clear();
+      await source.pressSequentially('show 2');
       await expect(skipLogicItem).toBeVisible();
       await expect(dataControlItemWithSourceHavingSkipLogic).not.toBeAttached();
 
       await skipLogicItem.click();
-      await skipLogicItem.type('xxx');
+      await skipLogicItem.pressSequentially('xxx');
       await expect(dataControlItemWithSourceHavingSkipLogic).toBeVisible();
       await expect(dataControlItemWithSourceHavingSkipLogic).toHaveValue('xxx');
     });

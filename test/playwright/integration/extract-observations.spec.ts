@@ -40,10 +40,11 @@ test.describe('Form with extract observation extension', () => {
     await waitForLFormsReady(page);
     await addFormToPage(page, 'extractObs-test.R4.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'choiceItem2/1').click();
-    await byId(page, 'choiceItem2/1').fill('');
+    const choiceItem2 = byId(page, 'choiceItem2/1');
+    await choiceItem2.click();
+    await choiceItem2.clear();
     await page.keyboard.press('Enter');
-    await byId(page, 'choiceItem2/1').blur();
+    await choiceItem2.blur();
 
     let bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -57,10 +58,11 @@ test.describe('Form with extract observation extension', () => {
     expect(obs[0].resource.valueBoolean).toBe(true);
     expect(obs[1].resource.valueCodeableConcept).toEqual({ coding: [{ code: 'code1', display: 'answer 1' }], text: 'answer 1' });
 
-    await byId(page, 'choiceItem1/1').click({ force: true });
-    await byId(page, 'choiceItem1/1').fill('');
+    const choiceItem1 = byId(page, 'choiceItem1/1');
+    await choiceItem1.click({ force: true });
+    await choiceItem1.clear();
     await page.keyboard.press('Enter');
-    await byId(page, 'choiceItem1/1').blur();
+    await choiceItem1.blur();
     bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
     );
@@ -91,12 +93,12 @@ test.describe('Form with extract observation extension', () => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'q-with-obs-extract-repeats-true.json', 'formContainer', { fhirVersion: 'R4' });
-    await byId(page, 'string/1').type('A');
+    await byId(page, 'string/1').pressSequentially('A');
     await byId(page, 'add-string/1').click();
-    await byId(page, 'string/2').type('B');
-    await byId(page, 'decimal/1').type('1');
+    await byId(page, 'string/2').pressSequentially('B');
+    await byId(page, 'decimal/1').pressSequentially('1');
     await byId(page, 'add-decimal/1').click();
-    await byId(page, 'decimal/2').type('2');
+    await byId(page, 'decimal/2').pressSequentially('2');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
@@ -220,11 +222,11 @@ test.describe('Form with extract observation extension', () => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'q-with-obs-extract-valueCode-with-repeatable-parents.json', 'formContainer', { fhirVersion: 'R4' });
-    await byId(page, 'parentRepeatableItem/1').type('Adam');
+    await byId(page, 'parentRepeatableItem/1').pressSequentially('Adam');
     await byId(page, 'add-parentRepeatableItem/1').click();
-    await byId(page, 'parentRepeatableItem/2').type('Ben');
-    await byId(page, 'childItem1/2/1').type('130');
-    await byId(page, 'childItem2/2/1').type('90');
+    await byId(page, 'parentRepeatableItem/2').pressSequentially('Ben');
+    await byId(page, 'childItem1/2/1').pressSequentially('130');
+    await byId(page, 'childItem2/2/1').pressSequentially('90');
 
     const bundle = await page.evaluate(() =>
       (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4', null, { extract: true })
