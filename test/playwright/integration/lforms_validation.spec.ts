@@ -29,6 +29,7 @@ async function testOneType(page: Page, eleInput: string, eleAway: string, eleCon
   // message disappears after a short period
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).not.toBeVisible();
   // get back focus again and message should be shown
+  await expect(byId(page, eleInput)).toBeVisible();
   await byId(page, eleInput).click();
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeVisible();
 
@@ -222,6 +223,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
+      await expect(st0).toBeVisible();
       await st0.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
       await st0.clear();
@@ -270,6 +272,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
+      await expect(cwe1).toBeVisible();
       await cwe1.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
       await cwe1.press('Control+a');
@@ -300,6 +303,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
+      await expect(inta).toBeVisible();
       await inta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
       await inta.clear();
@@ -308,6 +312,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).not.toBeVisible();
+      await expect(inta).toBeVisible();
       await inta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await inta.clear();
@@ -329,6 +334,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
+      await expect(reala).toBeVisible();
       await reala.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
       await reala.clear();
@@ -336,6 +342,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).not.toBeVisible();
+      await expect(reala).toBeVisible();
       await reala.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
       await reala.clear();
@@ -363,6 +370,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).not.toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).not.toBeVisible();
+      await expect(sta).toBeVisible();
       await sta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
@@ -506,10 +514,12 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).not.toBeVisible();
+      await expect(eleInput).toBeVisible();
       await eleInput.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeVisible();
       await eleAway.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).not.toBeVisible();
+      await expect(eleInput).toBeVisible();
       await eleInput.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeVisible();
       // valid value no messages
