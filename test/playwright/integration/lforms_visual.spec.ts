@@ -236,9 +236,11 @@ test.describe('Visual effect tests', () => {
       await addFormToPage(page, 'multipleCodes.json', 'formContainer', { fhirVersion: 'R4', showQuestionCode: true });
       const itemCodes = page.locator('.lhc-item-code');
       await expect(itemCodes.nth(0)).toContainText('[example]');
+      await expect(itemCodes.nth(0)).not.toHaveAttribute('href');
       await expect(itemCodes.nth(1)).toContainText('[85353-1]');
       await expect(itemCodes.nth(1)).toHaveAttribute('href', 'https://loinc.org/85353-1');
       await expect(itemCodes.nth(2)).toContainText('[example]');
+      await expect(itemCodes.nth(2)).not.toHaveAttribute('href');
       await expect(itemCodes.nth(3)).toContainText('[29463-7]');
       await expect(itemCodes.nth(3)).toHaveAttribute('href', 'https://loinc.org/29463-7');
       await expect(itemCodes.nth(4)).toContainText('[example]');

@@ -223,7 +223,7 @@ test.describe('load saved user data, where hasSavedData is set to true', () => {
     await openFormByIndex(page, 8); // FormWithUserDataWithHasSavedData
     await expect(byId(page, '/q5/1')).toHaveValue('');
     // default answer is not in the answer list
-    await expect(byId(page, '/cwe-checkbox-default-answer/1|_other')).not.toBeChecked();
-    await expect(byId(page, '/cwe-radio-default-answer/1|_other')).not.toBeChecked();
+    await expect(byId(page, '/cwe-checkbox-default-answer/1|_other').locator('input')).not.toBeChecked();
+    await expect(byId(page, '/cwe-radio-default-answer/1|_other').locator('input')).not.toBeChecked();
   });
 });

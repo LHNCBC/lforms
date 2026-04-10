@@ -21,6 +21,7 @@ test.describe('skip logic', () => {
     await n1.click();
     await n1.pressSequentially('5');
     await n2.click();
+    await expect(n1).toBeVisible();
     await n1.clear();
     await n1.click();
     await n1.pressSequentially('1');

@@ -240,7 +240,8 @@ test.describe('Validations', () => {
       await cne1.click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await pressCypressKeys(cne1, '{downArrow}{enter}');
-      await cne1.clear();
+      await cne1.press('Control+a');
+      await cne1.press('Backspace');
       await expect(page.locator(errorContainer)).not.toBeAttached();
       await page.locator('label[for=\'/BL/1\']').click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
@@ -249,7 +250,8 @@ test.describe('Validations', () => {
       await expect(cne1).toBeVisible();
       await cne1.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
-      await cne1.clear();
+      await cne1.press('Control+a');
+      await cne1.press('Backspace');
       await cne1.click();
       await pressCypressKeys(cne1, '{downArrow}{enter}');
       await expect(page.locator(errorContainer)).not.toBeAttached();
