@@ -4,6 +4,14 @@ import { mockFHIRContext } from '../../support/R4/fhir_context';
 
 const fhirVersion = 'R4';
 
+/**
+ *  Sets up a mock server FHIR context.  This will also set the page to do
+ *  prepopulation.  (If that is not desired, set prepopFHIR to false.)
+ * @param page the Playwright page object.
+ * @param serverFHIRNum the FHIR version number (as a string) for the mock server.
+ * @param weightQuantity the quantity to return from a search for a weight.
+ * @param prepopFHIR whether the prepopulation should be enabled.
+ */
 async function setServerFHIRContext(page, serverFHIRNum, weightQuantity = null, prepopFHIR = true) {
   await page.evaluate(({ mockFn, serverFHIRNum, weightQuantity, prepopFHIR }) => {
     const fhirContext = new Function('return ' + mockFn)();
@@ -20,6 +28,8 @@ test.describe('Form pre-population', () => {
       await setServerFHIRContext(page, serverFHIRNum);
       await loadFromTestData(page, 'phq9.json', fhirVersion);
 
+      // This test form does prepoluation of the first answer.
+      // This is also a test of prepoluation of list questions.
       const firstQ = '/44250-9/1';
       await expect(byId(page, firstQ)).toBeVisible();
       await expect(byId(page, firstQ)).toHaveValue('0. Not at all - 0');
@@ -36,6 +46,8 @@ test.describe('Form pre-population', () => {
 
       await expect(byId(page, '/54126-8/54125-0/1/1')).toHaveValue('John Smith');
       await expect(byId(page, '/54126-8/21112-8/1/1').locator('input')).toHaveValue('12/10/1990');
+      // expect(gender).toBe("Male"); // TBD
+      // initialExpression fields should not be read-only.
       await expect(byId(page, '/54126-8/54125-0/1/1')).not.toBeDisabled();
     });
 
@@ -91,7 +103,7 @@ test.describe('Form pre-population', () => {
             releaseVersion
           );
           expect(resources.length).toBe(2);
-          expect(resources[1].entry.length).toBe(1);
+          expect(resources[1].entry.length).toBe(1); // One QR and one observation
           const obs = resources[1].entry[0].resource;
           expect(obs.resourceType).toBe('Observation');
           expect(obs.valueQuantity.value).toBe(95);
@@ -120,7 +132,7 @@ test.describe('Form pre-population', () => {
             releaseVersion
           );
           expect(resources.length).toBe(2);
-          expect(resources[1].entry.length).toBe(2);
+          expect(resources[1].entry.length).toBe(2); // One QR and two observation
           const obs = resources[1].entry[0].resource;
           expect(obs.code.coding.length).toBe(2);
           expect(obs.resourceType).toBe('Observation');

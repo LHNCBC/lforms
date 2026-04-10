@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { byId, expectLoadButton, TIMEOUT_30S, pressCypressKeys, uploadFile, waitForLFormsReady } from '../support/lforms-helpers';
 
+// The project root directory is the root for the cypress server
 test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   const problemId = 'medication/1/1';
   const strengthId = 'strength/1/1';
@@ -25,6 +26,7 @@ test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
   }
 
   test('should have empty initial values', async ({ page }) => {
+    // load rxterms R4 Questionnaire
     await loadRxTermsForm(page);
 
     await expect(byId(page, problemId)).toHaveValue('');
@@ -44,6 +46,7 @@ test.describe('Multiple "valueExpression" extensions Test with RxTerms', () => {
     await expect(strength).toHaveValue('10 mg Tab', TIMEOUT_30S);
     await expect(byId(page, cuiId)).toHaveValue('213377', TIMEOUT_30S);
 
+    // pick a different strength
     await strength.click();
     await pressCypressKeys(strength, '{downarrow}{downarrow}{enter}');
     await expect(strength).toHaveValue('20 mg Tab', TIMEOUT_30S);

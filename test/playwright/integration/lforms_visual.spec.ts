@@ -10,13 +10,20 @@ test.describe('Visual effect tests', () => {
     for (let i = 0, len = dataTypes.length; i < len; ++i) {
       const d = dataTypes[i];
       const otherField = '/type' + (i + 1) + '/1';
+      // NEXT: TODO
+      // background should rgba(255, 248, 198, 1).
+      // but somehow they are 'rgba(255, 248, 198, 0.04), rgba(255, 248, 198, 0.114) and rgba(255, 248, 198, 0.04), respectively
+      // they look similar though.
       if (d === 'DT' || d === 'DTM' || d === 'TM') continue;
-      if (d === 'BL') continue;
+      if (d === 'BL') continue; // BL is a switch, which has no focused color
 
+      // Active field background color should the be same for all types of fields
       test('should be the same for data type ' + d, async ({ page }) => {
         await openFormByIndex(page, 4); // FullFeaturedForm
         // Get background color of the empty data type field when focused
         const type0 = byId(page, '/type0/1');
+        // The element changes background color on focus. For some reason this guarantees
+        // that we get the updated color instead of sometimes getting rgb(255, 255, 255).
         await type0.focus();
         await type0.blur();
         await type0.click();
@@ -83,6 +90,7 @@ test.describe('Visual effect tests', () => {
       await expect(page.locator('.lhc-form.lhc-view-lg')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-md')).toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-sm')).not.toBeAttached();
+      // check 4 questions
       await expect(page.locator('.lhc-item.lhc-item-view-lg').first().locator('#\\/q_lg\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-md').first().locator('#\\/q_md\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-sm').first().locator('#\\/q_sm\\/1')).toBeAttached();
@@ -95,6 +103,7 @@ test.describe('Visual effect tests', () => {
       await expect(page.locator('.lhc-form.lhc-view-lg')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-md')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-sm')).toBeAttached();
+      // check 4 questions
       await expect(page.locator('.lhc-item.lhc-item-view-lg').first().locator('#\\/q_lg\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-md').first().locator('#\\/q_md\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-sm').first().locator('#\\/q_sm\\/1')).toBeAttached();
@@ -106,6 +115,7 @@ test.describe('Visual effect tests', () => {
       await expect(page.locator('.lhc-form.lhc-view-lg')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-md')).toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-sm')).not.toBeAttached();
+      // check 4 questions
       await expect(page.locator('.lhc-item.lhc-item-view-md').nth(1).locator('#\\/q_auto\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-lg').nth(1)).not.toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-sm').nth(1).locator('#\\/q_auto\\/1')).not.toBeAttached();
@@ -151,6 +161,7 @@ test.describe('Visual effect tests', () => {
 
       // go to next question
       await page.keyboard.press('Tab');
+      // move to radio 'Not Answered'
       await page.keyboard.press('Tab');
       await expect(focused).toHaveAttribute('name', 'radiogroup_/type1b/1');
       await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1b/1', 'null'));
@@ -178,7 +189,7 @@ test.describe('Visual effect tests', () => {
       const n1 = byId(page, 'n1/1/1');
       const n2 = byId(page, 'n2/1/1');
       const n3 = byId(page, 'n3/1/1');
-      const q4 = byId(page, 'q4/1/1');
+      const q4 = byId(page, 'q4/1/1'); // present when n1+n2+n3 >= 5;
 
       await expect(n1).toBeVisible();
       await expect(q4).not.toBeAttached();

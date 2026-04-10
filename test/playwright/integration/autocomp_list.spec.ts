@@ -25,6 +25,8 @@ test.describe('autocomp list', () => {
   });
 
   test('should interoperate with score rules', async ({ page }) => {
+    // The data model needs to be correctly updated
+    // when the user enters a new value.
     await openFormByIndex(page, 3); // GlasgowForm
     const eyeField = byId(page, '/9267-6/1');
     const scoreField = byId(page, '/9269-2/1');

@@ -86,11 +86,19 @@ test.describe('FHIR variables', () => {
         return el?.autocomp?.rawList_?.length === 2;
       }, contextField, { timeout: 10000 });
 
+      // After picking the language list, pick the second list, for which there
+      // is no mock data, so only the first listView field should have a list.
+      // Testing this here after the previous test checks that the second
+      // listView field's list is empty.
+      // This test code actually does not catch the bug which prompted it (and
+      // in fact the problem does not happen when the test code is run), but I
+      // am leaving the test here.
       // Switch to verification list
       await byId(page, listSelField).fill('');
       await byId(page, listSelField).pressSequentially('ve'); // verification
       await page.locator('#lhc-tools-searchResults li:first-child').click();
 
+      // Wait for the other field lists to update
       await page.waitForFunction((fieldId) => {
         const el = document.querySelector(`[id="${fieldId}"]`) as any;
         return el?.autocomp?.rawList_?.length === 6;

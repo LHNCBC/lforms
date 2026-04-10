@@ -14,7 +14,7 @@ test.describe('skip logic', () => {
     const n1 = byId(page, 'n1/1/1');
     const n2 = byId(page, 'n2/1/1');
     const n3 = byId(page, 'n3/1/1');
-    const q4 = byId(page, 'q4/1/1');
+    const q4 = byId(page, 'q4/1/1'); // present when n1+n2+n3 >= 5;
 
     await expect(n1).toBeVisible();
     await expect(q4).not.toBeAttached();
@@ -53,10 +53,12 @@ test.describe('skip logic', () => {
   test('should show/hide elements per CNE/exists trigger settings if answered Yes', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const cneTriggerSrc1 = byId(page, '/54139-1-cnesrc-1/1');
+    // select "Yes" for is Living
     await cneTriggerSrc1.click();
     await pressCypressKeys(cneTriggerSrc1, '{downArrow}');
     await cneTriggerSrc1.blur();
     await expect(page.locator('#\\/54139-1-cnesrc-1\\/54124-3\\/1\\/1 input')).toBeVisible();
+    // trigger value has no 'system' while answers have 'system'
     await expect(byId(page, '/54139-1-cnesrc-1/54124-3b/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-1/54141-7/1/1')).toBeVisible();
     await expect(byId(page, '/54139-1-cnesrc-1/54112-8/1/1')).not.toBeAttached();
@@ -66,10 +68,12 @@ test.describe('skip logic', () => {
   test('should show/hide elements per CNE/exists trigger settings if answered No', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const cneTriggerSrc1 = byId(page, '/54139-1-cnesrc-1/1');
+    // select "No" for is Living
     await cneTriggerSrc1.click();
     await pressCypressKeys(cneTriggerSrc1, '{downArrow}{downArrow}');
     await cneTriggerSrc1.blur();
     await expect(byId(page, '/54139-1-cnesrc-1/54124-3/1/1')).not.toBeAttached();
+    // trigger value has no 'system' while answers have 'system'
     await expect(byId(page, '/54139-1-cnesrc-1/54124-3b/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-1/54141-7/1/1')).toBeVisible();
     await expect(byId(page, '/54139-1-cnesrc-1/54112-8/1/1')).toBeVisible();
@@ -79,6 +83,7 @@ test.describe('skip logic', () => {
   test('should show/hide elements per CNE/exists trigger settings if answer cleared', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const cneTriggerSrc1 = byId(page, '/54139-1-cnesrc-1/1');
+    // clear the answer to Living
     await cneTriggerSrc1.clear();
     await expect(byId(page, '/54139-1-cnesrc-1/54124-3/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-1/54124-3b/1/1')).not.toBeAttached();
@@ -91,9 +96,11 @@ test.describe('skip logic', () => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     const cneTriggerSrc2 = byId(page, '/54139-1-cnesrc-2/1');
 
+    // clear the answer to Living
     await cneTriggerSrc2.click();
     await pressCypressKeys(cneTriggerSrc2, '{downArrow}');
     await cneTriggerSrc2.blur();
+    // trigger value has 'system' while answers have no 'system'
     await expect(byId(page, '/54139-1-cnesrc-2/54124-3c/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-2/54124-3d/1/1')).toBeVisible();
     await expect(byId(page, '/54139-1-cnesrc-2/54112-8b/1/1')).not.toBeAttached();
@@ -101,6 +108,7 @@ test.describe('skip logic', () => {
     await cneTriggerSrc2.click();
     await pressCypressKeys(cneTriggerSrc2, '{downArrow}{downArrow}');
     await cneTriggerSrc2.blur();
+    // trigger value has 'system' while answers have no 'system'
     await expect(byId(page, '/54139-1-cnesrc-2/54124-3c/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-2/54124-3d/1/1')).not.toBeAttached();
     await expect(byId(page, '/54139-1-cnesrc-2/54112-8b/1/1')).toBeVisible();
@@ -157,6 +165,7 @@ test.describe('skip logic', () => {
 
   test('should work with logic ALL from two different sources', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
+    // check logic ALL
     const allSrc1 = byId(page, '/slALLSource1/1');
     const allSrc2 = byId(page, '/slALLSource2/1');
     const allTarget = byId(page, '/slALLTargetItem/1');
@@ -175,6 +184,7 @@ test.describe('skip logic', () => {
 
   test('should work with logic ANY from two different sources', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
+    // check logic ANY
     const anySrc1 = byId(page, '/slANYSource1/1');
     const anySrc2 = byId(page, '/slANYSource2/1');
     const anyTarget = byId(page, '/slANYTargetItem/1');
@@ -246,6 +256,8 @@ test.describe('skip logic', () => {
         await source.click();
         await pressCypressKeys(source, '{downArrow}{enter}');
         await expect(targetEqual).toBeVisible();
+        // It looks like below line was not supposed to be here:
+        // TestUtil.waitForElementNotPresent(targetEqual)
 
         await source.click();
         await pressCypressKeys(source, '{downArrow}{downArrow}{enter}');
@@ -262,6 +274,7 @@ test.describe('skip logic', () => {
         const targetWithSklSourceExists = byId(page, '4.4/1');
         const targetWithSklSourceNotExists = byId(page, '4.5/1');
 
+        // Initial setup
         await expect(source).toBeVisible();
         await expect(targetWithSklSourceExists).not.toBeAttached();
         await expect(targetWithSklSourceNotExists).toBeVisible();
@@ -276,9 +289,10 @@ test.describe('skip logic', () => {
         await source.click();
         await pressCypressKeys(source, '{downArrow}{downArrow}{enter}');
         await expect(targetEqual).toBeVisible();
+        // Field is displayed but no value entered in the item. The chained targets skip logic is not satisfied.
         await expect(targetWithSklSourceExists).not.toBeAttached();
         await expect(targetWithSklSourceNotExists).toBeVisible();
-        // Value entered in the item.
+        // Value entered in the item. The chained targets skip logic is satisfied.
         await targetEqual.click();
         await targetEqual.clear();
         await targetEqual.pressSequentially('xxx');
@@ -299,15 +313,19 @@ test.describe('skip logic', () => {
       await expect(skipLogicItem).not.toBeAttached();
       await expect(dataControlItemWithSourceHavingSkipLogic).not.toBeAttached();
 
+      // Not met skip logic condition ==> skip logic disabled
       await source.click();
       await source.pressSequentially('xxx');
       await expect(skipLogicItem).not.toBeAttached();
       await expect(dataControlItemWithSourceHavingSkipLogic).not.toBeAttached();
 
+      // Met skip logic condition
       await source.click();
       await source.clear();
       await source.pressSequentially('show 2');
       await expect(skipLogicItem).toBeVisible();
+
+      // skipLogicItem is present but its value does not exists yet.
       await expect(dataControlItemWithSourceHavingSkipLogic).not.toBeAttached();
 
       await skipLogicItem.click();

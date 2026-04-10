@@ -3,6 +3,7 @@ import { byId, openFormByIndex, waitForLFormsReady, loadFromTestData, addFormToP
 
 test.describe('popover buttons', () => {
 
+  // copyright
   test.describe('Copyright popover message', () => {
     test('should show a copyright popover message on the form title', async ({ page }) => {
       await openFormByIndex(page, 4); // FullFeaturedForm
@@ -35,11 +36,12 @@ test.describe('popover buttons', () => {
     });
   });
 
+  // coding instructions
   test.describe('coding instructions help message', () => {
-    const helpButton0 = 'help-button-/type0/1';
-    const helpButton1 = 'help-button-/type1/1';
-    const helpButton2 = 'help-button-/type2/1';
-    const helpButton3 = 'help-button-/type3/1';
+    const helpButton0 = 'help-button-/type0/1'; // text formatted content, no 'codingInstructionsFormat'
+    const helpButton1 = 'help-button-/type1/1'; // html formatted content, no 'codingInstructionsFormat'
+    const helpButton2 = 'help-button-/type2/1'; // html formatted content, 'codingInstructionsFormat' is 'text'
+    const helpButton3 = 'help-button-/type3/1'; // html formatted content, 'codingInstructionsFormat' is 'html'
     const helpPopover0 = 'help-content-/type0/1';
     const helpPopover1 = 'help-content-/type1/1';
     const helpPopover2 = 'help-content-/type2/1';
@@ -142,6 +144,7 @@ test.describe('popover buttons', () => {
         const testForm = document.getElementById('test-form') as any;
         testForm.options = { allowHTML: true };
       });
+      // Allow page to refresh this options change so that we don't get detached elements below.
       await page.waitForTimeout(100);
 
       const nameHelpButton = 'help-button-/54126-8/54125-0/1/1';
@@ -152,6 +155,7 @@ test.describe('popover buttons', () => {
       await expect(byId(page, nameHelpButton)).toBeVisible();
       await expect(byId(page, genderHelpButton)).toBeVisible();
 
+      // HTML formatted coding instructions
       await byId(page, nameHelpButton).click();
       await expect(byId(page, namePopover)).toBeVisible();
       await expect(page.locator('button.testButton')).toBeVisible();
@@ -159,6 +163,7 @@ test.describe('popover buttons', () => {
       await byId(page, '/54126-8/54131-8/1/1').click();
       await expect(page.locator('button.testButton')).not.toBeAttached();
 
+      // Text coding instructions
       await byId(page, genderHelpButton).click();
       await expect(byId(page, genderPopover)).toBeVisible();
       await expect(page.locator('button.testButton')).not.toBeAttached();
@@ -203,6 +208,7 @@ test.describe('popover buttons', () => {
       await expect(byId(page, helpButton_3!)).toBeVisible();
       await expect(byId(page, copyrightButton0!)).toBeVisible();
 
+      // simple text coding instructions
       await byId(page, helpButton_0!).click();
       await expect(byId(page, popover0!)).toBeVisible();
       await expect(byId(page, popover0!)).toHaveText('simple text instructions');
@@ -210,6 +216,7 @@ test.describe('popover buttons', () => {
       await byId(page, field_1).click();
       await expect(byId(page, popover0!)).not.toBeAttached();
 
+      // escaped HTML coding instructions, when "codingInstructionsFormat" is not set
       await byId(page, helpButton_1!).click();
       await expect(byId(page, popover1!)).toBeVisible();
       await expect(byId(page, popover1!)).toHaveText("<code>HTML</code> instructions, with a <button>button</button>LForms Demo 1");
@@ -217,6 +224,7 @@ test.describe('popover buttons', () => {
       await byId(page, field_1).click();
       await expect(byId(page, popover1!)).not.toBeAttached();
 
+      // escaped HTML coding instructions, when "codingInstructionsFormat" = "text"
       await byId(page, helpButton_2!).click();
       await expect(byId(page, popover2!)).toBeVisible();
       await expect(byId(page, popover2!)).toHaveText("<code>HTML</code> instructions, with a <button>button</button>LForms Demo 2");
@@ -224,6 +232,7 @@ test.describe('popover buttons', () => {
       await byId(page, field_1).click();
       await expect(byId(page, popover2!)).not.toBeAttached();
 
+      // enabled HTML coding instructions, when "codingInstructionsFormat" = "html"
       await byId(page, helpButton_3!).click();
       await expect(byId(page, popover3!)).toBeVisible();
       await expect(byId(page, popover3!)).toHaveText('HTML instructions, with a buttonLForms Demo 3');
@@ -232,6 +241,7 @@ test.describe('popover buttons', () => {
       await byId(page, field_1).click();
       await expect(byId(page, popover3!)).not.toBeAttached();
 
+      // copyright popover
       await byId(page, copyrightButton0!).click();
       await expect(byId(page, copyPopover0!)).toBeVisible();
       await expect(byId(page, copyPopover0!)).toHaveText('A Copyright notice of the item 1');
@@ -299,6 +309,7 @@ test.describe('images in coding instructions', () => {
       const popover_img_a = page.locator('#help-content-a\\/1 img').first();
       await expect(popover_img_a).toBeVisible();
       await expect(popover_img_a).toHaveAttribute('src', '/test/data/a-picture.png');
+      //make the popover disappear
       await page.locator('.lhc-form-title .lhc-question').first().click({ force: true });
       await expect(page.locator('#help-content-a\\/1')).not.toBeAttached();
 
@@ -308,6 +319,7 @@ test.describe('images in coding instructions', () => {
       await expect(popover_img_b).toBeVisible();
       const srcB = await popover_img_b.getAttribute('src');
       expect(srcB).toMatch(/^data:image\/png;base64/);
+      //make the popover disappear
       await page.locator('.lhc-form-title .lhc-question').first().click({ force: true });
       await expect(page.locator('#help-content-b\\/1')).not.toBeAttached();
 
@@ -317,6 +329,7 @@ test.describe('images in coding instructions', () => {
       await expect(popover_img_c).toBeVisible();
       const srcC = await popover_img_c.getAttribute('src');
       expect(srcC).toMatch(/^data:image\/png;base64/);
+      //make the popover disappear
       await page.locator('.lhc-form-title .lhc-question').first().click({ force: true });
       await expect(page.locator('#help-content-c\\/1')).not.toBeAttached();
     });

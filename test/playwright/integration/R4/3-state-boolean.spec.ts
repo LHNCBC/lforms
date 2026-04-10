@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { byId, addFormToPage, answerId, waitForLFormsReady } from '../../support/lforms-helpers';
 
+// Tests of the support for enableWhenExpression on choice, open-choice, and
+// string, date, time and integer
 test.describe('3 states boolean type', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
@@ -45,6 +47,7 @@ test.describe('3 states boolean type', () => {
       const q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
       const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
       const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      // merged qr where boolean item has a value of true
       const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
       win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
     });
@@ -60,6 +63,7 @@ test.describe('3 states boolean type', () => {
       const q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
       const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
       const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      // merged qr where boolean item has a value of false
       const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
       win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
     });

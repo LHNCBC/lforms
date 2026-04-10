@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { byId, addFormToPage, answerId, pressCypressKeys, waitForLFormsReady } from '../../support/lforms-helpers';
 
+// Tests of the support for answerExpression on choice, open-choice, and
+// string, date, time and integer
 test.describe('EnableWhen on different types', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');

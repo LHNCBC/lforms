@@ -75,6 +75,8 @@ test.describe('Tab Layout', () => {
     await expect(nestedQ2).toBeVisible();
 
     // Pick something on the first question in the first tab.
+    // enableWhen conditions on the nested tab container item
+    // should hide it in the second main tab.
     await page.locator('button#nz-tabs-0-tab-0').click();
     const field = byId(page, '/g3/g1m1/1/1/1/1');
     await field.click();

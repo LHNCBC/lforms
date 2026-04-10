@@ -15,6 +15,8 @@ test.describe('FHIR answerValueSet (matrix first load)', () => {
       (window as any).LForms.Util.setFHIRContext(fhirContext('R4', null, data));
     }, { mockFn: mockFHIRContext, data: mockData });
 
+    // load the questionnaire for the first time so that the answer list expanded from
+    // item.answerValueSet is not cached.
     await addFormToPage(page, 'q-with-answerValueSet-matrix.json', 'formContainer', { fhirVersion });
 
     for (let g = 1; g < 5; g++) {

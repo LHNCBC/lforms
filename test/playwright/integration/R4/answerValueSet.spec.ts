@@ -21,6 +21,8 @@ test.describe('FHIR answerValueSet', () => {
   });
 
   test.describe('answerValueSet with FHIR context, answers displayed as drop-down list (autocomplete)', () => {
+    // yesno1: choice, yesno2: choice (repeats), yesno3: open-choice,
+    // yesno4: open-choice, yesno5: open-choice (repeats), yesno6: open-choice (repeats)
     const answerFields = ['yesno1/1', 'yesno2/1', 'yesno3/1', 'yesno4/1', 'yesno5/1', 'yesno6/1'];
     const searchResults = 'lhc-tools-searchResults';
 
@@ -249,6 +251,7 @@ test.describe('FHIR answerValueSet', () => {
       }, { q, qr, fhirVersion });
       await expect(page.locator('#formContainer .lhc-form-title')).toBeVisible();
 
+      // check saved values
       // check answer list after merge
       for (let g = 1; g < 5; g++) {
         for (let m = 1; m < 4; m++) {

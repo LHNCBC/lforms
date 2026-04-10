@@ -5,6 +5,7 @@ import path from 'path';
 
 test.describe('"questionnaire-hidden" extension Test', () => {
   test('should hide all kinds of items that have the questionnnaire-hidden extension', async ({ page }) => {
+    // load a lforms form data
     await page.goto('/test/pages/lforms_testpage.html');
     await waitForLFormsReady(page);
     await expect(page.locator('#loadBtn')).toContainText('Load Form From File');
@@ -21,6 +22,7 @@ test.describe('"questionnaire-hidden" extension Test', () => {
     await expect(byId(page, 'label-g-hidden-vertical-group/q1/1/1')).not.toBeAttached();
 
     // hidden group in a displayed group
+    // displayed vertical group that contains a hidden group
     await expect(byId(page, 'label-g-displayed-vertical-group/1')).toBeVisible();
     await expect(byId(page, 'label-g-displayed-vertical-group/g-hidden-vertical-group/1/1')).not.toBeAttached();
     await expect(byId(page, 'label-g-displayed-vertical-group/g-hidden-vertical-group/q1/1/1/1')).not.toBeAttached();
@@ -34,18 +36,24 @@ test.describe('"questionnaire-hidden" extension Test', () => {
     await expect(byId(page, 'label-g-hidden-matrix/q1/1/1')).not.toBeAttached();
 
     // hidden column in a horizontal group
+    // horizontal group with a hidden column
     await expect(byId(page, 'label-g-horizontal-group/1')).toBeVisible();
+    // a hidden question in a horizontal group
     await expect(byId(page, 'label-g-horizontal-group/q1/1/1')).not.toBeAttached();
     await expect(byId(page, 'g-horizontal-group/q1/1/1')).not.toBeAttached();
+    // a displayed question in a horizontal group
     await expect(byId(page, 'label-g-horizontal-group/q2/1/1')).toBeVisible();
     await expect(byId(page, 'g-horizontal-group/q2/1/1')).toBeVisible();
 
     // hidden question row in a matrix
     const radio1 = answerId('g-displayed-matrix/q1/1/1', 'http://loinc.org', 'LA10427-5');
     const radio2 = answerId('g-displayed-matrix/q2/1/1', 'http://loinc.org', 'LA10427-5');
+    // displayed matrix
     await expect(byId(page, 'label-g-displayed-matrix/1')).toBeVisible();
+    // a hidden question in a matrix
     await expect(byId(page, 'label-g-displayed-matrix/q1/1/1')).not.toBeAttached();
     await expect(byId(page, radio1)).not.toBeAttached();
+    // a displayed question in a matrix
     await expect(byId(page, 'label-g-displayed-matrix/q2/1/1')).toBeVisible();
     await expect(byId(page, radio2)).toBeVisible();
   });

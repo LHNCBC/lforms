@@ -42,7 +42,9 @@ test.describe('Validations Message Position', () => {
 
   test('Validation messages should be right above the input field', async ({ page }) => {
     const addButtonIds = ['add-/int1/1', 'add-/st1/1', 'add-/group1/1', 'add-/group2/1'];
-    const otherEl = '/other/1';
+    const otherEl = '/other/1'; // Use for creating blur event
+
+    // No need to test normal cases that are not repeating.
 
     // add a repeating item and test message positions
     await byId(page, addButtonIds[0]).click();

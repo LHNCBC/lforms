@@ -16,6 +16,7 @@ test.describe('load saved user data', () => {
     await expect(byId(page, '/q7/1')).toHaveValue('Answer 3');
     await expect(byId(page, '/q8/1')).toHaveValue('');
     await expect(byId(page, '/q9/1')).toHaveValue('');
+    // NEXT: the saved value is 11/20/2015 10:10 !!
     await expect(byId(page, '/q99/1').locator('input')).toHaveValue('11/20/2015 10:10:00');
 
     const multiAnswers = page.locator('.autocomp_selected li');
@@ -152,6 +153,7 @@ test.describe('load saved user data', () => {
     await expect(byId(page, '/rp-q2/rp-q4/rp-q5/1/4/1')).toHaveValue('');
 
     // select from an answer list
+    // pick the 1st item, Answer 1
     const q5 = byId(page, '/q5/1');
     await q5.click();
     await pressCypressKeys(q5, '{downArrow}');
@@ -159,6 +161,7 @@ test.describe('load saved user data', () => {
     await expect(q5).toHaveValue('Answer 1');
 
     // select one more answer from multi select field
+    // pick the 1st item, Answer 2
     const q8 = byId(page, '/q8/1');
     await q8.click();
     await pressCypressKeys(q8, '{downArrow}');

@@ -16,23 +16,33 @@ test.describe('horizontal table', () => {
     // should have two remove buttons visible after the user adds a row
     await buttons.nth(2).click();
     await expect(buttons).toHaveCount(6);
+    // the first row has a '-' button only
     await expect(buttons.nth(2)).toHaveText('-');
+    // the second row has a '-' button
     await expect(buttons.nth(3)).toHaveText('-');
+    // and an add button
     await expect(buttons.nth(4)).toContainText("+ This family member's history of disease");
 
     // should have three remove buttons visible after the user adds a row
     await buttons.nth(4).click();
     await expect(buttons).toHaveCount(7);
+    // the first row has a '-' button only
     await expect(buttons.nth(2)).toHaveText('-');
+    // the second row has a '-' button
     await expect(buttons.nth(3)).toHaveText('-');
+    // the third row has a '-' button
     await expect(buttons.nth(4)).toHaveText('-');
+    // and an add button
     await expect(buttons.nth(5)).toContainText("+ This family member's history of disease");
 
     // should have 2 rows after the user removes the 2nd row
     await buttons.nth(3).click();
     await expect(buttons).toHaveCount(6);
+    // the first row has a '-' button only
     await expect(buttons.nth(2)).toHaveText('-');
+    // the second row has a '-' button
     await expect(buttons.nth(3)).toHaveText('-');
+    // and an add button
     await expect(buttons.nth(4)).toContainText("+ This family member's history of disease");
   });
 
@@ -53,6 +63,8 @@ test.describe('horizontal table', () => {
   });
 
   test('should populate the RxCUI field on the RxTerms form', async ({ page }) => {
+    // There was a bug where this did not happen when the strength value was
+    // padded.
     // RxTerms is at index 9
     await openFormByIndex(page, 9);
 

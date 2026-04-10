@@ -111,6 +111,7 @@ test.describe('data control', () => {
     // initially no repeats
     await dst.scrollIntoViewIfNeeded();
     // pick an answer
+    // strength is reset
     await dst.click();
     await pressCypressKeys(dst, '{downArrow}');
     await dst.blur();

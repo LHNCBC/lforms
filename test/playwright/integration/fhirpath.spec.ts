@@ -25,6 +25,7 @@ for (const fhirVersion of fhirVersions) {
         await expect(bmi).toHaveValue('30.1');
       }
 
+      // A test of the questionnaire-calculatedExpression extension
       test('work to compute a BMI value', async ({ page }) => {
         await page.goto('/test/pages/lforms_testpage.html');
         await waitForLFormsReady(page);
@@ -63,9 +64,9 @@ for (const fhirVersion of fhirVersions) {
         await weight.clear();
         await weight.pressSequentially('123');
         if (fhirVersion === 'R4') {
-          await expect(byId(page, '/39156-5/1')).toHaveValue('53');
+          await expect(byId(page, '/39156-5/1')).toHaveValue('53'); // the calculated bmi value when '123' was typed.
         } else if (fhirVersion === 'STU3') {
-          await expect(byId(page, '/39156-5/1')).toHaveValue('52.9');
+          await expect(byId(page, '/39156-5/1')).toHaveValue('52.9'); // the calculated bmi value when '123' was typed.
         }
         await weight.pressSequentially('abc');
         if (fhirVersion === 'R4') {
@@ -115,10 +116,10 @@ test.describe('answerExpression', () => {
     expect(result.stu3option).toBeUndefined();
   });
 
-  const rxTermsQs = [
-    'rxterms.R4',
-    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp',
-    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp2'
+  const rxTermsQs = [ // rxterms Questionnaires
+    'rxterms.R4', // where the strength item has an answerExpression
+    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp', // where the strength item has an answerExpression then a calculatedExpression (autofill)
+    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp2' // where the strength item has a calculatedExpression (autofill) then an answerExpression
   ];
 
   test.describe('answerExpression tests with the RxTerms form', () => {
@@ -126,6 +127,17 @@ test.describe('answerExpression', () => {
     for (const q of rxTermsQs) {
       test.describe('Questionnaire ' + q, () => {
         test('should not clear a list field if the form has just loaded with saved data', async ({ page }) => {
+          // This is the case when a QuestionnaireResponse is loaded in that has a
+          // value in a field whose list comes from an answerExpression or a
+          // cqf-expression.  Initially, there is no list, but when the expression
+          // runs, a list is obtained.  Because the data in the field is saved data,
+          // it should not be cleared, even if it is not in the current list.  For
+          // example, in the RxTerms form below, if the user saved a drug name and a
+          // strength value, when the form is later loaded, RxTerms might have been
+          // updated and no longer have the selected strength value, or even the drug
+          // name itself.  We must be careful not to discard the user's data just
+          // because the form is re-opened.
+
           // First, create a QR by loading the base form
           await page.goto('/test/pages/lforms_testpage.html');
           await waitForLFormsReady(page);
@@ -171,6 +183,7 @@ test.describe('answerExpression', () => {
             }, { qDef, qr, elemID });
           }
 
+          // Confirms that the saved data is still on the displayed form.
           async function checkSavedDataPresent() {
             await expect(byId(page, 'strength/1/1')).not.toHaveValue('');
             await expect(byId(page, 'rxcui/1/1')).not.toHaveValue('');
@@ -192,6 +205,7 @@ test.describe('answerExpression', () => {
 
           // Test 3: vertical layout (remove gtable extension)
           let qDataVert = JSON.parse(JSON.stringify(qOrig));
+          // delete itemControl "gtable" extension
           qDataVert.item[0].extension = qDataVert.item[0].extension.filter(
             (e: any) => e.url !== 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
           await showQQR(qDataVert, qr, 'formContainer');
@@ -223,6 +237,7 @@ test.describe('answerExpression', () => {
           await byId(page, 'strength/1/1').click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
           await expect(byId(page, 'medication/1/1')).not.toHaveValue('');
+          // The strength field's values are in the multi-select area.
           const selectedItems = await byId(page, 'strength/1/1').evaluate(
             el => (el as any).autocomp.getSelectedItems()
           );
@@ -231,10 +246,12 @@ test.describe('answerExpression', () => {
 
           // Test 7: radio buttons
           let qDataRadio = JSON.parse(JSON.stringify(qOrig));
+          // delete itemControl "gtable" extension
           qDataRadio.item[0].extension = qDataRadio.item[0].extension.filter(
             (e: any) => e.url !== 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
           const exts = qDataRadio.item[0].item[1].extension;
           expect(exts[0].url).toBe('http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
+          // Replace the strength field drop down with radio buttons
           exts[0] = {
             url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
             valueCodeableConcept: {
@@ -258,6 +275,7 @@ test.describe('answerExpression', () => {
 
       test.describe('Questionnaire ' + q + ' with checkboxes', () => {
         test('should not clear a list field if the form has just loaded with saved data', async ({ page }) => {
+          // Test with checkboxes and multiple values
           // First, create a QR by loading the base form
           await page.goto('/test/pages/lforms_testpage.html');
           await waitForLFormsReady(page);

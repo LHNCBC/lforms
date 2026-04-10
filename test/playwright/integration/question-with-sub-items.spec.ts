@@ -95,15 +95,15 @@ test.describe('Question with sub items', () => {
     // Fill out sub items for Apple and Banana.
     await byId(page, 'child-integer/1/checkbox-subgroup||Apple/1').pressSequentially('11');
     await byId(page, 'child-integer/1/checkbox-subgroup||Banana/1').pressSequentially('22');
-    // Delete the option Banana from answerExpression source.
+    // Delete the option Banana from answerExpression source, which should remove the sub items for Banana.
     await byId(page, 'del-fruit/2').click();
     // Banana is removed.
     await expect(byId(page, 'parent-checkbox/1||Banana')).not.toBeAttached();
     await expect(byId(page, 'label-checkbox-subgroup||Banana/1/checkbox-subgroup||Banana')).not.toBeAttached();
-    // Apple should still be selected.
+    // Apple should still be selected, and its sub items should still be there.
     await expect(byId(page, 'parent-checkbox/1||Apple').locator('input[type="checkbox"]')).toBeChecked();
     await expect(byId(page, 'label-checkbox-subgroup||Apple/1/checkbox-subgroup||Apple')).toBeVisible();
-    // Orange should not be selected.
+    // Orange should not be selected, and its sub items should not be there.
     await expect(byId(page, 'parent-checkbox/1||Orange').locator('input[type="checkbox"]')).not.toBeChecked();
     await expect(byId(page, 'label-checkbox-subgroup||o/1/checkbox-subgroup||o')).not.toBeAttached();
   });
@@ -113,17 +113,18 @@ test.describe('Question with sub items', () => {
     await waitForLFormsReady(page);
     await addFormToPage(page, 'checkbox-answerExpression-with-child-items.json', 'formContainer', { fhirVersion: 'R4' });
 
-    // Build the answer options list.
+    // Build the answer options list for the checkbox question.
     await byId(page, 'fruit/1').pressSequentially('Apple');
     await byId(page, 'add-fruit/1').click();
     await byId(page, 'fruit/2').pressSequentially('Banana');
     // Select Apple and Banana.
     await byId(page, 'parent-checkbox/1||Apple').click();
     await byId(page, 'parent-checkbox/1||Banana').click();
-    // Fill out sub items.
+    // Fill out sub items for Apple and Banana.
     await byId(page, 'child-integer/1/checkbox-subgroup||Apple/1').pressSequentially('11');
     await byId(page, 'child-integer/1/checkbox-subgroup||Banana/1').pressSequentially('22');
 
+    // Verify the exports.
     const { q, qr } = await page.evaluate(() => {
       const win = window as any;
       return {
