@@ -1,6 +1,17 @@
 import { test, expect, type Page } from '@playwright/test';
 import { byId, loadFromTestData, waitForLFormsReady } from '../support/lforms-helpers';
 
+
+/**
+ * Types an invalid value into a field, triggers validation by blurring, then
+ * clicks back to show the validation popover. Verifies the popover is
+ * horizontally aligned with and positioned directly above its input field.
+ * @param page - Playwright page
+ * @param index - The nth index of the validation popover / input-content div to check
+ * @param typeValue - The value to type (should trigger a validation error)
+ * @param inputId - The element ID of the input field
+ * @param otherEl - The element ID of another field to click (to blur the input)
+ */
 async function testOneType(page: Page, index: number, typeValue: string, inputId: string, otherEl: string) {
   const input = byId(page, inputId);
   await input.click();
