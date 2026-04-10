@@ -155,6 +155,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         !x.isSubGroupForCheckbox ||
         subGroupLinkIds.indexOf(x.linkId) !== -1
       );
+      lhcFormData._resetInternalData();
     }
   }
 
