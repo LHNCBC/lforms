@@ -244,6 +244,7 @@ test.describe('Validations', () => {
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
+      await expect(cne1).toBeVisible();
       await cne1.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
       await cne1.clear();
