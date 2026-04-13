@@ -10,7 +10,7 @@ export default defineConfig({
   timeout: 60000,
   fullyParallel: false,
   retries: 0,
-  workers: 10,
+  workers: '50%',
   reporter: [['list']],
   use: {
     baseURL: `http://localhost:${config.testPort}`,

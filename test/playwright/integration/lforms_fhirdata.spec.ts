@@ -28,43 +28,49 @@ async function getFHIRResource(page: Page, resourceType: string, fhirVersion: st
 
 // Fill in the USSG-FHT form with standard test data
 async function fillInFHTForm(page: Page) {
-  // ST, repeating
+  // Name, repeating
   await byId(page, '/54126-8/54125-0/1/1').fill('name 1');
   await byId(page, 'add-/54126-8/54125-0/1/1').click();
   await byId(page, '/54126-8/54125-0/1/2').fill('name 2');
-  // Date field needs pressSequentially for date picker to process
+  // DOB, Date field needs pressSequentially for date picker to process
   const dobInput = byId(page, '/54126-8/21112-8/1/1').locator('input');
   await dobInput.click();
   await dobInput.pressSequentially('10/27/2016');
   await dobInput.press('Tab');
-  // CWE/CNE - pick 1st item
+  // Gender, CWE/CNE - pick 1st item
   await byId(page, '/54126-8/54131-8/1/1').click();
   await byId(page, '/54126-8/54131-8/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54131-8/1/1').press('Enter');
-  // CWE, multiple answers - pick first 2 items
+  // Race, multiple answers - pick first 2 items
   await byId(page, '/54126-8/54134-2/1/1').click();
   await byId(page, '/54126-8/54134-2/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54134-2/1/1').press('Enter');
   await byId(page, '/54126-8/54134-2/1/1').press('Enter');
-  // Quantity fields
-  await byId(page, '/54126-8/8302-2/1/1').pressSequentially('70');
-  await byId(page, '/54126-8/29463-7/1/1').pressSequentially('170');
-  // repeating sub panel
+  // Weight and Height, Quantity fields
+  // FHTData.json uses calculationMethod (not FHIRPath), so fill() is fine.
+  await byId(page, '/54126-8/8302-2/1/1').fill('70');
+  await byId(page, '/54126-8/29463-7/1/1').fill('170');
+  // Wait for BMI calculation to complete
+  await expect(byId(page, '/54126-8/39156-5/1/1')).toHaveValue('24.39');
+  // Your deseases history, repeating sub panel
+  // Disease or condition, pick 1st item
   await byId(page, '/54126-8/54137-5/54140-9/1/1/1').click();
   await byId(page, '/54126-8/54137-5/54140-9/1/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54137-5/54140-9/1/1/1').press('Enter');
+  // Age at diagnosis, pick 2nd item
   await byId(page, '/54126-8/54137-5/54130-0/1/1/1').click();
   await byId(page, '/54126-8/54137-5/54130-0/1/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54137-5/54130-0/1/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54137-5/54130-0/1/1/1').press('Enter');
-
+  // add another disease history
   await byId(page, 'add-/54126-8/54137-5/1/1').click();
   await expect(byId(page, '/54126-8/54137-5/54140-9/1/2/1')).toBeVisible();
-
+  // Disease or condition, pick 2nd item
   await byId(page, '/54126-8/54137-5/54140-9/1/2/1').click();
   await byId(page, '/54126-8/54137-5/54140-9/1/2/1').press('ArrowDown');
   await byId(page, '/54126-8/54137-5/54140-9/1/2/1').press('ArrowDown');
   await byId(page, '/54126-8/54137-5/54140-9/1/2/1').press('Enter');
+  // Age at diagnosis, pick 3rd item
   await byId(page, '/54126-8/54137-5/54130-0/1/2/1').click();
   await byId(page, '/54126-8/54137-5/54130-0/1/2/1').press('ArrowDown');
   await byId(page, '/54126-8/54137-5/54130-0/1/2/1').press('ArrowDown');
