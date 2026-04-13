@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { addFormToPage, waitForLFormsReady, byId, answerId } from '../support/lforms-helpers';
 
+// Tests of the support for calculatedExpression.
 test.describe('calculatedExpression', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
@@ -16,9 +17,10 @@ test.describe('calculatedExpression', () => {
   test('should update the boolean field when the calculatedExpression changes', async ({ page }) => {
     await addFormToPage(page, 'calculatedExpression-on-boolean-item.json', 'formContainer', { fhirVersion: 'R4' });
     await expect(byId(page, answerId('overweight/1', 'null'))).toHaveClass(/ant-radio-wrapper-checked/);
-    await byId(page, 'weight/1').fill('10');
+    await byId(page, 'weight/1').pressSequentially('10');
     await expect(byId(page, answerId('overweight/1', 'false'))).toHaveClass(/ant-radio-wrapper-checked/);
-    await byId(page, 'weight/1').fill('102');
+    await byId(page, 'weight/1').fill('');
+    await byId(page, 'weight/1').pressSequentially('102');
     await expect(byId(page, answerId('overweight/1', 'true'))).toHaveClass(/ant-radio-wrapper-checked/);
   });
 
@@ -34,9 +36,13 @@ test.describe('calculatedExpression', () => {
       await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
       await page.locator('#inputList\\/1').click();
       await page.locator('#completionOptions li').first().click();
+      // Assert selected item contains 'blue' before removal
+      await expect(page.locator('#inputList\\/1').locator('..').locator('li:first-child')).toContainText('blue');
       // Remove the selected item
       const selectedItem = page.locator('#inputList\\/1').locator('..').locator('li:first-child span');
       await selectedItem.click();
+      // Assert 'blue' is gone after removal
+      await expect(page.locator('#inputList\\/1').locator('..')).not.toContainText('blue');
       await expect(page.locator('#calculatedAnswer\\/1\\/1')).toHaveValue('');
     });
 
@@ -44,6 +50,8 @@ test.describe('calculatedExpression', () => {
       await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
       await page.locator('#inputList\\/1').click();
       await page.locator('#completionOptions li').first().click();
+      // Clearing the field, which is currently autopopulated, but we will be
+      // disabling that behavior soon.
       await page.locator('#calculatedListOption\\/1\\/1').fill('');
       await page.locator('#calculatedListOption\\/1\\/1').click();
       await expect(page.locator('#completionOptions li').first()).toBeVisible();
@@ -77,7 +85,7 @@ test.describe('calculatedExpression', () => {
   test.describe('splitting a string', () => {
     test.beforeEach(async ({ page }) => {
       await addFormToPage(page, 'questionnaire-calculatedExpression.json', 'formContainer', { fhirVersion: 'R4' });
-      await page.locator('#string-to-split\\/1').fill('ab');
+      await page.locator('#string-to-split\\/1').pressSequentially('ab');
     });
 
     test('should be able to assign strings to a string field', async ({ page }) => {
@@ -95,7 +103,7 @@ test.describe('calculatedExpression', () => {
       await expect(byId(page, 'repeating-open-choice-from-string/1').locator('..').locator('li').nth(1)).toContainText('b');
     });
 
-    test('should be able to remove a repetition of a string field', async ({ page }) => {
+    test('should be able to remove a repetition of a string field and a value from a list', async ({ page }) => {
       const field = page.locator('#string-to-split\\/1');
       await field.press('End');
       await field.press('Backspace');
@@ -117,11 +125,12 @@ test.describe('calculatedExpression', () => {
     test('should allow the user to override values of the repeating string field', async ({ page }) => {
       // Clear source field to disable calculated expression
       await page.locator('#string-to-split\\/1').fill('');
+      await page.locator('#string-to-split\\/1').blur();
       await expect(page.locator('#repeating-string\\/1')).toHaveValue('');
       const repField = page.locator('#repeating-string\\/1');
-      await repField.type('o');
+      await repField.pressSequentially('o');
       await expect(repField).toHaveValue('o');
-      await repField.type('ne');
+      await repField.pressSequentially('ne');
 
       await page.locator('#add-repeating-string\\/1').click();
       await page.locator('#repeating-string\\/2').fill('two');
@@ -150,9 +159,9 @@ test.describe('calculatedExpression', () => {
   test.describe('splitting a string in a repeating group', () => {
     test('should have separate repetition sets within group repetitions', async ({ page }) => {
       await addFormToPage(page, 'questionnaire-calculatedExpression.json', 'formContainer', { fhirVersion: 'R4' });
-      await byId(page, 'non-repeating-q/1/1').fill('ab');
+      await byId(page, 'non-repeating-q/1/1').pressSequentially('ab');
       await byId(page, 'add-repeating-group/1').click();
-      await byId(page, 'non-repeating-q/2/1').fill('cd');
+      await byId(page, 'non-repeating-q/2/1').pressSequentially('cd');
       await expect(byId(page, 'repeating-q-in-repeating-group/1/1')).toHaveValue('a');
       await expect(byId(page, 'repeating-q-in-repeating-group/1/2')).toHaveValue('b');
       await expect(byId(page, 'repeating-q-in-repeating-group/2/1')).toHaveValue('c');
@@ -254,9 +263,11 @@ test.describe('calculatedExpression', () => {
     test('should support itemWeight extension in R4 for calculating scores', async ({ page }) => {
       await addFormToPage(page, 'calc-weight/q-with-contained-valueset-with-itemWeight.json', 'formContainer', { fhirVersion: 'R4' });
       // ordinalValue
+      await byId(page, 'link-1.1.1/1/1/1').click();
       await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.1/1/1/1').press('Enter');
+      await byId(page, 'link-1.1.2/1/1/1').click();
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
@@ -264,8 +275,10 @@ test.describe('calculatedExpression', () => {
       await expect(byId(page, 'link-2/1')).toHaveValue('12');
 
       // itemWeight
+      await byId(page, 'link-1.1.1/1/1/1').click();
       await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.1/1/1/1').press('Enter');
+      await byId(page, 'link-1.1.2/1/1/1').click();
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
@@ -281,17 +294,21 @@ test.describe('calculatedExpression', () => {
       await addFormToPage(page, 'calc-weight/q-with-contained-valueset-with-ordinalValue.json', 'formContainer', { fhirVersion: 'R5' });
       await expect(byId(page, 'link-2/1')).toHaveValue('');
 
+      await byId(page, 'link-1.1.1/1/1/1').click();
       await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.1/1/1/1').press('Enter');
+      await byId(page, 'link-1.1.2/1/1/1').click();
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('Enter');
       await expect(byId(page, 'link-2/1')).toHaveValue('12');
 
+      await byId(page, 'link-1.1.1/1/1/1').click();
       await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.1/1/1/1').press('Enter');
+      await byId(page, 'link-1.1.2/1/1/1').click();
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
       await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');

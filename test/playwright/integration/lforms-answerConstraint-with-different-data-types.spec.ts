@@ -71,6 +71,8 @@ async function testRenderNullOrOptionsOnly(page: Page, ids: any, values: any) {
   await expect(listItems.nth(2)).toContainText(values.g1Answer3);
   await byId(page, ids.g1item2).click();
   await expect(listItems.nth(0)).toContainText(values.g1Answer1);
+  await expect(listItems.nth(1)).toContainText(values.g1Answer2);
+  await expect(listItems.nth(2)).toContainText(values.g1Answer3);
 
   // group 2 - radio/checkbox
   await expect(byId(page, ids.g2item1ans2)).toContainText(values.g1Answer2);
@@ -79,8 +81,12 @@ async function testRenderNullOrOptionsOnly(page: Page, ids: any, values: any) {
   // group 3 - prefix, score
   await byId(page, ids.g3item1).click();
   await expect(listItems.nth(0)).toContainText(values.g3Answer1);
+  await expect(listItems.nth(1)).toContainText(values.g3Answer2);
+  await expect(listItems.nth(2)).toContainText(values.g3Answer3);
   await byId(page, ids.g3item2).click();
   await expect(listItems.nth(0)).toContainText(values.g3Answer1);
+  await expect(listItems.nth(1)).toContainText(values.g3Answer2);
+  await expect(listItems.nth(2)).toContainText(values.g3Answer3);
 
   // group 4 - radio/checkbox prefix
   await expect(byId(page, ids.g4item1ans2)).toContainText(values.g3Answer2);
@@ -96,8 +102,10 @@ async function testRenderNullOrOptionsOnly(page: Page, ids: any, values: any) {
   await expect(byId(page, ids.g6item1ans2)).toContainText(values.g1Answer2);
   await expect(byId(page, `${ids.g6item1ans2}`).locator('input').first()).toBeChecked();
   // checkbox initial
+  await expect(byId(page, ids.g6item2ans2)).toContainText(values.g1Answer2);
   await expect(byId(page, `${ids.g6item2ans1}`).locator('input').first()).not.toBeChecked();
   await expect(byId(page, `${ids.g6item2ans2}`).locator('input').first()).toBeChecked();
+  await expect(byId(page, ids.g6item2ans3)).toContainText(values.g1Answer3);
   await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).toBeChecked();
 }
 
@@ -107,15 +115,24 @@ async function testRenderOptionsOrString(page: Page, ids: any, values: any) {
   await byId(page, ids.g1item1).click();
   const listItems = page.locator('#lhc-tools-searchResults li');
   await expect(listItems.nth(0)).toContainText(values.g1Answer1);
+  await expect(listItems.nth(1)).toContainText(values.g1Answer2);
+  await expect(listItems.nth(2)).toContainText(values.g1Answer3);
   await byId(page, ids.g1item2).click();
   await expect(listItems.nth(0)).toContainText(values.g1Answer1);
+  await expect(listItems.nth(1)).toContainText(values.g1Answer2);
+  await expect(listItems.nth(2)).toContainText(values.g1Answer3);
 
   // group 2,3,4
   await expect(byId(page, ids.g2item1ans2)).toContainText(values.g1Answer2);
   await expect(byId(page, ids.g2item2ans2)).toContainText(values.g1Answer2);
   await byId(page, ids.g3item1).click();
   await expect(listItems.nth(0)).toContainText(values.g3Answer1);
+  await byId(page, ids.g3item2).click();
+  await expect(listItems.nth(0)).toContainText(values.g3Answer1);
+  await expect(listItems.nth(1)).toContainText(values.g3Answer2);
+  await expect(listItems.nth(2)).toContainText(values.g3Answer3);
   await expect(byId(page, ids.g4item1ans2)).toContainText(values.g3Answer2);
+  await expect(byId(page, ids.g4item2ans2)).toContainText(values.g3Answer2);
 
   // group 5 - initial is "user typed value"
   await expect(byId(page, ids.g5item1)).toHaveValue('user typed value');
@@ -124,12 +141,15 @@ async function testRenderOptionsOrString(page: Page, ids: any, values: any) {
   await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(1)).toHaveText('×user typed value');
 
   // group 6 - radio with "other"
+  await expect(byId(page, ids.g6item1ans2)).toContainText(values.g1Answer2);
   await expect(byId(page, `${ids.g6item1ans2}`).locator('input').first()).not.toBeChecked();
   await expect(byId(page, ids.g6item1ansOther).locator('input').first()).toBeChecked();
   await expect(byId(page, ids.g6item1ansOtherValue)).toHaveValue('user typed value');
   // checkbox with "other"
+  await expect(byId(page, ids.g6item2ans2)).toContainText(values.g1Answer2);
   await expect(byId(page, `${ids.g6item2ans1}`).locator('input').first()).not.toBeChecked();
   await expect(byId(page, `${ids.g6item2ans2}`).locator('input').first()).toBeChecked();
+  await expect(byId(page, ids.g6item2ans3)).toContainText(values.g1Answer3);
   await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).not.toBeChecked();
   await expect(byId(page, ids.g6item2ansOther).locator('input').first()).toBeChecked();
   await expect(byId(page, ids.g6item2ansOtherValue)).toHaveValue('user typed value');
@@ -148,6 +168,11 @@ async function testRenderOptionsOrString(page: Page, ids: any, values: any) {
 }
 
 test.describe('answerConstraint with different types', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+  });
+
   const valueTypes = ['valueString', 'valueInteger', 'valueDate', 'valueTime', 'valueCoding'];
 
   for (let index = 0; index < valueTypes.length; index++) {
@@ -158,8 +183,6 @@ test.describe('answerConstraint with different types', () => {
 
     test.describe(`${lfDataType} - no answerConstraint`, () => {
       test(`should render a questionnaire with ${lfDataType}`, async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
         await addFormToPage(page, `answerConstraint/dataType-${lfDataType}.json`, 'formContainer');
         await testRenderNullOrOptionsOnly(page, ids, values);
       });
@@ -167,8 +190,6 @@ test.describe('answerConstraint with different types', () => {
 
     test.describe(`${lfDataType} - optionsOnly`, () => {
       test(`should render a questionnaire with ${lfDataType} and optionsOnly`, async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
         await addFormToPage(page, `answerConstraint/dataType-${lfDataType}-optionsOnly.json`, 'formContainer');
         await testRenderNullOrOptionsOnly(page, ids, values);
       });
@@ -176,8 +197,6 @@ test.describe('answerConstraint with different types', () => {
 
     test.describe(`${lfDataType} - optionsOrString`, () => {
       test(`should render a questionnaire with ${lfDataType} and optionsOrString`, async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
         await addFormToPage(page, `answerConstraint/dataType-${lfDataType}-optionsOrString.json`, 'formContainer');
         await testRenderOptionsOrString(page, ids, values);
       });

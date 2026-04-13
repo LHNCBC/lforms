@@ -16,20 +16,20 @@ for (const fhirVersion of fhirVersions) {
       await byId(page, '/choice/1').press('ArrowDown');
       await byId(page, '/choice/1').press('Enter');
       await byId(page, '/choice/st/1/1').click();
-      await byId(page, '/choice/st/1/1').type('a');
+      await byId(page, '/choice/st/1/1').fill('a');
       await byId(page, '/choice/int/1/1').click();
-      await byId(page, '/choice/int/1/1').type('1');
+      await byId(page, '/choice/int/1/1').fill('1');
       await byId(page, 'add-/choice/int/1/1').click();
       await byId(page, '/choice/int/1/2').click();
-      await byId(page, '/choice/int/1/2').type('2');
+      await byId(page, '/choice/int/1/2').fill('2');
 
       await byId(page, '/choice/group/st/1/1/1').click();
-      await byId(page, '/choice/group/st/1/1/1').type('b');
+      await byId(page, '/choice/group/st/1/1/1').fill('b');
       await byId(page, '/choice/group/int/1/1/1').click();
-      await byId(page, '/choice/group/int/1/1/1').type('3');
+      await byId(page, '/choice/group/int/1/1/1').fill('3');
       await byId(page, 'add-/choice/group/int/1/1/1').click();
       await byId(page, '/choice/group/int/1/1/2').click();
-      await byId(page, '/choice/group/int/1/1/2').type('4');
+      await byId(page, '/choice/group/int/1/1/2').fill('4');
 
       // same set under another layer
       await byId(page, '/choice/choice/1/1').click();
@@ -37,12 +37,12 @@ for (const fhirVersion of fhirVersions) {
       await byId(page, '/choice/choice/1/1').press('ArrowDown');
       await byId(page, '/choice/choice/1/1').press('Enter');
       await byId(page, '/choice/choice/st/1/1/1').click();
-      await byId(page, '/choice/choice/st/1/1/1').type('c');
+      await byId(page, '/choice/choice/st/1/1/1').fill('c');
       await byId(page, '/choice/choice/int/1/1/1').click();
-      await byId(page, '/choice/choice/int/1/1/1').type('5');
+      await byId(page, '/choice/choice/int/1/1/1').fill('5');
       await byId(page, 'add-/choice/choice/int/1/1/1').click();
       await byId(page, '/choice/choice/int/1/1/2').click();
-      await byId(page, '/choice/choice/int/1/1/2').type('6');
+      await byId(page, '/choice/choice/int/1/1/2').fill('6');
 
       await byId(page, 'add-/choice/choice/1/1').click();
       await byId(page, '/choice/choice/1/2').click();
@@ -51,12 +51,12 @@ for (const fhirVersion of fhirVersions) {
       await byId(page, '/choice/choice/1/2').press('ArrowDown');
       await byId(page, '/choice/choice/1/2').press('Enter');
       await byId(page, '/choice/choice/st/1/2/1').click();
-      await byId(page, '/choice/choice/st/1/2/1').type('d');
+      await byId(page, '/choice/choice/st/1/2/1').fill('d');
       await byId(page, '/choice/choice/int/1/2/1').click();
-      await byId(page, '/choice/choice/int/1/2/1').type('7');
+      await byId(page, '/choice/choice/int/1/2/1').fill('7');
       await byId(page, 'add-/choice/choice/int/1/2/1').click();
       await byId(page, '/choice/choice/int/1/2/2').click();
-      await byId(page, '/choice/choice/int/1/2/2').type('8');
+      await byId(page, '/choice/choice/int/1/2/2').fill('8');
 
       // add another instance of the parent choice/coding item
       await byId(page, 'add-/choice/1').click();
@@ -65,32 +65,32 @@ for (const fhirVersion of fhirVersions) {
       await byId(page, '/choice/2').press('ArrowDown');
       await byId(page, '/choice/2').press('Enter');
       await byId(page, '/choice/st/2/1').click();
-      await byId(page, '/choice/st/2/1').type('aa');
+      await byId(page, '/choice/st/2/1').fill('aa');
       await byId(page, '/choice/int/2/1').click();
-      await byId(page, '/choice/int/2/1').type('11');
+      await byId(page, '/choice/int/2/1').fill('11');
       await byId(page, 'add-/choice/int/2/1').click();
       await byId(page, '/choice/int/2/2').click();
-      await byId(page, '/choice/int/2/2').type('22');
+      await byId(page, '/choice/int/2/2').fill('22');
 
       await byId(page, '/choice/group/st/2/1/1').click();
-      await byId(page, '/choice/group/st/2/1/1').type('bb');
+      await byId(page, '/choice/group/st/2/1/1').fill('bb');
       await byId(page, '/choice/group/int/2/1/1').click();
-      await byId(page, '/choice/group/int/2/1/1').type('33');
+      await byId(page, '/choice/group/int/2/1/1').fill('33');
       await byId(page, 'add-/choice/group/int/2/1/1').click();
       await byId(page, '/choice/group/int/2/1/2').click();
-      await byId(page, '/choice/group/int/2/1/2').type('44');
+      await byId(page, '/choice/group/int/2/1/2').fill('44');
 
       await byId(page, '/choice/choice/2/1').click();
       await byId(page, '/choice/choice/2/1').press('ArrowDown');
       await byId(page, '/choice/choice/2/1').press('ArrowDown');
       await byId(page, '/choice/choice/2/1').press('Enter');
       await byId(page, '/choice/choice/st/2/1/1').click();
-      await byId(page, '/choice/choice/st/2/1/1').type('cc');
+      await byId(page, '/choice/choice/st/2/1/1').fill('cc');
       await byId(page, '/choice/choice/int/2/1/1').click();
-      await byId(page, '/choice/choice/int/2/1/1').type('55');
+      await byId(page, '/choice/choice/int/2/1/1').fill('55');
       await byId(page, 'add-/choice/choice/int/2/1/1').click();
       await byId(page, '/choice/choice/int/2/1/2').click();
-      await byId(page, '/choice/choice/int/2/1/2').type('66');
+      await byId(page, '/choice/choice/int/2/1/2').fill('66');
 
       await byId(page, 'add-/choice/choice/2/1').click();
       await byId(page, '/choice/choice/2/2').click();
@@ -99,12 +99,12 @@ for (const fhirVersion of fhirVersions) {
       await byId(page, '/choice/choice/2/2').press('ArrowDown');
       await byId(page, '/choice/choice/2/2').press('Enter');
       await byId(page, '/choice/choice/st/2/2/1').click();
-      await byId(page, '/choice/choice/st/2/2/1').type('dd');
+      await byId(page, '/choice/choice/st/2/2/1').fill('dd');
       await byId(page, '/choice/choice/int/2/2/1').click();
-      await byId(page, '/choice/choice/int/2/2/1').type('77');
+      await byId(page, '/choice/choice/int/2/2/1').fill('77');
       await byId(page, 'add-/choice/choice/int/2/2/1').click();
       await byId(page, '/choice/choice/int/2/2/2').click();
-      await byId(page, '/choice/choice/int/2/2/2').type('88');
+      await byId(page, '/choice/choice/int/2/2/2').fill('88');
 
       const fhirQR = await page.evaluate((fv) =>
         (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', fv), fhirVersion);

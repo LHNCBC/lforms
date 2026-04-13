@@ -38,6 +38,7 @@ test.describe('enableWhen where the references form a loop', () => {
 
     // item 2 controls item 3
     await byId(page, answerId('item2/1', 'true')).locator('input').click();
+    await expect(byId(page, 'label-item3/1')).not.toBeAttached();
     await expect(byId(page, answerId('item3/1', 'true'))).not.toBeAttached();
     await expect(byId(page, answerId('item3/1', 'false'))).not.toBeAttached();
     await expect(byId(page, answerId('item3/1', 'null'))).not.toBeAttached();

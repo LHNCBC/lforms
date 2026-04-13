@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, openFormByIndex, waitForLFormsReady, addFormToPage } from '../support/lforms-helpers';
+import { byId, openFormByIndex } from '../support/lforms-helpers';
 
 test.describe('Data Type', () => {
   test('TITLE row should appear', async ({ page }) => {
@@ -11,17 +11,26 @@ test.describe('Data Type', () => {
 
   test('DTM datetime picker should work', async ({ page }) => {
     await openFormByIndex(page, 4);
-    const before = new Date();
+    // Helper: convert Date to "MM/DD/YYYY HH:MM:00" format (matches getCurrentDTMString)
+    const getDTMString = (offsetMS: number) => {
+      const d = new Date(Date.now() + offsetMS);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const yyyy = String(d.getFullYear());
+      const hh = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+      return `${mm}/${dd}/${yyyy} ${hh}:${min}:00`;
+    };
+    const minDTM = getDTMString(-60000); // -1 minute
+    const maxDTM = getDTMString(+60000); // +1 minute
     const dtmInput = page.locator('#\\/type7\\/1 input');
     await dtmInput.click();
     await page.locator('.ant-picker-now-btn').click();
     await page.locator('.ant-picker-ok button').click();
-    const after = new Date();
     const value = await dtmInput.inputValue();
-    // Parse the DTM value (MM/DD/YYYY HH:MM:SS) and check it's within range
-    expect(value).toBeTruthy();
-    // Verify format MM/DD/YYYY HH:MM:SS
     expect(value).toMatch(/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/);
+    expect(value >= minDTM).toBeTruthy();
+    expect(value <= maxDTM).toBeTruthy();
   });
 
   test('DT data type should work', async ({ page }) => {
@@ -30,12 +39,12 @@ test.describe('Data Type', () => {
     const otherEl = byId(page, '/type5/1');
 
     await dtEl.fill('');
-    await dtEl.type('02/032019');
+    await dtEl.pressSequentially('02/032019');
     await otherEl.click();
     await expect(dtEl).toHaveValue('');
 
     await dtEl.fill('');
-    await dtEl.type('02/03/2019');
+    await dtEl.pressSequentially('02/03/2019');
     await otherEl.click();
     await expect(dtEl).toHaveValue('02/03/2019');
   });
@@ -46,14 +55,13 @@ test.describe('Data Type', () => {
     const otherEl = byId(page, '/type5/1');
 
     await dtmEl.fill('');
-    await dtmEl.type('02/03/201923:59');
+    await dtmEl.pressSequentially('02/03/201923:59');
     await otherEl.click();
-    // Invalid format should revert to previous value
-    const val1 = await dtmEl.inputValue();
-    // Previous value or empty (depends on form state)
+    // Invalid format should be rejected - but the calendar widget reset the value to the previous valid value
+    //await expect(dtmEl).toHaveValue('');
 
     await dtmEl.fill('');
-    await dtmEl.type('02/03/2019 23:59:00');
+    await dtmEl.pressSequentially('02/03/2019 23:59:00');
     await otherEl.click();
     await expect(dtmEl).toHaveValue('02/03/2019 23:59:00');
   });
@@ -72,15 +80,17 @@ test.describe('Data Type', () => {
 
   test.describe('Items with units', () => {
     test.describe('with a REAL or INT data type', () => {
-      test('should have data type set', async ({ page }) => {
+      test.beforeEach(async ({ page }) => {
         await openFormByIndex(page, 21); // VitalSign
+      });
+
+      test('should have data type set', async ({ page }) => {
         await expect(byId(page, '/3140-1/1')).toHaveAttribute('type', 'text');
         await expect(byId(page, '/9279-1/1')).toHaveAttribute('type', 'text');
         await expect(byId(page, '/8310-5/1')).toHaveAttribute('type', 'text');
       });
 
       test('should show the unit', async ({ page }) => {
-        await openFormByIndex(page, 21); // VitalSign
         await expect(byId(page, 'unit_/8310-5/1')).toHaveValue('Cel');
       });
     });

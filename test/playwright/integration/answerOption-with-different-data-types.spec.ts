@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { addFormToPage, waitForLFormsReady, byId, answerId } from '../support/lforms-helpers';
 import * as fs from 'fs';
 
@@ -92,11 +92,13 @@ for (const fhirVersion of fhirVersions) {
       const fileName = `answerOption/answerOption-${valueType}.${fhirVersionInFile}.json`;
 
       test.describe(`${fhirVersion} - ${valueType}`, () => {
-        test(`should render a questionnaire with ${valueType} in answerOption`, async ({ page }) => {
+        test.beforeEach(async ({ page }) => {
           await page.goto('/test/pages/addFormToPageTest.html');
           await waitForLFormsReady(page);
           await addFormToPage(page, fileName, 'formContainer', { fhirVersion });
+        });
 
+        test(`should render a questionnaire with ${valueType} in answerOption`, async ({ page }) => {
           const listItems = page.locator('#lhc-tools-searchResults li');
 
           // group 1 - autocomplete
@@ -106,6 +108,8 @@ for (const fhirVersion of fhirVersions) {
           await expect(listItems.nth(2)).toContainText(values.g1Answer3);
           await byId(page, ids.g1item2).click();
           await expect(listItems.nth(0)).toContainText(values.g1Answer1);
+          await expect(listItems.nth(1)).toContainText(values.g1Answer2);
+          await expect(listItems.nth(2)).toContainText(values.g1Answer3);
 
           // group 2 - radio/checkbox
           await expect(byId(page, ids.g2item1ans2)).toContainText(values.g1Answer2);
@@ -114,8 +118,12 @@ for (const fhirVersion of fhirVersions) {
           // group 3 - prefix/score
           await byId(page, ids.g3item1).click();
           await expect(listItems.nth(0)).toContainText(values.g3Answer1);
+          await expect(listItems.nth(1)).toContainText(values.g3Answer2);
+          await expect(listItems.nth(2)).toContainText(values.g3Answer3);
           await byId(page, ids.g3item2).click();
           await expect(listItems.nth(0)).toContainText(values.g3Answer1);
+          await expect(listItems.nth(1)).toContainText(values.g3Answer2);
+          await expect(listItems.nth(2)).toContainText(values.g3Answer3);
 
           // group 4
           await expect(byId(page, ids.g4item1ans2)).toContainText(values.g3Answer2);
@@ -167,10 +175,6 @@ for (const fhirVersion of fhirVersions) {
         });
 
         test(`should get correct QR and merge back for ${valueType}`, async ({ page }) => {
-          await page.goto('/test/pages/addFormToPageTest.html');
-          await waitForLFormsReady(page);
-          await addFormToPage(page, fileName, 'formContainer', { fhirVersion });
-
           // Select values
           await byId(page, ids.g1item1).click();
           await byId(page, ids.g1item1).press('ArrowDown');
@@ -197,6 +201,55 @@ for (const fhirVersion of fhirVersions) {
           const qr = await page.evaluate((fv) => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', fv), fhirVersion);
           expect(qr.item[0].item[0].answer).toEqual([qrValues.g1Answer2]);
           expect(qr.item[0].item[1].answer).toEqual([qrValues.g1Answer2]);
+          expect(qr.item[1].item[0].answer).toEqual([qrValues.g1Answer2]);
+          expect(qr.item[1].item[1].answer).toEqual([qrValues.g1Answer2]);
+          const ordinalValueExtension = {
+            extension: [{
+              url: fhirVersion === 'STU3' ? 'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue' : 'http://hl7.org/fhir/StructureDefinition/ordinalValue',
+              valueDecimal: 2
+            }]
+          };
+          if (!valueType.startsWith('valueCoding')) {
+            const g1Answer2WithExtension = {...qrValues.g1Answer2, [`_${valueType}`]: ordinalValueExtension};
+            expect(qr.item[2].item[0].answer).toEqual([g1Answer2WithExtension]);
+            expect(qr.item[2].item[1].answer).toEqual([g1Answer2WithExtension]);
+            expect(qr.item[3].item[0].answer).toEqual([g1Answer2WithExtension]);
+            expect(qr.item[3].item[1].answer).toEqual([g1Answer2WithExtension]);
+          } else {
+            const g1AnswerCodingWithExtension = {...qrValues.g1Answer2.valueCoding, ...ordinalValueExtension};
+            expect(qr.item[2].item[0].answer[0].valueCoding).toEqual(g1AnswerCodingWithExtension);
+            expect(qr.item[2].item[1].answer[0].valueCoding).toEqual(g1AnswerCodingWithExtension);
+            expect(qr.item[3].item[0].answer[0].valueCoding).toEqual(g1AnswerCodingWithExtension);
+            expect(qr.item[3].item[1].answer[0].valueCoding).toEqual(g1AnswerCodingWithExtension);
+          }
+          if (valueType === 'valueCoding.open-choice') {
+            expect(qr.item[4].item[0].answer).toEqual([{valueString: 'user typed value'}]);
+          } else {
+            expect(qr.item[4].item[0].answer).toEqual([qrValues.g1Answer2]);
+          }
+          if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
+            if (valueType === 'valueCoding.open-choice') {
+              expect(qr.item[4].item[1].answer).toEqual([qrValues.g1Answer2, {valueString: 'user typed value'}]);
+            } else {
+              expect(qr.item[4].item[1].answer).toEqual([qrValues.g1Answer2, qrValues.g1Answer3]);
+            }
+          } else {
+            expect(qr.item[4].item[1].answer).toEqual([qrValues.g1Answer2]);
+          }
+          if (valueType === 'valueCoding.open-choice') {
+            expect(qr.item[5].item[0].answer).toEqual([{valueString: 'user typed value'}]);
+          } else {
+            expect(qr.item[5].item[0].answer).toEqual([qrValues.g1Answer2]);
+          }
+          if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
+            if (valueType === 'valueCoding.open-choice') {
+              expect(qr.item[5].item[1].answer).toEqual([qrValues.g1Answer2, {valueString: 'user typed value'}]);
+            } else {
+              expect(qr.item[5].item[1].answer).toEqual([qrValues.g1Answer2, qrValues.g1Answer3]);
+            }
+          } else {
+            expect(qr.item[5].item[1].answer).toEqual([qrValues.g1Answer2]);
+          }
 
           // Merge back
           const qData = JSON.parse(fs.readFileSync(`test/data/${fhirVersionInFile}/${fileName}`, 'utf-8'));
@@ -210,11 +263,66 @@ for (const fhirVersion of fhirVersions) {
           await expect(page.locator('#formContainer .lhc-form-title')).toBeVisible();
 
           // Verify merged data
+          // group 1
           await expect(byId(page, ids.g1item1)).toHaveValue(values.g1Answer2);
+          await expect(byId(page, `item-${ids.g1item2}`).locator('span.autocomp_selected li')).toHaveCount(1);
+          await expect(byId(page, `item-${ids.g1item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
+
+          // group 2
           await expect(byId(page, `${ids.g2item1ans2}`).locator('input').first()).toBeChecked();
           await expect(byId(page, `${ids.g2item2ans2}`).locator('input').first()).toBeChecked();
+
+          // group 3
           await expect(byId(page, ids.g3item1)).toHaveValue(values.g3Answer2);
+          await expect(byId(page, `item-${ids.g3item2}`).locator('span.autocomp_selected li')).toHaveCount(1);
+          await expect(byId(page, `item-${ids.g3item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g3Answer2);
+
+          // group 4
           await expect(byId(page, `${ids.g4item1ans2}`).locator('input').first()).toBeChecked();
+          await expect(byId(page, `${ids.g4item2ans2}`).locator('input').first()).toBeChecked();
+
+          // group 5
+          if (valueType === 'valueCoding.open-choice') {
+            await expect(byId(page, ids.g5item1)).toHaveValue('user typed value');
+          } else {
+            await expect(byId(page, ids.g5item1)).toHaveValue(values.g1Answer2);
+          }
+          if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
+            await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li')).toHaveCount(2);
+            await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
+            if (valueType === 'valueCoding.open-choice') {
+              await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(1)).toHaveText('×user typed value');
+            } else {
+              await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(1)).toHaveText('×' + values.g1Answer3);
+            }
+          } else {
+            await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li')).toHaveCount(1);
+            await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
+          }
+
+          // group 6
+          await expect(byId(page, `${ids.g6item1ans1}`).locator('input').first()).not.toBeChecked();
+          await expect(byId(page, `${ids.g6item1ans3}`).locator('input').first()).not.toBeChecked();
+          if (valueType === 'valueCoding.open-choice') {
+            await expect(byId(page, `${ids.g6item1ans2}`).locator('input').first()).not.toBeChecked();
+            await expect(byId(page, answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).locator('input').first()).toBeChecked();
+            await expect(byId(page, answerId('valueCoding.open-choice-group6-item1/1/1', '_otherValue'))).toHaveValue('user typed value');
+          } else {
+            await expect(byId(page, `${ids.g6item1ans2}`).locator('input').first()).toBeChecked();
+          }
+          await expect(byId(page, `${ids.g6item2ans1}`).locator('input').first()).not.toBeChecked();
+          await expect(byId(page, `${ids.g6item2ans2}`).locator('input').first()).toBeChecked();
+          if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
+            if (valueType === 'valueCoding.open-choice') {
+              await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).not.toBeChecked();
+              await expect(byId(page, answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).locator('input').first()).toBeChecked();
+              await expect(byId(page, answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))).toHaveValue('user typed value');
+            } else {
+              await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).toBeChecked();
+            }
+          } else {
+            await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).not.toBeChecked();
+          }
         });
       });
     }

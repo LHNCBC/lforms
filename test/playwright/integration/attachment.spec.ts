@@ -24,6 +24,9 @@ test.describe('Attachment support', () => {
     });
 
     test('should allow attachment of file data without a URL', async ({ page }) => {
+      // Note that the test file we are attaching below is the same the file
+      // containing the Questionnaire definition for the form (just for
+      // convenience).
       await page.locator('#file-upload\\/1').setInputFiles('test/data/lforms/attachmentQ.json');
       await expect(page.locator('#file-upload\\/1')).not.toBeAttached();
       await expect(page.locator('a')).toHaveText('attachmentQ.json');
@@ -43,6 +46,8 @@ test.describe('Attachment support', () => {
     });
 
     test('should not respond to presses of "enter" in unrelated fields', async ({ page }) => {
+      // This is a test for the fix for
+      // https://github.com/lhncbc/lforms/issues/71
       await page.locator('#upload-desc\\/1\\/1').press('Enter');
       await expect(page.locator('.lhc-attachment-url')).not.toBeAttached();
     });
@@ -127,6 +132,8 @@ test.describe('Attachment support', () => {
       expect(answer.title).toBe('two');
       expect(answer.data).toBeUndefined();
       expect(answer.url).toBe('http://one');
+      expect(answer.creation).toBeUndefined();
+      expect(answer.contentType).toBeUndefined();
     });
 
     test('should allow a second attachment, with both a URL and file data', async ({ page }) => {

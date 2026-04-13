@@ -2,10 +2,12 @@ import { test, expect } from '@playwright/test';
 import { addFormToPage, waitForLFormsReady, byId } from '../support/lforms-helpers';
 
 test.describe('enableWhen != minimal reproduction', () => {
-  test('checks if != on coded answer loops in init', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
+  });
 
+  test('checks if != on coded answer loops in init', async ({ page }) => {
     const result = await page.evaluate(() => {
       const win = window as any;
 
@@ -112,8 +114,6 @@ test.describe('enableWhen != minimal reproduction', () => {
   });
 
   test('should perform enableWhen logic correctly', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
     await addFormToPage(page, 'q-with-nested-enableWhen.json', 'formContainer', { fhirVersion: 'R4' });
 
     await byId(page, 'p1/1').press('ArrowDown');

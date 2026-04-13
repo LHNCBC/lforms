@@ -1,8 +1,20 @@
+// Tests FHIR output and import of FHIR resources.
 import { test, expect, Page } from '@playwright/test';
 import { byId, openFormByIndex, waitForLFormsReady, addFormToPage, answerId, loadFromTestData } from '../support/lforms-helpers';
+// R4B is same as R4 for Questionnaire and QuestionnaireResponse.
+// Only need to test R4B in the test for profile.
+const fhirVersions = ['R4', 'R5', 'STU3'];
 
-const fhirVersions = ['R4', 'STU3'];
-
+/**
+ *  Returns a promise that will resolve to an array of two elements, the first
+ *  of which will be an error message (if any), and the second of which will be
+ *  the requested FHIR resource for the given fhirVersion (if there was no
+ *  error).
+ * @param resourceType the type of the requested FHIR resource
+ * @param fhirVersion the FHIR version for which the resource is to be
+ *  generated.
+ * @param options The optional options parameter to pass to getFormFHIRData.
+ */
 async function getFHIRResource(page: Page, resourceType: string, fhirVersion: string, options: any = null) {
   return page.evaluate(({ resourceType, fhirVersion, options }) => {
     try {
@@ -16,6 +28,7 @@ async function getFHIRResource(page: Page, resourceType: string, fhirVersion: st
 
 // Fill in the USSG-FHT form with standard test data
 async function fillInFHTForm(page: Page) {
+  // ST, repeating
   await byId(page, '/54126-8/54125-0/1/1').fill('name 1');
   await byId(page, 'add-/54126-8/54125-0/1/1').click();
   await byId(page, '/54126-8/54125-0/1/2').fill('name 2');
@@ -24,15 +37,19 @@ async function fillInFHTForm(page: Page) {
   await dobInput.click();
   await dobInput.pressSequentially('10/27/2016');
   await dobInput.press('Tab');
+  // CWE/CNE - pick 1st item
   await byId(page, '/54126-8/54131-8/1/1').click();
   await byId(page, '/54126-8/54131-8/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54131-8/1/1').press('Enter');
+  // CWE, multiple answers - pick first 2 items
   await byId(page, '/54126-8/54134-2/1/1').click();
   await byId(page, '/54126-8/54134-2/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54134-2/1/1').press('Enter');
   await byId(page, '/54126-8/54134-2/1/1').press('Enter');
-  await byId(page, '/54126-8/8302-2/1/1').fill('70');
-  await byId(page, '/54126-8/29463-7/1/1').fill('170');
+  // Quantity fields
+  await byId(page, '/54126-8/8302-2/1/1').pressSequentially('70');
+  await byId(page, '/54126-8/29463-7/1/1').pressSequentially('170');
+  // repeating sub panel
   await byId(page, '/54126-8/54137-5/54140-9/1/1/1').click();
   await byId(page, '/54126-8/54137-5/54140-9/1/1/1').press('ArrowDown');
   await byId(page, '/54126-8/54137-5/54140-9/1/1/1').press('Enter');
@@ -181,8 +198,18 @@ for (const fhirVersion of fhirVersions) {
         expect(fhirData.contained[0].code.text).toBe('Name');
         expect(fhirData.contained[0].valueString).toBe('name 1');
         // name 2
+        expect(fhirData.contained[1].resourceType).toBe('Observation');
+        expect(fhirData.contained[1].id).not.toBe(undefined);
+        expect(fhirData.contained[1].code.coding[0].code).toBe('54125-0');
+        expect(fhirData.contained[1].code.coding[0].system).toBe(undefined);
+        expect(fhirData.contained[1].code.text).toBe('Name');
         expect(fhirData.contained[1].valueString).toBe('name 2');
         // gender
+        expect(fhirData.contained[2].resourceType).toBe('Observation');
+        expect(fhirData.contained[2].id).not.toBe(undefined);
+        expect(fhirData.contained[2].code.coding[0].code).toBe('54131-8');
+        expect(fhirData.contained[2].code.coding[0].system).toBe(undefined);
+        expect(fhirData.contained[2].code.text).toBe('Gender');
         expect(fhirData.contained[2].valueCodeableConcept).toEqual({ coding: [{ code: 'LA2-8', display: 'Male' }], text: 'Male' });
         // DOB
         expect(fhirData.contained[3].valueDate).toBe('2016-10-27');
@@ -251,11 +278,27 @@ for (const fhirVersion of fhirVersions) {
         expect(fhirData.entry.length).toBe(17);
         expect(fhirData.entry[0].resource.resourceType).toBe('DiagnosticReport');
         expect(fhirData.entry[0].resource.result.length).toBe(1);
+        expect(fhirData.entry[0].resource.result[0].reference).not.toBe(undefined);
         // name 1
+        expect(fhirData.entry[1].resource.resourceType).toBe('Observation');
+        expect(fhirData.entry[1].resource.id).not.toBe(undefined);
+        expect(fhirData.entry[1].resource.code.coding[0].code).toBe('54125-0');
+        expect(fhirData.entry[1].resource.code.coding[0].system).toBe(undefined);
+        expect(fhirData.entry[1].resource.code.text).toBe('Name');
         expect(fhirData.entry[1].resource.valueString).toBe('name 1');
         // name 2
+        expect(fhirData.entry[2].resource.resourceType).toBe('Observation');
+        expect(fhirData.entry[2].resource.id).not.toBe(undefined);
+        expect(fhirData.entry[2].resource.code.coding[0].code).toBe('54125-0');
+        expect(fhirData.entry[2].resource.code.coding[0].system).toBe(undefined);
+        expect(fhirData.entry[2].resource.code.text).toBe('Name');
         expect(fhirData.entry[2].resource.valueString).toBe('name 2');
         // gender
+        expect(fhirData.entry[3].resource.resourceType).toBe('Observation');
+        expect(fhirData.entry[3].resource.id).not.toBe(undefined);
+        expect(fhirData.entry[3].resource.code.coding[0].code).toBe('54131-8');
+        expect(fhirData.entry[3].resource.code.coding[0].system).toBe(undefined);
+        expect(fhirData.entry[3].resource.code.text).toBe('Gender');
         expect(fhirData.entry[3].resource.valueCodeableConcept).toEqual({ coding: [{ code: 'LA2-8', display: 'Male' }], text: 'Male' });
         // DOB
         expect(fhirData.entry[4].resource.valueDate).toBe('2016-10-27');
@@ -323,28 +366,80 @@ for (const fhirVersion of fhirVersions) {
         expect(fhirData.item[0].item[0].answer[0].valueString).toBe('name 1');
         expect(fhirData.item[0].item[0].answer[1].valueString).toBe('name 2');
         // gender
+        expect(fhirData.item[0].item[1].text).toBe('Gender');
+        expect(fhirData.item[0].item[1].linkId).toBe('/54126-8/54131-8');
+        expect(fhirData.item[0].item[1].answer.length).toBe(1);
         expect(fhirData.item[0].item[1].answer[0].valueCoding.code).toBe('LA2-8');
         expect(fhirData.item[0].item[1].answer[0].valueCoding.display).toBe('Male');
+        expect(fhirData.item[0].item[1].answer[0].valueCoding.system).toBe(undefined);
         // DOB
+        expect(fhirData.item[0].item[2].text).toBe('Date of Birth');
+        expect(fhirData.item[0].item[2].linkId).toBe('/54126-8/21112-8');
+        expect(fhirData.item[0].item[2].answer.length).toBe(1);
         expect(fhirData.item[0].item[2].answer[0].valueDate).toBe('2016-10-27');
         // Height
+        expect(fhirData.item[0].item[3].text).toBe('Height');
+        expect(fhirData.item[0].item[3].linkId).toBe('/54126-8/8302-2');
+        expect(fhirData.item[0].item[3].answer.length).toBe(1);
         expect(fhirData.item[0].item[3].answer[0].valueQuantity.unit).toBe('inches');
         expect(fhirData.item[0].item[3].answer[0].valueQuantity.value).toBe(70);
         // Weight
+        expect(fhirData.item[0].item[4].text).toBe('Weight');
+        expect(fhirData.item[0].item[4].linkId).toBe('/54126-8/29463-7');
+        expect(fhirData.item[0].item[4].answer.length).toBe(1);
         expect(fhirData.item[0].item[4].answer[0].valueQuantity.unit).toBe('lbs');
         expect(fhirData.item[0].item[4].answer[0].valueQuantity.value).toBe(170);
         // BMI
+        expect(fhirData.item[0].item[5].text).toBe('Mock-up item: Body mass index (BMI) [Ratio]');
+        expect(fhirData.item[0].item[5].linkId).toBe('/54126-8/39156-5');
+        expect(fhirData.item[0].item[5].answer.length).toBe(1);
         expect(fhirData.item[0].item[5].answer[0].valueString).toBe('24.39');
         // Race
+        expect(fhirData.item[0].item[6].text).toBe('Race');
+        expect(fhirData.item[0].item[6].linkId).toBe('/54126-8/54134-2');
         expect(fhirData.item[0].item[6].answer.length).toBe(2);
         expect(fhirData.item[0].item[6].answer[0].valueCoding.code).toBe('LA10608-0');
+        expect(fhirData.item[0].item[6].answer[0].valueCoding.display).toBe('American Indian or Alaska Native');
+        expect(fhirData.item[0].item[6].answer[0].valueCoding.system).toBe('http://loinc.org');
         expect(fhirData.item[0].item[6].answer[1].valueCoding.code).toBe('LA6156-9');
+        expect(fhirData.item[0].item[6].answer[1].valueCoding.display).toBe('Asian');
+        expect(fhirData.item[0].item[6].answer[1].valueCoding.system).toBe('http://loinc.org');
         // Disease history #1
+        expect(fhirData.item[0].item[7].text).toBe('Your diseases history');
+        expect(fhirData.item[0].item[7].linkId).toBe('/54126-8/54137-5');
+        expect(fhirData.item[0].item[7].item.length).toBe(2);
+        //-- Disease or Condition
+        expect(fhirData.item[0].item[7].item[0].text).toBe('Disease or Condition');
+        expect(fhirData.item[0].item[7].item[0].linkId).toBe('/54126-8/54137-5/54140-9');
+        expect(fhirData.item[0].item[7].item[0].answer.length).toBe(1);
         expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.code).toBe('LA10533-0');
+        expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.display).toBe('Blood Clots');
+        expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.system).toBe('http://loinc.org');
+        //-- Age at Diagnosis
+        expect(fhirData.item[0].item[7].item[1].text).toBe('Age at Diagnosis');
+        expect(fhirData.item[0].item[7].item[1].linkId).toBe('/54126-8/54137-5/54130-0');
+        expect(fhirData.item[0].item[7].item[1].answer.length).toBe(1);
         expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.code).toBe('LA10403-6');
+        expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.display).toBe('Newborn');
+        expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.system).toBe('http://loinc.org');
         // Disease history #2
+        expect(fhirData.item[0].item[8].text).toBe('Your diseases history');
+        expect(fhirData.item[0].item[8].linkId).toBe('/54126-8/54137-5');
+        expect(fhirData.item[0].item[8].item.length).toBe(2);
+        //-- Disease or Condition
+        expect(fhirData.item[0].item[8].item[0].text).toBe('Disease or Condition');
+        expect(fhirData.item[0].item[8].item[0].linkId).toBe('/54126-8/54137-5/54140-9');
+        expect(fhirData.item[0].item[8].item[0].answer.length).toBe(1);
         expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.code).toBe('LA10572-8');
+        expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.display).toBe('-- Blood Clot in Leg');
+        expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.system).toBe('http://loinc.org');
+        //-- Age at Diagnosis
+        expect(fhirData.item[0].item[8].item[1].text).toBe('Age at Diagnosis');
+        expect(fhirData.item[0].item[8].item[1].linkId).toBe('/54126-8/54137-5/54130-0');
+        expect(fhirData.item[0].item[8].item[1].answer.length).toBe(1);
         expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.code).toBe('LA10394-7');
+        expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.display).toBe('Infancy');
+        expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe('http://loinc.org');
       });
 
       test('should get a DiagnosticReport data from an RxTerms form', async ({ page }) => {
@@ -366,16 +461,26 @@ for (const fhirVersion of fhirVersions) {
         const [error, fhirData] = await getFHIRResource(page, 'DiagnosticReport', fhirVersion);
         expect(error).toBeNull();
         expect(fhirData.result.length).toBe(1);
+        expect(fhirData.result[0].reference).not.toBe(undefined);
+        expect(fhirData.contained.length).toBe(2);
+        // drug name
+        expect(fhirData.contained[0].resourceType).toBe('Observation');
+        expect(fhirData.contained[0].id).not.toBe(undefined);
         expect(fhirData.contained[0].code.coding[0].code).toBe('nameAndRoute');
+        expect(fhirData.contained[0].code.coding[0].system).toBe(undefined);
         expect(fhirData.contained[0].code.text).toBe('Drug Name');
+        expect(fhirData.contained[0].valueCodeableConcept).toEqual({ coding: [{ code: 'ASPERCREME (Topical)', display: 'ASPERCREME (Topical)' }], text: 'ASPERCREME (Topical)' });
       });
     });
 
     test.describe('merge FHIR data into form', () => {
-      test('should merge all DiagnosticReport (contained) data back into the form', async ({ page }) => {
+      test.beforeEach(async ({ page }) => {
         await page.goto('/test/pages/lforms_testpage.html');
         await waitForLFormsReady(page);
         await page.locator('#fhirVersion').selectOption(fhirVersion);
+      });
+
+      test('should merge all DiagnosticReport (contained) data back into the form', async ({ page }) => {
         await page.click('#merge-dr');
         await expect(byId(page, '/54126-8/54125-0/1/1')).toHaveValue('name 1');
         await expect(byId(page, '/54126-8/54125-0/1/2')).toHaveValue('name 2');
@@ -394,9 +499,6 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should merge all DiagnosticReport (Bundle) data back into the form', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
-        await page.locator('#fhirVersion').selectOption(fhirVersion);
         await page.click('#merge-bundle-dr');
         await expect(byId(page, '/54126-8/54125-0/1/1')).toHaveValue('12');
         await expect(byId(page, '/54126-8/54131-8/1/1')).toHaveValue('Male');
@@ -409,9 +511,6 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should merge all DiagnosticReport (contained) data without setting default values', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
-        await page.locator('#fhirVersion').selectOption(fhirVersion);
         await page.click('#merge-dr-default-values');
         await expect(byId(page, '/intField/1')).toHaveValue('24');
         await expect(byId(page, '/decField/1')).toHaveValue('');
@@ -421,9 +520,6 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should merge FHIR SDC QuestionnaireResponse data back into the form', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
-        await page.locator('#fhirVersion').selectOption(fhirVersion);
         await page.click('#merge-qr');
         await expect(byId(page, '/54126-8/54125-0/1/1')).toHaveValue('name 1');
         await expect(byId(page, '/54126-8/54125-0/1/2')).toHaveValue('name 2');
@@ -448,9 +544,6 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should merge FHIR SDC QR with User Data on CWE fields', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
-        await page.locator('#fhirVersion').selectOption(fhirVersion);
         await page.click('#merge-qr-cwe');
 
         await expect(byId(page, '/type2/1')).toHaveValue('0');
@@ -491,17 +584,17 @@ for (const fhirVersion of fhirVersions) {
     });
 
     test.describe('Converted Questionnaire', () => {
-      test('should be able to show a converted questionnaire', async ({ page }) => {
+      test.beforeEach(async ({ page }) => {
         await page.goto('/test/pages/addFormToPageTest.html');
         await waitForLFormsReady(page);
         await addFormToPage(page, '4712701.json', 'formContainer', { fhirVersion });
+      });
+
+      test('should be able to show a converted questionnaire', async ({ page }) => {
         await expect(byId(page, 'label-4.3.3.1/1/1/1/1')).toContainText('Rezidiv/Progress aufgetreten');
       });
 
       test('should have functioning skiplogic when codes are not present', async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
-        await addFormToPage(page, '4712701.json', 'formContainer', { fhirVersion });
         await expect(byId(page, '1.5.4/1/1/1')).not.toBeAttached();
         await byId(page, answerId('1.5.1/1/1/1', 'true')).click();
         await expect(byId(page, '1.5.4/1/1/1')).toBeVisible();
@@ -510,9 +603,6 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should have functioning skiplogic when codes are present', async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
-        await addFormToPage(page, '4712701.json', 'formContainer', { fhirVersion });
         await expect(byId(page, '4.3.3.2/1/1/1/1')).not.toBeAttached();
         await byId(page, answerId('4.3.3.1/1/1/1/1', 'true')).click();
         await expect(byId(page, '4.3.3.2/1/1/1/1')).toBeVisible();
@@ -522,10 +612,13 @@ for (const fhirVersion of fhirVersions) {
     });
 
     test.describe('Subject option', () => {
-      test('should put the patient ID into the QuestionnaireResponse', async ({ page }) => {
+      test.beforeEach(async ({ page }) => {
         await page.goto('/test/pages/addFormToPageTest.html');
         await waitForLFormsReady(page);
         await addFormToPage(page, 'weightHeightQuestionnaire.json', 'formContainer', { fhirVersion });
+      });
+
+      test('should put the patient ID into the QuestionnaireResponse', async ({ page }) => {
         await byId(page, '/8302-2/1').fill('70');
 
         const patientRes = { id: 3, resourceType: 'Patient', name: [{ family: 'Smith', given: ['John'] }] };
@@ -541,9 +634,6 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should put the patient ID into the DiagnosticReport', async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
-        await addFormToPage(page, 'weightHeightQuestionnaire.json', 'formContainer', { fhirVersion });
         await byId(page, '/8302-2/1').fill('70');
 
         const patientRes = { id: 3, resourceType: 'Patient', name: [{ family: 'Smith', given: ['John'] }] };
@@ -587,10 +677,13 @@ for (const fhirVersion of fhirVersions) {
     });
 
     test.describe('initial[x] in Questionnaire', () => {
-      test('should display initial[x] values correctly', async ({ page }) => {
+      test.beforeEach(async ({ page }) => {
         await page.goto('/test/pages/addFormToPageTest.html');
         await waitForLFormsReady(page);
         await addFormToPage(page, 'questionnaire-initialx.json', 'formContainer', { fhirVersion });
+      });
+
+      test('should display initial[x] values correctly', async ({ page }) => {
 
         await expect(byId(page, answerId('/type-boolean/1', 'true')).locator('input')).toBeChecked();
 
@@ -652,10 +745,6 @@ for (const fhirVersion of fhirVersions) {
       });
 
       test('should keep the initial[x] values when converted back to Questionnaire', async ({ page }) => {
-        await page.goto('/test/pages/addFormToPageTest.html');
-        await waitForLFormsReady(page);
-        await addFormToPage(page, 'questionnaire-initialx.json', 'formContainer', { fhirVersion });
-
         const [error, fhirData] = await getFHIRResource(page, 'Questionnaire', fhirVersion);
         expect(error).toBeNull();
 
@@ -698,9 +787,12 @@ for (const fhirVersion of fhirVersions) {
 
     if (fhirVersion === 'R4') {
       test.describe('QuestionnaireResponse special case', () => {
-        test('should NOT get answers from a question under a question with no answer', async ({ page }) => {
+        test.beforeEach(async ({ page }) => {
           await page.goto('/test/pages/addFormToPageTest.html');
           await waitForLFormsReady(page);
+        });
+
+        test('should NOT get answers from a question under a question with no answer', async ({ page }) => {
           await addFormToPage(page, 'question-under-question.R4.json', 'formContainer', { fhirVersion });
 
           let [error, fhirData] = await getFHIRResource(page, 'QuestionnaireResponse', fhirVersion);
@@ -714,8 +806,6 @@ for (const fhirVersion of fhirVersions) {
         });
 
         test('should NOT get answers from a question in a group under a question with no answer', async ({ page }) => {
-          await page.goto('/test/pages/addFormToPageTest.html');
-          await waitForLFormsReady(page);
           await addFormToPage(page, 'group-under-question.R4.json', 'formContainer', { fhirVersion });
 
           let [error, fhirData] = await getFHIRResource(page, 'QuestionnaireResponse', fhirVersion);

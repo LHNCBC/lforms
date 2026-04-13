@@ -10,10 +10,11 @@ for (const fhirVersion of fhirVersions) {
       await waitForLFormsReady(page);
     });
 
-    test('should display answerOption correctly even when missing either a code or a display string', async ({ page }) => {
+    test('should display answerOption correctly even when missing either a code or a display string (but not both)', async ({ page }) => {
       await addFormToPage(page, 'questionnaire-answerOption-without-code-or-display.json', 'formContainer', { fhirVersion });
       await byId(page, '/answers/1').click();
       const listItems = page.locator('#lhc-tools-searchResults li');
+      await expect(listItems).toHaveCount(3);
       await expect(listItems.nth(0)).toContainText('c1');
       await expect(listItems.nth(1)).toContainText('Answer 2');
       await expect(listItems.nth(2)).toContainText('Answer 3');

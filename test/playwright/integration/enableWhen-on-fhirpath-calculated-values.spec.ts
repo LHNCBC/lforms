@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { addFormToPage, waitForLFormsReady, byId, answerId } from '../support/lforms-helpers';
 
+// Tests the interaction between enableWhen and calculatedExpression.
 test.describe('enableWhen on calculatedExpression', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
