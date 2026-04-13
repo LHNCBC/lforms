@@ -44,13 +44,13 @@ test.describe('HL7 data', () => {
     await openFormByIndex(page, 1); // USSGFHTVertical
 
     // ST, repeating
-    await byId(page, ff.name).fill('name1');
+    await byId(page, ff.name).pressSequentially('name1');
     await byId(page, ff.btnName).click();
-    await byId(page, ff.name2).fill('name2');
+    await byId(page, ff.name2).pressSequentially('name2');
     await byId(page, ff.btnName2).click();
-    await byId(page, ff.name3).fill('name3');
+    await byId(page, ff.name3).pressSequentially('name3');
     await byId(page, ff.btnName3).click();
-    await byId(page, ff.name).fill('');
+    await byId(page, ff.name).clear();
     // DT
     await byId(page, ff.dob).locator('input').click();
     await byId(page, ff.dob).locator('input').pressSequentially('10/27/2016');
@@ -62,8 +62,8 @@ test.describe('HL7 data', () => {
     await byId(page, ff.race).click();
     await pressCypressKeys(byId(page, ff.race), '{downArrow}{enter}{enter}');
     // REAL
-    await byId(page, ff.height).fill('70');
-    await byId(page, ff.weight).fill('170');
+    await byId(page, ff.height).pressSequentially('70');
+    await byId(page, ff.weight).pressSequentially('170');
     // repeating sub panel
     await byId(page, ff.disease).click();
     await pressCypressKeys(byId(page, ff.disease), '{downArrow}{enter}');
@@ -82,18 +82,18 @@ test.describe('HL7 data', () => {
     await byId(page, ff.btnDiseasesHist3).click();
 
     // clear up the first instance
-    await byId(page, ff.disease).fill('');
+    await byId(page, ff.disease).clear();
     await byId(page, ff.disease).blur();
-    await byId(page, ff.ageAtDiag).fill('');
+    await byId(page, ff.ageAtDiag).clear();
     await byId(page, ff.ageAtDiag).blur();
 
     // family member
-    await byId(page, ff.fmName).fill('member name1');
+    await byId(page, ff.fmName).pressSequentially('member name1');
     await pressCypressKeys(byId(page, ff.fmDisease), '{downArrow}{enter}');
     await byId(page, ff.btnAnotherDiseasesHist).click();
 
     await byId(page, ff.btnAnotherFamily).click();
-    await byId(page, ff.fmName2).fill('member name2');
+    await byId(page, ff.fmName2).pressSequentially('member name2');
     await pressCypressKeys(byId(page, ff.fmDisease2), '{downArrow}{downArrow}{enter}');
     await byId(page, ff.btnAnotherDiseasesHist2).click();
 
@@ -109,14 +109,13 @@ test.describe('HL7 data', () => {
 
     const drugNameField = byId(page, rxterms.drugName);
     await drugNameField.click();
-    await drugNameField.pressSequentially('aspercreme', { delay: 50 });
-    // Wait for the search results list to have an actual item (RxTerms uses table rows)
+    await drugNameField.pressSequentially('aspercreme');
     await page.locator('#lhc-tools-searchResults tr').first().waitFor({ state: 'visible', timeout: 30000 });
     await drugNameField.press('ArrowDown');
     // Click elsewhere to trigger blur/accept
     await byId(page, rxterms.strengthAndForm).click();
     // Verify drug name was selected before checking HL7
-    await expect(drugNameField).not.toHaveValue('aspercreme');
+    await expect(drugNameField).toHaveValue('ASPERCREME (Topical)');
 
     const hl7Data: string = await page.evaluate(() => (window as any).LForms.Util.getFormHL7Data());
     const hl7 = hl7Data.replace(/\r/g, '');

@@ -2,12 +2,15 @@ import { test, expect } from '@playwright/test';
 import { byId, answerId, waitForLFormsReady, loadFromTestData } from '../../support/lforms-helpers';
 
 test.describe('rendering-xhtml (STU3)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/test/pages/lforms_testpage.html');
+    await waitForLFormsReady(page);
+  });
+
   test.describe('on answerOption', () => {
 
     test.describe('valueString', () => {
       test('should display answerOption html if allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'STU3');
         // radio
@@ -31,8 +34,6 @@ test.describe('rendering-xhtml (STU3)', () => {
       });
 
       test('should display answerOption text if not allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'STU3');
         await expect(page.locator('.testBold')).not.toBeAttached();
         // radio
@@ -59,8 +60,6 @@ test.describe('rendering-xhtml (STU3)', () => {
 
     test.describe('valueCoding.display', () => {
       test('should display answerOption html if allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await page.click('#allowHTML');
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'STU3');
         // radio
@@ -81,8 +80,6 @@ test.describe('rendering-xhtml (STU3)', () => {
       });
 
       test('should display answerOption text if not allowed in template options', async ({ page }) => {
-        await page.goto('/test/pages/lforms_testpage.html');
-        await waitForLFormsReady(page);
         await loadFromTestData(page, 'q-with-rendering-xhtml-answerOption.json', 'STU3');
         await expect(page.locator('.testItalic')).not.toBeAttached();
         // radio

@@ -17,35 +17,37 @@ test.describe('formdata', () => {
       let formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
       expect(formData.itemsData.length).toBe(2);
       expect(formData.itemsData[0].items.length).toBe(13);
-      expect(formData.itemsData[0].items[0].value).toBeUndefined();
-      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10);
+      expect(formData.itemsData[0].items[0].value).toBeUndefined(); // name
+      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
 
-      await name.type('Not Empty');
+      await name.pressSequentially('Not Empty');
+      // pick the 1st item, centimeters
       await gender.click();
       await pressCypressKeys(gender, '{downArrow}');
       await gender.blur();
+      // pick the first 2 items
       await race.click();
       await pressCypressKeys(race, '{downArrow}');
       await race.blur();
       await race.click();
       await pressCypressKeys(race, '{downArrow}');
       await race.blur();
-      await height.type('70');
+      await height.pressSequentially('70');
       await expect(bmi).toHaveValue('');
-      await weight.type('170');
+      await weight.pressSequentially('170');
       await expect(bmi).toHaveValue('24.39');
 
       formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
       expect(formData.itemsData.length).toBe(2);
       expect(formData.itemsData[0].items.length).toBe(13);
-      expect(formData.itemsData[0].items[0].value).toBe('Not Empty');
-      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(11);
-      expect(formData.itemsData[0].items[1].value.text).toBe('Male');
-      expect(formData.itemsData[0].items[2].value).toBeUndefined();
-      expect(formData.itemsData[0].items[6].value).toBe(70);
-      expect(formData.itemsData[0].items[8].value).toBe(170);
-      expect(formData.itemsData[0].items[9].value).toBe('24.39');
-      expect(formData.itemsData[0].items[10].value.length).toBe(2);
+      expect(formData.itemsData[0].items[0].value).toBe('Not Empty'); // name
+      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(11); // name
+      expect(formData.itemsData[0].items[1].value.text).toBe('Male'); // gender
+      expect(formData.itemsData[0].items[2].value).toBeUndefined(); // dob
+      expect(formData.itemsData[0].items[6].value).toBe(70); // height
+      expect(formData.itemsData[0].items[8].value).toBe(170); // weight
+      expect(formData.itemsData[0].items[9].value).toBe('24.39'); // bmi
+      expect(formData.itemsData[0].items[10].value.length).toBe(2); // race
       expect(formData.itemsData[0].items[10].value[0].text).toBe('American Indian or Alaska Native');
       expect(formData.itemsData[0].items[10].value[1].text).toBe('Asian');
 
@@ -55,7 +57,7 @@ test.describe('formdata', () => {
       expect(formData.itemsData[0].items.length).toBe(13);
       expect(formData.itemsData[0].items[0].question).toBeUndefined();
       expect(formData.itemsData[0].items[0].dataType).toBeUndefined();
-      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(2);
+      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(2); // name
 
       // #4 test parameters noEmptyValue
       formData = await page.evaluate(() => (window as any).LForms.Util.getUserData(null, false, true));
@@ -95,17 +97,19 @@ test.describe('formdata', () => {
       const weight = byId(page, '/54126-8/29463-7/1/1');
       const bmi = byId(page, '/54126-8/39156-5/1/1');
 
-      await name.type('Not Empty');
-      await gender.type('');
+      await name.pressSequentially('Not Empty');
+      // pick the 1st item
+      await gender.clear();
       await pressCypressKeys(gender, '{downArrow}');
       await gender.blur();
       await expect(name).toBeVisible();
       await expect(gender).toHaveValue('Male');
-      await height.type('70');
+      await height.pressSequentially('70');
       await expect(height).toHaveValue('70');
-      await weight.type('170');
+      await weight.pressSequentially('170');
       await expect(bmi).toHaveValue('24.39');
 
+      // check the data directly
       let formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
       expect(formData.code).toBe('54127-6N');
       expect(formData.name).toBe('USSG-FHT, (with mock-up items for skip logic demo)');
@@ -129,12 +133,14 @@ test.describe('formdata', () => {
 
       // reset the form
       await page.click('#reset-form-with-same-data');
+      // changed in reset function to be 'after reset', was 'Not Empty'
       await expect(name).toHaveValue('after reset');
       await expect(gender).toHaveValue('Male');
       await expect(height).toHaveValue('70');
       await expect(weight).toHaveValue('170');
       await expect(bmi).toHaveValue('24.39');
 
+      // check the data again, directly
       formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
       expect(formData.code).toBe('54127-6N');
       expect(formData.items[0].items[0].value).toBe('after reset');
@@ -151,6 +157,7 @@ test.describe('formdata', () => {
     test('should not get any data with empty values when the noEmptyValue parameter is used', async ({ page }) => {
       await openFormByIndex(page, 4); // FullFeaturedForm
 
+      // only three fields have data
       const formData = await page.evaluate(() => (window as any).LForms.Util.getFormData(null, true, true));
       expect(formData.items.length).toBe(5);
       expect(formData.items[2].question).toBe('With data type CNE');
@@ -168,6 +175,10 @@ test.describe('formdata', () => {
 
       // Test date field default (with value of "t" -- today)
       const now = new Date();
+      /**
+       *  Returns a string version of the given number, zero padded on the left to
+       *  be at least two characters.
+       */
       function zeroPad(num: number) {
         let rtn = '' + num;
         if (rtn.length === 1) rtn = '0' + rtn;
@@ -208,9 +219,13 @@ test.describe('formdata', () => {
       expect(multiSelResult.items.length).toBe(1);
       expect(multiSelResult.items[0]).toBe('ii. Blue');
 
-      // Also test specifying by answer text
+      // Also test specifying by answer text, to preserve the current behavior,
+      // even though that is not in the LHC-Forms form specification.
       await expect(byId(page, '/ansTextDefault/1')).toHaveValue('Blue');
 
+      // Also test the date field default in the templateOptions, to make sure
+      // those are getting processed.
+      // NEXT: no templateOption fields
       // Check form data values
       const formData = await page.evaluate(() => (window as any).LForms.Util.getUserData(null, false, true));
       expect(formData.itemsData.length).toBe(13);
@@ -236,10 +251,10 @@ test.describe('formdata', () => {
       const strField = byId(page, '/strField/1');
       const listField = byId(page, '/ansCodeDefault/1');
 
-      await intField.fill('');
-      await decField.fill('');
-      await strField.fill('');
-      await listField.fill('');
+      await intField.clear();
+      await decField.clear();
+      await strField.clear();
+      await listField.clear();
       await byId(page, 'add-/strField/1').click();
 
       await expect(intField).toHaveValue('');

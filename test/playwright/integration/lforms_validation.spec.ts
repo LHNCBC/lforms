@@ -3,19 +3,33 @@ import { byId, openFormByIndex, pressCypressKeys, waitForLFormsReady, loadFromTe
 import * as fs from 'fs';
 import * as path from 'path';
 
+/**
+ * Tests validation behavior for a single input type: verifies error messages
+ * appear/disappear correctly on focus changes and with valid/invalid values.
+ * @param page - The Playwright page object.
+ * @param eleInput - Selector for the input element to test.
+ * @param eleAway - Selector for an element to click to move focus away.
+ * @param eleContainer - Selector for the validation message container.
+ * @param eleMessage - The expected validation message text.
+ * @param value1 - An invalid value that should trigger the validation message.
+ * @param value2 - A valid value that should clear the validation message.
+ * @returns A promise that resolves when all validation checks complete.
+ */
 async function testOneType(page: Page, eleInput: string, eleAway: string, eleContainer: string, eleMessage: string, value1: string, value2: string) {
   // no initial validations
   await expect(page.locator(eleContainer)).not.toBeAttached();
   // no error messages on first visit
-  await byId(page, eleInput).type(value1);
+  await byId(page, eleInput).pressSequentially(value1);
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeAttached();
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).not.toBeVisible();
   // show message when the focus is gone
   await page.locator(eleAway).click();
+  await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeAttached();
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeVisible();
   // message disappears after a short period
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).not.toBeVisible();
   // get back focus again and message should be shown
+  await expect(byId(page, eleInput)).toBeVisible();
   await byId(page, eleInput).click();
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeVisible();
 
@@ -26,8 +40,8 @@ async function testOneType(page: Page, eleInput: string, eleAway: string, eleCon
   await byId(page, eleInput).click();
   await expect(page.locator(eleContainer).filter({ hasText: eleMessage })).toBeVisible();
   // valid value no messages
-  await byId(page, eleInput).fill('');
-  await byId(page, eleInput).type(value2);
+  await byId(page, eleInput).clear();
+  await byId(page, eleInput).pressSequentially(value2);
   await expect(page.locator(eleContainer)).not.toBeAttached();
   // still no message when the focus is gone
   await page.locator(eleAway).click();
@@ -197,21 +211,32 @@ test.describe('Validations', () => {
 
     test('should validate required on ST', async ({ page }) => {
       await openFormByIndex(page, 13);
+      const st0 = byId(page, '/ST0/1');
+      // no initial validations
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await byId(page, '/ST0/1').click();
+      // no error messages on first time getting focus
+      await st0.click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await byId(page, '/ST0/1').type('abc');
-      await byId(page, '/ST0/1').fill('');
+      // no error messages on first visit
+      await st0.pressSequentially('abc');
+      await st0.clear();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
+      // show message when the focus is gone
       await page.locator('label[for=\'/ST3/1\']').click();
+      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
+      // message disappears after a short period
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
-      await byId(page, '/ST0/1').click();
+      // get back focus and message should be shown
+      await expect(st0).toBeVisible();
+      await st0.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
-      await byId(page, '/ST0/1').fill('');
-      await byId(page, '/ST0/1').type('abcde');
+      // valid value no messages
+      await st0.clear();
+      await st0.pressSequentially('abcde');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // still no message when the focus is gone
       await page.locator('label[for=\'/ST3/1\']').click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
@@ -219,25 +244,33 @@ test.describe('Validations', () => {
     test('should validate required on CNE (single)', async ({ page }) => {
       await openFormByIndex(page, 13);
       const cne1 = byId(page, '/CNE1/1');
+      // no initial validations
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // no error messages on first time getting focus
       await cne1.click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // no error messages on first visit
       await pressCypressKeys(cne1, '{downArrow}{enter}');
-      // Clear the autocomplete (select-all + backspace keeps focus like Cypress .clear())
-      await cne1.click({ clickCount: 3 });
+      await cne1.press('Control+a');
       await cne1.press('Backspace');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // show message when the focus is gone
       await page.locator('label[for=\'/BL/1\']').click();
-      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible({ timeout: 10000 });
+      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
+      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
+      // message disappears after a short period
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
+      // get back focus and message should be shown
+      await expect(cne1).toBeVisible();
       await cne1.click();
-      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible({ timeout: 10000 });
-      // Clear and re-select
-      await cne1.click({ clickCount: 3 });
+      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
+      // valid value no messages
+      await cne1.press('Control+a');
       await cne1.press('Backspace');
       await cne1.click();
       await pressCypressKeys(cne1, '{downArrow}{enter}');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // still no message when the focus is gone
       await page.locator('label[for=\'/BL/1\']').click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
@@ -245,59 +278,84 @@ test.describe('Validations', () => {
     test('should validate required on CWE (single)', async ({ page }) => {
       await openFormByIndex(page, 13);
       const cwe1 = byId(page, '/CWE1/1');
+      // no initial validations
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // no error messages on first time getting focus
       await cwe1.click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // no error messages on first visit
       await pressCypressKeys(cwe1, '{downArrow}{enter}');
       await expect(cwe1).not.toHaveValue('');
       await cwe1.press('Control+a');
       await cwe1.press('Backspace');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // show message when the focus is gone
       await page.locator('label[for=\'/BL/1\']').click();
+      await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
+      // message disappears after a short period
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).not.toBeVisible();
+      // get back focus and message should be shown
+      await expect(cwe1).toBeVisible();
       await cwe1.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorRequire })).toBeVisible();
+      // valid value no messages
       await cwe1.press('Control+a');
       await cwe1.press('Backspace');
       await cwe1.click();
       await pressCypressKeys(cwe1, '{downArrow}{enter}');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // still no message when the focus is gone
       await page.locator('label[for=\'/BL/1\']').click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
       // valid user input no message
       await cwe1.press('Control+a');
       await cwe1.press('Backspace');
-      await cwe1.type('user input');
+      await cwe1.pressSequentially('user input');
       await cwe1.blur();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
+
+    // CNE/CWE with multiple selections does not work with validations. Need a fix in autocomplete directive.
 
     test('should validate multiple restrictions on INT', async ({ page }) => {
       await openFormByIndex(page, 13);
       const inta = byId(page, '/INTA/1');
       const lblbl = 'label[for=\'/BL/1\']';
+      // no initial validations
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await inta.type('1');
+      // no error messages on first visit
+      await inta.pressSequentially('1');
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).not.toBeAttached();
+      // show message when the focus is gone
       await page.locator(lblbl).click();
+      await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
+      // message disappears after a short period
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
+      // get back focus and message should be shown
+      await expect(inta).toBeVisible();
       await inta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
-      await inta.fill('');
-      await inta.type('10');
+      // try again, message shown since it is not the first visit
+      await inta.clear();
+      await inta.pressSequentially('10');
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
+      // not to show message when the focus is gone, since it is not the first visit
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).not.toBeVisible();
+      // get back focus and message should be shown
+      await expect(inta).toBeVisible();
       await inta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
-      await inta.fill('');
-      await inta.type('9');
+      // valid value no messages
+      await inta.clear();
+      await inta.pressSequentially('9');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // still no message when the focus is gone
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
@@ -306,25 +364,38 @@ test.describe('Validations', () => {
       await openFormByIndex(page, 13);
       const reala = byId(page, '/REALA/1');
       const lblbl = 'label[for=\'/BL/1\']';
+      // no initial validations
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await reala.type('1.0');
+      // no error messages on first visit
+      await reala.pressSequentially('1.0');
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
+      // show message when the focus is gone
       await page.locator(lblbl).click();
+      await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
+      // message disappears after a short period
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).not.toBeVisible();
+      // get back focus and message should be shown
+      await expect(reala).toBeVisible();
       await reala.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinInclusive })).toBeVisible();
-      await reala.fill('');
-      await reala.type('10.0');
+      // try again, message shown since it is not the first visit
+      await reala.clear();
+      await reala.pressSequentially('10.0');
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
+      // not to show message when the focus is gone, since it is not the first visit
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).not.toBeVisible();
+      // get back focus and message should be shown
+      await expect(reala).toBeVisible();
       await reala.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxExclusive })).toBeVisible();
-      await reala.fill('');
-      await reala.type('9.999');
+      // valid value no messages
+      await reala.clear();
+      await reala.pressSequentially('9.999');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // still no message when the focus is gone
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
@@ -333,35 +404,48 @@ test.describe('Validations', () => {
       await openFormByIndex(page, 13);
       const sta = byId(page, '/STA/1');
       const lblbl = 'label[for=\'/BL/1\']';
+      // no initial validations
       await expect(page.locator(errorContainer)).not.toBeAttached();
-      await sta.type('123');
+      // no error messages on first visit
+      await sta.pressSequentially('123');
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxLength })).not.toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).not.toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).not.toBeVisible();
+      // show message when the focus is gone
       await page.locator(lblbl).click();
+      await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).toBeAttached();
+      await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
+      // message disappears after a short period
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).not.toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).not.toBeVisible();
+      // get back focus and message should be shown
+      await expect(sta).toBeVisible();
       await sta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
-      await sta.fill('');
-      await sta.type('abcde678901');
+      // try again, message shown since it is not the first visit
+      await sta.clear();
+      await sta.pressSequentially('abcde678901');
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxLength })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinLength })).not.toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
+      // not to show message when the focus is gone, since it is not the first visit
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxLength })).not.toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).not.toBeVisible();
+      // get back focus and message should be shown
       await sta.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxLength })).toBeVisible();
       await expect(page.locator(errorContainer).filter({ hasText: errorPattern })).toBeVisible();
-      await sta.fill('');
-      await sta.type('abcde');
+      // valid value no messages
+      await sta.clear();
+      await sta.fill('abcde');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // still no message when the focus is gone
       await page.locator(lblbl).click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
@@ -392,6 +476,7 @@ test.describe('Validations', () => {
   test.describe('form validation', () => {
     test('should not validate when required inputs are empty', async ({ page }) => {
       await openFormByIndex(page, 4); // FullFeaturedForm
+      // Required fields are empty
       let errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toEqual([
         'Required DT field requires a value',
@@ -400,7 +485,9 @@ test.describe('Validations', () => {
         'Required ST field requires a value'
       ]);
 
-      await byId(page, '/sl_source_to_test_required/1').type('1');
+      // Entering 1 will show a previously hidden section with required inputs to make sure they now
+      // trigger the validation
+      await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
       errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toEqual([
         'Required DT field requires a value',
@@ -414,17 +501,24 @@ test.describe('Validations', () => {
 
     test('should validate when required inputs are entered', async ({ page }) => {
       await openFormByIndex(page, 4); // FullFeaturedForm
-      await byId(page, '/sl_source_to_test_required/1').type('1');
+      // Entering 1 will show a previously hidden section with required inputs to make sure they now
+      // trigger the validation
+      await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
 
-      await byId(page, '/required_dt/1').locator('input').fill('');
-      await byId(page, '/required_dt/1').locator('input').type('10/16/2020');
-      await byId(page, '/required_tx/1').click();
-      await byId(page, '/required_dtm/1').locator('input').type('10/16/2020 16:00:00');
-      await byId(page, '/required_tx/1').click();
-      await byId(page, '/required_tx/1').type('test');
-      await byId(page, '/required_st/1').type('test');
-      await byId(page, '/sl_target_to_test_required1/1').type('test');
-      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').type('test');
+      // Fill the required fields
+      const requiredDtInput = byId(page, '/required_dt/1').locator('input');
+      const requiredDtmInput = byId(page, '/required_dtm/1').locator('input');
+      const requiredTx = byId(page, '/required_tx/1');
+      await requiredDtInput.click();
+      await requiredDtInput.pressSequentially('10/16/2020');
+      await requiredTx.click();
+      await requiredDtmInput.click();
+      await requiredDtmInput.pressSequentially('10/16/2020 16:00:00');
+      await requiredTx.click();
+      await requiredTx.pressSequentially('test');
+      await byId(page, '/required_st/1').pressSequentially('test');
+      await byId(page, '/sl_target_to_test_required1/1').pressSequentially('test');
+      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').pressSequentially('test');
 
       const errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toBeNull();
@@ -435,16 +529,23 @@ test.describe('Validations', () => {
       await waitForLFormsReady(page);
       await loadFromTestData(page, 'test-date-validation.json');
 
-      await byId(page, '/sl_source_to_test_required/1').type('1');
-      await byId(page, '/required_dt/1').locator('input').fill('');
-      await byId(page, '/required_dt/1').locator('input').type('10/16/2020');
-      await byId(page, '/required_tx/1').click();
-      await byId(page, '/required_dtm/1').locator('input').type('10/16/2020 16:00:00');
-      await byId(page, '/required_tx/1').click();
-      await byId(page, '/required_tx/1').type('test');
-      await byId(page, '/required_st/1').type('test');
-      await byId(page, '/sl_target_to_test_required1/1').type('test');
-      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').type('test');
+      // Entering 1 will show a previously hidden section with required inputs to make sure they now
+      // trigger the validation
+      await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
+      // Fill the required fields
+      const requiredDtInput = byId(page, '/required_dt/1').locator('input');
+      const requiredDtmInput = byId(page, '/required_dtm/1').locator('input');
+      const requiredTx = byId(page, '/required_tx/1');
+      await requiredDtInput.click();
+      await requiredDtInput.pressSequentially('10/16/2020');
+      await requiredTx.click();
+      await requiredDtmInput.click();
+      await requiredDtmInput.pressSequentially('10/16/2020 16:00:00');
+      await requiredTx.click();
+      await requiredTx.pressSequentially('test');
+      await byId(page, '/required_st/1').pressSequentially('test');
+      await byId(page, '/sl_target_to_test_required1/1').pressSequentially('test');
+      await byId(page, '/sl_target_header/sl_target_to_test_required/1/1').pressSequentially('test');
 
       const error = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(error).toBeNull();
@@ -457,8 +558,9 @@ test.describe('Validations', () => {
         await page.goto('/test/pages/lforms_testpage.html');
         await waitForLFormsReady(page);
         await loadFromTestData(page, 'q-with-modifierExtension.json', fhirVersion);
-        await expect(page.locator('div.lhc-item-error')).toBeVisible();
-        await expect(page.locator('div.lhc-item-error')).toContainText('One or more modifierExtensions are found');
+        const itemError = page.locator('div.lhc-item-error');
+        await expect(itemError).toBeVisible();
+        await expect(itemError).toContainText('One or more modifierExtensions are found');
       });
     }
   });
@@ -471,23 +573,33 @@ test.describe('Validations', () => {
       const eleInput = byId(page, '1.1/1/1');
       const eleAway = byId(page, '1.2/1/1');
 
+      // no error messages on first visit
       await eleInput.click();
       await pressCypressKeys(eleInput, '{downArrow}{enter}');
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).not.toBeVisible();
+      // show message when the focus is gone
       await eleAway.click();
+      await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeAttached();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeVisible();
+      // message disappears after a short period
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).not.toBeVisible();
+      // get back focus again and message should be shown
+      await expect(eleInput).toBeVisible();
       await eleInput.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeVisible();
+      // no message on the 2nd time when the focus is lost
       await eleAway.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).not.toBeVisible();
+      // get back focus the 3rd time and message should be shown
+      await expect(eleInput).toBeVisible();
       await eleInput.click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeVisible();
       // valid value no messages
       await eleInput.click();
       await pressCypressKeys(eleInput, '{downArrow}{enter}');
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // still no message when the focus is gone
       await eleAway.click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
 
@@ -508,11 +620,14 @@ test.describe('Validations', () => {
       await loadFromTestData(page, 'q-with-minOccurs-maxOccurs.json', 'R4');
       await byId(page, '1.3/1/1||Apple').click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMinOccurs })).toBeVisible();
+      // valid value no messages
       await byId(page, '1.3/1/1||Orange').click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
+      // Add too many answers.
       await byId(page, '1.3/1/1||Banana').click();
       await byId(page, '1.3/1/1||Pear').click();
       await expect(page.locator(errorContainer).filter({ hasText: errorMaxOccurs })).toBeVisible();
+      // Remove one answer, error should go away.
       await byId(page, '1.3/1/1||Apple').click();
       await expect(page.locator(errorContainer)).not.toBeAttached();
     });
@@ -521,13 +636,18 @@ test.describe('Validations', () => {
       await page.goto('/test/pages/lforms_testpage.html');
       await waitForLFormsReady(page);
       await loadFromTestData(page, 'q-with-minOccurs-maxOccurs.json', 'R4');
-      await expect(page.locator('text=This repeatable item should have at least 2 occurrences.')).toBeVisible();
-      await byId(page, '1.2/1/1').type('a');
+      // Initially there is one group, an error message about minOccurs should be shown.
+      const minOccursMsg = page.locator('text=This repeatable item should have at least 2 occurrences.');
+      await expect(minOccursMsg).toBeVisible();
+      // Add another repeatable group, the error message should disappear.
+      await byId(page, '1.2/1/1').pressSequentially('a');
       await byId(page, 'add-1/1').click();
-      await expect(page.locator('text=This repeatable item should have at least 2 occurrences.')).not.toBeAttached();
-      await byId(page, '1.2/2/1').type('a');
+      await expect(minOccursMsg).not.toBeAttached();
+      // Add another repeatable group, the Add button should disappear.
+      await byId(page, '1.2/2/1').pressSequentially('a');
       await byId(page, 'add-1/2').click();
       await expect(byId(page, 'add-1/3')).not.toBeAttached();
+      // Remove a group, the Add button should come back.
       await byId(page, 'del-1/3').click();
       await expect(byId(page, 'add-1/2')).toBeVisible();
     });
@@ -536,15 +656,21 @@ test.describe('Validations', () => {
       await page.goto('/test/pages/lforms_testpage.html');
       await waitForLFormsReady(page);
       await loadFromTestData(page, 'q-with-repeating-group-with-horizontal-layout.json', 'R4');
-      await expect(page.locator('text=This repeatable item should have at least 2 occurrences.')).toBeVisible();
+      // Initially there is one group, an error message about minOccurs should be shown.
+      const minOccursMsg = page.locator('text=This repeatable item should have at least 2 occurrences.');
+      await expect(minOccursMsg).toBeVisible();
+      // Add another repeatable group, the error message should disappear.
       await pressCypressKeys(byId(page, '/g3/g1m1/1/1'), '{downArrow}{enter}');
-      await byId(page, 'add-/g3/1').click();
-      await expect(page.locator('text=This repeatable item should have at least 2 occurrences.')).not.toBeAttached();
+      const addG3 = byId(page, 'add-/g3/1');
+      await addG3.click();
+      await expect(minOccursMsg).not.toBeAttached();
+      // Add another repeatable group, the Add button should disappear.
       await pressCypressKeys(byId(page, '/g3/g1m1/2/1'), '{downArrow}{enter}');
-      await byId(page, 'add-/g3/1').click();
-      await expect(byId(page, 'add-/g3/1')).not.toBeAttached();
+      await addG3.click();
+      await expect(addG3).not.toBeAttached();
+      // Remove a group, the Add button should come back.
       await byId(page, 'del-/g3/3').click();
-      await expect(byId(page, 'add-/g3/1')).toBeVisible();
+      await expect(addG3).toBeVisible();
     });
 
     test('should load a QuestionnaireResponse with more repeating items than maxOccurs', async ({ page }) => {
@@ -563,9 +689,13 @@ test.describe('Validations', () => {
         w.LForms.Util.addFormToPage(mergedFormData, 'formContainer', { fhirVersion: 'R4' });
       }, { q, qr });
 
-      await expect(page.locator('text=This repeatable item should have at most 3 occurrences.')).toBeVisible();
+      // Initially there are 4 groups, an error message about maxOccurs should be shown.
+      const maxOccursMsg = page.locator('text=This repeatable item should have at most 3 occurrences.');
+      await expect(maxOccursMsg).toBeVisible();
+      // Remove a group, the error message should disappear.
       await byId(page, 'del-1/4').click();
-      await expect(page.locator('text=This repeatable item should have at most 3 occurrences.')).not.toBeAttached();
+      await expect(maxOccursMsg).not.toBeAttached();
+      // Remove another group, the Add button should appear.
       await byId(page, 'del-1/3').click();
       await expect(byId(page, 'add-1/2')).toBeVisible();
     });

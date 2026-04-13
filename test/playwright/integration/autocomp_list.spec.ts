@@ -25,6 +25,8 @@ test.describe('autocomp list', () => {
   });
 
   test('should interoperate with score rules', async ({ page }) => {
+    // The data model needs to be correctly updated
+    // when the user enters a new value.
     await openFormByIndex(page, 3); // GlasgowForm
     const eyeField = byId(page, '/9267-6/1');
     const scoreField = byId(page, '/9269-2/1');
@@ -99,7 +101,7 @@ test.describe('autocomp list', () => {
       await expect(byId(page, 'strength/1/1')).toHaveValue('20% Cream');
       await expect(byId(page, 'rxcui/1/1')).toHaveValue('1043753');
 
-      await medication.fill('');
+      await medication.clear();
       await medication.pressSequentially('Factor X');
       await page.locator('#lhc-tools-searchResults').waitFor({ state: 'visible' });
       await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -107,20 +109,22 @@ test.describe('autocomp list', () => {
       await expect(byId(page, 'rxcui/1/1')).toHaveValue('1719235');
 
       // no autofill when the strength has more than one item in the list
-      await medication.fill('');
+      await medication.clear();
       await medication.pressSequentially('GAS-X');
       await page.locator('#lhc-tools-searchResults').waitFor({ state: 'visible' });
       await page.locator('#lhc-tools-searchResults li:first-child').click();
-      await expect(byId(page, 'strength/1/1')).toHaveValue('');
-      await expect(byId(page, 'rxcui/1/1')).toHaveValue('');
+      const strength = byId(page, 'strength/1/1');
+      const rxcui = byId(page, 'rxcui/1/1');
+      await expect(strength).toHaveValue('');
+      await expect(rxcui).toHaveValue('');
 
-      await byId(page, 'strength/1/1').click();
+      await strength.click();
       await page.locator('#lhc-tools-searchResults li:first-child').click();
-      await expect(byId(page, 'strength/1/1')).toHaveValue('80 mg Tab');
-      await expect(byId(page, 'rxcui/1/1')).toHaveValue('210273');
+      await expect(strength).toHaveValue('80 mg Tab');
+      await expect(rxcui).toHaveValue('210273');
 
       // still works: autofill when the strength has one item in the list
-      await medication.fill('');
+      await medication.clear();
       await medication.pressSequentially('Factor X');
       await page.locator('#lhc-tools-searchResults').waitFor({ state: 'visible' });
       await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -140,11 +144,14 @@ test.describe('autocomp list', () => {
 
     // has sequence number
     await byId(page, '/type9/1').click();
-    await expect(page.locator('#lhc-tools-searchResults #completionOptions ul li:first-child .listNum')).toBeVisible();
-    await expect(page.locator('#lhc-tools-searchResults #completionOptions ul li:first-child .listNum')).toHaveText('1:');
-    await expect(page.locator('#lhc-tools-searchResults #completionOptions ul li:nth-child(2) .listNum')).toBeVisible();
-    await expect(page.locator('#lhc-tools-searchResults #completionOptions ul li:nth-child(2) .listNum')).toHaveText('2:');
-    await expect(page.locator('#lhc-tools-searchResults #completionOptions ul li:nth-child(3) .listNum')).toBeVisible();
-    await expect(page.locator('#lhc-tools-searchResults #completionOptions ul li:nth-child(3) .listNum')).toHaveText('3:');
+    const listNum1 = page.locator('#lhc-tools-searchResults #completionOptions ul li:first-child .listNum');
+    await expect(listNum1).toBeVisible();
+    await expect(listNum1).toHaveText('1:');
+    const listNum2 = page.locator('#lhc-tools-searchResults #completionOptions ul li:nth-child(2) .listNum');
+    await expect(listNum2).toBeVisible();
+    await expect(listNum2).toHaveText('2:');
+    const listNum3 = page.locator('#lhc-tools-searchResults #completionOptions ul li:nth-child(3) .listNum');
+    await expect(listNum3).toBeVisible();
+    await expect(listNum3).toHaveText('3:');
   });
 });

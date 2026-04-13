@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { addFormToPage, byId, waitForLFormsReady } from '../support/lforms-helpers';
+import { addFormToPage, byId, TIMEOUT_30S, waitForLFormsReady } from '../support/lforms-helpers';
 
-const LONG = { timeout: 30000 };
-
+// The project root directory is the root for the cypress server
 test.describe('initialExpression with multiple values', () => {
   const field1 = 'answersFromParentQR/1/1/1';
   const field2 = 'answersFromParentQR/1/1/2';
@@ -11,13 +10,14 @@ test.describe('initialExpression with multiple values', () => {
   test('should add repeating items and set initial values', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
+    // This uses a form that is based on a user's form
     await addFormToPage(page, 'questionnaire-initialExpression-2values.json', 'formContainer', { fhirVersion: 'R4' });
 
     await expect(byId(page, field1)).toHaveValue('Blue');
     await expect(byId(page, field2)).toHaveValue('Green');
 
     await byId(page, answerField).click();
-    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(LONG);
+    await expect(page.locator('#lhc-tools-searchResults')).toBeVisible(TIMEOUT_30S);
     const items = page.locator('#lhc-tools-searchResults li');
     await expect(items).toHaveCount(2);
     await expect(items.nth(0)).toContainText('Blue');

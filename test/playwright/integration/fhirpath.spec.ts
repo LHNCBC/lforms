@@ -15,13 +15,17 @@ for (const fhirVersion of fhirVersions) {
           return w.LForms && w.LForms.FHIR;
         }, { timeout: 30000 });
         await loadFromTestData(page, 'weightHeightQuestionnaire.json', fhirVersion);
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').type('70');
-        await byId(page, '/8302-2/1').click();
-        await byId(page, '/8302-2/1').type('60');
-        await expect(byId(page, '/39156-5/1')).toHaveValue('30.1');
+        const weight = byId(page, '/29463-7/1');
+        const height = byId(page, '/8302-2/1');
+        const bmi = byId(page, '/39156-5/1');
+        await weight.click();
+        await weight.pressSequentially('70');
+        await height.click();
+        await height.pressSequentially('60');
+        await expect(bmi).toHaveValue('30.1');
       }
 
+      // A test of the questionnaire-calculatedExpression extension
       test('work to compute a BMI value', async ({ page }) => {
         await page.goto('/test/pages/lforms_testpage.html');
         await waitForLFormsReady(page);
@@ -42,22 +46,29 @@ for (const fhirVersion of fhirVersions) {
           return w.LForms && w.LForms.FHIR;
         }, { timeout: 30000 });
         await loadFromTestData(page, 'weightHeightQuestionnaire.json', fhirVersion);
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').type('123abc');
-        await byId(page, '/8302-2/1').click();
-        await byId(page, '/8302-2/1').type('60');
-        await expect(byId(page, '/39156-5/1')).toHaveValue('');
+        const weight = byId(page, '/29463-7/1');
+        const height = byId(page, '/8302-2/1');
+        const bmi = byId(page, '/39156-5/1');
+        await weight.click();
+        await weight.pressSequentially('123abc');
+        await height.click();
+        await height.pressSequentially('60');
+        await expect(bmi).toHaveValue('');
 
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').press('Control+a');
-        await byId(page, '/29463-7/1').press('Backspace');
-        await byId(page, '/29463-7/1').type('70');
-        await expect(byId(page, '/39156-5/1')).toHaveValue('30.1');
+        await weight.click();
+        await weight.clear();
+        await weight.pressSequentially('70');
+        await expect(bmi).toHaveValue('30.1');
 
-        await byId(page, '/29463-7/1').click();
-        await byId(page, '/29463-7/1').press('Control+a');
-        await byId(page, '/29463-7/1').press('Backspace');
-        await byId(page, '/29463-7/1').pressSequentially('123abc', { delay: 50 });
+        await weight.click();
+        await weight.clear();
+        await weight.pressSequentially('123');
+        if (fhirVersion === 'R4') {
+          await expect(byId(page, '/39156-5/1')).toHaveValue('53'); // the calculated bmi value when '123' was typed.
+        } else if (fhirVersion === 'STU3') {
+          await expect(byId(page, '/39156-5/1')).toHaveValue('52.9'); // the calculated bmi value when '123' was typed.
+        }
+        await weight.pressSequentially('abc');
         if (fhirVersion === 'R4') {
           await expect(byId(page, '/39156-5/1')).toHaveValue('53');
         } else if (fhirVersion === 'STU3') {
@@ -78,8 +89,9 @@ test.describe('answerExpression', () => {
     }, { timeout: 30000 });
     await loadFromTestData(page, 'answerExpressionTest.json');
     await byId(page, 'language/1').click();
-    await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(2);
-    await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible();
+    const searchResults = page.locator('#lhc-tools-searchResults li');
+    await expect(searchResults).toHaveCount(2);
+    await expect(searchResults.first()).toBeVisible();
   });
 
   test('should not cause answerOptions to be generated in the Questionnaire', async ({ page }) => {
@@ -104,10 +116,10 @@ test.describe('answerExpression', () => {
     expect(result.stu3option).toBeUndefined();
   });
 
-  const rxTermsQs = [
-    'rxterms.R4',
-    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp',
-    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp2'
+  const rxTermsQs = [ // rxterms Questionnaires
+    'rxterms.R4', // where the strength item has an answerExpression
+    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp', // where the strength item has an answerExpression then a calculatedExpression (autofill)
+    'rxtermsAnswerExpTests/rxterms.R4.with-autofill-calexp2' // where the strength item has a calculatedExpression (autofill) then an answerExpression
   ];
 
   test.describe('answerExpression tests with the RxTerms form', () => {
@@ -115,6 +127,17 @@ test.describe('answerExpression', () => {
     for (const q of rxTermsQs) {
       test.describe('Questionnaire ' + q, () => {
         test('should not clear a list field if the form has just loaded with saved data', async ({ page }) => {
+          // This is the case when a QuestionnaireResponse is loaded in that has a
+          // value in a field whose list comes from an answerExpression or a
+          // cqf-expression.  Initially, there is no list, but when the expression
+          // runs, a list is obtained.  Because the data in the field is saved data,
+          // it should not be cleared, even if it is not in the current list.  For
+          // example, in the RxTerms form below, if the user saved a drug name and a
+          // strength value, when the form is later loaded, RxTerms might have been
+          // updated and no longer have the selected strength value, or even the drug
+          // name itself.  We must be careful not to discard the user's data just
+          // because the form is re-opened.
+
           // First, create a QR by loading the base form
           await page.goto('/test/pages/lforms_testpage.html');
           await waitForLFormsReady(page);
@@ -123,13 +146,16 @@ test.describe('answerExpression', () => {
             return w.LForms && w.LForms.FHIR;
           }, { timeout: 30000 });
           await loadFromTestData(page, 'rxterms.R4.json', 'R4');
-          await byId(page, 'medication/1/1').click();
-          await byId(page, 'medication/1/1').pressSequentially('ar', { delay: 50 });
+          const medication = byId(page, 'medication/1/1');
+          const strength = byId(page, 'strength/1/1');
+          const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
+          await medication.click();
+          await medication.pressSequentially('ar');
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
-          await byId(page, 'strength/1/1').click();
+          await firstResult.click();
+          await strength.click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
+          await firstResult.click();
           await expect(byId(page, 'rxcui/1/1')).not.toHaveValue('');
 
           // get QR
@@ -157,6 +183,7 @@ test.describe('answerExpression', () => {
             }, { qDef, qr, elemID });
           }
 
+          // Confirms that the saved data is still on the displayed form.
           async function checkSavedDataPresent() {
             await expect(byId(page, 'strength/1/1')).not.toHaveValue('');
             await expect(byId(page, 'rxcui/1/1')).not.toHaveValue('');
@@ -178,12 +205,14 @@ test.describe('answerExpression', () => {
 
           // Test 3: vertical layout (remove gtable extension)
           let qDataVert = JSON.parse(JSON.stringify(qOrig));
+          // delete itemControl "gtable" extension
           qDataVert.item[0].extension = qDataVert.item[0].extension.filter(
             (e: any) => e.url !== 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
           await showQQR(qDataVert, qr, 'formContainer');
-          await byId(page, 'strength/1/1').click();
+          const strengthField = byId(page, 'strength/1/1');
+          await strengthField.click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
-          await byId(page, 'strength/1/1').blur();
+          await strengthField.blur();
           await checkSavedDataPresent();
 
           // Test 4: drug code that is off list
@@ -208,6 +237,7 @@ test.describe('answerExpression', () => {
           await byId(page, 'strength/1/1').click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
           await expect(byId(page, 'medication/1/1')).not.toHaveValue('');
+          // The strength field's values are in the multi-select area.
           const selectedItems = await byId(page, 'strength/1/1').evaluate(
             el => (el as any).autocomp.getSelectedItems()
           );
@@ -216,10 +246,12 @@ test.describe('answerExpression', () => {
 
           // Test 7: radio buttons
           let qDataRadio = JSON.parse(JSON.stringify(qOrig));
+          // delete itemControl "gtable" extension
           qDataRadio.item[0].extension = qDataRadio.item[0].extension.filter(
             (e: any) => e.url !== 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
           const exts = qDataRadio.item[0].item[1].extension;
           expect(exts[0].url).toBe('http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
+          // Replace the strength field drop down with radio buttons
           exts[0] = {
             url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
             valueCodeableConcept: {
@@ -243,6 +275,7 @@ test.describe('answerExpression', () => {
 
       test.describe('Questionnaire ' + q + ' with checkboxes', () => {
         test('should not clear a list field if the form has just loaded with saved data', async ({ page }) => {
+          // Test with checkboxes and multiple values
           // First, create a QR by loading the base form
           await page.goto('/test/pages/lforms_testpage.html');
           await waitForLFormsReady(page);
@@ -251,13 +284,15 @@ test.describe('answerExpression', () => {
             return w.LForms && w.LForms.FHIR;
           }, { timeout: 30000 });
           await loadFromTestData(page, 'rxterms.R4.json', 'R4');
-          await byId(page, 'medication/1/1').click();
-          await byId(page, 'medication/1/1').pressSequentially('ar', { delay: 50 });
+          const medication = byId(page, 'medication/1/1');
+          const firstResult = page.locator('#lhc-tools-searchResults li:first-child');
+          await medication.click();
+          await medication.pressSequentially('ar');
           await expect(page.locator('#lhc-tools-searchResults li').first()).toBeVisible({ timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
+          await firstResult.click();
           await byId(page, 'strength/1/1').click();
           await page.waitForSelector('#lhc-tools-searchResults li', { timeout: 10000 });
-          await page.locator('#lhc-tools-searchResults li:first-child').click();
+          await firstResult.click();
           await expect(byId(page, 'rxcui/1/1')).not.toHaveValue('');
 
           const qrData = await page.evaluate(() =>

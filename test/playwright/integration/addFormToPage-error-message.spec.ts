@@ -1,10 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { byId, expectLoadButton, uploadFile, waitForLFormsReady } from '../support/lforms-helpers';
-
-const LONG = { timeout: 30000 };
+import { byId, expectLoadButton, TIMEOUT_30S, uploadFile, waitForLFormsReady } from '../support/lforms-helpers';
 
 async function expectFormTitle(page, title: string) {
-  await expect(page.locator('.lhc-form-title')).toContainText(title, LONG);
+  await expect(page.locator('.lhc-form-title')).toContainText(title, TIMEOUT_30S);
 }
 
 test.describe('addFormToPage Error Message Test', () => {
@@ -15,20 +13,20 @@ test.describe('addFormToPage Error Message Test', () => {
 
     await uploadFile(page, '#fileAnchor', 'test/data/R4/fhir-context-q-wrong-valueset-url.json');
     await expectFormTitle(page, 'A questionnaire for testing code that requires a FHIR context 1');
-    await expect(page.locator('#loadMsg')).toContainText('Unable to load ValueSet', LONG);
+    await expect(page.locator('#loadMsg')).toContainText('Unable to load ValueSet', TIMEOUT_30S);
 
     const itemError = byId(page, 'item-/54126-8/54128-4/1/1').locator('.lhc-item-error');
-    await expect(itemError).toBeVisible(LONG);
-    await expect(itemError).toHaveText('Error: Unable to load the answer list for this question.', LONG);
+    await expect(itemError).toBeVisible(TIMEOUT_30S);
+    await expect(itemError).toHaveText('Error: Unable to load the answer list for this question.', TIMEOUT_30S);
 
     await uploadFile(page, '#fileAnchor', 'test/data/R4/fhir-context-q.json');
     await expectFormTitle(page, 'A questionnaire for testing code that requires a FHIR context');
-    await expect(page.locator('.lhc-item-error')).toHaveCount(0, LONG);
+    await expect(page.locator('.lhc-item-error')).toHaveCount(0, TIMEOUT_30S);
 
     await uploadFile(page, '#fileAnchor', 'test/data/R4/fhir-context-q-wrong-valueset-url.json');
     await expectFormTitle(page, 'A questionnaire for testing code that requires a FHIR context 1');
-    await expect(itemError).toBeVisible(LONG);
-    await expect(itemError).toHaveText('Error: Unable to load the answer list for this question.', LONG);
+    await expect(itemError).toBeVisible(TIMEOUT_30S);
+    await expect(itemError).toHaveText('Error: Unable to load the answer list for this question.', TIMEOUT_30S);
   });
 
   test('show an error when a valueset cannot be loaded because of a wrong fhir context', async ({ page }) => {
@@ -38,7 +36,7 @@ test.describe('addFormToPage Error Message Test', () => {
 
     await uploadFile(page, '#fileAnchor', 'test/data/R4/fhir-context-q-wrong-fhircontext.json');
     await expectFormTitle(page, 'A questionnaire for testing code that requires a FHIR context 2');
-    await expect(page.locator('#loadMsg')).toContainText('Unable to load ValueSet http://terminology.hl7.org/ValueSet/v3-MessageWaitingPriority-invalid from FHIR server', LONG);
+    await expect(page.locator('#loadMsg')).toContainText('Unable to load ValueSet http://terminology.hl7.org/ValueSet/v3-MessageWaitingPriority-invalid from FHIR server', TIMEOUT_30S);
   });
 
   test('show only the first error when there are multiple valuesets cannot be loaded.', async ({ page }) => {
@@ -49,8 +47,9 @@ test.describe('addFormToPage Error Message Test', () => {
     await uploadFile(page, '#fileAnchor', 'test/data/R4/fhir-context-q-wrong-valueset-url-fhircontext.json');
     await expectFormTitle(page, 'A questionnaire for testing code that requires a FHIR context 3');
 
-    await expect(page.locator('#loadMsg')).toContainText('Unable to load ValueSet', LONG);
-    await expect(page.locator('#loadMsg')).toContainText(/v3-MessageWaitingPriority-invalid|yesnodontknow-invalid/, LONG);
+    const loadMsg = page.locator('#loadMsg');
+    await expect(loadMsg).toContainText('Unable to load ValueSet', TIMEOUT_30S);
+    await expect(loadMsg).toContainText(/v3-MessageWaitingPriority-invalid|yesnodontknow-invalid/, TIMEOUT_30S);
   });
 
   test('successfully load a form that requests AnswerValueSet', async ({ page }) => {
@@ -105,7 +104,7 @@ test.describe('addFormToPage Error Message Test', () => {
     await waitForLFormsReady(page);
     await expectLoadButton(page, 'Load From File');
     await uploadFile(page, '#fileAnchor', 'test/data/R4/q-with-duplicate-variable-names-root-level.json');
-    await expect(page.locator('#loadMsg')).toContainText('Duplicate variable name "X" found at root level.', LONG);
+    await expect(page.locator('#loadMsg')).toContainText('Duplicate variable name "X" found at root level.', TIMEOUT_30S);
   });
 
   test('should show errors for duplicate variable names - item level', async ({ page }) => {
@@ -113,7 +112,7 @@ test.describe('addFormToPage Error Message Test', () => {
     await waitForLFormsReady(page);
     await expectLoadButton(page, 'Load From File');
     await uploadFile(page, '#fileAnchor', 'test/data/R4/q-with-duplicate-variable-names-item-level.json');
-    await expect(page.locator('#loadMsg')).toContainText('Duplicate variable name "Y" found. Item linkId: /fieldA.', LONG);
+    await expect(page.locator('#loadMsg')).toContainText('Duplicate variable name "Y" found. Item linkId: /fieldA.', TIMEOUT_30S);
   });
 
   test('should show errors if a duplicate name is found in variable extension and launchContext extension', async ({ page }) => {
@@ -121,6 +120,6 @@ test.describe('addFormToPage Error Message Test', () => {
     await waitForLFormsReady(page);
     await expectLoadButton(page, 'Load From File');
     await uploadFile(page, '#fileAnchor', 'test/data/R4/q-with-duplicate-variable-name-as-launchContext.json');
-    await expect(page.locator('#loadMsg')).toContainText('Duplicate variable name "patient" found at root level.', LONG);
+    await expect(page.locator('#loadMsg')).toContainText('Duplicate variable name "patient" found at root level.', TIMEOUT_30S);
   });
 });

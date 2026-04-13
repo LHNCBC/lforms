@@ -6,36 +6,46 @@ test.describe('formula', () => {
     await openFormByIndex(page, 1); // USSGFHTVertical
 
     // check bmi1
-    await byId(page, '/54126-8/8302-2/1/1').fill('70');
-    await expect(byId(page, '/54126-8/39156-5/1/1')).toHaveValue('');
-    await byId(page, '/54126-8/29463-7/1/1').fill('170');
-    await expect(byId(page, '/54126-8/39156-5/1/1')).toHaveValue('24.39');
-    await byId(page, '/54126-8/8302-2/1/1').fill('80');
-    await expect(byId(page, '/54126-8/39156-5/1/1')).toHaveValue('18.68');
+    const height1 = byId(page, '/54126-8/8302-2/1/1');
+    const bmi1 = byId(page, '/54126-8/39156-5/1/1');
+    await height1.pressSequentially('70');
+    await expect(bmi1).toHaveValue('');
+    await byId(page, '/54126-8/29463-7/1/1').pressSequentially('170');
+    await expect(bmi1).toHaveValue('24.39');
+    await height1.clear();
+    await height1.pressSequentially('80');
+    await expect(bmi1).toHaveValue('18.68');
 
     // change height unit and check bmi1 again
-    await byId(page, 'unit_/54126-8/8302-2/1/1').click();
+    const heightUnit = byId(page, 'unit_/54126-8/8302-2/1/1');
+    await heightUnit.click();
     // pick the 2nd item, centimeters
-    await pressCypressKeys(byId(page, 'unit_/54126-8/8302-2/1/1'), '{downArrow}{downArrow}');
-    await byId(page, 'unit_/54126-8/8302-2/1/1').blur();
-    await byId(page, '/54126-8/8302-2/1/1').fill('170');
-    await expect(byId(page, '/54126-8/39156-5/1/1')).toHaveValue('26.68');
+    await pressCypressKeys(heightUnit, '{downArrow}{downArrow}');
+    await heightUnit.blur();
+    await height1.clear();
+    await height1.pressSequentially('170');
+    await expect(bmi1).toHaveValue('26.68');
 
     // change weight unit and check bmi1 again
-    await byId(page, 'unit_/54126-8/29463-7/1/1').click();
+    const weightUnit = byId(page, 'unit_/54126-8/29463-7/1/1');
+    await weightUnit.click();
     // pick the 2nd item, kgs
-    await pressCypressKeys(byId(page, 'unit_/54126-8/29463-7/1/1'), '{downArrow}{downArrow}');
-    await byId(page, 'unit_/54126-8/29463-7/1/1').blur();
-    await byId(page, '/54126-8/29463-7/1/1').fill('80');
-    await expect(byId(page, '/54126-8/39156-5/1/1')).toHaveValue('27.68');
+    await pressCypressKeys(weightUnit, '{downArrow}{downArrow}');
+    await weightUnit.blur();
+    await byId(page, '/54126-8/29463-7/1/1').clear();
+    await byId(page, '/54126-8/29463-7/1/1').pressSequentially('80');
+    await expect(bmi1).toHaveValue('27.68');
 
     // check bmi2
-    await byId(page, '/54114-4/54117-7/8302-2/1/1/1').fill('70');
-    await expect(byId(page, '/54114-4/54117-7/39156-5/1/1/1')).toHaveValue('');
-    await byId(page, '/54114-4/54117-7/29463-7/1/1/1').fill('170');
-    await expect(byId(page, '/54114-4/54117-7/39156-5/1/1/1')).toHaveValue('24.39');
-    await byId(page, '/54114-4/54117-7/8302-2/1/1/1').fill('80');
-    await expect(byId(page, '/54114-4/54117-7/39156-5/1/1/1')).toHaveValue('18.68');
+    const height2 = byId(page, '/54114-4/54117-7/8302-2/1/1/1');
+    const bmi2 = byId(page, '/54114-4/54117-7/39156-5/1/1/1');
+    await height2.pressSequentially('70');
+    await expect(bmi2).toHaveValue('');
+    await byId(page, '/54114-4/54117-7/29463-7/1/1/1').pressSequentially('170');
+    await expect(bmi2).toHaveValue('24.39');
+    await height2.clear();
+    await height2.pressSequentially('80');
+    await expect(bmi2).toHaveValue('18.68');
   });
 
   test('should work with calculation method having skip logic disabled sources', async ({ page }) => {

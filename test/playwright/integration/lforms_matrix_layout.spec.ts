@@ -13,6 +13,7 @@ test.describe('Form level Matrix layout', () => {
     await expect(byId(page, item1answer1)).toBeVisible();
     await expect(byId(page, item4answer4)).toBeVisible();
 
+    // first question
     let formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value).toBeUndefined();
     expect(formData.itemsData[1].value).toBeUndefined();
@@ -58,6 +59,7 @@ test.describe('Form level Matrix layout', () => {
     await expect(byId(page, item1answer1)).toBeVisible();
     await expect(byId(page, item4answer4)).toBeVisible();
 
+    // first question
     let formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value).toBeUndefined();
 
@@ -75,14 +77,15 @@ test.describe('Form level Matrix layout', () => {
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value[2]).toBeUndefined();
 
-    await byId(page, item1OtherValue).fill('other values');
+    await byId(page, item1OtherValue).pressSequentially('other values');
     await byId(page, item1OtherValue).blur();
     await byId(page, item1OtherValue).click();
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value[2]).toBe('other values');
 
     // change the other value alone
-    await byId(page, item1OtherValue).fill('other values again');
+    await byId(page, item1OtherValue).clear();
+    await byId(page, item1OtherValue).pressSequentially('other values again');
     await byId(page, item1OtherValue).blur();
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value[2]).toBe('other values again');
@@ -97,7 +100,7 @@ test.describe('Form level Matrix layout', () => {
     expect(formData.itemsData[3].value[0].code).toBe('c1');
     expect(formData.itemsData[3].value[1].code).toBe('c4');
 
-    await byId(page, item4OtherValue).fill('others');
+    await byId(page, item4OtherValue).pressSequentially('others');
     // model value does not change when the checkbox is not checked
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[3].value.length).toBe(2);
@@ -107,6 +110,7 @@ test.describe('Form level Matrix layout', () => {
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[3].value.length).toBe(3);
     expect(formData.itemsData[3].value[2]).toBe('others');
+    // the value on the first question does not change
   });
 
   test.describe('Use data files in lforms internal data format', () => {
@@ -118,6 +122,7 @@ test.describe('Form level Matrix layout', () => {
       await expect(byId(page, '/g1m2/1|_other')).toBeChecked();
       await expect(byId(page, '/g1m2/1|_otherValue')).toHaveValue('User typed string');
 
+      // first question
       const formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
       expect(formData.itemsData[0].value).toEqual({code: 'c1', text: 'Answer a'});
       expect(formData.itemsData[1].value).toEqual('User typed string');
@@ -135,6 +140,7 @@ test.describe('Form level Matrix layout', () => {
       await expect(byId(page, '/g1m2/1|_other')).toBeChecked();
       await expect(byId(page, '/g1m2/1|_otherValue')).toHaveValue('user typed string');
 
+      // first question
       const formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
       expect(formData.itemsData[0].value).toEqual([{code: 'c1', text: 'Answer 1'}, {code: 'c2', text: 'Answer 2'}]);
       expect(formData.itemsData[1].value).toEqual([{code: 'c1', text: 'Answer 1'}, 'user typed string']);
@@ -152,6 +158,7 @@ test.describe('Form level Matrix layout', () => {
       await expect(byId(page, '/g1m2/1/1|_other')).toBeChecked();
       await expect(byId(page, '/g1m2/1/1|_otherValue')).toHaveValue('User typed string');
 
+      // first question
       const formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
       expect(formData.itemsData[0].items[0].value).toEqual({code: 'c1', text: 'Answer a'});
       expect(formData.itemsData[0].items[1].value).toEqual('User typed string');
@@ -169,6 +176,7 @@ test.describe('Form level Matrix layout', () => {
       await expect(byId(page, '/g1m2/1/1|_other')).toBeChecked();
       await expect(byId(page, '/g1m2/1/1|_otherValue')).toHaveValue('user typed string');
 
+      // first question
       const formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
       expect(formData.itemsData[0].items[0].value).toEqual([{code: 'c1', text: 'Answer 1'}, {code: 'c2', text: 'Answer 2'}]);
       expect(formData.itemsData[0].items[1].value).toEqual([{code: 'c1', text: 'Answer 1'}, 'user typed string']);

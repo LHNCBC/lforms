@@ -10,16 +10,25 @@ test.describe('Visual effect tests', () => {
     for (let i = 0, len = dataTypes.length; i < len; ++i) {
       const d = dataTypes[i];
       const otherField = '/type' + (i + 1) + '/1';
+      // NEXT: TODO
+      // background should rgba(255, 248, 198, 1).
+      // but somehow they are 'rgba(255, 248, 198, 0.04), rgba(255, 248, 198, 0.114) and rgba(255, 248, 198, 0.04), respectively
+      // they look similar though.
       if (d === 'DT' || d === 'DTM' || d === 'TM') continue;
-      if (d === 'BL') continue;
+      if (d === 'BL') continue; // BL is a switch, which has no focused color
 
+      // Active field background color should the be same for all types of fields
       test('should be the same for data type ' + d, async ({ page }) => {
         await openFormByIndex(page, 4); // FullFeaturedForm
         // Get background color of the empty data type field when focused
-        await byId(page, '/type0/1').focus();
-        await byId(page, '/type0/1').blur();
-        await byId(page, '/type0/1').click();
-        const color = await byId(page, '/type0/1').evaluate(
+        const type0 = byId(page, '/type0/1');
+        // The element changes background color on focus. For some reason this guarantees
+        // that we get the updated color instead of sometimes getting rgb(255, 255, 255).
+        await type0.focus();
+        await type0.blur();
+        await type0.click();
+
+        const color = await type0.evaluate(
           el => getComputedStyle(el).backgroundColor
         );
         await byId(page, otherField).click();
@@ -81,6 +90,7 @@ test.describe('Visual effect tests', () => {
       await expect(page.locator('.lhc-form.lhc-view-lg')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-md')).toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-sm')).not.toBeAttached();
+      // check 4 questions
       await expect(page.locator('.lhc-item.lhc-item-view-lg').first().locator('#\\/q_lg\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-md').first().locator('#\\/q_md\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-sm').first().locator('#\\/q_sm\\/1')).toBeAttached();
@@ -93,6 +103,7 @@ test.describe('Visual effect tests', () => {
       await expect(page.locator('.lhc-form.lhc-view-lg')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-md')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-sm')).toBeAttached();
+      // check 4 questions
       await expect(page.locator('.lhc-item.lhc-item-view-lg').first().locator('#\\/q_lg\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-md').first().locator('#\\/q_md\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-sm').first().locator('#\\/q_sm\\/1')).toBeAttached();
@@ -104,6 +115,7 @@ test.describe('Visual effect tests', () => {
       await expect(page.locator('.lhc-form.lhc-view-lg')).not.toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-md')).toBeAttached();
       await expect(page.locator('.lhc-form.lhc-view-sm')).not.toBeAttached();
+      // check 4 questions
       await expect(page.locator('.lhc-item.lhc-item-view-md').nth(1).locator('#\\/q_auto\\/1')).toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-lg').nth(1)).not.toBeAttached();
       await expect(page.locator('.lhc-item.lhc-item-view-sm').nth(1).locator('#\\/q_auto\\/1')).not.toBeAttached();
@@ -131,30 +143,39 @@ test.describe('Visual effect tests', () => {
       await byId(page, '/type0/1').click();
       await page.keyboard.press('Tab'); // focus on help button
       await page.keyboard.press('Tab'); // move to radio 'Not Answered'
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      const focused = page.locator(':focus');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'null'));
       // move to radio 'No'
       await page.keyboard.press('ArrowLeft');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'false'));
       // move to radio 'Yes'
       await page.keyboard.press('ArrowLeft');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'true'));
       // back to radio 'No'
       await page.keyboard.press('ArrowRight');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1/1', 'false'));
 
       // go to next question
       await page.keyboard.press('Tab');
+      // move to radio 'Not Answered'
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveAttribute('name', 'radiogroup_/type1b/1');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1b/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1b/1', 'null'));
       // move to radio 'No'
       await page.keyboard.press('ArrowLeft');
+      await expect(focused).toHaveAttribute('name', 'radiogroup_/type1b/1');
+      await expect(focused.locator('xpath=../..')).toHaveAttribute('id', answerId('/type1b/1', 'false'));
 
       // go to next question
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveAttribute('id', '/type2/1');
+      await expect(focused).toHaveAttribute('id', '/type2/1');
     });
   });
 
@@ -168,22 +189,24 @@ test.describe('Visual effect tests', () => {
       const n1 = byId(page, 'n1/1/1');
       const n2 = byId(page, 'n2/1/1');
       const n3 = byId(page, 'n3/1/1');
-      const q4 = byId(page, 'q4/1/1');
+      const q4 = byId(page, 'q4/1/1'); // present when n1+n2+n3 >= 5;
 
       await expect(n1).toBeVisible();
       await expect(q4).not.toBeAttached();
       await n1.click();
-      await n1.type('1');
+      await n1.pressSequentially('1');
       await n2.click();
-      await n2.type('2');
+      await n2.pressSequentially('2');
       await n3.click();
-      await n3.type('3');
+      await n3.pressSequentially('3');
       await expect(q4).toBeVisible();
 
-      await expect(byId(page, 'item-n3/1/1')).toHaveClass(/lhc-tree-line/);
-      await expect(byId(page, 'item-n3/1/1')).not.toHaveClass(/lhc-last-item/);
-      await expect(byId(page, 'item-q4/1/1')).toHaveClass(/lhc-tree-line/);
-      await expect(byId(page, 'item-q4/1/1')).toHaveClass(/lhc-last-item/);
+      const itemN3 = byId(page, 'item-n3/1/1');
+      await expect(itemN3).toHaveClass(/lhc-tree-line/);
+      await expect(itemN3).not.toHaveClass(/lhc-last-item/);
+      const itemQ4 = byId(page, 'item-q4/1/1');
+      await expect(itemQ4).toHaveClass(/lhc-tree-line/);
+      await expect(itemQ4).toHaveClass(/lhc-last-item/);
     });
 
     test('should not show treeline by default if the questionnaire is 3 levels deep', async ({ page }) => {
@@ -222,17 +245,19 @@ test.describe('Visual effect tests', () => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
       await addFormToPage(page, 'multipleCodes.json', 'formContainer', { fhirVersion: 'R4', showQuestionCode: true });
-
-      await expect(page.locator('.lhc-item-code').nth(0)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(1)).toContainText('[85353-1]');
-      await expect(page.locator('.lhc-item-code').nth(1)).toHaveAttribute('href', 'https://loinc.org/85353-1');
-      await expect(page.locator('.lhc-item-code').nth(2)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(3)).toContainText('[29463-7]');
-      await expect(page.locator('.lhc-item-code').nth(3)).toHaveAttribute('href', 'https://loinc.org/29463-7');
-      await expect(page.locator('.lhc-item-code').nth(4)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(5)).toContainText('[29463-7]');
-      await expect(page.locator('.lhc-item-code').nth(6)).toContainText('[example]');
-      await expect(page.locator('.lhc-item-code').nth(7)).toContainText('[29463-7]');
+      const itemCodes = page.locator('.lhc-item-code');
+      await expect(itemCodes.nth(0)).toContainText('[example]');
+      await expect(itemCodes.nth(0)).not.toHaveAttribute('href');
+      await expect(itemCodes.nth(1)).toContainText('[85353-1]');
+      await expect(itemCodes.nth(1)).toHaveAttribute('href', 'https://loinc.org/85353-1');
+      await expect(itemCodes.nth(2)).toContainText('[example]');
+      await expect(itemCodes.nth(2)).not.toHaveAttribute('href');
+      await expect(itemCodes.nth(3)).toContainText('[29463-7]');
+      await expect(itemCodes.nth(3)).toHaveAttribute('href', 'https://loinc.org/29463-7');
+      await expect(itemCodes.nth(4)).toContainText('[example]');
+      await expect(itemCodes.nth(5)).toContainText('[29463-7]');
+      await expect(itemCodes.nth(6)).toContainText('[example]');
+      await expect(itemCodes.nth(7)).toContainText('[29463-7]');
     });
   });
 });

@@ -53,18 +53,19 @@ test.describe('display controls demo', () => {
 
     await byId(page, item2Other).locator('input').click();
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
-    expect(formData.items[2].value == null).toBe(true);
+    expect(formData.items[2].value == null).toBe(true); // allow undefined (Chrome)
 
-    await byId(page, item2OtherValue).fill('other values');
+    await byId(page, item2OtherValue).pressSequentially('other values');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[2].value).toBe('other values');
 
-    await byId(page, item2OtherValue).fill('other values again');
+    await byId(page, item2OtherValue).clear();
+    await byId(page, item2OtherValue).pressSequentially('other values again');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[2].value).toBe('other values again');
 
     // third answer list
-    expect(formData.items[3].value).toEqual([{code: 'c2', text: 'Answer Y'}, {code: 'c3', text: 'Answer Z'}]);
+    expect(formData.items[3].value).toEqual([{code: 'c2', text: 'Answer Y'}, {code: 'c3', text: 'Answer Z'}]); // default values
 
     await byId(page, item3answer1).click(); // appends first answer
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
@@ -83,16 +84,18 @@ test.describe('display controls demo', () => {
     await byId(page, item4Other).click();
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[4].value[0]).toEqual({code: 'c1', text: 'Answer X'});
-    expect(formData.items[4].value[1] == null).toBe(true);
+    expect(formData.items[4].value[1] == null).toBe(true); // allow undefined
 
-    await byId(page, item4OtherValue).fill('other values');
+    await byId(page, item4OtherValue).pressSequentially('other values');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[4].value.length).toBe(2);
     expect(formData.items[4].value[0].code).toBe('c1');
     expect(formData.items[4].value[0].text).toBe('Answer X');
     expect(formData.items[4].value[1]).toBe('other values');
 
-    await byId(page, item4OtherValue).fill('other values again');
+    // change the other value alone will update the data model when the checkbox is checked.
+    await byId(page, item4OtherValue).clear();
+    await byId(page, item4OtherValue).pressSequentially('other values again');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[4].value.length).toBe(2);
     expect(formData.items[4].value[0].code).toBe('c1');
@@ -117,24 +120,27 @@ test.describe('display controls demo', () => {
     await expect(byId(page, '/g1/g1m1/1/1')).toBeVisible();
     await expect(byId(page, '/g1/g1g2/g1g2q1/1/1/1')).toBeVisible();
     await expect(byId(page, '/g2/g1m1/1/1')).toBeVisible();
-    await expect(byId(page, '/g1/g1m1/2/1')).not.toBeAttached();
-    await expect(byId(page, '/g1/g1g2/g1g2q1/1/2/1')).not.toBeAttached();
-    await expect(byId(page, '/g2/g1m1/2/1')).not.toBeAttached();
+    const g1m1_2 = byId(page, '/g1/g1m1/2/1');
+    await expect(g1m1_2).not.toBeAttached();
+    const g1g2q1_2 = byId(page, '/g1/g1g2/g1g2q1/1/2/1');
+    await expect(g1g2q1_2).not.toBeAttached();
+    const g2m1_2 = byId(page, '/g2/g1m1/2/1');
+    await expect(g2m1_2).not.toBeAttached();
 
     await btnAdd1.click();
-    await expect(byId(page, '/g1/g1m1/2/1')).toBeVisible();
+    await expect(g1m1_2).toBeVisible();
     await byId(page, 'del-/g1/2').click();
-    await expect(byId(page, '/g1/g1m1/2/1')).not.toBeAttached();
+    await expect(g1m1_2).not.toBeAttached();
 
     await btnAdd2.click();
-    await expect(byId(page, '/g1/g1g2/g1g2q1/1/2/1')).toBeVisible();
+    await expect(g1g2q1_2).toBeVisible();
     await byId(page, 'del-/g1/g1g2/1/2').click();
-    await expect(byId(page, '/g1/g1g2/g1g2q1/1/2/1')).not.toBeAttached();
+    await expect(g1g2q1_2).not.toBeAttached();
 
     await btnAdd3.click();
-    await expect(byId(page, '/g2/g1m1/2/1')).toBeVisible();
+    await expect(g2m1_2).toBeVisible();
     await byId(page, 'del-/g2/2').click();
-    await expect(byId(page, '/g2/g1m1/2/1')).not.toBeAttached();
+    await expect(g2m1_2).not.toBeAttached();
   });
 
   test('section matrix works', async ({ page }) => {
@@ -147,6 +153,7 @@ test.describe('display controls demo', () => {
 
     await expect(byId(page, item1answer1)).toBeAttached();
 
+    // first row in matrix
     let formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[8].items[0].value).toBeUndefined();
 
@@ -161,6 +168,7 @@ test.describe('display controls demo', () => {
     expect(formData.items[8].items[0].value[0].text).toBe('Answer 1');
     expect(formData.items[8].items[0].value[1].code).toBe('c2');
     expect(formData.items[8].items[0].value[1].text).toBe('Answer 2');
+    // second row in matrix
     expect(formData.items[8].items[1].value).toBeUndefined();
 
     await byId(page, item2answer1).click();
@@ -183,8 +191,9 @@ test.describe('display controls demo', () => {
 
   test('should show disabled inputs', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
-    await expect(byId(page, '/readonlyST/1')).toBeAttached();
-    await expect(byId(page, '/readonlyST/1')).toBeDisabled();
+    const readonlyST = byId(page, '/readonlyST/1');
+    await expect(readonlyST).toBeAttached();
+    await expect(readonlyST).toBeDisabled();
     await expect(byId(page, '/readonlyCNE-s/1')).toBeDisabled();
     await expect(byId(page, '/readonlyCWE-m/1')).toBeDisabled();
     await expect(byId(page, answerId('/readonlyCNE-sb/1', undefined, 'c1')).locator('input')).toBeDisabled();
@@ -200,13 +209,15 @@ test.describe('display controls demo', () => {
   test('should show changed font color', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     await expect(byId(page, 'label-/q_lg/1')).toBeAttached();
-    await expect(byId(page, 'label-/q_lg/1')).toHaveCSS('color', 'rgb(255, 0, 0)');
+    await expect(byId(page, 'label-/q_lg/1')).toHaveCSS('color', 'rgb(255, 0, 0)'); // red
   });
 
   test('should display unit in item-control sub-item when exists', async ({ page }) => {
     await page.goto('/test/pages/lforms_testpage.html');
     await waitForLFormsReady(page);
     await loadFromTestData(page, 'q-with-item-control-unit.json', 'R5');
+    // Should use the unit display from the sub-item with item-control unit,
+    // instead of the Coding display from questionnaire-unit extension.
     await expect(byId(page, 'unit_/height/1')).toHaveValue('international inch');
   });
 });

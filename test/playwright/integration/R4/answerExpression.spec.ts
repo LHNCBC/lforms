@@ -2,11 +2,13 @@ import { test, expect } from '@playwright/test';
 import { byId, addFormToPage, pressCypressKeys, waitForLFormsReady } from '../../support/lforms-helpers';
 
 test.describe('AnswerExpression', () => {
-  test('should update answer list on an item whose type is string', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
+  });
 
+  test('should update answer list on an item whose type is string', async ({ page }) => {
     await byId(page, 'q2String/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(3);
     await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -14,10 +16,6 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should update answer list on an item whose type is integer', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await byId(page, 'q3Integer/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(3);
     await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -25,10 +23,6 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should update answer list on an item whose type is date', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await byId(page, 'q4Date/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(3);
     await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -36,10 +30,6 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should update answer list on an item whose type is time', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await byId(page, 'q5Time/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(3);
     await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -47,12 +37,8 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should update answer list when the source item changes', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     await byId(page, 'q1/1').click();
-    await byId(page, 'q1/1').type('abc');
+    await byId(page, 'q1/1').pressSequentially('abc');
 
     await byId(page, 'q1ListChoice/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(1);
@@ -67,7 +53,7 @@ test.describe('AnswerExpression', () => {
     // added another q1
     await byId(page, 'add-q1/1').click();
     await byId(page, 'q1/2').click();
-    await byId(page, 'q1/2').type('def');
+    await byId(page, 'q1/2').pressSequentially('def');
     // The selected answer 'abc' on 2 items should not disappear, as it is still valid.
     await expect(byId(page, 'q1ListChoice/1')).toHaveValue('abc');
     await expect(byId(page, 'q1ListString/1')).toHaveValue('abc');
@@ -84,13 +70,9 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should get correct data in lforms internal format', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     // Set up data: type abc in q1, def in q1/2, select items
     await byId(page, 'q1/1').click();
-    await byId(page, 'q1/1').type('abc');
+    await byId(page, 'q1/1').pressSequentially('abc');
     await byId(page, 'q1ListChoice/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(1);
     await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -101,7 +83,7 @@ test.describe('AnswerExpression', () => {
 
     await byId(page, 'add-q1/1').click();
     await byId(page, 'q1/2').click();
-    await byId(page, 'q1/2').type('def');
+    await byId(page, 'q1/2').pressSequentially('def');
 
     await byId(page, 'q1ListString/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(2);
@@ -138,20 +120,16 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should get correct data in QuestionnaireResponse', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     // Set up same data
     await byId(page, 'q1/1').click();
-    await byId(page, 'q1/1').type('abc');
+    await byId(page, 'q1/1').pressSequentially('abc');
     await byId(page, 'q1ListChoice/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(1);
     await page.locator('#lhc-tools-searchResults li:first-child').click();
 
     await byId(page, 'add-q1/1').click();
     await byId(page, 'q1/2').click();
-    await byId(page, 'q1/2').type('def');
+    await byId(page, 'q1/2').pressSequentially('def');
 
     await byId(page, 'q1ListString/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(2);
@@ -187,10 +165,6 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should get correct data in Questionnaire', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     const q = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('Questionnaire', 'R4'));
     for (let i = 0; i < 7; i++) {
       expect(q.item[i].answerOption).toBeUndefined();
@@ -198,13 +172,9 @@ test.describe('AnswerExpression', () => {
   });
 
   test('should reset selected answer when source item changes and selected answer becomes invalid', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'answerExpTest.R4.json', 'formContainer', { fhirVersion: 'R4' });
-
     // Set up: type abc in q1, select it in q1ListChoice and q1ListString
     await byId(page, 'q1/1').click();
-    await byId(page, 'q1/1').type('abc');
+    await byId(page, 'q1/1').pressSequentially('abc');
     await byId(page, 'q1ListChoice/1').click();
     await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(1);
     await page.locator('#lhc-tools-searchResults li:first-child').click();
@@ -218,7 +188,7 @@ test.describe('AnswerExpression', () => {
     // Add another q1 with 'def'
     await byId(page, 'add-q1/1').click();
     await byId(page, 'q1/2').click();
-    await byId(page, 'q1/2').type('def');
+    await byId(page, 'q1/2').pressSequentially('def');
 
     // Select 'def' for q1ListString
     await byId(page, 'q1ListString/1').click();

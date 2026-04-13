@@ -1,11 +1,22 @@
 import { test, expect, type Page } from '@playwright/test';
 import { byId, loadFromTestData, waitForLFormsReady } from '../support/lforms-helpers';
 
+
+/**
+ * Types an invalid value into a field, triggers validation by blurring, then
+ * clicks back to show the validation popover. Verifies the popover is
+ * horizontally aligned with and positioned directly above its input field.
+ * @param page - Playwright page
+ * @param index - The nth index of the validation popover / input-content div to check
+ * @param typeValue - The value to type (should trigger a validation error)
+ * @param inputId - The element ID of the input field
+ * @param otherEl - The element ID of another field to click (to blur the input)
+ */
 async function testOneType(page: Page, index: number, typeValue: string, inputId: string, otherEl: string) {
   const input = byId(page, inputId);
   await input.click();
-  await input.fill('');
-  await input.type(typeValue);
+  await input.clear();
+  await input.pressSequentially(typeValue);
   await byId(page, otherEl).click();
   await input.click();
 
@@ -31,7 +42,9 @@ test.describe('Validations Message Position', () => {
 
   test('Validation messages should be right above the input field', async ({ page }) => {
     const addButtonIds = ['add-/int1/1', 'add-/st1/1', 'add-/group1/1', 'add-/group2/1'];
-    const otherEl = '/other/1';
+    const otherEl = '/other/1'; // Use for creating blur event
+
+    // No need to test normal cases that are not repeating.
 
     // add a repeating item and test message positions
     await byId(page, addButtonIds[0]).click();

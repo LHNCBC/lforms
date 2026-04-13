@@ -2,10 +2,12 @@ import { test, expect } from '@playwright/test';
 import { byId, answerId, waitForLFormsReady, loadFromTestData } from '../../support/lforms-helpers';
 
 test.describe('Matrix Initial values on Radio buttons (R5)', () => {
-  test('displays a radio matrix table with initial values displayed --coding', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/lforms_testpage.html');
     await waitForLFormsReady(page);
+  });
 
+  test('displays a radio matrix table with initial values displayed --coding', async ({ page }) => {
     const files = [
       'matrixLayout-initialvalue-coding-non-repeats.R5.json',
       'matrixLayout-initialvalue-coding-optionsOrString-non-repeats.R5.json'
@@ -39,9 +41,6 @@ test.describe('Matrix Initial values on Radio buttons (R5)', () => {
   });
 
   test('displays a radio matrix table with initial values displayed --string', async ({ page }) => {
-    await page.goto('/test/pages/lforms_testpage.html');
-    await waitForLFormsReady(page);
-
     const files = [
       'matrixLayout-initialvalue-string-non-repeats.R5.json',
       'matrixLayout-initialvalue-string-optionsOrString-non-repeats.R5.json'

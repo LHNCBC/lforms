@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { addFormToPage, escapeIdSelector, waitForLFormsReady } from '../support/lforms-helpers';
+import { addFormToPage, escapeIdSelector, fhirVersions, waitForLFormsReady } from '../support/lforms-helpers';
 
-const fhirVersions = ['STU3', 'R4', 'R4B', 'R5'];
-
+// Testing that questionnaire-hidden extension works as expected.
 for (const fhirVersion of fhirVersions) {
   test.describe(`${fhirVersion}: questionnaire-hidden extension`, () => {
     test('Instructions field G0.d should be hidden', async ({ page }) => {
