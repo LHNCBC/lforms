@@ -264,10 +264,20 @@ describe('Visual effect tests', () => {
       });
       // A radio option is initially selected.
       cy.byId('/g1m1/1/1||c2').should('be.checked');
+      // Exported QR has 3 items.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item[0].item.length).to.equal(3);
+      });
       // Clear selection.
       cy.byId('/g1m1/1/1|_clearSelection').click();
       // Radio option should be unselected.
       cy.byId('/g1m1/1/1||c2').should('not.be.checked');
+      // Exported QR now has 2 items because the radio selection is cleared.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item[0].item.length).to.equal(2);
+      });
     });
   });
 
