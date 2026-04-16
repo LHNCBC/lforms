@@ -25,61 +25,64 @@ test.describe('calculatedExpression', () => {
   });
 
   test.describe('for single-select lists', () => {
-    test('should be able to set off-list Codings as answers', async ({ page }) => {
+    
+    test('should be able to set and reset answer/list using calculatedExpression and answerExpression', async ({ page }) => {
       await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
       await page.locator('#inputList\\/1').click();
+      // pick the first item, which is "blue"
       await page.locator('#completionOptions li').first().click();
+      // assert the calculated answer is set to "blue"
       await expect(page.locator('#calculatedAnswer\\/1\\/1')).toHaveValue('blue');
-    });
-
-    test('should be able to clear answers', async ({ page }) => {
-      await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
-      await page.locator('#inputList\\/1').click();
-      await page.locator('#completionOptions li').first().click();
-      // Assert selected item contains 'blue' before removal
-      await expect(page.locator('#inputList\\/1').locator('..').locator('li:first-child')).toContainText('blue');
-      // Remove the selected item
-      const selectedItem = page.locator('#inputList\\/1').locator('..').locator('li:first-child span');
-      await selectedItem.click();
-      // Assert 'blue' is gone after removal
-      await expect(page.locator('#inputList\\/1').locator('..')).not.toContainText('blue');
-      await expect(page.locator('#calculatedAnswer\\/1\\/1')).toHaveValue('');
-    });
-
-    test('should be able to set answer lists from list answers', async ({ page }) => {
-      await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
-      await page.locator('#inputList\\/1').click();
-      await page.locator('#completionOptions li').first().click();
-      // Clearing the field, which is currently autopopulated, but we will be
-      // disabling that behavior soon.
+      // assert the calculated list option is set to "blue"
       await page.locator('#calculatedListOption\\/1\\/1').fill('');
       await page.locator('#calculatedListOption\\/1\\/1').click();
       await expect(page.locator('#completionOptions li').first()).toBeVisible();
       await expect(page.locator('#completionOptions li').first()).toContainText('blue');
+
+      // assert selected item contains 'blue' before removal
+      await expect(page.locator('#inputList\\/1').locator('..').locator('li:first-child')).toContainText('blue');
+      // remove the selected item
+      const selectedItem = page.locator('#inputList\\/1').locator('..').locator('li:first-child span');
+      await selectedItem.click();
+      // assert 'blue' is gone after removal
+      await expect(page.locator('#inputList\\/1').locator('..')).not.toContainText('blue');
+      // assert the calculated answer is reset to empty
+      await expect(page.locator('#calculatedAnswer\\/1\\/1')).toHaveValue('');
+      // assert the calculated list option is reset to empty
+      await expect(page.locator('#calculatedListOption\\/1\\/1')).toHaveValue('');
     });
   });
 
   test.describe('for multi-select lists', () => {
-    test('should be able to set off-list Codings as answers', async ({ page }) => {
+    test('should be able to set and reset answers/list using calculatedExpression and answerExpression', async ({ page }) => {
       await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
       await page.locator('#inputList\\/1').click();
+      // pick the first item, which is "blue"
       await page.locator('#completionOptions li').first().click();
+      // pick the second item, which is "green"
+      await page.locator('#completionOptions li').first().click();
+      // assert both "blue" and "green" are selected
       await expect(byId(page, 'calculatedAnswers/1/1').locator('..')).toContainText('blue');
-      await page.locator('#completionOptions li').first().click();
       await expect(byId(page, 'calculatedAnswers/1/1').locator('..')).toContainText('green');
-    });
-
-    test('should be able to set answer lists from list answers', async ({ page }) => {
-      await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
-      await page.locator('#inputList\\/1').click();
-      await page.locator('#completionOptions li').first().click();
-      await page.locator('#completionOptions li').first().click();
+      // assert the calculated list options are set to "blue" and "green" but nothing is seleted
       await expect(page.locator('#calculatedListOptions\\/1\\/1')).toHaveValue('');
       await page.locator('#calculatedListOptions\\/1\\/1').click();
       await expect(page.locator('#completionOptions li').first()).toBeVisible();
       await expect(page.locator('#completionOptions li').first()).toContainText('blue');
       await expect(page.locator('#completionOptions li').nth(1)).toContainText('green');
+
+      // remove the selected item, "blue"
+      const selectedItem = page.locator('#inputList\\/1').locator('..').locator('li:first-child span');
+      await selectedItem.click();
+      // assert only "green" is selected
+      await expect(byId(page, 'calculatedAnswers/1/1').locator('..')).toContainText('green');
+      // assert the calculated list options is set to "green" but nothing is seleted
+      await expect(page.locator('#calculatedListOptions\\/1\\/1')).toHaveValue('');
+      await page.locator('#calculatedListOptions\\/1\\/1').click();
+      await expect(page.locator('#completionOptions li').first()).toBeVisible();
+      await expect(page.locator('#completionOptions li').first()).toContainText('green');
     });
+
   });
 
   test.describe('splitting a string', () => {
