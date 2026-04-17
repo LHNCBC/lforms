@@ -145,6 +145,7 @@ test.describe('multiple initial values on repeating question', () => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'q-with-multiple-initial-values-and-child-items.json', 'formContainer', { fhirVersion: 'R4' });
+    // Should render two questions, each with a single default answer.
     await expect(byId(page, 'parent-decimal/1')).toHaveValue('10.5');
     await expect(byId(page, 'parent-decimal/2')).toHaveValue('2');
   });

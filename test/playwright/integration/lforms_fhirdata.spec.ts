@@ -78,6 +78,8 @@ async function fillInFHTForm(page: Page) {
   await byId(page, '/54126-8/54137-5/54130-0/1/2/1').press('Enter');
   // Blur the last field to commit the value
   await byId(page, '/54126-8/54137-5/54130-0/1/2/1').blur();
+  // Blue sometimes doesn't trigger the change event for the last field, so click on another field to make sure the value is committed.
+  await byId(page, '/54126-8/54137-5/54140-9/1/2/1').click();
 }
 
 for (const fhirVersion of fhirVersions) {

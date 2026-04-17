@@ -101,45 +101,56 @@ for (const fhirVersion of fhirVersions) {
         test(`should render a questionnaire with ${valueType} in answerOption`, async ({ page }) => {
           const listItems = page.locator('#lhc-tools-searchResults li');
 
-          // group 1 - autocomplete
+          // group 1
+          // autocomplete, non-repearts
           await byId(page, ids.g1item1).click();
           await expect(listItems.nth(0)).toContainText(values.g1Answer1);
           await expect(listItems.nth(1)).toContainText(values.g1Answer2);
           await expect(listItems.nth(2)).toContainText(values.g1Answer3);
+          // autocomplete, repeats
           await byId(page, ids.g1item2).click();
           await expect(listItems.nth(0)).toContainText(values.g1Answer1);
           await expect(listItems.nth(1)).toContainText(values.g1Answer2);
           await expect(listItems.nth(2)).toContainText(values.g1Answer3);
 
-          // group 2 - radio/checkbox
+          // group 2 
+          // radio
           await expect(byId(page, ids.g2item1ans2)).toContainText(values.g1Answer2);
+          // checkbox
           await expect(byId(page, ids.g2item2ans2)).toContainText(values.g1Answer2);
 
-          // group 3 - prefix/score
+          // group 3
+          // autocomplete, non-repeats, prefix, score
           await byId(page, ids.g3item1).click();
           await expect(listItems.nth(0)).toContainText(values.g3Answer1);
           await expect(listItems.nth(1)).toContainText(values.g3Answer2);
           await expect(listItems.nth(2)).toContainText(values.g3Answer3);
+          // autocomplete, repeats, prefix, score
           await byId(page, ids.g3item2).click();
           await expect(listItems.nth(0)).toContainText(values.g3Answer1);
           await expect(listItems.nth(1)).toContainText(values.g3Answer2);
           await expect(listItems.nth(2)).toContainText(values.g3Answer3);
 
           // group 4
+          // radiobutton, prefix, score
           await expect(byId(page, ids.g4item1ans2)).toContainText(values.g3Answer2);
+          // checkbox, prefix, score
           await expect(byId(page, ids.g4item2ans2)).toContainText(values.g3Answer2);
 
-          // group 5 - initial values
+          // group 5
+          // autocomplete, non-repeats, initial
+          // for open-choice, the initial value is free text
           if (valueType === 'valueCoding.open-choice') {
             await expect(byId(page, ids.g5item1)).toHaveValue('user typed value');
           } else {
             await expect(byId(page, ids.g5item1)).toHaveValue(values.g1Answer2);
           }
-
+          // autocomplete, repeats, initial
           if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
             await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li')).toHaveCount(2);
             await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
             if (valueType === 'valueCoding.open-choice') {
+              // for open-choice, the 2nd initial value is free text
               await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(1)).toHaveText('×user typed value');
             } else {
               await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(1)).toHaveText('×' + values.g1Answer3);
@@ -149,7 +160,10 @@ for (const fhirVersion of fhirVersions) {
             await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
           }
 
-          // group 6 - radio/checkbox initial
+          // group 6 
+          // radiobutton, non-repeats, initial
+          await expect(byId(page, ids.g6item1ans2)).toContainText(values.g1Answer2);
+          // for open-choice, the initial value is free text
           if (valueType === 'valueCoding.open-choice') {
             await expect(byId(page, ids.g6item1ans2).locator('input').first()).not.toBeChecked();
             await expect(byId(page, answerId('valueCoding.open-choice-group6-item1/1/1', '_other')).locator('input').first()).toBeChecked();
@@ -157,9 +171,11 @@ for (const fhirVersion of fhirVersions) {
           } else {
             await expect(byId(page, ids.g6item1ans2).locator('input').first()).toBeChecked();
           }
-
+          // checkbox, repeats, initial
+          await expect(byId(page, ids.g6item2ans2)).toContainText(values.g1Answer2);
           await expect(byId(page, `${ids.g6item2ans1}`).locator('input').first()).not.toBeChecked();
           await expect(byId(page, `${ids.g6item2ans2}`).locator('input').first()).toBeChecked();
+          await expect(byId(page, ids.g6item2ans3)).toContainText(values.g1Answer3);
 
           if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
             if (valueType === 'valueCoding.open-choice') {
@@ -176,26 +192,40 @@ for (const fhirVersion of fhirVersions) {
 
         test(`should get correct QR and merge back for ${valueType}`, async ({ page }) => {
           // Select values
+          // group 1
+          // autocomplete, non-repeats
           await byId(page, ids.g1item1).click();
           await byId(page, ids.g1item1).press('ArrowDown');
           await byId(page, ids.g1item1).press('ArrowDown');
           await byId(page, ids.g1item1).press('Enter');
+          // autocomplete, repeats
           await byId(page, ids.g1item2).click();
           await byId(page, ids.g1item2).press('ArrowDown');
           await byId(page, ids.g1item2).press('ArrowDown');
           await byId(page, ids.g1item2).press('Enter');
+          // group 2
+          // raidobutoon
           await byId(page, ids.g2item1ans2).click();
+          // checkbox
           await byId(page, ids.g2item2ans2).click();
+          // group 3
+          // autocomplete, non-repeats, prefix, score
           await byId(page, ids.g3item1).click();
           await byId(page, ids.g3item1).press('ArrowDown');
           await byId(page, ids.g3item1).press('ArrowDown');
           await byId(page, ids.g3item1).press('Enter');
+          // autocomplete, repeats, prefix, score
           await byId(page, ids.g3item2).click();
           await byId(page, ids.g3item2).press('ArrowDown');
           await byId(page, ids.g3item2).press('ArrowDown');
           await byId(page, ids.g3item2).press('Enter');
+          // group 4
+          // radiobutton, prefix, score
           await byId(page, ids.g4item1ans2).click();
+          // checkbox, prefix, score
           await byId(page, ids.g4item2ans2).click();
+
+          // group 5 and group 6 use the initial values
 
           // Get QR and merge back
           const qr = await page.evaluate((fv) => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', fv), fhirVersion);
@@ -251,42 +281,54 @@ for (const fhirVersion of fhirVersions) {
             expect(qr.item[5].item[1].answer).toEqual([qrValues.g1Answer2]);
           }
 
-          // Merge back
+          // merge the QuestionnaireResonse back to the Questionnaire
           const qData = JSON.parse(fs.readFileSync(`test/data/${fhirVersionInFile}/${fileName}`, 'utf-8'));
-          await page.evaluate(async ({ q, qr, fhirVersion }) => {
+          const hasSavedData = await page.evaluate(async ({ q, qr, fhirVersion }) => {
             const win = window as any;
             const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
             const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, fhirVersion);
             document.getElementById('formContainer')!.innerHTML = '';
             await win.LForms.Util.addFormToPage(mergedFormData, 'formContainer', { fhirVersion });
+            return mergedFormData?.hasSavedData;
           }, { q: qData, qr, fhirVersion });
+          expect(hasSavedData).toBe(true);
           await expect(page.locator('#formContainer .lhc-form-title')).toBeVisible();
 
           // Verify merged data
           // group 1
+          // autocomplete, non-repeats
           await expect(byId(page, ids.g1item1)).toHaveValue(values.g1Answer2);
+          // autocomplete, repeats
           await expect(byId(page, `item-${ids.g1item2}`).locator('span.autocomp_selected li')).toHaveCount(1);
           await expect(byId(page, `item-${ids.g1item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
 
           // group 2
+          // raidobutoon
           await expect(byId(page, `${ids.g2item1ans2}`).locator('input').first()).toBeChecked();
+          // checkbox
           await expect(byId(page, `${ids.g2item2ans2}`).locator('input').first()).toBeChecked();
 
           // group 3
+          // autocomplete, non-repeats, prefix, score
           await expect(byId(page, ids.g3item1)).toHaveValue(values.g3Answer2);
+          // autocomplete, repeats, prefix, score
           await expect(byId(page, `item-${ids.g3item2}`).locator('span.autocomp_selected li')).toHaveCount(1);
           await expect(byId(page, `item-${ids.g3item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g3Answer2);
 
           // group 4
+          // radiobutton, prefix, score
           await expect(byId(page, `${ids.g4item1ans2}`).locator('input').first()).toBeChecked();
+          // checkbox, prefix, score
           await expect(byId(page, `${ids.g4item2ans2}`).locator('input').first()).toBeChecked();
 
           // group 5
+          // autocomplete, non-repeats, initial
           if (valueType === 'valueCoding.open-choice') {
             await expect(byId(page, ids.g5item1)).toHaveValue('user typed value');
           } else {
             await expect(byId(page, ids.g5item1)).toHaveValue(values.g1Answer2);
           }
+          // autocomplete, repeats, initial
           if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
             await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li')).toHaveCount(2);
             await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
@@ -301,6 +343,7 @@ for (const fhirVersion of fhirVersions) {
           }
 
           // group 6
+          // radiobutton, non-repeats, initial
           await expect(byId(page, `${ids.g6item1ans1}`).locator('input').first()).not.toBeChecked();
           await expect(byId(page, `${ids.g6item1ans3}`).locator('input').first()).not.toBeChecked();
           if (valueType === 'valueCoding.open-choice') {
@@ -310,6 +353,7 @@ for (const fhirVersion of fhirVersions) {
           } else {
             await expect(byId(page, `${ids.g6item1ans2}`).locator('input').first()).toBeChecked();
           }
+          // checkbox, repeats, initial
           await expect(byId(page, `${ids.g6item2ans1}`).locator('input').first()).not.toBeChecked();
           await expect(byId(page, `${ids.g6item2ans2}`).locator('input').first()).toBeChecked();
           if (fhirVersion === 'R4' || fhirVersion === 'R4B') {

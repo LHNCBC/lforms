@@ -53,6 +53,7 @@ test.describe('Attachment support', () => {
     });
 
     test('should not allow files over maxSize size', async ({ page }) => {
+      // Create a temporary test file
       let testData = '';
       for (let i = 0; i < 5002; i++) testData += 'z';
       const tempFile = path.join(os.tmpdir(), 'test.txt');
@@ -69,6 +70,7 @@ test.describe('Attachment support', () => {
     });
 
     test('should only allow permitted mime types', async ({ page }) => {
+      // The questionnaire is configured to only allow .json & .txt
       let testData = 'zz';
       const tempZip = path.join(os.tmpdir(), 'test.zip');
       fs.writeFileSync(tempZip, testData);
@@ -79,6 +81,7 @@ test.describe('Attachment support', () => {
       });
       await page.locator('#file-upload\\/1').setInputFiles(tempZip);
       expect(dialogMessage).toContain('type');
+      // The file input should still be there and be blank.
       await expect(page.locator('#file-upload\\/1')).toHaveValue('');
       fs.unlinkSync(tempZip);
 
@@ -92,6 +95,8 @@ test.describe('Attachment support', () => {
       });
       await page.locator('#file-upload\\/1').setInputFiles(tempBlank);
       expect(dialogMessage2).toContain('type');
+      // The file input should still be there and be blank.
+      await expect(page.locator('#file-upload\\/1')).toHaveValue('');
       fs.unlinkSync(tempBlank);
     });
 
@@ -101,6 +106,7 @@ test.describe('Attachment support', () => {
       await expect(inputs).toHaveCount(3);
       await inputs.nth(0).fill('http://one');
       await page.locator('.attach-button').click();
+      // Confirm the fields are replaced by a link
       await expect(page.locator('#file-upload\\/1')).not.toBeAttached();
       await expect(page.locator('a')).toHaveText('http://one');
       await expect(page.locator('a')).toHaveAttribute('href', 'http://one');
@@ -122,6 +128,7 @@ test.describe('Attachment support', () => {
       await inputs.nth(0).fill('http://one');
       await inputs.nth(1).fill('two');
       await page.locator('.attach-button').click();
+      // Confirm the fields are replaced by a link
       await expect(page.locator('#file-upload\\/1')).not.toBeAttached();
       await expect(page.locator('a')).toHaveText('two');
       await expect(page.locator('a')).toHaveAttribute('href', 'http://one');
@@ -154,6 +161,7 @@ test.describe('Attachment support', () => {
       await inputs2.nth(1).fill('four');
       await page.locator('#file-upload\\/2').setInputFiles('test/data/lforms/attachmentQ.json');
       await page.locator('.attach-button').click();
+      // Confirm the fields are replaced by a link
       await expect(page.locator('#file-upload\\/1')).not.toBeAttached();
       await expect(page.locator('a')).toHaveCount(2);
       await expect(page.locator('a').nth(1)).toHaveText('four');
@@ -185,7 +193,7 @@ test.describe('Attachment support', () => {
         const lfData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, q, 'R4');
         return { lfData };
       });
-
+      // Open another page where we can use addFormToPage
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
       await page.evaluate(async ({ lfData }) => {
@@ -207,6 +215,7 @@ test.describe('Attachment support', () => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
       await addFormToPage(page, 'attachmentQ.json', 'formContainer', {});
+      // Use the current page to get a QR
       await page.locator('#file-upload\\/1').setInputFiles('test/data/lforms/attachmentQ.json');
       await expect(page.locator('#file-upload\\/1')).not.toBeAttached();
       await expect(page.locator('a')).toHaveText('attachmentQ.json');

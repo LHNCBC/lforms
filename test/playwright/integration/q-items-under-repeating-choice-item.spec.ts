@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { addFormToPage, waitForLFormsReady, byId } from '../support/lforms-helpers';
 import * as fs from 'fs';
-
+// R4B is same as R4 for Questionnaire and QuestionnaireResponse.
+// No need to test R4B in this test file.
 const fhirVersions = ['R4', 'R5', 'STU3'];
 
 for (const fhirVersion of fhirVersions) {
@@ -31,7 +32,7 @@ for (const fhirVersion of fhirVersions) {
       await byId(page, '/choice/group/int/1/1/2').click();
       await byId(page, '/choice/group/int/1/1/2').fill('4');
 
-      // same set under another layer
+      // same set of item under another layer of choice/coding item
       await byId(page, '/choice/choice/1/1').click();
       await byId(page, '/choice/choice/1/1').press('ArrowDown');
       await byId(page, '/choice/choice/1/1').press('ArrowDown');

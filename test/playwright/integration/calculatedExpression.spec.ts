@@ -10,6 +10,7 @@ test.describe('calculatedExpression', () => {
 
   test('should not cause a field to be readonly', async ({ page }) => {
     await addFormToPage(page, 'editableCalcExp.json', 'formContainer', { fhirVersion: 'R4' });
+    // Check that the BMI field is not disabled
     const disabled = await byId(page, '/39156-5/1').getAttribute('disabled');
     expect(disabled).toBeNull();
   });
@@ -33,8 +34,8 @@ test.describe('calculatedExpression', () => {
       await page.locator('#completionOptions li').first().click();
       // assert the calculated answer is set to "blue"
       await expect(page.locator('#calculatedAnswer\\/1\\/1')).toHaveValue('blue');
-      // assert the calculated list option is set to "blue"
-      await page.locator('#calculatedListOption\\/1\\/1').fill('');
+      // assert the calculated list option is set to "blue"      // Clearing the field, which is currently autopopulated, but we will be
+      // disabling that behavior soon.      await page.locator('#calculatedListOption\\/1\\/1').fill('');
       await page.locator('#calculatedListOption\\/1\\/1').click();
       await expect(page.locator('#completionOptions li').first()).toBeVisible();
       await expect(page.locator('#completionOptions li').first()).toContainText('blue');
@@ -127,9 +128,11 @@ test.describe('calculatedExpression', () => {
 
     test('should allow the user to override values of the repeating string field', async ({ page }) => {
       // Clear source field to disable calculated expression
+      // Clear source field to disable calculated expression
       await page.locator('#string-to-split\\/1').fill('');
       await page.locator('#string-to-split\\/1').blur();
       await expect(page.locator('#repeating-string\\/1')).toHaveValue('');
+      // Type 'one', but while doing so, check for a bug where the first character disappears
       const repField = page.locator('#repeating-string\\/1');
       await repField.pressSequentially('o');
       await expect(repField).toHaveValue('o');
@@ -289,7 +292,7 @@ test.describe('calculatedExpression', () => {
       await byId(page, 'link-1.1.2/1/1/1').press('Enter');
       await expect(byId(page, 'link-2/1')).toHaveValue('21');
 
-      // initialExpression should also work
+      // initialExpression should also work with itemWeight.
       await expect(byId(page, 'link-3/1')).toHaveValue('1');
     });
 

@@ -14,7 +14,9 @@ test.describe('Tests of addFormToPage test page', () => {
   test('should have two forms displayed on the page', async ({ page }) => {
     await addFormToPage(page, 'allInOne.json', 'formContainer');
     await addFormToPage(page, 'rxTerms.json', 'formContainer2');
+    // two tags with tag name "wc-lhc-form" 
     await expect(page.locator('wc-lhc-form')).toHaveCount(2);
+    // two formsFormTo
     await expect(page.locator('.lhc-form-title')).toHaveCount(2);
   });
 
@@ -66,11 +68,13 @@ test.describe('Tests of addFormToPage test page', () => {
   test('should be able to display a very nested form', async ({ page }) => {
     await addFormToPage(page, 'very-nested-form.json', 'formContainer');
     await expect(page.locator('#formContainer')).toContainText('NestedQ');
+    // Make sure the error message div is blank
     await expect(byId(page, 'loadMsg')).toHaveText('');
   });
 
   test('should display answerValueSet with an old terminology server URL specified at root level', async ({ page }) => {
     await addFormToPage(page, 'preferredTerminologyServer-at-root-level.json', 'formContainer', { fhirVersion: 'R4' });
+    // The form has a question with 7 radio button options.
     await expect(page.locator('.ant-radio-input')).toHaveCount(7);
   });
 
@@ -86,6 +90,7 @@ test.describe('Tests of addFormToPage test page', () => {
 
     test('should be able to be called with a variable name', async ({ page }) => {
       const formDef = JSON.parse(fs.readFileSync('test/data/lforms/FHTData.json', 'utf-8'));
+      // using the variable name method (FHTData).
       await page.evaluate(async ({ formDef }) => {
         (window as any).FHTData = formDef;
         await (window as any).LForms.Util.addFormToPage('FHTData', 'formContainer');
@@ -93,8 +98,9 @@ test.describe('Tests of addFormToPage test page', () => {
       await expect(page.locator('#formContainer')).toContainText('USSG-FHT');
     });
 
-    test('should be able to take a form object', async ({ page }) => {
+    test('should be able to take a form object in lforms format', async ({ page }) => {
       const formDef = JSON.parse(fs.readFileSync('test/data/lforms/FHTData.json', 'utf-8'));
+      // using the form object method
       await page.evaluate(async ({ formDef }) => {
         await (window as any).LForms.Util.addFormToPage(formDef, 'formContainer');
       }, { formDef });
@@ -145,6 +151,9 @@ test.describe('Tests of addFormToPage test page', () => {
       await byId(page, '/54126-8/54128-4/1/1').press('ArrowDown');
       await byId(page, '/54126-8/54128-4/1/1').press('ArrowDown');
       await byId(page, '/54126-8/54128-4/1/1').press('Enter');
+      // Store the "Adopted" question answer in beforeValue for verification after addFormToPage().
+      // The answer valueset returned from server is not of deterministic order - it could be
+      // Yes/No/Don't know or No/Yes/Don't know.
       const beforeValue = await byId(page, '/54126-8/54128-4/1/1').inputValue();
 
       const { q, qr } = await page.evaluate(() => {
