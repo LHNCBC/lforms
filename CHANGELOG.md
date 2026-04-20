@@ -2,9 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [41.1.1] 2026-04-20
+## [41.2.1] 2026-04-20
 ### Changed
 - Converted Cypress e2e tests to Playwright.
+
+## [41.2.0] 2026-04-10
+### Added
+- New template option showRadioClearSelectionButton to show a
+  "clear selection" button next to radio buttons. Defaults to false.
 
 ## [41.1.0] 2026-04-02
 ### Added

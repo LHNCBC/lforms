@@ -121,7 +121,9 @@ export default class LhcFormData {
     // only be set to true when the form is used in a trusted environment.
     allowExternalURL: false,
     // Whether to render the form as readonly
-    readonlyMode: false
+    readonlyMode: false,
+    // Whether to show a "clear selection" button next to radio buttons.
+    showRadioClearSelectionButton: false
   };
 
   // other instance level variables that were not previously listed
@@ -650,7 +652,7 @@ export default class LhcFormData {
     if (item._hasValidation && item.constraints && item.constraints.length > 0) {
       for (let i=0; i<item.constraints.length; i++) {
         const constraint = item.constraints[i].extension;
-        const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
+        const expression = constraint.find(e => e.url === 'expression')?.valueExpression?.expression;
         if (expression) {
           // Regenerate _elemIDToQRItem to get a fresh context, otherwise the evaluated result will be cached
           // even after you change form value and evaluate again.
@@ -665,12 +667,14 @@ export default class LhcFormData {
             const itemOfLocation = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, location, item);
             // Use a timeout to add to the validation errors of the location item, lest it be overridden by
             // the validation of the location item itself which might be processed after the current item.
-            setTimeout(() => {
-              let itemToShowError = this._findItemByLinkId(item, itemOfLocation.linkId);
-              // Add the validation error message (human) to the item._validationErrors array of the item
-              // specified in the constraint's location.
-              itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], errorMsg];
-            }, 1);
+            if (itemOfLocation && itemOfLocation.linkId) {
+              setTimeout(() => {
+                let itemToShowError = this._findItemByLinkId(item, itemOfLocation.linkId);
+                // Add the validation error message (human) to the item._validationErrors array of the item
+                // specified in the constraint's location.
+                itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], errorMsg];
+              }, 1);
+            }
           }
         }
       }
