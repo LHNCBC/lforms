@@ -177,6 +177,63 @@ test.describe('Visual effect tests', () => {
       await page.keyboard.press('Tab');
       await expect(focused).toHaveAttribute('id', '/type2/1');
     });
+
+    test('should clear radio selection when "clear selection" button is clicked', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerOption/answerOption-valueCoding.open-choice.R4.json', 'formContainer', {fhirVersion: 'R4', showRadioClearSelectionButton: true});
+      // Select a radio option.
+      await byId(page, 'valueCoding.open-choice-group2-item1/1/1||c3').click();
+      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1||c3').locator('input')).toBeChecked();
+      // Clear selection.
+      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      // Radio option should be unselected.
+      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1||c3').locator('input')).not.toBeChecked();
+      // Check Other option and type in Other value.
+      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_other').click();
+      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1|_other').locator('input[type="radio"]')).toBeChecked();
+      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_otherValue').fill('abc');
+      // Exported QR has 3 items.
+      const qr1 = await page.evaluate(() => {
+        return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+      });
+      expect(qr1.item.length).toBe(3);
+      // Clear selection.
+      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      // Other option should be unselected, and Other value should be gone.
+      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1|_other').locator('input[type="radio"]')).not.toBeChecked();
+      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1|_otherValue')).not.toBeAttached();
+      // Exported QR now has 2 items because the radio selection is cleared.
+      const qr2 = await page.evaluate(() => {
+        return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+      });
+      expect(qr2.item.length).toBe(2);
+    });
+
+    test('should clear radio selection when "clear selection" button is clicked - matrix layout', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'matrixLayout-initialvalue-choice-non-repeats.R4.json', 'formContainer', {
+        fhirVersion: 'R4',
+        showRadioClearSelectionButton: true
+      });
+      // A radio option is initially selected.
+      await expect(byId(page, '/g1m1/1/1||c2')).toBeChecked();
+      // Exported QR has 3 items.
+      const qr1 = await page.evaluate(() => {
+        return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+      });
+      expect(qr1.item[0].item.length).toBe(3);
+      // Clear selection.
+      await byId(page, '/g1m1/1/1|_clearSelection').click();
+      // Radio option should be unselected.
+      await expect(byId(page, '/g1m1/1/1||c2')).not.toBeChecked();
+      // Exported QR now has 2 items because the radio selection is cleared.
+      const qr2 = await page.evaluate(() => {
+        return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+      });
+      expect(qr2.item[0].item.length).toBe(2);
+    });
   });
 
   test.describe('tree lines', () => {
