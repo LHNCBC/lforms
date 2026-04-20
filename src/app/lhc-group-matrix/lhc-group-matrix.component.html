@@ -33,6 +33,14 @@
           <td class="lhc-question">
             <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
             <lhc-item-messages [item]="subItem" ></lhc-item-messages>
+            <button type="button"
+                    *ngIf="!isCheckbox && lhcDataService.getLhcFormData()?.templateOptions.showRadioClearSelectionButton"
+                    [id]="lhcDataService.getItemAnswerId(subItem, '_clearSelection')"
+                    class="lhc-float-button lhc-button"
+                    [disabled]="item._readOnly"
+                    (click)="updateRadioListValue(subItem, undefined, null)">
+              Clear selection
+            </button>
           </td>
           <td *ngFor="let answer of item.items[0].answers; index as i"
             class="lhc-form-matrix-cell">
