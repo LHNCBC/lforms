@@ -34,6 +34,31 @@ test.describe('skip logic', () => {
     await expect(n1).toBeVisible();
   });
 
+  test('should remove enableWhenExpression items from QuestionnaireResponse properly', async ({ page }) => {
+    await page.goto('/test/pages/lforms_testpage.html');
+    await waitForLFormsReady(page);
+    await loadFromTestData(page, 'enableWhenExpressionTest.json', 'R4');
+    const n1 = byId(page, 'n1/1/1');
+    const q4 = byId(page, 'q4/1/1'); // present when n1+n2+n3 >= 5;
+    await expect(n1).toBeVisible();
+    await expect(q4).not.toBeAttached();
+    await n1.click();
+    await n1.fill('5');
+    await expect(q4).toBeVisible();
+    await q4.click();
+    await q4.fill('888');
+    const qr1 = await page.evaluate(() => {
+      return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+    });
+    expect(qr1.item[0].item.length).toBe(2);
+    await n1.fill('4');
+    await expect(q4).not.toBeAttached();
+    const qr2 = await page.evaluate(() => {
+      return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+    });
+    expect(qr2.item[0].item.length).toBe(1);
+  });
+
   test('target items should be hidden initially', async ({ page }) => {
     await openFormByIndex(page, 4); // FullFeaturedForm
     await expect(byId(page, '/slTargetItem1/1')).not.toBeAttached();

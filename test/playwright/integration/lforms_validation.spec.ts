@@ -700,4 +700,39 @@ test.describe('Validations', () => {
       await expect(byId(page, 'add-1/2')).toBeVisible();
     });
   });
+
+  test.describe('targetConstraint', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/test/pages/lforms_testpage.html');
+      await waitForLFormsReady(page);
+    });
+
+    test('should validate targetConstraint', async ({ page }) => {
+      await loadFromTestData(page, 'q-with-targetConstraint.json', 'R4');
+      await byId(page, '1.1/1/1').fill('2');
+      await byId(page, '1.2/1/1').fill('1');
+      await byId(page, '1.2/1/1').blur();
+      const errors1 = await page.evaluate(() => {
+        return (window as any).LForms.Util.checkValidity();
+      });
+      expect(errors1).toEqual([
+        'Please enter a minimum and maximum value. The minimum value must be less than or equal to the maximum value. The targetConstraint key is: min-max-check.'
+      ]);
+      // The error message should be shown on the Maximum Value field, as defined in the
+      // targetConstraint extension 'location' sub extension.
+      await expect(
+        byId(page, 'item-1.2/1/1').locator(':text("The minimum value must be less than or equal to the maximum value.")')
+      ).toBeVisible();
+      // Change to valid values.
+      await byId(page, '1.2/1/1').fill('3');
+      await byId(page, '1.2/1/1').blur();
+      const errors2 = await page.evaluate(() => {
+        return (window as any).LForms.Util.checkValidity();
+      });
+      expect(errors2).toBeNull();
+      await expect(
+        page.locator(':text("The minimum value must be less than or equal to the maximum value.")')
+      ).not.toBeVisible();
+    });
+  });
 });
