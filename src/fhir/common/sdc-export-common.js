@@ -316,7 +316,7 @@ function addCommonSDCExportFns(ns) {
         if (source.items[i].isSubGroupForCheckbox) {
           source.items.splice(i, 1);
         }
-        // If the precious item is a repeating item and this item's linkdId is the same, remove it.
+        // If the previous item is a repeating item and this item's linkId is the same, remove it.
         else if (repeatingItemLinkId && source.items[i].linkId === repeatingItemLinkId) {
           source.items.splice(i, 1);
         } else {
@@ -527,7 +527,7 @@ function addCommonSDCExportFns(ns) {
         }]
       };
 
-      // format could be 'html' or 'text'
+      // format could be 'html', 'markdown' or 'text'
       if (item.codingInstructionsFormat === 'html') {
         // add a "_text" field to contain the extension for the string value in the 'text' field
         // see http://hl7.org/fhir/R4/json.html#primitive
@@ -535,6 +535,13 @@ function addCommonSDCExportFns(ns) {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
             "valueString": item.codingInstructions
+          }]
+        }
+      } else if (item.codingInstructionsFormat === 'markdown') {
+        helpItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+            "valueString": item.codingInstructionsOriginalMarkdown
           }]
         }
       }
@@ -581,7 +588,7 @@ function addCommonSDCExportFns(ns) {
         }]
       };
 
-      // format could be 'html' or 'text'
+      // format could be 'html', 'markdown' or 'text'
       if (item.legalFormat === 'html') {
         // add a "_text" field to contain the extension for the string value in the 'text' field
         // see http://hl7.org/fhir/R4/json.html#primitive
@@ -589,6 +596,13 @@ function addCommonSDCExportFns(ns) {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
             "valueString": item.legal
+          }]
+        }
+      } else if (item.legalFormat === 'markdown') {
+        legalItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
+            "valueString": item.legalOriginalMarkdown
           }]
         }
       }
@@ -1042,16 +1056,18 @@ function addCommonSDCExportFns(ns) {
               if (fhirItem) {
                 // Find the matching QR answer and put the sub-group item under it instead of under targetItem.item.
                 // Using checkboxOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
-                const refindedAnswerList = targetItem.answer.map(a => {
+                const refinedAnswerList = targetItem.answer.map(a => {
                   if (!a.valueCoding) {
                     return a;
-                  } else if (a.valueCoding && a.valueCoding.display) {
+                  } else if (a.valueCoding.display) {
                     // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
                     // Create a new object with property "text" for matching, since lfSubItem.checkboxOption has "text" but not "display".
                     return { ...a.valueCoding, text: a.valueCoding.display };
+                  } else {
+                    return a.valueCoding;
                   }
                 });
-                let matchingAnswerIndex = refindedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.checkboxOption, lfItem));
+                let matchingAnswerIndex = refinedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.checkboxOption, lfItem));
                 if (matchingAnswerIndex !== -1) {
                   targetItem.answer[matchingAnswerIndex].item = fhirItem.item;
                 }

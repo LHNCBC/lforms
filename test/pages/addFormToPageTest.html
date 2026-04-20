@@ -50,6 +50,8 @@
                   allowHTML</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="displayInvalidHTML" />
                   displayInvalidHTML</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="allowMarkdown" />
+                  allowMarkdown</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" />
                   showCodingInstruction</label></span>
             </div>
@@ -130,6 +132,7 @@
         var questionnaire, options = { 'messageLevel': 'info' };
         var allowHTML = document.querySelector('#allowHTML').checked,
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
+            allowMarkdown = document.querySelector('#allowMarkdown').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
 
         reader.onload = function() {
@@ -139,7 +142,7 @@
 
           try {
             LForms.Util.addFormToPage(questionnaire, 'formContainer',
-                {'fhirVersion':getFHIRVersion(), allowHTML, displayInvalidHTML, showCodingInstruction})
+                {'fhirVersion':getFHIRVersion(), allowHTML, displayInvalidHTML, allowMarkdown, showCodingInstruction})
                 .then(function() {
               console.log("Form Added successfully")
             })

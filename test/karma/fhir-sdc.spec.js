@@ -572,10 +572,28 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          it('should preserve rendering-markdown extension on _text', function (){
+            $.get('test/data/R4/q-with-rendering-markdown-text.json', function(json) {
+              const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+              const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+              assert.ok(qData.item[0]._text);
+              assert.deepEqual(qData.item[0]._text, json.item[0]._text);
+            });
+          });
+
           it('should preserve rendering-xhtml extension on _prefix', function (){
             $.get('test/data/R4/q-with-rendering-xhtml-prefix.json', function(json) {
               const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
               assert.equal(lfData.items[0]._prefixHTML, "<i class='testPlease'>A</i> HTML <b>prefix:</b>");
+              const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+              assert.ok(qData.item[0]._prefix);
+              assert.deepEqual(qData.item[0]._prefix, json.item[0]._prefix);
+            });
+          });
+
+          it('should preserve rendering-markdown extension on _prefix', function (){
+            $.get('test/data/R4/q-with-rendering-markdown-prefix.json', function(json) {
+              const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
               const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
               assert.ok(qData.item[0]._prefix);
               assert.deepEqual(qData.item[0]._prefix, json.item[0]._prefix);
@@ -660,6 +678,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               });
             });
 
+            it('should preserve rendering-markdown extension on answerOption _valueString', function (){
+              $.get('test/data/R4/q-with-rendering-markdown-answerOption.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[0].item[0].answerOption[0]._valueString);
+                assert.deepEqual(qData.item[0].item[0].answerOption[0]._valueString, json.item[0].item[0].answerOption[0]._valueString);
+              });
+            });
+
             it('should preserve rendering-xhtml extension on answerOption valueCoding._display', function (){
               $.get('test/data/R4/q-with-rendering-xhtml-answerOption.json', function(json) {
                 const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
@@ -668,6 +695,24 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
                 assert.ok(qData.item[3].item[0].answerOption[0].valueCoding._display);
                 assert.deepEqual(qData.item[3].item[0].answerOption[0].valueCoding._display, json.item[3].item[0].answerOption[0].valueCoding._display);
+              });
+            });
+
+            it('should preserve rendering-markdown extension on answerOption valueCoding._display', function (){
+              $.get('test/data/R4/q-with-rendering-markdown-answerOption.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.ok(qData.item[3].item[0].answerOption[0].valueCoding._display);
+                assert.deepEqual(qData.item[3].item[0].answerOption[0].valueCoding._display, json.item[3].item[0].answerOption[0].valueCoding._display);
+              });
+            });
+
+            it('should preserve rendering-markdown extension on help and legal', function (){
+              $.get('test/data/R4/q-with-rendering-markdown-help-and-legal.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.deepEqual(qData.item[0].item[0]._text, json.item[0].item[0]._text);
+                assert.deepEqual(qData.item[1].item[0]._text, json.item[1].item[0]._text);
               });
             });
 
@@ -799,6 +844,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                     ]
                   }
                 ]);
+              });
+            });
+
+            it('should preserve score extension url', function (){
+              $.get('test/data/R4/apgar-with-itemWeight-variable.json', function(json) {
+                const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+                const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+                assert.deepEqual(qData.item[0].answerOption[0], json.item[0].answerOption[0]);
               });
             });
           }
@@ -2053,9 +2106,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
 
                   assert.equal(convertedQ.item[11].item[0].option.length, json.item[11].item[0].option.length);
-                  // The score is changed from argonaut extension to FHIR extension.
+                  // The score extension URL is preserved from the original input (argonaut URL).
                   assert.equal(convertedQ.item[11].item[0].option[0].extension[0].url,
-                      'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue');
+                      json.item[11].item[0].option[0].extension[0].url);
                   assert.equal(convertedQ.item[11].item[0].option[0].extension[0].valueDecimal,
                       json.item[11].item[0].option[0].extension[0].valueDecimal);
                 }).done(function () {
