@@ -182,27 +182,32 @@ test.describe('Visual effect tests', () => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
       await addFormToPage(page, 'answerOption/answerOption-valueCoding.open-choice.R4.json', 'formContainer', {fhirVersion: 'R4', showRadioClearSelectionButton: true});
+      const optionC3 = byId(page, 'valueCoding.open-choice-group2-item1/1/1||c3');
+      const clearSelectionBtn = byId(page, 'valueCoding.open-choice-group2-item1/1/1|_clearSelection');
+      const otherOption = byId(page, 'valueCoding.open-choice-group2-item1/1/1|_other');
+      const otherValueInput = byId(page, 'valueCoding.open-choice-group2-item1/1/1|_otherValue');
+
       // Select a radio option.
-      await byId(page, 'valueCoding.open-choice-group2-item1/1/1||c3').click();
-      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1||c3').locator('input')).toBeChecked();
+      await optionC3.click();
+      await expect(optionC3.locator('input')).toBeChecked();
       // Clear selection.
-      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      await clearSelectionBtn.click();
       // Radio option should be unselected.
-      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1||c3').locator('input')).not.toBeChecked();
+      await expect(optionC3.locator('input')).not.toBeChecked();
       // Check Other option and type in Other value.
-      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_other').click();
-      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1|_other').locator('input[type="radio"]')).toBeChecked();
-      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_otherValue').fill('abc');
+      await otherOption.click();
+      await expect(otherOption.locator('input[type="radio"]')).toBeChecked();
+      await otherValueInput.fill('abc');
       // Exported QR has 3 items.
       const qr1 = await page.evaluate(() => {
         return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
       });
       expect(qr1.item.length).toBe(3);
       // Clear selection.
-      await byId(page, 'valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      await clearSelectionBtn.click();
       // Other option should be unselected, and Other value should be gone.
-      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1|_other').locator('input[type="radio"]')).not.toBeChecked();
-      await expect(byId(page, 'valueCoding.open-choice-group2-item1/1/1|_otherValue')).not.toBeAttached();
+      await expect(otherOption.locator('input[type="radio"]')).not.toBeChecked();
+      await expect(otherValueInput).not.toBeAttached();
       // Exported QR now has 2 items because the radio selection is cleared.
       const qr2 = await page.evaluate(() => {
         return (window as any).LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
