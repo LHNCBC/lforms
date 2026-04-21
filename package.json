@@ -75,13 +75,13 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^20.3.20",
-    "@angular-devkit/core": "^20.3.20",
+    "@angular-devkit/build-angular": "^20.3.24",
+    "@angular-devkit/core": "^20.3.24",
     "@angular-eslint/builder": "^20.1.0",
     "@angular-eslint/eslint-plugin": "^20.1.0",
     "@angular-eslint/eslint-plugin-template": "^20.1.0",
     "@angular-eslint/template-parser": "^20.1.0",
-    "@angular/cli": "^20.3.20",
+    "@angular/cli": "^20.3.24",
     "@angular/compiler-cli": "^20.3.18",
     "@playwright/test": "^1.58.2",
     "@types/jasmine": "~5.1.13",
