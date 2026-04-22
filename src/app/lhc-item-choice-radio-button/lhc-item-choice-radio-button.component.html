@@ -53,6 +53,14 @@
     </label>
   </nz-radio-group>
 
+  <button type="button"
+    *ngIf="lhcDataService.getLhcFormData()?.templateOptions.showRadioClearSelectionButton"
+    [id]="lhcDataService.getItemAnswerId(item, '_clearSelection')"
+    class="lhc-float-button lhc-button"
+    [disabled]="item._readOnly"
+    (click)="onRadioModelChange(undefined)">
+    Clear selection
+  </button>
 </div>
 
 
