@@ -116,41 +116,44 @@ test.describe('enableWhen != minimal reproduction', () => {
   test('should perform enableWhen logic correctly', async ({ page }) => {
     await addFormToPage(page, 'q-with-nested-enableWhen.json', 'formContainer', { fhirVersion: 'R4' });
 
-    await byId(page, 'p1/1').press('ArrowDown');
-    await byId(page, 'p1/1').press('Enter'); // select YES
-    await byId(page, 'c1/1/1').press('ArrowDown');
-    await byId(page, 'c1/1/1').press('ArrowDown');
-    await byId(page, 'c1/1/1').press('Enter'); // select B
+    const p1 = byId(page, 'p1/1');
+    await p1.press('ArrowDown');
+    await p1.press('Enter'); // select YES
+    const c1 = byId(page, 'c1/1/1');
+    await c1.press('ArrowDown');
+    await c1.press('ArrowDown');
+    await c1.press('Enter'); // select B
     await expect(byId(page, 'd1/1/1')).toBeVisible(); // visible since c1 != A
 
     // Clear the autocomplete and select A.
     // Cypress .clear() resets the autocomplete-lhc internal model; replicate via
     // triple-click to select all, then type the replacement value directly.
-    await byId(page, 'c1/1/1').click({ clickCount: 3 });
-    await byId(page, 'c1/1/1').press('Backspace');
-    await expect(byId(page, 'c1/1/1')).toHaveValue('');
-    await byId(page, 'c1/1/1').blur();
+    await c1.click({ clickCount: 3 });
+    await c1.press('Backspace');
+    await expect(c1).toHaveValue('');
+    await c1.blur();
     // Re-focus and make a new selection
-    await byId(page, 'c1/1/1').click();
-    await byId(page, 'c1/1/1').press('ArrowDown');
-    await byId(page, 'c1/1/1').press('Enter'); // select A
-    await byId(page, 'c1/1/1').blur();
+    await c1.click();
+    await c1.press('ArrowDown');
+    await c1.press('Enter'); // select A
+    await c1.blur();
     await expect(byId(page, 'd1/1/1')).not.toBeAttached(); // hidden since c1 = A
 
     // With another middle layer
-    await byId(page, 'cc1/1/1/1').press('ArrowDown');
-    await byId(page, 'cc1/1/1/1').press('ArrowDown');
-    await byId(page, 'cc1/1/1/1').press('Enter'); // select B
+    const cc1 = byId(page, 'cc1/1/1/1');
+    await cc1.press('ArrowDown');
+    await cc1.press('ArrowDown');
+    await cc1.press('Enter'); // select B
     await expect(byId(page, 'dd1/1/1/1')).toBeVisible(); // visible since cc1 != A
 
     // Clear the autocomplete and select A
-    await byId(page, 'cc1/1/1/1').click({ clickCount: 3 });
-    await byId(page, 'cc1/1/1/1').press('Backspace');
-    await expect(byId(page, 'cc1/1/1/1')).toHaveValue('');
-    await byId(page, 'cc1/1/1/1').blur();
-    await byId(page, 'cc1/1/1/1').click();
-    await byId(page, 'cc1/1/1/1').press('ArrowDown');
-    await byId(page, 'cc1/1/1/1').press('Enter'); // select A
+    await cc1.click({ clickCount: 3 });
+    await cc1.press('Backspace');
+    await expect(cc1).toHaveValue('');
+    await cc1.blur();
+    await cc1.click();
+    await cc1.press('ArrowDown');
+    await cc1.press('Enter'); // select A
     await expect(byId(page, 'dd1/1/1/1')).not.toBeAttached(); // hidden since cc1 = A
   });
 });
