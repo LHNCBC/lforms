@@ -13,10 +13,11 @@ test.describe('rendering-markdown', () => {
       await page.click('#allowMarkdown');
       await loadFromTestData(page, 'q-with-rendering-markdown-text.json', 'R4');
       await expect(page.getByText('Please answer Yes or No to each of the following questions:')).not.toBeAttached();
-      await expect(byId(page, 'label-1.1/1').locator('h1')).toHaveText('This is a markdown heading');
-      await expect(byId(page, 'label-1.1/1').locator('li')).toHaveCount(2);
-      await expect(byId(page, 'label-1.1/1').locator('strong')).toHaveText('This text is bold');
-      await expect(byId(page, 'label-1.1/1').locator('em')).toHaveText('This text is italicized');
+      const eleLabel = byId(page, 'label-1.1/1');
+      await expect(eleLabel.locator('h1')).toHaveText('This is a markdown heading');
+      await expect(eleLabel.locator('li')).toHaveCount(2);
+      await expect(eleLabel.locator('strong')).toHaveText('This text is bold');
+      await expect(eleLabel.locator('em')).toHaveText('This text is italicized');
     });
 
     test('should display question text if not allowed in template options', async ({ page }) => {

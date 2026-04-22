@@ -38,14 +38,16 @@ async function fillInFHTForm(page: Page) {
   await dobInput.pressSequentially('10/27/2016');
   await dobInput.press('Tab');
   // Gender, CWE/CNE - pick 1st item
-  await byId(page, '/54126-8/54131-8/1/1').click();
-  await byId(page, '/54126-8/54131-8/1/1').press('ArrowDown');
-  await byId(page, '/54126-8/54131-8/1/1').press('Enter');
+  const gender = byId(page, '/54126-8/54131-8/1/1');
+  await gender.click();
+  await gender.press('ArrowDown');
+  await gender.press('Enter');
   // Race, multiple answers - pick first 2 items
-  await byId(page, '/54126-8/54134-2/1/1').click();
-  await byId(page, '/54126-8/54134-2/1/1').press('ArrowDown');
-  await byId(page, '/54126-8/54134-2/1/1').press('Enter');
-  await byId(page, '/54126-8/54134-2/1/1').press('Enter');
+  const race = byId(page, '/54126-8/54134-2/1/1');
+  await race.click();
+  await race.press('ArrowDown');
+  await race.press('Enter');
+  await race.press('Enter');
   // Weight and Height, Quantity fields
   // FHTData.json uses calculationMethod (not FHIRPath), so fill() is fine.
   await byId(page, '/54126-8/8302-2/1/1').fill('70');
@@ -54,32 +56,36 @@ async function fillInFHTForm(page: Page) {
   await expect(byId(page, '/54126-8/39156-5/1/1')).toHaveValue('24.39');
   // Your deseases history, repeating sub panel
   // Disease or condition, pick 1st item
-  await byId(page, '/54126-8/54137-5/54140-9/1/1/1').click();
-  await byId(page, '/54126-8/54137-5/54140-9/1/1/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54140-9/1/1/1').press('Enter');
+  const disease1 = byId(page, '/54126-8/54137-5/54140-9/1/1/1');
+  await disease1.click();
+  await disease1.press('ArrowDown');
+  await disease1.press('Enter');
   // Age at diagnosis, pick 2nd item
-  await byId(page, '/54126-8/54137-5/54130-0/1/1/1').click();
-  await byId(page, '/54126-8/54137-5/54130-0/1/1/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54130-0/1/1/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54130-0/1/1/1').press('Enter');
+  const age1 = byId(page, '/54126-8/54137-5/54130-0/1/1/1');
+  await age1.click();
+  await age1.press('ArrowDown');
+  await age1.press('ArrowDown');
+  await age1.press('Enter');
   // add another disease history
   await byId(page, 'add-/54126-8/54137-5/1/1').click();
-  await expect(byId(page, '/54126-8/54137-5/54140-9/1/2/1')).toBeVisible();
+  const disease2 = byId(page, '/54126-8/54137-5/54140-9/1/2/1');
+  await expect(disease2).toBeVisible();
   // Disease or condition, pick 2nd item
-  await byId(page, '/54126-8/54137-5/54140-9/1/2/1').click();
-  await byId(page, '/54126-8/54137-5/54140-9/1/2/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54140-9/1/2/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54140-9/1/2/1').press('Enter');
+  await disease2.click();
+  await disease2.press('ArrowDown');
+  await disease2.press('ArrowDown');
+  await disease2.press('Enter');
   // Age at diagnosis, pick 3rd item
-  await byId(page, '/54126-8/54137-5/54130-0/1/2/1').click();
-  await byId(page, '/54126-8/54137-5/54130-0/1/2/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54130-0/1/2/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54130-0/1/2/1').press('ArrowDown');
-  await byId(page, '/54126-8/54137-5/54130-0/1/2/1').press('Enter');
+  const age2 = byId(page, '/54126-8/54137-5/54130-0/1/2/1');
+  await age2.click();
+  await age2.press('ArrowDown');
+  await age2.press('ArrowDown');
+  await age2.press('ArrowDown');
+  await age2.press('Enter');
   // Blur the last field to commit the value
-  await byId(page, '/54126-8/54137-5/54130-0/1/2/1').blur();
+  await age2.blur();
   // Blue sometimes doesn't trigger the change event for the last field, so click on another field to make sure the value is committed.
-  await byId(page, '/54126-8/54137-5/54140-9/1/2/1').click();
+  await disease2.click();
 }
 
 for (const fhirVersion of fhirVersions) {
@@ -363,91 +369,92 @@ for (const fhirVersion of fhirVersions) {
         expect(!!fhirData.identifier).toBe(false);
 
         expect(fhirData.item.length).toBe(1);
-        expect(fhirData.item[0].linkId).toBe('/54126-8');
-        expect(fhirData.item[0].text).toBe('Your health information');
-        expect(fhirData.item[0].item.length).toBe(9);
+        const item0 = fhirData.item[0];
+        expect(item0.linkId).toBe('/54126-8');
+        expect(item0.text).toBe('Your health information');
+        expect(item0.item.length).toBe(9);
 
         // name 1 & 2
-        expect(fhirData.item[0].item[0].text).toBe('Name');
-        expect(fhirData.item[0].item[0].linkId).toBe('/54126-8/54125-0');
-        expect(fhirData.item[0].item[0].answer.length).toBe(2);
-        expect(fhirData.item[0].item[0].answer[0].valueString).toBe('name 1');
-        expect(fhirData.item[0].item[0].answer[1].valueString).toBe('name 2');
+        expect(item0.item[0].text).toBe('Name');
+        expect(item0.item[0].linkId).toBe('/54126-8/54125-0');
+        expect(item0.item[0].answer.length).toBe(2);
+        expect(item0.item[0].answer[0].valueString).toBe('name 1');
+        expect(item0.item[0].answer[1].valueString).toBe('name 2');
         // gender
-        expect(fhirData.item[0].item[1].text).toBe('Gender');
-        expect(fhirData.item[0].item[1].linkId).toBe('/54126-8/54131-8');
-        expect(fhirData.item[0].item[1].answer.length).toBe(1);
-        expect(fhirData.item[0].item[1].answer[0].valueCoding.code).toBe('LA2-8');
-        expect(fhirData.item[0].item[1].answer[0].valueCoding.display).toBe('Male');
-        expect(fhirData.item[0].item[1].answer[0].valueCoding.system).toBe(undefined);
+        expect(item0.item[1].text).toBe('Gender');
+        expect(item0.item[1].linkId).toBe('/54126-8/54131-8');
+        expect(item0.item[1].answer.length).toBe(1);
+        expect(item0.item[1].answer[0].valueCoding.code).toBe('LA2-8');
+        expect(item0.item[1].answer[0].valueCoding.display).toBe('Male');
+        expect(item0.item[1].answer[0].valueCoding.system).toBe(undefined);
         // DOB
-        expect(fhirData.item[0].item[2].text).toBe('Date of Birth');
-        expect(fhirData.item[0].item[2].linkId).toBe('/54126-8/21112-8');
-        expect(fhirData.item[0].item[2].answer.length).toBe(1);
-        expect(fhirData.item[0].item[2].answer[0].valueDate).toBe('2016-10-27');
+        expect(item0.item[2].text).toBe('Date of Birth');
+        expect(item0.item[2].linkId).toBe('/54126-8/21112-8');
+        expect(item0.item[2].answer.length).toBe(1);
+        expect(item0.item[2].answer[0].valueDate).toBe('2016-10-27');
         // Height
-        expect(fhirData.item[0].item[3].text).toBe('Height');
-        expect(fhirData.item[0].item[3].linkId).toBe('/54126-8/8302-2');
-        expect(fhirData.item[0].item[3].answer.length).toBe(1);
-        expect(fhirData.item[0].item[3].answer[0].valueQuantity.unit).toBe('inches');
-        expect(fhirData.item[0].item[3].answer[0].valueQuantity.value).toBe(70);
+        expect(item0.item[3].text).toBe('Height');
+        expect(item0.item[3].linkId).toBe('/54126-8/8302-2');
+        expect(item0.item[3].answer.length).toBe(1);
+        expect(item0.item[3].answer[0].valueQuantity.unit).toBe('inches');
+        expect(item0.item[3].answer[0].valueQuantity.value).toBe(70);
         // Weight
-        expect(fhirData.item[0].item[4].text).toBe('Weight');
-        expect(fhirData.item[0].item[4].linkId).toBe('/54126-8/29463-7');
-        expect(fhirData.item[0].item[4].answer.length).toBe(1);
-        expect(fhirData.item[0].item[4].answer[0].valueQuantity.unit).toBe('lbs');
-        expect(fhirData.item[0].item[4].answer[0].valueQuantity.value).toBe(170);
+        expect(item0.item[4].text).toBe('Weight');
+        expect(item0.item[4].linkId).toBe('/54126-8/29463-7');
+        expect(item0.item[4].answer.length).toBe(1);
+        expect(item0.item[4].answer[0].valueQuantity.unit).toBe('lbs');
+        expect(item0.item[4].answer[0].valueQuantity.value).toBe(170);
         // BMI
-        expect(fhirData.item[0].item[5].text).toBe('Mock-up item: Body mass index (BMI) [Ratio]');
-        expect(fhirData.item[0].item[5].linkId).toBe('/54126-8/39156-5');
-        expect(fhirData.item[0].item[5].answer.length).toBe(1);
-        expect(fhirData.item[0].item[5].answer[0].valueString).toBe('24.39');
+        expect(item0.item[5].text).toBe('Mock-up item: Body mass index (BMI) [Ratio]');
+        expect(item0.item[5].linkId).toBe('/54126-8/39156-5');
+        expect(item0.item[5].answer.length).toBe(1);
+        expect(item0.item[5].answer[0].valueString).toBe('24.39');
         // Race
-        expect(fhirData.item[0].item[6].text).toBe('Race');
-        expect(fhirData.item[0].item[6].linkId).toBe('/54126-8/54134-2');
-        expect(fhirData.item[0].item[6].answer.length).toBe(2);
-        expect(fhirData.item[0].item[6].answer[0].valueCoding.code).toBe('LA10608-0');
-        expect(fhirData.item[0].item[6].answer[0].valueCoding.display).toBe('American Indian or Alaska Native');
-        expect(fhirData.item[0].item[6].answer[0].valueCoding.system).toBe('http://loinc.org');
-        expect(fhirData.item[0].item[6].answer[1].valueCoding.code).toBe('LA6156-9');
-        expect(fhirData.item[0].item[6].answer[1].valueCoding.display).toBe('Asian');
-        expect(fhirData.item[0].item[6].answer[1].valueCoding.system).toBe('http://loinc.org');
+        expect(item0.item[6].text).toBe('Race');
+        expect(item0.item[6].linkId).toBe('/54126-8/54134-2');
+        expect(item0.item[6].answer.length).toBe(2);
+        expect(item0.item[6].answer[0].valueCoding.code).toBe('LA10608-0');
+        expect(item0.item[6].answer[0].valueCoding.display).toBe('American Indian or Alaska Native');
+        expect(item0.item[6].answer[0].valueCoding.system).toBe('http://loinc.org');
+        expect(item0.item[6].answer[1].valueCoding.code).toBe('LA6156-9');
+        expect(item0.item[6].answer[1].valueCoding.display).toBe('Asian');
+        expect(item0.item[6].answer[1].valueCoding.system).toBe('http://loinc.org');
         // Disease history #1
-        expect(fhirData.item[0].item[7].text).toBe('Your diseases history');
-        expect(fhirData.item[0].item[7].linkId).toBe('/54126-8/54137-5');
-        expect(fhirData.item[0].item[7].item.length).toBe(2);
+        expect(item0.item[7].text).toBe('Your diseases history');
+        expect(item0.item[7].linkId).toBe('/54126-8/54137-5');
+        expect(item0.item[7].item.length).toBe(2);
         //-- Disease or Condition
-        expect(fhirData.item[0].item[7].item[0].text).toBe('Disease or Condition');
-        expect(fhirData.item[0].item[7].item[0].linkId).toBe('/54126-8/54137-5/54140-9');
-        expect(fhirData.item[0].item[7].item[0].answer.length).toBe(1);
-        expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.code).toBe('LA10533-0');
-        expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.display).toBe('Blood Clots');
-        expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.system).toBe('http://loinc.org');
+        expect(item0.item[7].item[0].text).toBe('Disease or Condition');
+        expect(item0.item[7].item[0].linkId).toBe('/54126-8/54137-5/54140-9');
+        expect(item0.item[7].item[0].answer.length).toBe(1);
+        expect(item0.item[7].item[0].answer[0].valueCoding.code).toBe('LA10533-0');
+        expect(item0.item[7].item[0].answer[0].valueCoding.display).toBe('Blood Clots');
+        expect(item0.item[7].item[0].answer[0].valueCoding.system).toBe('http://loinc.org');
         //-- Age at Diagnosis
-        expect(fhirData.item[0].item[7].item[1].text).toBe('Age at Diagnosis');
-        expect(fhirData.item[0].item[7].item[1].linkId).toBe('/54126-8/54137-5/54130-0');
-        expect(fhirData.item[0].item[7].item[1].answer.length).toBe(1);
-        expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.code).toBe('LA10403-6');
-        expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.display).toBe('Newborn');
-        expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.system).toBe('http://loinc.org');
+        expect(item0.item[7].item[1].text).toBe('Age at Diagnosis');
+        expect(item0.item[7].item[1].linkId).toBe('/54126-8/54137-5/54130-0');
+        expect(item0.item[7].item[1].answer.length).toBe(1);
+        expect(item0.item[7].item[1].answer[0].valueCoding.code).toBe('LA10403-6');
+        expect(item0.item[7].item[1].answer[0].valueCoding.display).toBe('Newborn');
+        expect(item0.item[7].item[1].answer[0].valueCoding.system).toBe('http://loinc.org');
         // Disease history #2
-        expect(fhirData.item[0].item[8].text).toBe('Your diseases history');
-        expect(fhirData.item[0].item[8].linkId).toBe('/54126-8/54137-5');
-        expect(fhirData.item[0].item[8].item.length).toBe(2);
+        expect(item0.item[8].text).toBe('Your diseases history');
+        expect(item0.item[8].linkId).toBe('/54126-8/54137-5');
+        expect(item0.item[8].item.length).toBe(2);
         //-- Disease or Condition
-        expect(fhirData.item[0].item[8].item[0].text).toBe('Disease or Condition');
-        expect(fhirData.item[0].item[8].item[0].linkId).toBe('/54126-8/54137-5/54140-9');
-        expect(fhirData.item[0].item[8].item[0].answer.length).toBe(1);
-        expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.code).toBe('LA10572-8');
-        expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.display).toBe('-- Blood Clot in Leg');
-        expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.system).toBe('http://loinc.org');
+        expect(item0.item[8].item[0].text).toBe('Disease or Condition');
+        expect(item0.item[8].item[0].linkId).toBe('/54126-8/54137-5/54140-9');
+        expect(item0.item[8].item[0].answer.length).toBe(1);
+        expect(item0.item[8].item[0].answer[0].valueCoding.code).toBe('LA10572-8');
+        expect(item0.item[8].item[0].answer[0].valueCoding.display).toBe('-- Blood Clot in Leg');
+        expect(item0.item[8].item[0].answer[0].valueCoding.system).toBe('http://loinc.org');
         //-- Age at Diagnosis
-        expect(fhirData.item[0].item[8].item[1].text).toBe('Age at Diagnosis');
-        expect(fhirData.item[0].item[8].item[1].linkId).toBe('/54126-8/54137-5/54130-0');
-        expect(fhirData.item[0].item[8].item[1].answer.length).toBe(1);
-        expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.code).toBe('LA10394-7');
-        expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.display).toBe('Infancy');
-        expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe('http://loinc.org');
+        expect(item0.item[8].item[1].text).toBe('Age at Diagnosis');
+        expect(item0.item[8].item[1].linkId).toBe('/54126-8/54137-5/54130-0');
+        expect(item0.item[8].item[1].answer.length).toBe(1);
+        expect(item0.item[8].item[1].answer[0].valueCoding.code).toBe('LA10394-7');
+        expect(item0.item[8].item[1].answer[0].valueCoding.display).toBe('Infancy');
+        expect(item0.item[8].item[1].answer[0].valueCoding.system).toBe('http://loinc.org');
       });
 
       test('should get a DiagnosticReport data from an RxTerms form', async ({ page }) => {

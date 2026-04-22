@@ -58,19 +58,23 @@ test.describe('calculatedExpression', () => {
     test('should be able to set and reset answers/list using calculatedExpression and answerExpression', async ({ page }) => {
       await addFormToPage(page, 'calculatedListAnwers.json', 'formContainer', { fhirVersion: 'R4' });
       await page.locator('#inputList\\/1').click();
+      const completionOptions = page.locator('#completionOptions li');
+
       // pick the first item, which is "blue"
-      await page.locator('#completionOptions li').first().click();
-      // pick the second item, which is "green"
-      await page.locator('#completionOptions li').first().click();
+      await completionOptions.first().click();
+      // After selecting "blue", the dropdown keeps only the remaining option.
+      // Pick that remaining option, which is "green".
+      await expect(completionOptions.first()).toContainText('green');
+      await completionOptions.first().click();
       // assert both "blue" and "green" are selected
       await expect(byId(page, 'calculatedAnswers/1/1').locator('..')).toContainText('blue');
       await expect(byId(page, 'calculatedAnswers/1/1').locator('..')).toContainText('green');
       // assert the calculated list options are set to "blue" and "green" but nothing is seleted
       await expect(page.locator('#calculatedListOptions\\/1\\/1')).toHaveValue('');
       await page.locator('#calculatedListOptions\\/1\\/1').click();
-      await expect(page.locator('#completionOptions li').first()).toBeVisible();
-      await expect(page.locator('#completionOptions li').first()).toContainText('blue');
-      await expect(page.locator('#completionOptions li').nth(1)).toContainText('green');
+      await expect(completionOptions.first()).toBeVisible();
+      await expect(completionOptions.first()).toContainText('blue');
+      await expect(completionOptions.nth(1)).toContainText('green');
 
       // remove the selected item, "blue"
       const selectedItem = page.locator('#inputList\\/1').locator('..').locator('li:first-child span');
@@ -80,8 +84,8 @@ test.describe('calculatedExpression', () => {
       // assert the calculated list options is set to "green" but nothing is seleted
       await expect(page.locator('#calculatedListOptions\\/1\\/1')).toHaveValue('');
       await page.locator('#calculatedListOptions\\/1\\/1').click();
-      await expect(page.locator('#completionOptions li').first()).toBeVisible();
-      await expect(page.locator('#completionOptions li').first()).toContainText('green');
+      await expect(completionOptions.first()).toBeVisible();
+      await expect(completionOptions.first()).toContainText('green');
     });
 
   });
@@ -181,56 +185,60 @@ test.describe('calculatedExpression', () => {
       const searchResults = page.locator('#lhc-tools-searchResults li');
 
       // expression works on the first group
-      await byId(page, 'p1.10.1.1/1/1/1/1').click();
+      const p1 = byId(page, 'p1.10.1.1/1/1/1/1');
+      const p0 = byId(page, 'p1.10.1.2/1/1/1/1');
+      await p1.click();
       await expect(searchResults).toHaveCount(2);
-      await byId(page, 'p1.10.1.1/1/1/1/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/1/1').press('Enter');
-      await expect(byId(page, 'p1.10.1.1/1/1/1/1')).toHaveValue('NIH');
-      await expect(byId(page, 'p1.10.1.2/1/1/1/1')).toHaveValue('NIH-2021-5678901234567');
+      await p1.press('ArrowDown');
+      await p1.press('Enter');
+      await expect(p1).toHaveValue('NIH');
+      await expect(p0).toHaveValue('NIH-2021-5678901234567');
 
       // add a new repeating group
       await byId(page, 'add-p1.10.1/1/1/1').click();
       // expression works on the second group
-      await byId(page, 'p1.10.1.1/1/1/2/1').click();
+      const p2 = byId(page, 'p1.10.1.1/1/1/2/1');
+      await p2.click();
       await expect(searchResults).toHaveCount(2);
-      await byId(page, 'p1.10.1.1/1/1/2/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/2/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/2/1').press('Enter');
-      await expect(byId(page, 'p1.10.1.1/1/1/2/1')).toHaveValue('Immunotherapy Industry Association');
+      await p2.press('ArrowDown');
+      await p2.press('ArrowDown');
+      await p2.press('Enter');
+      await expect(p2).toHaveValue('Immunotherapy Industry Association');
       await expect(byId(page, 'p1.10.1.2/1/1/2/1')).toHaveValue('IIA900000');
 
       // add a third repeating group
       await byId(page, 'add-p1.10.1/1/1/2').click();
-      await byId(page, 'p1.10.1.1/1/1/3/1').click();
+      const p3 = byId(page, 'p1.10.1.1/1/1/3/1');
+      await p3.click();
       await expect(searchResults).toHaveCount(2);
-      await byId(page, 'p1.10.1.1/1/1/3/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/3/1').press('Enter');
-      await expect(byId(page, 'p1.10.1.1/1/1/3/1')).toHaveValue('NIH');
+      await p3.press('ArrowDown');
+      await p3.press('Enter');
+      await expect(p3).toHaveValue('NIH');
       await expect(byId(page, 'p1.10.1.2/1/1/3/1')).toHaveValue('NIH-2021-5678901234567');
 
       // delete the second repeating group
       await byId(page, 'del-p1.10.1/1/1/2').click();
       // values remain in the remaining 2 groups
-      await expect(byId(page, 'p1.10.1.1/1/1/1/1')).toHaveValue('NIH');
-      await expect(byId(page, 'p1.10.1.2/1/1/1/1')).toHaveValue('NIH-2021-5678901234567');
-      await expect(byId(page, 'p1.10.1.1/1/1/3/1')).toHaveValue('NIH');
+      await expect(p1).toHaveValue('NIH');
+      await expect(p0).toHaveValue('NIH-2021-5678901234567');
+      await expect(p3).toHaveValue('NIH');
       await expect(byId(page, 'p1.10.1.2/1/1/3/1')).toHaveValue('NIH-2021-5678901234567');
 
       // expression works in the remaining 2 groups
-      await byId(page, 'p1.10.1.1/1/1/1/1').click();
+      await p1.click();
       await expect(searchResults).toHaveCount(2);
-      await byId(page, 'p1.10.1.1/1/1/1/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/1/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/1/1').press('Enter');
-      await expect(byId(page, 'p1.10.1.1/1/1/1/1')).toHaveValue('Immunotherapy Industry Association');
-      await expect(byId(page, 'p1.10.1.2/1/1/1/1')).toHaveValue('IIA900000');
+      await p1.press('ArrowDown');
+      await p1.press('ArrowDown');
+      await p1.press('Enter');
+      await expect(p1).toHaveValue('Immunotherapy Industry Association');
+      await expect(p0).toHaveValue('IIA900000');
 
-      await byId(page, 'p1.10.1.1/1/1/3/1').click();
+      await p3.click();
       await expect(searchResults).toHaveCount(2);
-      await byId(page, 'p1.10.1.1/1/1/3/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/3/1').press('ArrowDown');
-      await byId(page, 'p1.10.1.1/1/1/3/1').press('Enter');
-      await expect(byId(page, 'p1.10.1.1/1/1/3/1')).toHaveValue('Immunotherapy Industry Association');
+      await p3.press('ArrowDown');
+      await p3.press('ArrowDown');
+      await p3.press('Enter');
+      await expect(p3).toHaveValue('Immunotherapy Industry Association');
       await expect(byId(page, 'p1.10.1.2/1/1/3/1')).toHaveValue('IIA900000');
     });
 
@@ -269,27 +277,29 @@ test.describe('calculatedExpression', () => {
     test('should support itemWeight extension in R4 for calculating scores', async ({ page }) => {
       await addFormToPage(page, 'calc-weight/q-with-contained-valueset-with-itemWeight.json', 'formContainer', { fhirVersion: 'R4' });
       // ordinalValue
-      await byId(page, 'link-1.1.1/1/1/1').click();
-      await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.1/1/1/1').press('Enter');
-      await byId(page, 'link-1.1.2/1/1/1').click();
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('Enter');
+      const link1 = byId(page, 'link-1.1.1/1/1/1');
+      await link1.click();
+      await link1.press('ArrowDown');
+      await link1.press('ArrowDown');
+      await link1.press('Enter');
+      const link2 = byId(page, 'link-1.1.2/1/1/1');
+      await link2.click();
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('Enter');
       await expect(byId(page, 'link-2/1')).toHaveValue('12');
 
       // itemWeight
-      await byId(page, 'link-1.1.1/1/1/1').click();
-      await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.1/1/1/1').press('Enter');
-      await byId(page, 'link-1.1.2/1/1/1').click();
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('Enter');
+      await link1.click();
+      await link1.press('ArrowDown');
+      await link1.press('Enter');
+      await link2.click();
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('Enter');
       await expect(byId(page, 'link-2/1')).toHaveValue('21');
 
       // initialExpression should also work with itemWeight.
@@ -299,27 +309,28 @@ test.describe('calculatedExpression', () => {
     test('should support ordinalValue extension in R5 for calculating scores', async ({ page }) => {
       await addFormToPage(page, 'calc-weight/q-with-contained-valueset-with-ordinalValue.json', 'formContainer', { fhirVersion: 'R5' });
       await expect(byId(page, 'link-2/1')).toHaveValue('');
-
-      await byId(page, 'link-1.1.1/1/1/1').click();
-      await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.1/1/1/1').press('Enter');
-      await byId(page, 'link-1.1.2/1/1/1').click();
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('Enter');
+      const link1 = byId(page, 'link-1.1.1/1/1/1');
+      await link1.click();
+      await link1.press('ArrowDown');
+      await link1.press('ArrowDown');
+      await link1.press('Enter');
+      const link2 = byId(page, 'link-1.1.2/1/1/1');
+      await link2.click();
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('Enter');
       await expect(byId(page, 'link-2/1')).toHaveValue('12');
 
-      await byId(page, 'link-1.1.1/1/1/1').click();
-      await byId(page, 'link-1.1.1/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.1/1/1/1').press('Enter');
-      await byId(page, 'link-1.1.2/1/1/1').click();
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('ArrowDown');
-      await byId(page, 'link-1.1.2/1/1/1').press('Enter');
+      await link1.click();
+      await link1.press('ArrowDown');
+      await link1.press('Enter');
+      await link2.click();
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('ArrowDown');
+      await link2.press('Enter');
       await expect(byId(page, 'link-2/1')).toHaveValue('21');
     });
   });

@@ -12,7 +12,7 @@ const fhirVersion = 'R4';
  * @param weightQuantity the quantity to return from a search for a weight.
  * @param prepopFHIR whether the prepopulation should be enabled.
  */
-async function setServerFHIRContext(page, serverFHIRNum, weightQuantity = null, prepopFHIR = true) {
+async function setServerFHIRContext(page:any, serverFHIRNum:string, weightQuantity:any=null, prepopFHIR = true) {
   await page.evaluate(({ mockFn, serverFHIRNum, weightQuantity, prepopFHIR }) => {
     const fhirContext = new Function('return ' + mockFn)();
     (window as any).LForms.Util.setFHIRContext(fhirContext(serverFHIRNum, weightQuantity));
@@ -210,9 +210,10 @@ test.describe('Form pre-population', () => {
       await addFormToPage(page, 'expression-on-data-from-prepopulation.json', 'formContainer', { fhirVersion: 'R4' });
 
       await expect(byId(page, 'p1.1/1/1')).toHaveValue('Interventional');
-      await expect(byId(page, 'p1.2/1/1')).toBeVisible();
-      await expect(byId(page, 'p1.2/1/1')).toHaveValue('');
-      await byId(page, 'p1.2/1/1').click();
+      const p1_2 = byId(page, 'p1.2/1/1');
+      await expect(p1_2).toBeVisible();
+      await expect(p1_2).toHaveValue('');
+      await p1_2.click();
       await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(4);
       await expect(byId(page, 'p3.1.14/1')).toBeVisible();
     });

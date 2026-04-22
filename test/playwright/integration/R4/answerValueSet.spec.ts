@@ -25,17 +25,18 @@ test.describe('FHIR answerValueSet', () => {
     // yesno4: open-choice, yesno5: open-choice (repeats), yesno6: open-choice (repeats)
     const answerFields = ['yesno1/1', 'yesno2/1', 'yesno3/1', 'yesno4/1', 'yesno5/1', 'yesno6/1'];
     const searchResults = 'lhc-tools-searchResults';
-
+    
     test('should have expected answer list when the Questionnaire is loaded', async ({ page }) => {
       await addFormToPage(page, 'q-with-answerValueSet-autocomplete.json', 'formContainer', { fhirVersion });
+      const listItems = page.locator(`#${searchResults} li`);
 
       for (const answerField of answerFields) {
         await byId(page, answerField).click();
         await expect(byId(page, searchResults)).toBeVisible();
-        await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(3);
-        await expect(page.locator('#lhc-tools-searchResults li').nth(0)).toContainText('No');
-        await expect(page.locator('#lhc-tools-searchResults li').nth(1)).toContainText('Yes');
-        await expect(page.locator('#lhc-tools-searchResults li').nth(2)).toContainText("Don't know");
+        await expect(listItems).toHaveCount(3);
+        await expect(listItems.nth(0)).toContainText('No');
+        await expect(listItems.nth(1)).toContainText('Yes');
+        await expect(listItems.nth(2)).toContainText("Don't know");
       }
     });
 
@@ -51,39 +52,49 @@ test.describe('FHIR answerValueSet', () => {
       }, { q, qr, fhirVersion });
       await expect(page.locator('#formContainer .lhc-form-title')).toBeVisible();
 
+      // Define expected values
+      const expectedSavedValues = {
+        'yesno1/1': { type: 'single', value: 'Yes' },
+        'yesno2/1': { type: 'multi', values: ['×Yes', '×No'] },
+        'yesno3/1': { type: 'single', value: 'Yes' },
+        'yesno4/1': { type: 'single', value: 'offlist answer 1' },
+        'yesno5/1': { type: 'multi', values: ['×Yes', '×No'] },
+        'yesno6/1': { type: 'multi', values: ['×Yes', '×offlist answer 2'] }
+      };
+
       // check saved values
-      await expect(byId(page, 'yesno1/1')).toHaveValue('Yes');
-      await expect(byId(page, 'item-yesno2/1').locator('span.autocomp_selected li').nth(0)).toHaveText('×Yes');
-      await expect(byId(page, 'item-yesno2/1').locator('span.autocomp_selected li').nth(1)).toHaveText('×No');
-      await expect(byId(page, 'yesno3/1')).toHaveValue('Yes');
-      await expect(byId(page, 'yesno4/1')).toHaveValue('offlist answer 1');
-      await expect(byId(page, 'item-yesno5/1').locator('span.autocomp_selected li').nth(0)).toHaveText('×Yes');
-      await expect(byId(page, 'item-yesno5/1').locator('span.autocomp_selected li').nth(1)).toHaveText('×No');
-      await expect(byId(page, 'item-yesno6/1').locator('span.autocomp_selected li').nth(0)).toHaveText('×Yes');
-      await expect(byId(page, 'item-yesno6/1').locator('span.autocomp_selected li').nth(1)).toHaveText('×offlist answer 2');
+      for (const [fieldId, expected] of Object.entries(expectedSavedValues)) {
+        if (expected.type === 'single') {
+          await expect(byId(page, fieldId)).toHaveValue(expected.value);
+        } else {
+          const container = byId(page, `item-${fieldId}`);
+          const items = container.locator('span.autocomp_selected li');
+          for (let i = 0; i < expected.values.length; i++) {
+            await expect(items.nth(i)).toContainText(expected.values[i]);
+          }
+        }
+      }
+
+      // Define expected answer lists per field
+      const answerListConfigs = {
+        'yesno1/1': { count: 3, answers: ['No', 'Yes', "Don't know"] },
+        'yesno2/1': { count: 1, answers: ["Don't know"] },
+        'yesno3/1': { count: 3, answers: ['No', 'Yes', "Don't know"] },
+        'yesno4/1': { count: 3, answers: ['No', 'Yes', "Don't know"] },
+        'yesno5/1': { count: 1, answers: ["Don't know"] },
+        'yesno6/1': { count: 2, answers: ['No', "Don't know"] }
+      };
 
       // check answer list
-      for (const answerField of ['yesno1/1', 'yesno3/1', 'yesno4/1']) {
-        await byId(page, answerField).click();
+      for (const [fieldId, config] of Object.entries(answerListConfigs)) {
+        await byId(page, fieldId).click();
         await expect(byId(page, searchResults)).toBeVisible();
-        await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(3);
-        await expect(page.locator('#lhc-tools-searchResults li').nth(0)).toContainText('No');
-        await expect(page.locator('#lhc-tools-searchResults li').nth(1)).toContainText('Yes');
-        await expect(page.locator('#lhc-tools-searchResults li').nth(2)).toContainText("Don't know");
+        const listItems = page.locator(`#${searchResults} li`);
+        await expect(listItems).toHaveCount(config.count);
+        for (let i = 0; i < config.answers.length; i++) {
+          await expect(listItems.nth(i)).toContainText(config.answers[i]);
+        }
       }
-      await byId(page, 'yesno2/1').click();
-      await expect(byId(page, searchResults)).toBeVisible();
-      await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(1);
-      await expect(page.locator('#lhc-tools-searchResults li').nth(0)).toContainText("Don't know");
-      await byId(page, 'yesno5/1').click();
-      await expect(byId(page, searchResults)).toBeVisible();
-      await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(1);
-      await expect(page.locator('#lhc-tools-searchResults li').nth(0)).toContainText("Don't know");
-      await byId(page, 'yesno6/1').click();
-      await expect(byId(page, searchResults)).toBeVisible();
-      await expect(page.locator('#lhc-tools-searchResults li')).toHaveCount(2);
-      await expect(page.locator('#lhc-tools-searchResults li').nth(0)).toContainText('No');
-      await expect(page.locator('#lhc-tools-searchResults li').nth(1)).toContainText("Don't know");
 
       // export a correct QR again
       const exportedQR = await page.evaluate(() =>
@@ -167,36 +178,36 @@ test.describe('FHIR answerValueSet', () => {
       }, { q, qr, fhirVersion });
       await expect(page.locator('#formContainer .lhc-form-title')).toBeVisible();
 
+      // Define expected checkbox states per field
+      const fieldStates = {
+        f1: { f1a1: false, f1a2: true, f1a3: false },
+        f2: { f2a1: true, f2a2: true, f2a3: false },
+        f3: { f3a1: false, f3a2: true, f3a3: false, f3Other: false },
+        f4: { f4a1: true, f4a2: true, f4a3: false, f4Other: false },
+        f5: { f5a1: false, f5a2: false, f5a3: false, f5Other: true, f5OtherValue: 'offlist answer 1' },
+        f6: { f6a1: false, f6a2: true, f6a3: false, f6Other: true, f6OtherValue: 'offlist answer 2' }
+      };
+
       // check saved values
-      await expect(byId(page, f1a1)).toBeVisible(); await expect(byId(page, f1a1).locator('input')).not.toBeChecked();
-      await expect(byId(page, f1a2)).toBeVisible(); await expect(byId(page, f1a2).locator('input')).toBeChecked();
-      await expect(byId(page, f1a3)).toBeVisible(); await expect(byId(page, f1a3).locator('input')).not.toBeChecked();
-
-      await expect(byId(page, f2a1)).toBeVisible(); await expect(byId(page, f2a1).locator('input')).toBeChecked();
-      await expect(byId(page, f2a2)).toBeVisible(); await expect(byId(page, f2a2).locator('input')).toBeChecked();
-      await expect(byId(page, f2a3)).toBeVisible(); await expect(byId(page, f2a3).locator('input')).not.toBeChecked();
-
-      await expect(byId(page, f3a1)).toBeVisible(); await expect(byId(page, f3a1).locator('input')).not.toBeChecked();
-      await expect(byId(page, f3a2)).toBeVisible(); await expect(byId(page, f3a2).locator('input')).toBeChecked();
-      await expect(byId(page, f3a3)).toBeVisible(); await expect(byId(page, f3a3).locator('input')).not.toBeChecked();
-      await expect(byId(page, f3Other)).toBeVisible(); await expect(byId(page, f3Other).locator('input').first()).not.toBeChecked();
-
-      await expect(byId(page, f4a1)).toBeVisible(); await expect(byId(page, f4a1).locator('input')).toBeChecked();
-      await expect(byId(page, f4a2)).toBeVisible(); await expect(byId(page, f4a2).locator('input')).toBeChecked();
-      await expect(byId(page, f4a3)).toBeVisible(); await expect(byId(page, f4a3).locator('input')).not.toBeChecked();
-      await expect(byId(page, f4Other)).toBeVisible(); await expect(byId(page, f4Other).locator('input').first()).not.toBeChecked();
-
-      await expect(byId(page, f5a1)).toBeVisible(); await expect(byId(page, f5a1).locator('input')).not.toBeChecked();
-      await expect(byId(page, f5a2)).toBeVisible(); await expect(byId(page, f5a2).locator('input')).not.toBeChecked();
-      await expect(byId(page, f5a3)).toBeVisible(); await expect(byId(page, f5a3).locator('input')).not.toBeChecked();
-      await expect(byId(page, f5Other)).toBeVisible(); await expect(byId(page, f5Other).locator('input').first()).toBeChecked();
-      await expect(byId(page, f5OtherValue)).toBeVisible(); await expect(byId(page, f5OtherValue)).toHaveValue('offlist answer 1');
-
-      await expect(byId(page, f6a1)).toBeVisible(); await expect(byId(page, f6a1).locator('input')).not.toBeChecked();
-      await expect(byId(page, f6a2)).toBeVisible(); await expect(byId(page, f6a2).locator('input')).toBeChecked();
-      await expect(byId(page, f6a3)).toBeVisible(); await expect(byId(page, f6a3).locator('input')).not.toBeChecked();
-      await expect(byId(page, f6Other)).toBeVisible(); await expect(byId(page, f6Other).locator('input').first()).toBeChecked();
-      await expect(byId(page, f6OtherValue)).toBeVisible(); await expect(byId(page, f6OtherValue)).toHaveValue('offlist answer 2');
+      for (const [groupKey, states] of Object.entries(fieldStates)) {
+        for (const [fieldId, expectedState] of Object.entries(states)) {
+          const field = byId(page, eval(fieldId));
+          await expect(field).toBeVisible();
+          
+          if (typeof expectedState === 'string') {
+            // It's a text field (e.g., OtherValue)
+            await expect(field).toHaveValue(expectedState);
+          } else {
+            // It's a checkbox
+            const input = field.locator('input').first();
+            if (expectedState) {
+              await expect(input).toBeChecked();
+            } else {
+              await expect(input).not.toBeChecked();
+            }
+          }
+        }
+      }
 
       // export a correct QR
       const exportedQR = await page.evaluate(() =>
@@ -271,38 +282,57 @@ test.describe('FHIR answerValueSet', () => {
       const exportedQR = await page.evaluate(() =>
         (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4')
       );
-      // first group
-      expect(exportedQR.item[0].item[0].linkId).toBe('/g1m1');
-      expect(exportedQR.item[0].item[0].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'N', display: 'No' } });
-      expect(exportedQR.item[0].item[1].linkId).toBe('/g1m2');
-      expect(exportedQR.item[0].item[1].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'Y', display: 'Yes' } });
-      expect(exportedQR.item[0].item[2].linkId).toBe('/g1m3');
-      expect(exportedQR.item[0].item[2].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/data-absent-reason', code: 'asked-unknown', display: "Don't know" } });
-      // second group
-      expect(exportedQR.item[1].item[0].linkId).toBe('/g2m1');
-      expect(exportedQR.item[1].item[0].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'N', display: 'No' } });
-      expect(exportedQR.item[1].item[1].linkId).toBe('/g2m2');
-      expect(exportedQR.item[1].item[1].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'N', display: 'No' } });
-      expect(exportedQR.item[1].item[1].answer[1]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'Y', display: 'Yes' } });
-      expect(exportedQR.item[1].item[2].linkId).toBe('/g2m3');
-      expect(exportedQR.item[1].item[2].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'N', display: 'No' } });
-      expect(exportedQR.item[1].item[2].answer[1]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'Y', display: 'Yes' } });
-      expect(exportedQR.item[1].item[2].answer[2]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/data-absent-reason', code: 'asked-unknown', display: "Don't know" } });
-      // third group
-      expect(exportedQR.item[2].item[0].linkId).toBe('/g3m1');
-      expect(exportedQR.item[2].item[0].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'N', display: 'No' } });
-      expect(exportedQR.item[2].item[1].linkId).toBe('/g3m2');
-      expect(exportedQR.item[2].item[1].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'Y', display: 'Yes' } });
-      expect(exportedQR.item[2].item[2].linkId).toBe('/g3m3');
-      expect(exportedQR.item[2].item[2].answer[0]).toEqual({ valueString: 'offlist answer 1' });
-      // fourth group
-      expect(exportedQR.item[3].item[0].linkId).toBe('/g4m1');
-      expect(exportedQR.item[3].item[0].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'Y', display: 'Yes' } });
-      expect(exportedQR.item[3].item[1].linkId).toBe('/g4m2');
-      expect(exportedQR.item[3].item[1].answer[0]).toEqual({ valueString: 'offlist answer 2' });
-      expect(exportedQR.item[3].item[2].linkId).toBe('/g4m3');
-      expect(exportedQR.item[3].item[2].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'Y', display: 'Yes' } });
-      expect(exportedQR.item[3].item[2].answer[1]).toEqual({ valueString: 'offlist answer 3' });
+
+      const V2_0136 = 'http://terminology.hl7.org/CodeSystem/v2-0136';
+      const DATA_ABSENT_REASON = 'http://terminology.hl7.org/CodeSystem/data-absent-reason';
+
+      const expectedMatrixQR = [
+        {
+          linkId: 'g1', // first group
+          item: [
+            { linkId: '/g1m1', answer: [ { valueCoding: { code: 'N', display: 'No', system: V2_0136 } } ] },
+            { linkId: '/g1m2', answer: [ { valueCoding: { code: 'Y', display: 'Yes', system: V2_0136 } } ] },
+            { linkId: '/g1m3', answer: [ { valueCoding: { code: 'asked-unknown', display: "Don't know", system: DATA_ABSENT_REASON } } ] }
+          ]
+        },
+        {
+          linkId: 'g2', // second group
+          item: [
+            { linkId: '/g2m1', answer: [ { valueCoding: { code: 'N', display: 'No', system: V2_0136 } } ] },
+            { linkId: '/g2m2', answer: [ { valueCoding: { code: 'N', display: 'No', system: V2_0136 } }, { valueCoding: { code: 'Y', display: 'Yes', system: V2_0136 } } ] },
+            { linkId: '/g2m3', answer: [ { valueCoding: { code: 'N', display: 'No', system: V2_0136 } }, { valueCoding: { code: 'Y', display: 'Yes', system: V2_0136 } }, { valueCoding: { code: 'asked-unknown', display: "Don't know", system: DATA_ABSENT_REASON } } ] }
+          ]
+        },
+        {
+          linkId: 'g3', // third group
+          item: [
+            { linkId: '/g3m1', answer: [{ valueCoding: { code: 'N', display: 'No', system: V2_0136 } }] },
+            { linkId: '/g3m2', answer: [{ valueCoding: { code: 'Y', display: 'Yes', system: V2_0136 } }] },
+            { linkId: '/g3m3', answer: [{ valueString: 'offlist answer 1' }] }
+          ]
+        },
+        {
+          linkId: 'g4', // fourth group
+          item: [
+            { linkId: '/g4m1', answer: [{ valueCoding: { code: 'Y', display: 'Yes', system: V2_0136 } }] },
+            { linkId: '/g4m2', answer: [{ valueString: 'offlist answer 2' }] },
+            { linkId: '/g4m3', answer: [{ valueCoding: { code: 'Y', display: 'Yes', system: V2_0136 } }, { valueString: 'offlist answer 3' }] }
+          ]
+        }
+      ];
+
+      // Validate exported QR
+      expectedMatrixQR.forEach((expectedGroup, groupIdx) => {
+        const groupItem = exportedQR.item[groupIdx];
+        expect(groupItem.linkId).toBe(expectedGroup.linkId);
+
+        expectedGroup.item.forEach((item, itemIdx) => {
+          const expectedItem = expectedGroup.item[itemIdx];
+          expect(item.linkId).toBe(expectedItem.linkId);
+          expect(item.answer).toEqual(expectedItem.answer); 
+        });
+      });
+
     });
   });
 

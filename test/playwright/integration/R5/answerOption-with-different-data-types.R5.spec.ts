@@ -201,15 +201,17 @@ test.describe('AnswerOption with different types', () => {
 
         test(`should get a correct QR from a questionnaire with answerOption where item.type=${valueType} and item.answerConstraint=${answerConstraint}, and should merge back`, async ({ page }) => {
           // group 1 - autocomplete, non-repeats: select 2nd item
-          await byId(page, ids.g1item1).click();
-          await byId(page, ids.g1item1).press('ArrowDown');
-          await byId(page, ids.g1item1).press('ArrowDown');
-          await byId(page, ids.g1item1).press('Enter');
+          const g1item1 = byId(page, ids.g1item1);
+          await g1item1.click();
+          await g1item1.press('ArrowDown');
+          await g1item1.press('ArrowDown');
+          await g1item1.press('Enter');
           // autocomplete, repeats: select 2nd item
-          await byId(page, ids.g1item2).click();
-          await byId(page, ids.g1item2).press('ArrowDown');
-          await byId(page, ids.g1item2).press('ArrowDown');
-          await byId(page, ids.g1item2).press('Enter');
+          const g1item2 = byId(page, ids.g1item2);
+          await g1item2.click();
+          await g1item2.press('ArrowDown');
+          await g1item2.press('ArrowDown');
+          await g1item2.press('Enter');
 
           // group 2 - radiobutton
           await byId(page, ids.g2item1ans2).click();
@@ -217,15 +219,17 @@ test.describe('AnswerOption with different types', () => {
           await byId(page, ids.g2item2ans2).click();
 
           // group 3 - autocomplete, non-repeats, prefix, score: select 2nd item
-          await byId(page, ids.g3item1).click();
-          await byId(page, ids.g3item1).press('ArrowDown');
-          await byId(page, ids.g3item1).press('ArrowDown');
-          await byId(page, ids.g3item1).press('Enter');
+          const g3item1 = byId(page, ids.g3item1);
+          await g3item1.click();
+          await g3item1.press('ArrowDown');
+          await g3item1.press('ArrowDown');
+          await g3item1.press('Enter');
           // autocomplete, repeats, prefix, score: select 2nd item
-          await byId(page, ids.g3item2).click();
-          await byId(page, ids.g3item2).press('ArrowDown');
-          await byId(page, ids.g3item2).press('ArrowDown');
-          await byId(page, ids.g3item2).press('Enter');
+          const g3item2 = byId(page, ids.g3item2);
+          await g3item2.click();
+          await g3item2.press('ArrowDown');
+          await g3item2.press('ArrowDown');
+          await g3item2.press('Enter');
 
           // group 4 - radiobutton, prefix, score
           await byId(page, ids.g4item1ans2).click();
@@ -261,25 +265,13 @@ test.describe('AnswerOption with different types', () => {
 
           if (answerConstraint === 'optionsOrString') {
             expect(qr.item[4].item[0].answer).toEqual([{ valueString: 'user typed value' }]);
-          } else {
-            expect(qr.item[4].item[0].answer).toEqual([qrValues.g1Answer2]);
-          }
-
-          if (answerConstraint === 'optionsOrString') {
             expect(qr.item[4].item[1].answer).toEqual([qrValues.g1Answer2, { valueString: 'user typed value' }]);
-          } else {
-            expect(qr.item[4].item[1].answer).toEqual([qrValues.g1Answer2, qrValues.g1Answer3]);
-          }
-
-          if (answerConstraint === 'optionsOrString') {
             expect(qr.item[5].item[0].answer).toEqual([{ valueString: 'user typed value' }]);
-          } else {
-            expect(qr.item[5].item[0].answer).toEqual([qrValues.g1Answer2]);
-          }
-
-          if (answerConstraint === 'optionsOrString') {
             expect(qr.item[5].item[1].answer).toEqual([qrValues.g1Answer2, { valueString: 'user typed value' }]);
           } else {
+            expect(qr.item[4].item[0].answer).toEqual([qrValues.g1Answer2]);
+            expect(qr.item[4].item[1].answer).toEqual([qrValues.g1Answer2, qrValues.g1Answer3]);
+            expect(qr.item[5].item[0].answer).toEqual([qrValues.g1Answer2]);
             expect(qr.item[5].item[1].answer).toEqual([qrValues.g1Answer2, qrValues.g1Answer3]);
           }
 
