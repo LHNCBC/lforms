@@ -950,6 +950,32 @@ describe('Util library', function() {
         });
     });
 
+    it('should throw if OperationOutcome is not returned from server', function(done) {
+      const q = {
+        "resourceType": "Questionnaire",
+        "title": "Test Questionnaire",
+        "status": "draft"
+      };
+      const operationOutCome = {
+        "resourceType": "BadResourceType",
+        "issue": [
+          {
+            "severity": "warning",
+            "code": "processing",
+            "diagnostics": "Some warning message"
+          }
+        ]
+      };
+      mockFetchResults([
+        ['Questionnaire/$validate', operationOutCome]
+      ])
+      LForms.Util.validateQuestionnaireOnFHIRServer(q, 'https://lforms-fhir.nlm.nih.gov/baseR4')
+        .then(() => {}, (result) => {
+          assert.equal(result, 'Error: Fetch error: Unexpected response from server: expected an OperationOutcome resource, but got BadResourceType');
+          done();
+        });
+    });
+
     it('should throw for network failure', function(done) {
       const q = {
         "resourceType": "Questionnaire",

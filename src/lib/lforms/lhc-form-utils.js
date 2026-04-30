@@ -237,6 +237,12 @@ const FormUtils = {
         }
         return response.json();
       })
+      .then(function (rtn) {
+        if (rtn.resourceType !== "OperationOutcome") {
+          throw new Error('Unexpected response from server: expected an OperationOutcome resource, but got ' + rtn.resourceType);
+        }
+        return rtn;
+      })
       .catch(function (error) {
         // Catch network failures and http errors like 404, 500.
         throw new Error('Fetch error: ' + error.message || error);
