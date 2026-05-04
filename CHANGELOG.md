@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.3.0] 2026-04-29
+### Changed
+- LForms.Util.validateQuestionnaireOnFHIRServer() returned Promise
+  now resolves to an OperationOutcome resource from the $validate operation.
+
 ## [41.2.0] 2026-04-20
 ### Added
 - New template option showRadioClearSelectionButton to show a
