@@ -173,7 +173,7 @@ function addSDCImportFns(ns) {
 
   // Property codes and URIs that are considered score-relevant.
   // Centralised here so _isScoreProperty and any future callers share one definition.
-  const SCORE_PROPERTY_CODES = ['ordinalValue', 'itemWeight', 'weight'];
+  const SCORE_PROPERTY_CODES = ['itemWeight'];
   const SCORE_PROPERTY_URIS = [
     self.fhirExtUrlValueSetScoreOrdinalValue,       // http://hl7.org/fhir/StructureDefinition/ordinalValue
     self.fhirExtUrlValueSetScoreItemWeight,          // http://hl7.org/fhir/StructureDefinition/itemWeight
