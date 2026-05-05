@@ -171,8 +171,29 @@ function addSDCImportFns(ns) {
   };
 
 
+  // Property codes and URIs that are considered score-relevant.
+  // Centralised here so _isScoreProperty and any future callers share one definition.
+  const SCORE_PROPERTY_CODES = ['ordinalValue', 'itemWeight', 'weight'];
+  const SCORE_PROPERTY_URIS = [
+    self.fhirExtUrlValueSetScoreOrdinalValue,       // http://hl7.org/fhir/StructureDefinition/ordinalValue
+    self.fhirExtUrlValueSetScoreItemWeight,          // http://hl7.org/fhir/StructureDefinition/itemWeight
+    "http://hl7.org/fhir/concept-properties#itemWeight"
+  ];
+
+
   /**
    * True if a ValueSet property code/uri is score-relevant.
+   *
+   * When the expansion.property map provides a URI for the code, URI-based
+   * validation is authoritative (the local code alias is implementation-defined
+   * and could collide with non-score properties).  A code that maps to a
+   * non-score URI is therefore NOT considered a score property even if its name
+   * appears in SCORE_PROPERTY_CODES.
+   *
+   * When no URI mapping exists, the code name is used as a fallback and a
+   * console.warn is emitted so implementers can detect missing expansion.property
+   * definitions in their ValueSets.
+   *
    * @param {string} propertyCode the code from contains.property.code
    * @param {Object} propertyUriByCode map from expansion.property code to uri
    * @returns {boolean}
@@ -183,17 +204,27 @@ function addSDCImportFns(ns) {
       return false;
     }
 
-    const scoreCodes = ['ordinalValue', 'itemWeight', 'weight'];
-    if (scoreCodes.includes(propertyCode)) {
+    const resolvedUri = propertyUriByCode[propertyCode];
+
+    // URI mapping is authoritative: if the expansion defines a URI for this
+    // code, rely solely on whether that URI is a known score URI.
+    if (resolvedUri !== undefined) {
+      return SCORE_PROPERTY_URIS.includes(resolvedUri);
+    }
+
+    // No URI mapping found.  Fall back to matching by well-known code names,
+    // but warn so missing expansion.property entries are visible.
+    if (SCORE_PROPERTY_CODES.includes(propertyCode)) {
+      console.warn(
+        'LForms: ValueSet expansion property "' + propertyCode + '" is ' +
+        'recognized as score-relevant by name, but has no URI mapping in ' +
+        'expansion.property to confirm. Add an expansion.property entry with ' +
+        'the corresponding URI to suppress this warning.'
+      );
       return true;
     }
 
-    const scoreUris = [
-      self.fhirExtUrlValueSetScoreOrdinalValue,
-      self.fhirExtUrlValueSetScoreItemWeight,
-      "http://hl7.org/fhir/concept-properties#itemWeight"
-    ];
-    return scoreUris.includes(propertyUriByCode[propertyCode]);
+    return false;
   };
 
 
@@ -256,6 +287,8 @@ function addSDCImportFns(ns) {
   /**
    * Deprecated fallback: score from ValueSet.expansion.contains.extension.
    * This is retained for backward compatibility with existing questionnaires.
+   * Emits a console.warn when a score is found so implementers can migrate to
+   * expansion.contains.property (R5) or the R4/R4B backport extension.
    * @param containsEntry entry in expansion.contains
    * @returns {number|undefined}
    * @private
@@ -265,7 +298,16 @@ function addSDCImportFns(ns) {
       self.fhirExtUrlValueSetScoreOrdinalValue) ||
       LForms.Util.findObjectInArray(containsEntry?.extension, 'url',
         self.fhirExtUrlValueSetScoreItemWeight);
-    return self._toScoreNumber(self._extractValueX(ordExt));
+    const score = self._toScoreNumber(self._extractValueX(ordExt));
+    if (score !== undefined) {
+      console.warn(
+        'LForms: Score extracted from deprecated ValueSet.expansion.contains.extension ' +
+        '(ordinalValue/itemWeight). This path is retained for backward compatibility only. ' +
+        'Migrate to expansion.contains.property (R5) or the R4/R4B backport extension ' +
+        'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property'
+      );
+    }
+    return score;
   };
 
 
