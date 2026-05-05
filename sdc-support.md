@@ -39,6 +39,13 @@ fields.
 * maxSize
 * answerOption
 * answerValueSet:  Note that contained ValueSets are expected to contain an expansion.
+  For ValueSet expansion scores, the recommended path is
+  `ValueSet.expansion.contains.property` (FHIR R5), or in R4/R4B, the R5
+  backport extension
+  `http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property`.
+  Legacy score extraction from `ValueSet.expansion.contains.extension` using
+  `ordinalValue`/`itemWeight` is still supported only as a backward-compatible
+  fallback.
 * answerExpression
 * required: (also listed in previous section of the SDC IG)
 * repeats

@@ -8,6 +8,12 @@ This project follows [Semantic Versioning](http://semver.org/).
   "clear selection" button next to radio buttons. Defaults to false.
 ### Changed
 - Converted Cypress e2e tests to Playwright.
+- For ValueSet expansions, score import now prioritizes
+  `expansion.contains.property` (R5) and the R4/R4B backport extension
+  `http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property`.
+  Legacy score extraction from `expansion.contains.extension`
+  (`ordinalValue`/`itemWeight`) is retained as a deprecated fallback for
+  backward compatibility.
 
 ## [41.1.0] 2026-04-02
 ### Added
@@ -2077,4 +2083,3 @@ object.
 ### Removed
 - WidgetUtil.preprocessRIData.  This was an internal API, so it should not be
   a breaking change for anyone but ourselves.
-
