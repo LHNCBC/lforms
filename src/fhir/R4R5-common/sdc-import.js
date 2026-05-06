@@ -322,7 +322,19 @@ function addSDCImportFns(ns) {
    * @returns {number|undefined}
    */
   self.resolveAnswerScore = function(valueSet, containsEntry) {
-    const propertyUriByCode = self._buildExpansionPropertyUriByCodeMap(valueSet?.expansion);
+    const expansion = valueSet?.expansion;
+    let propertyUriByCode;
+
+    if (expansion) {
+      if (!expansion._lfPropertyUriByCodeMap) {
+        expansion._lfPropertyUriByCodeMap =
+          self._buildExpansionPropertyUriByCodeMap(expansion);
+      }
+      propertyUriByCode = expansion._lfPropertyUriByCodeMap;
+    }
+    else {
+      propertyUriByCode = self._buildExpansionPropertyUriByCodeMap(expansion);
+    }
 
     const scoreFromProperty = self._resolveScoreFromContainsProperty(containsEntry, propertyUriByCode);
     if (scoreFromProperty !== undefined) {

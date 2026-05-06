@@ -169,6 +169,52 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(lfData.items[0].answers[0].score, 7);
             });
 
+            it('should ignore contains.property itemWeight without expansion.property uri mapping', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    property: [{
+                      code: 'itemWeight',
+                      valueDecimal: 8
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.isUndefined(lfData.items[0].answers[0].score);
+            });
+
+            it('should ignore contains.property when expansion.property maps code to a non-score uri', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  property: [{
+                    code: 'weight',
+                    uri: 'http://example.com/not-item-weight'
+                  }],
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    property: [{
+                      code: 'weight',
+                      valueDecimal: 5
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.isUndefined(lfData.items[0].answers[0].score);
+            });
+
             it('should keep legacy contains.extension score as fallback', function() {
               const q = createQuestionnaireWithContainedValueSet({
                 resourceType: 'ValueSet',
