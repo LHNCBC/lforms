@@ -169,7 +169,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(lfData.items[0].answers[0].score, 7);
             });
 
-            it('should ignore contains.property itemWeight without expansion.property uri mapping', function() {
+            it('should fall back to contains.property itemWeight without expansion.property uri mapping', function() {
               const q = createQuestionnaireWithContainedValueSet({
                 resourceType: 'ValueSet',
                 id: 'vs1',
@@ -187,7 +187,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               });
 
               const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
-              assert.isUndefined(lfData.items[0].answers[0].score);
+              assert.equal(lfData.items[0].answers[0].score, 8);
             });
 
             it('should ignore contains.property when expansion.property maps code to a non-score uri', function() {
