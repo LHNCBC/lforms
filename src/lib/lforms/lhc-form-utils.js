@@ -205,8 +205,7 @@ const FormUtils = {
    * Makes a Questionnaire/$validate call with the given Questionnaire and base FHIR server.
    * @param questionnaire a FHIR Questionnaire resource to be validated.
    * @param fhirServerBase the base URL of the FHIR server to which the $validate call should be made.
-   * @return a Promise that resolves to null if the Questionnaire is valid, or an error message if not valid.
-   * If multiple errors are returned from server, they will be concatenated into a single string with " | " as separator.
+   * @return a Promise that resolves to the OperationOutCome resource returned from server.
    */
   validateQuestionnaireOnFHIRServer: function(questionnaire, fhirServerBase) {
     if (!questionnaire || questionnaire.resourceType !== 'Questionnaire') {
@@ -238,13 +237,9 @@ const FormUtils = {
         }
         return response.json();
       })
-      .then(function (parsedJSON) {
-        let rtn = null;
-        if (parsedJSON.resourceType === "OperationOutcome") {
-          const errorOrFatal = parsedJSON.issue?.filter(item => item.severity === "error" || item.severity === "fatal");
-          if (errorOrFatal && errorOrFatal.length) {
-            rtn = errorOrFatal.map(e => e.diagnostics).join(' | ');
-          }
+      .then(function (rtn) {
+        if (rtn.resourceType !== "OperationOutcome") {
+          throw new Error('Unexpected response from server: expected an OperationOutcome resource, but got ' + rtn.resourceType);
         }
         return rtn;
       })
