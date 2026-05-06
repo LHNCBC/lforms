@@ -120,6 +120,253 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
         });
 
+        describe('ValueSet expansion score extraction', function() {
+          const containsPropertyBackportUrl =
+            'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property';
+          const expansionPropertyBackportUrl =
+            'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.property';
+
+          function getChoiceTypeForVersion() {
+            return fhirVersion === 'R5' ? 'coding' : 'choice';
+          }
+
+          function createQuestionnaireWithContainedValueSet(valueSet) {
+            return {
+              resourceType: 'Questionnaire',
+              status: 'draft',
+              contained: [valueSet],
+              item: [{
+                linkId: 'q1',
+                type: getChoiceTypeForVersion(),
+                answerValueSet: '#vs1'
+              }]
+            };
+          }
+
+          if (fhirVersion === 'R5') {
+            it('should extract score from expansion.contains.property using expansion.property uri mapping', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  property: [{
+                    code: 'weight',
+                    uri: 'http://hl7.org/fhir/concept-properties#itemWeight'
+                  }],
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    property: [{
+                      code: 'weight',
+                      valueInteger: 7
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.equal(lfData.items[0].answers[0].score, 7);
+            });
+
+            it('should fall back to contains.property itemWeight without expansion.property uri mapping', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    property: [{
+                      code: 'itemWeight',
+                      valueDecimal: 8
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.equal(lfData.items[0].answers[0].score, 8);
+            });
+
+            it('should ignore contains.property when expansion.property maps code to a non-score uri', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  property: [{
+                    code: 'weight',
+                    uri: 'http://example.com/not-item-weight'
+                  }],
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    property: [{
+                      code: 'weight',
+                      valueDecimal: 5
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.isUndefined(lfData.items[0].answers[0].score);
+            });
+
+            it('should keep legacy contains.extension score as fallback', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    extension: [{
+                      url: 'http://hl7.org/fhir/StructureDefinition/itemWeight',
+                      valueDecimal: 6
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.equal(lfData.items[0].answers[0].score, 6);
+            });
+
+            it('should prefer contains.property over legacy contains.extension', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  property: [{
+                    code: 'weight',
+                    uri: 'http://hl7.org/fhir/concept-properties#itemWeight'
+                  }],
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    property: [{
+                      code: 'weight',
+                      valueDecimal: 9
+                    }],
+                    extension: [{
+                      url: 'http://hl7.org/fhir/StructureDefinition/itemWeight',
+                      valueDecimal: 2
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.equal(lfData.items[0].answers[0].score, 9);
+            });
+          }
+
+          if (fhirVersion === 'R4' || fhirVersion === 'R4B') {
+            it('should extract score from R5 backport contains.property extension', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  extension: [{
+                    url: expansionPropertyBackportUrl,
+                    extension: [{
+                      url: 'code',
+                      valueCode: 'weight'
+                    }, {
+                      url: 'uri',
+                      valueUri: 'http://hl7.org/fhir/concept-properties#itemWeight'
+                    }]
+                  }],
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    extension: [{
+                      url: containsPropertyBackportUrl,
+                      extension: [{
+                        url: 'code',
+                        valueCode: 'weight'
+                      }, {
+                        url: 'value',
+                        valueDecimal: 4.5
+                      }]
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.equal(lfData.items[0].answers[0].score, 4.5);
+            });
+
+            it('should keep legacy contains.extension score as fallback', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    extension: [{
+                      url: 'http://hl7.org/fhir/StructureDefinition/ordinalValue',
+                      valueDecimal: 3
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.equal(lfData.items[0].answers[0].score, 3);
+            });
+
+            it('should prefer backport contains.property over legacy contains.extension', function() {
+              const q = createQuestionnaireWithContainedValueSet({
+                resourceType: 'ValueSet',
+                id: 'vs1',
+                expansion: {
+                  extension: [{
+                    url: expansionPropertyBackportUrl,
+                    extension: [{
+                      url: 'code',
+                      valueCode: 'weight'
+                    }, {
+                      url: 'uri',
+                      valueUri: 'http://hl7.org/fhir/concept-properties#itemWeight'
+                    }]
+                  }],
+                  contains: [{
+                    code: 'c1',
+                    system: 'sys',
+                    display: 'A',
+                    extension: [{
+                      url: containsPropertyBackportUrl,
+                      extension: [{
+                        url: 'code',
+                        valueCode: 'weight'
+                      }, {
+                        url: 'value',
+                        valueInteger: 11
+                      }]
+                    }, {
+                      url: 'http://hl7.org/fhir/StructureDefinition/itemWeight',
+                      valueDecimal: 2
+                    }]
+                  }]
+                }
+              });
+
+              const lfData = LForms.Util.convertFHIRQuestionnaireToLForms(q, fhirVersion);
+              assert.equal(lfData.items[0].answers[0].score, 11);
+            });
+          }
+        });
+
         describe('_processFHIRValues', function() {
           describe('list fields with coding values', function () {
             let answerValCases = [{
@@ -2611,5 +2858,3 @@ for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
     });
   })(nonSTU3FHIRVersions[i]);
 }
-
-

@@ -114,18 +114,22 @@ function addSTU3R4ImportFns(ns) {
             }
           }
         }
-        var ordExt;
-        if (self.fhirExtUrlValueSetScore) { // STU3.
-          ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+        let score;
+        if (self.resolveAnswerScore) { // R4/R4B path (from R4R5-common).
+          score = self.resolveAnswerScore(vs, vsItem);
+        } else if (self.fhirExtUrlValueSetScore) { // STU3.
+          const ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
             self.fhirExtUrlValueSetScore);
-        } else { // R4. Both ordinalValue and itemWeight extensions are supported.
-          ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+          score = ordExt?.valueDecimal;
+        } else { // Legacy fallback behavior if resolveAnswerScore is unavailable.
+          const ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
               self.fhirExtUrlValueSetScoreOrdinalValue) ||
             LForms.Util.findObjectInArray(vsItem.extension, 'url',
               self.fhirExtUrlValueSetScoreItemWeight);
+          score = ordExt?.valueDecimal;
         }
-        if(ordExt) {
-          answer.score = ordExt.valueDecimal;
+        if(score !== undefined) {
+          answer.score = score;
         }
         rtn.push(answer);
       });

@@ -15,6 +15,10 @@ function addSDCImportFns(ns) {
   // FHIR extension urls
   self.fhirExtUrlValueSetScoreOrdinalValue = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
   self.fhirExtUrlValueSetScoreItemWeight = "http://hl7.org/fhir/StructureDefinition/itemWeight";
+  self.fhirExtUrlValueSetExpansionPropertyBackport =
+    "http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.property";
+  self.fhirExtUrlValueSetExpansionContainsPropertyBackport =
+    "http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property";
 
 
   /**
@@ -99,6 +103,251 @@ function addSDCImportFns(ns) {
         lfItem.skipLogic.logic = qItem.enableBehavior.toUpperCase();
       }
     }
+  };
+
+
+  /**
+   * Build a map from ValueSet.expansion.property code to uri. For R4/R4B, this
+   * also parses the R5 backport extension for ValueSet.expansion.property.
+   * @param expansion valueSet.expansion
+   * @returns {Object} map from property code to uri
+   * @private
+   */
+  self._buildExpansionPropertyUriByCodeMap = function(expansion) {
+    const propertyUriByCode = {};
+    (expansion?.property || []).forEach(function(prop) {
+      if (prop?.code && prop?.uri) {
+        propertyUriByCode[prop.code] = prop.uri;
+      }
+    });
+
+    (expansion?.extension || []).forEach(function(ext) {
+      if (ext?.url !== self.fhirExtUrlValueSetExpansionPropertyBackport || !ext.extension) {
+        return;
+      }
+      const codeExt = LForms.Util.findObjectInArray(ext.extension, 'url', 'code');
+      const uriExt = LForms.Util.findObjectInArray(ext.extension, 'url', 'uri');
+      if (codeExt?.valueCode && uriExt?.valueUri) {
+        propertyUriByCode[codeExt.valueCode] = uriExt.valueUri;
+      }
+    });
+
+    return propertyUriByCode;
+  };
+
+
+  /**
+   * Extract the first value[x] from a FHIR element.
+   * @param element a FHIR element object
+   * @returns value[x], or undefined
+   * @private
+   */
+  self._extractValueX = function(element) {
+    if (!element) {
+      return undefined;
+    }
+    const valueKey = Object.keys(element).find(function(key) {
+      return /^value[A-Z]/.test(key);
+    });
+    return valueKey ? element[valueKey] : undefined;
+  };
+
+
+  /**
+   * Convert a value[x] to score number when possible.
+   * @param {*} rawValue value from value[x]
+   * @returns {number|undefined}
+   * @private
+   */
+  self._toScoreNumber = function(rawValue) {
+    if (rawValue === undefined || rawValue === null || rawValue === '') {
+      return undefined;
+    }
+    if (typeof rawValue === 'number') {
+      return Number.isFinite(rawValue) ? rawValue : undefined;
+    }
+    const parsed = parseFloat(rawValue);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  };
+
+
+  // Property codes and URIs that are considered score-relevant.
+  // Centralised here so _isScoreProperty and any future callers share one definition.
+  const SCORE_PROPERTY_CODES = ['itemWeight'];
+  const SCORE_PROPERTY_URIS = [
+    self.fhirExtUrlValueSetScoreOrdinalValue,       // http://hl7.org/fhir/StructureDefinition/ordinalValue
+    self.fhirExtUrlValueSetScoreItemWeight,          // http://hl7.org/fhir/StructureDefinition/itemWeight
+    "http://hl7.org/fhir/concept-properties#itemWeight"
+  ];
+
+
+  /**
+   * True if a ValueSet property code/uri is score-relevant.
+   *
+   * When the expansion.property map provides a URI for the code, URI-based
+   * validation is authoritative (the local code alias is implementation-defined
+   * and could collide with non-score properties).  A code that maps to a
+   * non-score URI is therefore NOT considered a score property even if its name
+   * appears in SCORE_PROPERTY_CODES.
+   *
+   * When no URI mapping exists, the code name is used as a fallback and a
+   * console.warn is emitted so implementers can detect missing expansion.property
+   * definitions in their ValueSets.
+   *
+   * @param {string} propertyCode the code from contains.property.code
+   * @param {Object} propertyUriByCode map from expansion.property code to uri
+   * @returns {boolean}
+   * @private
+   */
+  self._isScoreProperty = function(propertyCode, propertyUriByCode) {
+    if (!propertyCode) {
+      return false;
+    }
+
+    const resolvedUri = propertyUriByCode[propertyCode];
+
+    // URI mapping is authoritative: if the expansion defines a URI for this
+    // code, rely solely on whether that URI is a known score URI.
+    if (resolvedUri !== undefined) {
+      return SCORE_PROPERTY_URIS.includes(resolvedUri);
+    }
+
+    // No URI mapping found.  Fall back to matching by well-known code names,
+    // but warn so missing expansion.property entries are visible.
+    if (SCORE_PROPERTY_CODES.includes(propertyCode)) {
+      console.warn(
+        'LForms: ValueSet expansion property "' + propertyCode + '" is ' +
+        'recognized as score-relevant by name, but has no URI mapping in ' +
+        'expansion.property to confirm. Add an expansion.property entry with ' +
+        'the corresponding URI to suppress this warning.'
+      );
+      return true;
+    }
+
+    return false;
+  };
+
+
+  /**
+   * Get score from native R5 ValueSet.expansion.contains.property.
+   * @param containsEntry entry in expansion.contains
+   * @param propertyUriByCode map from expansion.property code to uri
+   * @returns {number|undefined}
+   * @private
+   */
+  self._resolveScoreFromContainsProperty = function(containsEntry, propertyUriByCode) {
+    const properties = containsEntry?.property || [];
+    for (let i = 0; i < properties.length; i++) {
+      const prop = properties[i];
+      if (!self._isScoreProperty(prop?.code, propertyUriByCode)) {
+        continue;
+      }
+      const score = self._toScoreNumber(self._extractValueX(prop));
+      if (score !== undefined) {
+        return score;
+      }
+    }
+    return undefined;
+  };
+
+
+  /**
+   * Get score from the R4/R4B backport extension for
+   * ValueSet.expansion.contains.property.
+   * @param containsEntry entry in expansion.contains
+   * @param propertyUriByCode map from expansion.property code to uri
+   * @returns {number|undefined}
+   * @private
+   */
+  self._resolveScoreFromContainsPropertyBackport = function(containsEntry, propertyUriByCode) {
+    const extensions = containsEntry?.extension || [];
+    for (let i = 0; i < extensions.length; i++) {
+      const ext = extensions[i];
+      if (ext?.url !== self.fhirExtUrlValueSetExpansionContainsPropertyBackport || !ext.extension) {
+        continue;
+      }
+
+      const codeExt = LForms.Util.findObjectInArray(ext.extension, 'url', 'code');
+      const valueExt = LForms.Util.findObjectInArray(ext.extension, 'url', 'value');
+      const propertyCode = codeExt?.valueCode;
+      if (!self._isScoreProperty(propertyCode, propertyUriByCode)) {
+        continue;
+      }
+
+      // For this backport extension, value lives under nested extension[url="value"].
+      const score = self._toScoreNumber(self._extractValueX(valueExt));
+      if (score !== undefined) {
+        return score;
+      }
+    }
+    return undefined;
+  };
+
+
+  /**
+   * Deprecated fallback: score from ValueSet.expansion.contains.extension.
+   * This is retained for backward compatibility with existing questionnaires.
+   * Emits a console.warn when a score is found so implementers can migrate to
+   * expansion.contains.property (R5) or the R4/R4B backport extension.
+   * @param containsEntry entry in expansion.contains
+   * @returns {number|undefined}
+   * @private
+   */
+  self._resolveLegacyScoreFromContainsExtension = function(containsEntry) {
+    const ordExt = LForms.Util.findObjectInArray(containsEntry?.extension, 'url',
+      self.fhirExtUrlValueSetScoreOrdinalValue) ||
+      LForms.Util.findObjectInArray(containsEntry?.extension, 'url',
+        self.fhirExtUrlValueSetScoreItemWeight);
+    const score = self._toScoreNumber(self._extractValueX(ordExt));
+    if (score !== undefined) {
+      console.warn(
+        'LForms: Score extracted from deprecated ValueSet.expansion.contains.extension ' +
+        '(ordinalValue/itemWeight). This path is retained for backward compatibility only. ' +
+        'Migrate to expansion.contains.property (R5) or the R4/R4B backport extension ' +
+        'http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property'
+      );
+    }
+    return score;
+  };
+
+
+  /**
+   * Resolve answer.score for a ValueSet expansion concept.
+   * Priority:
+   * 1) native contains.property
+   * 2) R4/R4B backport extension for contains.property
+   * 3) deprecated fallback on contains.extension
+   * @param valueSet ValueSet resource
+   * @param containsEntry entry in valueSet.expansion.contains
+   * @returns {number|undefined}
+   */
+  self.resolveAnswerScore = function(valueSet, containsEntry) {
+    const expansion = valueSet?.expansion;
+    let propertyUriByCode;
+
+    if (expansion) {
+      if (!expansion._lfPropertyUriByCodeMap) {
+        expansion._lfPropertyUriByCodeMap =
+          self._buildExpansionPropertyUriByCodeMap(expansion);
+      }
+      propertyUriByCode = expansion._lfPropertyUriByCodeMap;
+    }
+    else {
+      propertyUriByCode = self._buildExpansionPropertyUriByCodeMap(expansion);
+    }
+
+    const scoreFromProperty = self._resolveScoreFromContainsProperty(containsEntry, propertyUriByCode);
+    if (scoreFromProperty !== undefined) {
+      return scoreFromProperty;
+    }
+
+    const scoreFromBackport =
+      self._resolveScoreFromContainsPropertyBackport(containsEntry, propertyUriByCode);
+    if (scoreFromBackport !== undefined) {
+      return scoreFromBackport;
+    }
+
+    return self._resolveLegacyScoreFromContainsExtension(containsEntry);
   };
 
 

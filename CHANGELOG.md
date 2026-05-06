@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [41.3.0] tbd
+### Changed
+- For ValueSet expansions, score import now prioritizes
+  `expansion.contains.property` (R5) and the R4/R4B backport extension
+  `http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property` using the `itemWeight` property.
+  Legacy score extraction from `expansion.contains.extension`
+  (`ordinalValue`/`itemWeight`) is retained as a deprecated fallback for
+  backward compatibility.
+
 ## [41.2.0] 2026-04-20
 ### Added
 - New template option showRadioClearSelectionButton to show a
@@ -2077,4 +2086,3 @@ object.
 ### Removed
 - WidgetUtil.preprocessRIData.  This was an internal API, so it should not be
   a breaking change for anyone but ourselves.
-
