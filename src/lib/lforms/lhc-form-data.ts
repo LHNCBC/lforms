@@ -2547,7 +2547,7 @@ export default class LhcFormData {
       "_id": "",
       "items": []
     };
-    newGroupItemForCheckbox.question = answer._displayText;
+    newGroupItemForCheckbox.question = answer._displayText || answer.text || answer.code + "";
     newGroupItemForCheckbox.linkId = linkId;
     newGroupItemForCheckbox._id = linkId;
     newGroupItemForCheckbox.items = subItemsCopy;

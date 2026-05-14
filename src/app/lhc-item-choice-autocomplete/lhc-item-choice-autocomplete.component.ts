@@ -34,12 +34,16 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
     }
   }
 
+  /**
+   * Add or remove subgroups for the multi-select item based on the current value of the item.
+   */
   addOrRemoveSubGroups(): void {
     if (!this.item.items) {
       return;
     }
     const validLinkIds = this.item.value.map((v) => {
       return {
+        'value': v,
         'linkId': this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(v),
         'matched': false
       };
@@ -48,8 +52,9 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
       if (!this.item.items[i].isSubGroupForCheckbox) {
         continue;
       }
-      if (validLinkIds.includes(this.item.items[i].linkId)) {
-        validLinkIds.find((v) => v.linkId === this.item.items[i].linkId).matched = true;
+      const matched = validLinkIds.find((v) => v.linkId === this.item.items[i].linkId);
+      if (matched) {
+        matched.matched = true;
       }
       else {
         this.item.items.splice(i, 1);
@@ -57,10 +62,9 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
     }
     validLinkIds.forEach((v) => {
       if (!v.matched) {
-        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, v);
+        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, v.value);
       }
     });
-    console.log(this.item.items);
   }
 
 }

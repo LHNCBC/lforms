@@ -1,10 +1,5 @@
 {
   "resourceType": "Questionnaire",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
-    ]
-  },
   "title": "Dropdown layout with child item",
   "status": "draft",
   "item": [
