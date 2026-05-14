@@ -749,7 +749,7 @@ export default class LhcFormData {
         const subItem = item.items[i];
         const toBeHidden = hidden || this.isItemHidden(subItem) ||
           // Hide the original sub items if item is a checkbox layout question with sub items.
-          (InternalUtil.isCheckboxWithSubItems(item) && !subItem.isSubGroupForCheckbox);
+          (InternalUtil.isMultiSelectWithSubItems(item) && !subItem.isSubGroupForCheckbox);
         // set the sub item's hidden status
         subItem._isHiddenFromView = toBeHidden;
         // process the sub item's sub items

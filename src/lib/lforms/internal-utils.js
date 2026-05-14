@@ -507,12 +507,10 @@ export const InternalUtil = {
 
 
   /**
-   * Check if the item is a checkbox layout with sub items.
+   * Check if the item is a multi-select (coudl be checkbox or dropdown layout) with sub items.
    */
-  isCheckboxWithSubItems: function(item) {
-    return item.displayControl && item.displayControl.answerLayout &&
-      item.displayControl.answerLayout.type === 'RADIO_CHECKBOX' &&
-      item._multipleAnswers &&
+  isMultiSelectWithSubItems: function(item) {
+    return item._multipleAnswers &&
       item.items && item.items.length > 0;
   },
 
