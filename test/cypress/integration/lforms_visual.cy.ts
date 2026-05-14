@@ -1,4 +1,5 @@
 import {TestPage} from '../support/lforms_testpage.po.js';
+import { AddFormToPageTestPage } from "../support/addFormToPageTest.po";
 import * as util from "../support/util";
 const answerId = util.answerId;
 
@@ -161,6 +162,8 @@ describe('Visual effect tests', () => {
   });
 
   describe('radio buttons in a radio group', () => {
+    const po = new AddFormToPageTestPage();
+
     it('should get to the first radio button in a radiobutton group using tab key and get to rest using arrow keys', () => {
       tp.LoadForm.openFullFeaturedForm();
       cy.byId('/type0/1')
@@ -220,6 +223,61 @@ describe('Visual effect tests', () => {
       cy.realPress("Tab");
       cy.focused()
         .should('have.attr', 'id', '/type2/1')
+    });
+
+    it('should clear radio selection when "clear selection" button is clicked', () => {
+      po.openPage();
+      util.addFormToPage('answerOption/answerOption-valueCoding.open-choice.R4.json', null, {fhirVersion: 'R4', showRadioClearSelectionButton: true});
+      // Select a radio option.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1||c3').click();
+      cy.byId('valueCoding.open-choice-group2-item1/1/1||c3 input').should('be.checked');
+      // Clear selection.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      // Radio option should be unselected.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1||c3 input').should('not.be.checked');
+      // Check Other option and type in Other value.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_other').click();
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_other input').should('be.checked');
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_otherValue').type('abc');
+      // Exported QR has 3 items.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item.length).to.equal(3);
+      });
+      // Clear selection.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_clearSelection').click();
+      // Other option should be unselected, and Other value should be gone.
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_other input').should('not.be.checked');
+      cy.byId('valueCoding.open-choice-group2-item1/1/1|_otherValue').should('not.exist');
+      // Exported QR now has 2 items because the radio selection is cleared.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item.length).to.equal(2);
+      });
+    });
+
+    it('should clear radio selection when "clear selection" button is clicked - matrix layout', () => {
+      po.openPage();
+      util.addFormToPage('matrixLayout-initialvalue-choice-non-repeats.R4.json', null, {
+        fhirVersion: 'R4',
+        showRadioClearSelectionButton: true
+      });
+      // A radio option is initially selected.
+      cy.byId('/g1m1/1/1||c2').should('be.checked');
+      // Exported QR has 3 items.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item[0].item.length).to.equal(3);
+      });
+      // Clear selection.
+      cy.byId('/g1m1/1/1|_clearSelection').click();
+      // Radio option should be unselected.
+      cy.byId('/g1m1/1/1||c2').should('not.be.checked');
+      // Exported QR now has 2 items because the radio selection is cleared.
+      cy.window().then((win) => {
+        const qr = win.LForms.Util.getFormFHIRData("QuestionnaireResponse", "R4");
+        expect(qr.item[0].item.length).to.equal(2);
+      });
     });
   });
 

@@ -7,7 +7,11 @@
   color: red;
 }
 
-.lhc-error-msg, .lhc-error-item {
+.lhc-warning-msg {
+  color: orange;
+}
+
+.lhc-error-msg, .lhc-warning-msg, .lhc-error-item {
   margin-left: 0.5em;
 }
 

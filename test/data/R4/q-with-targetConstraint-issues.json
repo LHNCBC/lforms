@@ -1,0 +1,287 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "target-constraint-tester",
+  "url": "https://example.org/R4/Questionnaire/target-constraint-tester",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "title": "Target Constraint Tester",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "container",
+      "type": "group",
+      "text": "Some Questions for You",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "key",
+              "valueId": "constraint-dont-be-shy"
+            },
+            {
+              "url": "requirements",
+              "valueMarkdown": "User must state favorite color or number"
+            },
+            {
+              "url": "severity",
+              "valueCode": "error"
+            },
+            {
+              "url": "expression",
+              "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%resource.descendants().where(linkId = '1' or linkId = '2'or linkId = '3'or linkId = '4').count() >= 2"
+              }
+            },
+            {
+              "url": "human",
+              "valueString": "You must state your favorite color or number (or both)."
+            },
+            {
+              "url": "location",
+              "valueString": "%questionnaire.descendants().where(linkId = '1')"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/targetConstraint"
+        }
+      ],
+      "item": [
+        {
+          "linkId": "container_help",
+          "type": "display",
+          "text": "Constraint (error): Must answer at least two questions. (Bug: Pick a color in question 1 and leave all others blank. First time you validate, it will return error for this item. If you validate again, it will return an error for this item and repeat it for the favorite color item. Every time you validate again after that, it will add another (duplicate) error for the Favorite Color item. If you answer another question, the original error will clear, but all the extra errors persist.)",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "help",
+                    "display": "Help-Button"
+                  }
+                ],
+                "text": "Help-Button"
+              }
+            }
+          ]
+        },
+        {
+          "linkId": "1",
+          "type": "string",
+          "text": "Favorite Primary Color",
+          "answerOption": [
+            {
+              "valueString": "red"
+            },
+            {
+              "valueString": "yellow"
+            },
+            {
+              "valueString": "blue"
+            }
+          ]
+        },
+        {
+          "linkId": "2",
+          "type": "integer",
+          "text": "Favorite Number",
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "key",
+                  "valueId": "constraint-number"
+                },
+                {
+                  "url": "requirements",
+                  "valueMarkdown": "Number should be less than 100."
+                },
+                {
+                  "url": "severity",
+                  "valueCode": "warning"
+                },
+                {
+                  "url": "expression",
+                  "valueExpression": {
+                    "language": "text/fhirpath",
+                    "expression": "%context.answer.value < 100"
+                  }
+                },
+                {
+                  "url": "human",
+                  "valueString": "The number should be less than 100."
+                },
+                {
+                  "url": "location",
+                  "valueString": "%questionnaire.descendants().where(linkId = '2')"
+                }
+              ],
+              "url": "http://hl7.org/fhir/StructureDefinition/targetConstraint"
+            }
+          ],
+          "item": [
+            {
+              "linkId": "2_help",
+              "type": "display",
+              "text": "Constraint (warning): Value must be < 100 (note: LHC enforces even though it's not required because it's an integer type).",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "help",
+                        "display": "Help-Button"
+                      }
+                    ],
+                    "text": "Help-Button"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "linkId": "3",
+          "type": "string",
+          "text": "Best Baseball Team",
+          "required": false,
+          "answerOption": [
+            {
+              "valueString": "Boston Red Sox"
+            },
+            {
+              "valueString": "BoSox"
+            },
+            {
+              "valueString": "The Sox"
+            }
+          ],
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "key",
+                  "valueId": "constraint-team"
+                },
+                {
+                  "url": "requirements",
+                  "valueMarkdown": "Answer should unambiguously refer to the Boston Red Sox."
+                },
+                {
+                  "url": "severity",
+                  "valueCode": "warning"
+                },
+                {
+                  "url": "expression",
+                  "valueExpression": {
+                    "language": "text/fhirpath",
+                    "expression": "%context.answer.value != 'The Sox'"
+                  }
+                },
+                {
+                  "url": "human",
+                  "valueString": "The Sox is not a valid answer since it might refer to the White Sox."
+                },
+                {
+                  "url": "location",
+                  "valueString": "%questionnaire.descendants().where(linkId = '3')"
+                }
+              ],
+              "url": "http://hl7.org/fhir/StructureDefinition/targetConstraint"
+            }
+          ],
+          "item": [
+            {
+              "linkId": "3_help",
+              "type": "display",
+              "text": "Constraint (warning): Must not choose 'The Sox' (bug: LHC Forms does not enforce this since the item is string type and required = false. If you set required to true then LHC Forms will properly enforce this constraint).",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "help",
+                        "display": "Help-Button"
+                      }
+                    ],
+                    "text": "Help-Button"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "linkId": "4",
+          "type": "string",
+          "text": "Best Time of Day",
+          "required": true,
+          "extension": [
+            {
+              "extension": [
+                {
+                  "url": "key",
+                  "valueId": "constraint-time"
+                },
+                {
+                  "url": "requirements",
+                  "valueMarkdown": "Time should be in hh:mm:ss format."
+                },
+                {
+                  "url": "severity",
+                  "valueCode": "warning"
+                },
+                {
+                  "url": "expression",
+                  "valueExpression": {
+                    "language": "text/fhirpath",
+                    "expression": "%context.answer.value.matches('^(0[0-9]|1[12]):[0-5][0-9]:[0-5][0-9]$')"
+                  }
+                },
+                {
+                  "url": "human",
+                  "valueString": "The time should be in the format hh:mm:ss (e.g., 01:23:45)."
+                },
+                {
+                  "url": "location",
+                  "valueString": "%questionnaire.descendants().where(linkId = '4')"
+                }
+              ],
+              "url": "http://hl7.org/fhir/StructureDefinition/targetConstraint"
+            }
+          ],
+          "item": [
+            {
+              "linkId": "4_help",
+              "type": "display",
+              "text": "Constraint (warning): Value in format hh:mm:ss (note: LHC enforces this because it is a required item. If you set required to false it will stop enforcing the constraint.).",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "help",
+                        "display": "Help-Button"
+                      }
+                    ],
+                    "text": "Help-Button"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

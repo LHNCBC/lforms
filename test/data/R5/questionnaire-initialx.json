@@ -179,7 +179,7 @@
     },
     {
       "type": "coding",
-      "answerConstraint": "optionsOrType",
+      "answerConstraint": "optionsOrString",
       "code": [
         {
           "code": "type-open-choice",
@@ -329,7 +329,7 @@
     },
     {
       "type": "coding",
-      "answerConstraint": "optionsOrType",
+      "answerConstraint": "optionsOrString",
       "code": [
         {
           "code": "type-open-choice-m",

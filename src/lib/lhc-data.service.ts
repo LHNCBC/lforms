@@ -451,6 +451,9 @@ export class LhcDataService {
     if (Array.isArray(item._validationErrors) && item._validationErrors.length > 0) {
       eleClass += ' lhc-invalid'
     }
+    if (Array.isArray(item._validationWarnings) && item._validationWarnings.length > 0) {
+      eleClass += ' lhc-warning'
+    }
 
     return eleClass;
   }

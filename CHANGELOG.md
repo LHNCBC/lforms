@@ -2,6 +2,25 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.1.0] 2026-05-04
+### Added
+- New utility function LForms.Util.checkConstraints() to get a list
+  of errors/warnings from targetConstraints, including severity levels.
+### Fixed
+- Issues where targetConstraint errors were ignored or duplicated.
+
+## [42.0.0] 2026-04-29
+### Changed
+- LForms.Util.validateQuestionnaireOnFHIRServer() returned Promise
+  now resolves to an OperationOutcome resource from the $validate operation.
+
+## [41.2.0] 2026-04-20
+### Added
+- New template option showRadioClearSelectionButton to show a
+  "clear selection" button next to radio buttons. Defaults to false.
+### Changed
+- Converted Cypress e2e tests to Playwright.
+
 ## [41.1.0] 2026-04-02
 ### Added
 - New utility function LForms.Util.validateQuestionnaireOnFHIRServer()

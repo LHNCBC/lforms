@@ -121,7 +121,9 @@ export default class LhcFormData {
     // only be set to true when the form is used in a trusted environment.
     allowExternalURL: false,
     // Whether to render the form as readonly
-    readonlyMode: false
+    readonlyMode: false,
+    // Whether to show a "clear selection" button next to radio buttons.
+    showRadioClearSelectionButton: false
   };
 
   // other instance level variables that were not previously listed
@@ -643,39 +645,59 @@ export default class LhcFormData {
   /**
    * Check for constraints (targetConstraint extension) defined on this item, if any.
    * @param item the question item
-   * @param errors the error messages array that returns
-   * @returns {boolean}
+   * @param issues the error/warning object array that returns
    */
-  _checkConstraints(item, errors) {
-    if (item._hasValidation && item.constraints && item.constraints.length > 0) {
+  _checkConstraintsOnItem(item, issues) {
+    if (item.constraints && item.constraints.length > 0) {
       for (let i=0; i<item.constraints.length; i++) {
         const constraint = item.constraints[i].extension;
         const expression = constraint.find(e => e.url === 'expression').valueExpression.expression;
         if (expression) {
-          // Regenerate _elemIDToQRItem to get a fresh context, otherwise the evaluated result will be cached
-          // even after you change form value and evaluate again.
-          this._expressionProcessor._regenerateQuestionnaireResp();
           const valid = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, expression, item);
           if (valid === false) {
             const human = constraint.find(e => e.url === 'human').valueString;
+            const severity = constraint.find(e => e.url === 'severity').valueCode;
             const constraintKey = constraint.find(e => e.url === 'key').valueId;
-            const errorMsg = constraintKey ? `${human} The targetConstraint key is: ${constraintKey}.` : human;
-            errors.push(errorMsg);
-            const location = constraint.find(e => e.url === 'location').valueString;
-            const itemOfLocation = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, location, item);
-            // Use a timeout to add to the validation errors of the location item, lest it be overridden by
-            // the validation of the location item itself which might be processed after the current item.
-            setTimeout(() => {
-              let itemToShowError = this._findItemByLinkId(item, itemOfLocation.linkId);
-              // Add the validation error message (human) to the item._validationErrors array of the item
-              // specified in the constraint's location.
-              itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], errorMsg];
-            }, 1);
+            const issue = {
+              linkId: item.linkId,
+              message: human,
+              severity: severity,
+              constraintKey: constraintKey
+            } as any;
+            issues.push(issue);
+            const location = constraint.find(e => e.url === 'location')?.valueString;
+            if (location) {
+              const itemOfLocation = this._expressionProcessor._evaluateFHIRPathAgainstContext(item, location, item);
+              if (itemOfLocation.linkId) {
+                issue.locationLinkId = itemOfLocation.linkId;
+                // Use a timeout to add to the validation errors of the location item, lest it be overridden by
+                // the validation of the location item itself which might be processed after the current item.
+                setTimeout(() => {
+                  let itemToShowError = this.itemList.find(x => x.linkId === itemOfLocation.linkId);
+                  if (itemToShowError) {
+                    // Add the validation error message (human) to the item._validationErrors or item._validationWarnings
+                    // array of the item specified in the constraint's location.
+                    if (severity === 'warning') {
+                      itemToShowError._validationWarnings = [...itemToShowError._validationWarnings || [], human];
+                    } else {
+                      itemToShowError._validationErrors = [...itemToShowError._validationErrors || [], human];
+                    }
+                    itemToShowError._hasValidation = true;
+                  }
+                }, 1);
+              } else {
+                console.warn(`The location expression "${location}" in the constraint "${constraintKey}" on item "${item.linkId}" does not evaluate to an item with a linkId, so the validation message will not be added to any item._validationErrors array.`);
+              }
+            } else {
+              console.warn(`No location is specified for the constraint "${constraintKey}" on item "${item.linkId}", so the validation message will not be added to any item._validationErrors array.`);
+            }
           }
         }
       }
     }
   }
+
+
     /**
    * run all form controls when a form data is initially loaded.
    * @private
@@ -1762,7 +1784,6 @@ export default class LhcFormData {
 
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         this._checkValidations(item);
-        this._checkConstraints(item, item._validationErrors);
 
         if (item._validationErrors !== undefined && item._validationErrors.length) {
           const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
@@ -1774,6 +1795,33 @@ export default class LhcFormData {
 
     if (errors.length) {
       return errors;
+    } else {
+      return null;
+    }
+  }
+
+
+  /**
+   * Get a list of errors preventing the form from being valid.
+   * @returns {Array<string> | null} list of errors or null if no errors
+   */
+  checkConstraints () {
+    // Regenerate _elemIDToQRItem to get a fresh context, otherwise the evaluated result will be cached
+    // even after you change form value and evaluate again.
+    this._expressionProcessor._regenerateFhirVariableQ();
+    this._expressionProcessor._regenerateQuestionnaireResp();
+    const issues = [];
+    const itemListLength = this.itemList.length;
+    for (let i = 0; i < itemListLength; i++) {
+      const item = this.itemList[i];
+      delete item._validationErrors;
+      delete item._validationWarnings;
+      if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+        this._checkConstraintsOnItem(item, issues);
+      }
+    }
+    if (issues.length) {
+      return issues;
     } else {
       return null;
     }

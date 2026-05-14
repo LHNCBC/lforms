@@ -54,6 +54,8 @@
                   allowMarkdown</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="showCodingInstruction" />
                   showCodingInstruction</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="showRadioClearSelectionButton" />
+                  showRadioClearSelectionButton</label></span>
             </div>
           </div>
           <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
@@ -134,6 +136,7 @@
             displayInvalidHTML = document.querySelector('#displayInvalidHTML').checked,
             allowMarkdown = document.querySelector('#allowMarkdown').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked;
+            showRadioClearSelectionButton = document.querySelector('#showRadioClearSelectionButton').checked;
 
         reader.onload = function() {
           var questionnaire = JSON.parse(reader.result);
@@ -142,7 +145,7 @@
 
           try {
             LForms.Util.addFormToPage(questionnaire, 'formContainer',
-                {'fhirVersion':getFHIRVersion(), allowHTML, displayInvalidHTML, allowMarkdown, showCodingInstruction})
+                {'fhirVersion':getFHIRVersion(), allowHTML, displayInvalidHTML, allowMarkdown, showCodingInstruction, showRadioClearSelectionButton})
                 .then(function() {
               console.log("Form Added successfully")
             })

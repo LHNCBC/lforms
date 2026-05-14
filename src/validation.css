@@ -21,7 +21,10 @@
 .lhc-form .lhc-invalid.lhc-visited-before:hover .lhc-validation-popover,
 .lhc-form .lhc-invalid.lhc-visited-before .lhc-active-row .lhc-validation-popover,
 /* .lhc-form .lhc-invalid.lhc-active-row .lhc-validation-popover, */
-.lhc-form .lhc-invalid.lhc-show-validation .lhc-validation-popover {
+.lhc-form .lhc-invalid.lhc-show-validation .lhc-validation-popover,
+.lhc-form .lhc-warning.lhc-visited-before:hover .lhc-validation-popover,
+.lhc-form .lhc-warning.lhc-visited-before .lhc-active-row .lhc-validation-popover,
+.lhc-form .lhc-warning.lhc-show-validation .lhc-validation-popover{
   border-radius: 6px;
   background-color: #fcf8e3;
   /* left: 0px; */

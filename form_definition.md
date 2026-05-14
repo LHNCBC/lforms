@@ -136,6 +136,8 @@ about the meaning of each key:
       when the form is used in a trusted environment.
     * readonlyMode - a boolean that controls whether to render the Questionnaire as readonly.
       The default is false. If set to true, all input fields will be disabled/readonly.
+    * showRadioClearSelectionButton - a boolean that controls whether to show a 
+      "clear selection" button next to radio buttons. The default is false.
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
