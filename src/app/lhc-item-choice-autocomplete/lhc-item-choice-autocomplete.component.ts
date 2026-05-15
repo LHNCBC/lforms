@@ -41,13 +41,13 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
     if (!this.item.items) {
       return;
     }
-    const validLinkIds = this.item.value.map((v) => {
+    const validLinkIds = this.item.value?.map((v) => {
       return {
         'value': v,
         'linkId': this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(v),
         'matched': false
       };
-    });
+    }) || [];
     for (let i=0; i<this.item.items.length; i++) {
       if (!this.item.items[i].isSubGroupForCheckbox) {
         continue;
@@ -58,6 +58,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
       }
       else {
         this.item.items.splice(i, 1);
+        i--;
       }
     }
     validLinkIds.forEach((v) => {
