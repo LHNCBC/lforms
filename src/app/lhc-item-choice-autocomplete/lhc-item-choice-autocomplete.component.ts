@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import {CommonUtilsService} from "../../lib/common-utils.service";
 
 @Component({
     selector: 'lhc-item-choice-autocomplete',
@@ -20,7 +21,10 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
   /**
    * Component class constructor
    */
-  constructor(public lhcDataService: LhcDataService) {}
+  constructor(
+    private commonUtils: CommonUtilsService,
+    public lhcDataService: LhcDataService
+  ) {}
 
 
   ngOnChanges(changes): void {
@@ -32,6 +36,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
         readOnly: this.readOnly
       }
     }
+    this.updateSubGroupsForMergedQR();
   }
 
   /**
@@ -58,7 +63,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
       }
       else {
         this.item.items.splice(i, 1);
-        i--;
+        i--; // Adjust the index since we removed an item from the array.
       }
     }
     validLinkIds.forEach((v) => {
@@ -66,6 +71,28 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
         this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, v.value);
       }
     });
+  }
+
+  /**
+   * If rendering a merged QR, the subgroups for the autocomplete are missing some properties,
+   * such as "question" and "checkboxOption". This function is to update those properties for
+   * the subgroups of autocomplete, so that they can be rendered correctly.
+   */
+  updateSubGroupsForMergedQR(): void {
+    if (this.item.items && this.item.value && Array.isArray(this.item.value) &&
+      this.item.answers && Array.isArray(this.item.answers)) {
+      const lfData = this.lhcDataService.getLhcFormData();
+      for (let i = 0, len = this.acOptions.listItems.length; i < len; i++) {
+        const checkboxOption = this.acOptions.listItems[i];
+        const answer = this.item.answers[i];
+        const isOptionSelected = this.item.value.some(v => this.commonUtils.areTwoAnswersSame(v, answer, this.item));
+        const subGroupLinkId = lfData.getLinkIdForCheckboxSubGroup(checkboxOption);
+        const subGroupExists = lfData.hasSubGroupWithLinkId(this.item, subGroupLinkId);
+        if (isOptionSelected && subGroupExists) {
+          lfData.updateCheckboxSubGroupProperties(this.item, checkboxOption, subGroupLinkId);
+        }
+      }
+    }
   }
 
 }

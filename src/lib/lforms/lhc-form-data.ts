@@ -2578,6 +2578,20 @@ export default class LhcFormData {
 
 
   /**
+   * Checks if an item has a checkbox subgroup with a specific linkId.
+   * @param item an LForms item with checkbox layout and sub items.
+   * @param linkId the linkId of the checkbox subgroup.
+   */
+  hasSubGroupWithLinkId(item, linkId): boolean {
+    if (item.items && item.items.some(x => x.isSubGroupForCheckbox === true && x.linkId === linkId)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+  /**
    * Updates some properties for a checkbox sub group.
    * Used when rendering a merged QR.
    * @param item an LForms item with checkbox layout and sub items.
