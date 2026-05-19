@@ -1077,9 +1077,11 @@ function addCommonSDCImportFns(ns) {
                     throw new Error("qrAnswersItemsInfo[" + k + "] doesn't have a corresponding item value. Please check the QR.");
                   }
                   const linkId = 'checkbox-subgroup|' + (checkboxOption.system || '') + '|' + (checkboxOption.code || checkboxOption.text);
-                  // newCheckboxSubGroup.checkboxOption and newCheckboxSubGroup.question could not be set here during import/merge,
-                  // because checkboxOption._displayText is set in lhc-form-data.ts. They will be updated later in
-                  // lhc-item-choice-check-box.component.ts.
+                  // checkboxOption._displayText might be missing here during import/merge, because it is set in lhc-form-data.ts.
+                  // For this reason, newCheckboxSubGroup.checkboxOption and newCheckboxSubGroup.question will be updated later in
+                  // lhc-item-choice-check-box.component.ts or lhc-item-choice-autocomplete.component.ts.
+                  newCheckboxSubGroup.checkboxOption = checkboxOption;
+                  newCheckboxSubGroup.question = checkboxOption._displayText || checkboxOption.text || checkboxOption.code + '';
                   newCheckboxSubGroup.linkId = linkId;
                   newCheckboxSubGroup._id = linkId;
                   newCheckboxSubGroup.items = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
