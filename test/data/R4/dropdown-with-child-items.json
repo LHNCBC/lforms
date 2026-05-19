@@ -26,7 +26,7 @@
           }
         }
       ],
-      "linkId": "parent-checkbox",
+      "linkId": "parent-dropdown",
       "text": "Which fruits would you like?",
       "repeats": true,
       "answerOption": [
