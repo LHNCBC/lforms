@@ -96,20 +96,20 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       return;
     }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
-      const checkboxOption = this.acOptions.listItems[i];
-      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(checkboxOption);
+      const MultiSelectOption = this.acOptions.listItems[i];
+      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForMultiSelectSubGroup(MultiSelectOption);
       const subGroupExists = this.lhcDataService.getLhcFormData().hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && !subGroupExists) {
-        this.lhcDataService.getLhcFormData().addSubItemsForCheckbox(this.item, checkboxOption);
+        this.lhcDataService.getLhcFormData().addSubItemsForMultiSelect(this.item, MultiSelectOption);
       } else if (!this.checkboxModels[i] && subGroupExists) {
-        this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, checkboxOption);
+        this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, MultiSelectOption);
       }
     }
   }
 
   /**
    * If rendering a merged QR, the subgroups for the checkboxes are missing some properties,
-   * such as "question" and "checkboxOption". This function is to update those properties for
+   * such as "question" and "MultiSelectOption". This function is to update those properties for
    * the subgroups of checkboxes, so that they can be rendered correctly.
    */
   updateSubGroupsForMergedQR(): void {
@@ -117,11 +117,11 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       return;
     }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
-      const checkboxOption = this.acOptions.listItems[i];
-      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForCheckboxSubGroup(checkboxOption);
+      const MultiSelectOption = this.acOptions.listItems[i];
+      const subGroupLinkId = this.lhcDataService.getLhcFormData().getLinkIdForMultiSelectSubGroup(MultiSelectOption);
       const subGroupExists = this.lhcDataService.getLhcFormData().hasSubGroupWithLinkId(this.item, subGroupLinkId);
       if (this.checkboxModels[i] === true && subGroupExists) {
-        this.lhcDataService.getLhcFormData().updateCheckboxSubGroupProperties(this.item, checkboxOption, subGroupLinkId);
+        this.lhcDataService.getLhcFormData().updateMultiSelectSubGroupProperties(this.item, MultiSelectOption, subGroupLinkId);
       }
     }
   }
@@ -136,10 +136,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     const lhcFormData = this.lhcDataService.getLhcFormData();
     // A list of currently valid subgroup linkIds.
     const subGroupLinkIds = this.acOptions.listItems.map(x =>
-      lhcFormData.getLinkIdForCheckboxSubGroup(x));
+      lhcFormData.getLinkIdForMultiSelectSubGroup(x));
     if (this.item.items) {
       this.item.items = this.item.items.filter(x =>
-        !x.isSubGroupForCheckbox ||
+        !x.isSubGroupForMultiSelect ||
         subGroupLinkIds.indexOf(x.linkId) !== -1
       );
       lhcFormData._resetInternalData();

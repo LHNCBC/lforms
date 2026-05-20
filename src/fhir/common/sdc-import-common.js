@@ -1060,8 +1060,8 @@ function addCommonSDCImportFns(ns) {
               } else {
                 for (let k = 0; k < qrItemInfo.qrAnswersItemsInfo.length; k++) {
                   let newCheckboxSubGroup = {
-                    "isSubGroupForCheckbox": true,
-                    "checkboxOption": {},
+                    "isSubGroupForMultiSelect": true,
+                    "MultiSelectOption": {},
                     "header": true,
                     "dataType": "SECTION",
                     "displayControl": {
@@ -1072,19 +1072,19 @@ function addCommonSDCImportFns(ns) {
                     "_id": "",
                     "items": []
                   };
-                  const checkboxOption = item.value[k];
-                  if (!checkboxOption) {
+                  const MultiSelectOption = item.value[k];
+                  if (!MultiSelectOption) {
                     throw new Error("qrAnswersItemsInfo[" + k + "] doesn't have a corresponding item value. Please check the QR.");
                   }
-                  const linkId = 'checkbox-subgroup|' + (checkboxOption.system || '') + '|' + (checkboxOption.code || checkboxOption.text);
-                  // checkboxOption._displayText might be missing here during import/merge, because it is set in lhc-form-data.ts.
-                  // For this reason, newCheckboxSubGroup.checkboxOption and newCheckboxSubGroup.question will be updated later in
+                  const linkId = 'multi-select-subgroup|' + (MultiSelectOption.system || '') + '|' + (MultiSelectOption.code || MultiSelectOption.text);
+                  // MultiSelectOption._displayText might be missing here during import/merge, because it is set in lhc-form-data.ts.
+                  // For this reason, newCheckboxSubGroup.MultiSelectOption and newCheckboxSubGroup.question will be updated later in
                   // lhc-item-choice-check-box.component.ts or lhc-item-choice-autocomplete.component.ts.
-                  newCheckboxSubGroup.checkboxOption = checkboxOption;
-                  newCheckboxSubGroup.question = checkboxOption._displayText || checkboxOption.text || checkboxOption.code + '';
+                  newCheckboxSubGroup.MultiSelectOption = MultiSelectOption;
+                  newCheckboxSubGroup.question = MultiSelectOption._displayText || MultiSelectOption.text || MultiSelectOption.code + '';
                   newCheckboxSubGroup.linkId = linkId;
                   newCheckboxSubGroup._id = linkId;
-                  newCheckboxSubGroup.items = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
+                  newCheckboxSubGroup.items = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForMultiSelect));
                   item.items.push(newCheckboxSubGroup);
                   if (qrItemInfo.qrAnswersItemsInfo[k] && item.value[k]) {
                     this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[k], newCheckboxSubGroup);

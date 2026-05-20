@@ -748,8 +748,8 @@ export default class LhcFormData {
       for (let i=0, iLen=item.items.length; i<iLen; i++) {
         const subItem = item.items[i];
         const toBeHidden = hidden || this.isItemHidden(subItem) ||
-          // Hide the original sub items if item is a checkbox layout question with sub items.
-          (InternalUtil.isMultiSelectWithSubItems(item) && !subItem.isSubGroupForCheckbox);
+          // Hide the original sub items if item is a multi-select layout question with sub items.
+          (InternalUtil.isMultiSelectWithSubItems(item) && !subItem.isSubGroupForMultiSelect);
         // set the sub item's hidden status
         subItem._isHiddenFromView = toBeHidden;
         // process the sub item's sub items
@@ -1700,7 +1700,7 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
-   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
+   * @param includeTempItems optional, to include subgroups created for multi-select sub items, the default is false.
    * @return {{}} form definition JSON object
    */
   getFormData(noEmptyValue, noDisabledItem, keepId, includeTempItems) {
@@ -1756,7 +1756,7 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
-   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
+   * @param includeTempItems optional, to include subgroups created for multi-select sub items, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
   getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems) {
@@ -1870,7 +1870,7 @@ export default class LhcFormData {
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @param keepId optional, to keep _id field on item, the default is false
-   * @param includeTempItems optional, to include sub groups created for checkbox sub items, the default is false.
+   * @param includeTempItems optional, to include sub groups created for multi-select sub items, the default is false.
    * @returns {Array} form data on one tree level
    * @private
    */
@@ -1878,7 +1878,7 @@ export default class LhcFormData {
     const itemsData = [];
     for (let i=0, iLen=items.length; i<iLen; i++) {
       const item = items[i];
-      if (!includeTempItems && item.isSubGroupForCheckbox) {
+      if (!includeTempItems && item.isSubGroupForMultiSelect) {
         continue;
       }
       const itemData:any = {};
@@ -2515,28 +2515,28 @@ export default class LhcFormData {
 
 
   /**
-   * Construct a linkId for a checkbox sub group.
-   * @param answer the selected checkbox option.
+   * Construct a linkId for a multi-select subgroup.
+   * @param answer the selected multi-select option.
    */
-  getLinkIdForCheckboxSubGroup(answer) {
+  getLinkIdForMultiSelectSubGroup(answer) {
     const system = answer.system || '';
-    return 'checkbox-subgroup|' + system + '|' + (answer.code || answer.text);
+    return 'multi-select-subgroup|' + system + '|' + (answer.code || answer.text);
   }
 
 
   /**
-   * Adds a subgroup item for a checkbox answer option.
+   * Adds a subgroup item for a multi-select answer option.
    * The subgroup will contain the original sub items.
-   * @param item an LForms item with checkbox layout and sub items.
-   * @param answer the selected checkbox option.
+   * @param item an LForms item with multi-select layout and sub items.
+   * @param answer the selected multi-select option.
    */
-  addSubItemsForCheckbox(item, answer) {
-    const linkId = this.getLinkIdForCheckboxSubGroup(answer);
-    // Make a copy of the original sub items, excluding checkbox subgroups.
-    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForCheckbox));
-    let newGroupItemForCheckbox = {
-      "isSubGroupForCheckbox": true,
-      "checkboxOption": answer,
+  addSubItemsForMultiSelect(item, answer) {
+    const linkId = this.getLinkIdForMultiSelectSubGroup(answer);
+    // Make a copy of the original sub items, excluding multi-select subgroups.
+    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForMultiSelect));
+    let newGroupItemForMultiSelect = {
+      "isSubGroupForMultiSelect": true,
+      "MultiSelectOption": answer,
       "header": true,
       "dataType": "SECTION",
       "displayControl": {
@@ -2547,16 +2547,16 @@ export default class LhcFormData {
       "_id": "",
       "items": []
     };
-    newGroupItemForCheckbox.question = answer._displayText || answer.text || answer.code + "";
-    newGroupItemForCheckbox.linkId = linkId;
-    newGroupItemForCheckbox._id = linkId;
-    newGroupItemForCheckbox.items = subItemsCopy;
-    this._updateSubItemsHiddenFromView(newGroupItemForCheckbox, false);
-    item.items.unshift(newGroupItemForCheckbox);
+    newGroupItemForMultiSelect.question = answer._displayText || answer.text || answer.code + "";
+    newGroupItemForMultiSelect.linkId = linkId;
+    newGroupItemForMultiSelect._id = linkId;
+    newGroupItemForMultiSelect.items = subItemsCopy;
+    this._updateSubItemsHiddenFromView(newGroupItemForMultiSelect, false);
+    item.items.unshift(newGroupItemForMultiSelect);
 
     this._resetInternalData();
 
-    var readerMsg = language.added + newGroupItemForCheckbox.question;
+    var readerMsg = language.added + newGroupItemForMultiSelect.question;
     this._actionLogs.push(readerMsg);
   }
 
@@ -2564,10 +2564,10 @@ export default class LhcFormData {
   /**
    * Deletes a subgroup item for a checkbox answer option, using the subgroup's linkId.
    * @param item an LForms item with checkbox layout and sub items.
-   * @param checkboxDisplayText the display text of the selected checkbox option.
+   * @param answer the selected checkbox option.
    */
   deleteSubItemsForCheckbox(item, answer) {
-    const linkId = this.getLinkIdForCheckboxSubGroup(answer);
+    const linkId = this.getLinkIdForMultiSelectSubGroup(answer);
     item.items = item.items.filter(x => x.linkId !== linkId);
 
     this._resetInternalData();
@@ -2578,12 +2578,12 @@ export default class LhcFormData {
 
 
   /**
-   * Checks if an item has a checkbox subgroup with a specific linkId.
-   * @param item an LForms item with checkbox layout and sub items.
-   * @param linkId the linkId of the checkbox subgroup.
+   * Checks if an item has a multi-select subgroup with a specific linkId.
+   * @param item an LForms item with multi-select layout and sub items.
+   * @param linkId the linkId of the multi-select subgroup.
    */
   hasSubGroupWithLinkId(item, linkId): boolean {
-    if (item.items && item.items.some(x => x.isSubGroupForCheckbox === true && x.linkId === linkId)) {
+    if (item.items && item.items.some(x => x.isSubGroupForMultiSelect === true && x.linkId === linkId)) {
       return true;
     } else {
       return false;
@@ -2592,17 +2592,17 @@ export default class LhcFormData {
 
 
   /**
-   * Updates some properties for a checkbox sub group.
+   * Updates some properties for a multi-select subgroup.
    * Used when rendering a merged QR.
-   * @param item an LForms item with checkbox layout and sub items.
-   * @param answer the selected checkbox option, which contains _displayText.
+   * @param item an LForms item with multi-select layout and sub items.
+   * @param answer the selected option, which contains _displayText.
    * @param linkId the linkId of the subgroup item.
    */
-  updateCheckboxSubGroupProperties(item, answer, linkId) {
-    const checkboxSubGroup = item.items.find(x => x.isSubGroupForCheckbox === true && x.linkId === linkId);
-    if (checkboxSubGroup && !checkboxSubGroup.question) {
-      checkboxSubGroup.question = answer._displayText;
-      checkboxSubGroup.checkboxOption = answer;
+  updateMultiSelectSubGroupProperties(item, answer, linkId) {
+    const multiSelectSubGroup = item.items.find(x => x.isSubGroupForMultiSelect === true && x.linkId === linkId);
+    if (multiSelectSubGroup && !multiSelectSubGroup.question) {
+      multiSelectSubGroup.question = answer._displayText;
+      multiSelectSubGroup.MultiSelectOption = answer;
       this._resetInternalData();
     }
   }
