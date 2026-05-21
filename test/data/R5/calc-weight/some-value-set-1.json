@@ -3,7 +3,7 @@
   "expansion": {
     "property": [{
       "code" : "itemWeight",
-      "uri": "http://hl7.org/fhir/concept-properties"
+      "uri": "http://hl7.org/fhir/concept-properties#itemWeight"
     }],
     "contains": [{
       "code": "some-code-1",

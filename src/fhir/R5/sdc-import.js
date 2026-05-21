@@ -212,24 +212,9 @@ function addR5ImportFns(ns) {
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
         var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
-        // In R5, the "property" (ValueSet.expansion.contains.property) was
-        // added so that if you do an expansion, you can request properties from
-        // the CodeSystem at the same time (without having to do a CodeSytem
-        // $lookup as in R4)
-        const ordProp = LForms.Util.findObjectInArray(vsItem.property, 'code', 'itemWeight');
-        if(ordProp) {
-          answer.score = ordProp.valueDecimal;
-        } else {
-          // Still, someone could provide us with an R5 ValueSet.expansion that
-          // put score extensions on the contained Codings.
-          // Both ordinalValue and itemWeight extensions are supported.
-          const ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-            self.fhirExtUrlValueSetScoreOrdinalValue) ||
-            LForms.Util.findObjectInArray(vsItem.extension, 'url',
-            self.fhirExtUrlValueSetScoreItemWeight);
-          if(ordExt) {
-            answer.score = ordExt.valueDecimal;
-          }
+        const score = self.resolveAnswerScore(vs, vsItem);
+        if (score !== undefined) {
+          answer.score = score;
         }
         rtn.push(answer);
       });
