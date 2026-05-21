@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.2.0] 2026-05-21
+### Changed
+- For a multi-select dropdown layout question with sub items, the sub items
+  will be rendered for each selected dropdown option.
+- When exported to QuestionnaireResponse, each sub item will go under its
+  associated answer, in the format of item.answer.item.
+
 ## [42.1.0] 2026-05-04
 ### Added
 - New utility function LForms.Util.checkConstraints() to get a list
