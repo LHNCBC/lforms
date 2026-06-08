@@ -411,9 +411,41 @@ should be visible).</p>
 
   <b>Parameters:</b>
   <ul>
-    <li><b>formElement</b> - (optional) an HTML element that includes the rendered form. If
-    this is omitted, the "body" tag will be used.  If there is more than one
-    LHC-Forms form within formElement, the first found will be used.</li>
+      <li><b>formElement</b> - (optional) an HTML element that includes the rendered form. If
+          this is omitted, the "body" tag will be used. If there is more than one
+          LHC-Forms form within formElement, the first found will be used.
+      </li>
+  </ul>
+
+  <p>For constraints defined by the targetConstraint extension, a separate function is defined with different
+      signatures:
+      (Note that this function will not check validity requirements such as required fields and value formats,
+      but only the constraints defined by the targetConstraint extension.
+      If some fields are not valid, this function might throw an error because LHC-Forms cannot generate a valid
+      QR to evaluate the constraints. In that case, you can first call checkValidity to find out which fields
+      are not valid and fix them before calling this function again.)
+  </p>
+
+  <pre><code>LForms.Util.checkConstraints(formElement)</code></pre>
+
+  <b>Parameters:</b>
+  <ul>
+      <li><b>formElement</b> - (optional) an HTML element that includes the rendered form. If
+           this is omitted, the "body" tag will be used. If there is more than one
+          LHC-Forms form within formElement, the first found will be used.
+      </li>
+  </ul>
+
+  <b>Returns:</b> a list of errors/warnings or null if form is valid.
+  Each error/warning object has the following properties:
+  <ul>
+      <li>linkId: the linkId of the item that defined the constraint</li>
+      <li>message: the error/warning message defined in the constraint</li>
+      <li>severity: the severity of the constraint, either "error" or "warning"</li>
+      <li>constraintKey: the key defined in the targetConstraint extension</li>
+      <li>locationLinkIds: an array of the linkIds of the items that are defined in the "location" sub
+          extension, if found
+      </li>
   </ul>
 
   <p>API to validate a questionnaire against a FHIR server:</p>
