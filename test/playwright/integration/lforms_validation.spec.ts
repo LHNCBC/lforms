@@ -723,7 +723,7 @@ test.describe('Validations', () => {
           message: 'The minimum value must be less than or equal to the maximum value.',
           severity: 'error',
           constraintKey: 'min-max-check',
-          locationLinkId: '1.2'
+          locationLinkIds: ['1.2']
         }
       ]);
       // The error message should be shown on the Maximum Value field, as defined in the
@@ -757,7 +757,7 @@ test.describe('Validations', () => {
           message: 'You must state your favorite color or number (or both).',
           severity: 'error',
           constraintKey: 'constraint-dont-be-shy',
-          locationLinkId: '1'
+          locationLinkIds: ['1']
         }
       ]);
       // The error message should be shown on the Maximum Value field, as defined in the
@@ -774,7 +774,7 @@ test.describe('Validations', () => {
           message: 'You must state your favorite color or number (or both).',
           severity: 'error',
           constraintKey: 'constraint-dont-be-shy',
-          locationLinkId: '1'
+          locationLinkIds: ['1']
         }
       ]);
       // Fill field 3 to make the constraint valid.
@@ -801,11 +801,68 @@ test.describe('Validations', () => {
           message: 'The Sox is not a valid answer since it might refer to the White Sox.',
           severity: 'warning',
           constraintKey: 'constraint-team',
-          locationLinkId: '3'
+          locationLinkIds: ['3']
         }
       ]);
       await q3.click();
       await expect(page.locator(errorContainer).filter({ hasText: "The Sox is not a valid answer since it might refer to the White Sox." })).toBeVisible();
+    });
+
+    test('should validate targetConstraint that uses FHIRPath variables', async ({ page }) => {
+      await loadFromTestData(page, 'q-with-targetConstraint-and-variable.json', 'R4');
+      const errors1 = await page.evaluate(() => {
+        return (window as any).LForms.Util.checkConstraints();
+      });
+      expect(errors1).toBeNull();
+      // a valid value (between 1 and 100)
+      let q1 = byId(page, 'number-one-to-hundred/1');
+      await q1.pressSequentially('2');
+      await q1.blur();
+      const errors2 = await page.evaluate(() => {
+        return (window as any).LForms.Util.checkConstraints();
+      });
+      expect(errors2).toBeNull();
+      // type an invalid value
+      await q1.clear();
+      await q1.pressSequentially('200');
+      await q1.blur();
+      const errors3 = await page.evaluate(() => {
+        return (window as any).LForms.Util.checkConstraints();
+      });
+      expect(errors3).toEqual([
+        { constraintKey: "number-1-to-100",
+          linkId: "number-one-to-hundred",
+          locationLinkIds: ["number-one-to-hundred"],
+          message: "Number must be between 1 and 100.",
+          severity: "error"
+        }
+      ]);
+    });
+
+    test('should validate targetConstraint - multiple locations', async ({ page }) => {
+      await loadFromTestData(page, 'q-with-targetConstraint-multiple-locations.json', 'R4');
+      let q1 = byId(page, '1.1/1/1');
+      let q2 = byId(page, '1.2/1/1');
+      let q3 = byId(page, '1.3/1/1');
+      await q1.pressSequentially('2');
+      await q2.pressSequentially('1');
+      await q2.blur();
+      const errors1 = await page.evaluate(() => {
+        return (window as any).LForms.Util.checkConstraints();
+      });
+      expect(errors1).toEqual([
+        {
+          linkId: '1',
+          message: 'The minimum value must be less than or equal to the maximum value.',
+          severity: 'error',
+          constraintKey: 'min-max-check',
+          locationLinkIds: ['1.1', '1.2']
+        }
+      ]);
+      // The error message should be shown on both the Maximum Value and the Minimum fields, as the
+      // targetConstraint extension has two 'location' sub extension.
+      await q2.click();
+      await expect(page.locator(errorContainer).filter({ hasText: "The minimum value must be less than or equal to the maximum value." })).toHaveCount(2);
     });
   });
 });

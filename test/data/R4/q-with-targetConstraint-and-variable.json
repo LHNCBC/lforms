@@ -1,0 +1,59 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "number-from-1-to-100",
+  "url": "https://example.org/fhir/Questionnaire/number-from-1-to-100",
+  "version": "1.0.0",
+  "name": "NumberFrom1To100",
+  "title": "Number from 1 to 100",
+  "status": "draft",
+  "date": "2026-05-27",
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression": {
+        "name": "theNumber",
+        "language": "text/fhirpath",
+        "expression": "%resource.item.where(linkId='number-one-to-hundred').answer.value"
+      }
+    }
+  ],
+  "item": [
+    {
+      "linkId": "number-one-to-hundred",
+      "text": "Number from 1 to 100",
+      "type": "integer",
+      "required": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/targetConstraint",
+          "extension": [
+            {
+              "url": "key",
+              "valueId": "number-1-to-100"
+            },
+            {
+              "url": "severity",
+              "valueCode": "error"
+            },
+            {
+              "url": "human",
+              "valueString": "Number must be between 1 and 100."
+            },
+            {
+              "url": "expression",
+              "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%theNumber.exists() implies %theNumber >= 1 and %theNumber <= 100"
+              }
+            },
+            {
+              "url": "location",
+              "valueString": "%questionnaire.item.where(linkId='number-one-to-hundred')"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
