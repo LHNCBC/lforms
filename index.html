@@ -440,11 +440,11 @@ should be visible).</p>
   <b>Returns:</b> a list of errors/warnings or null if form is valid.
   Each error/warning object has the following properties:
   <ul>
-      <li>linkId: the linkId of the item that defines the constraint</li>
+      <li>linkId: the linkId of the item where the targetConstraint is defined</li>
       <li>message: the error/warning message defined in the 'human' sub-extension</li>
       <li>severity: the severity of the constraint, either "error" or "warning", defined in the 'severity' sub-extension</li>
       <li>constraintKey: the key defined in the 'key' sub-extension</li>
-      <li>locationLinkIds: an array of the linkIds of the items that are defined in the "location" sub-extension, if found
+      <li>locationLinkIds: an array of the linkIds of the items that are defined in the 'location' sub-extension, if found
       </li>
   </ul>
 
