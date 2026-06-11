@@ -418,8 +418,8 @@ should be visible).</p>
       </li>
   </ul>
 
-  <p>For constraints defined by the targetConstraint extension, a separate function is defined with different
-      signatures:
+  <p>For constraints defined by the <a href="http://hl7.org/fhir/StructureDefinition/targetConstraint">targetConstraint</a>
+      extension, a separate function is defined with different signatures:
       (Note that this function will not check validity requirements such as required fields and value formats,
       but only the constraints defined by the targetConstraint extension.
       If some fields are not valid, this function might throw an error because LHC-Forms cannot generate a valid
@@ -440,12 +440,11 @@ should be visible).</p>
   <b>Returns:</b> a list of errors/warnings or null if form is valid.
   Each error/warning object has the following properties:
   <ul>
-      <li>linkId: the linkId of the item that defined the constraint</li>
-      <li>message: the error/warning message defined in the constraint</li>
-      <li>severity: the severity of the constraint, either "error" or "warning"</li>
-      <li>constraintKey: the key defined in the targetConstraint extension</li>
-      <li>locationLinkIds: an array of the linkIds of the items that are defined in the "location" sub
-          extension, if found
+      <li>linkId: the linkId of the item that defines the constraint</li>
+      <li>message: the error/warning message defined in the 'human' sub-extension</li>
+      <li>severity: the severity of the constraint, either "error" or "warning", defined in the 'severity' sub-extension</li>
+      <li>constraintKey: the key defined in the 'key' sub-extension</li>
+      <li>locationLinkIds: an array of the linkIds of the items that are defined in the "location" sub-extension, if found
       </li>
   </ul>
 
