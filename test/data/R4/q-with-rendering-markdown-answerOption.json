@@ -34,7 +34,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold A**"
+                    "valueMarkdown": "**This text is bold A**"
                   }
                 ]
               }
@@ -45,7 +45,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold B**"
+                    "valueMarkdown": "**This text is bold B**"
                   }
                 ]
               }
@@ -56,7 +56,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold C**"
+                    "valueMarkdown": "**This text is bold C**"
                   }
                 ]
               }
@@ -100,7 +100,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold A**"
+                    "valueMarkdown": "**This text is bold A**"
                   }
                 ]
               }
@@ -111,7 +111,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold B**"
+                    "valueMarkdown": "**This text is bold B**"
                   }
                 ]
               }
@@ -122,7 +122,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold C**"
+                    "valueMarkdown": "**This text is bold C**"
                   }
                 ]
               }
@@ -160,7 +160,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold A**"
+                    "valueMarkdown": "**This text is bold A**"
                   }
                 ]
               }
@@ -171,7 +171,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold B**"
+                    "valueMarkdown": "**This text is bold B**"
                   }
                 ]
               }
@@ -182,7 +182,7 @@
                 "extension": [
                   {
                     "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                    "valueString": "**This text is bold C**"
+                    "valueMarkdown": "**This text is bold C**"
                   }
                 ]
               }
@@ -224,7 +224,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized A*"
+                      "valueMarkdown": "*This text is italicized A*"
                     }
                   ]
                 }
@@ -238,7 +238,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized B*"
+                      "valueMarkdown": "*This text is italicized B*"
                     }
                   ]
                 }
@@ -252,7 +252,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized C*"
+                      "valueMarkdown": "*This text is italicized C*"
                     }
                   ]
                 }
@@ -289,7 +289,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized A*"
+                      "valueMarkdown": "*This text is italicized A*"
                     }
                   ]
                 }
@@ -303,7 +303,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized B*"
+                      "valueMarkdown": "*This text is italicized B*"
                     }
                   ]
                 }
@@ -317,7 +317,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized C*"
+                      "valueMarkdown": "*This text is italicized C*"
                     }
                   ]
                 }
@@ -364,7 +364,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized A*"
+                      "valueMarkdown": "*This text is italicized A*"
                     }
                   ]
                 }
@@ -378,7 +378,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized B*"
+                      "valueMarkdown": "*This text is italicized B*"
                     }
                   ]
                 }
@@ -392,7 +392,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized C*"
+                      "valueMarkdown": "*This text is italicized C*"
                     }
                   ]
                 }
@@ -433,7 +433,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized A*"
+                      "valueMarkdown": "*This text is italicized A*"
                     }
                   ]
                 }
@@ -447,7 +447,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized B*"
+                      "valueMarkdown": "*This text is italicized B*"
                     }
                   ]
                 }
@@ -461,7 +461,7 @@
                   "extension": [
                     {
                       "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                      "valueString": "*This text is italicized C*"
+                      "valueMarkdown": "*This text is italicized C*"
                     }
                   ]
                 }

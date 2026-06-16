@@ -361,7 +361,6 @@ function addCommonSDCExportFns(ns) {
     this._handleMeta(target);
   };
 
-
   /**
    * Handle Questionnaire.meta field
    */
@@ -541,7 +540,7 @@ function addCommonSDCExportFns(ns) {
         helpItem._text = {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-            "valueString": item.codingInstructionsOriginalMarkdown
+            "valueMarkdown": item.codingInstructionsOriginalMarkdown
           }]
         }
       }
@@ -602,7 +601,7 @@ function addCommonSDCExportFns(ns) {
         legalItem._text = {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-            "valueString": item.legalOriginalMarkdown
+            "valueMarkdown": item.legalOriginalMarkdown
           }]
         }
       }

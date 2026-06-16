@@ -104,7 +104,26 @@ export const InternalUtil = {
    * @param markdownFormat the rendering-markdown extension.
    */
   setAnswerTextMarkdown: function(answer, markdownFormat) {
-    answer.textMarkdown = md.render(markdownFormat.valueString);
+    const markdownText = this.getMarkdownExtensionValue(markdownFormat);
+    if (typeof markdownText === 'string') {
+      answer.textMarkdown = md.render(markdownText);
+    }
+  },
+
+
+  /**
+   * Gets the markdown string from a rendering-markdown extension.
+   * @param markdownFormat the rendering-markdown extension.
+   * @returns {string|null}
+   */
+  getMarkdownExtensionValue: function(markdownFormat) {
+    if (!markdownFormat) {
+      return null;
+    }
+    if (typeof markdownFormat.valueMarkdown === 'string') {
+      return markdownFormat.valueMarkdown;
+    }
+    return null;
   },
 
 

@@ -211,7 +211,7 @@ const FormUtils = {
    *        message: the error/warning message defined in the constraint
    *        severity: the severity of the constraint, either "error" or "warning"
    *        constraintKey: the key defined in the targetConstraint extension
-   *        locationLinkId: the linkId of the item that is defined in the "location" sub extension, if found
+   *        locationLinkIds: an array of the linkIds of the items that are defined in the "location" sub extension, if found
    */
   checkConstraints: function (element) {
     var formObj = this._getFormObjectInScope(element);

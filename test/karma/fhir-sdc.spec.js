@@ -846,6 +846,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          it('should preserve rendering-markdown extension on _text with valueMarkdown', function (){
+            $.get('test/data/R4/q-with-rendering-markdown-text-valuemarkdown.json', function(json) {
+              const lfData = fhir.SDC.convertQuestionnaireToLForms(json);
+              assert.equal(lfData.items[0]._displayTextMarkdown.includes('<h1>This is a markdown heading</h1>'), true);
+              const qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+              assert.ok(qData.item[0]._text);
+              assert.deepEqual(qData.item[0]._text, json.item[0]._text);
+            });
+          });
+
           it('should preserve rendering-xhtml extension on _prefix', function (){
             $.get('test/data/R4/q-with-rendering-xhtml-prefix.json', function(json) {
               const lfData = fhir.SDC.convertQuestionnaireToLForms(json);

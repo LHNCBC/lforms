@@ -11,7 +11,7 @@
         "extension": [
           {
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-            "valueString": "# This is a <script>Yes</script> markdown heading"
+            "valueMarkdown": "# This is a <script>Yes</script> markdown heading"
           }
         ]
       }

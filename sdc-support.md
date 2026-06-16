@@ -98,7 +98,7 @@ fields.
 * choiceColumn
 * valueset-label
 * shortText
-* rendering-styleSensitive
+* rendering-criticalExtension
 * optionalDisplay
 
 ### Form Behavior

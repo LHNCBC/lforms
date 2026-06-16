@@ -16,7 +16,7 @@
             "extension": [
               {
                 "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                "valueString": "# This is a markdown heading"
+                "valueMarkdown": "# This is a markdown heading"
               }
             ]
           },
@@ -51,7 +51,7 @@
             "extension": [
               {
                 "url": "http://hl7.org/fhir/StructureDefinition/rendering-markdown",
-                "valueString": "# This is a markdown heading"
+                "valueMarkdown": "# This is a markdown heading"
               }
             ]
           },

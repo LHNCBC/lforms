@@ -733,7 +733,10 @@ function addCommonSDCImportFns(ns) {
         const markdownFormat = lfItem[itemAttr] ?
           LForms.Util.findObjectInArray(lfItem[itemAttr].extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-markdown") : null;
         if (markdownFormat) {
-          lfItem[htmlAttrName+'Markdown'] = InternalUtil.md.render(markdownFormat.valueString);
+          const markdownText = InternalUtil.getMarkdownExtensionValue(markdownFormat);
+          if (typeof markdownText === 'string') {
+            lfItem[htmlAttrName+'Markdown'] = InternalUtil.md.render(markdownText);
+          }
         }
       }
       if (self._widgetOptions?.allowHTML && lfItem[htmlAttrName+'HTML']) {
@@ -1762,19 +1765,20 @@ function addCommonSDCImportFns(ns) {
         }
 
         // there is a xhtml or markdown extension
+        const markdownText = InternalUtil.getMarkdownExtensionValue(markdownFormat);
         const htmlString = xhtmlFormat ? xhtmlFormat.valueString :
-          markdownFormat ? InternalUtil.md.render(markdownFormat.valueString) : null;
+          (typeof markdownText === 'string' ? InternalUtil.md.render(markdownText) : null);
         if (htmlString) {
           helpOrLegal = isLegal ? {
             legalFormat: xhtmlFormat ? "html" : "markdown",
             legal: htmlString,
-            legalOriginalMarkdown: xhtmlFormat ? null : markdownFormat.valueString, // kept for export use
+            legalOriginalMarkdown: xhtmlFormat ? null : markdownText, // kept for export use
             legalLinkId: qItem.linkId,
             legalPlain: qItem.text  // this always contains the legal in plain text
           } : {
             codingInstructionsFormat: xhtmlFormat ? "html" : "markdown",
             codingInstructions: htmlString,
-            codingInstructionsOriginalMarkdown: xhtmlFormat ? null : markdownFormat.valueString, // kept for export use
+            codingInstructionsOriginalMarkdown: xhtmlFormat ? null : markdownText, // kept for export use
             codingInstructionsLinkId: qItem.linkId,
             codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
           };

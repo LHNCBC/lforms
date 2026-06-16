@@ -1,0 +1,36 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "enabled-required-item",
+  "title": "Example of required with enableWhen",
+  "url": "https://example.org/R4/Questionnaire/enabled-required-item",
+  "status": "draft",
+  "item": [
+    {
+      "type": "boolean",
+      "linkId": "question",
+      "text": "Should we show the group?"
+    },
+    {
+      "type": "group",
+      "linkId": "parent",
+      "text": "Parent group with enableWhen expression",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+            "expression": "%resource.descendants().where(linkId='question').answer.value = true"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "boolean",
+          "linkId": "child",
+          "text": "Required child item",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

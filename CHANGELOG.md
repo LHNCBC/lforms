@@ -2,19 +2,33 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [42.3.0] 2026-05-21
+## [42.3.0] 2026-06-16
 ### Changed
 - For a multi-select dropdown layout question with sub items, the sub items
   will be rendered for each selected dropdown option.
 - When exported to QuestionnaireResponse, each sub item will go under its
   associated answer, in the format of item.answer.item.
 
+## [42.2.2] 2026-06-11
+### Fixed
+- For the `rendering-markdown` extension, support for wrong value[x] `valueString` was removed.
+  Import and export now use the spec-compliant `valueMarkdown` field.
+- An issue of checkValidity() marking required items as missing when
+  they or their parents are not enabled due to enableWhen.
+
+## [42.2.1] 2026-05-29
+### Fixed
+- Fixed a bug in checking targetConstraints that FHIRPath variables 
+  might not be found.
+### Changed
+- Support multiple locations on targetConstraint.
+
 ## [42.2.0] 2026-05-07
 ### Changed
 - For ValueSet expansions, score import now prioritizes
   `expansion.contains.property` (R5) and the R4/R4B backport extension
-  `http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property` using the `itemWeight` property.
-  Legacy score extraction from `expansion.contains.extension`
+  `http://hl7.org/fhir/5.0/StructureDefinition/extension-ValueSet.expansion.contains.property` 
+  using the `itemWeight` property. Legacy score extraction from `expansion.contains.extension`
   (`ordinalValue`/`itemWeight`) is retained as a deprecated fallback for
   backward compatibility.
 
