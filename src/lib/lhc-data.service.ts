@@ -3,6 +3,7 @@ import { ScreenReaderLog } from './screen-reader-log';
 import CommonUtils from "./lforms/lhc-common-utils.js";
 import {InternalUtil} from "./lforms/internal-utils.js";
 import language from '../../language-config.json';
+import {Subject} from "rxjs";
 declare let LForms: any;
 // @Injectable({
 //   providedIn: 'root'
@@ -15,6 +16,9 @@ export class LhcDataService {
 
   private lhcFormData:any;
   private srLog: ScreenReaderLog;
+
+  private formChangeEventSource = new Subject<string>();
+  public formChangeEvent$ = this.formChangeEventSource.asObservable();
 
   constructor() {
     this.srLog = new ScreenReaderLog();
@@ -705,6 +709,8 @@ export class LhcDataService {
       this.lhcFormData.updateOnSourceItemChange(item)
 
       this.sendActionsToScreenReader();
+
+      this.formChangeEventSource.next('Item value change. LinkId: ' + item.linkId);
 
     }
   };
