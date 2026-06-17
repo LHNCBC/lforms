@@ -101,7 +101,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
         this.formReady();
         this.formChangeEventSubscription = this.lhcDataService.formChangeEvent$
           .pipe(
-            debounceTime(100)
+            debounceTime(360)
           )
           .subscribe((event) => {
           this.onFormChange.emit(event);
