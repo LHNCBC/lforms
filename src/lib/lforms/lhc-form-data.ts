@@ -2613,7 +2613,7 @@ export default class LhcFormData {
   updateMultiSelectSubGroupProperties(item, answer, linkId) {
     const multiSelectSubGroup = item.items.find(x => x.isSubGroupForMultiSelect === true && x.linkId === linkId);
     if (multiSelectSubGroup && !multiSelectSubGroup.question) {
-      multiSelectSubGroup.question = answer._displayText;
+      multiSelectSubGroup.question = answer._displayText || answer.text || answer.code + "";
       multiSelectSubGroup.MultiSelectOption = answer;
       this._resetInternalData();
     }

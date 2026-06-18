@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, inject } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import {CommonUtilsService} from "../../lib/common-utils.service";
 
@@ -17,12 +17,12 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
   @Input() acOptions; // item._autocompOptions
   @Input() readOnly;
   options: any={};
+  private commonUtils = inject(CommonUtilsService);
 
   /**
    * Component class constructor
    */
   constructor(
-    private commonUtils: CommonUtilsService,
     public lhcDataService: LhcDataService
   ) {}
 
@@ -80,7 +80,8 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
    */
   updateSubGroupsForMergedQR(): void {
     if (this.item.items && this.item.value && Array.isArray(this.item.value) &&
-      this.item.answers && Array.isArray(this.item.answers)) {
+      this.item.answers && Array.isArray(this.item.answers) &&
+      this.acOptions && this.acOptions.listItems) {
       const lfData = this.lhcDataService.getLhcFormData();
       for (let i = 0, len = this.acOptions.listItems.length; i < len; i++) {
         const MultiSelectOption = this.acOptions.listItems[i];

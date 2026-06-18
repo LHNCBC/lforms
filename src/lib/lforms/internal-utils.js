@@ -526,7 +526,7 @@ export const InternalUtil = {
 
 
   /**
-   * Check if the item is a multi-select (coudl be checkbox or dropdown layout) with sub items.
+   * Check if the item is a multi-select (could be checkbox or dropdown layout) with sub items.
    */
   isMultiSelectWithSubItems: function(item) {
     return item._multipleAnswers &&
