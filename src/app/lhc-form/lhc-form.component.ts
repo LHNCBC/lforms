@@ -105,7 +105,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
           )
           .subscribe((event) => {
           this.onFormChange.emit(event);
-          console.log(event);
         });
       }
     }
