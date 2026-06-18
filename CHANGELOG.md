@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.3.0] 2026-06-18
+### Added
+- New onFormChange event, emitted when the form data is changed at
+  any level, or when a repeating item or group is added or removed.
+
 ## [42.2.2] 2026-06-11
 ### Fixed
 - For the `rendering-markdown` extension, support for wrong value[x] `valueString` was removed.
