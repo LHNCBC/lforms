@@ -121,7 +121,7 @@ test.describe('Question with sub items', () => {
       const win = window as any;
       const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
       const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
-      document.getElementById('formContainer')!.innerHTML = '';
+      document.getElementById('formContainer').innerHTML = '';
       return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
     }, { q, qr });
 
@@ -129,6 +129,51 @@ test.describe('Question with sub items', () => {
     await expect(byId(page, 'label-multi-select-subgroup||b/1/1')).toBeVisible();
     await expect(byId(page, 'item-multi-select-subgroup||a/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('11');
     await expect(byId(page, 'item-multi-select-subgroup||b/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('22');
+  });
+
+  test('should merge back the QR properly if only one answer is selected, autocomplete layout', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'dropdown-with-child-items.json', 'formContainer', { fhirVersion: 'R4' });
+
+    // Select all 3 options from the dropdown. Sub groups for all 3 options should be shown.
+    await byId(page, 'parent-dropdown/1').click();
+    await byId(page, 'parent-dropdown/1').press('ArrowDown');
+    await byId(page, 'parent-dropdown/1').press('Enter');
+    await expect(byId(page, 'label-multi-select-subgroup||a/1/multi-select-subgroup||a')).toBeVisible();
+    // Fill out the sub items.
+    await byId(page, 'child-integer/1/multi-select-subgroup||a/1').pressSequentially('11');
+
+    // Verify the exports.
+    const { q, qr } = await page.evaluate(() => {
+      const win = window as any;
+      const q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
+      const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      return { q, qr };
+    });
+    expect(q.item[0].item.length).toBe(1);
+    expect(q.item[0].item[0]).toEqual({
+      type: 'integer',
+      linkId: 'child-integer',
+      text: 'How many of this?'
+    });
+    expect(qr.item[0].answer.length).toBe(1);
+    expect(qr.item[0].answer[0]).toEqual({
+      valueCoding: { code: 'a', display: 'Apple' },
+      item: [{ answer: [{ valueInteger: 11 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+
+    // Load back the merged QR.
+    await page.evaluate(({ q, qr }) => {
+      const win = window as any;
+      const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
+      document.getElementById('formContainer').innerHTML = '';
+      return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
+    }, { q, qr });
+
+    await expect(byId(page, 'label-multi-select-subgroup||a/1/1')).toBeVisible();
+    await expect(byId(page, 'item-multi-select-subgroup||a/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('11');
   });
 
   test('should remove invalid sub items when options are removed by answerExpression', async ({ page }) => {

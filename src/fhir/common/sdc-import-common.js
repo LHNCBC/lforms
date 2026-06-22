@@ -1055,13 +1055,9 @@ function addCommonSDCImportFns(ns) {
           if (qrAnswer && qrAnswer.length > 0) {
             this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
             // process item.answer.item, if applicable
-            if(qrItemInfo.qrAnswersItemsInfo) {
-              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CODING
-              // moreover, each answer has already got its own item above if question repeats
-              if(qrItemInfo.qrAnswersItemsInfo.length === 1) {
-                this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[0], item);
-              } else {
-                for (let k = 0; k < qrItemInfo.qrAnswersItemsInfo.length; k++) {
+            if (qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo.length > 0) {
+              for (let k = 0; k < qrItemInfo.qrAnswersItemsInfo.length; k++) {
+                if (qrItemInfo.qrAnswersItemsInfo[k]) {
                   let newCheckboxSubGroup = {
                     "isSubGroupForMultiSelect": true,
                     "MultiSelectOption": {},
@@ -1089,7 +1085,7 @@ function addCommonSDCImportFns(ns) {
                   newCheckboxSubGroup._id = linkId;
                   newCheckboxSubGroup.items = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForMultiSelect));
                   item.items.push(newCheckboxSubGroup);
-                  if (qrItemInfo.qrAnswersItemsInfo[k] && item.value[k]) {
+                  if (item.value[k]) {
                     this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[k], newCheckboxSubGroup);
                   }
                 }
