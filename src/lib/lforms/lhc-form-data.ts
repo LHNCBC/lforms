@@ -2548,7 +2548,7 @@ export default class LhcFormData {
     let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForMultiSelect));
     let newGroupItemForMultiSelect = {
       "isSubGroupForMultiSelect": true,
-      "MultiSelectOption": answer,
+      "multiSelectOption": answer,
       "header": true,
       "dataType": "SECTION",
       "displayControl": {
@@ -2614,7 +2614,7 @@ export default class LhcFormData {
     const multiSelectSubGroup = item.items.find(x => x.isSubGroupForMultiSelect === true && x.linkId === linkId);
     if (multiSelectSubGroup && !multiSelectSubGroup.question) {
       multiSelectSubGroup.question = answer._displayText || answer.text || answer.code + "";
-      multiSelectSubGroup.MultiSelectOption = answer;
+      multiSelectSubGroup.multiSelectOption = answer;
       this._resetInternalData();
     }
   }

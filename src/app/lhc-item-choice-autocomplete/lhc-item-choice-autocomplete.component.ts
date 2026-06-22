@@ -75,7 +75,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
 
   /**
    * If rendering a merged QR, the subgroups for the autocomplete are missing some properties,
-   * such as "question" and "MultiSelectOption". This function is to update those properties for
+   * such as "question" and "multiSelectOption". This function is to update those properties for
    * the subgroups of autocomplete, so that they can be rendered correctly.
    */
   updateSubGroupsForMergedQR(): void {
@@ -84,13 +84,13 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
       this.acOptions && this.acOptions.listItems) {
       const lfData = this.lhcDataService.getLhcFormData();
       for (let i = 0, len = this.acOptions.listItems.length; i < len; i++) {
-        const MultiSelectOption = this.acOptions.listItems[i];
+        const multiSelectOption = this.acOptions.listItems[i];
         const answer = this.item.answers[i];
         const isOptionSelected = this.item.value.some(v => this.commonUtils.areTwoAnswersSame(v, answer, this.item));
-        const subGroupLinkId = lfData.getLinkIdForMultiSelectSubGroup(MultiSelectOption);
+        const subGroupLinkId = lfData.getLinkIdForMultiSelectSubGroup(multiSelectOption);
         const subGroupExists = lfData.hasSubGroupWithLinkId(this.item, subGroupLinkId);
         if (isOptionSelected && subGroupExists) {
-          lfData.updateMultiSelectSubGroupProperties(this.item, MultiSelectOption, subGroupLinkId);
+          lfData.updateMultiSelectSubGroupProperties(this.item, multiSelectOption, subGroupLinkId);
         }
       }
     }

@@ -1054,19 +1054,19 @@ function addCommonSDCExportFns(ns) {
               let fhirItem = this._processResponseItem(lfSubItem);
               if (fhirItem) {
                 // Find the matching QR answer and put the sub-group item under it instead of under targetItem.item.
-                // Using MultiSelectOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
+                // Using multiSelectOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
                 const refinedAnswerList = targetItem.answer.map(a => {
                   if (!a.valueCoding) {
                     return a;
                   } else if (a.valueCoding.display) {
                     // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
-                    // Create a new object with property "text" for matching, since lfSubItem.MultiSelectOption has "text" but not "display".
+                    // Create a new object with property "text" for matching, since lfSubItem.multiSelectOption has "text" but not "display".
                     return { ...a.valueCoding, text: a.valueCoding.display };
                   } else {
                     return a.valueCoding;
                   }
                 });
-                let matchingAnswerIndex = refinedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.MultiSelectOption, lfItem));
+                let matchingAnswerIndex = refinedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.multiSelectOption, lfItem));
                 if (matchingAnswerIndex !== -1) {
                   targetItem.answer[matchingAnswerIndex].item = fhirItem.item;
                 }
