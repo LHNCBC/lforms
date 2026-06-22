@@ -62,7 +62,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
         matched.matched = true;
       }
       else {
-        this.item.items.splice(i, 1);
+        this.lhcDataService.getLhcFormData().deleteSubItemsForAutocomplete(this.item, i);
         i--; // Adjust the index since we removed an item from the array.
       }
     }

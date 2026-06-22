@@ -2590,6 +2590,21 @@ export default class LhcFormData {
 
 
   /**
+   * Deletes a subgroup item for an autocomplete answer option, using the subgroup's index number.
+   * @param item an LForms item with autocomplete layout and sub items.
+   * @param index the index of the sub-group to be deleted.
+   */
+  deleteSubItemsForAutocomplete(item, index) {
+    item.items.splice(index, 1);
+
+    this._resetInternalData();
+
+    var readerMsg = `${language.removed} Sub items for autocomplete option: ${item.items[index]?.question}`;
+    this._actionLogs.push(readerMsg);
+  }
+
+
+  /**
    * Checks if an item has a multi-select subgroup with a specific linkId.
    * @param item an LForms item with multi-select layout and sub items.
    * @param linkId the linkId of the multi-select subgroup.
@@ -2612,7 +2627,7 @@ export default class LhcFormData {
    */
   updateMultiSelectSubGroupProperties(item, answer, linkId) {
     const multiSelectSubGroup = item.items.find(x => x.isSubGroupForMultiSelect === true && x.linkId === linkId);
-    if (multiSelectSubGroup && !multiSelectSubGroup.question) {
+    if (multiSelectSubGroup) {
       multiSelectSubGroup.question = answer._displayText || answer.text || answer.code + "";
       multiSelectSubGroup.multiSelectOption = answer;
       this._resetInternalData();
