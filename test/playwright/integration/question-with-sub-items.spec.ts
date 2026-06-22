@@ -131,6 +131,72 @@ test.describe('Question with sub items', () => {
     await expect(byId(page, 'item-multi-select-subgroup||b/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('22');
   });
 
+  test('should render sub items for each selected option and export/merge properly, autocomplete layout, valueString answerOption', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'dropdown-with-child-items-valueString.json', 'formContainer', { fhirVersion: 'R4' });
+
+    // Select all 3 options from the dropdown. Sub groups for all 3 options should be shown.
+    await byId(page, 'parent-dropdown/1').click();
+    await byId(page, 'parent-dropdown/1').press('ArrowDown');
+    await byId(page, 'parent-dropdown/1').press('Enter');
+    await byId(page, 'parent-dropdown/1').press('Enter');
+    await byId(page, 'parent-dropdown/1').press('Enter');
+    await expect(byId(page, 'label-multi-select-subgroup||Apple/1/multi-select-subgroup||Apple')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||Banana/1/multi-select-subgroup||Banana')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||Orange/1/multi-select-subgroup||Orange')).toBeVisible();
+    // Unchecking an option should remove the sub items for that option.
+    await page.locator('.autocomp_selected ul li:nth-child(3) button').click();
+    await expect(byId(page, 'label-multi-select-subgroup||o/1/multi-select-subgroup||o')).not.toBeAttached();
+    // Fill out the sub items.
+    await byId(page, 'child-integer/1/multi-select-subgroup||Apple/1').pressSequentially('11');
+    await byId(page, 'child-integer/1/multi-select-subgroup||Banana/1').pressSequentially('22');
+
+    // getFormData() should not include sub groups by default.
+    const formData1 = await page.evaluate(() => (window as any).LForms.Util.getFormData());
+    expect(formData1.items[0].items.length).toBe(1);
+    const formData2 = await page.evaluate(() => (window as any).LForms.Util.getFormData(null, null, null, true));
+    expect(formData2.items[0].items.length).toBe(3);
+
+    // Verify the exports.
+    const { q, qr } = await page.evaluate(() => {
+      const win = window as any;
+      const q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
+      const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      return { q, qr };
+    });
+
+    expect(q.item[0].item.length).toBe(1);
+    expect(q.item[0].item[0]).toEqual({
+      type: 'integer',
+      linkId: 'child-integer',
+      text: 'How many of this?'
+    });
+    expect(qr.item[0].answer.length).toBe(2);
+    expect(qr.item[0].answer[0]).toEqual({
+      valueCoding: { display: 'Apple' },
+      item: [{ answer: [{ valueInteger: 11 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+    expect(qr.item[0].answer[1]).toEqual({
+      valueCoding: { display:'Banana' },
+      item: [{ answer: [{ valueInteger: 22 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+
+    // Load back the merged QR.
+    await page.evaluate(({ q, qr }) => {
+      const win = window as any;
+      const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
+      document.getElementById('formContainer').innerHTML = '';
+      return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
+    }, { q, qr });
+
+    await expect(byId(page, 'label-multi-select-subgroup||Apple/1/1')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||Banana/1/1')).toBeVisible();
+    await expect(byId(page, 'item-multi-select-subgroup||Apple/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('11');
+    await expect(byId(page, 'item-multi-select-subgroup||Banana/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('22');
+  });
+
   test('should merge back the QR properly if only one answer is selected, autocomplete layout', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
