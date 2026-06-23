@@ -17,7 +17,7 @@ export class LhcDataService {
   private lhcFormData:any;
   private srLog: ScreenReaderLog;
 
-  private formChangeEventSource = new Subject<string>();
+  private formChangeEventSource = new Subject<any>();
   public formChangeEvent$ = this.formChangeEventSource.asObservable();
 
   constructor() {
@@ -551,7 +551,10 @@ export class LhcDataService {
     if (!anyEmpty) {
       const newItem = append ? this.lhcFormData.appendRepeatingItems(item) : this.lhcFormData.addRepeatingItems(item);
       this.sendActionsToScreenReader();
-      this.formChangeEventSource.next('Add one repeating item. LinkId: ' + item.linkId);
+      this.formChangeEventSource.next({
+        'event': 'itemAdded',
+        'linkId': item.linkId
+      });
     }
   }
 
@@ -587,7 +590,10 @@ export class LhcDataService {
 
     this.sendActionsToScreenReader();
 
-    this.formChangeEventSource.next('Remove one repeating item. LinkId: ' + item.linkId);
+    this.formChangeEventSource.next({
+      'event': 'itemRemoved',
+      'linkId': item.linkId
+    });
 
     // set the focus
     setTimeout(function() {
@@ -713,7 +719,10 @@ export class LhcDataService {
 
       this.sendActionsToScreenReader();
 
-      this.formChangeEventSource.next('Item value change. LinkId: ' + item.linkId);
+      this.formChangeEventSource.next({
+        'event': 'dataChanged',
+        'linkId': item.linkId
+      });
 
     }
   };

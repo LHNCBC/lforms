@@ -4,8 +4,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [42.3.0] 2026-06-18
 ### Added
-- New onFormChange event, emitted when the form data is changed at
-  any level, or when a repeating item or group is added or removed.
+- New onFormChange event, emitted when item value is modified at any
+  level of the form, or when a repeating item is added or removed.
 
 ## [42.2.2] 2026-06-11
 ### Fixed

@@ -99,13 +99,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
       this.lhcFormData._formRendered = true;
       if (this.lhcFormData._formProcessed) {
         this.formReady();
-        this.formChangeEventSubscription = this.lhcDataService.formChangeEvent$
-          .pipe(
-            debounceTime(360)
-          )
-          .subscribe((event) => {
-          this.onFormChange.emit(event);
-        });
       }
     }
   }
@@ -140,6 +133,14 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
     // (lhc-autocomplete component depends on this flag to work correctly
     // with fhirpath expression triggered changes)
     this.lhcFormData._formReady = true;
+    // Hook up onFormChange event.
+    this.formChangeEventSubscription = this.lhcDataService.formChangeEvent$
+      .pipe(
+        debounceTime(360)
+      )
+      .subscribe((event) => {
+        this.onFormChange.emit(event);
+      });
     // emit an event when the data is initially loaded (if there are data to be loaded)
     // and the form's view is initially rendered
     this.onFormReady.emit();

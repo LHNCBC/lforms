@@ -377,6 +377,8 @@ about the meaning of each key:
 * **onError** - emitted when the ValueSets are not retrieved during the form initialization. 
 The form is still initialized and might be rendered, with possible missing data. 
 The event will contain an array of error messages.
+* **onFormChange** - emitted when item value is modified at any level of the form, or when
+a repeating item is added or removed.
 
 ### How to use properties and events:
 * In HTML: 
