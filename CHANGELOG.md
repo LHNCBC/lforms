@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.2.3] 2026-06-24
+### Fixed
+- 'clear selection' button text was not configured for languages.
+
 ## [42.2.2] 2026-06-11
 ### Fixed
 - For the `rendering-markdown` extension, support for wrong value[x] `valueString` was removed.
