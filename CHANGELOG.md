@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.2.3] 2026-06-25
+### Fixed
+- Make build:version script OS independent.
+
 ## [42.2.2] 2026-06-11
 ### Fixed
 - For the `rendering-markdown` extension, support for wrong value[x] `valueString` was removed.
