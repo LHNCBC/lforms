@@ -32,7 +32,7 @@
     "build:init": "npm run build:clean && shx mkdir -p dist/$npm_package_name && shx cp src/index.js dist && npm run build:version && npm run build:language",
     "build:prepare-zip": "node prepare-zip.js",
     "build:zip": "cd dist;  shx mv $npm_package_name $npm_package_name-$npm_package_version; bestzip $npm_package_name-$npm_package_version.zip $npm_package_name-$npm_package_version/*; shx mv $npm_package_name-$npm_package_version $npm_package_name",
-    "build:version": "node -e 'require(\"fs\").writeFileSync(\"src/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",
+    "build:version": "node bin/build-version.js",
     "build:language": "node bin/build-locale.js $npm_package_config_localeID",
     "test:fhir-unit": "karma start test/karma.conf.js",
     "test:ng-unit": "ng test --watch=false",
