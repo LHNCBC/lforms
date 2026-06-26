@@ -88,6 +88,7 @@ export class LhcGroupMatrixComponent implements OnChanges {
   updateRadioListValueForOther(item, otherValue) {
     // add/update the other value
     if (item._answerOtherChecked) {
+      item._selectedRadio = null; // Clear the selected radio index when "Other" is checked.
       item.value = { "text": otherValue, "_notOnList": true};
 
       // run the change function
