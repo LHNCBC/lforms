@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.2.4] 2026-06-26
+### Fixed
+- Use antd radio buttons in matrix layout.
+
 ## [42.2.3] 2026-06-24
 ### Fixed
 - 'clear selection' button text was not configured for languages.
