@@ -166,6 +166,19 @@ test.describe('Form level Matrix layout', () => {
       expect(formData.itemsData[0].items[3].value).toBeUndefined();
     });
 
+    test('interacts with a radio matrix table', async ({ page }) => {
+      await page.goto('/test/pages/lforms_testpage.html');
+      await waitForLFormsReady(page);
+      await loadFromTestData(page, 'matrixLayoutSingleSelectionWithData.R4.json', 'R4');
+      await expect(byId(page, '/g1m1/1/1||c1')).toBeChecked();
+      // Click on the second answer in the first question, and verify that the first answer is unchecked.
+      await byId(page, '/g1m1/1/1||c2').click();
+      await expect(byId(page, '/g1m1/1/1||c1')).not.toBeChecked();
+      // Click on the "Other" answer in the first question, and verify that the second answer is unchecked.
+      await byId(page, '/g1m1/1/1|_other').locator('input').click();
+      await expect(byId(page, '/g1m1/1/1||c2')).not.toBeChecked();
+    });
+
     test('displays a checkbox matrix table with initial values displayed', async ({ page }) => {
       await page.goto('/test/pages/lforms_testpage.html');
       await waitForLFormsReady(page);
