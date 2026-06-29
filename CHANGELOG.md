@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.2.4] 2026-06-25
+### Fixed
+- Make build:version script OS independent.
+
 ## [42.2.3] 2026-06-24
 ### Fixed
 - 'clear selection' button text was not configured for languages.
