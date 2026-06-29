@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [42.3.0] 2026-06-29
+### Changed
+- If there is an 'implicitRules' on a Questionnaire, lforms will not
+  render it and just show an error message.
+
 ## [42.2.3] 2026-06-24
 ### Fixed
 - 'clear selection' button text was not configured for languages.
