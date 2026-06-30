@@ -2,9 +2,18 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [42.2.4] 2026-06-26
+## [43.0.1] 2026-06-30
 ### Fixed
 - Use antd radio buttons in matrix layout.
+
+## [43.0.0] 2026-06-29
+### Changed
+- If there is an 'implicitRules' on a Questionnaire, lforms will not
+  render it and just show an error message.
+
+## [42.2.4] 2026-06-25
+### Fixed
+- Make build:version script OS independent.
 
 ## [42.2.3] 2026-06-24
 ### Fixed
