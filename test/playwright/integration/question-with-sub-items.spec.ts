@@ -134,14 +134,14 @@ test.describe('Question with sub items', () => {
   test('should render sub items for each selected option and export/merge properly, autocomplete layout, valueString answerOption', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
-    await addFormToPage(page, 'dropdown-with-child-items-valueString.json', 'formContainer', { fhirVersion: 'R4' });
+    await addFormToPage(page, 'dropdown-with-child-items-primitive-types.json', 'formContainer', { fhirVersion: 'R4' });
 
     // Select all 3 options from the dropdown. Sub groups for all 3 options should be shown.
-    await byId(page, 'parent-dropdown/1').click();
-    await byId(page, 'parent-dropdown/1').press('ArrowDown');
-    await byId(page, 'parent-dropdown/1').press('Enter');
-    await byId(page, 'parent-dropdown/1').press('Enter');
-    await byId(page, 'parent-dropdown/1').press('Enter');
+    await byId(page, 'parent-dropdown-string/1').click();
+    await byId(page, 'parent-dropdown-string/1').press('ArrowDown');
+    await byId(page, 'parent-dropdown-string/1').press('Enter');
+    await byId(page, 'parent-dropdown-string/1').press('Enter');
+    await byId(page, 'parent-dropdown-string/1').press('Enter');
     await expect(byId(page, 'label-multi-select-subgroup||Apple/1/multi-select-subgroup||Apple')).toBeVisible();
     await expect(byId(page, 'label-multi-select-subgroup||Banana/1/multi-select-subgroup||Banana')).toBeVisible();
     await expect(byId(page, 'label-multi-select-subgroup||Orange/1/multi-select-subgroup||Orange')).toBeVisible();
@@ -174,11 +174,11 @@ test.describe('Question with sub items', () => {
     });
     expect(qr.item[0].answer.length).toBe(2);
     expect(qr.item[0].answer[0]).toEqual({
-      valueCoding: { display: 'Apple' },
+      valueString: 'Apple',
       item: [{ answer: [{ valueInteger: 11 }], linkId: 'child-integer', text: 'How many of this?' }]
     });
     expect(qr.item[0].answer[1]).toEqual({
-      valueCoding: { display:'Banana' },
+      valueString:'Banana',
       item: [{ answer: [{ valueInteger: 22 }], linkId: 'child-integer', text: 'How many of this?' }]
     });
 
@@ -195,6 +195,204 @@ test.describe('Question with sub items', () => {
     await expect(byId(page, 'label-multi-select-subgroup||Banana/1/1')).toBeVisible();
     await expect(byId(page, 'item-multi-select-subgroup||Apple/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('11');
     await expect(byId(page, 'item-multi-select-subgroup||Banana/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('22');
+  });
+
+  test('should render sub items for each selected option and export/merge properly, autocomplete layout, valueInteger answerOption', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'dropdown-with-child-items-primitive-types.json', 'formContainer', { fhirVersion: 'R4' });
+
+    // Select all 3 options from the dropdown. Sub groups for all 3 options should be shown.
+    await byId(page, 'parent-dropdown-integer/1').click();
+    await byId(page, 'parent-dropdown-integer/1').press('ArrowDown');
+    await byId(page, 'parent-dropdown-integer/1').press('Enter');
+    await byId(page, 'parent-dropdown-integer/1').press('Enter');
+    await byId(page, 'parent-dropdown-integer/1').press('Enter');
+    await expect(byId(page, 'label-multi-select-subgroup||10/1/multi-select-subgroup||10')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||20/1/multi-select-subgroup||20')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||30/1/multi-select-subgroup||30')).toBeVisible();
+    // Unchecking an option should remove the sub items for that option.
+    await page.locator('.autocomp_selected ul li:nth-child(3) button').click();
+    await expect(byId(page, 'label-multi-select-subgroup||30/1/multi-select-subgroup||30')).not.toBeAttached();
+    // Fill out the sub items.
+    await byId(page, 'child-integer/1/multi-select-subgroup||10/1').pressSequentially('11');
+    await byId(page, 'child-integer/1/multi-select-subgroup||20/1').pressSequentially('22');
+
+    // getFormData() should not include sub groups by default.
+    const formData1 = await page.evaluate(() => (window as any).LForms.Util.getFormData());
+    expect(formData1.items[1].items.length).toBe(1);
+    const formData2 = await page.evaluate(() => (window as any).LForms.Util.getFormData(null, null, null, true));
+    expect(formData2.items[1].items.length).toBe(3);
+
+    // Verify the exports.
+    const { q, qr } = await page.evaluate(() => {
+      const win = window as any;
+      const q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
+      const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      return { q, qr };
+    });
+
+    expect(q.item[1].item.length).toBe(1);
+    expect(q.item[1].item[0]).toEqual({
+      type: 'integer',
+      linkId: 'child-integer',
+      text: 'How many of this?'
+    });
+    expect(qr.item[0].answer.length).toBe(2);
+    expect(qr.item[0].answer[0]).toEqual({
+      valueInteger: 10,
+      item: [{ answer: [{ valueInteger: 11 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+    expect(qr.item[0].answer[1]).toEqual({
+      valueInteger: 20,
+      item: [{ answer: [{ valueInteger: 22 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+
+    // Load back the merged QR.
+    await page.evaluate(({ q, qr }) => {
+      const win = window as any;
+      const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
+      document.getElementById('formContainer').innerHTML = '';
+      return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
+    }, { q, qr });
+
+    await expect(byId(page, 'label-multi-select-subgroup||10/1/1')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||20/1/1')).toBeVisible();
+    await expect(byId(page, 'item-multi-select-subgroup||10/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('11');
+    await expect(byId(page, 'item-multi-select-subgroup||20/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('22');
+  });
+
+  test('should render sub items for each selected option and export/merge properly, autocomplete layout, valueDate answerOption', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'dropdown-with-child-items-primitive-types.json', 'formContainer', { fhirVersion: 'R4' });
+
+    // Select all 3 options from the dropdown. Sub groups for all 3 options should be shown.
+    await byId(page, 'parent-dropdown-date/1').click();
+    await byId(page, 'parent-dropdown-date/1').press('ArrowDown');
+    await byId(page, 'parent-dropdown-date/1').press('Enter');
+    await byId(page, 'parent-dropdown-date/1').press('Enter');
+    await byId(page, 'parent-dropdown-date/1').press('Enter');
+    await expect(byId(page, 'label-multi-select-subgroup||2026/1/multi-select-subgroup||2026')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||2027/1/multi-select-subgroup||2027')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||2028/1/multi-select-subgroup||2028')).toBeVisible();
+    // Unchecking an option should remove the sub items for that option.
+    await page.locator('.autocomp_selected ul li:nth-child(3) button').click();
+    await expect(byId(page, 'label-multi-select-subgroup||2028/1/multi-select-subgroup||2028')).not.toBeAttached();
+    // Fill out the sub items.
+    await byId(page, 'child-integer/1/multi-select-subgroup||2026/1').pressSequentially('11');
+    await byId(page, 'child-integer/1/multi-select-subgroup||2027/1').pressSequentially('22');
+
+    // getFormData() should not include sub groups by default.
+    const formData1 = await page.evaluate(() => (window as any).LForms.Util.getFormData());
+    expect(formData1.items[2].items.length).toBe(1);
+    const formData2 = await page.evaluate(() => (window as any).LForms.Util.getFormData(null, null, null, true));
+    expect(formData2.items[2].items.length).toBe(3);
+
+    // Verify the exports.
+    const { q, qr } = await page.evaluate(() => {
+      const win = window as any;
+      const q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
+      const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      return { q, qr };
+    });
+
+    expect(q.item[2].item.length).toBe(1);
+    expect(q.item[2].item[0]).toEqual({
+      type: 'integer',
+      linkId: 'child-integer',
+      text: 'How many of this?'
+    });
+    expect(qr.item[0].answer.length).toBe(2);
+    expect(qr.item[0].answer[0]).toEqual({
+      valueDate: '2026',
+      item: [{ answer: [{ valueInteger: 11 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+    expect(qr.item[0].answer[1]).toEqual({
+      valueDate: '2027',
+      item: [{ answer: [{ valueInteger: 22 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+
+    // Load back the merged QR.
+    await page.evaluate(({ q, qr }) => {
+      const win = window as any;
+      const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
+      document.getElementById('formContainer').innerHTML = '';
+      return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
+    }, { q, qr });
+
+    await expect(byId(page, 'label-multi-select-subgroup||2026/1/1')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||2027/1/1')).toBeVisible();
+    await expect(byId(page, 'item-multi-select-subgroup||2026/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('11');
+    await expect(byId(page, 'item-multi-select-subgroup||2027/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('22');
+  });
+
+  test('should render sub items for each selected option and export/merge properly, autocomplete layout, valueTime answerOption', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'dropdown-with-child-items-primitive-types.json', 'formContainer', { fhirVersion: 'R4' });
+
+    // Select all 3 options from the dropdown. Sub groups for all 3 options should be shown.
+    await byId(page, 'parent-dropdown-time/1').click();
+    await byId(page, 'parent-dropdown-time/1').press('ArrowDown');
+    await byId(page, 'parent-dropdown-time/1').press('Enter');
+    await byId(page, 'parent-dropdown-time/1').press('Enter');
+    await byId(page, 'parent-dropdown-time/1').press('Enter');
+    await expect(byId(page, 'label-multi-select-subgroup||10:00:10/1/multi-select-subgroup||10:00:10')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||10:00:20/1/multi-select-subgroup||10:00:20')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||10:00:30/1/multi-select-subgroup||10:00:30')).toBeVisible();
+    // Unchecking an option should remove the sub items for that option.
+    await page.locator('.autocomp_selected ul li:nth-child(3) button').click();
+    await expect(byId(page, 'label-multi-select-subgroup||10:00:30/1/multi-select-subgroup||10:00:30')).not.toBeAttached();
+    // Fill out the sub items.
+    await byId(page, 'child-integer/1/multi-select-subgroup||10:00:10/1').pressSequentially('11');
+    await byId(page, 'child-integer/1/multi-select-subgroup||10:00:20/1').pressSequentially('22');
+
+    // getFormData() should not include sub groups by default.
+    const formData1 = await page.evaluate(() => (window as any).LForms.Util.getFormData());
+    expect(formData1.items[3].items.length).toBe(1);
+    const formData2 = await page.evaluate(() => (window as any).LForms.Util.getFormData(null, null, null, true));
+    expect(formData2.items[3].items.length).toBe(3);
+
+    // Verify the exports.
+    const { q, qr } = await page.evaluate(() => {
+      const win = window as any;
+      const q = win.LForms.Util.getFormFHIRData('Questionnaire', 'R4');
+      const qr = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      return { q, qr };
+    });
+
+    expect(q.item[3].item.length).toBe(1);
+    expect(q.item[3].item[0]).toEqual({
+      type: 'integer',
+      linkId: 'child-integer',
+      text: 'How many of this?'
+    });
+    expect(qr.item[0].answer.length).toBe(2);
+    expect(qr.item[0].answer[0]).toEqual({
+      valueTime: '10:00:10',
+      item: [{ answer: [{ valueInteger: 11 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+    expect(qr.item[0].answer[1]).toEqual({
+      valueTime: '10:00:20',
+      item: [{ answer: [{ valueInteger: 22 }], linkId: 'child-integer', text: 'How many of this?' }]
+    });
+
+    // Load back the merged QR.
+    await page.evaluate(({ q, qr }) => {
+      const win = window as any;
+      const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      const mergedFormData = win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, 'R4');
+      document.getElementById('formContainer').innerHTML = '';
+      return win.LForms.Util.addFormToPage(mergedFormData, 'formContainer');
+    }, { q, qr });
+
+    await expect(byId(page, 'label-multi-select-subgroup||10:00:10/1/1')).toBeVisible();
+    await expect(byId(page, 'label-multi-select-subgroup||10:00:20/1/1')).toBeVisible();
+    await expect(byId(page, 'item-multi-select-subgroup||10:00:10/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('11');
+    await expect(byId(page, 'item-multi-select-subgroup||10:00:20/1/1').locator('#' + escapeIdSelector('child-integer/1/1/1'))).toHaveValue('22');
   });
 
   test('should merge back the QR properly if only one answer is selected, autocomplete layout', async ({ page }) => {
