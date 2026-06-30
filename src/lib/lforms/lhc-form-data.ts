@@ -2595,11 +2595,10 @@ export default class LhcFormData {
    * @param index the index of the sub-group to be deleted.
    */
   deleteSubItemsForAutocomplete(item, index) {
+    const readerMsg = `${language.removed} sub items for autocomplete option: ${item.items[index]?.question}`;
     item.items.splice(index, 1);
 
     this._resetInternalData();
-
-    var readerMsg = `${language.removed} Sub items for autocomplete option: ${item.items[index]?.question}`;
     this._actionLogs.push(readerMsg);
   }
 
