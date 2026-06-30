@@ -1057,7 +1057,7 @@ function addCommonSDCExportFns(ns) {
                 // Using multiSelectOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
                 const refinedAnswerList = targetItem.answer.map(a => {
                   if (!a.valueCoding) {
-                    return a;
+                    return { text: a.valueString || a.valueInteger || a.valueDate || a.valueTime };
                   } else if (a.valueCoding.display) {
                     // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
                     // Create a new object with property "text" for matching, since lfSubItem.multiSelectOption has "text" but not "display".
