@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [42.3.0] 2026-06-29
+## [43.0.0] 2026-06-29
 ### Changed
 - If there is an 'implicitRules' on a Questionnaire, lforms will not
   render it and just show an error message.

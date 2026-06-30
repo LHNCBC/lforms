@@ -154,7 +154,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
             // check if questionnaire is a FHIR Questionnaire
             if (q.resourceType === "Questionnaire") {
               if (q.implicitRules) {
-                throw new Error("The system checks for implicitRules on resources, and only processes resources that have no implicit rules, or where the system understands the implicit rules.");
+                throw new Error("The Questionnaire cannot be rendered because it uses implicitRules that LHC-Forms does not support.");
               }
               const fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
