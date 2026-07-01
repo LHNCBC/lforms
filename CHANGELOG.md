@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.0.0] 2026-06-30
+### Changed
+- Breaking: The web component's bundled vendor CSS (ng-zorro-antd and
+  autocomplete-lhc) is now scoped to LForms-owned containers and wrapped in
+  `@layer lforms` at build time, so it no longer leaks into or overrides
+  host-page global styles. Host pages can still override LForms internal styles
+  with their own (unlayered) CSS.
+
 ## [43.0.0] 2026-06-29
 ### Changed
 - If there is an 'implicitRules' on a Questionnaire, lforms will not

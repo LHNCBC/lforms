@@ -1,0 +1,135 @@
+/*
+ * Scoped reset for the LForms web component.
+ *
+ * ng-zorro-antd ships a global "core" reset (html/body/*, h1-h6, p, a, button,
+ * input, ...). Those bare-element rules are stripped from the vendor bundle at
+ * build time by tools/postcss-lforms-scope so they no longer leak out of the
+ * web component (https://github.com/LHNCBC/lforms/issues/169).
+ *
+ * The pieces of that reset ng-zorro and autocomplete-lhc still rely on are
+ * re-applied here, scoped to LForms-owned containers (the form and the CDK
+ * overlay container that hosts popovers / date & time pickers). It is wrapped
+ * in `@layer lforms` so host pages can still override with plain CSS.
+ *
+ * NOTE: the page-level parts of ng-zorro's reset (e.g. `html, body { width:
+ * 100%; height: 100% }` and `body { margin: 0 }`) are intentionally NOT
+ * re-applied, so the web component does not resize or reset the host page.
+ */
+@layer lforms {
+  .lhc-form,
+  .lhc-form *,
+  .lhc-form *::before,
+  .lhc-form *::after,
+  .lhc-form-overlay-container,
+  .lhc-form-overlay-container *,
+  .lhc-form-overlay-container *::before,
+  .lhc-form-overlay-container *::after {
+    box-sizing: border-box;
+  }
+
+  .lhc-form button,
+  .lhc-form input,
+  .lhc-form optgroup,
+  .lhc-form select,
+  .lhc-form textarea,
+  .lhc-form-overlay-container button,
+  .lhc-form-overlay-container input,
+  .lhc-form-overlay-container optgroup,
+  .lhc-form-overlay-container select,
+  .lhc-form-overlay-container textarea {
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    line-height: inherit;
+  }
+
+  .lhc-form input[type='text'],
+  .lhc-form input[type='password'],
+  .lhc-form input[type='number'],
+  .lhc-form textarea,
+  .lhc-form-overlay-container input[type='text'],
+  .lhc-form-overlay-container input[type='password'],
+  .lhc-form-overlay-container input[type='number'],
+  .lhc-form-overlay-container textarea {
+    -webkit-appearance: none;
+  }
+
+  .lhc-form a,
+  .lhc-form-overlay-container a {
+    color: #1890ff;
+    text-decoration: none;
+    background-color: transparent;
+    outline: 0;
+    cursor: pointer;
+    transition: color 0.3s;
+    -webkit-text-decoration-skip: objects;
+    touch-action: manipulation;
+  }
+
+  .lhc-form a:hover,
+  .lhc-form-overlay-container a:hover {
+    color: #40a9ff;
+  }
+
+  .lhc-form a:active,
+  .lhc-form-overlay-container a:active {
+    color: #096dd9;
+  }
+
+  .lhc-form a:active,
+  .lhc-form a:hover,
+  .lhc-form-overlay-container a:active,
+  .lhc-form-overlay-container a:hover {
+    text-decoration: none;
+    outline: 0;
+  }
+
+  .lhc-form a[disabled],
+  .lhc-form-overlay-container a[disabled] {
+    color: rgba(0, 0, 0, 0.25);
+    cursor: not-allowed;
+  }
+
+  .lhc-form,
+  .lhc-form-overlay-container {
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 14px;
+    font-variant: tabular-nums;
+    line-height: 1.5715;
+    font-feature-settings: 'tnum';
+  }
+
+  /*
+   * Restore ng-zorro's default body font stack for content rendered OUTSIDE
+   * the form -- the CDK overlay (popovers, date / time pickers) and the
+   * autocomplete-lhc results popup. Both previously inherited this stack from
+   * ng-zorro's `body` reset, which is now stripped. `.lhc-form` itself keeps
+   * its own font from lhc-form.css and is intentionally excluded here.
+   */
+  .lhc-form-overlay-container,
+  #lhc-tools-searchResults {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  }
+
+  #lhc-tools-searchResults {
+    font-size: 14px;
+    font-variant: tabular-nums;
+    line-height: 1.5715;
+    font-feature-settings: 'tnum';
+  }
+
+  /*
+   * autocomplete-lhc sets `#lhc-tools-searchResults { font-size: 100% }`, which
+   * historically resolved against ng-zorro's `body { font-size: 14px }`. That
+   * body reset is now stripped, so `100%` would resolve against the host page's
+   * body instead, making the results list (and its `90%`/`85%` children)
+   * larger. Pin the popup to 14px with a higher-specificity selector so it wins
+   * regardless of stylesheet order.
+   */
+  html #lhc-tools-searchResults {
+    font-size: 14px;
+  }
+}

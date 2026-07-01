@@ -21,6 +21,7 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "styles": [
+              "src/lforms-vendor-reset.css",
               "src/styles.css",
               "src/lhc-form.css",
               "src/flexible-row.css",
@@ -180,6 +181,7 @@
               }
             ],
             "styles": [
+              "src/lforms-vendor-reset.css",
               "src/styles.css",
               "src/lhc-form.css",
               "src/flexible-row.css",
