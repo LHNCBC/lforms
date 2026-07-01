@@ -9,6 +9,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   `@layer lforms` at build time, so it no longer leaks into or overrides
   host-page global styles. Host pages can still override LForms internal styles
   with their own (unlayered) CSS.
+- Removed Cypress tests that have been replaced by Playwright tests.
 
 ## [43.0.0] 2026-06-29
 ### Changed
