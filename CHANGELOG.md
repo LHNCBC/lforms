@@ -2,10 +2,23 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [42.3.0] 2026-06-18
+## [43.1.0] 2026-06-18
 ### Added
 - New onFormChange event, emitted when item value is modified at any
   level of the form, or when a repeating item is added or removed.
+
+## [43.0.0] 2026-06-29
+### Changed
+- If there is an 'implicitRules' on a Questionnaire, lforms will not
+  render it and just show an error message.
+
+## [42.2.4] 2026-06-25
+### Fixed
+- Make build:version script OS independent.
+
+## [42.2.3] 2026-06-24
+### Fixed
+- 'clear selection' button text was not configured for languages.
 
 ## [42.2.2] 2026-06-11
 ### Fixed
