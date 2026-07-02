@@ -378,7 +378,8 @@ about the meaning of each key:
 The form is still initialized and might be rendered, with possible missing data. 
 The event will contain an array of error messages.
 * **onFormChange** - emitted when item value is modified at any level of the form, or when
-a repeating item is added or removed.
+a repeating item is added or removed. The event returns an object: 
+`{"event": "itemAdded" | "itemRemoved" | "itemValueChanged", "linkId": string}`.
 
 ### How to use properties and events:
 * In HTML: 
