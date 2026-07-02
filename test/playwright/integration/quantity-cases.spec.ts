@@ -20,9 +20,11 @@ test.describe('Quantities with and without unit lists and unit-open', () => {
 
   test('should have a CNE list for a quantity with units list but without unit-open', async ({ page }) => {
     const unitField = page.locator('#unit_q5\\/1');
+    const nextInput = page.locator('#q6\\/1');
     await unitField.click();
+    await unitField.clear();
     await unitField.pressSequentially('meters');
-    await unitField.blur();
+    await nextInput.click();
     await expect(unitField).toHaveValue('');
     const fhirData = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
     expect(fhirData.item).toBeUndefined();
@@ -64,9 +66,11 @@ test.describe('Quantities with and without unit lists and unit-open', () => {
     // This is because we don't currently provide the user with a way to enter
     // an off-list coding.
     const unitField = page.locator('#unit_q7\\/1');
+    const nextInput = page.locator('#q8\\/1');
     await unitField.click();
+    await unitField.clear();
     await unitField.pressSequentially('meters');
-    await unitField.blur();
+    await nextInput.click();
     await expect(unitField).toHaveValue('');
     const fhirData = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
     expect(fhirData.item).toBeUndefined();
@@ -74,9 +78,11 @@ test.describe('Quantities with and without unit lists and unit-open', () => {
 
   test('should have a CNE list for a quantity with units list and with unit-open=optionsOnly', async ({ page }) => {
     const unitField = page.locator('#unit_q8\\/1');
+    const nextInput = page.locator('#q1\\/1');
     await unitField.click();
+    await unitField.clear();
     await unitField.pressSequentially('meters');
-    await unitField.blur();
+    await nextInput.click();
     await expect(unitField).toHaveValue('');
     const fhirData = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
     expect(fhirData.item).toBeUndefined();

@@ -1,5 +1,5 @@
 <ng-container *ngIf="item">
-  <div class="lhc-validation-popover" *ngIf="item._hasValidation">
+  <div class="lhc-validation-popover" *ngIf="item._hasValidation" && (item._validationErrors?.length || item._validationWarnings?.length)>
     <div *ngFor="let error of item._validationErrors; index as i" >
       <div class="validation-error">
         <i class="lhc-error-icon" nz-icon nzType="close"></i>

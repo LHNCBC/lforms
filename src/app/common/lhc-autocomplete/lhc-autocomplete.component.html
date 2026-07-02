@@ -3,9 +3,8 @@
          [disabled]="options.readOnly"
          placeholder="{{options.placeholder}}"
          id="{{options.elementId}}"
-         (blur)="onInputBlur()"
+         (blur)="onInputBlur($event)"
          (focus)="onInputFocus()"
          #ac
   >
 </div>
-

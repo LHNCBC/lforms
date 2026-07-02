@@ -42,6 +42,7 @@
     "PHONE": "must be a valid phone number."
   },
   "requiresAValue": "requires a value",
+  "invalidAnswer": "must be a valid answer from the list.",  
   "mustBeGreater": "must be a value greater than {lformsParam}.",
   "mustBeGreaterOrEqual": "must be a value greater than or equal to {lformsParam}.",
   "mustBeLess": "must be a value less than {lformsParam}.",

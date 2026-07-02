@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import { byId, openFormByIndex, pressCypressKeys, waitForLFormsReady, loadFromTestData } from '../support/lforms-helpers';
+import { addFormToPage, byId, openFormByIndex, pressCypressKeys, waitForLFormsReady, loadFromTestData } from '../support/lforms-helpers';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -69,6 +69,7 @@ test.describe('Validations', () => {
   const errorRequire = 'requires a value';
   const errorMinOccurs = 'must have at least ';
   const errorMaxOccurs = 'must not have more than ';
+  const errorInvalidAnswer = 'must be a valid answer from the list.';
 
   test.describe('data type validations (table)', () => {
     test('should validate INT type', async ({ page }) => {
@@ -317,6 +318,48 @@ test.describe('Validations', () => {
     });
 
     // CNE/CWE with multiple selections does not work with validations. Need a fix in autocomplete directive.
+
+    test('should validate and clear invalid autocomplete entries for optionsOnly fields', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerConstraint/dataType-ST-optionsOnly.json', 'formContainer');
+
+      const itemId = 'valueString-group1-item1/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const invalidMessage = page.locator(errorContainer).filter({ hasText: errorInvalidAnswer });
+
+      await input.click();
+      await input.pressSequentially('invalid');
+      await input.press('Enter');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(input).toHaveCSS('border-top-color', 'rgb(255, 0, 0)');
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      await input.press('Control+a');
+      await input.press('Backspace');
+      await input.pressSequentially('b');
+      await input.press('Enter');
+      await expect(input).toHaveValue('b');
+      await expect(input).not.toHaveClass(/invalid/);
+      await expect(item).not.toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).not.toBeAttached();
+
+      await input.press('Control+a');
+      await input.press('Backspace');
+      await input.pressSequentially('invalid again');
+      await input.press('Enter');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      await byId(page, 'valueString-group1-item2/1/1').click();
+      await expect(input).toHaveValue('');
+      await expect(input).not.toHaveClass(/invalid/);
+      await expect(item).not.toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).not.toBeAttached();
+    });
 
     test('should validate multiple restrictions on INT', async ({ page }) => {
       await openFormByIndex(page, 13);
