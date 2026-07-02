@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import {Component, OnInit, Input, OnChanges, ElementRef, QueryList, ViewChildren, AfterViewInit} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import deepEqual from "deep-equal";
@@ -10,7 +10,7 @@ import language from '../../../language-config.json';
     styleUrls: ['./lhc-group-matrix.component.css'],
     standalone: false
 })
-export class LhcGroupMatrixComponent implements OnChanges {
+export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit {
 
   @Input() item;
   // item.item[0]._autocompOptions
@@ -18,6 +18,7 @@ export class LhcGroupMatrixComponent implements OnChanges {
   // It could be delayed when the answer list is loaded from answerValueSet or answerExpression
   @Input() acOptions;
   @Input() formLevel: boolean = false;
+  @ViewChildren('tableRow') tableRows: QueryList<ElementRef>;
   language = language;
 
   isCheckbox: boolean = false;
@@ -36,6 +37,24 @@ export class LhcGroupMatrixComponent implements OnChanges {
     this.setInitialValue();
     // Set answerOption list items which have _displayText.
     const lhcFormData = this.lhcDataService.getLhcFormData();
+  }
+
+
+  /**
+   * Invoked after the component's view has been fully initialized.
+   */
+  ngAfterViewInit() {
+    if (!this.isCheckbox) {
+      // Set the 'name' attribute of all the .ant-radio-input elements in the same row to the same value,
+      // to satisfy accessibility requirements. This is needed because standalone nz-radio elements are
+      // used without nz-radio-group inside the table.
+      this.tableRows?.forEach((row, rowIndex) => {
+        const radioInputs = row.nativeElement.querySelectorAll('.ant-radio-input');
+        radioInputs?.forEach((input, inputIndex) => {
+          input.setAttribute('name', `matrix-row-${rowIndex}`);
+        });
+      });
+    }
   }
 
 

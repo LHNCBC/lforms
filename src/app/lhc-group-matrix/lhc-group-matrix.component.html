@@ -29,7 +29,7 @@
       </thead>
       <tbody>
       <ng-container *ngFor="let subItem of item.items; trackBy: lhcDataService.trackByElementId">
-        <tr *ngIf="!subItem._isHiddenFromView" role="radiogroup">
+        <tr *ngIf="!subItem._isHiddenFromView" role="radiogroup" #tableRow>
           <td class="lhc-question">
             <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
             <lhc-item-messages [item]="subItem" ></lhc-item-messages>
