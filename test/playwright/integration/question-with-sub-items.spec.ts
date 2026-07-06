@@ -147,7 +147,7 @@ test.describe('Question with sub items', () => {
     await expect(byId(page, 'label-multi-select-subgroup||Orange/1/multi-select-subgroup||Orange')).toBeVisible();
     // Unchecking an option should remove the sub items for that option.
     await page.locator('.autocomp_selected ul li:nth-child(3) button').click();
-    await expect(byId(page, 'label-multi-select-subgroup||o/1/multi-select-subgroup||o')).not.toBeAttached();
+    await expect(byId(page, 'label-multi-select-subgroup||Orange/1/multi-select-subgroup||Orange')).not.toBeAttached();
     // Fill out the sub items.
     await byId(page, 'child-integer/1/multi-select-subgroup||Apple/1').pressSequentially('11');
     await byId(page, 'child-integer/1/multi-select-subgroup||Banana/1').pressSequentially('22');

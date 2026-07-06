@@ -1056,17 +1056,24 @@ function addCommonSDCExportFns(ns) {
                 // Find the matching QR answer and put the sub-group item under it instead of under targetItem.item.
                 // Using multiSelectOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
                 const refinedAnswerList = targetItem.answer.map(a => {
-                  if (!a.valueCoding) {
-                    return { text: Object.hasOwn(a, 'valueString') && a.valueString ||
-                        Object.hasOwn(a, 'valueInteger') && a.valueInteger ||
-                        Object.hasOwn(a, 'valueDate') && a.valueDate ||
-                        Object.hasOwn(a, 'valueTime') && a.valueTime || null };
-                  } else if (a.valueCoding.display) {
-                    // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
-                    // Create a new object with property "text" for matching, since lfSubItem.multiSelectOption has "text" but not "display".
-                    return { ...a.valueCoding, text: a.valueCoding.display };
+                  if (Object.hasOwn(a, 'valueString')) {
+                    return {text: a.valueString};
+                  } else if (Object.hasOwn(a, 'valueInteger')) {
+                    return {text: a.valueInteger};
+                  } else if (Object.hasOwn(a, 'valueDate')) {
+                    return {text: a.valueDate};
+                  } else if (Object.hasOwn(a, 'valueTime')) {
+                    return {text: a.valueTime};
+                  } else if (Object.hasOwn(a, 'valueCoding')) {
+                    if (a.valueCoding.display) {
+                      // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
+                      // Create a new object with property "text" for matching, since lfSubItem.multiSelectOption has "text" but not "display".
+                      return {...a.valueCoding, text: a.valueCoding.display};
+                    } else {
+                      return a.valueCoding;
+                    }
                   } else {
-                    return a.valueCoding;
+                    return a;
                   }
                 });
                 let matchingAnswerIndex = refinedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.multiSelectOption, lfItem));
