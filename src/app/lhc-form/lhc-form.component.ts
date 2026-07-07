@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, OnDestroy, ElementRef, NgZone,
          Output, EventEmitter, AfterViewChecked } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import { debounceTime} from 'rxjs/operators';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
@@ -32,6 +32,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   @Output() onFormReady: EventEmitter<any> = new EventEmitter<any>();
   // emit an event when there are errors during the initialization and rendering.
   @Output() onError: EventEmitter<any> = new EventEmitter<any>();
+  // emit an event when the form data is changed at any level, or when a repeating item or group is added or removed.
+  @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
 
   //lhcFormData: any;
   viewModeClass = "";
@@ -40,6 +42,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
   private changeSize = new Subject();
   private observer: any;
+  private formChangeEventSubscription: Subscription;
 
   constructor(private winService: WindowService,
     public lhcDataService: LhcDataService,
@@ -94,8 +97,9 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
     // we should send the formReady event.
     if (this.lhcFormData && !this.lhcFormData._formRendered) {
       this.lhcFormData._formRendered = true;
-      if (this.lhcFormData._formProcessed)
+      if (this.lhcFormData._formProcessed) {
         this.formReady();
+      }
     }
   }
 
@@ -105,6 +109,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
    */
   ngOnDestroy() {
     this.observer.unobserve(this.host.nativeElement);
+    this.formChangeEventSubscription?.unsubscribe();
   }
 
 
@@ -128,6 +133,15 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
     // (lhc-autocomplete component depends on this flag to work correctly
     // with fhirpath expression triggered changes)
     this.lhcFormData._formReady = true;
+    // Hook up onFormChange event.
+    this.formChangeEventSubscription?.unsubscribe();
+    this.formChangeEventSubscription = this.lhcDataService.formChangeEvent$
+      .pipe(
+        debounceTime(360)
+      )
+      .subscribe((event) => {
+        this.onFormChange.emit(event);
+      });
     // emit an event when the data is initially loaded (if there are data to be loaded)
     // and the form's view is initially rendered
     this.onFormReady.emit();
