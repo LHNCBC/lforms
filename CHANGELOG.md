@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.1.0] 2026-06-30
+### Changed
+- For a multi-select dropdown layout question with sub items, the sub items
+  will be rendered for each selected dropdown option.
+- When exported to QuestionnaireResponse, each sub item will go under its
+  associated answer, in the format of item.answer.item.
+
 ## [43.0.0] 2026-06-29
 ### Changed
 - If there is an 'implicitRules' on a Questionnaire, lforms will not
