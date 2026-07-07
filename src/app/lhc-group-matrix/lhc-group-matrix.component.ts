@@ -3,6 +3,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import deepEqual from "deep-equal";
 import language from '../../../language-config.json';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'lhc-group-matrix',
@@ -20,6 +21,7 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit {
   @Input() formLevel: boolean = false;
   @ViewChildren('tableRow') tableRows: QueryList<ElementRef>;
   language = language;
+  private radioNamesSubscription: Subscription;
 
   isCheckbox: boolean = false;
 
@@ -37,6 +39,10 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit {
     this.setInitialValue();
     // Set answerOption list items which have _displayText.
     const lhcFormData = this.lhcDataService.getLhcFormData();
+    // If the answer list is loaded from answerValueSet or answerExpression, the answer list may not be available when the component is initialized.
+    if (!this.isCheckbox && this.tableRows) {
+      this.updateRadioNames();
+    }
   }
 
 
@@ -44,17 +50,27 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit {
    * Invoked after the component's view has been fully initialized.
    */
   ngAfterViewInit() {
-    if (!this.isCheckbox) {
-      // Set the 'name' attribute of all the .ant-radio-input elements in the same row to the same value,
-      // to satisfy accessibility requirements. This is needed because standalone nz-radio elements are
-      // used without nz-radio-group inside the table.
-      this.tableRows?.forEach((row, rowIndex) => {
+    if (!this.isCheckbox && this.tableRows) {
+      this.updateRadioNames();
+    }
+  }
+
+
+  /**
+   * Set the 'name' attribute of all the .ant-radio-input elements in the same row to the same value,
+   * to satisfy accessibility requirements. This is needed because standalone nz-radio elements are
+   * used without nz-radio-group inside the table.
+   */
+  updateRadioNames() {
+    this.radioNamesSubscription?.unsubscribe();
+    this.radioNamesSubscription = this.tableRows.changes.subscribe(() => {
+      this.tableRows.forEach((row, rowIndex) => {
         const radioInputs = row.nativeElement.querySelectorAll('.ant-radio-input');
         radioInputs?.forEach((input, inputIndex) => {
           input.setAttribute('name', `matrix-row-${rowIndex}`);
         });
       });
-    }
+    });
   }
 
 
