@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.2.0] 2026-07-07
+### Added
+- New onFormChange event, emitted when the item value is modified at any
+  level of the form, or when a repeating item is added or removed.
+
 ## [43.1.0] 2026-06-30
 ### Changed
 - For a multi-select dropdown layout question with sub items, the sub items
