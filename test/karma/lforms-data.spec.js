@@ -19,5 +19,26 @@ describe('LFormsData class', function() {
       assert(lfData.lformsVersion.length > 0);
     });
 
+    it('should set validation for answer-list items that must match the list', function() {
+      var lfData = new LForms.LFormsData({name: 'test form', items: [
+        {
+          linkId: 'options-only',
+          question: 'Options only',
+          dataType: 'ST',
+          answers: [{text: 'A'}, {text: 'B'}]
+        },
+        {
+          linkId: 'options-or-string',
+          question: 'Options or string',
+          dataType: 'CODING',
+          answerConstraint: 'optionsOrString',
+          answers: [{text: 'A'}, {text: 'B'}]
+        }
+      ]});
+
+      assert.equal(lfData.items[0]._hasValidation, true);
+      assert.equal(lfData.items[1]._hasValidation, undefined);
+    });
+
   });
 });

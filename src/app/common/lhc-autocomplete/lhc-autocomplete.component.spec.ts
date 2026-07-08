@@ -25,7 +25,7 @@ describe('LhcAutocompleteComponent', () => {
   });
 
   it('should show validation when adding an autocomplete invalid value error', () => {
-    component.item = { _validationErrors: ['existing error'] };
+    component.item = { _hasValidation: true, _validationErrors: ['existing error'] };
 
     component.addAutocompleteValidationError();
 
@@ -33,6 +33,18 @@ describe('LhcAutocompleteComponent', () => {
     expect(component.item._showValidation).toBeTrue();
     expect(component.item._validationErrors).toEqual([
       'existing error',
+      component.autocompleteInvalidError
+    ]);
+  });
+
+  it('should not set the item validation flag when adding an autocomplete invalid value error', () => {
+    component.item = {};
+
+    component.addAutocompleteValidationError();
+
+    expect(component.item._hasValidation).toBeUndefined();
+    expect(component.item._showValidation).toBeTrue();
+    expect(component.item._validationErrors).toEqual([
       component.autocompleteInvalidError
     ]);
   });

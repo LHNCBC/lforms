@@ -39,7 +39,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   prefetchTextToItem: {};
   displayProp: string = '';
   viewInitialized = false;
-  autocompleteInvalidError = language.invalidAnswer || "must be a valid answer from the list.";
+  autocompleteInvalidError = language.invalidAnswer;
 
   constructor(
     public lhcDataService: LhcDataService
@@ -336,7 +336,6 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     if (!this.item) {
       return;
     }
-    this.item._hasValidation = true;
     this.item._showValidation = true;
     const errors = this.item._validationErrors || [];
 

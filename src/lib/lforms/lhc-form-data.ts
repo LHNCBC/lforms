@@ -1402,7 +1402,8 @@ export default class LhcFormData {
       }
 
       // set up validation flag
-      if (item._answerRequired ||
+      if ((item._hasAnswerList && item.answerConstraint !== "optionsOrString") ||
+          item._answerRequired ||
           item.restrictions ||
           (item.dataType !== CONSTANTS.DATA_TYPE.ST &&
             item.dataType !== CONSTANTS.DATA_TYPE.TX &&
