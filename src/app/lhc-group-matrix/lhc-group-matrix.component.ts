@@ -71,11 +71,11 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
    * used without nz-radio-group inside the table.
    */
   applyRadioNames() {
-    const self = this;
+    const visibleSubitems = this.item.items.filter(x => !x._isHiddenFromView);
     this.tableRows?.forEach((row, rowIndex) => {
       const radioInputs = row.nativeElement.querySelectorAll('.ant-radio-input');
       radioInputs?.forEach((input) => {
-        input.setAttribute('name', self.item.items[rowIndex]._elementId);
+        input.setAttribute('name', visibleSubitems[rowIndex]._elementId);
       });
     });
   }

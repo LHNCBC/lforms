@@ -171,10 +171,10 @@ test.describe('Form level Matrix layout', () => {
       await waitForLFormsReady(page);
       await loadFromTestData(page, 'matrixLayoutSingleSelectionWithData.R4.json', 'R4');
       await expect(byId(page, '/g1m1/1/1||c1')).toContainClass('ant-radio-wrapper-checked');
-      // Click on the second answer in the first question, and verify that the first answer is unchecked.
+      // Click on the second answer in the first question and verify that the first answer is unchecked.
       await byId(page, '/g1m1/1/1||c2').click();
       await expect(byId(page, '/g1m1/1/1||c1')).not.toContainClass('ant-radio-wrapper-checked');
-      // Click on the "Other" answer in the first question, and verify that the second answer is unchecked.
+      // Click on the "Other" answer in the first question and verify that the second answer is unchecked.
       await byId(page, '/g1m1/1/1|_other').locator('input').click();
       await expect(byId(page, '/g1m1/1/1||c2')).not.toContainClass('ant-radio-wrapper-checked');
     });
