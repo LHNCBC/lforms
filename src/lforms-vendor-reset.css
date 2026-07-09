@@ -14,6 +14,11 @@
  * NOTE: the page-level parts of ng-zorro's reset (e.g. `html, body { width:
  * 100%; height: 100% }` and `body { margin: 0 }`) are intentionally NOT
  * re-applied, so the web component does not resize or reset the host page.
+ *
+ * WARNING: the values below (colors such as #1890ff, the font stack, 14px,
+ * line-height 1.5715, etc.) are copied verbatim from ng-zorro-antd@20.4.3's
+ * core reset. When bumping ng-zorro, re-check its `style/index` reset and
+ * update these values (and tools/postcss-lforms-scope) if they changed.
  */
 @layer lforms {
   .lhc-form,

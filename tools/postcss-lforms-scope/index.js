@@ -159,6 +159,12 @@ function transformSelectorList(selectorList, scopeSelector) {
 
 /**
  * Classify a stylesheet by its source path.
+ *
+ * NOTE: this depends on ng-zorro's internal layout -- the global reset lives in
+ * `ng-zorro-antd/style/index*` (verified against ng-zorro-antd@20.4.3). If a
+ * future ng-zorro version relocates or renames that file, `ngzorro-core` will
+ * no longer be detected and the reset would stop being stripped; re-check this
+ * matcher (and src/lforms-vendor-reset.css) when bumping ng-zorro.
  * @returns {'ngzorro-core'|'ngzorro'|'autocomplete'|null}
  */
 function categorize(file) {

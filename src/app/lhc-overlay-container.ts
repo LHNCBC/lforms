@@ -18,12 +18,16 @@ export class LhcOverlayContainer extends OverlayContainer {
   /** Class added to the cdk-overlay-container hosting LForms overlays. */
   static readonly OVERLAY_CONTAINER_CLASS = 'lhc-form-overlay-container';
 
-  protected override _createContainer(): void {
-    super._createContainer();
-    if (this._containerElement) {
-      this._containerElement.classList.add(
-        LhcOverlayContainer.OVERLAY_CONTAINER_CLASS
-      );
-    }
+  /**
+   * Public entry point the CDK calls before attaching any overlay. Overriding
+   * it (rather than only the protected `_createContainer`) guarantees the
+   * marker class is applied even if a future CDK version changes how/when the
+   * container element is created. `classList.add` is idempotent, so re-applying
+   * on every overlay open is safe and cheap.
+   */
+  override getContainerElement(): HTMLElement {
+    const element = super.getContainerElement();
+    element.classList.add(LhcOverlayContainer.OVERLAY_CONTAINER_CLASS);
+    return element;
   }
 }
