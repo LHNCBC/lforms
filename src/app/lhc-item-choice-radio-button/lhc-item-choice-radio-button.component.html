@@ -9,7 +9,12 @@
     role="radiogroup"
     nz-row
     class="lhc-radio-group"
-    [ngClass]="{'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl)}">
+    [style.--lhc-answer-column-count]="commonUtils.getDisplayControlColumnCount(item.displayControl)"
+    [style.--lhc-answer-column-width]="commonUtils.getDisplayControlColumnWidth(item.displayControl)"
+    [ngClass]="{
+      'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl),
+      'lhc-grid': commonUtils.getDisplayControlIsGrid(item.displayControl)
+    }">
     <label
       *ngFor="let answer of acOptions.listItems; index as i"
       class="lhc-answer"
@@ -62,5 +67,3 @@
     Clear selection
   </button>
 </div>
-
-

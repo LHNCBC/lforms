@@ -264,4 +264,17 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     expect(containerDiv.classList).not.toContain('lhc-vertical');
   });
 
+  it('should have lhc-grid class with columns greater than 1', () => {
+    const item = JSON.parse(JSON.stringify(itemCheckboxCWE));
+    item.displayControl.answerLayout.columns = '3';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('div[nz-row]') as HTMLElement;
+    expect(containerDiv.classList).not.toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
+    expect(containerDiv.style.getPropertyValue('--lhc-answer-column-count')).toBe('3');
+    expect(containerDiv.style.getPropertyValue('--lhc-answer-column-width')).toBe('33.33333%');
+  });
+
 });

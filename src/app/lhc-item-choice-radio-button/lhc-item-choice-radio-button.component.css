@@ -7,6 +7,26 @@
   margin: 0;
 }
 
+.lhc-radio-group.lhc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.lhc-radio-group.lhc-grid .lhc-answer {
+  align-items: flex-start;
+  flex: 1 1 var(--lhc-answer-column-width);
+  max-width: var(--lhc-answer-column-width);
+  min-width: min(100%, 12rem);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.lhc-radio-group.lhc-grid .lhc-answer span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .lhc-answer-other-input {
   height: 22px;
 }

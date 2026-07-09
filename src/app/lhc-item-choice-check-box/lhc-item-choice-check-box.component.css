@@ -2,6 +2,32 @@
   height: 22px;
 }
 
+.lhc-checkbox-group.lhc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.lhc-checkbox-group.lhc-grid .lhc-answer {
+  flex: 1 1 var(--lhc-answer-column-width);
+  max-width: var(--lhc-answer-column-width);
+  min-width: min(100%, 12rem);
+}
+
+.lhc-checkbox-group.lhc-grid .lhc-answer > label {
+  align-items: flex-start;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  width: 100%;
+}
+
+.lhc-checkbox-group.lhc-grid .lhc-answer span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .ant-checkbox-group,
 .ant-checkbox-wrapper {
   color: rgba(0,0,0,0.85);

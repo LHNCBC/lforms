@@ -413,7 +413,7 @@ function addCommonSDCExportFns(ns) {
   self._handleItemControl = function(targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
-    var itemControlDisplay, answerChoiceOrientation;
+    var itemControlDisplay, answerChoiceOrientation, answerColumnCount;
     // Fly-over, Table, Checkbox, Combo-box, Lookup
     if (!LForms.jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
@@ -449,6 +449,9 @@ function addCommonSDCExportFns(ns) {
           }
           else if (item.displayControl.answerLayout.columns === "1") {
             answerChoiceOrientation = "vertical";
+          }
+          else if (parseInt(item.displayControl.answerLayout.columns, 10) > 1) {
+            answerColumnCount = parseInt(item.displayControl.answerLayout.columns, 10);
           }
 
         }
@@ -492,6 +495,13 @@ function addCommonSDCExportFns(ns) {
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
               "valueCode": answerChoiceOrientation
+            });
+        }
+        if (answerColumnCount) {
+          targetItem.extension.push(
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+              "valuePositiveInt": answerColumnCount
             });
         }
       }

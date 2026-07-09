@@ -1310,7 +1310,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-          it('should not convert answer layout to choice orientation, if columns is not "0" or "1"', function () {
+          it('should convert answer layout columns greater than 1 to column count', function () {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 column",
@@ -1356,6 +1356,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                       ],
                       "text": "Check-box"
                   }
+              },
+              {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                  "valuePositiveInt": 2
               }
             ]);
 
@@ -1781,6 +1785,61 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "answerLayout": {
                 "type": "RADIO_CHECKBOX",
                 "columns": "0"
+              }
+            };
+            var targetItem = {};
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+            assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
+          it('should convert column count to answer layout columns', function () {
+            var qItem = {
+              "type": "choice",
+              "extension": [
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                          "coding": [
+                              {
+                                  "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                  "code": "radio-button",
+                                  "display": "Radio Button"
+                              }
+                          ],
+                          "text": "Radio Button"
+                      }
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                      "valueCode": "horizontal"
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                      "valuePositiveInt": 3
+                  }
+              ],
+              "required": false,
+              "linkId": "/q1c",
+              "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --3 columns",
+              "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "c1",
+                        "display": "Answer X"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "c2",
+                        "display": "Answer Y"
+                    }
+                }
+              ]
+            };
+            var itemDisplayControl =  {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "columns": "3"
               }
             };
             var targetItem = {};

@@ -49,6 +49,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtEnableWhenExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+  self.fhirExtColumnCount = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
   self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
   self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
@@ -92,6 +93,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtTerminologyServer,
     self.fhirExtUrlDataControl,
     self.fhirExtChoiceOrientation,
+    self.fhirExtColumnCount,
     self.fhirExtUrlMaxDecimalPlaces
   ]);
 
@@ -896,6 +898,14 @@ function addCommonSDCImportFns(ns) {
             }
             else if (answerChoiceOrientation.valueCode === "horizontal") {
               displayControl.answerLayout.columns = "0"
+            }
+          }
+          var answerColumnCount = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtColumnCount);
+          if (answerColumnCount) {
+            var columnCount = parseInt(answerColumnCount.valuePositiveInt, 10);
+            if (columnCount > 0) {
+              // Treat columnCount as the preferred column hint, regardless of choiceOrientation.
+              displayControl.answerLayout.columns = columnCount.toString();
             }
           }
           break;

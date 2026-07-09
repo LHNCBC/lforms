@@ -87,4 +87,36 @@ describe('CommonUtilsService', () => {
     expect(service.areTwoAnswersSame(e, completeAnswerWithoutSystem, itemWithAnswerCodeSystem)).toBeFalsy();
 
   })
+
+  it('should treat one answer layout column as vertical', () => {
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '1'
+      }
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '0'
+      }
+    })).toBeFalse();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '3'
+      }
+    })).toBeFalse();
+  });
+
+  it('should detect grid layout for answer layout columns greater than one', () => {
+    const displayControl = {
+      answerLayout: {
+        columns: '3'
+      }
+    };
+
+    expect(service.getDisplayControlIsGrid(displayControl)).toBeTrue();
+    expect(service.getDisplayControlColumnCount(displayControl)).toBe(3);
+    expect(service.getDisplayControlColumnWidth(displayControl)).toBe('33.33333%');
+  });
 });
