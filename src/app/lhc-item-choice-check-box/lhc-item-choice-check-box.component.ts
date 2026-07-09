@@ -17,6 +17,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
 
   // internal data models
   otherValue: string = null;
+  otherValues: string[] = [];
   checkboxModels: boolean[] = [];
   otherCheckboxModel: boolean = null;
 
@@ -42,7 +43,13 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         const value = this.item.value[j];
         if (value._notOnList) {
           this.otherCheckboxModel = true;
-          this.otherValue = value.text;
+          if (j === jLen - 1) {
+            // The last off list value is in this.otherValue, and the rest are in this.otherValues.
+            this.otherValue = value.text;
+          } else {
+            // this.otherValues holds the off list values except the last one, which is in this.otherValue.
+            this.otherValues.push(value.text);
+          }
         }
         else {
           for (let i = 0; i < iLen; i++) {
@@ -80,6 +87,12 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * @param value the selected values of a checkbox group
    */
   onCheckboxModelChange(value: any): void {
+    if (this.otherValues.length) {
+      // The off list values displayed like tags and stored in this.otherValues are not part of the checkbox list.
+      // The last off list value, stored in this.otherValue, is already in the value array.
+      // Add them to the value array, to the second to last position.
+      value.splice(-1, 0, ...this.otherValues.map(x => ({text: x, _notOnList: true})));
+    }
     this.item.value = value;
     this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
     this.prevCheckBoxValue = this.item.value;
@@ -147,20 +160,72 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Invoked when the selection of the 'other' checkbox changes
+   * @param value the boolean value of the 'other' checkbox
+   */
+  onOtherCheckboxChange(value: any): void {
+    if (value === false) {
+      const newValue = CommonUtils.deepCopy(this.prevCheckBoxValue);
+      const indexOfFirstOffListValue = newValue.findIndex(x => x._notOnList);
+      if (indexOfFirstOffListValue !== -1) {
+        // Remove all off list values from the value array.
+        newValue.splice(indexOfFirstOffListValue, newValue.length - indexOfFirstOffListValue);
+      }
+      this.item.value = newValue;
+      this.otherValues = [];
+      this.otherValue = null;
+      this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
+      this.prevCheckBoxValue = this.item.value;
+    }
+    this.otherCheckboxModel = value;
+  }
+
+  /**
    * Invoked when the value in the input field of 'other' changes
    * @param otherValue the value in the other value input
    */
   onOtherValueChange(otherValue: any): void {
     if (this.otherCheckboxModel) {
-      this.item.value = CommonUtils.deepCopy(this.prevCheckBoxValue).map((answer) => {
-        if (answer._notOnList) {
-          answer.text = otherValue;
-        }
-        return answer;
-      });
+      const newValue = CommonUtils.deepCopy(this.prevCheckBoxValue);
+      if (this.otherValue === null && this.otherValues.length) {
+        // If the event is fired right after the Add button is clicked, push the new other value
+        // to the end of the value array, since it was not added during Add button click.
+        newValue.push({"text": otherValue, "_notOnList": true});
+      } else {
+        // The last position of the value array holds the last off list value, which is stored
+        // in this.otherValue. Update it with the new value.
+        newValue[newValue.length - 1].text = otherValue;
+      }
+      this.item.value = newValue;
       this.otherValue = otherValue;
-      this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+      this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
       this.prevCheckBoxValue = this.item.value;
     }
   }
+
+  /**
+   * Invoked when the Add button next to the other value input is clicked to add another other value.
+   */
+  onAddOtherValue(): void {
+    if (this.otherValue) {
+      this.otherValues.push(this.otherValue);
+      this.otherValue = null;
+    }
+  }
+
+  /**
+   * Invoked when the Remove button next to an other value is clicked to remove that other value.
+   * @param index the index of the other value to remove
+   */
+  onRemoveOtherValue(index: number): void {
+    this.otherValues.splice(index, 1);
+    const newValue = CommonUtils.deepCopy(this.prevCheckBoxValue);
+    const indexOfFirstOffListValue = newValue.findIndex(x => x._notOnList);
+    newValue.splice(indexOfFirstOffListValue + index, 1);
+    this.item.value = newValue;
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+    this.prevCheckBoxValue = this.item.value;
+    this.item._visitedBefore = true;
+  }
+
 }
