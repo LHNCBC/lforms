@@ -1,4 +1,5 @@
 {
+  "//": "Auto-discovered by the webpack Angular builder (ngx-build-plus:browser); the plugin is not imported anywhere in code. Angular CLI only reads PostCSS config from JSON, so this maintainer note uses a '//' key (the loader reads only 'plugins' and ignores it). CAVEAT: if the project migrates to Angular's esbuild 'application' builder, PostCSS config resolution differs and this vendor-CSS scoping must be re-validated/re-wired. See tools/postcss-lforms-scope/index.js.",
   "plugins": {
     "postcss-lforms-scope": {}
   }

@@ -22,6 +22,19 @@
  *
  * First-party LForms stylesheets and Angular component styles are left
  * untouched. See https://github.com/LHNCBC/lforms/issues/169
+ *
+ * BUILD WIRING (important for maintainers):
+ * This plugin is not imported anywhere in code -- it is auto-discovered by the
+ * webpack-based Angular builder (`ngx-build-plus:browser`) via the `.postcssrc.json`
+ * config at the repo root, which lists it by name (`postcss-lforms-scope`).
+ * Angular CLI only reads PostCSS config from a JSON file (`.postcssrc.json` /
+ * `postcss.config.json`), which is why that config is JSON and cannot itself
+ * carry an explanatory comment -- hence this note lives here instead.
+ *
+ * CAVEAT: this auto-discovery is tied to the current webpack builder. If the
+ * project ever migrates to Angular's esbuild `application` builder, PostCSS
+ * config resolution differs and this scoping must be re-validated (and this
+ * plugin re-wired) -- otherwise the vendor CSS would silently ship unscoped.
  */
 
 const IN_FORM = ':where(.lhc-form)';
