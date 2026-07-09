@@ -61,13 +61,10 @@
               <label *ngIf="!isCheckbox"
                   nz-radio
                   [nzDisabled]="item._readOnly"
-                  [disabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
                   [ngModel]="subItem._selectedRadio === i"
                   [nzValue]="answer"
-                  name="{{subItem._elementId}}"
-                  [attr.name]="subItem._elementId"
                   (ngModelChange)="updateRadioListValue(subItem, answer, i)">
               </label>
             </span>
@@ -104,13 +101,10 @@
               <label
                   nz-radio
                   [nzDisabled]="item._readOnly"
-                  [disabled]="item._readOnly"
                   id="{{lhcDataService.getItemAnswerId(subItem, '_other')}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
                   [nzValue]="true"
-                  name="{{subItem._elementId}}"
-                  [attr.name]="subItem._elementId"
                   (ngModelChange)="updateRadioListValueForOther(subItem, subItem._answerOther)">
               </label>
               <label>
