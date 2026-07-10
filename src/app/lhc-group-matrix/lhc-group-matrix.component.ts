@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import {Component, OnInit, Input, OnChanges, ElementRef, QueryList, ViewChildren, AfterViewInit, OnDestroy} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import deepEqual from "deep-equal";
 import language from '../../../language-config.json';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'lhc-group-matrix',
@@ -10,7 +11,7 @@ import language from '../../../language-config.json';
     styleUrls: ['./lhc-group-matrix.component.css'],
     standalone: false
 })
-export class LhcGroupMatrixComponent implements OnChanges {
+export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   @Input() item;
   // item.item[0]._autocompOptions
@@ -18,7 +19,9 @@ export class LhcGroupMatrixComponent implements OnChanges {
   // It could be delayed when the answer list is loaded from answerValueSet or answerExpression
   @Input() acOptions;
   @Input() formLevel: boolean = false;
+  @ViewChildren('tableRow') tableRows: QueryList<ElementRef>;
   language = language;
+  private radioNamesSubscription?: Subscription;
 
   isCheckbox: boolean = false;
 
@@ -36,6 +39,45 @@ export class LhcGroupMatrixComponent implements OnChanges {
     this.setInitialValue();
     // Set answerOption list items which have _displayText.
     const lhcFormData = this.lhcDataService.getLhcFormData();
+  }
+
+
+  /**
+   * Invoked after the component's view has been fully initialized.
+   */
+  ngAfterViewInit() {
+    if (!this.isCheckbox && this.tableRows) {
+      this.applyRadioNames();
+      if (!this.radioNamesSubscription) {
+        this.radioNamesSubscription = this.tableRows.changes.subscribe(() => {
+          this.applyRadioNames();
+        });
+      }
+    }
+  }
+
+
+  /**
+   * Invoked when the component is destroyed. Unsubscribe from any subscriptions to avoid memory leaks.
+   */
+  ngOnDestroy() {
+    this.radioNamesSubscription?.unsubscribe();
+  }
+
+
+  /**
+   * Set the 'name' attribute of all the .ant-radio-input elements in the same row to the same value
+   * to satisfy accessibility requirements. This is needed because standalone nz-radio elements are
+   * used without nz-radio-group inside the table.
+   */
+  applyRadioNames() {
+    const visibleSubitems = this.item.items.filter(x => !x._isHiddenFromView);
+    this.tableRows?.forEach((row, rowIndex) => {
+      const radioInputs = row.nativeElement.querySelectorAll('.ant-radio-input');
+      radioInputs?.forEach((input) => {
+        input.setAttribute('name', visibleSubitems[rowIndex]._elementId);
+      });
+    });
   }
 
 
@@ -88,6 +130,7 @@ export class LhcGroupMatrixComponent implements OnChanges {
   updateRadioListValueForOther(item, otherValue) {
     // add/update the other value
     if (item._answerOtherChecked) {
+      item._selectedRadio = null; // Clear the selected radio index when "Other" is checked.
       item.value = { "text": otherValue, "_notOnList": true};
 
       // run the change function
