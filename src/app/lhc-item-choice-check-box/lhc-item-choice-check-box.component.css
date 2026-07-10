@@ -37,19 +37,31 @@
 /* Tag Display Layout */
 .tag-container {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
+}
+
+.tag-container > * {
+  height: var(--tag-item-height, 32px);
+  box-sizing: border-box;
 }
 
 .tag {
   background-color: #e0e0e0;
   color: #333;
   padding: 6px 12px;
-  border-radius: 16px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
+}
+
+.tag-container .lhc-answer-other-input {
+  height: var(--tag-item-height, 32px);
+  width: auto;
 }
 
 .remove-icon {
