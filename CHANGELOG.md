@@ -11,6 +11,10 @@ This project follows [Semantic Versioning](http://semver.org/).
   with their own (unlayered) CSS.
 - Removed Cypress tests that have been replaced by Playwright tests.
 
+## [43.2.1] 2026-07-07
+### Fixed
+- Use antd radio buttons in matrix layout.
+
 ## [43.2.0] 2026-07-07
 ### Added
 - New onFormChange event, emitted when the item value is modified at any
