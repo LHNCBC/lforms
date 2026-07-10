@@ -30,11 +30,11 @@
         [id]="lhcDataService.getItemAnswerId(item, '_other')">
         {{item.openLabel || language.other}}
       </label>
-      <div *ngIf="otherCheckboxModel" class="tag-container" style="--tag-item-height: 32px;">
+      <div *ngIf="otherCheckboxModel" class="lhc-tag-container" style="--tag-item-height: 32px;">
         @for (tag of this.otherValues; track $index) {
-          <div class="tag">
+          <div class="lhc-tag">
             <span>{{ tag }}</span>
-            <span class="remove-icon" (click)="onRemoveOtherValue($index)">&times;</span>
+            <span class="lhc-remove-icon" (click)="onRemoveOtherValue($index)">&times;</span>
           </div>
         }
         <input
@@ -46,9 +46,9 @@
           nz-input
           [disabled]="item._readOnly"
           (focus)="lhcDataService.setActiveRow(item)"/>
-        <button class="add-button" (click)="onAddOtherValue()" aria-label="Add one other value"
+        <button class="lhc-add-button" (click)="onAddOtherValue()" aria-label="Add one other value"
                 [disabled]="item._readOnly" *ngIf="otherValue">
-          <span class="add-icon">&#43;</span>
+          <span class="lhc-add-icon">&#43;</span>
         </button>
       </div>
     </div>
