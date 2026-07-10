@@ -96,7 +96,4 @@ describe('LhcUnitComponent', () => {
     expect(unitDe.nativeElement.readOnly).toBe(true);
   });
 
-// Certain tests could not be done in Karma.  (For example, I could not simulate a tab
-// key press, or wait between two blur events.) Switched to Cypress for those
-// tests, in test/cypress/integration/quantity-cases.spec.js
 });
