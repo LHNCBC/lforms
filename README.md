@@ -86,7 +86,7 @@ you don't accidentally add something that we are also working on.
 ## Running end-to-end tests
 
 1. Run `npm run test:e2e` to execute the end-to-end tests via 
-   [Cypress](https://www.cypress.io/). The e2e tests are configured to use Chrome.
+   [Playwright](https://playwright.dev/). The e2e tests are configured to use Chrome.
 
 ## <a id="using">Using the LHC-Forms Web Component</a>
 
