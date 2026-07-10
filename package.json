@@ -36,7 +36,7 @@
     "build:language": "node bin/build-locale.js $npm_package_config_localeID",
     "test:fhir-unit": "karma start test/karma.conf.js",
     "test:ng-unit": "ng test --watch=false",
-    "test:tools": "mocha tools/postcss-lforms-scope/index.spec.js",
+    "test:tools": "mocha tools/postcss-lforms-scope/index.spec.js test/tools/lforms-vendor-reset.spec.js",
     "test:unit": "npm run test:tools && npm run test:fhir-unit && npm run test:ng-unit",
     "test:e2e:fhir-server": "start-server-and-test start:fhir-dev http://localhost:$npm_package_config_testPortFhir test:e2e:lforms-server",
     "test:e2e:lforms-server": "start-server-and-test start:lforms-dev http://localhost:$npm_package_config_testPort pw:test",

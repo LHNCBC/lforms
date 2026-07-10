@@ -20,18 +20,84 @@
  * core reset. When bumping ng-zorro, re-check its `style/index` reset and
  * update these values (and tools/postcss-lforms-scope) if they changed.
  */
-@layer lforms {
-  .lhc-form,
-  .lhc-form *,
-  .lhc-form *::before,
-  .lhc-form *::after,
-  .lhc-form-overlay-container,
-  .lhc-form-overlay-container *,
-  .lhc-form-overlay-container *::before,
-  .lhc-form-overlay-container *::after {
-    box-sizing: border-box;
-  }
 
+/*
+ * Host global-reset defense -- intentionally OUTSIDE `@layer lforms`.
+ *
+ * `@layer lforms` deliberately yields to un-layered host CSS so LForms themes
+ * stay overridable. The trade-off is that an un-layered host *global reset*
+ * (e.g. Bootstrap Reboot's `ul, ol { padding-left: 2rem }`) also defeats
+ * LForms' own layered list/box styling, because an un-layered declaration wins
+ * over any layered one regardless of specificity.
+ *
+ * The rules below re-assert the few *structural* box-model / list defaults that
+ * vendor CSS depends on. They are un-layered and scoped with real class/id
+ * specificity (NO `:where()`), so they outrank bare-element host resets
+ * (`ul {...}` = 0,0,1) while still yielding to host rules that intentionally
+ * target LForms elements (e.g. `.lhc-form .autocomp_selected ul`). Add entries
+ * here only when a host global reset is found to break a *structural* (not
+ * merely cosmetic) style.
+ */
+.lhc-form,
+.lhc-form *,
+.lhc-form *::before,
+.lhc-form *::after,
+.lhc-form-overlay-container,
+.lhc-form-overlay-container *,
+.lhc-form-overlay-container *::before,
+.lhc-form-overlay-container *::after {
+  box-sizing: border-box;
+}
+
+/*
+ * autocomplete-lhc's selected-answers list. Re-declares the vendor values from
+ * autocomplete-lhc/source/auto_completion.css `.autocomp_selected ul` so a host
+ * `ul { padding-left: ... }` reset cannot shift the selected-answer chips.
+ */
+.lhc-form .autocomp_selected ul,
+#lhc-tools-searchResults .autocomp_selected ul {
+  list-style-type: none;
+  margin: 0.5em 0 0.25em 0.25em;
+  padding-left: 0;
+}
+
+/*
+ * autocomplete-lhc's results dropdown list (`.auto_complete > ul`, rendered in
+ * the shared `#lhc-tools-searchResults` popup). The vendor rule zeroes its
+ * margin/padding; without this un-layered copy a host global reset such as
+ * Bootstrap Reboot's `ul { padding-left: 2rem; margin-bottom: 1rem }` indents
+ * and over-spaces the option rows in the dropdown.
+ */
+.lhc-form .auto_complete > ul,
+#lhc-tools-searchResults .auto_complete > ul {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * autocomplete-lhc's search loading indicator (`.loading-indicator-container
+ * progress`, created at runtime for search autocompletes). The vendor hides the
+ * <progress> by default and reveals a 5px bar pinned to the bottom of the field
+ * via the `.show` class. Kept un-layered (with real class specificity) so a host
+ * global reset that styles bare `progress` (e.g. Normalize / Bootstrap Reboot)
+ * cannot force the bar visible or knock out its positioning.
+ */
+.lhc-form .loading-indicator-container progress,
+#lhc-tools-searchResults .loading-indicator-container progress {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+}
+
+.lhc-form .loading-indicator-container progress.show,
+#lhc-tools-searchResults .loading-indicator-container progress.show {
+  display: inline-block;
+}
+
+@layer lforms {
   .lhc-form button,
   .lhc-form input,
   .lhc-form optgroup,
