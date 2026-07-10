@@ -39,11 +39,12 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       const iLen = this.item.answers.length;
       this.checkboxModels = new Array(iLen);
 
+      const lastOffListIndex = this.item.value.findLastIndex(x => x._notOnList);
       for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
         const value = this.item.value[j];
         if (value._notOnList) {
           this.otherCheckboxModel = true;
-          if (j === jLen - 1) {
+          if (lastOffListIndex !== -1 && j === lastOffListIndex) {
             // The last off list value is in this.otherValue, and the rest are in this.otherValues.
             this.otherValue = value.text;
           } else {
@@ -192,9 +193,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         // to the end of the value array, since it was not added during Add button click.
         newValue.push({"text": otherValue, "_notOnList": true});
       } else {
-        // The last position of the value array holds the last off list value, which is stored
+        // Find the position of the last off list value, which is stored
         // in this.otherValue. Update it with the new value.
-        newValue[newValue.length - 1].text = otherValue;
+        const lastOffListIndex = newValue.findLastIndex(x => x._notOnList);
+        newValue[lastOffListIndex].text = otherValue;
       }
       this.item.value = newValue;
       this.otherValue = otherValue;
