@@ -23,7 +23,7 @@ describe('LFormsData class', function() {
       var lfData = new LForms.LFormsData({name: 'test form', items: [
         {
           linkId: 'options-only',
-          question: 'Options only',
+          question: 'Options only autocomplete',
           dataType: 'ST',
           answers: [{text: 'A'}, {text: 'B'}]
         },
@@ -33,11 +33,23 @@ describe('LFormsData class', function() {
           dataType: 'CODING',
           answerConstraint: 'optionsOrString',
           answers: [{text: 'A'}, {text: 'B'}]
+        },
+        {
+          linkId: 'options-only-radio-checkbox',
+          question: 'Options only radio checkbox',
+          dataType: 'ST',
+          displayControl: {
+            answerLayout: {
+              type: 'RADIO_CHECKBOX'
+            }
+          },
+          answers: [{text: 'A'}, {text: 'B'}]
         }
       ]});
 
       assert.equal(lfData.items[0]._hasValidation, true);
       assert.equal(lfData.items[1]._hasValidation, undefined);
+      assert.equal(lfData.items[2]._hasValidation, undefined);
     });
 
   });
