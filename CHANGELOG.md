@@ -2,42 +2,26 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [44.0.0] 2026-06-30
+## [43.0.0] 2026-07-13
+### Added
+- New onFormChange event, emitted when the item value is modified at any
+  level of the form, or when a repeating item is added or removed.
 ### Changed
 - Breaking: The web component's bundled vendor CSS (ng-zorro-antd and
   autocomplete-lhc) is now scoped to LForms-owned containers and wrapped in
   `@layer lforms` at build time, so it no longer leaks into or overrides
   host-page global styles. Host pages can still override LForms internal styles
   with their own (unlayered) CSS.
+- Breaking: If there is an 'implicitRules' on a Questionnaire, lforms will not
+  render it and just show an error message.
 - Removed Cypress tests that have been replaced by Playwright tests.
-
-## [43.2.1] 2026-07-07
-### Fixed
-- Use antd radio buttons in matrix layout.
-
-## [43.2.0] 2026-07-07
-### Added
-- New onFormChange event, emitted when the item value is modified at any
-  level of the form, or when a repeating item is added or removed.
-
-## [43.1.0] 2026-06-30
-### Changed
 - For a multi-select dropdown layout question with sub items, the sub items
   will be rendered for each selected dropdown option.
 - When exported to QuestionnaireResponse, each sub item will go under its
   associated answer, in the format of item.answer.item.
-
-## [43.0.0] 2026-06-29
-### Changed
-- If there is an 'implicitRules' on a Questionnaire, lforms will not
-  render it and just show an error message.
-
-## [42.2.4] 2026-06-25
 ### Fixed
+- Use antd radio buttons in matrix layout.
 - Make build:version script OS independent.
-
-## [42.2.3] 2026-06-24
-### Fixed
 - 'clear selection' button text was not configured for languages.
 
 ## [42.2.2] 2026-06-11
