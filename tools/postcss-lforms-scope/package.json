@@ -1,0 +1,8 @@
+{
+  "name": "postcss-lforms-scope",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build-time PostCSS plugin that scopes LForms vendor CSS (ng-zorro + autocomplete-lhc) to LForms-owned containers and wraps it in @layer lforms, so the web component does not pollute host-page global styles. See https://github.com/LHNCBC/lforms/issues/169",
+  "main": "index.js",
+  "license": "SEE LICENSE IN ../../LICENSE.md"
+}

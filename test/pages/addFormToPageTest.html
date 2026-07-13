@@ -4,6 +4,19 @@
     <base href="/">
     <link rel="stylesheet" href="/styles.css">
     <style>
+      /*
+       * The LForms web component no longer leaks ng-zorro's global body reset
+       * onto the host page (https://github.com/LHNCBC/lforms/issues/169), so
+       * the host page now provides its own base typography, as a real consuming
+       * application would.
+       */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+        font-size: 14px;
+        line-height: 1.5715;
+        color: rgba(0, 0, 0, 0.85);
+      }
       .btn {
         display: inline-block;
         margin: 1px;

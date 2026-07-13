@@ -56,8 +56,14 @@ test.describe('Tests of addFormToPage test page', () => {
     const minDTM = getDTMString(-60000); // -1 minute
     const maxDTM = getDTMString(+60000); // +1 minute
     const dtmInput = page.locator('#\\/type7\\/1 input');
+    // Scroll the input near the top of the viewport so the picker dropdown,
+    // which is anchored below the input, has room to render its footer (with
+    // the "Now" button) on-screen instead of below the fold.
+    await dtmInput.evaluate((el) => el.scrollIntoView({ block: 'start' }));
     await dtmInput.click();
-    await page.locator('.ant-picker-now-btn').click();
+    const btnNow = page.locator('.ant-picker-now-btn');
+    await expect(btnNow).toBeVisible();
+    await btnNow.click();
     await page.locator('.ant-picker-ok button').click();
     const value = await dtmInput.inputValue();
     expect(value).toMatch(/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/);
