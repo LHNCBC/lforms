@@ -25,8 +25,7 @@
         (click)="lhcDataService.setActiveRow(item)"
         [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
         [nzDisabled]="item._readOnly"
-        [ngModel]="otherCheckboxModel"
-        (ngModelChange)="onOtherCheckboxChange($event)"
+        [(ngModel)]="otherCheckboxModel"
         [id]="lhcDataService.getItemAnswerId(item, '_other')">
         {{item.openLabel || language.other}}
       </label>

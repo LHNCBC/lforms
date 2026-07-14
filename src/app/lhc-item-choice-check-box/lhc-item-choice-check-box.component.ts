@@ -88,6 +88,12 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * @param value the selected values of a checkbox group
    */
   onCheckboxModelChange(value: any): void {
+    const otherCheckboxValue = value[value.length - 1];
+    if (!otherCheckboxValue._notOnList) {
+      // If the Other checkbox is unchecked, clear this.otherValues and this.otherValue.
+      this.otherValues = [];
+      this.otherValue = null;
+    }
     if (this.otherValues.length) {
       // The off list values displayed like tags and stored in this.otherValues are not part of the checkbox list.
       // The last off list value, stored in this.otherValue, is already in the value array.
@@ -158,27 +164,6 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       );
       lhcFormData._resetInternalData();
     }
-  }
-
-  /**
-   * Invoked when the selection of the 'other' checkbox changes
-   * @param value the boolean value of the 'other' checkbox
-   */
-  onOtherCheckboxChange(value: any): void {
-    if (value === false) {
-      const newValue = CommonUtils.deepCopy(this.prevCheckBoxValue);
-      const indexOfFirstOffListValue = newValue.findIndex(x => x._notOnList);
-      if (indexOfFirstOffListValue !== -1) {
-        // Remove all off list values from the value array.
-        newValue.splice(indexOfFirstOffListValue, newValue.length - indexOfFirstOffListValue);
-      }
-      this.item.value = newValue;
-      this.otherValues = [];
-      this.otherValue = null;
-      this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
-      this.prevCheckBoxValue = this.item.value;
-    }
-    this.otherCheckboxModel = value;
   }
 
   /**
