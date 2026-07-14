@@ -89,7 +89,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    */
   onCheckboxModelChange(value: any): void {
     const otherCheckboxValue = value[value.length - 1];
-    if (!otherCheckboxValue._notOnList) {
+    if (!otherCheckboxValue?._notOnList) {
       // If the Other checkbox is unchecked, clear this.otherValues and this.otherValue.
       this.otherValues = [];
       this.otherValue = null;
@@ -181,7 +181,13 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         // Find the position of the last off list value, which is stored
         // in this.otherValue. Update it with the new value.
         const lastOffListIndex = newValue.findLastIndex(x => x._notOnList);
-        newValue[lastOffListIndex].text = otherValue;
+        if (lastOffListIndex !== -1) {
+          newValue[lastOffListIndex].text = otherValue;
+        } else {
+          // No off list value to update (unexpected, since the Other checkbox is checked);
+          // add one so the typed value is not lost.
+          newValue.push({"text": otherValue, "_notOnList": true});
+        }
       }
       this.item.value = newValue;
       this.otherValue = otherValue;
@@ -201,6 +207,29 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Find the position in the value array of the nth (0-based) off list value.
+   * The off list values are not guaranteed to be contiguous in the value array
+   * (e.g. an initial value could interleave off list and on list values), so the
+   * position is found by counting the off list entries rather than assuming they
+   * are adjacent to each other.
+   * @param value the item value array
+   * @param n the 0-based index of the off list value among all off list values
+   * @return the index in the value array, or -1 if there is no such off list value
+   */
+  getOffListValueIndex(value: any[], n: number): number {
+    let count = 0;
+    for (let i = 0, len = value.length; i < len; i++) {
+      if (value[i]._notOnList) {
+        if (count === n) {
+          return i;
+        }
+        count++;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * Invoked when the Remove button next to an other value is clicked to remove that other value.
    * @param index the index of the other value to remove
    */
@@ -210,8 +239,12 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     }
     this.otherValues.splice(index, 1);
     const newValue = CommonUtils.deepCopy(this.prevCheckBoxValue);
-    const indexOfFirstOffListValue = newValue.findIndex(x => x._notOnList);
-    newValue.splice(indexOfFirstOffListValue + index, 1);
+    // this.otherValues holds the off list values in order (except the last one, which is in
+    // this.otherValue), so the tag at position "index" is the "index"th off list value.
+    const offListValueIndex = this.getOffListValueIndex(newValue, index);
+    if (offListValueIndex !== -1) {
+      newValue.splice(offListValueIndex, 1);
+    }
     this.item.value = newValue;
     this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
     this.prevCheckBoxValue = this.item.value;
