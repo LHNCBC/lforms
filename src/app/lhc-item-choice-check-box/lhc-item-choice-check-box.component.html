@@ -33,8 +33,10 @@
         @for (tag of this.otherValues; track $index) {
           <div class="lhc-tag">
             <span>{{ tag }}</span>
-            <span class="lhc-remove-icon" (click)="onRemoveOtherValue($index)"
-                  *ngIf="!item._readOnly">&times;</span>
+            <button type="button" class="lhc-remove-icon" (click)="onRemoveOtherValue($index)"
+                    *ngIf="!item._readOnly" attr.aria-label="Remove other value {{tag}}">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
         }
         <input
