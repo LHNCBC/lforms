@@ -220,6 +220,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * @param index the index of the other value to remove
    */
   onRemoveOtherValue(index: number): void {
+    if (this.item._readOnly) {
+      return;
+    }
     this.otherValues.splice(index, 1);
     const newValue = CommonUtils.deepCopy(this.prevCheckBoxValue);
     const indexOfFirstOffListValue = newValue.findIndex(x => x._notOnList);
