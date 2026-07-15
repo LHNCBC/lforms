@@ -90,5 +90,6 @@
   "Error": "Error",
   "Warning": "Warning",
   "repeatableItemAtLeast": "This repeatable item should have at least {lformsParam} occurrences.",
-  "repeatableItemAtMost": "This repeatable item should have at most {lformsParam} occurrences."
+  "repeatableItemAtMost": "This repeatable item should have at most {lformsParam} occurrences.",
+  "implicitRulesNotSupported": "The Questionnaire cannot be rendered because it uses \"implicitRules\" that LHC-Forms does not support."
 }

@@ -92,5 +92,6 @@
   "Error": "Fehler",
   "Warning": "Warnung",
   "repeatableItemAtLeast": "Dieses wiederholbare Element sollte mindestens {lformsParam} Vorkommen haben.",
-  "repeatableItemAtMost": "Dieses wiederholbare Element sollte höchstens {lformsParam} Vorkommen haben."
+  "repeatableItemAtMost": "Dieses wiederholbare Element sollte höchstens {lformsParam} Vorkommen haben.",
+  "implicitRulesNotSupported": "Der Fragebogen kann nicht gerendert werden, da er \"implicitRules\" verwendet, die von LHC-Forms nicht unterstützt werden."
 }
