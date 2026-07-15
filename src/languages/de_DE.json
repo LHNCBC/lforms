@@ -88,5 +88,9 @@
     "invalidTagInHTMLContent": "Ungültige HTML-Tags/Attribute im Elementtext/Präfix gefunden.",
     "answerValueSetLoadingError": "Die Antwortliste für diese Frage konnte nicht geladen werden.",
     "hasModifierExtension": "Im Fragebogen sind eine oder mehrere ModifierExtensions enthalten. Der unten dargestellte Fragebogen dient nur der Veranschaulichung und wird möglicherweise nicht korrekt dargestellt. Die daraus generierte Antwort (QuestionnaireResponse) ist unter Umständen ungültig."
-  }
+  },
+  "Error": "Fehler",
+  "Warning": "Warnung",
+  "repeatableItemAtLeast": "Dieses wiederholbare Element sollte mindestens {lformsParam} Vorkommen haben.",
+  "repeatableItemAtMost": "Dieses wiederholbare Element sollte höchstens {lformsParam} Vorkommen haben."
 }
