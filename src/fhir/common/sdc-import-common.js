@@ -892,11 +892,12 @@ function addCommonSDCImportFns(ns) {
         case 'radio-button':
           displayControl.answerLayout = {type: 'RADIO_CHECKBOX'};
           var answerChoiceOrientation = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtChoiceOrientation);
+          var answerChoiceOrientationValue = answerChoiceOrientation && answerChoiceOrientation.valueCode;
           if (answerChoiceOrientation) {
-            if (answerChoiceOrientation.valueCode === "vertical") {
+            if (answerChoiceOrientationValue === "vertical") {
               displayControl.answerLayout.columns = "1"
             }
-            else if (answerChoiceOrientation.valueCode === "horizontal") {
+            else if (answerChoiceOrientationValue === "horizontal") {
               displayControl.answerLayout.columns = "0"
             }
           }
@@ -906,6 +907,9 @@ function addCommonSDCImportFns(ns) {
             if (columnCount > 0) {
               // Treat columnCount as the preferred column hint, regardless of choiceOrientation.
               displayControl.answerLayout.columns = columnCount.toString();
+              if (answerChoiceOrientationValue === "vertical" || answerChoiceOrientationValue === "horizontal") {
+                displayControl.answerLayout.orientation = answerChoiceOrientationValue;
+              }
             }
           }
           break;

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import CommonUtils from './lforms/lhc-common-utils.js';
 
 type AnswerLayoutType = 'RADIO_CHECKBOX' | 'COMBO_BOX';
+type AnswerLayoutOrientation = 'horizontal' | 'vertical';
 
 /**
  * Partial shape of the LForms displayControl object used by common UI helpers.
@@ -11,6 +12,7 @@ export interface DisplayControl {
   answerLayout?: {
     type?: AnswerLayoutType | null;
     columns?: string;
+    orientation?: AnswerLayoutOrientation | null;
   };
 }
 
@@ -57,7 +59,8 @@ export class CommonUtilsService {
    * @param displayControl an object that controls the display of the selected template
    */
   getDisplayControlIsVertical(displayControl: DisplayControl): boolean {
-    return displayControl?.answerLayout?.columns === '1';
+    return displayControl?.answerLayout?.columns === '1' ||
+      displayControl?.answerLayout?.orientation === 'vertical';
   }
 
 
@@ -88,6 +91,39 @@ export class CommonUtilsService {
   getDisplayControlColumnWidth(displayControl: DisplayControl): string | null {
     const columnCount = this.getDisplayControlColumnCount(displayControl);
     return columnCount ? `${Math.round((100 / columnCount) * 100000) / 100000}%` : null;
+  }
+
+  /**
+   * Get the CSS grid row needed to fill vertical answer columns from top to bottom.
+   * @param index the zero-based index of the answer option
+   * @param answerCount the total number of answer options in the layout
+   * @param displayControl an object that controls the display of the selected template
+   */
+  getAnswerLayoutGridRow(index: number, answerCount: number, displayControl: DisplayControl): number | null {
+    const columnCount = this.getDisplayControlColumnCount(displayControl);
+    if (!columnCount || !this.getDisplayControlIsVertical(displayControl) || answerCount <= 0) {
+      return null;
+    }
+
+    const rowCount = Math.ceil(answerCount / columnCount);
+    return (index % rowCount) + 1;
+  }
+
+
+  /**
+   * Get the CSS grid column needed to fill vertical answer columns from top to bottom.
+   * @param index the zero-based index of the answer option
+   * @param answerCount the total number of answer options in the layout
+   * @param displayControl an object that controls the display of the selected template
+   */
+  getAnswerLayoutGridColumn(index: number, answerCount: number, displayControl: DisplayControl): number | null {
+    const columnCount = this.getDisplayControlColumnCount(displayControl);
+    if (!columnCount || !this.getDisplayControlIsVertical(displayControl) || answerCount <= 0) {
+      return null;
+    }
+
+    const rowCount = Math.ceil(answerCount / columnCount);
+    return Math.floor(index / rowCount) + 1;
   }
 
 

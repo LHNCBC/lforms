@@ -332,6 +332,18 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     expect(containerDiv.style.getPropertyValue('--lhc-answer-column-width')).toBe('33.33333%');
   });
 
+  it('should have lhc-grid and lhc-vertical classes with vertical orientation and columns greater than 1', () => {
+    const item = JSON.parse(JSON.stringify(itemRadioCWE));
+    item.displayControl.answerLayout.columns = '3';
+    item.displayControl.answerLayout.orientation = 'vertical';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('nz-radio-group') as HTMLElement;
+    expect(containerDiv.classList).toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
+  });
+
 
 
 });

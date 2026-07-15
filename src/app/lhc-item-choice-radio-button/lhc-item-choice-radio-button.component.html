@@ -25,7 +25,9 @@
       [nzValue]="item.answers[i]"
       [(ngModel)]="radioModels[i]"
       [id]="lhcDataService.getItemAnswerId(item, answer)"
-      [style]="answer._obj_CSS">
+      [style]="answer._obj_CSS"
+      [style.grid-row]="commonUtils.getAnswerLayoutGridRow(i, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0), item.displayControl)"
+      [style.grid-column]="commonUtils.getAnswerLayoutGridColumn(i, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0), item.displayControl)">
       <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
         <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
         <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
@@ -43,7 +45,9 @@
       [nzValue]="{'text': otherValue, '_notOnList': true}"
       [(ngModel)]="otherRadioModel"
       [id]="lhcDataService.getItemAnswerId(item, '_other')"
-      class="lhc-answer">
+      class="lhc-answer"
+      [style.grid-row]="commonUtils.getAnswerLayoutGridRow(acOptions.listItems.length, acOptions.listItems.length + 1, item.displayControl)"
+      [style.grid-column]="commonUtils.getAnswerLayoutGridColumn(acOptions.listItems.length, acOptions.listItems.length + 1, item.displayControl)">
       {{item.openLabel || language.other}}
       <input
         type="text"

@@ -452,6 +452,10 @@ function addCommonSDCExportFns(ns) {
           }
           else if (parseInt(item.displayControl.answerLayout.columns, 10) > 1) {
             answerColumnCount = parseInt(item.displayControl.answerLayout.columns, 10);
+            if (item.displayControl.answerLayout.orientation === "vertical" ||
+              item.displayControl.answerLayout.orientation === "horizontal") {
+              answerChoiceOrientation = item.displayControl.answerLayout.orientation;
+            }
           }
 
         }

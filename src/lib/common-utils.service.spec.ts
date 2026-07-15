@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CommonUtilsService } from './common-utils.service';
+import { CommonUtilsService, DisplayControl } from './common-utils.service';
 
 describe('CommonUtilsService', () => {
   let service: CommonUtilsService;
@@ -106,6 +106,13 @@ describe('CommonUtilsService', () => {
         columns: '3'
       }
     })).toBeFalse();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '3',
+        orientation: 'vertical'
+      }
+    })).toBeTrue();
   });
 
   it('should detect grid layout for answer layout columns greater than one', () => {
@@ -118,5 +125,22 @@ describe('CommonUtilsService', () => {
     expect(service.getDisplayControlIsGrid(displayControl)).toBeTrue();
     expect(service.getDisplayControlColumnCount(displayControl)).toBe(3);
     expect(service.getDisplayControlColumnWidth(displayControl)).toBe('33.33333%');
+  });
+
+  it('should place vertical grid answers down each column', () => {
+    const displayControl: DisplayControl = {
+      answerLayout: {
+        columns: '3',
+        orientation: 'vertical'
+      }
+    };
+
+    expect([0, 1, 2, 3, 4, 5, 6].map((index) =>
+      service.getAnswerLayoutGridRow(index, 7, displayControl)
+    )).toEqual([1, 2, 3, 1, 2, 3, 1]);
+
+    expect([0, 1, 2, 3, 4, 5, 6].map((index) =>
+      service.getAnswerLayoutGridColumn(index, 7, displayControl)
+    )).toEqual([1, 1, 1, 2, 2, 2, 3]);
   });
 });

@@ -4,6 +4,7 @@
 
 .lhc-checkbox-group.lhc-grid {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
 }
@@ -26,6 +27,16 @@
 .lhc-checkbox-group.lhc-grid .lhc-answer span {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.lhc-checkbox-group.lhc-grid.lhc-vertical {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(12rem, var(--lhc-answer-column-width))), 1fr));
+}
+
+.lhc-checkbox-group.lhc-grid.lhc-vertical .lhc-answer {
+  max-width: none;
+  width: 100%;
 }
 
 .ant-checkbox-group,

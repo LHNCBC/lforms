@@ -1,7 +1,13 @@
 import { test, expect, type Page } from '@playwright/test';
 import { waitForLFormsReady } from '../support/lforms-helpers';
 
-const urinaryContinenceAnswerOptions = [
+type AnswerOption = {
+  code: string;
+  display: string;
+  system?: string;
+};
+
+const urinaryContinenceAnswerOptions: AnswerOption[] = [
   {
     code: 'LA11042-1',
     display: 'Always continent'
@@ -24,7 +30,22 @@ const urinaryContinenceAnswerOptions = [
   }
 ];
 
-function buildQuestionnaire(controlCode: 'radio-button' | 'check-box') {
+const assistanceAnswerOptions: AnswerOption[] = [
+  { code: 'independent', display: 'Independent', system: 'http://example.org/lforms-test-codes' },
+  { code: 'setup-assistance', display: 'Setup or clean-up assistance', system: 'http://example.org/lforms-test-codes' },
+  { code: 'supervision-assistance', display: 'Supervision or touching assistance', system: 'http://example.org/lforms-test-codes' },
+  { code: 'partial-assistance', display: 'Partial/moderate assistance', system: 'http://example.org/lforms-test-codes' },
+  { code: 'substantial-assistance', display: 'Substantial/maximal assistance', system: 'http://example.org/lforms-test-codes' },
+  { code: 'dependent', display: 'Dependent', system: 'http://example.org/lforms-test-codes' },
+  { code: 'not-attempted', display: 'Activity not attempted', system: 'http://example.org/lforms-test-codes' }
+];
+
+function buildQuestionnaire(
+  controlCode: 'radio-button' | 'check-box',
+  orientation: 'horizontal' | 'vertical' = 'horizontal',
+  columnCount = 4,
+  answerOptions = urinaryContinenceAnswerOptions
+) {
   return {
     resourceType: 'Questionnaire',
     title: 'Column count layout test',
@@ -52,7 +73,7 @@ function buildQuestionnaire(controlCode: 'radio-button' | 'check-box') {
         extension: [
           {
             url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation',
-            valueCode: 'horizontal'
+            valueCode: orientation
           },
           {
             url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
@@ -69,18 +90,24 @@ function buildQuestionnaire(controlCode: 'radio-button' | 'check-box') {
           },
           {
             url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount',
-            valuePositiveInt: 4
+            valuePositiveInt: columnCount
           }
         ],
-        answerOption: urinaryContinenceAnswerOptions.map(({ code, display }) => ({
-          valueCoding: { code, display, system: 'http://loinc.org' }
+        answerOption: answerOptions.map(({ code, display, system = 'http://loinc.org' }) => ({
+          valueCoding: { code, display, system }
         }))
       }
     ]
   };
 }
 
-async function addInlineQuestionnaire(page: Page, controlCode: 'radio-button' | 'check-box') {
+async function addInlineQuestionnaire(
+  page: Page,
+  controlCode: 'radio-button' | 'check-box',
+  orientation: 'horizontal' | 'vertical' = 'horizontal',
+  columnCount = 4,
+  answerOptions = urinaryContinenceAnswerOptions
+) {
   await page.setViewportSize({ width: 1920, height: 900 });
   await page.goto('/test/pages/addFormToPageTest.html');
   await waitForLFormsReady(page);
@@ -90,7 +117,7 @@ async function addInlineQuestionnaire(page: Page, controlCode: 'radio-button' | 
       document.getElementById('formContainer')!.innerHTML = '';
       await (window as any).LForms.Util.addFormToPage(questionnaire, 'formContainer', { fhirVersion: 'R4' });
     },
-    { questionnaire: buildQuestionnaire(controlCode) }
+    { questionnaire: buildQuestionnaire(controlCode, orientation, columnCount, answerOptions) }
   );
 
   await expect(page.locator('#formContainer .lhc-form-title')).toBeVisible();
@@ -164,6 +191,34 @@ async function expectFourColumnHintLayout(page: Page, containerSelector: string)
   expect(lineCounts.longAnswer).toBeGreaterThan(1);
 }
 
+async function expectVerticalThreeColumnLayout(page: Page, containerSelector: string) {
+  const container = page.locator(containerSelector);
+  await expect(container).toHaveClass(/lhc-grid/);
+  await expect(container).toHaveClass(/lhc-vertical/);
+  await expect(container).toHaveCSS('--lhc-answer-column-width', '33.33333%');
+
+  const answers = container.locator('.lhc-answer');
+  await expect(answers).toHaveCount(7);
+
+  const boxes = await Promise.all(
+    Array.from({ length: 7 }, (_, index) => answers.nth(index).boundingBox())
+  );
+  expect(boxes.every(Boolean)).toBeTruthy();
+
+  expect(Math.abs(boxes[0]!.x - boxes[1]!.x)).toBeLessThan(2);
+  expect(Math.abs(boxes[1]!.x - boxes[2]!.x)).toBeLessThan(2);
+  expect(Math.abs(boxes[3]!.x - boxes[4]!.x)).toBeLessThan(2);
+  expect(Math.abs(boxes[4]!.x - boxes[5]!.x)).toBeLessThan(2);
+  expect(boxes[3]!.x).toBeGreaterThan(boxes[0]!.x + boxes[0]!.width - 2);
+  expect(boxes[6]!.x).toBeGreaterThan(boxes[3]!.x + boxes[3]!.width - 2);
+
+  expect(Math.abs(boxes[0]!.y - boxes[3]!.y)).toBeLessThan(2);
+  expect(Math.abs(boxes[3]!.y - boxes[6]!.y)).toBeLessThan(2);
+  expect(Math.abs(boxes[1]!.y - boxes[4]!.y)).toBeLessThan(2);
+  expect(Math.abs(boxes[2]!.y - boxes[5]!.y)).toBeLessThan(2);
+  expect(boxes[2]!.y).toBeGreaterThan(boxes[1]!.y + 1);
+}
+
 test.describe('Questionnaire columnCount layout', () => {
   test('renders radio answer options as equal-width column hints', async ({ page }) => {
     await addInlineQuestionnaire(page, 'radio-button');
@@ -173,5 +228,15 @@ test.describe('Questionnaire columnCount layout', () => {
   test('renders checkbox answer options as equal-width column hints', async ({ page }) => {
     await addInlineQuestionnaire(page, 'check-box');
     await expectFourColumnHintLayout(page, '.lhc-checkbox-group.lhc-grid');
+  });
+
+  test('renders vertical radio answer options down each hinted column', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'radio-button', 'vertical', 3, assistanceAnswerOptions);
+    await expectVerticalThreeColumnLayout(page, 'nz-radio-group.lhc-grid');
+  });
+
+  test('renders vertical checkbox answer options down each hinted column', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'check-box', 'vertical', 3, assistanceAnswerOptions);
+    await expectVerticalThreeColumnLayout(page, '.lhc-checkbox-group.lhc-grid');
   });
 });
