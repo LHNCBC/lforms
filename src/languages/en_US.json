@@ -75,5 +75,16 @@
     "M-D-YY HH:mm",
     "M-D HH:mm"
   ],
-  "clearSelection": "Clear Selection"
+  "clearSelection": "Clear Selection",
+  "error-messages": {
+    "comparatorInQuantity": "This item cannot accept a quantity with a comparator",
+    "nonMatchingQuantityUnit": "An attempt was made to assign a quantity with a non-matching unit.",
+    "MultipleValuesForNonRepeat": "An attempt was made to assign multiple values to a non-repeating item.",
+    "invalidTagInHelpHTMLContent": "Invalid HTML tags/attributes found in the help text.",
+    "invalidTagInLegalHTMLContent": "Invalid HTML tags/attributes found in the legal text.",
+    "invalidTagInAnswerOptionHTMLContent": "Invalid HTML tags/attributes found in answerOptions.",
+    "invalidTagInHTMLContent": "Invalid HTML tags/attributes found in item text/prefix.",
+    "answerValueSetLoadingError": "Unable to load the answer list for this question.",
+    "hasModifierExtension": "One or more modifierExtensions are found in the Questionnaire resource. The rendered Questionnaire below is for display only and may not be correctly rendered, and the QuestionnaireResponse generated from it may not be valid."
+  }
 }
