@@ -77,7 +77,7 @@
   ],
   "clearSelection": "Clear Selection",
   "error-messages": {
-    "comparatorInQuantity": "This item cannot accept a quantity with a comparator",
+    "comparatorInQuantity": "This item cannot accept a quantity with a comparator.",
     "nonMatchingQuantityUnit": "An attempt was made to assign a quantity with a non-matching unit.",
     "MultipleValuesForNonRepeat": "An attempt was made to assign multiple values to a non-repeating item.",
     "invalidTagInHelpHTMLContent": "Invalid HTML tags/attributes found in the help text.",
