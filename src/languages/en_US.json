@@ -58,23 +58,6 @@
   "booleanNotAnswered": "Not Answered",
   "pleaseEnterInfoForTheBlank": "Please enter info in the blank \"{lformsParam}\".",
   "other": "Other",
-  "parsedDateFormats": [
-    "M/D/YYYY",
-    "M/D/YY",
-    "M/D",
-    "M-D-YYYY",
-    "M-D-YY",
-    "M-D",
-    "YYYY",
-    "YYYY-M-D",
-    "YYYY/M/D",
-    "M/D/YYYY HH:mm",
-    "M/D/YY HH:mm",
-    "M/D HH:mm",
-    "M-D-YYYY HH:mm",
-    "M-D-YY HH:mm",
-    "M-D HH:mm"
-  ],
   "clearSelection": "Clear Selection",
   "error-messages": {
     "comparatorInQuantity": "This item cannot accept a quantity with a comparator.",
@@ -91,5 +74,22 @@
   "Warning": "Warning",
   "repeatableItemAtLeast": "This repeatable item should have at least {lformsParam} occurrences.",
   "repeatableItemAtMost": "This repeatable item should have at most {lformsParam} occurrences.",
-  "implicitRulesNotSupported": "The Questionnaire cannot be rendered because it uses \"implicitRules\" that LHC-Forms does not support."
+  "implicitRulesNotSupported": "The Questionnaire cannot be rendered because it uses \"implicitRules\" that LHC-Forms does not support.",
+  "parsedDateFormats": [
+    "M/D/YYYY",
+    "M/D/YY",
+    "M/D",
+    "M-D-YYYY",
+    "M-D-YY",
+    "M-D",
+    "YYYY",
+    "YYYY-M-D",
+    "YYYY/M/D",
+    "M/D/YYYY HH:mm",
+    "M/D/YY HH:mm",
+    "M/D HH:mm",
+    "M-D-YYYY HH:mm",
+    "M-D-YY HH:mm",
+    "M-D HH:mm"
+  ]
 }

@@ -58,6 +58,23 @@
   "booleanNotAnswered": "Nicht beantwortet",
   "pleaseEnterInfoForTheBlank": "Bitte geben Sie Informationen in das Feld „{lformsParam}“ ein.",
   "other": "Andere",
+  "clearSelection": "Auswahl leeren",
+  "error-messages": {
+    "comparatorInQuantity": "Dieser Artikel akzeptiert keine Mengenangabe mit einem Komparator.",
+    "nonMatchingQuantityUnit": "Es wurde versucht, eine Größe mit einer nicht passenden Einheit zuzuordnen.",
+    "MultipleValuesForNonRepeat": "Es wurde versucht, einem nicht wiederkehrenden Element mehrere Werte zuzuordnen.",
+    "invalidTagInHelpHTMLContent": "Im Hilfetext wurden ungültige HTML-Tags/Attribute gefunden.",
+    "invalidTagInLegalHTMLContent": "Im Rechtstext wurden ungültige HTML-Tags/Attribute gefunden.",
+    "invalidTagInAnswerOptionHTMLContent": "Ungültige HTML-Tags/Attribute in answerOptions gefunden.",
+    "invalidTagInHTMLContent": "Ungültige HTML-Tags/Attribute im Elementtext/Präfix gefunden.",
+    "answerValueSetLoadingError": "Die Antwortliste für diese Frage konnte nicht geladen werden.",
+    "hasModifierExtension": "Im Fragebogen sind eine oder mehrere ModifierExtensions enthalten. Der unten dargestellte Fragebogen dient nur der Veranschaulichung und wird möglicherweise nicht korrekt dargestellt. Die daraus generierte Antwort (QuestionnaireResponse) ist unter Umständen ungültig."
+  },
+  "Error": "Fehler",
+  "Warning": "Warnung",
+  "repeatableItemAtLeast": "Dieses wiederholbare Element sollte mindestens {lformsParam} Vorkommen haben.",
+  "repeatableItemAtMost": "Dieses wiederholbare Element sollte höchstens {lformsParam} Vorkommen haben.",
+  "implicitRulesNotSupported": "Der Fragebogen kann nicht gerendert werden, da er \"implicitRules\" verwendet, die von LHC-Forms nicht unterstützt werden.",
   "parsedDateFormats": [
     "M/D/YYYY",
     "M/D/YY",
@@ -76,22 +93,5 @@
     "M-D-YY HH:mm",
     "M-D HH:mm",
     "DD.MM.YYYY HH:mm"
-  ],
-  "clearSelection": "Auswahl leeren",
-  "error-messages": {
-    "comparatorInQuantity": "Dieser Artikel akzeptiert keine Mengenangabe mit einem Komparator.",
-    "nonMatchingQuantityUnit": "Es wurde versucht, eine Größe mit einer nicht passenden Einheit zuzuordnen.",
-    "MultipleValuesForNonRepeat": "Es wurde versucht, einem nicht wiederkehrenden Element mehrere Werte zuzuordnen.",
-    "invalidTagInHelpHTMLContent": "Im Hilfetext wurden ungültige HTML-Tags/Attribute gefunden.",
-    "invalidTagInLegalHTMLContent": "Im Rechtstext wurden ungültige HTML-Tags/Attribute gefunden.",
-    "invalidTagInAnswerOptionHTMLContent": "Ungültige HTML-Tags/Attribute in answerOptions gefunden.",
-    "invalidTagInHTMLContent": "Ungültige HTML-Tags/Attribute im Elementtext/Präfix gefunden.",
-    "answerValueSetLoadingError": "Die Antwortliste für diese Frage konnte nicht geladen werden.",
-    "hasModifierExtension": "Im Fragebogen sind eine oder mehrere ModifierExtensions enthalten. Der unten dargestellte Fragebogen dient nur der Veranschaulichung und wird möglicherweise nicht korrekt dargestellt. Die daraus generierte Antwort (QuestionnaireResponse) ist unter Umständen ungültig."
-  },
-  "Error": "Fehler",
-  "Warning": "Warnung",
-  "repeatableItemAtLeast": "Dieses wiederholbare Element sollte mindestens {lformsParam} Vorkommen haben.",
-  "repeatableItemAtMost": "Dieses wiederholbare Element sollte höchstens {lformsParam} Vorkommen haben.",
-  "implicitRulesNotSupported": "Der Fragebogen kann nicht gerendert werden, da er \"implicitRules\" verwendet, die von LHC-Forms nicht unterstützt werden."
+  ]
 }
