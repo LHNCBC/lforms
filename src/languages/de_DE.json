@@ -36,7 +36,7 @@
     "NR": "müssen zwei numerische Werte sein, die durch ein ^ getrennt sind. Ein Wert kann weggelassen werden, das ^ jedoch nicht.",
     "YEAR": "muss eine Jahresangabe sein.",
     "MONTH": "muss eine numerische Monatsangabe sein.",
-    "DAY": "muss eine numerische Tagesangangabe sein.",
+    "DAY": "muss eine numerische Tagesangabe sein.",
     "URL": "muss eine gültige URL sein.",
     "EMAIL": "muss eine gültige E-Mail-Adresse sein.",
     "PHONE": "muss eine gültige Telefonnummer sein."
@@ -60,7 +60,7 @@
   "other": "Andere",
   "clearSelection": "Auswahl leeren",
   "error-messages": {
-    "comparatorInQuantity": "Dieser Artikel akzeptiert keine Mengenangabe mit einem Komparator.",
+    "comparatorInQuantity": "Diese Frage akzeptiert keine Mengenangabe mit einem Komparator.",
     "nonMatchingQuantityUnit": "Es wurde versucht, eine Größe mit einer nicht passenden Einheit zuzuordnen.",
     "MultipleValuesForNonRepeat": "Es wurde versucht, einem nicht wiederkehrenden Element mehrere Werte zuzuordnen.",
     "invalidTagInHelpHTMLContent": "Im Hilfetext wurden ungültige HTML-Tags/Attribute gefunden.",
