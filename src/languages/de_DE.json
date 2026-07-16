@@ -75,6 +75,12 @@
   "repeatableItemAtLeast": "Dieses wiederholbare Element sollte mindestens {lformsParam} Vorkommen haben.",
   "repeatableItemAtMost": "Dieses wiederholbare Element sollte höchstens {lformsParam} Vorkommen haben.",
   "implicitRulesNotSupported": "Der Fragebogen kann nicht gerendert werden, da er \"implicitRules\" verwendet, die von LHC-Forms nicht unterstützt werden.",
+  "unknownFileType": "Unbekannter Dateityp. Bitte stellen Sie sicher, dass die Datei die korrekte Dateiendung hat.",
+  "mimeTypeNotPermitted": "Die Datei {lformsParam1} gehört nicht zu den in diesem Fragebogen zulässigen MIME-Typen ({lformsParam2} und {lformsParam3}). Bitte stellen Sie sicher, dass Ihre Datei die korrekte Dateiendung für ihren Typ im Dateinamen hat.",
+  "maxAttachmentSizeExceeded": "Die Datei {lformsParam1} überschreitet die maximal zulässige Dateigröße von {lformsParam2} bytes. Falls Sie die Datei über eine URL angeben können, verwenden Sie die Schaltfläche, um das URL-Feld zu öffnen und die URL einzugeben.",
+  "largeFileConfirmation": "Das Hinzufügen einer großen Datei als Anhang kann zu einem Speichermangel auf Ihrem Computer führen. Sie können eine URL eingeben, anstatt die Datei anzuhängen. Möchten Sie die Datei wirklich anhängen?",
+  "attachmentFileOrUrlRequired": "Ein Anhang muss entweder eine Datei oder eine URL (oder beides) enthalten.",
+  "unableToAttachFile": "Die Datei konnte nicht angehängt werden.",
   "parsedDateFormats": [
     "M/D/YYYY",
     "M/D/YY",
