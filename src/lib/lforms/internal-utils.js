@@ -424,8 +424,7 @@ export const InternalUtil = {
     let warnings = msgsFromSource.warnings;
     if (!warnings)
       warnings = msgsFromSource.warnings = {};
-    warnings[messageID] = ErrorMessages.getMsg(messageID);
-    console.log(JSON.stringify(item.messages));
+    ErrorMessages.addMsg(warnings, messageID);
   },
 
 
