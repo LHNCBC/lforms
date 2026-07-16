@@ -70,8 +70,8 @@
     "answerValueSetLoadingError": "Unable to load the answer list for this question.",
     "hasModifierExtension": "One or more modifierExtensions are found in the Questionnaire resource. The rendered Questionnaire below is for display only and may not be correctly rendered, and the QuestionnaireResponse generated from it may not be valid."
   },
-  "Error": "Error",
-  "Warning": "Warning",
+  "error": "Error",
+  "warning": "Warning",
   "repeatableItemAtLeast": "This repeatable item should have at least {lformsParam} occurrences.",
   "repeatableItemAtMost": "This repeatable item should have at most {lformsParam} occurrences.",
   "implicitRulesNotSupported": "The Questionnaire cannot be rendered because it uses \"implicitRules\" that LHC-Forms does not support.",
