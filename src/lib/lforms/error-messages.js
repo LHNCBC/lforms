@@ -6,7 +6,7 @@
  */
 
 import language from '../../../language-config.json';
-const messages = language['error-messages'];
+const messages = language.renderingErrorMessages;
 
 export const ErrorMessages = {
   /**
