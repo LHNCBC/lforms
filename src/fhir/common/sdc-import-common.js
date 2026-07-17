@@ -50,6 +50,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtEnableWhenExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
   self.fhirExtColumnCount = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+  self.fhirExtColumnCountLegacy = "http://hl7.org/fhir/StructureDefinition/questionnaire-columnCount";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
   self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
   self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
@@ -94,6 +95,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlDataControl,
     self.fhirExtChoiceOrientation,
     self.fhirExtColumnCount,
+    self.fhirExtColumnCountLegacy,
     self.fhirExtUrlMaxDecimalPlaces
   ]);
 
@@ -901,9 +903,10 @@ function addCommonSDCImportFns(ns) {
               displayControl.answerLayout.columns = "0"
             }
           }
-          var answerColumnCount = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtColumnCount);
+          var answerColumnCount = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtColumnCount) ||
+            LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtColumnCountLegacy);
           if (answerColumnCount) {
-            var columnCount = parseInt(answerColumnCount.valuePositiveInt, 10);
+            var columnCount = parseInt(answerColumnCount.valuePositiveInt || answerColumnCount.valueInteger, 10);
             if (columnCount > 0) {
               // Treat columnCount as the preferred column hint, regardless of choiceOrientation.
               displayControl.answerLayout.columns = columnCount.toString();
