@@ -74,7 +74,7 @@
   "warning": "警告",
   "repeatableItemAtLeast": "此可重复条目至少应出现{lformsParam}次。",
   "repeatableItemAtMost": "此可重复条目最多应出现{lformsParam}次。",
-  "implicitRulesNotSupported": "由于此Questionnaire使用了LHC-Forms不支持的“implicitRules”，因此无法渲染。",
+  "implicitRulesNotSupported": "由于此Questionnaire使用了LHC-Forms不支持的implicitRules，因此无法渲染。",
   "unknownFileType": "文件类型未知。请确保文件具有正确的扩展名。",
   "mimeTypeNotPermitted": "文件{lformsParam1}不是此问卷允许的MIME类型之一（{lformsParam2}和{lformsParam3}）。请确保您的文件名包含与其类型相符的文件扩展名。",
   "maxAttachmentSizeExceeded": "文件{lformsParam1}超过了此问卷允许的最大附件大小{lformsParam2}字节。如果您可以使用URL指定文件，请使用按钮打开URL输入框并输入URL。",
