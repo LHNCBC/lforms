@@ -127,6 +127,19 @@ describe('CommonUtilsService', () => {
     expect(service.getDisplayControlColumnWidth(displayControl)).toBe('33.33333%');
   });
 
+  it('should not reserve more columns than there are answers', () => {
+    const displayControl = {
+      answerLayout: {
+        columns: '10'
+      }
+    };
+
+    expect(service.getDisplayControlEffectiveColumnCount(displayControl, 5)).toBe(5);
+    expect(service.getDisplayControlColumnWidth(displayControl, 5)).toBe('20%');
+    expect(service.getDisplayControlEffectiveColumnCount(displayControl, 12)).toBe(10);
+    expect(service.getDisplayControlColumnWidth(displayControl, 12)).toBe('10%');
+  });
+
   it('should place vertical grid answers down each column', () => {
     const displayControl: DisplayControl = {
       answerLayout: {

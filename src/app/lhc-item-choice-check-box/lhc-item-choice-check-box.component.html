@@ -1,8 +1,8 @@
 <nz-checkbox-wrapper style="width: 100%;"  (nzOnChange)="onCheckboxModelChange($event)" *ngIf="item">
   <div nz-row
     class="lhc-checkbox-group"
-    [style.--lhc-answer-column-count]="commonUtils.getDisplayControlColumnCount(item.displayControl)"
-    [style.--lhc-answer-column-width]="commonUtils.getDisplayControlColumnWidth(item.displayControl)"
+    [lhcAnswerOptionMinWidth]="!commonUtils.getDisplayControlIsVertical(item.displayControl) ? commonUtils.getDisplayControlEffectiveColumnCount(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0)) : null"
+    [style.--lhc-answer-column-width]="commonUtils.getDisplayControlColumnWidth(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
     [ngClass]="{
       'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl),
       'lhc-grid': commonUtils.getDisplayControlIsGrid(item.displayControl)

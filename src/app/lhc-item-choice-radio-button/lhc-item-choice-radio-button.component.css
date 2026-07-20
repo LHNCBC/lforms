@@ -11,14 +11,15 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  max-width: var(--lhc-answer-group-width, 100%);
   width: 100%;
 }
 
 .lhc-radio-group.lhc-grid .lhc-answer {
   align-items: flex-start;
-  flex: 1 1 var(--lhc-answer-column-width);
-  max-width: var(--lhc-answer-column-width);
-  min-width: min(100%, 12rem);
+  flex: 0 1 var(--lhc-answer-option-width, 12rem);
+  max-width: min(100%, var(--lhc-answer-option-width, 12rem));
+  min-width: min(100%, var(--lhc-answer-option-width, 12rem));
   overflow-wrap: anywhere;
   white-space: normal;
 }

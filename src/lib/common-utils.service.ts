@@ -57,6 +57,7 @@ export class CommonUtilsService {
    * Check if a checkbox or radio button control should use vertical layout.
    * Returns true if it should use vertical layout, false if horizontal.
    * @param displayControl an object that controls the display of the selected template
+   * @returns true for vertical layout, otherwise false
    */
   getDisplayControlIsVertical(displayControl: DisplayControl): boolean {
     return displayControl?.answerLayout?.columns === '1' ||
@@ -67,6 +68,7 @@ export class CommonUtilsService {
   /**
    * Check if a checkbox or radio button control should use a grid layout.
    * @param displayControl an object that controls the display of the selected template
+   * @returns true when the requested answer column count is greater than one
    */
   getDisplayControlIsGrid(displayControl: DisplayControl): boolean {
     return this.getDisplayControlColumnCount(displayControl) > 1;
@@ -76,6 +78,7 @@ export class CommonUtilsService {
   /**
    * Get the number of answer columns requested by the display control.
    * @param displayControl an object that controls the display of the selected template
+   * @returns the requested column count, or null when a multi-column layout was not requested
    */
   getDisplayControlColumnCount(displayControl: DisplayControl): number | null {
     const columns = displayControl?.answerLayout?.columns;
@@ -85,11 +88,30 @@ export class CommonUtilsService {
 
 
   /**
+   * Get the number of answer columns that can actually be populated.
+   * A requested column count larger than the answer count would otherwise
+   * reserve empty columns and leave the populated columns using only part of
+   * the available width.
+   * @param displayControl an object that controls the display of the selected template
+   * @param answerCount the number of rendered answer options
+   * @returns the requested count capped at the answer count, or null when no columns can be rendered
+   */
+  getDisplayControlEffectiveColumnCount(displayControl: DisplayControl, answerCount: number): number | null {
+    const columnCount = this.getDisplayControlColumnCount(displayControl);
+    return columnCount && Number.isInteger(answerCount) && answerCount > 0 ?
+      Math.min(columnCount, answerCount) : null;
+  }
+
+
+  /**
    * Get the preferred answer column width requested by the display control.
    * @param displayControl an object that controls the display of the selected template
+   * @param answerCount optional number of rendered answers, used to avoid empty columns
+   * @returns the percentage width for each answer column, or null when no grid layout was requested
    */
-  getDisplayControlColumnWidth(displayControl: DisplayControl): string | null {
-    const columnCount = this.getDisplayControlColumnCount(displayControl);
+  getDisplayControlColumnWidth(displayControl: DisplayControl, answerCount?: number): string | null {
+    const columnCount = answerCount === undefined ? this.getDisplayControlColumnCount(displayControl) :
+      this.getDisplayControlEffectiveColumnCount(displayControl, answerCount);
     return columnCount ? `${Math.round((100 / columnCount) * 100000) / 100000}%` : null;
   }
 
@@ -98,9 +120,10 @@ export class CommonUtilsService {
    * @param index the zero-based index of the answer option
    * @param answerCount the total number of answer options in the layout
    * @param displayControl an object that controls the display of the selected template
+   * @returns the one-based CSS grid row, or null when vertical grid placement does not apply
    */
   getAnswerLayoutGridRow(index: number, answerCount: number, displayControl: DisplayControl): number | null {
-    const columnCount = this.getDisplayControlColumnCount(displayControl);
+    const columnCount = this.getDisplayControlEffectiveColumnCount(displayControl, answerCount);
     if (!columnCount || !this.getDisplayControlIsVertical(displayControl) || answerCount <= 0) {
       return null;
     }
@@ -115,9 +138,10 @@ export class CommonUtilsService {
    * @param index the zero-based index of the answer option
    * @param answerCount the total number of answer options in the layout
    * @param displayControl an object that controls the display of the selected template
+   * @returns the one-based CSS grid column, or null when vertical grid placement does not apply
    */
   getAnswerLayoutGridColumn(index: number, answerCount: number, displayControl: DisplayControl): number | null {
-    const columnCount = this.getDisplayControlColumnCount(displayControl);
+    const columnCount = this.getDisplayControlEffectiveColumnCount(displayControl, answerCount);
     if (!columnCount || !this.getDisplayControlIsVertical(displayControl) || answerCount <= 0) {
       return null;
     }

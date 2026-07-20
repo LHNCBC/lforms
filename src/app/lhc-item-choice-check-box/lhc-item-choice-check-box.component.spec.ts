@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box.component';
+import { AnswerOptionMinWidthDirective } from '../answer-option-min-width.directive';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { getItemAnswerElem } from '../ng-unit-test-helpers';
 
@@ -126,7 +127,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemChoiceCheckBoxComponent ],
+      declarations: [ LhcItemChoiceCheckBoxComponent, AnswerOptionMinWidthDirective ],
       imports: [FormsModule, NzCheckboxModule, NzGridModule],
       providers: [LhcDataService]
     })
@@ -273,7 +274,6 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     const containerDiv = element.querySelector('div[nz-row]') as HTMLElement;
     expect(containerDiv.classList).not.toContain('lhc-vertical');
     expect(containerDiv.classList).toContain('lhc-grid');
-    expect(containerDiv.style.getPropertyValue('--lhc-answer-column-count')).toBe('3');
     expect(containerDiv.style.getPropertyValue('--lhc-answer-column-width')).toBe('33.33333%');
   });
 

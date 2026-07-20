@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button.component';
+import { AnswerOptionMinWidthDirective } from '../answer-option-min-width.directive';
 import { EventEmitter } from 'events';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { getItemAnswerElem } from '../ng-unit-test-helpers';
@@ -126,7 +127,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemChoiceRadioButtonComponent ],
+      declarations: [ LhcItemChoiceRadioButtonComponent, AnswerOptionMinWidthDirective ],
       imports: [FormsModule, NzRadioModule, NzGridModule],
       providers: [LhcDataService]
     })
@@ -328,7 +329,6 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     const containerDiv = element.querySelector('nz-radio-group') as HTMLElement;
     expect(containerDiv.classList).not.toContain('lhc-vertical');
     expect(containerDiv.classList).toContain('lhc-grid');
-    expect(containerDiv.style.getPropertyValue('--lhc-answer-column-count')).toBe('3');
     expect(containerDiv.style.getPropertyValue('--lhc-answer-column-width')).toBe('33.33333%');
   });
 

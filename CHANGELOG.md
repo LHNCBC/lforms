@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.1.0] 2026-07-20
+### Added
+- Added support for the FHIR SDC Questionnaire columnCount extension, including
+  multi-column horizontal and vertical answer layouts and round-trip conversion.
+
 ## [43.0.0] 2026-07-13
 ### Added
 - New onFormChange event, emitted when the item value is modified at any

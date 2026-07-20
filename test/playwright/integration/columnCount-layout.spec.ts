@@ -40,6 +40,14 @@ const assistanceAnswerOptions: AnswerOption[] = [
   { code: 'not-attempted', display: 'Activity not attempted', system: 'http://example.org/lforms-test-codes' }
 ];
 
+const shortAnswerOptions: AnswerOption[] = [
+  { code: 'a', display: 'A' },
+  { code: 'b', display: 'B' },
+  { code: 'c', display: 'C' },
+  { code: 'd', display: 'D' },
+  { code: 'e', display: 'E' }
+];
+
 function buildQuestionnaire(
   controlCode: 'radio-button' | 'check-box',
   orientation: 'horizontal' | 'vertical' = 'horizontal',
@@ -219,6 +227,29 @@ async function expectVerticalThreeColumnLayout(page: Page, containerSelector: st
   expect(boxes[2]!.y).toBeGreaterThan(boxes[1]!.y + 1);
 }
 
+async function expectShortColumnsToRemainCompact(page: Page, containerSelector: string) {
+  const container = page.locator(containerSelector);
+  const availableArea = container.locator('xpath=ancestor::div[contains(@class, "lhc-de-input-unit-content")][1]');
+  await expect(container).toHaveCSS('--lhc-answer-column-width', '20%');
+
+  const containerBox = await container.boundingBox();
+  const availableAreaBox = await availableArea.boundingBox();
+  const answers = container.locator('.lhc-answer');
+  const boxes = await Promise.all(
+    Array.from({ length: 5 }, (_, index) => answers.nth(index).boundingBox())
+  );
+  expect(containerBox).toBeTruthy();
+  expect(availableAreaBox).toBeTruthy();
+  expect(boxes.every(Boolean)).toBeTruthy();
+  expect(containerBox!.width).toBeLessThan(availableAreaBox!.width);
+
+  for (const box of boxes) {
+    expect(Math.abs(box!.y - boxes[0]!.y)).toBeLessThan(2);
+    expect(Math.abs(box!.width - containerBox!.width / 5)).toBeLessThan(2);
+  }
+  expect(Math.abs(boxes[4]!.x + boxes[4]!.width - (containerBox!.x + containerBox!.width))).toBeLessThan(2);
+}
+
 test.describe('Questionnaire columnCount layout', () => {
   test('renders radio answer options as equal-width column hints', async ({ page }) => {
     await addInlineQuestionnaire(page, 'radio-button');
@@ -228,6 +259,11 @@ test.describe('Questionnaire columnCount layout', () => {
   test('renders checkbox answer options as equal-width column hints', async ({ page }) => {
     await addInlineQuestionnaire(page, 'check-box');
     await expectFourColumnHintLayout(page, '.lhc-checkbox-group.lhc-grid');
+  });
+
+  test('keeps short answer columns compact when fewer answers exist than requested columns', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'radio-button', 'horizontal', 10, shortAnswerOptions);
+    await expectShortColumnsToRemainCompact(page, 'nz-radio-group.lhc-grid');
   });
 
   test('renders vertical radio answer options down each hinted column', async ({ page }) => {
