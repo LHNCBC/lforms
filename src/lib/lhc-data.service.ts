@@ -3,6 +3,7 @@ import { ScreenReaderLog } from './screen-reader-log';
 import CommonUtils from "./lforms/lhc-common-utils.js";
 import {InternalUtil} from "./lforms/internal-utils.js";
 import language from '../../language-config.json';
+import {Subject} from "rxjs";
 declare let LForms: any;
 // @Injectable({
 //   providedIn: 'root'
@@ -15,6 +16,9 @@ export class LhcDataService {
 
   private lhcFormData:any;
   private srLog: ScreenReaderLog;
+
+  private formChangeEventSource = new Subject<any>();
+  public formChangeEvent$ = this.formChangeEventSource.asObservable();
 
   constructor() {
     this.srLog = new ScreenReaderLog();
@@ -547,6 +551,10 @@ export class LhcDataService {
     if (!anyEmpty) {
       const newItem = append ? this.lhcFormData.appendRepeatingItems(item) : this.lhcFormData.addRepeatingItems(item);
       this.sendActionsToScreenReader();
+      this.formChangeEventSource.next({
+        'event': 'itemAdded',
+        'linkId': item.linkId
+      });
     }
   }
 
@@ -581,6 +589,11 @@ export class LhcDataService {
     this.lhcFormData.removeRepeatingItems(item);
 
     this.sendActionsToScreenReader();
+
+    this.formChangeEventSource.next({
+      'event': 'itemRemoved',
+      'linkId': item.linkId
+    });
 
     // set the focus
     setTimeout(function() {
@@ -705,6 +718,11 @@ export class LhcDataService {
       this.lhcFormData.updateOnSourceItemChange(item)
 
       this.sendActionsToScreenReader();
+
+      this.formChangeEventSource.next({
+        'event': 'dataChanged',
+        'linkId': item.linkId
+      });
 
     }
   };

@@ -25,7 +25,6 @@
 /*.js
 /*.json
 /.gitattributes
-/cypress.config.ts
 
 # temp files
 /.tmp

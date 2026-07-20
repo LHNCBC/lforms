@@ -14,6 +14,8 @@ import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { LhcOverlayContainer } from './lhc-overlay-container';
 
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -109,6 +111,7 @@ registerLocaleData(en);
         NzSwitchModule,
         NzTabsModule], providers: [
         { provide: NZ_I18N, useValue: en_US },
+        { provide: OverlayContainer, useClass: LhcOverlayContainer },
         provideHttpClient(withInterceptorsFromDi())
     ] })
 

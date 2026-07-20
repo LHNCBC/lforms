@@ -184,6 +184,12 @@
         showError(e.detail);
       });
 
+      testForm.addEventListener('onFormChange', e => {
+        console.log('onFormChange');
+        console.log(e.detail);
+        console.debug(LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
+      })
+
 
       /**
        *  Shows an error message.
