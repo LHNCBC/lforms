@@ -1,11 +1,9 @@
 :host input[type="text"].invalid,
 :host input[type="text"][invalid="true"] {
-  border: 1px solid #FF0000 !important;
-  outline-color: #FF0000 !important;
+  border: 1px solid #FF0000;
 }
 
 :host input[type="text"].invalid:focus,
 :host input[type="text"][invalid="true"]:focus {
-  outline: 1px solid #FF0000 !important;
-  outline-offset: 0;
+  outline: none;
 }
