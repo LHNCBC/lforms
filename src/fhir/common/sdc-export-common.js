@@ -313,7 +313,7 @@ function addCommonSDCExportFns(ns) {
     if (source.items && Array.isArray(source.items)) {
       let repeatingItemLinkId = null;
       for (var i = source.items.length - 1; i >= 0; i--) {
-        if (source.items[i].isSubGroupForCheckbox) {
+        if (source.items[i].isSubGroupForMultiSelect) {
           source.items.splice(i, 1);
         }
         // If the previous item is a repeating item and this item's linkId is the same, remove it.
@@ -1050,23 +1050,33 @@ function addCommonSDCExportFns(ns) {
           if(! lfSubItem._isProcessed) {
             var linkId = lfSubItem.linkId;
             var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
-            if (lfSubItem.isSubGroupForCheckbox) {
+            if (lfSubItem.isSubGroupForMultiSelect) {
               let fhirItem = this._processResponseItem(lfSubItem);
               if (fhirItem) {
                 // Find the matching QR answer and put the sub-group item under it instead of under targetItem.item.
-                // Using checkboxOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
+                // Using multiSelectOption for matching since the linkId could not be produced from the matching answer at this stage due to loss of _elementId.
                 const refinedAnswerList = targetItem.answer.map(a => {
-                  if (!a.valueCoding) {
-                    return a;
-                  } else if (a.valueCoding.display) {
-                    // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
-                    // Create a new object with property "text" for matching, since lfSubItem.checkboxOption has "text" but not "display".
-                    return { ...a.valueCoding, text: a.valueCoding.display };
+                  if (Object.hasOwn(a, 'valueString')) {
+                    return {text: a.valueString};
+                  } else if (Object.hasOwn(a, 'valueInteger')) {
+                    return {text: a.valueInteger};
+                  } else if (Object.hasOwn(a, 'valueDate')) {
+                    return {text: a.valueDate};
+                  } else if (Object.hasOwn(a, 'valueTime')) {
+                    return {text: a.valueTime};
+                  } else if (Object.hasOwn(a, 'valueCoding')) {
+                    if (a.valueCoding.display) {
+                      // For cases where valueCoding.code is missing, we have to rely on valueCoding.display for matching.
+                      // Create a new object with property "text" for matching, since lfSubItem.multiSelectOption has "text" but not "display".
+                      return {...a.valueCoding, text: a.valueCoding.display};
+                    } else {
+                      return a.valueCoding;
+                    }
                   } else {
-                    return a.valueCoding;
+                    return a;
                   }
                 });
-                let matchingAnswerIndex = refinedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.checkboxOption, lfItem));
+                let matchingAnswerIndex = refinedAnswerList.findIndex(x => LForms.Util.areTwoAnswersSame(x, lfSubItem.multiSelectOption, lfItem));
                 if (matchingAnswerIndex !== -1) {
                   targetItem.answer[matchingAnswerIndex].item = fhirItem.item;
                 }

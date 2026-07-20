@@ -29,7 +29,7 @@
       </thead>
       <tbody>
       <ng-container *ngFor="let subItem of item.items; trackBy: lhcDataService.trackByElementId">
-        <tr *ngIf="!subItem._isHiddenFromView" role="radiogroup">
+        <tr *ngIf="!subItem._isHiddenFromView" role="radiogroup" #tableRow>
           <td class="lhc-question">
             <lhc-item-question-text [item]="subItem" ></lhc-item-question-text>
             <lhc-item-messages [item]="subItem" ></lhc-item-messages>
@@ -39,7 +39,7 @@
                     class="lhc-float-button lhc-button"
                     [disabled]="item._readOnly"
                     (click)="updateRadioListValue(subItem, undefined, null)">
-              Clear selection
+              {{language.clearSelection}}
             </button>
           </td>
           <td *ngFor="let answer of item.items[0].answers; index as i"
@@ -58,17 +58,14 @@
                   (ngModelChange)="updateCheckboxListValue(subItem)">
               </label>
               <!--for single answer-->
-              <label *ngIf="!isCheckbox">
-                <input
-                  type="radio"
-                  [disabled]="item._readOnly"
+              <label *ngIf="!isCheckbox"
+                  nz-radio
+                  [nzDisabled]="item._readOnly"
                   [id]="lhcDataService.getItemAnswerId(subItem, answer)"
                   attr.aria-label="{{answer.text}} for {{subItem.question}}"
-                  [checked]="subItem._selectedRadio === i"
-                  [value]="answer"
-                  name="{{subItem._elementId}}"
-                  [attr.name]="subItem._elementId"
-                  (change)="updateRadioListValue(subItem, answer, i)">
+                  [ngModel]="subItem._selectedRadio === i"
+                  [nzValue]="answer"
+                  (ngModelChange)="updateRadioListValue(subItem, answer, i)">
               </label>
             </span>
           </td>
@@ -101,17 +98,14 @@
             </span>
             <!--for single answer-->
             <span *ngIf="!isCheckbox" class="lhc-form-matrix-answer">
-              <label>
-                <input
-                  type="radio"
-                  [disabled]="item._readOnly"
+              <label
+                  nz-radio
+                  [nzDisabled]="item._readOnly"
                   id="{{lhcDataService.getItemAnswerId(subItem, '_other')}}"
                   attr.aria-label="Other values for {{subItem.question}}"
                   [(ngModel)]="subItem._answerOtherChecked"
-                  [value]="true"
-                  name="{{subItem._elementId}}"
-                  [attr.name]="subItem._elementId"
-                  (change)="updateRadioListValueForOther(subItem, subItem._answerOther)">
+                  [nzValue]="true"
+                  (ngModelChange)="updateRadioListValueForOther(subItem, subItem._answerOther)">
               </label>
               <label>
                 <input

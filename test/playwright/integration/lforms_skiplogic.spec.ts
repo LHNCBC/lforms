@@ -359,4 +359,48 @@ test.describe('skip logic', () => {
       await expect(dataControlItemWithSourceHavingSkipLogic).toHaveValue('xxx');
     });
   });
+
+  test.describe('Skip logic and onFormChange event', () => {
+    test('should emit onFormChange event after enableWhenExpressions are updated', async ({ page }) => {
+      await page.goto('/test/pages/lforms_testpage.html');
+      await waitForLFormsReady(page);
+      await loadFromTestData(page, 'enableWhenExpressionTest.json', 'R4');
+
+      const n1 = byId(page, 'n1/1/1');
+      const n2 = byId(page, 'n2/1/1');
+      const n3 = byId(page, 'n3/1/1');
+      const q4 = byId(page, 'q4/1/1'); // present when n1+n2+n3 >= 5;
+
+      await expect(q4).not.toBeAttached();
+      await n1.click();
+      await n1.pressSequentially('1');
+      await n2.click();
+      await n2.pressSequentially('4');
+      await expect(q4).toBeVisible();
+      await q4.click();
+      await q4.pressSequentially('a');
+      // Start waiting for a console.debug event which will be emitted when the onFormChange event is triggered.
+      const debugPromise1 = page.waitForEvent('console', {
+        predicate: msg => msg.type() === 'debug'
+      });
+      // Clear the value of n1 to trigger the onFormChange event.
+      await n1.clear();
+      // Wait for the console.debug event to be emitted and get the value of the QuestionnaireResponse.
+      const debugMsg1 = await debugPromise1;
+      const qr1 = await debugMsg1.args()[0].jsonValue();
+      // The QuestionnaireResponse should only contain the item for n2 since n1 was cleared and q4 is no longer present.
+      expect(qr1.item[0].item.length).toBe(1);
+      const debugPromise2 = page.waitForEvent('console', {
+        predicate: msg => msg.type() === 'debug'
+      });
+      await n1.click();
+      await n1.pressSequentially('1');
+      await n2.click();
+      const debugMsg2 = await debugPromise2;
+      const qr2 = await debugMsg2.args()[0].jsonValue();
+      // The QuestionnaireResponse should contain the items for n1, n2, and q4 since n1+n2+n3 >= 5.
+      expect(qr2.item[0].item.length).toBe(3);
+      expect(qr2.item[0].item[2].answer[0].valueString).toBe('a');
+    });
+  });
 });

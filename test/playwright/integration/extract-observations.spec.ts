@@ -291,7 +291,9 @@ test.describe('Form with extract observation extension', () => {
     expect(request.method).toBe('PUT');
     expect(request.url).toBe(`Observation/${resource.id}`);
     expect(request.ifNoneMatch).toBe(resource.id);
-    expect(request.ifModifiedSince).toBe(new Date().toISOString().slice(0, 10));
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    expect(request.ifModifiedSince).toBe(today);
     expect(request.ifMatch).toBe(resource.id);
     expect(request.ifNoneExist).toBe(resource.id);
   });

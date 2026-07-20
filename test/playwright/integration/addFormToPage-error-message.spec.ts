@@ -6,10 +6,10 @@ async function expectFormTitle(page, title: string) {
 }
 
 test.describe('addFormToPage Error Message Test', () => {
-  test.beforeEach(async ({ page }) => { 
+  test.beforeEach(async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
-    await expectLoadButton(page, 'Load From File');  
+    await expectLoadButton(page, 'Load From File');
   });
 
   test('show an error when a valueset cannot be loaded because of a wrong valueset url', async ({ page }) => {
@@ -108,5 +108,10 @@ test.describe('addFormToPage Error Message Test', () => {
   test('should show errors if a duplicate name is found in variable extension and launchContext extension', async ({ page }) => {
     await uploadFile(page, '#fileAnchor', 'test/data/R4/q-with-duplicate-variable-name-as-launchContext.json');
     await expect(page.locator('#loadMsg')).toContainText('Duplicate variable name "patient" found at root level.', TIMEOUT_30S);
+  });
+
+  test('should show errors for implicitRules', async ({ page }) => {
+    await uploadFile(page, '#fileAnchor', 'test/data/R4/q-with-implicitRules.json');
+    await expect(page.locator('#loadMsg')).toContainText('implicitRules', TIMEOUT_30S);
   });
 });

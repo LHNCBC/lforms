@@ -77,5 +77,6 @@
     "M-D-YY HH:mm",
     "M-D HH:mm",
     "DD.MM.YYYY HH:mm"
-  ]
+  ],
+  "clearSelection": "Auswahl leeren"
 }

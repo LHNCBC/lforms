@@ -52,7 +52,7 @@ you don't accidentally add something that we are also working on.
 - Run `npm run build` to build the project and generate a production version of
   the js files, which are much smaller than the development version. It
   generates an ES2017 version of the js files under dist/lforms. For details on
-  the files to load, see ["Usng the LHC-Forms Web Component"](#using).  
+  the files to load, see ["Using the LHC-Forms Web Component"](#using).  
   The `dist` directory is deleted and recreated during the process.
 
   The build also concatenates all the js files (except for zone.min.js and the
@@ -86,7 +86,7 @@ you don't accidentally add something that we are also working on.
 ## Running end-to-end tests
 
 1. Run `npm run test:e2e` to execute the end-to-end tests via 
-   [Cypress](https://www.cypress.io/). The e2e tests are configured to use Chrome.
+   [Playwright](https://playwright.dev/). The e2e tests are configured to use Chrome.
 
 ## <a id="using">Using the LHC-Forms Web Component</a>
 
