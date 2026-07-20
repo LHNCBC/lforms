@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.1.0] 2026-07-20
+### Added
+- Validation of values entered in autocomplete fields, with a red border and
+  tooltip error message shown when the value does not match an option in the list.
+
 ## [43.0.0] 2026-07-13
 ### Added
 - New onFormChange event, emitted when the item value is modified at any
@@ -2134,4 +2139,3 @@ object.
 ### Removed
 - WidgetUtil.preprocessRIData.  This was an internal API, so it should not be
   a breaking change for anyone but ourselves.
-
