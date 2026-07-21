@@ -139,6 +139,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       if (this.acInstance) {
         value.splice(-1, 1, ...this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
       } else {
+        // If "Other" is checked but no values are in the autocomplete, remove the "Other" value from the item.value array.
         value.splice(-1, 1);
         setTimeout(() => {
           this.setupAutocomplete();
