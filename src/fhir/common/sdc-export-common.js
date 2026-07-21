@@ -443,19 +443,38 @@ function addCommonSDCExportFns(ns) {
             itemControlType = "radio-button";
             itemControlDisplay = "Radio Button";
           }
+          var answerLayoutOrientation = item.displayControl.answerLayout.orientation;
+          if (answerLayoutOrientation === "vertical" || answerLayoutOrientation === "horizontal") {
+            answerChoiceOrientation = answerLayoutOrientation;
+          }
+          var hasRetainedColumnCount = targetItem.extension.some(function(extension) {
+            return extension.url === self.fhirExtColumnCount ||
+              extension.url === self.fhirExtColumnCountLegacy;
+          });
           // answer choice orientation
           if (item.displayControl.answerLayout.columns === "0") {
-            answerChoiceOrientation = "horizontal";
+            if (!answerChoiceOrientation) {
+              answerChoiceOrientation = "horizontal";
+            }
+            // A retained columnCount no longer describes a horizontal layout
+            // after its internal columns value has been changed to zero.
+            targetItem.extension = targetItem.extension.filter(function(extension) {
+              return extension.url !== self.fhirExtColumnCount &&
+                extension.url !== self.fhirExtColumnCountLegacy;
+            });
           }
           else if (item.displayControl.answerLayout.columns === "1") {
-            answerChoiceOrientation = "vertical";
+            if (!answerChoiceOrientation) {
+              answerChoiceOrientation = "vertical";
+            }
+            // Only export columnCount=1 when the retained extension shows that
+            // this was an explicit FHIR column count, not a legacy vertical layout.
+            if (hasRetainedColumnCount) {
+              answerColumnCount = 1;
+            }
           }
           else if (parseInt(item.displayControl.answerLayout.columns, 10) > 1) {
             answerColumnCount = parseInt(item.displayControl.answerLayout.columns, 10);
-            if (item.displayControl.answerLayout.orientation === "vertical" ||
-              item.displayControl.answerLayout.orientation === "horizontal") {
-              answerChoiceOrientation = item.displayControl.answerLayout.orientation;
-            }
           }
 
         }

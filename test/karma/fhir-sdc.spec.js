@@ -2042,6 +2042,91 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(columnCountExt.valuePositiveInt, 3);
           });
 
+          it('should preserve columnCount=1 and its explicit orientation during round-trip conversion', function () {
+            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
+            var columnCountUrl = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+            var orientationUrl = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+
+            ["horizontal", "vertical"].forEach(function(orientation) {
+              var fhirQ = {
+                "resourceType": "Questionnaire",
+                "status": "draft",
+                "item": [
+                  {
+                    "type": fhirVersion === "R5" ? "coding" : "choice",
+                    "linkId": "/q1c",
+                    "text": "One-column choice with explicit orientation",
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                        "valueCodeableConcept": {
+                          "coding": [
+                            {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": "radio-button",
+                              "display": "Radio Button"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "url": orientationUrl,
+                        "valueCode": orientation
+                      },
+                      {
+                        "url": columnCountUrl,
+                        "valuePositiveInt": 1
+                      }
+                    ]
+                  }
+                ]
+              };
+              fhirQ.item[0][optionsProperty] = [
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer X"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer Y"
+                  }
+                }
+              ];
+
+              var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+              assert.equal(lfData.items[0].displayControl.answerLayout.columns, "1");
+              assert.equal(lfData.items[0].displayControl.answerLayout.orientation, orientation);
+              assert.equal(lfData.items[0].extension.length, 1);
+              assert.equal(lfData.items[0].extension[0].url, columnCountUrl);
+
+              var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+              var columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === columnCountUrl;
+              });
+              var orientationExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === orientationUrl;
+              });
+              assert.equal(columnCountExts.length, 1);
+              assert.equal(columnCountExts[0].valuePositiveInt, 1);
+              assert.equal(orientationExts.length, 1);
+              assert.equal(orientationExts[0].valueCode, orientation);
+
+              if (orientation === "horizontal") {
+                // Changing back to the legacy horizontal layout should remove
+                // the retained one-column extension.
+                lfData.items[0].displayControl.answerLayout.columns = "0";
+                convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+                columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                  return extension.url === columnCountUrl;
+                });
+                assert.equal(columnCountExts.length, 0);
+              }
+            });
+          });
+
           it('should convert legacy column count extension to SDC column count extension', function () {
             var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
             var fhirQ = {

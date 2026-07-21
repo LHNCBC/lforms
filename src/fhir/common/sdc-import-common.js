@@ -911,9 +911,11 @@ function addCommonSDCImportFns(ns) {
               if (answerChoiceOrientationValue === "vertical" || answerChoiceOrientationValue === "horizontal") {
                 displayControl.answerLayout.orientation = answerChoiceOrientationValue;
               }
-              // The raw extension has now been consumed. Remove both supported
-              // URLs so export generates one normalized SDC extension.
-              if (lfItem.extension) {
+              // For values greater than one, answerLayout can distinguish the
+              // column count from the legacy orientation values. A value of one
+              // must remain available for export because columns="1" alone only
+              // identifies the legacy vertical layout.
+              if (columnCount > 1 && lfItem.extension) {
                 lfItem.extension = lfItem.extension.filter(function(extension) {
                   return extension.url !== self.fhirExtColumnCount &&
                     extension.url !== self.fhirExtColumnCountLegacy;
