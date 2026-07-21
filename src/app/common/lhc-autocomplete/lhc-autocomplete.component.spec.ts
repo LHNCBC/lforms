@@ -66,7 +66,7 @@ describe('LhcAutocompleteComponent', () => {
     expect(input.hasAttribute('invalid')).toBeFalse();
   });
 
-  it('should not restore an invalid value cleared by autocomplete on blur', () => {
+  it('should remove autocomplete validation when the field is empty', () => {
     const input = document.createElement('input');
     input.classList.add('invalid', 'no_match');
     input.setAttribute('invalid', 'true');
@@ -84,31 +84,36 @@ describe('LhcAutocompleteComponent', () => {
     expect(input.hasAttribute('invalid')).toBeFalse();
   });
 
-  it('should clear a non-empty invalid value when autocomplete blurs', () => {
+  it('should retain a non-empty invalid value and its validation error', () => {
     const input = document.createElement('input');
     input.value = 'bad value';
     input.classList.add('invalid', 'no_match');
     input.setAttribute('invalid', 'true');
     component.ac = { nativeElement: input };
-    component.acInstance = {
-      clearInvalidFieldVal: jasmine.createSpy('clearInvalidFieldVal').and.callFake(() => {
-        input.value = '';
-      }),
+    component.item = {};
+
+    component.updateAutocompleteValidationError();
+
+    expect(input.value).toBe('bad value');
+    expect(component.item._validationErrors).toEqual([component.autocompleteInvalidError]);
+    expect(input.classList.contains('invalid')).toBeTrue();
+    expect(input.classList.contains('no_match')).toBeTrue();
+    expect(input.getAttribute('invalid')).toBe('true');
+  });
+
+  it('should suppress autocomplete-lhc automatic clearing of invalid text', () => {
+    const clearInvalidFieldVal = jasmine.createSpy('clearInvalidFieldVal');
+    const acInstance: any = {
+      clearInvalidFieldVal,
       setFieldVal: jasmine.createSpy('setFieldVal'),
       destroy: jasmine.createSpy('destroy')
     };
-    component.item = {
-      _validationErrors: [component.autocompleteInvalidError]
-    };
+    component.acInstance = acInstance;
 
-    component.updateAutocompleteValidationError(true);
+    component.retainInvalidValueOnBlur();
+    acInstance.clearInvalidFieldVal();
 
-    expect(component.acInstance.clearInvalidFieldVal).toHaveBeenCalled();
-    expect(input.value).toBe('');
-    expect(component.item._validationErrors).toBeUndefined();
-    expect(input.classList.contains('invalid')).toBeFalse();
-    expect(input.classList.contains('no_match')).toBeFalse();
-    expect(input.hasAttribute('invalid')).toBeFalse();
+    expect(clearInvalidFieldVal).not.toHaveBeenCalled();
   });
 
   it('should normalize a case-insensitive prefetch match before updating the model', () => {

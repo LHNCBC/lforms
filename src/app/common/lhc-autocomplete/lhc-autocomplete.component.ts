@@ -279,11 +279,10 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
 
   /**
    * Input field blur event handler
-   * @param event the blur event from the autocomplete input.
    */
-  onInputBlur(event?: FocusEvent) {
+  onInputBlur() {
     this.onBlurFn.emit();
-    setTimeout(() => this.updateAutocompleteValidationError(!!event));
+    setTimeout(() => this.updateAutocompleteValidationError());
   }
 
 
@@ -299,9 +298,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    * Adds/removes the LForms validation message for autocomplete-lhc's own
    * invalid typed-value state. The normal LForms validation path does not see
    * this because an unmatched typed value is not written to item.value.
-   * @param clearInvalidValue whether to clear the invalid typed value from the field.
    */
-  updateAutocompleteValidationError(clearInvalidValue = false): void {
+  updateAutocompleteValidationError(): void {
     if (!this.item || !this.ac?.nativeElement) {
       return;
     }
@@ -316,12 +314,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       input.getAttribute('invalid') === 'true';
 
     if (isInvalid) {
-      if (clearInvalidValue) {
-        this.clearInvalidAutocompleteValue();
-      }
-      else {
-        this.addAutocompleteValidationError();
-      }
+      this.addAutocompleteValidationError();
     }
     else {
       this.removeAutocompleteValidationError();
@@ -373,27 +366,6 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     input.classList.remove('invalid');
     input.classList.remove('no_match');
     input.removeAttribute('invalid');
-  }
-
-
-  /**
-   * Clears an invalid autocomplete value after the field loses focus.
-   */
-  clearInvalidAutocompleteValue(): void {
-    if (typeof this.acInstance?.clearInvalidFieldVal === 'function') {
-      this.acInstance.clearInvalidFieldVal();
-    }
-    else if (this.acInstance) {
-      this.acInstance.setFieldVal('', false);
-      if (typeof this.acInstance.clearStoredSelection === 'function') {
-        this.acInstance.clearStoredSelection();
-      }
-    }
-    else if (this.ac?.nativeElement) {
-      this.ac.nativeElement.value = '';
-    }
-
-    this.removeAutocompleteValidationError();
   }
 
 
@@ -516,6 +488,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
         this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
       }
 
+      this.retainInvalidValueOnBlur();
+
       const defaultItem =  acOptions.defaultValue
       // set up initial values if there is value
       const savedValue = this.dataModel || defaultItem;  //boolean is not a valid data type for answerOption
@@ -524,6 +498,21 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       // add event handler
       Def.Autocompleter.Event.observeListSelections(this.options.elementId, this.onSelectionHandler.bind(this));
     }
+  }
+
+
+  /**
+   * Keeps autocomplete-lhc from automatically clearing invalid typed text.
+   * LForms retains the text so the user can correct it while the underlying
+   * model remains unchanged.
+   */
+  retainInvalidValueOnBlur(): void {
+    const acInstance = this.acInstance;
+    if (typeof acInstance?.clearInvalidFieldVal !== 'function') {
+      return;
+    }
+
+    acInstance.clearInvalidFieldVal = () => undefined;
   }
 
 

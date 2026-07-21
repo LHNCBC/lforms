@@ -319,7 +319,7 @@ test.describe('Validations', () => {
 
     // CNE/CWE with multiple selections does not work with validations. Need a fix in autocomplete directive.
 
-    test('should validate and clear invalid autocomplete entries for optionsOnly fields', async ({ page }) => {
+    test('should validate and retain invalid autocomplete entries for optionsOnly fields', async ({ page }) => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
       await addFormToPage(page, 'answerConstraint/dataType-ST-optionsOnly.json', 'formContainer');
@@ -355,10 +355,10 @@ test.describe('Validations', () => {
       await expect(invalidMessage).toBeVisible();
 
       await byId(page, 'valueString-group1-item2/1/1').click();
-      await expect(input).toHaveValue('');
-      await expect(input).not.toHaveClass(/invalid/);
-      await expect(item).not.toHaveClass(/lhc-invalid/);
-      await expect(invalidMessage).not.toBeAttached();
+      await expect(input).toHaveValue('invalid again');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
     });
 
     test('should validate multiple restrictions on INT', async ({ page }) => {

@@ -25,7 +25,8 @@ test.describe('Quantities with and without unit lists and unit-open', () => {
     await unitField.clear();
     await unitField.pressSequentially('meters');
     await nextInput.click();
-    await expect(unitField).toHaveValue('');
+    await expect(unitField).toHaveValue('meters');
+    await expect(unitField).toHaveClass(/invalid/);
     const fhirData = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
     expect(fhirData.item).toBeUndefined();
   });
@@ -71,7 +72,8 @@ test.describe('Quantities with and without unit lists and unit-open', () => {
     await unitField.clear();
     await unitField.pressSequentially('meters');
     await nextInput.click();
-    await expect(unitField).toHaveValue('');
+    await expect(unitField).toHaveValue('meters');
+    await expect(unitField).toHaveClass(/invalid/);
     const fhirData = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
     expect(fhirData.item).toBeUndefined();
   });
@@ -83,7 +85,8 @@ test.describe('Quantities with and without unit lists and unit-open', () => {
     await unitField.clear();
     await unitField.pressSequentially('meters');
     await nextInput.click();
-    await expect(unitField).toHaveValue('');
+    await expect(unitField).toHaveValue('meters');
+    await expect(unitField).toHaveClass(/invalid/);
     const fhirData = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
     expect(fhirData.item).toBeUndefined();
   });
