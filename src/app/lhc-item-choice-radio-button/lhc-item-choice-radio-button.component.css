@@ -31,7 +31,7 @@
 
 .lhc-radio-group.lhc-grid.lhc-vertical {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(12rem, var(--lhc-answer-column-width))), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--lhc-answer-option-width, 12rem), var(--lhc-answer-column-width))), 1fr));
 }
 
 .lhc-radio-group.lhc-grid.lhc-vertical .lhc-answer {

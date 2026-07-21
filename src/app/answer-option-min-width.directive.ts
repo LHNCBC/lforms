@@ -2,8 +2,8 @@ import { AfterViewInit, Directive, ElementRef, Input, NgZone, OnDestroy } from '
 
 /**
  * Sets a shared width for answer options based on their rendered content plus
- * 1.5rem of spacing. The width is capped at 12rem so long answers wrap instead
- * of forcing excessively wide columns.
+ * 1.5rem of spacing. Columns remain compact until the content needs its equal
+ * share of the available width.
  */
 @Directive({
   selector: '[lhcAnswerOptionMinWidth]',
@@ -40,7 +40,8 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
   ) {}
 
   /**
-   * Start observing rendered answers and schedule the initial measurement.
+   * Start observing rendered answers and available layout width, then schedule
+   * the initial measurement.
    */
   ngAfterViewInit(): void {
     this.ngZone.runOutsideAngular(() => {
@@ -48,6 +49,9 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
       this.observeMutations();
       this.resizeObserver = new ResizeObserver(() => this.scheduleMeasurement());
       this.resizeObserver.observe(this.host.nativeElement);
+      if (this.host.nativeElement.parentElement) {
+        this.resizeObserver.observe(this.host.nativeElement.parentElement);
+      }
 
       this.scheduleMeasurement();
       document.fonts?.ready.then(() => this.scheduleMeasurement());
@@ -147,7 +151,11 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
 
     const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
     const remSize = Number.isFinite(rootFontSize) ? rootFontSize : 16;
-    const optionWidth = Math.min(Math.ceil(widestAnswer + remSize * 1.5), remSize * 12);
+    const availableWidth = this.host.nativeElement.parentElement?.getBoundingClientRect().width ||
+      this.host.nativeElement.getBoundingClientRect().width;
+    const compactOptionWidth = Math.ceil(widestAnswer + remSize * 1.5);
+    const maximumOptionWidth = Math.max(remSize * 12, availableWidth / this.columnCount);
+    const optionWidth = Math.min(compactOptionWidth, maximumOptionWidth);
     this.host.nativeElement.style.setProperty('--lhc-answer-option-width', `${optionWidth}px`);
     this.host.nativeElement.style.setProperty('--lhc-answer-group-width', `${optionWidth * this.columnCount}px`);
   }

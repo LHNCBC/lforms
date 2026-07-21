@@ -48,6 +48,19 @@ const shortAnswerOptions: AnswerOption[] = [
   { code: 'e', display: 'E' }
 ];
 
+const moderatelyLongAnswerOptions: AnswerOption[] = [
+  { code: 'a', display: 'AAA' },
+  { code: 'b', display: 'BBB' },
+  { code: 'c', display: 'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC' },
+  { code: 'd', display: 'DDD' },
+  { code: 'e', display: 'EEE' },
+  { code: 'f', display: 'FFF' },
+  { code: 'g', display: 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG' },
+  { code: 'h', display: 'HHH' },
+  { code: 'i', display: 'III' },
+  { code: 'j', display: 'JJJ' }
+];
+
 function buildQuestionnaire(
   controlCode: 'radio-button' | 'check-box',
   orientation: 'horizontal' | 'vertical' = 'horizontal',
@@ -250,6 +263,36 @@ async function expectShortColumnsToRemainCompact(page: Page, containerSelector: 
   expect(Math.abs(boxes[4]!.x + boxes[4]!.width - (containerBox!.x + containerBox!.width))).toBeLessThan(2);
 }
 
+async function expectLongColumnsToUseAvailableWidth(page: Page, containerSelector: string) {
+  const container = page.locator(containerSelector);
+  const availableArea = container.locator('xpath=ancestor::div[contains(@class, "lhc-de-input-unit-content")][1]');
+  const containerBox = await container.boundingBox();
+  const availableAreaBox = await availableArea.boundingBox();
+  const optionWidth = await container.evaluate(element =>
+    parseFloat(getComputedStyle(element).getPropertyValue('--lhc-answer-option-width'))
+  );
+
+  expect(containerBox).toBeTruthy();
+  expect(availableAreaBox).toBeTruthy();
+  expect(Math.abs(containerBox!.width - availableAreaBox!.width)).toBeLessThan(2);
+  expect(Math.abs(optionWidth - availableAreaBox!.width / 2)).toBeLessThan(2);
+}
+
+async function expectLongColumnsToRemainCompact(page: Page, containerSelector: string) {
+  const container = page.locator(containerSelector);
+  const availableArea = container.locator('xpath=ancestor::div[contains(@class, "lhc-de-input-unit-content")][1]');
+  const containerBox = await container.boundingBox();
+  const availableAreaBox = await availableArea.boundingBox();
+  const optionWidth = await container.evaluate(element =>
+    parseFloat(getComputedStyle(element).getPropertyValue('--lhc-answer-option-width'))
+  );
+
+  expect(containerBox).toBeTruthy();
+  expect(availableAreaBox).toBeTruthy();
+  expect(containerBox!.width).toBeLessThan(availableAreaBox!.width);
+  expect(Math.abs(containerBox!.width - optionWidth * 2)).toBeLessThan(2);
+}
+
 test.describe('Questionnaire columnCount layout', () => {
   test('renders radio answer options as equal-width column hints', async ({ page }) => {
     await addInlineQuestionnaire(page, 'radio-button');
@@ -264,6 +307,38 @@ test.describe('Questionnaire columnCount layout', () => {
   test('keeps short answer columns compact when fewer answers exist than requested columns', async ({ page }) => {
     await addInlineQuestionnaire(page, 'radio-button', 'horizontal', 10, shortAnswerOptions);
     await expectShortColumnsToRemainCompact(page, 'nz-radio-group.lhc-grid');
+  });
+
+  test('keeps two horizontal columns compact when long answers fit in less than the available width', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'radio-button', 'horizontal', 2, moderatelyLongAnswerOptions);
+    await expectLongColumnsToRemainCompact(page, 'nz-radio-group.lhc-grid');
+  });
+
+  test('keeps two vertical columns compact when long answers fit in less than the available width', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'check-box', 'vertical', 2, moderatelyLongAnswerOptions);
+    await expectLongColumnsToRemainCompact(page, '.lhc-checkbox-group.lhc-grid');
+  });
+
+  test('lets two horizontal columns use the available width when answers need it', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'radio-button', 'horizontal', 2);
+    await expectLongColumnsToUseAvailableWidth(page, 'nz-radio-group.lhc-grid');
+  });
+
+  test('lets two vertical columns use the available width when answers need it', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'check-box', 'vertical', 2);
+    await expectLongColumnsToUseAvailableWidth(page, '.lhc-checkbox-group.lhc-grid');
+  });
+
+  test('updates long vertical columns when the viewport is resized', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'check-box', 'vertical', 2);
+    const containerSelector = '.lhc-checkbox-group.lhc-grid';
+    const initialWidth = await page.locator(containerSelector).boundingBox().then(box => box!.width);
+
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await expect.poll(async () =>
+      page.locator(containerSelector).boundingBox().then(box => box!.width)
+    ).toBeLessThan(initialWidth);
+    await expectLongColumnsToUseAvailableWidth(page, containerSelector);
   });
 
   test('renders vertical radio answer options down each hinted column', async ({ page }) => {

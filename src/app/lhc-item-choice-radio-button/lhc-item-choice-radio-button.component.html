@@ -9,7 +9,7 @@
     role="radiogroup"
     nz-row
     class="lhc-radio-group"
-    [lhcAnswerOptionMinWidth]="!commonUtils.getDisplayControlIsVertical(item.displayControl) ? commonUtils.getDisplayControlEffectiveColumnCount(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0)) : null"
+    [lhcAnswerOptionMinWidth]="commonUtils.getDisplayControlEffectiveColumnCount(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
     [style.--lhc-answer-column-width]="commonUtils.getDisplayControlColumnWidth(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
     [ngClass]="{
       'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl),

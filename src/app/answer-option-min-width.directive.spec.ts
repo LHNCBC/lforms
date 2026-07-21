@@ -4,13 +4,15 @@ import { AnswerOptionMinWidthDirective } from './answer-option-min-width.directi
 
 @Component({
   template: `
-    <div [lhcAnswerOptionMinWidth]="enabled">
-      <label class="lhc-answer">
-        <input type="radio" name="answer" checked>
-        A very long answer option whose intrinsic width exceeds the maximum allowed width
-      </label>
-      <label class="lhc-answer"><input type="radio" name="answer">Yes</label>
-    </div>
+    <section style="width: 720px">
+      <div [lhcAnswerOptionMinWidth]="enabled">
+        <label class="lhc-answer">
+          <input type="radio" name="answer" checked>
+          A very long answer option whose intrinsic width exceeds the maximum allowed width
+        </label>
+        <label class="lhc-answer"><input type="radio" name="answer">Yes</label>
+      </div>
+    </section>
   `,
   standalone: false
 })
@@ -32,12 +34,14 @@ describe('AnswerOptionMinWidthDirective', () => {
     fixture.detectChanges();
   });
 
-  it('caps the shared answer minimum width at 12rem', async () => {
+  it('lets long answers use an equal share of the available width', async () => {
     await nextAnimationFrame();
 
     const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    expect(host.style.getPropertyValue('--lhc-answer-option-width')).toBe(`${rootFontSize * 12}px`);
-    expect(host.style.getPropertyValue('--lhc-answer-group-width')).toBe(`${rootFontSize * 12 * 3}px`);
+    const availableWidth = host.parentElement.getBoundingClientRect().width;
+    const expectedWidth = Math.max(rootFontSize * 12, availableWidth / 3);
+    expect(host.style.getPropertyValue('--lhc-answer-option-width')).toBe(`${expectedWidth}px`);
+    expect(host.style.getPropertyValue('--lhc-answer-group-width')).toBe(`${expectedWidth * 3}px`);
   });
 
   it('does not change the selected radio while measuring it', async () => {
@@ -49,7 +53,7 @@ describe('AnswerOptionMinWidthDirective', () => {
     expect(selectedRadio.checked).toBeTrue();
   });
 
-  it('uses the widest rendered option when it is narrower than 12rem', async () => {
+  it('uses the widest rendered option when the answers are short', async () => {
     host.querySelectorAll('.lhc-answer').forEach(answer => answer.textContent = 'Yes');
     await nextAnimationFrame();
     await nextAnimationFrame();
@@ -59,6 +63,38 @@ describe('AnswerOptionMinWidthDirective', () => {
     expect(measuredWidth).toBeGreaterThan(0);
     expect(measuredWidth).toBeLessThan(rootFontSize * 12);
     expect(parseFloat(host.style.getPropertyValue('--lhc-answer-group-width'))).toBe(measuredWidth * 3);
+  });
+
+  it('keeps columns compact when a long answer is narrower than its equal share', async () => {
+    fixture.componentInstance.enabled = 2;
+    host.querySelectorAll('.lhc-answer').forEach(answer =>
+      answer.textContent = 'WWWWWWWWWWWWWWWWWWWWWW'
+    );
+    fixture.detectChanges();
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+
+    const availableWidth = host.parentElement.getBoundingClientRect().width;
+    const optionWidth = parseFloat(host.style.getPropertyValue('--lhc-answer-option-width'));
+    expect(optionWidth).toBeLessThan(availableWidth / 2);
+    expect(parseFloat(host.style.getPropertyValue('--lhc-answer-group-width'))).toBe(optionWidth * 2);
+  });
+
+  it('remeasures when the available parent width changes', async () => {
+    fixture.componentInstance.enabled = 2;
+    host.querySelectorAll('.lhc-answer').forEach(answer =>
+      answer.textContent = 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW'
+    );
+    fixture.detectChanges();
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+
+    host.parentElement.style.width = '900px';
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+
+    expect(host.style.getPropertyValue('--lhc-answer-option-width')).toBe('450px');
+    expect(host.style.getPropertyValue('--lhc-answer-group-width')).toBe('900px');
   });
 
   it('removes the measured width when disabled', async () => {
