@@ -1,7 +1,6 @@
-import {Component, Input, OnInit, OnChanges, ViewChild, ElementRef} from '@angular/core';
-import { CommonUtilsService } from '../../lib/common-utils.service';
-import { LhcDataService} from '../../lib/lhc-data.service';
-import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
+import {Component, ElementRef, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {CommonUtilsService} from '../../lib/common-utils.service';
+import {LhcDataService} from '../../lib/lhc-data.service';
 import language from '../../../language-config.json';
 import Def from 'autocomplete-lhc';
 
@@ -102,6 +101,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       this.acInstance.setFieldVal('', false);
       this.acInstance.destroy();
       this.acInstance = null;
+      this.offListValues = [];
     }
   }
 
@@ -115,7 +115,16 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       };
       this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, [], acOptions);
       this.offListValues.forEach(v => {
+        this.acInstance.storeSelectedItem(v, null); // no code, only text
         this.acInstance.addToSelectedArea(v);
+      });
+      Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(this.item, '_otherValue'), (e) => {
+        this.item.value = this.prevCheckBoxValue
+          .filter(v => !v._notOnList)
+          .concat(this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
+        this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+        this.prevCheckBoxValue = this.item.value;
+        this.item._visitedBefore = true;
       });
     }
   }
