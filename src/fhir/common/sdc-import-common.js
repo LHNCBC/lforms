@@ -94,8 +94,6 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtTerminologyServer,
     self.fhirExtUrlDataControl,
     self.fhirExtChoiceOrientation,
-    self.fhirExtColumnCount,
-    self.fhirExtColumnCountLegacy,
     self.fhirExtUrlMaxDecimalPlaces
   ]);
 
@@ -912,6 +910,17 @@ function addCommonSDCImportFns(ns) {
               displayControl.answerLayout.columns = columnCount.toString();
               if (answerChoiceOrientationValue === "vertical" || answerChoiceOrientationValue === "horizontal") {
                 displayControl.answerLayout.orientation = answerChoiceOrientationValue;
+              }
+              // The raw extension has now been consumed. Remove both supported
+              // URLs so export generates one normalized SDC extension.
+              if (lfItem.extension) {
+                lfItem.extension = lfItem.extension.filter(function(extension) {
+                  return extension.url !== self.fhirExtColumnCount &&
+                    extension.url !== self.fhirExtColumnCountLegacy;
+                });
+                if (lfItem.extension.length === 0) {
+                  delete lfItem.extension;
+                }
               }
             }
           }

@@ -502,9 +502,15 @@ function addCommonSDCExportFns(ns) {
             });
         }
         if (answerColumnCount) {
+          // Replace any unconsumed SDC or legacy extension retained during
+          // import, rather than exporting duplicate columnCount extensions.
+          targetItem.extension = (targetItem.extension || []).filter(function(extension) {
+            return extension.url !== self.fhirExtColumnCount &&
+              extension.url !== self.fhirExtColumnCountLegacy;
+          });
           targetItem.extension.push(
             {
-              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+              "url": self.fhirExtColumnCount,
               "valuePositiveInt": answerColumnCount
             });
         }

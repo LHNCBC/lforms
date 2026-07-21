@@ -2112,6 +2112,105 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(legacyColumnCountExt, undefined);
           });
 
+          it('should retain an unused column count extension during Questionnaire round-trip conversion', function () {
+            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
+            var columnCountUrl = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+            var fhirQ = {
+              "resourceType": "Questionnaire",
+              "status": "draft",
+              "item": [
+                {
+                  "type": fhirVersion === "R5" ? "coding" : "choice",
+                  "linkId": "/q1c",
+                  "text": "Choice without an explicit item control",
+                  "extension": [
+                    {
+                      "url": columnCountUrl,
+                      "valuePositiveInt": 2
+                    }
+                  ]
+                }
+              ]
+            };
+            fhirQ.item[0][optionsProperty] = [
+              {
+                "valueCoding": {
+                  "code": "c1",
+                  "display": "Answer X"
+                }
+              },
+              {
+                "valueCoding": {
+                  "code": "c2",
+                  "display": "Answer Y"
+                }
+              }
+            ];
+
+            var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            assert.deepEqual(lfData.items[0].extension, fhirQ.item[0].extension);
+
+            var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+            var columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+              return extension.url === columnCountUrl;
+            });
+            assert.deepEqual(columnCountExts, fhirQ.item[0].extension);
+
+            // If the retained item is later changed to a supported control,
+            // replace the raw extension with one generated from answerLayout.
+            lfData.items[0].displayControl = {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "orientation": "horizontal",
+                "columns": "3"
+              }
+            };
+            convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+            columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+              return extension.url === columnCountUrl ||
+                extension.url === "http://hl7.org/fhir/StructureDefinition/questionnaire-columnCount";
+            });
+            assert.equal(columnCountExts.length, 1);
+            assert.equal(columnCountExts[0].url, columnCountUrl);
+            assert.equal(columnCountExts[0].valuePositiveInt, 3);
+          });
+
+          it('should retain column count when a different item control is used', function () {
+            var columnCountExtension = {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+              "valuePositiveInt": 2
+            };
+            var qItem = {
+              "type": "choice",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ]
+                  }
+                },
+                columnCountExtension
+              ]
+            };
+            var targetItem = {};
+
+            fhir.SDC._processExtensions(targetItem, qItem);
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+
+            assert.deepEqual(targetItem.extension, [columnCountExtension]);
+            assert.deepEqual(targetItem.displayControl, {
+              "answerLayout": {
+                "type": "COMBO_BOX"
+              }
+            });
+          });
+
 
           it('should convert FHTData to lforms', function (done) {
             $.get('/base/test/data/lforms/FHTData.json', function (FHTData) {
