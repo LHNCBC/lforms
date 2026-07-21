@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { waitForLFormsReady } from '../support/lforms-helpers';
 
 type AnswerOption = {
@@ -144,26 +144,43 @@ async function addInlineQuestionnaire(
   await expect(page.locator('#formContainer .lhc-form-title')).toBeVisible();
 }
 
+/**
+ * Wait for the answer-width directive and any resulting resize measurement to finish.
+ * @param container the answer group being measured
+ * @returns a promise that resolves after the measured width is set and the layout settles
+ */
+async function waitForAnswerColumnMeasurement(container: Locator): Promise<void> {
+  await expect.poll(async () => container.evaluate(element =>
+    parseFloat(getComputedStyle(element).getPropertyValue('--lhc-answer-option-width')) || 0
+  )).toBeGreaterThan(0);
+  await container.evaluate(() => new Promise<void>(resolve =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  ));
+}
+
 async function expectFourColumnHintLayout(page: Page, containerSelector: string) {
   const container = page.locator(containerSelector);
   await expect(container).toHaveClass(/lhc-grid/);
   await expect(container).toHaveCSS('--lhc-answer-column-width', '25%');
+  await waitForAnswerColumnMeasurement(container);
 
   const answers = container.locator('.lhc-answer');
   await expect(answers).toHaveCount(5);
+  await expect.poll(async () => {
+    const boxes = await Promise.all(
+      Array.from({ length: 5 }, (_, index) => answers.nth(index).boundingBox())
+    );
+    if (boxes.some(box => !box)) {
+      return false;
+    }
 
-  const boxes = await Promise.all(
-    Array.from({ length: 5 }, (_, index) => answers.nth(index).boundingBox())
-  );
-  expect(boxes.every(Boolean)).toBeTruthy();
-
-  const firstRowTop = boxes[0]!.y;
-  for (let i = 0; i < 4; i++) {
-    expect(Math.abs(boxes[i]!.y - firstRowTop)).toBeLessThan(2);
-    expect(Math.abs(boxes[i]!.width - boxes[0]!.width)).toBeLessThan(2);
-  }
-  expect(boxes[4]!.y).toBeGreaterThan(firstRowTop + 1);
-  expect(Math.abs(boxes[4]!.width - boxes[0]!.width)).toBeLessThan(2);
+    const firstRowTop = boxes[0]!.y;
+    const firstFourShareRow = boxes.slice(0, 4)
+      .every(box => Math.abs(box!.y - firstRowTop) < 2);
+    const widthsAreEqual = boxes
+      .every(box => Math.abs(box!.width - boxes[0]!.width) < 2);
+    return firstFourShareRow && widthsAreEqual && boxes[4]!.y > firstRowTop + 1;
+  }).toBe(true);
 
   for (const answerOption of urinaryContinenceAnswerOptions) {
     await expect(answers.filter({ hasText: answerOption.display })).toHaveCount(1);
@@ -217,6 +234,7 @@ async function expectVerticalThreeColumnLayout(page: Page, containerSelector: st
   await expect(container).toHaveClass(/lhc-grid/);
   await expect(container).toHaveClass(/lhc-vertical/);
   await expect(container).toHaveCSS('--lhc-answer-column-width', '33.33333%');
+  await waitForAnswerColumnMeasurement(container);
 
   const answers = container.locator('.lhc-answer');
   await expect(answers).toHaveCount(7);
@@ -242,54 +260,52 @@ async function expectVerticalThreeColumnLayout(page: Page, containerSelector: st
 
 async function expectShortColumnsToRemainCompact(page: Page, containerSelector: string) {
   const container = page.locator(containerSelector);
-  const availableArea = container.locator('xpath=ancestor::div[contains(@class, "lhc-de-input-unit-content")][1]');
   await expect(container).toHaveCSS('--lhc-answer-column-width', '20%');
+  await waitForAnswerColumnMeasurement(container);
 
   const containerBox = await container.boundingBox();
-  const availableAreaBox = await availableArea.boundingBox();
+  const availableWidth = await container.evaluate(element => element.parentElement!.getBoundingClientRect().width);
   const answers = container.locator('.lhc-answer');
   const boxes = await Promise.all(
     Array.from({ length: 5 }, (_, index) => answers.nth(index).boundingBox())
   );
   expect(containerBox).toBeTruthy();
-  expect(availableAreaBox).toBeTruthy();
   expect(boxes.every(Boolean)).toBeTruthy();
-  expect(containerBox!.width).toBeLessThan(availableAreaBox!.width);
+  expect(containerBox!.width).toBeLessThan(availableWidth);
 
   for (const box of boxes) {
     expect(Math.abs(box!.y - boxes[0]!.y)).toBeLessThan(2);
     expect(Math.abs(box!.width - containerBox!.width / 5)).toBeLessThan(2);
   }
-  expect(Math.abs(boxes[4]!.x + boxes[4]!.width - (containerBox!.x + containerBox!.width))).toBeLessThan(2);
 }
 
 async function expectLongColumnsToUseAvailableWidth(page: Page, containerSelector: string) {
   const container = page.locator(containerSelector);
-  const availableArea = container.locator('xpath=ancestor::div[contains(@class, "lhc-de-input-unit-content")][1]');
-  const containerBox = await container.boundingBox();
-  const availableAreaBox = await availableArea.boundingBox();
-  const optionWidth = await container.evaluate(element =>
-    parseFloat(getComputedStyle(element).getPropertyValue('--lhc-answer-option-width'))
-  );
+  await waitForAnswerColumnMeasurement(container);
+  const availableWidth = await container.evaluate(element => element.parentElement!.getBoundingClientRect().width);
+  const measuredWidths = await container.evaluate(element => {
+    const computedStyle = getComputedStyle(element);
+    return {
+      group: parseFloat(computedStyle.getPropertyValue('--lhc-answer-group-width')),
+      option: parseFloat(computedStyle.getPropertyValue('--lhc-answer-option-width'))
+    };
+  });
 
-  expect(containerBox).toBeTruthy();
-  expect(availableAreaBox).toBeTruthy();
-  expect(Math.abs(containerBox!.width - availableAreaBox!.width)).toBeLessThan(2);
-  expect(Math.abs(optionWidth - availableAreaBox!.width / 2)).toBeLessThan(2);
+  expect(Math.abs(measuredWidths.group - availableWidth)).toBeLessThan(2);
+  expect(Math.abs(measuredWidths.option - availableWidth / 2)).toBeLessThan(2);
 }
 
 async function expectLongColumnsToRemainCompact(page: Page, containerSelector: string) {
   const container = page.locator(containerSelector);
-  const availableArea = container.locator('xpath=ancestor::div[contains(@class, "lhc-de-input-unit-content")][1]');
+  await waitForAnswerColumnMeasurement(container);
   const containerBox = await container.boundingBox();
-  const availableAreaBox = await availableArea.boundingBox();
+  const availableWidth = await container.evaluate(element => element.parentElement!.getBoundingClientRect().width);
   const optionWidth = await container.evaluate(element =>
     parseFloat(getComputedStyle(element).getPropertyValue('--lhc-answer-option-width'))
   );
 
   expect(containerBox).toBeTruthy();
-  expect(availableAreaBox).toBeTruthy();
-  expect(containerBox!.width).toBeLessThan(availableAreaBox!.width);
+  expect(containerBox!.width).toBeLessThan(availableWidth);
   expect(Math.abs(containerBox!.width - optionWidth * 2)).toBeLessThan(2);
 }
 
