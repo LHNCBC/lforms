@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-item-messages',
@@ -11,6 +12,7 @@ export class LhcItemMessagesComponent implements OnInit {
 
   @Input() item;
 //  JSON;  // for debugging
+  language = language;
 
   constructor(public lhcDataService: LhcDataService) {
 //    this.JSON = JSON; // for debugging
