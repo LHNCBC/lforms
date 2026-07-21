@@ -279,17 +279,16 @@ async function expectShortColumnsToRemainCompact(page: Page, containerSelector: 
 async function expectLongColumnsToUseAvailableWidth(page: Page, containerSelector: string) {
   const container = page.locator(containerSelector);
   await waitForAnswerColumnMeasurement(container);
-  const availableWidth = await container.evaluate(element => element.parentElement!.getBoundingClientRect().width);
-  const measuredWidths = await container.evaluate(element => {
+  await expect.poll(async () => container.evaluate(element => {
     const computedStyle = getComputedStyle(element);
-    return {
-      group: parseFloat(computedStyle.getPropertyValue('--lhc-answer-group-width')),
-      option: parseFloat(computedStyle.getPropertyValue('--lhc-answer-option-width'))
-    };
-  });
-
-  expect(Math.abs(measuredWidths.group - availableWidth)).toBeLessThan(2);
-  expect(Math.abs(measuredWidths.option - availableWidth / 2)).toBeLessThan(2);
+    const availableWidth = element.parentElement!.getBoundingClientRect().width;
+    const groupWidth = parseFloat(computedStyle.getPropertyValue('--lhc-answer-group-width'));
+    const optionWidth = parseFloat(computedStyle.getPropertyValue('--lhc-answer-option-width'));
+    return Math.max(
+      Math.abs(groupWidth - availableWidth),
+      Math.abs(optionWidth - availableWidth / 2)
+    );
+  })).toBeLessThan(2);
 }
 
 async function expectLongColumnsToRemainCompact(page: Page, containerSelector: string) {
