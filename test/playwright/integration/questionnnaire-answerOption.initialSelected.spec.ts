@@ -99,23 +99,19 @@ test.describe('checkbox with multiple off-list initial values', () => {
     await expect(byId(page, '1/1||c2')).toBeChecked();
     await expect(byId(page, '1/1||c3')).not.toBeChecked();
     await expect(byId(page, '1/1|_other')).toBeChecked();
-    await expect(page.locator('.lhc-tag')).toHaveCount(1);
-    await expect(page.locator('.lhc-tag').first()).toContainText('user typed value 1');
-    await expect(byId(page, '1/1|_otherValue')).toHaveValue('user typed value 2');
-    await expect(page.getByLabel('Add one other value')).toBeVisible();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 1');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 2');
     // Add another off-list value.
-    await page.getByLabel('Add one other value').click();
-    await expect(page.locator('.lhc-tag')).toHaveCount(2);
-    await expect(page.locator('.lhc-tag').nth(1)).toContainText('user typed value 2');
-    await expect(byId(page, '1/1|_otherValue')).toHaveValue('');
-    // The Add one other value button should not be visible when the other value input is empty.
-    await expect(page.getByLabel('Add one other value')).not.toBeAttached();
     await byId(page, '1/1|_otherValue').fill('user typed value 3');
-    await expect(page.getByLabel('Add one other value')).toBeVisible();
+    await byId(page, '1/1|_otherValue').blur();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(3);
+    await expect(page.locator('.autocomp_selected li').nth(2)).toContainText('user typed value 3');
     // Remove the first off-list value.
-    await page.locator('.lhc-tag').first().locator('.lhc-remove-icon').click();
-    await expect(page.locator('.lhc-tag')).toHaveCount(1);
-    await expect(page.locator('.lhc-tag').first()).toContainText('user typed value 2');
+    await page.locator('.autocomp_selected li').first().locator('button').click();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 2');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 3');
     // Export to QR.
     const resource = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
     expect(resource.resourceType).toBe('QuestionnaireResponse');
@@ -133,23 +129,19 @@ test.describe('checkbox with multiple off-list initial values', () => {
     await expect(byId(page, '1/1||c2')).toBeChecked();
     await expect(byId(page, '1/1||c3')).not.toBeChecked();
     await expect(byId(page, '1/1|_other')).toBeChecked();
-    await expect(page.locator('.lhc-tag')).toHaveCount(1);
-    await expect(page.locator('.lhc-tag').first()).toContainText('user typed value 1');
-    await expect(byId(page, '1/1|_otherValue')).toHaveValue('user typed value 2');
-    await expect(page.getByLabel('Add one other value')).toBeVisible();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 1');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 2');
     // Add another off-list value.
-    await page.getByLabel('Add one other value').click();
-    await expect(page.locator('.lhc-tag')).toHaveCount(2);
-    await expect(page.locator('.lhc-tag').nth(1)).toContainText('user typed value 2');
-    await expect(byId(page, '1/1|_otherValue')).toHaveValue('');
-    // The Add one other value button should not be visible when the other value input is empty.
-    await expect(page.getByLabel('Add one other value')).not.toBeAttached();
     await byId(page, '1/1|_otherValue').fill('user typed value 3');
-    await expect(page.getByLabel('Add one other value')).toBeVisible();
+    await byId(page, '1/1|_otherValue').blur();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(3);
+    await expect(page.locator('.autocomp_selected li').nth(2)).toContainText('user typed value 3');
     // Remove the first off-list value.
-    await page.locator('.lhc-tag').first().locator('.lhc-remove-icon').click();
-    await expect(page.locator('.lhc-tag')).toHaveCount(1);
-    await expect(page.locator('.lhc-tag').first()).toContainText('user typed value 2');
+    await page.locator('.autocomp_selected li').first().locator('button').click();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 2');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 3');
     // Export to QR.
     const resource = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R5'));
     expect(resource.resourceType).toBe('QuestionnaireResponse');
