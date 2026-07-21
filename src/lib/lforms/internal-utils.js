@@ -424,8 +424,7 @@ export const InternalUtil = {
     let warnings = msgsFromSource.warnings;
     if (!warnings)
       warnings = msgsFromSource.warnings = {};
-    warnings[messageID] = ErrorMessages.getMsg(messageID);
-    console.log(JSON.stringify(item.messages));
+    ErrorMessages.addMsg(warnings, messageID);
   },
 
 
@@ -572,7 +571,4 @@ export const InternalUtil = {
 
 
 InternalUtil.errorMessages = ErrorMessages;
-// Set the default language for error messages.  Apps can call this with a
-// different language code, if error-messages.js has messages in that language.
-InternalUtil.errorMessages.setLanguage('en');
 InternalUtil.md = md;

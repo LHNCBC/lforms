@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { WindowService} from '../../lib/window.service';
+import language from '../../../language-config.json';
 
 @Component({
     selector: 'lhc-item',
@@ -13,6 +14,7 @@ export class LhcItemComponent {
   @Input() item;
 
   viewMode = "";
+  language = language;
 
   constructor(
     private winService: WindowService,

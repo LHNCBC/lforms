@@ -7,6 +7,12 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Validation of values entered in autocomplete fields, with a red border and
   tooltip error message shown when the value does not match an option in the list.
 
+## [43.0.1] 2026-07-16
+### Fixed
+- Missing error messages in language configuration files.
+### Added
+- Chinese language file.
+
 ## [43.0.0] 2026-07-13
 ### Added
 - New onFormChange event, emitted when the item value is modified at any
