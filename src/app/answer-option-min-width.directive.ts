@@ -2,8 +2,8 @@ import { AfterViewInit, Directive, ElementRef, Input, NgZone, OnDestroy } from '
 
 /**
  * Sets a shared width for answer options based on their rendered content plus
- * 1.5rem of spacing. Columns remain compact until the content needs its equal
- * share of the available width.
+ * 1.5rem of spacing. For vertical layouts, it also reduces the column count
+ * when the requested columns do not fit and updates answer positions.
  */
 @Directive({
   selector: '[lhcAnswerOptionMinWidth]',
@@ -12,6 +12,7 @@ import { AfterViewInit, Directive, ElementRef, Input, NgZone, OnDestroy } from '
 export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
   private enabled = false;
   private columnCount = 0;
+  private vertical = false;
   private animationFrame: number | null = null;
   private mutationObserver: MutationObserver | null = null;
   private resizeObserver: ResizeObserver | null = null;
@@ -29,8 +30,19 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
       this.scheduleMeasurement();
     }
     else {
-      this.host.nativeElement.style.removeProperty('--lhc-answer-option-width');
-      this.host.nativeElement.style.removeProperty('--lhc-answer-group-width');
+      this.clearLayoutStyles();
+    }
+  }
+
+  /**
+   * Set whether answers should fill each column from top to bottom.
+   * @param vertical true for vertical ordering, otherwise false
+   */
+  @Input()
+  set lhcAnswerOptionVertical(vertical: boolean) {
+    this.vertical = vertical;
+    if (this.enabled) {
+      this.scheduleMeasurement();
     }
   }
 
@@ -68,6 +80,7 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
     if (this.animationFrame !== null) {
       cancelAnimationFrame(this.animationFrame);
     }
+    this.clearLayoutStyles();
   }
 
   /**
@@ -98,8 +111,7 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
       this.host.nativeElement.querySelectorAll<HTMLElement>(':scope > .lhc-answer')
     );
     if (!answerOptions.length) {
-      this.host.nativeElement.style.removeProperty('--lhc-answer-option-width');
-      this.host.nativeElement.style.removeProperty('--lhc-answer-group-width');
+      this.clearLayoutStyles();
       return;
     }
 
@@ -144,8 +156,7 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
     this.observeMutations();
 
     if (widestAnswer <= 0) {
-      this.host.nativeElement.style.removeProperty('--lhc-answer-option-width');
-      this.host.nativeElement.style.removeProperty('--lhc-answer-group-width');
+      this.clearLayoutStyles();
       return;
     }
 
@@ -154,10 +165,61 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
     const availableWidth = this.host.nativeElement.parentElement?.getBoundingClientRect().width ||
       this.host.nativeElement.getBoundingClientRect().width;
     const compactOptionWidth = Math.ceil(widestAnswer + remSize * 1.5);
-    const maximumOptionWidth = Math.max(remSize * 12, availableWidth / this.columnCount);
+    const readableOptionWidth = Math.min(compactOptionWidth, remSize * 12);
+    const fittingColumnCount = Math.max(1, Math.floor(availableWidth / readableOptionWidth));
+    const effectiveColumnCount = this.vertical ?
+      Math.min(this.columnCount, fittingColumnCount) : this.columnCount;
+    const maximumOptionWidth = Math.max(remSize * 12, availableWidth / effectiveColumnCount);
     const optionWidth = Math.min(compactOptionWidth, maximumOptionWidth);
     this.host.nativeElement.style.setProperty('--lhc-answer-option-width', `${optionWidth}px`);
-    this.host.nativeElement.style.setProperty('--lhc-answer-group-width', `${optionWidth * this.columnCount}px`);
+    this.host.nativeElement.style.setProperty('--lhc-answer-group-width', `${optionWidth * effectiveColumnCount}px`);
+
+    if (this.vertical) {
+      this.host.nativeElement.style.setProperty(
+        '--lhc-answer-effective-column-count', effectiveColumnCount.toString()
+      );
+      this.setVerticalAnswerPositions(answerOptions, effectiveColumnCount);
+    }
+    else {
+      this.host.nativeElement.style.removeProperty('--lhc-answer-effective-column-count');
+      this.clearAnswerPositions(answerOptions);
+    }
+  }
+
+  /**
+   * Position answers down each column using the responsive column count.
+   * @param answerOptions the rendered answer elements
+   * @param columnCount the number of columns that currently fit
+   */
+  private setVerticalAnswerPositions(answerOptions: HTMLElement[], columnCount: number): void {
+    const rowCount = Math.ceil(answerOptions.length / columnCount);
+    answerOptions.forEach((answerOption, index) => {
+      answerOption.style.gridRow = `${(index % rowCount) + 1}`;
+      answerOption.style.gridColumn = `${Math.floor(index / rowCount) + 1}`;
+    });
+  }
+
+  /**
+   * Remove grid positions assigned by the directive.
+   * @param answerOptions the rendered answer elements
+   */
+  private clearAnswerPositions(answerOptions: HTMLElement[]): void {
+    answerOptions.forEach(answerOption => {
+      answerOption.style.removeProperty('grid-row');
+      answerOption.style.removeProperty('grid-column');
+    });
+  }
+
+  /**
+   * Remove all layout styles assigned by the directive.
+   */
+  private clearLayoutStyles(): void {
+    this.host.nativeElement.style.removeProperty('--lhc-answer-option-width');
+    this.host.nativeElement.style.removeProperty('--lhc-answer-group-width');
+    this.host.nativeElement.style.removeProperty('--lhc-answer-effective-column-count');
+    this.clearAnswerPositions(Array.from(
+      this.host.nativeElement.querySelectorAll<HTMLElement>(':scope > .lhc-answer')
+    ));
   }
 
   /**

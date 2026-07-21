@@ -329,7 +329,6 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     const containerDiv = element.querySelector('nz-radio-group') as HTMLElement;
     expect(containerDiv.classList).not.toContain('lhc-vertical');
     expect(containerDiv.classList).toContain('lhc-grid');
-    expect(containerDiv.style.getPropertyValue('--lhc-answer-column-width')).toBe('33.33333%');
   });
 
   it('should have lhc-grid and lhc-vertical classes with vertical orientation and columns greater than 1', () => {

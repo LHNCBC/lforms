@@ -124,7 +124,6 @@ describe('CommonUtilsService', () => {
 
     expect(service.getDisplayControlIsGrid(displayControl)).toBeTrue();
     expect(service.getDisplayControlColumnCount(displayControl)).toBe(3);
-    expect(service.getDisplayControlColumnWidth(displayControl)).toBe('33.33333%');
   });
 
   it('should not reserve more columns than there are answers', () => {
@@ -135,25 +134,7 @@ describe('CommonUtilsService', () => {
     };
 
     expect(service.getDisplayControlEffectiveColumnCount(displayControl, 5)).toBe(5);
-    expect(service.getDisplayControlColumnWidth(displayControl, 5)).toBe('20%');
     expect(service.getDisplayControlEffectiveColumnCount(displayControl, 12)).toBe(10);
-    expect(service.getDisplayControlColumnWidth(displayControl, 12)).toBe('10%');
   });
 
-  it('should place vertical grid answers down each column', () => {
-    const displayControl: DisplayControl = {
-      answerLayout: {
-        columns: '3',
-        orientation: 'vertical'
-      }
-    };
-
-    expect([0, 1, 2, 3, 4, 5, 6].map((index) =>
-      service.getAnswerLayoutGridRow(index, 7, displayControl)
-    )).toEqual([1, 2, 3, 1, 2, 3, 1]);
-
-    expect([0, 1, 2, 3, 4, 5, 6].map((index) =>
-      service.getAnswerLayoutGridColumn(index, 7, displayControl)
-    )).toEqual([1, 1, 1, 2, 2, 2, 3]);
-  });
 });

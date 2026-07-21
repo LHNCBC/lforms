@@ -10,7 +10,7 @@
     nz-row
     class="lhc-radio-group"
     [lhcAnswerOptionMinWidth]="commonUtils.getDisplayControlEffectiveColumnCount(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
-    [style.--lhc-answer-column-width]="commonUtils.getDisplayControlColumnWidth(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
+    [lhcAnswerOptionVertical]="commonUtils.getDisplayControlIsVertical(item.displayControl)"
     [ngClass]="{
       'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl),
       'lhc-grid': commonUtils.getDisplayControlIsGrid(item.displayControl)
@@ -25,9 +25,7 @@
       [nzValue]="item.answers[i]"
       [(ngModel)]="radioModels[i]"
       [id]="lhcDataService.getItemAnswerId(item, answer)"
-      [style]="answer._obj_CSS"
-      [style.grid-row]="commonUtils.getAnswerLayoutGridRow(i, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0), item.displayControl)"
-      [style.grid-column]="commonUtils.getAnswerLayoutGridColumn(i, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0), item.displayControl)">
+      [style]="answer._obj_CSS">
       <ng-container [ngSwitch]="lhcDataService.getTextDisplayType(answer)">
         <ng-container *ngSwitchCase="'escaped'">{{answer._displayTextHTML}}</ng-container>
         <span *ngSwitchCase="'html'" [outerHTML]="answer._displayTextHTML | safeHtml"></span>
@@ -45,9 +43,7 @@
       [nzValue]="{'text': otherValue, '_notOnList': true}"
       [(ngModel)]="otherRadioModel"
       [id]="lhcDataService.getItemAnswerId(item, '_other')"
-      class="lhc-answer"
-      [style.grid-row]="commonUtils.getAnswerLayoutGridRow(acOptions.listItems.length, acOptions.listItems.length + 1, item.displayControl)"
-      [style.grid-column]="commonUtils.getAnswerLayoutGridColumn(acOptions.listItems.length, acOptions.listItems.length + 1, item.displayControl)">
+      class="lhc-answer">
       {{item.openLabel || language.other}}
       <input
         type="text"

@@ -161,7 +161,6 @@ async function waitForAnswerColumnMeasurement(container: Locator): Promise<void>
 async function expectFourColumnHintLayout(page: Page, containerSelector: string) {
   const container = page.locator(containerSelector);
   await expect(container).toHaveClass(/lhc-grid/);
-  await expect(container).toHaveCSS('--lhc-answer-column-width', '25%');
   await waitForAnswerColumnMeasurement(container);
 
   const answers = container.locator('.lhc-answer');
@@ -233,7 +232,6 @@ async function expectVerticalThreeColumnLayout(page: Page, containerSelector: st
   const container = page.locator(containerSelector);
   await expect(container).toHaveClass(/lhc-grid/);
   await expect(container).toHaveClass(/lhc-vertical/);
-  await expect(container).toHaveCSS('--lhc-answer-column-width', '33.33333%');
   await waitForAnswerColumnMeasurement(container);
 
   const answers = container.locator('.lhc-answer');
@@ -260,7 +258,6 @@ async function expectVerticalThreeColumnLayout(page: Page, containerSelector: st
 
 async function expectShortColumnsToRemainCompact(page: Page, containerSelector: string) {
   const container = page.locator(containerSelector);
-  await expect(container).toHaveCSS('--lhc-answer-column-width', '20%');
   await waitForAnswerColumnMeasurement(container);
 
   const containerBox = await container.boundingBox();
@@ -355,6 +352,53 @@ test.describe('Questionnaire columnCount layout', () => {
       page.locator(containerSelector).boundingBox().then(box => box!.width)
     ).toBeLessThan(initialWidth);
     await expectLongColumnsToUseAvailableWidth(page, containerSelector);
+  });
+
+  test('reduces vertical columns and preserves vertical order when the requested columns do not fit', async ({ page }) => {
+    await addInlineQuestionnaire(page, 'check-box', 'vertical', 4, assistanceAnswerOptions);
+    const container = page.locator('.lhc-checkbox-group.lhc-grid');
+    await waitForAnswerColumnMeasurement(container);
+
+    await container.evaluate(element => {
+      element.parentElement!.style.width = '500px';
+    });
+    await expect.poll(async () => container.evaluate(element =>
+      getComputedStyle(element).getPropertyValue('--lhc-answer-effective-column-count').trim()
+    )).toBe('2');
+
+    const answers = container.locator('.lhc-answer');
+    await expect(answers).toHaveCount(7);
+    await expect.poll(async () => answers.evaluateAll(elements => elements.map(element => ({
+      column: (element as HTMLElement).style.gridColumn,
+      row: (element as HTMLElement).style.gridRow
+    })))).toEqual([
+      { column: '1', row: '1' },
+      { column: '1', row: '2' },
+      { column: '1', row: '3' },
+      { column: '1', row: '4' },
+      { column: '2', row: '1' },
+      { column: '2', row: '2' },
+      { column: '2', row: '3' }
+    ]);
+
+    await container.evaluate(element => {
+      element.parentElement!.style.width = '800px';
+    });
+    await expect.poll(async () => container.evaluate(element =>
+      getComputedStyle(element).getPropertyValue('--lhc-answer-effective-column-count').trim()
+    )).toBe('4');
+    await expect.poll(async () => answers.evaluateAll(elements => elements.map(element => ({
+      column: (element as HTMLElement).style.gridColumn,
+      row: (element as HTMLElement).style.gridRow
+    })))).toEqual([
+      { column: '1', row: '1' },
+      { column: '1', row: '2' },
+      { column: '2', row: '1' },
+      { column: '2', row: '2' },
+      { column: '3', row: '1' },
+      { column: '3', row: '2' },
+      { column: '4', row: '1' }
+    ]);
   });
 
   test('renders vertical radio answer options down each hinted column', async ({ page }) => {

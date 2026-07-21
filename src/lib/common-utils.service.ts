@@ -102,55 +102,6 @@ export class CommonUtilsService {
       Math.min(columnCount, answerCount) : null;
   }
 
-
-  /**
-   * Get the preferred answer column width requested by the display control.
-   * @param displayControl an object that controls the display of the selected template
-   * @param answerCount optional number of rendered answers, used to avoid empty columns
-   * @returns the percentage width for each answer column, or null when no grid layout was requested
-   */
-  getDisplayControlColumnWidth(displayControl: DisplayControl, answerCount?: number): string | null {
-    const columnCount = answerCount === undefined ? this.getDisplayControlColumnCount(displayControl) :
-      this.getDisplayControlEffectiveColumnCount(displayControl, answerCount);
-    return columnCount ? `${Math.round((100 / columnCount) * 100000) / 100000}%` : null;
-  }
-
-  /**
-   * Get the CSS grid row needed to fill vertical answer columns from top to bottom.
-   * @param index the zero-based index of the answer option
-   * @param answerCount the total number of answer options in the layout
-   * @param displayControl an object that controls the display of the selected template
-   * @returns the one-based CSS grid row, or null when vertical grid placement does not apply
-   */
-  getAnswerLayoutGridRow(index: number, answerCount: number, displayControl: DisplayControl): number | null {
-    const columnCount = this.getDisplayControlEffectiveColumnCount(displayControl, answerCount);
-    if (!columnCount || !this.getDisplayControlIsVertical(displayControl) || answerCount <= 0) {
-      return null;
-    }
-
-    const rowCount = Math.ceil(answerCount / columnCount);
-    return (index % rowCount) + 1;
-  }
-
-
-  /**
-   * Get the CSS grid column needed to fill vertical answer columns from top to bottom.
-   * @param index the zero-based index of the answer option
-   * @param answerCount the total number of answer options in the layout
-   * @param displayControl an object that controls the display of the selected template
-   * @returns the one-based CSS grid column, or null when vertical grid placement does not apply
-   */
-  getAnswerLayoutGridColumn(index: number, answerCount: number, displayControl: DisplayControl): number | null {
-    const columnCount = this.getDisplayControlEffectiveColumnCount(displayControl, answerCount);
-    if (!columnCount || !this.getDisplayControlIsVertical(displayControl) || answerCount <= 0) {
-      return null;
-    }
-
-    const rowCount = Math.ceil(answerCount / columnCount);
-    return Math.floor(index / rowCount) + 1;
-  }
-
-
   /**
    * Get the aria-label for a control
    */

@@ -2,16 +2,14 @@
   <div nz-row
     class="lhc-checkbox-group"
     [lhcAnswerOptionMinWidth]="commonUtils.getDisplayControlEffectiveColumnCount(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
-    [style.--lhc-answer-column-width]="commonUtils.getDisplayControlColumnWidth(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
+    [lhcAnswerOptionVertical]="commonUtils.getDisplayControlIsVertical(item.displayControl)"
     [ngClass]="{
       'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl),
       'lhc-grid': commonUtils.getDisplayControlIsGrid(item.displayControl)
     }">
     <div
       *ngFor="let answer of acOptions.listItems; index as i"
-      class="lhc-answer"
-      [style.grid-row]="commonUtils.getAnswerLayoutGridRow(i, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0), item.displayControl)"
-      [style.grid-column]="commonUtils.getAnswerLayoutGridColumn(i, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0), item.displayControl)">
+      class="lhc-answer">
       <label
         nz-checkbox
         attr.aria-label="Checkbox {{answer._displayText}} for {{item.question}}"
@@ -31,9 +29,7 @@
     </div>
     <div
       *ngIf="item.answerConstraint === 'optionsOrString'"
-      class="lhc-answer"
-      [style.grid-row]="commonUtils.getAnswerLayoutGridRow(acOptions.listItems.length, acOptions.listItems.length + 1, item.displayControl)"
-      [style.grid-column]="commonUtils.getAnswerLayoutGridColumn(acOptions.listItems.length, acOptions.listItems.length + 1, item.displayControl)">
+      class="lhc-answer">
       <label
         nz-checkbox
         attr.aria-label="Checkbox Other for {{item.question}}"

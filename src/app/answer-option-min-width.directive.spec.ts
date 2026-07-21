@@ -5,7 +5,9 @@ import { AnswerOptionMinWidthDirective } from './answer-option-min-width.directi
 @Component({
   template: `
     <section style="width: 720px">
-      <div [lhcAnswerOptionMinWidth]="enabled">
+      <div
+        [lhcAnswerOptionMinWidth]="enabled"
+        [lhcAnswerOptionVertical]="vertical">
         <label class="lhc-answer">
           <input type="radio" name="answer" checked>
           A very long answer option whose intrinsic width exceeds the maximum allowed width
@@ -18,6 +20,7 @@ import { AnswerOptionMinWidthDirective } from './answer-option-min-width.directi
 })
 class TestHostComponent {
   enabled: number | null = 3;
+  vertical = false;
 }
 
 describe('AnswerOptionMinWidthDirective', () => {
@@ -97,6 +100,37 @@ describe('AnswerOptionMinWidthDirective', () => {
     expect(host.style.getPropertyValue('--lhc-answer-group-width')).toBe('900px');
   });
 
+  it('reduces vertical columns and recalculates answer positions when space is limited', async () => {
+    fixture.componentInstance.enabled = 4;
+    fixture.componentInstance.vertical = true;
+    host.parentElement.style.width = '500px';
+    host.querySelectorAll('.lhc-answer').forEach(answer =>
+      answer.textContent = 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW'
+    );
+    for (let index = 2; index < 8; index++) {
+      const answer = document.createElement('label');
+      answer.className = 'lhc-answer';
+      answer.textContent = 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW';
+      host.appendChild(answer);
+    }
+    fixture.detectChanges();
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+
+    const answers = Array.from(host.querySelectorAll<HTMLElement>(':scope > .lhc-answer'));
+    expect(host.style.getPropertyValue('--lhc-answer-effective-column-count')).toBe('2');
+    expect(answers.map(answer => answer.style.gridRow)).toEqual(['1', '2', '3', '4', '1', '2', '3', '4']);
+    expect(answers.map(answer => answer.style.gridColumn)).toEqual(['1', '1', '1', '1', '2', '2', '2', '2']);
+
+    host.parentElement.style.width = '800px';
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+
+    expect(host.style.getPropertyValue('--lhc-answer-effective-column-count')).toBe('4');
+    expect(answers.map(answer => answer.style.gridRow)).toEqual(['1', '2', '1', '2', '1', '2', '1', '2']);
+    expect(answers.map(answer => answer.style.gridColumn)).toEqual(['1', '1', '2', '2', '3', '3', '4', '4']);
+  });
+
   it('removes the measured width when disabled', async () => {
     await nextAnimationFrame();
     fixture.componentInstance.enabled = null;
@@ -104,6 +138,7 @@ describe('AnswerOptionMinWidthDirective', () => {
 
     expect(host.style.getPropertyValue('--lhc-answer-option-width')).toBe('');
     expect(host.style.getPropertyValue('--lhc-answer-group-width')).toBe('');
+    expect(host.style.getPropertyValue('--lhc-answer-effective-column-count')).toBe('');
   });
 });
 
