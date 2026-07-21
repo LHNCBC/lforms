@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { LhcDataService } from '../../lib/lhc-data.service';
+import language from '../../../language-config.json';
 
 // Thanks to https://github.com/mistralworks/ng-file-model/blob/master/ng-file-model.js
 // and https://embed.plnkr.co/plunk/7BBYAa
@@ -29,33 +30,27 @@ export class LhcItemAttachmentComponent {
       if (!newFile.type) {
         // Per the FHIR specification, we can't proceed without a mime
         // type.
-        alert('Unknown file type.  Please ensure the file has an ' +
-          'appropriate extension');
+        alert(language.unknownFileType);
         newFile = null; // don't proceed
       }
       else if (item.allowedAttachmentTypes &&
         item.allowedAttachmentTypes.indexOf(newFile.type) < 0) {
         const types = item.allowedAttachmentTypes;
-        alert('The file ' + newFile.name + ' is not one of the mime types ' +
-          'permitted by this questionnaire (' + types.slice(0, -1).join(', ') +
-          ' and ' + types.slice(-1) + ').  Please make sure your file has ' +
-          'an appropriate file extension for its type in its filename.');
+        alert(language.mimeTypeNotPermitted
+            .replace('{lformsParam1}', newFile.name)
+            .replace('{lformsParam2}', types.slice(0, -1).join(', '))
+            .replace('{lformsParam3}', types.slice(-1)));
         newFile = null; // don't proceed
       }
       else if (newFile.size >  item.maxAttachmentSize) {
-        const msg = 'The file ' + newFile.name + ' exceeds the maximum ' +
-          'attachment size of ' + item.maxAttachmentSize + ' bytes permitted by ' +
-          'this questionnaire.  If you can specify the file with a URL, ' +
-          'use the button to open the URL field and enter that instead.';
+        const msg = language.maxAttachmentSizeExceeded
+            .replace('{lformsParam1}', newFile.name)
+            .replace('{lformsParam2}', item.maxAttachmentSize);
         alert(msg);
         newFile = null; // don't proceed
       }
       else if (newFile.size > 500000000) {
-        const msg = 'Adding a large file as an attachment might cause your ' +
-          'computer to run low on memory.  There is a button to enter a ' +
-          'URL instead of attaching the file data.  Are you sure you want ' +
-          'to attach the file data?';
-        if (!confirm(msg)) {
+        if (!confirm(language.largeFileConfirmation)) {
           newFile = null; // don't proceed
         }
       }
@@ -91,7 +86,7 @@ export class LhcItemAttachmentComponent {
    */
   createAttachment(item): void {
     if (!item._fileInfo && !item._attachmentURL) {
-      alert('An attachment must have either a file or a URL (or both).');
+      alert(language.attachmentFileOrUrlRequired);
     }
     else {
       item.value = {title: item._attachmentName || item._fileInfo?.name};
@@ -118,7 +113,7 @@ export class LhcItemAttachmentComponent {
           const data = loadEvent.target.result as string;
           const commaIndex = data.indexOf(',');
           if (data.indexOf('data:') !== 0 || commaIndex < 0) {
-            alert('Unable to attach the file data.');
+            alert(language.unableToAttachFile);
             throw new Error('data URL did not start with expected prefix, but with ' +
               data.slice(0, 30));
           }

@@ -58,6 +58,29 @@
   "booleanNotAnswered": "Not Answered",
   "pleaseEnterInfoForTheBlank": "Please enter info in the blank \"{lformsParam}\".",
   "other": "Other",
+  "clearSelection": "Clear Selection",
+  "renderingErrorMessages": {
+    "comparatorInQuantity": "This item cannot accept a quantity with a comparator.",
+    "nonMatchingQuantityUnit": "An attempt was made to assign a quantity with a non-matching unit.",
+    "MultipleValuesForNonRepeat": "An attempt was made to assign multiple values to a non-repeating item.",
+    "invalidTagInHelpHTMLContent": "Invalid HTML tags/attributes found in the help text.",
+    "invalidTagInLegalHTMLContent": "Invalid HTML tags/attributes found in the legal text.",
+    "invalidTagInAnswerOptionHTMLContent": "Invalid HTML tags/attributes found in answerOptions.",
+    "invalidTagInHTMLContent": "Invalid HTML tags/attributes found in item text/prefix.",
+    "answerValueSetLoadingError": "Unable to load the answer list for this question.",
+    "hasModifierExtension": "One or more modifierExtensions are found in the Questionnaire resource. The rendered Questionnaire below is for display only and may not be correctly rendered, and the QuestionnaireResponse generated from it may not be valid."
+  },
+  "error": "Error",
+  "warning": "Warning",
+  "repeatableItemAtLeast": "This repeatable item should have at least {lformsParam} occurrences.",
+  "repeatableItemAtMost": "This repeatable item should have at most {lformsParam} occurrences.",
+  "implicitRulesNotSupported": "The Questionnaire cannot be rendered because it uses \"implicitRules\" that LHC-Forms does not support.",
+  "unknownFileType": "Unknown file type. Please ensure the file has an appropriate extension.",
+  "mimeTypeNotPermitted": "The file {lformsParam1} is not one of the mime types permitted by this questionnaire ({lformsParam2} and {lformsParam3}).  Please make sure your file has an appropriate file extension for its type in its filename.",
+  "maxAttachmentSizeExceeded": "The file {lformsParam1} exceeds the maximum attachment size of {lformsParam2} bytes permitted by this questionnaire.  If you can specify the file with a URL, use the button to open the URL field and enter that instead.",
+  "largeFileConfirmation": "Adding a large file as an attachment might cause your computer to run low on memory.  There is a button to enter a URL instead of attaching the file data.  Are you sure you want to attach the file data?",
+  "attachmentFileOrUrlRequired": "An attachment must have either a file or a URL (or both).",
+  "unableToAttachFile": "Unable to attach the file data.",
   "parsedDateFormats": [
     "M/D/YYYY",
     "M/D/YY",
@@ -74,6 +97,5 @@
     "M-D-YYYY HH:mm",
     "M-D-YY HH:mm",
     "M-D HH:mm"
-  ],
-  "clearSelection": "Clear Selection"
+  ]
 }
