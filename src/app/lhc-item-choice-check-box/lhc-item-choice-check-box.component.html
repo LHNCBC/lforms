@@ -23,35 +23,19 @@
         nz-checkbox
         attr.aria-label="Checkbox Other for {{item.question}}"
         (click)="lhcDataService.setActiveRow(item)"
-        [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
+        [nzValue]="{'_notOnList': true}"
         [nzDisabled]="item._readOnly"
         [(ngModel)]="otherCheckboxModel"
         [id]="lhcDataService.getItemAnswerId(item, '_other')">
         {{item.openLabel || language.other}}
       </label>
-      <div *ngIf="otherCheckboxModel" class="lhc-tag-container" style="--tag-item-height: 32px;">
-        @for (tag of this.otherValues; track $index) {
-          <div class="lhc-tag">
-            <span>{{ tag }}</span>
-            <button type="button" class="lhc-remove-icon" (click)="onRemoveOtherValue($index)"
-                    *ngIf="!item._readOnly" attr.aria-label="Remove other value {{tag}}">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-        }
-        <input
-          type="text"
-          [ngModel]="otherValue"
-          (ngModelChange)="onOtherValueChange($event)"
-          class="lhc-answer-other-input"
-          [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
-          nz-input
-          [disabled]="item._readOnly"
-          (focus)="lhcDataService.setActiveRow(item)"/>
-        <button class="lhc-add-button" (click)="onAddOtherValue()" aria-label="Add one other value"
-                [disabled]="item._readOnly" *ngIf="otherValue">
-          <span class="lhc-add-icon">&#43;</span>
-        </button>
+      <div *ngIf="otherCheckboxModel">
+        <input type="text"
+               [disabled]="item._readOnly"
+               placeholder=""
+               [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
+               #ac
+        >
       </div>
     </div>
   </div>
