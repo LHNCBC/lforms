@@ -2,10 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [43.1.0] 2026-07-14
+## [43.1.0] 2026-07-21
 ### Changed
 - When the answer list is rendered as checkboxes, allow multiple string values
   for the "Other" option for R4 open-choice and R5 optionsOrString.
+
+## [43.0.1] 2026-07-16
+### Fixed
+- Missing error messages in language configuration files.
+### Added
+- Chinese language file.
 
 ## [43.0.0] 2026-07-13
 ### Added

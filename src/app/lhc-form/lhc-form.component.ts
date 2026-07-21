@@ -8,6 +8,7 @@ import { LhcDataService} from '../../lib/lhc-data.service';
 import LhcFormData from '../../lib/lforms/lhc-form-data';
 import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
 import copy from "fast-copy";
+import language from '../../../language-config.json';
 
 declare let LForms: any;
 declare let ResizeObserver;
@@ -168,7 +169,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
             // check if questionnaire is a FHIR Questionnaire
             if (q.resourceType === "Questionnaire") {
               if (q.implicitRules) {
-                throw new Error("The Questionnaire cannot be rendered because it uses implicitRules that LHC-Forms does not support.");
+                throw new Error(language.implicitRulesNotSupported);
               }
               const fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
