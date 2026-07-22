@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {CommonUtilsService} from '../../lib/common-utils.service';
 import {LhcDataService} from '../../lib/lhc-data.service';
 import language from '../../../language-config.json';
@@ -30,10 +30,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   ) {}
 
   /**
-   * Set initial status of the component
+   * Set the initial status of the autocomplete for "Other" values.
    */
   setInitialValue(): void {
-
     if (this.item && this.item.value && Array.isArray(this.item.value) &&
         this.item.answers && Array.isArray(this.item.answers)) {
       const iLen = this.item.answers.length;
@@ -55,7 +54,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       }
       if (this.offListValues.length) {
         this.otherCheckboxModel = true;
-        if (this.viewInitialized) {
+        if (this.viewInitialized && this.ac) {
           this.cleanupAutocomplete();
           this.setupAutocomplete();
         }
@@ -88,8 +87,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
-    this.setupAutocomplete();
-    this.viewInitialized = true;
+    setTimeout(() => {
+      this.setupAutocomplete();
+      this.viewInitialized = true;
+    }, 0);
   }
 
   /**
@@ -101,7 +102,6 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
       this.acInstance.setFieldVal('', false);
       this.acInstance.destroy();
       this.acInstance = null;
-      this.offListValues = [];
     }
   }
 
@@ -118,7 +118,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
         this.acInstance.storeSelectedItem(v, null); // no code, only text
         this.acInstance.addToSelectedArea(v);
       });
-      Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(this.item, '_otherValue'), (e) => {
+      this.offListValues.length = 0;
+      Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(this.item, '_otherValueInput'), (e) => {
         this.item.value = this.prevCheckBoxValue
           .filter(v => !v._notOnList)
           .concat(this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));

@@ -29,11 +29,13 @@
         [id]="lhcDataService.getItemAnswerId(item, '_other')">
         {{item.openLabel || language.other}}
       </label>
-      <div *ngIf="otherCheckboxModel">
+      <div *ngIf="otherCheckboxModel"
+           [id]="lhcDataService.getItemAnswerId(item, '_otherValue')">
         <input type="text"
                [disabled]="item._readOnly"
                placeholder="Add one other value"
-               [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
+               (focus)="lhcDataService.setActiveRow(item)"
+               [id]="lhcDataService.getItemAnswerId(item, '_otherValueInput')"
                #ac
         >
       </div>

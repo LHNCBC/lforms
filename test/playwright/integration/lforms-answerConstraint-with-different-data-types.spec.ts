@@ -152,7 +152,7 @@ async function testRenderOptionsOrString(page: Page, ids: any, values: any) {
   await expect(byId(page, ids.g6item2ans3)).toContainText(values.g1Answer3);
   await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).not.toBeChecked();
   await expect(byId(page, ids.g6item2ansOther).locator('input').first()).toBeChecked();
-  await expect(byId(page, ids.g6item2ansOtherValue)).toHaveValue('user typed value');
+  await expect(byId(page, ids.g6item2ansOtherValue)).toContainText('user typed value');
 
   // group 7 - matrix radio
   await expect(byId(page, ids.g7item1ans2)).toBeChecked();

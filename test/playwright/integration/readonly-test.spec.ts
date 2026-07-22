@@ -76,7 +76,7 @@ test.describe('calculatedExpression and hasSavedData=true/false tests', () => {
     // the other input field in CWE radio layout should be disabled too
     await expect(byId(page, answerId('g2/cwe-single-radio/1/1', '_otherValue'))).toBeDisabled();
     // the other input field in CWE checkbox layout should be disabled too
-    await expect(byId(page, answerId('g2/cwe-multiple-checkbox/1/1', '_otherValue'))).toBeDisabled();
+    await expect(byId(page, answerId('g2/cwe-multiple-checkbox/1/1', '_otherValueInput'))).toBeDisabled();
   });
 });
 

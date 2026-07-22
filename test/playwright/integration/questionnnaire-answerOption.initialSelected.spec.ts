@@ -103,8 +103,8 @@ test.describe('checkbox with multiple off-list initial values', () => {
     await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 1');
     await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 2');
     // Add another off-list value.
-    await byId(page, '1/1|_otherValue').fill('user typed value 3');
-    await byId(page, '1/1|_otherValue').blur();
+    await byId(page, '1/1|_otherValueInput').fill('user typed value 3');
+    await byId(page, '1/1|_otherValueInput').blur();
     await expect(page.locator('.autocomp_selected li')).toHaveCount(3);
     await expect(page.locator('.autocomp_selected li').nth(2)).toContainText('user typed value 3');
     // Remove the first off-list value.
@@ -133,8 +133,8 @@ test.describe('checkbox with multiple off-list initial values', () => {
     await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 1');
     await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 2');
     // Add another off-list value.
-    await byId(page, '1/1|_otherValue').fill('user typed value 3');
-    await byId(page, '1/1|_otherValue').blur();
+    await byId(page, '1/1|_otherValueInput').fill('user typed value 3');
+    await byId(page, '1/1|_otherValueInput').blur();
     await expect(page.locator('.autocomp_selected li')).toHaveCount(3);
     await expect(page.locator('.autocomp_selected li').nth(2)).toContainText('user typed value 3');
     // Remove the first off-list value.

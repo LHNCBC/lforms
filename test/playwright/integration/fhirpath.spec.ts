@@ -320,7 +320,7 @@ test.describe('answerExpression', () => {
           await expect(byId(page, 'medication/1/1')).not.toHaveValue('');
           await expect(byId(page, answerId('strength/1/1', undefined, '213377')).locator('input')).toBeChecked();
           await expect(byId(page, answerId('strength/1/1', '_other')).locator('input')).toBeChecked();
-          await expect(byId(page, answerId('strength/1/1', '_otherValue'))).toHaveValue('other value');
+          await expect(page.locator('.autocomp_selected')).toContainText('other value');
           await expect(byId(page, 'rxcui/1/1')).not.toHaveValue('');
         });
       });
