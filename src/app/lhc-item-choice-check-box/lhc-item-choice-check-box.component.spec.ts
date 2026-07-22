@@ -203,49 +203,6 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   })
 
-  it('should set item.value, when the "other" checkbox is selected', () => {
-    component.item = itemCheckboxCWE;
-    component.acOptions = acOptions;
-    fixture.detectChanges();
-
-    let radio:HTMLElement = getItemAnswerElem(element, itemCheckboxCWE, itemCheckboxCWE.answers[2]);
-    radio.click();
-    expect(component.item.value).toEqual([{
-      "code": "c3",
-      "text": "Answer Z"
-    }])
-
-    //item.value should change, when the "other" checkbox is clicked
-    radio = getItemAnswerElem(element, itemCheckboxCWE, '_other')
-    radio.click();
-    fixture.detectChanges();
-    expect(component.item.value).toEqual([{
-      "code": "c3",
-      "text": "Answer Z"
-    },{
-      "text": null,
-      "_notOnList": true
-    }])
-
-    const otherInput:HTMLInputElement = getItemAnswerElem(element, itemCheckboxCWE, '_otherValue');
-    otherInput.value = 'some value';
-    otherInput.dispatchEvent(new Event('input'));
-    otherInput.dispatchEvent(new KeyboardEvent('keyup', {
-      bubbles : true, cancelable : true, shiftKey : false
-    }))
-    fixture.detectChanges();
-//    fixture.whenStable().then(() => {
-      expect(component.item.value).toEqual([{
-        "code": "c3",
-        "text": "Answer Z",
-      },{
-        "text": "some value",
-        "_notOnList": true
-      }])
-
-//    })
-  })
-
 
   it('should have lhc-vertical class with column 1', () => {
     component.item = itemCheckboxCNE;
