@@ -131,6 +131,29 @@ describe('AnswerOptionMinWidthDirective', () => {
     expect(answers.map(answer => answer.style.gridColumn)).toEqual(['1', '1', '2', '2', '3', '3', '4', '4']);
   });
 
+  it('distributes vertical answers across every requested column', async () => {
+    fixture.componentInstance.enabled = 4;
+    fixture.componentInstance.vertical = true;
+    host.parentElement.style.width = '800px';
+    host.querySelectorAll('.lhc-answer').forEach(answer =>
+      answer.textContent = 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW'
+    );
+    for (let index = 2; index < 5; index++) {
+      const answer = document.createElement('label');
+      answer.className = 'lhc-answer';
+      answer.textContent = 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW';
+      host.appendChild(answer);
+    }
+    fixture.detectChanges();
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+
+    const answers = Array.from(host.querySelectorAll<HTMLElement>(':scope > .lhc-answer'));
+    expect(host.style.getPropertyValue('--lhc-answer-effective-column-count')).toBe('4');
+    expect(answers.map(answer => answer.style.gridRow)).toEqual(['1', '2', '1', '1', '1']);
+    expect(answers.map(answer => answer.style.gridColumn)).toEqual(['1', '1', '2', '3', '4']);
+  });
+
   it('removes the measured width when disabled', async () => {
     await nextAnimationFrame();
     fixture.componentInstance.enabled = null;

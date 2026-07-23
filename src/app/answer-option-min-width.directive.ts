@@ -187,16 +187,24 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Position answers down each column using the responsive column count.
+   * Position answers down each column using the responsive column count,
+   * distributing answers as evenly as possible across every column.
    * @param answerOptions the rendered answer elements
    * @param columnCount the number of columns that currently fit
    */
   private setVerticalAnswerPositions(answerOptions: HTMLElement[], columnCount: number): void {
-    const rowCount = Math.ceil(answerOptions.length / columnCount);
-    answerOptions.forEach((answerOption, index) => {
-      answerOption.style.gridRow = `${(index % rowCount) + 1}`;
-      answerOption.style.gridColumn = `${Math.floor(index / rowCount) + 1}`;
-    });
+    const minimumRowCount = Math.floor(answerOptions.length / columnCount);
+    const columnsWithExtraAnswer = answerOptions.length % columnCount;
+    let answerIndex = 0;
+
+    for (let column = 1; column <= columnCount; column++) {
+      const rowCount = minimumRowCount + (column <= columnsWithExtraAnswer ? 1 : 0);
+      for (let row = 1; row <= rowCount; row++) {
+        answerOptions[answerIndex].style.gridRow = `${row}`;
+        answerOptions[answerIndex].style.gridColumn = `${column}`;
+        answerIndex++;
+      }
+    }
   }
 
   /**

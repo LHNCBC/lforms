@@ -245,14 +245,14 @@ async function expectVerticalThreeColumnLayout(page: Page, containerSelector: st
   expect(Math.abs(boxes[0]!.x - boxes[1]!.x)).toBeLessThan(2);
   expect(Math.abs(boxes[1]!.x - boxes[2]!.x)).toBeLessThan(2);
   expect(Math.abs(boxes[3]!.x - boxes[4]!.x)).toBeLessThan(2);
-  expect(Math.abs(boxes[4]!.x - boxes[5]!.x)).toBeLessThan(2);
+  expect(Math.abs(boxes[5]!.x - boxes[6]!.x)).toBeLessThan(2);
   expect(boxes[3]!.x).toBeGreaterThan(boxes[0]!.x + boxes[0]!.width - 2);
-  expect(boxes[6]!.x).toBeGreaterThan(boxes[3]!.x + boxes[3]!.width - 2);
+  expect(boxes[5]!.x).toBeGreaterThan(boxes[3]!.x + boxes[3]!.width - 2);
 
   expect(Math.abs(boxes[0]!.y - boxes[3]!.y)).toBeLessThan(2);
-  expect(Math.abs(boxes[3]!.y - boxes[6]!.y)).toBeLessThan(2);
+  expect(Math.abs(boxes[3]!.y - boxes[5]!.y)).toBeLessThan(2);
   expect(Math.abs(boxes[1]!.y - boxes[4]!.y)).toBeLessThan(2);
-  expect(Math.abs(boxes[2]!.y - boxes[5]!.y)).toBeLessThan(2);
+  expect(Math.abs(boxes[4]!.y - boxes[6]!.y)).toBeLessThan(2);
   expect(boxes[2]!.y).toBeGreaterThan(boxes[1]!.y + 1);
 }
 
