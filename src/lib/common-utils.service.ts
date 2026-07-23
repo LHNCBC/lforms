@@ -11,7 +11,7 @@ type AnswerLayoutOrientation = 'horizontal' | 'vertical';
 export interface DisplayControl {
   answerLayout?: {
     type?: AnswerLayoutType | null;
-    columns?: string;
+    columns?: string | number;
     orientation?: AnswerLayoutOrientation | null;
   };
 }
@@ -60,7 +60,8 @@ export class CommonUtilsService {
    * @returns true for vertical layout, otherwise false
    */
   getDisplayControlIsVertical(displayControl: DisplayControl): boolean {
-    return displayControl?.answerLayout?.columns === '1' ||
+    const columns = displayControl?.answerLayout?.columns;
+    return (columns === '1' || columns === 1) ||
       displayControl?.answerLayout?.orientation === 'vertical';
   }
 
@@ -82,7 +83,7 @@ export class CommonUtilsService {
    */
   getDisplayControlColumnCount(displayControl: DisplayControl): number | null {
     const columns = displayControl?.answerLayout?.columns;
-    const columnCount = parseInt(columns, 10);
+    const columnCount = parseInt(String(columns), 10);
     return Number.isInteger(columnCount) && columnCount > 1 ? columnCount : null;
   }
 

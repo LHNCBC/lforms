@@ -97,7 +97,19 @@ describe('CommonUtilsService', () => {
 
     expect(service.getDisplayControlIsVertical({
       answerLayout: {
+        columns: 1
+      }
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
         columns: '0'
+      }
+    })).toBeFalse();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: 0
       }
     })).toBeFalse();
 
