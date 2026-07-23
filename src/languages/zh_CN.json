@@ -81,6 +81,7 @@
   "largeFileConfirmation": "将大文件作为附件添加可能导致计算机内存不足。可使用按钮改为输入URL，而不附加文件数据。确定要附加文件数据吗？",
   "attachmentFileOrUrlRequired": "附件必须包含文件或URL（或两者兼有）。",
   "unableToAttachFile": "无法附加文件数据。",
+  "typeToAddMoreValues": "输入以添加更多值",
 	"parsedDateFormats": [
 		"YYYY-MM-DD",
 		"YY-MM-DD",

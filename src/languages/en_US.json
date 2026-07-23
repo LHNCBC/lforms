@@ -81,6 +81,7 @@
   "largeFileConfirmation": "Adding a large file as an attachment might cause your computer to run low on memory.  There is a button to enter a URL instead of attaching the file data.  Are you sure you want to attach the file data?",
   "attachmentFileOrUrlRequired": "An attachment must have either a file or a URL (or both).",
   "unableToAttachFile": "Unable to attach the file data.",
+  "typeToAddMoreValues": "Type to add more values",
   "parsedDateFormats": [
     "M/D/YYYY",
     "M/D/YY",

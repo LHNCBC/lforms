@@ -33,7 +33,7 @@
            [id]="lhcDataService.getItemAnswerId(item, '_otherValue')">
         <input type="text"
                [disabled]="item._readOnly"
-               placeholder="Add one other value"
+               [placeholder]="language.typeToAddMoreValues"
                (focus)="lhcDataService.setActiveRow(item)"
                [id]="lhcDataService.getItemAnswerId(item, '_otherValueInput')"
                #ac

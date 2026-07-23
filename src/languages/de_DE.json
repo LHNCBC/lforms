@@ -81,6 +81,7 @@
   "largeFileConfirmation": "Das Hinzufügen einer großen Datei als Anhang kann zu einem Speichermangel auf Ihrem Computer führen. Sie können eine URL eingeben, anstatt die Datei anzuhängen. Möchten Sie die Datei wirklich anhängen?",
   "attachmentFileOrUrlRequired": "Ein Anhang muss entweder eine Datei oder eine URL (oder beides) enthalten.",
   "unableToAttachFile": "Die Datei konnte nicht angehängt werden.",
+  "typeToAddMoreValues": "Geben Sie weitere Werte ein, um diese hinzuzufügen.",
   "parsedDateFormats": [
     "M/D/YYYY",
     "M/D/YY",
