@@ -30,6 +30,7 @@
         {{item.openLabel || language.other}}
       </label>
       <div *ngIf="otherCheckboxModel"
+           class="{{item._readOnly ? 'lhc-item-readyonly' : null}}"
            [id]="lhcDataService.getItemAnswerId(item, '_otherValue')">
         <input type="text"
                [disabled]="item._readOnly"
