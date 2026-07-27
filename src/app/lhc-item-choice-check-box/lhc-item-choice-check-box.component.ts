@@ -60,6 +60,14 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         if (this.viewInitialized && this.ac) {
           this.cleanupAutocomplete();
           this.setupAutocomplete();
+        } else if (this.viewInitialized && !this.ac && !this.acInstance) {
+          // If "Other" is re-bound to true, #ac may not be rendered yet in this change cycle.
+          // Retry setup after Angular applies the *ngIf DOM update.
+          setTimeout(() => {
+            if (this.otherCheckboxModel && this.ac && !this.acInstance) {
+              this.setupAutocomplete();
+            }
+          }, 0);
         }
       } else {
         // The (re-bound) value has no off-list entries, so the "Other" checkbox should not
