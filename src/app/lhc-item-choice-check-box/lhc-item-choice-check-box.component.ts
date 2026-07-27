@@ -158,14 +158,17 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
    * Invoked when the selection of checkbox changes
    * @param value the selected values of a checkbox group
    */
-  onCheckboxModelChange(value: any): void {
-    const lastCheckboxValue = value[value.length - 1];
-    if (lastCheckboxValue && lastCheckboxValue._notOnList) {
+  onCheckboxModelChange(value: any[]): void {
+    const hasOffListValue = value.some(v => v && v._notOnList);
+    if (hasOffListValue) {
       if (this.acInstance) {
-        value.splice(-1, 1, ...this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
+        const onListValues = value.filter(v => !v || !v._notOnList);
+        value.splice(0, value.length, ...onListValues, ...this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
       } else {
-        // If "Other" is checked but no values are in the autocomplete, remove the "Other" value from the item.value array.
-        value.splice(-1, 1);
+        // If "Other" is checked but no values are in the autocomplete, remove all off-list
+        // placeholders from item.value.
+        const onListValues = value.filter(v => !v || !v._notOnList);
+        value.splice(0, value.length, ...onListValues);
         setTimeout(() => {
           this.setupAutocomplete();
         }, 0);
