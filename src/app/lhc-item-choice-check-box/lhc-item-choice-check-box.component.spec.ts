@@ -221,4 +221,23 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     expect(containerDiv.classList).not.toContain('lhc-vertical');
   });
 
+  it('should uncheck "Other" when the item is re-bound to a value with no off-list entries', () => {
+    // getLhcFormData() is used by the subgroup helpers in setInitialValue; stub it out.
+    spyOn(component.lhcDataService, 'getLhcFormData').and.returnValue({
+      getLinkIdForMultiSelectSubGroup: () => null
+    } as any);
+    component.acOptions = acOptions;
+
+    // First bind: the value has an off-list entry, so "Other" is checked.
+    component.item = { ...itemCheckboxCWE, value: [{ text: 'off list value', _notOnList: true }] };
+    component.ngOnChanges({});
+    expect(component.otherCheckboxModel).toBe(true);
+
+    // Re-bind: the value now has only on-list entries, so "Other" should be unchecked
+    // instead of staying stuck as checked from the previous value.
+    component.item = { ...itemCheckboxCWE, value: [{ code: 'c2', text: 'Answer Y' }] };
+    component.ngOnChanges({});
+    expect(component.otherCheckboxModel).toBe(false);
+  });
+
 });

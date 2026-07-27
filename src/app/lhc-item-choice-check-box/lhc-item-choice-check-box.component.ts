@@ -61,6 +61,11 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
           this.cleanupAutocomplete();
           this.setupAutocomplete();
         }
+      } else {
+        // The (re-bound) value has no off-list entries, so the "Other" checkbox should not
+        // stay checked with a stale autocompleter left over from a previous value.
+        this.otherCheckboxModel = false;
+        this.cleanupAutocomplete();
       }
 
       this.prevCheckBoxValue = this.item.value;
@@ -126,7 +131,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
    * Set up the autocompleter
    */
   setupAutocomplete() {
-    if (this.otherCheckboxModel) {
+    // this.ac may be undefined if the "#ac" input (guarded by *ngIf="otherCheckboxModel")
+    // has not been rendered yet when this is called; skip until it is available.
+    if (this.otherCheckboxModel && this.ac) {
       const acOptions = {
         maxSelect: '*'
       };
