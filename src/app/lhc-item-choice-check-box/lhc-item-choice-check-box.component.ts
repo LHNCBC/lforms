@@ -10,7 +10,7 @@ import Def from 'autocomplete-lhc';
     styleUrls: ['./lhc-item-choice-check-box.component.css'],
     standalone: false
 })
-export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDestroy {
+export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   @Input() item;
   @Input() acOptions; // item._autocompOptions
   @ViewChild("ac") ac: ElementRef<any>;
@@ -151,11 +151,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         this.acInstance.addToSelectedArea(v);
       });
       this.initialOffListValues.length = 0;
-      this.listSelectionObserver = Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(this.item, '_otherValueInput'), (e) => {
-        this.item.value = this.prevCheckBoxValue
-          .filter(v => !v._notOnList)
-          .concat(this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
-        this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+      this.listSelectionObserver = Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(this.item, '_otherValueInput'), () => {
+        const onListValues = (this.prevCheckBoxValue || []).filter(v => !v._notOnList);
+        this.item.value = onListValues.concat(this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
+        this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
         this.prevCheckBoxValue = this.item.value;
         this.item._visitedBefore = true;
       });
@@ -186,7 +185,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
       this.cleanupAutocomplete();
     }
     this.item.value = value;
-    this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
     this.prevCheckBoxValue = this.item.value;
     this.item._visitedBefore = true;
 
