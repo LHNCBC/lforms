@@ -43,10 +43,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
 
       for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
         const value = this.item.value[j];
-        if (value._notOnList) {
+        if (value._notOnList && value.text) {
           this.initialOffListValues.push(value.text);
         }
-        else {
+        else if (!value._notOnList) {
           for (let i = 0; i < iLen; i++) {
             const answer = this.item.answers[i];
             if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
@@ -80,6 +80,11 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
 
       this.removeSubGroupsForNonExistentCheckboxes();
       this.updateSubGroupsForMergedQR();
+    } else {
+      this.checkboxModels = [];
+      this.initialOffListValues = [];
+      this.otherCheckboxModel = false;
+      this.cleanupAutocomplete();
     }
   }
 
