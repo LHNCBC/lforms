@@ -1964,6 +1964,58 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(targetItem.displayControl, itemDisplayControl);
           });
 
+          it('should default columnCount greater than one to vertical orientation when choiceOrientation is missing', function () {
+            var qItem = {
+              "type": "choice",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "radio-button",
+                        "display": "Radio Button"
+                      }
+                    ],
+                    "text": "Radio Button"
+                  }
+                },
+                {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                  "valuePositiveInt": 3
+                }
+              ],
+              "required": false,
+              "linkId": "/q1c",
+              "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --3 columns",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer X"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer Y"
+                  }
+                }
+              ]
+            };
+            var itemDisplayControl =  {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "orientation": "vertical",
+                "columns": "3"
+              }
+            };
+            var targetItem = {};
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+            assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
           it('should preserve column count during Questionnaire round-trip conversion', function () {
             var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
             var fhirQ = {
@@ -2124,6 +2176,53 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 });
                 assert.equal(columnCountExts.length, 0);
               }
+            });
+          });
+
+          it('should export numeric answerLayout columns 0 and 1 with choice orientation', function () {
+            var item = {
+              "questionCode": "q1c",
+              "question": "Answer RADIO_CHECKBOX layout numeric columns",
+              "dataType": "CODING",
+              "answerCardinality": {
+                "min": "0",
+                "max": "*"
+              },
+              "displayControl": {
+                "answerLayout": {
+                  "type": "RADIO_CHECKBOX",
+                  "columns": 0
+                }
+              },
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer X"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer Y"
+                }
+              ]
+            };
+
+            [
+              {columns: 0, orientation: 'horizontal'},
+              {columns: 1, orientation: 'vertical'}
+            ].forEach(function(testCase) {
+              var itemCopy = LForms.Util.deepCopy(item);
+              itemCopy.displayControl.answerLayout.columns = testCase.columns;
+              var out = fhir.SDC._processItem(LForms.Util.initializeCodes(itemCopy), {});
+              var orientationExt = out.extension.find(function(extension) {
+                return extension.url === "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+              });
+              var columnCountExt = out.extension.find(function(extension) {
+                return extension.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+              });
+
+              assert.isOk(orientationExt);
+              assert.equal(orientationExt.valueCode, testCase.orientation);
+              assert.equal(columnCountExt, undefined);
             });
           });
 

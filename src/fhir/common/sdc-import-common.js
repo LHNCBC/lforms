@@ -911,6 +911,11 @@ function addCommonSDCImportFns(ns) {
               if (answerChoiceOrientationValue === "vertical" || answerChoiceOrientationValue === "horizontal") {
                 displayControl.answerLayout.orientation = answerChoiceOrientationValue;
               }
+              else if (columnCount > 1) {
+                // Per SDC columnCount definition, vertical is the default
+                // orientation when no explicit choiceOrientation is present.
+                displayControl.answerLayout.orientation = "vertical";
+              }
               // For values greater than one, answerLayout can distinguish the
               // column count from the legacy orientation values. A value of one
               // must remain available for export because columns="1" alone only

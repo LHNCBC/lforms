@@ -451,8 +451,10 @@ function addCommonSDCExportFns(ns) {
             return extension.url === self.fhirExtColumnCount ||
               extension.url === self.fhirExtColumnCountLegacy;
           });
+          var answerLayoutColumns = item.displayControl.answerLayout.columns;
+          var normalizedAnswerLayoutColumns = parseInt(String(answerLayoutColumns), 10);
           // answer choice orientation
-          if (item.displayControl.answerLayout.columns === "0") {
+          if (normalizedAnswerLayoutColumns === 0) {
             if (!answerChoiceOrientation) {
               answerChoiceOrientation = "horizontal";
             }
@@ -463,7 +465,7 @@ function addCommonSDCExportFns(ns) {
                 extension.url !== self.fhirExtColumnCountLegacy;
             });
           }
-          else if (item.displayControl.answerLayout.columns === "1") {
+          else if (normalizedAnswerLayoutColumns === 1) {
             if (!answerChoiceOrientation) {
               answerChoiceOrientation = "vertical";
             }
@@ -473,8 +475,8 @@ function addCommonSDCExportFns(ns) {
               answerColumnCount = 1;
             }
           }
-          else if (parseInt(item.displayControl.answerLayout.columns, 10) > 1) {
-            answerColumnCount = parseInt(item.displayControl.answerLayout.columns, 10);
+          else if (normalizedAnswerLayoutColumns > 1) {
+            answerColumnCount = normalizedAnswerLayoutColumns;
           }
 
         }
