@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.0.2] 2026-07-31
+### Added
+- Added system to tag in generated Questionnaire or QuestionnaireResponse.
+
 ## [43.0.1] 2026-07-16
 ### Fixed
 - Missing error messages in language configuration files.
