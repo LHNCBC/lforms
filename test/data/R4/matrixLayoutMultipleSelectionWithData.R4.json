@@ -8,16 +8,6 @@
   "title": "A form with matrix layout, multiple selections",
   "resourceType": "Questionnaire",
   "status": "draft",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
-    ],
-    "tag": [
-      {
-        "code": "lformsVersion: 33.3.1"
-      }
-    ]
-  },
   "item": [
     {
       "linkId": "g1",

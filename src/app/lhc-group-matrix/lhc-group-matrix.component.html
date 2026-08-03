@@ -84,17 +84,15 @@
                   [(ngModel)]="subItem._answerOtherChecked"
                   (ngModelChange)="updateCheckboxListValue(subItem)">
               </label>
-              <label>
-                <input
-                  type="text"
-                  [disabled]="item._readOnly"
-                  id="{{lhcDataService.getItemAnswerId(subItem, '_otherValue')}}"
-                  name="{{subItem._elementId}}"
-                  [attr.name]="subItem._elementId"
-                  attr.aria-label="Other values for {{subItem.question}}"
-                  [(ngModel)]="subItem._answerOther"
-                  (ngModelChange)="updateCheckboxListValue(subItem)">
-              </label>
+              <div class="{{item._readOnly ? 'lhc-item-readyonly' : null}}">
+                <input type="text"
+                       [disabled]="item._readOnly"
+                       [placeholder]="language.typeToAddMoreValues"
+                       (focus)="lhcDataService.setActiveRow(item)"
+                       [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
+                       #ac
+                >
+              </div>
             </span>
             <!--for single answer-->
             <span *ngIf="!isCheckbox" class="lhc-form-matrix-answer">
