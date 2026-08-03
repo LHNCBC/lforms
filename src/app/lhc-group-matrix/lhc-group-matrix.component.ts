@@ -298,7 +298,7 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
           });
         }
         this.acInstances[i] = acInstance;
-        this.listSelectionObservers[i] = Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(this.item, '_otherValue'), () => {
+        this.listSelectionObservers[i] = Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(subItem, '_otherValue'), () => {
           subItem._answerOther = acInstance.getSelectedItems();
           this.updateCheckboxListValue(subItem);
         });

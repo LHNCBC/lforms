@@ -88,8 +88,7 @@
                 <input type="text"
                        [disabled]="item._readOnly"
                        [placeholder]="language.typeToAddMoreValues"
-                       (focus)="lhcDataService.setActiveRow(item)"
-                       [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
+                       [id]="lhcDataService.getItemAnswerId(subItem, '_otherValue')"
                        #ac
                 >
               </div>

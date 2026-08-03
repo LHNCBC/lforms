@@ -57,7 +57,6 @@ function getItemIds(valueType: string, values: any) {
     g8item1ans3: `${valueType}-group8-item1/1/1||${coding ? values.g1Code3 : values.g1Answer3}`,
     g8item2ans2: `${valueType}-group8-item2/1/1||${coding ? values.g1Code2 : values.g1Answer2}`,
     g8item2ansOther: answerId(`${valueType}-group8-item2/1/1`, '_other'),
-    g8item2ansOtherValue: answerId(`${valueType}-group8-item2/1/1`, '_otherValue'),
   };
 }
 
@@ -164,7 +163,8 @@ async function testRenderOptionsOrString(page: Page, ids: any, values: any) {
   await expect(byId(page, ids.g8item1ans3)).toBeChecked();
   await expect(byId(page, ids.g8item2ans2)).toBeChecked();
   await expect(byId(page, ids.g8item2ansOther)).toBeChecked();
-  await expect(byId(page, ids.g8item2ansOtherValue)).toHaveValue('user typed value');
+  await expect(page.locator('lhc-group-matrix').nth(1).locator('.autocomp_selected').nth(1))
+    .toContainText('user typed value');
 }
 
 test.describe('answerConstraint with different types', () => {
