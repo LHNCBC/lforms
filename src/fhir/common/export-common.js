@@ -228,7 +228,10 @@ var self = {
    */
   _addVersionTag: function(res) {
     var tag = this._resTags(res);
-    tag.push({code: _versionTagStr+LForms.lformsVersion});
+    tag.push({
+      system: "https://lhcforms.nlm.nih.gov/cs/lhcforms-versions",
+      code: _versionTagStr+LForms.lformsVersion
+    });
   }
 };
 
