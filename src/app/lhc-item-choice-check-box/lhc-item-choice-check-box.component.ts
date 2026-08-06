@@ -85,6 +85,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
       this.initialOffListValues = [];
       this.otherCheckboxModel = false;
       this.cleanupAutocomplete();
+      this.prevCheckBoxValue = null;
     }
   }
 
