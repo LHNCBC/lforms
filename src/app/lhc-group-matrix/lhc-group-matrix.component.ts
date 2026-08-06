@@ -38,6 +38,8 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
   isCheckbox: boolean = false;
   private acInstances = [];
   private listSelectionObservers: (() => void)[] = [];
+  private autocompleteSetupTimeout: any = null;
+  private isDestroyed = false;
 
   constructor(
     private commonUtils: CommonUtilsService,
@@ -75,7 +77,10 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
    * Invoked when the component is destroyed. Unsubscribe from any subscriptions to avoid memory leaks.
    */
   ngOnDestroy() {
+    this.isDestroyed = true;
     this.radioNamesSubscription?.unsubscribe();
+    this.cancelAutocompleteSetup();
+    this.cleanupAutocomplete();
   }
 
 
@@ -171,14 +176,11 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
 
     const hasAC = this.isCheckbox && this.item.items[0].answerConstraint === 'optionsOrString';
     if (hasAC) {
-      if (this.ac && this.ac.length) {
-        this.cleanupAutocomplete();
-        this.setupAutocomplete();
-      } else {
-        setTimeout(() => {
-          this.setupAutocomplete();
-        }, 0);
-      }
+      this.scheduleAutocompleteSetup();
+    }
+    else {
+      this.cancelAutocompleteSetup();
+      this.cleanupAutocomplete();
     }
   }
 
@@ -283,11 +285,12 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
    */
   setupAutocomplete(): void {
     if (this.ac && this.ac.length) {
-      if (this.ac.length !== this.item.items.length) {
-        throw new Error(`The number of autocompleters (${this.ac.length}) does not match the number of subitems (${this.item.items.length}).`);
+      const autocompleteSubItems = this.getVisibleAutocompleteSubItems();
+      if (this.ac.length !== autocompleteSubItems.length) {
+        return;
       }
       this.ac.forEach((ac, i) => {
-        const subItem = this.item.items[i];
+        const subItem = autocompleteSubItems[i];
         const acInstance = new Def.Autocompleter.Prefetch(ac.nativeElement, [], {
           maxSelect: '*'
         });
@@ -303,6 +306,43 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
           this.updateCheckboxListValue(subItem);
         });
       });
+    }
+  }
+
+
+  /**
+   * Gets the visible subitems that render an autocomplete for checkbox "Other" values.
+   */
+  private getVisibleAutocompleteSubItems() {
+    return this.item.items.filter(subItem =>
+      !subItem._isHiddenFromView && subItem.answerConstraint === 'optionsOrString'
+    );
+  }
+
+
+  /**
+   * Schedules autocomplete setup after Angular has applied any row visibility changes.
+   */
+  private scheduleAutocompleteSetup(): void {
+    this.cancelAutocompleteSetup();
+    this.cleanupAutocomplete();
+    this.autocompleteSetupTimeout = setTimeout(() => {
+      this.autocompleteSetupTimeout = null;
+      if (!this.isDestroyed) {
+        this.cleanupAutocomplete();
+        this.setupAutocomplete();
+      }
+    }, 0);
+  }
+
+
+  /**
+   * Cancels a delayed autocomplete setup if one is pending.
+   */
+  private cancelAutocompleteSetup(): void {
+    if (this.autocompleteSetupTimeout) {
+      clearTimeout(this.autocompleteSetupTimeout);
+      this.autocompleteSetupTimeout = null;
     }
   }
 
