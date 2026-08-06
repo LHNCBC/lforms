@@ -2,10 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [43.1.0] 2026-07-20
+## [43.1.0] 2026-08-06
 ### Added
 - Validation of values entered in autocomplete fields, with a red border and
   tooltip error message shown when the value does not match an option in the list.
+
+## [43.0.2] 2026-07-31
+### Added
+- Added system to tag in generated Questionnaire or QuestionnaireResponse.
 
 ## [43.0.1] 2026-07-16
 ### Fixed
