@@ -320,9 +320,21 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     expect(containerDiv.classList).not.toContain('lhc-vertical');
   });
 
-  it('should have lhc-grid class with columns greater than 1', () => {
+  it('should default columns greater than 1 to a vertical grid', () => {
     const item = JSON.parse(JSON.stringify(itemRadioCWE));
     item.displayControl.answerLayout.columns = '3';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('nz-radio-group') as HTMLElement;
+    expect(containerDiv.classList).toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
+  });
+
+  it('should use a horizontal grid when explicitly requested', () => {
+    const item = JSON.parse(JSON.stringify(itemRadioCWE));
+    item.displayControl.answerLayout.columns = '3';
+    item.displayControl.answerLayout.orientation = 'horizontal';
     component.item = item;
     component.acOptions = acOptions;
     fixture.detectChanges();
