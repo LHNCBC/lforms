@@ -35,6 +35,7 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
   @ViewChildren('ac') ac: QueryList<ElementRef>;
   language = language;
   private radioNamesSubscription?: Subscription;
+  private autocompleteInputsSubscription?: Subscription;
   isCheckbox: boolean = false;
   private acInstances = [];
   private listSelectionObservers: (() => void)[] = [];
@@ -70,6 +71,11 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
         });
       }
     }
+    else if (this.isCheckbox && this.ac && !this.autocompleteInputsSubscription) {
+      this.autocompleteInputsSubscription = this.ac.changes.subscribe(() => {
+        this.scheduleAutocompleteSetup();
+      });
+    }
   }
 
 
@@ -79,6 +85,7 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
   ngOnDestroy() {
     this.isDestroyed = true;
     this.radioNamesSubscription?.unsubscribe();
+    this.autocompleteInputsSubscription?.unsubscribe();
     this.cancelAutocompleteSetup();
     this.cleanupAutocomplete();
   }
