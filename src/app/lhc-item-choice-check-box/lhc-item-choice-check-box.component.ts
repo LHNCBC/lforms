@@ -22,6 +22,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
   viewInitialized = false;
   // the function returned by observeListSelections, used to remove the callback
   listSelectionObserver: () => void = null;
+  private autocompleteSetupTimeout: any = null;
+  private isDestroyed = false;
 
   // the previous value, because nz-checkbox-wrapper does not have access to the previous value in the ngOnChange event
   prevCheckBoxValue: any = null;
@@ -63,7 +65,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         } else if (this.viewInitialized && !this.ac && !this.acInstance) {
           // If "Other" is re-bound to true, #ac may not be rendered yet in this change cycle.
           // Retry setup after Angular applies the *ngIf DOM update.
-          setTimeout(() => {
+          this.cancelAutocompleteSetup();
+          this.autocompleteSetupTimeout = setTimeout(() => {
+            this.autocompleteSetupTimeout = null;
             if (this.otherCheckboxModel && this.ac && !this.acInstance) {
               this.setupAutocomplete();
             }
@@ -109,7 +113,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
    * not ready yet on ngOnInit
    */
   ngAfterViewInit() {
-    setTimeout(() => {
+    this.cancelAutocompleteSetup();
+    this.autocompleteSetupTimeout = setTimeout(() => {
+      this.autocompleteSetupTimeout = null;
       this.setupAutocomplete();
       this.viewInitialized = true;
     }, 0);
@@ -119,7 +125,19 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
    * Clean up the autocompleter and its list selection callback when the component is destroyed
    */
   ngOnDestroy(): void {
+    this.isDestroyed = true;
+    this.cancelAutocompleteSetup();
     this.cleanupAutocomplete();
+  }
+
+  /**
+   * Cancels a delayed autocomplete setup if one is pending.
+   */
+  private cancelAutocompleteSetup(): void {
+    if (this.autocompleteSetupTimeout) {
+      clearTimeout(this.autocompleteSetupTimeout);
+      this.autocompleteSetupTimeout = null;
+    }
   }
 
   /**
@@ -182,7 +200,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         // placeholders from item.value.
         const onListValues = value.filter(v => !v || !v._notOnList);
         value.splice(0, value.length, ...onListValues);
-        setTimeout(() => {
+        this.cancelAutocompleteSetup();
+        this.autocompleteSetupTimeout = setTimeout(() => {
+          this.autocompleteSetupTimeout = null;
           this.setupAutocomplete();
         }, 0);
       }
