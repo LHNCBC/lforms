@@ -1817,11 +1817,12 @@ export default class LhcFormData {
 
   /**
    * Get a list of errors preventing the form from being valid.
-   * @returns {Array<string> | null} list of errors or null if no errors
+   * @returns {Promise<Array<string> | null>} list of errors or null if no errors
    */
-  checkConstraints () {
+  async checkConstraints () {
     // re-evaluated FHIRPath expression in case variables need an update.
-    this._expressionProcessor.runCalculations(false);
+    await this._expressionProcessor.runCalculations(false);
+    this._checkFormControls();
     const issues = [];
     const itemListLength = this.itemList.length;
     for (let i = 0; i < itemListLength; i++) {

@@ -205,7 +205,7 @@ const FormUtils = {
    * Get a list of errors/warnings from targetConstraints.
    * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be a DOM element or a CSS selector.
-   * @return {Array<object>} list of errors/warnings or null if form is valid.
+   * @return {Promise<Array<object>|null>} list of errors/warnings or null if form is valid.
    *        Each error/warning object has the following properties:
    *        linkId: the linkId of the item that defined the constraint
    *        message: the error/warning message defined in the constraint
@@ -213,9 +213,9 @@ const FormUtils = {
    *        constraintKey: the key defined in the targetConstraint extension
    *        locationLinkIds: an array of the linkIds of the items that are defined in the "location" sub extension, if found
    */
-  checkConstraints: function (element) {
+  checkConstraints: async function (element) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.checkConstraints() : null;
+    return formObj ? await formObj.checkConstraints() : null;
   },
 
 
