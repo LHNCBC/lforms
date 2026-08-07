@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.0.0] 2026-08-07
+### Changed
+- LForms.Util.checkConstraints() is now an async function.
+
 ## [43.0.2] 2026-07-31
 ### Added
 - Added system to tag in generated Questionnaire or QuestionnaireResponse.
