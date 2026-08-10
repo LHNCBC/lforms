@@ -859,6 +859,109 @@ test.describe('Validations', () => {
       ]);
     });
 
+    test('should validate targetConstraint after async expressions feed legacy data controls', async ({ page }) => {
+      let asyncRequestCount = 0;
+      await page.route(/\/async-constraint-value\/go\?_format=json$/, async route => {
+        asyncRequestCount += 1;
+        await route.fulfill({
+          contentType: 'application/json',
+          body: JSON.stringify({ value: 'fresh' })
+        });
+      });
+      const q = {
+        resourceType: 'Questionnaire',
+        status: 'draft',
+        title: 'Async targetConstraint dataControl test',
+        extension: [
+          {
+            url: 'http://hl7.org/fhir/StructureDefinition/variable',
+            valueExpression: {
+              name: 'asyncConstraintValue',
+              language: 'application/x-fhir-query',
+              expression: '/async-constraint-value/{{item.where(linkId=\'trigger\').answer.value}}'
+            }
+          }
+        ],
+        item: [
+          {
+            linkId: 'trigger',
+            text: 'Trigger async value',
+            type: 'string'
+          },
+          {
+            linkId: 'async-source',
+            text: 'Async source',
+            type: 'string',
+            extension: [
+              {
+                url: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression',
+                valueExpression: {
+                  language: 'text/fhirpath',
+                  expression: '%asyncConstraintValue.value'
+                }
+              }
+            ]
+          },
+          {
+            linkId: 'controlled-target',
+            text: 'Controlled target',
+            type: 'string',
+            extension: [
+              {
+                url: 'http://lhcforms.nlm.nih.gov/fhirExt/dataControl',
+                valueString: '[{"source":{"sourceType":"INTERNAL","sourceLinkId":"async-source"},"construction":"SIMPLE","dataFormat":"value","onAttribute":"value"}]'
+              },
+              {
+                url: 'http://hl7.org/fhir/StructureDefinition/targetConstraint',
+                extension: [
+                  {
+                    url: 'key',
+                    valueId: 'controlled-target-is-fresh'
+                  },
+                  {
+                    url: 'severity',
+                    valueCode: 'error'
+                  },
+                  {
+                    url: 'human',
+                    valueString: 'Controlled target should use the fresh async value.'
+                  },
+                  {
+                    url: 'expression',
+                    valueExpression: {
+                      language: 'text/fhirpath',
+                      expression: "%resource.item.where(linkId='controlled-target').answer.value.exists() and %resource.item.where(linkId='controlled-target').answer.value = 'fresh'"
+                    }
+                  },
+                  {
+                    url: 'location',
+                    valueString: "%questionnaire.item.where(linkId='controlled-target')"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+
+      await page.evaluate(async q => {
+        const w = window as any;
+        const formDef = w.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+        await w.LForms.Util.addFormToPage(formDef, 'formContainer', { fhirVersion: 'R4' });
+      }, q);
+      await expect(page.locator('.lhc-form-title')).toBeVisible();
+
+      await byId(page, 'trigger/1').pressSequentially('go');
+      await byId(page, 'trigger/1').blur();
+      const errors = await page.evaluate(() => {
+        return (window as any).LForms.Util.checkConstraints();
+      });
+
+      expect(asyncRequestCount).toBeGreaterThan(0);
+      expect(errors).toBeNull();
+      await expect(byId(page, 'controlled-target/1')).toHaveValue('fresh');
+    });
+
     test('should validate targetConstraint - multiple locations', async ({ page }) => {
       await loadFromTestData(page, 'q-with-targetConstraint-multiple-locations.json', 'R4');
       let q1 = byId(page, '1.1/1/1');
