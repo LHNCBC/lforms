@@ -10,15 +10,36 @@ const messages = language.renderingErrorMessages;
 
 export const ErrorMessages = {
   /**
+   * Returns the text for a message in the locale selected at build time.
+   * @param messageID the id of the message
+   * @return the text corresponding to messageID
+   */
+  getMsg: function (messageID) {
+    if (!messages[messageID]) {
+      throw new Error('Unknown message ID "' +messageID+'"');
+    }
+    return messages[messageID];
+  },
+
+
+  /**
    *  Adds the message with the given ID to the given message object.
    * @param msgObj an object to which the message will be added, with the given
    * messageID as the key and the text as the value.
    * @param messageID the id of the message
    */
   addMsg: function (msgObj, messageID) {
-    if (!messages[messageID]) {
-      throw new Error('Unknown message ID "' +messageID+'"');
-    }
-    msgObj[messageID] = messages[messageID];
+    msgObj[messageID] = this.getMsg(messageID);
+  },
+
+
+  /**
+   * Retained for compatibility with callers of the previous runtime-language API.
+   * Language is now selected at build time, so this method no longer changes it.
+   * @deprecated Configure the locale when building LForms instead.
+   * @param languageCode the requested language code
+   */
+  setLanguage: function (languageCode) {
+    return undefined;
   }
 };
