@@ -25,7 +25,7 @@ test.describe('FHIR answerValueSet', () => {
     // yesno4: open-choice, yesno5: open-choice (repeats), yesno6: open-choice (repeats)
     const answerFields = ['yesno1/1', 'yesno2/1', 'yesno3/1', 'yesno4/1', 'yesno5/1', 'yesno6/1'];
     const searchResults = 'lhc-tools-searchResults';
-    
+
     test('should have expected answer list when the Questionnaire is loaded', async ({ page }) => {
       await addFormToPage(page, 'q-with-answerValueSet-autocomplete.json', 'formContainer', { fhirVersion });
       const listItems = page.locator(`#${searchResults} li`);
@@ -185,7 +185,7 @@ test.describe('FHIR answerValueSet', () => {
         f3: { f3a1: false, f3a2: true, f3a3: false, f3Other: false },
         f4: { f4a1: true, f4a2: true, f4a3: false, f4Other: false },
         f5: { f5a1: false, f5a2: false, f5a3: false, f5Other: true, f5OtherValue: 'offlist answer 1' },
-        f6: { f6a1: false, f6a2: true, f6a3: false, f6Other: true, f6OtherValue: 'offlist answer 2' }
+        f6: { f6a1: false, f6a2: true, f6a3: false, f6Other: true, f6OtherValue: 'offlist answer 2 checkbox' }
       };
 
       // check saved values
@@ -193,10 +193,14 @@ test.describe('FHIR answerValueSet', () => {
         for (const [fieldId, expectedState] of Object.entries(states)) {
           const field = byId(page, eval(fieldId));
           await expect(field).toBeVisible();
-          
+
           if (typeof expectedState === 'string') {
             // It's a text field (e.g., OtherValue)
-            await expect(field).toHaveValue(expectedState);
+            if (expectedState.includes('checkbox')) {
+              await expect(field).toContainText(expectedState); // checkbox
+            } else {
+              await expect(field).toHaveValue(expectedState); // radio
+            }
           } else {
             // It's a checkbox
             const input = field.locator('input').first();
@@ -227,7 +231,7 @@ test.describe('FHIR answerValueSet', () => {
       expect(exportedQR.item[4].answer[0]).toEqual({ valueString: 'offlist answer 1' });
       expect(exportedQR.item[5].linkId).toBe('yesno6');
       expect(exportedQR.item[5].answer[0]).toEqual({ valueCoding: { system: 'http://terminology.hl7.org/CodeSystem/v2-0136', code: 'Y', display: 'Yes' } });
-      expect(exportedQR.item[5].answer[1]).toEqual({ valueString: 'offlist answer 2' });
+      expect(exportedQR.item[5].answer[1]).toEqual({ valueString: 'offlist answer 2 checkbox' });
     });
   });
 
@@ -329,7 +333,7 @@ test.describe('FHIR answerValueSet', () => {
         expectedGroup.item.forEach((item, itemIdx) => {
           const expectedItem = expectedGroup.item[itemIdx];
           expect(item.linkId).toBe(expectedItem.linkId);
-          expect(item.answer).toEqual(expectedItem.answer); 
+          expect(item.answer).toEqual(expectedItem.answer);
         });
       });
 

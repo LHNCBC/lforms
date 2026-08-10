@@ -1,9 +1,21 @@
-import {Component, OnInit, Input, OnChanges, ElementRef, QueryList, ViewChildren, AfterViewInit, OnDestroy} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnChanges,
+  ElementRef,
+  QueryList,
+  ViewChildren,
+  AfterViewInit,
+  OnDestroy,
+  ViewChild
+} from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { CommonUtilsService } from '../../lib/common-utils.service';
 import deepEqual from "deep-equal";
 import language from '../../../language-config.json';
 import { Subscription } from 'rxjs';
+import Def from 'autocomplete-lhc';
 
 @Component({
     selector: 'lhc-group-matrix',
@@ -20,10 +32,15 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
   @Input() acOptions;
   @Input() formLevel: boolean = false;
   @ViewChildren('tableRow') tableRows: QueryList<ElementRef>;
+  @ViewChildren('ac') ac: QueryList<ElementRef>;
   language = language;
   private radioNamesSubscription?: Subscription;
-
+  private autocompleteInputsSubscription?: Subscription;
   isCheckbox: boolean = false;
+  private acInstances = [];
+  private listSelectionObservers: (() => void)[] = [];
+  private autocompleteSetupTimeout: any = null;
+  private isDestroyed = false;
 
   constructor(
     private commonUtils: CommonUtilsService,
@@ -54,6 +71,11 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
         });
       }
     }
+    else if (this.isCheckbox && this.ac && !this.autocompleteInputsSubscription) {
+      this.autocompleteInputsSubscription = this.ac.changes.subscribe(() => {
+        this.scheduleAutocompleteSetup();
+      });
+    }
   }
 
 
@@ -61,7 +83,11 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
    * Invoked when the component is destroyed. Unsubscribe from any subscriptions to avoid memory leaks.
    */
   ngOnDestroy() {
+    this.isDestroyed = true;
     this.radioNamesSubscription?.unsubscribe();
+    this.autocompleteInputsSubscription?.unsubscribe();
+    this.cancelAutocompleteSetup();
+    this.cleanupAutocomplete();
   }
 
 
@@ -94,8 +120,8 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
         newValues.push(item.answers[i])
       }
     }
-    if (item._answerOtherChecked) {
-      newValues.push({"text": item._answerOther, "_notOnList": true})
+    if (item._answerOtherChecked && item._answerOther && item._answerOther.length) {
+      newValues.push(...item._answerOther.map(x => ({text: x, _notOnList: true})));
     }
     item.value = newValues;
 
@@ -154,6 +180,15 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
         this.setRadioInitialValue(subItem);
       }
     });
+
+    const hasAC = this.isCheckbox && this.item.items[0].answerConstraint === 'optionsOrString';
+    if (hasAC) {
+      this.scheduleAutocompleteSetup();
+    }
+    else {
+      this.cancelAutocompleteSetup();
+      this.cleanupAutocomplete();
+    }
   }
 
 
@@ -225,10 +260,11 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
       // if there is an initial value or an existing value
       if (subItem.value && Array.isArray(subItem.value)) {
         const checkboxModels = new Array(subItem.answers.length).fill(false);
+        subItem._answerOther = [];
         for (let i=0, iLen=subItem.value.length; i<iLen; i++) {
           if (subItem.value[i]._notOnList) {
             subItem._answerOtherChecked = true;
-            subItem._answerOther = subItem.value[i].text;
+            subItem._answerOther.push(subItem.value[i].text);
           }
           else {
             for (let j=0, jLen=subItem.answers.length; j<jLen; j++) {
@@ -248,5 +284,91 @@ export class LhcGroupMatrixComponent implements OnChanges, AfterViewInit, OnDest
         delete subItem._answerOther;
       }
     }
+  }
+
+
+  /**
+   * Set up the autocompleter
+   */
+  setupAutocomplete(): void {
+    if (this.ac && this.ac.length) {
+      const autocompleteSubItems = this.getVisibleAutocompleteSubItems();
+      if (this.ac.length !== autocompleteSubItems.length) {
+        return;
+      }
+      this.ac.forEach((ac, i) => {
+        const subItem = autocompleteSubItems[i];
+        const acInstance = new Def.Autocompleter.Prefetch(ac.nativeElement, [], {
+          maxSelect: '*'
+        });
+        if (subItem._answerOther && Array.isArray(subItem._answerOther)) {
+          subItem._answerOther.forEach(v => {
+            acInstance.storeSelectedItem(v, null); // no code, only text
+            acInstance.addToSelectedArea(v);
+          });
+        }
+        this.acInstances[i] = acInstance;
+        this.listSelectionObservers[i] = Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(subItem, '_otherValue'), () => {
+          subItem._answerOther = acInstance.getSelectedItems();
+          this.updateCheckboxListValue(subItem);
+        });
+      });
+    }
+  }
+
+
+  /**
+   * Gets the visible subitems that render an autocomplete for checkbox "Other" values.
+   */
+  private getVisibleAutocompleteSubItems() {
+    return this.item.items.filter(subItem =>
+      !subItem._isHiddenFromView && subItem.answerConstraint === 'optionsOrString'
+    );
+  }
+
+
+  /**
+   * Schedules autocomplete setup after Angular has applied any row visibility changes.
+   */
+  private scheduleAutocompleteSetup(): void {
+    this.cancelAutocompleteSetup();
+    this.cleanupAutocomplete();
+    this.autocompleteSetupTimeout = setTimeout(() => {
+      this.autocompleteSetupTimeout = null;
+      if (!this.isDestroyed) {
+        this.cleanupAutocomplete();
+        this.setupAutocomplete();
+      }
+    }, 0);
+  }
+
+
+  /**
+   * Cancels a delayed autocomplete setup if one is pending.
+   */
+  private cancelAutocompleteSetup(): void {
+    if (this.autocompleteSetupTimeout) {
+      clearTimeout(this.autocompleteSetupTimeout);
+      this.autocompleteSetupTimeout = null;
+    }
+  }
+
+
+  /**
+   * Clean up the autocompleters if there are any.
+   */
+  cleanupAutocomplete(): void {
+    this.listSelectionObservers.forEach((obs) => {
+      obs();
+    });
+    this.listSelectionObservers.length = 0;
+    this.acInstances.forEach((acInstance) => {
+      if (acInstance) {
+        // reset the field value
+        acInstance.setFieldVal('', false);
+        acInstance.destroy();
+      }
+    });
+    this.acInstances.length = 0;
   }
 }

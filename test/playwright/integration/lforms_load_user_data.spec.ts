@@ -19,7 +19,7 @@ test.describe('load saved user data', () => {
     // NEXT: the saved value is 11/20/2015 10:10 !!
     await expect(byId(page, '/q99/1').locator('input')).toHaveValue('11/20/2015 10:10:00');
 
-    const multiAnswers = page.locator('.autocomp_selected li');
+    const multiAnswers = page.locator('lhc-autocomplete .autocomp_selected li');
     await expect(multiAnswers).toHaveCount(6);
     await expect(multiAnswers.nth(0)).toHaveText('×Answer 1');
     await expect(multiAnswers.nth(1)).toHaveText('×Answer 3');
@@ -166,7 +166,7 @@ test.describe('load saved user data', () => {
     await q8.click();
     await pressCypressKeys(q8, '{downArrow}');
     await q8.blur();
-    const multiAnswers = page.locator('.autocomp_selected li');
+    const multiAnswers = page.locator('lhc-autocomplete .autocomp_selected li');
     await expect(multiAnswers).toHaveCount(7);
     await expect(multiAnswers.nth(0)).toHaveText('×Answer 1');
     await expect(multiAnswers.nth(1)).toHaveText('×Answer 3');
@@ -196,22 +196,22 @@ test.describe('load saved user data', () => {
 
     // OTHER in checkbox display with the user value not in the answer list
     await expect(byId(page, '/cwe-checkbox-user-value/1|_other').locator('input[type=checkbox]')).toBeChecked();
-    await expect(byId(page, '/cwe-checkbox-user-value/1|_otherValue')).toHaveValue('user typed value');
+    await expect(byId(page, '/cwe-checkbox-user-value/1|_otherValue')).toContainText('user typed value');
     // OTHER and an answer that has only a 'code', in checkbox display
     await expect(byId(page, answerId('/cwe-checkbox-user-value-and-answer-code/1', undefined, 'c1')).locator('input[type=checkbox]')).toBeChecked();
     await expect(byId(page, '/cwe-checkbox-user-value-and-answer-code/1|_other').locator('input[type=checkbox]')).toBeChecked();
-    await expect(byId(page, '/cwe-checkbox-user-value-and-answer-code/1|_otherValue')).toHaveValue('user typed value');
+    await expect(byId(page, '/cwe-checkbox-user-value-and-answer-code/1|_otherValue')).toContainText('user typed value');
     // OTHER and an answer that has only a 'text', in checkbox display
     await expect(byId(page, answerId('/cwe-checkbox-user-value-and-answer-text/1', undefined, 'c2')).locator('input[type=checkbox]')).toBeChecked();
     await expect(byId(page, '/cwe-checkbox-user-value-and-answer-text/1|_other').locator('input[type=checkbox]')).toBeChecked();
-    await expect(byId(page, '/cwe-checkbox-user-value-and-answer-text/1|_otherValue')).toHaveValue('user typed value');
+    await expect(byId(page, '/cwe-checkbox-user-value-and-answer-text/1|_otherValue')).toContainText('user typed value');
     // OTHER and an answer that has a 'code' and a 'text', in checkbox display
     await expect(byId(page, answerId('/cwe-checkbox-user-value-and-answer/1', undefined, 'c3')).locator('input[type=checkbox]')).toBeChecked();
     await expect(byId(page, '/cwe-checkbox-user-value-and-answer/1|_other').locator('input[type=checkbox]')).toBeChecked();
-    await expect(byId(page, '/cwe-checkbox-user-value-and-answer/1|_otherValue')).toHaveValue('user typed value');
+    await expect(byId(page, '/cwe-checkbox-user-value-and-answer/1|_otherValue')).toContainText('user typed value');
     // default answer is not in the answer list, checkbox display, other value set
     await expect(byId(page, '/cwe-checkbox-default-answer/1|_other').locator('input[type=checkbox]')).toBeChecked();
-    await expect(byId(page, '/cwe-checkbox-default-answer/1|_otherValue')).toHaveValue('off-list default answer');
+    await expect(byId(page, '/cwe-checkbox-default-answer/1|_otherValue')).toContainText('off-list default answer');
     // OTHER, in radiobutton display with the user value not in the answer list
     await expect(byId(page, '/cwe-radio-user-value/1|_other').locator('input[type=radio]')).toBeChecked();
     await expect(byId(page, '/cwe-radio-user-value/1|_otherValue')).toHaveValue('user typed value');
