@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import { CommonUtilsService } from '../../lib/common-utils.service';
-import { LhcDataService} from '../../lib/lhc-data.service';
-import CommonUtils from "../../lib/lforms/lhc-common-utils.js";
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {CommonUtilsService} from '../../lib/common-utils.service';
+import {LhcDataService} from '../../lib/lhc-data.service';
 import language from '../../../language-config.json';
+import Def from 'autocomplete-lhc';
 
 @Component({
     selector: 'lhc-item-choice-check-box',
@@ -10,15 +10,20 @@ import language from '../../../language-config.json';
     styleUrls: ['./lhc-item-choice-check-box.component.css'],
     standalone: false
 })
-export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
+export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   @Input() item;
   @Input() acOptions; // item._autocompOptions
+  @ViewChild("ac") ac: ElementRef<any>;
   language = language;
-
-  // internal data models
-  otherValue: string = null;
   checkboxModels: boolean[] = [];
   otherCheckboxModel: boolean = null;
+  acInstance: any = null;
+  initialOffListValues = [];
+  viewInitialized = false;
+  // the function returned by observeListSelections, used to remove the callback
+  listSelectionObserver: () => void = null;
+  private autocompleteSetupTimeout: any = null;
+  private isDestroyed = false;
 
   // the previous value, because nz-checkbox-wrapper does not have access to the previous value in the ngOnChange event
   prevCheckBoxValue: any = null;
@@ -29,22 +34,21 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   ) {}
 
   /**
-   * Set initial status of the component
+   * Set the initial status of the autocomplete for "Other" values.
    */
   setInitialValue(): void {
-
     if (this.item && this.item.value && Array.isArray(this.item.value) &&
         this.item.answers && Array.isArray(this.item.answers)) {
       const iLen = this.item.answers.length;
       this.checkboxModels = new Array(iLen);
+      this.initialOffListValues = [];
 
       for (let j = 0, jLen = this.item.value.length; j < jLen; j++) {
         const value = this.item.value[j];
-        if (value._notOnList) {
-          this.otherCheckboxModel = true;
-          this.otherValue = value.text;
+        if (value._notOnList && value.text) {
+          this.initialOffListValues.push(value.text);
         }
-        else {
+        else if (!value._notOnList) {
           for (let i = 0; i < iLen; i++) {
             const answer = this.item.answers[i];
             if (this.commonUtils.areTwoAnswersSame(value, answer, this.item)) {
@@ -53,11 +57,39 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
           }
         }
       }
+      if (this.initialOffListValues.length) {
+        this.otherCheckboxModel = true;
+        if (this.viewInitialized && this.ac) {
+          this.cleanupAutocomplete();
+          this.setupAutocomplete();
+        } else if (this.viewInitialized && !this.ac && !this.acInstance) {
+          // If "Other" is re-bound to true, #ac may not be rendered yet in this change cycle.
+          // Retry setup after Angular applies the *ngIf DOM update.
+          this.cancelAutocompleteSetup();
+          this.autocompleteSetupTimeout = setTimeout(() => {
+            this.autocompleteSetupTimeout = null;
+            if (!this.isDestroyed && this.otherCheckboxModel && this.ac && !this.acInstance) {
+              this.setupAutocomplete();
+            }
+          }, 0);
+        }
+      } else {
+        // The (re-bound) value has no off-list entries, so the "Other" checkbox should not
+        // stay checked with a stale autocompleter left over from a previous value.
+        this.otherCheckboxModel = false;
+        this.cleanupAutocomplete();
+      }
 
       this.prevCheckBoxValue = this.item.value;
 
       this.removeSubGroupsForNonExistentCheckboxes();
       this.updateSubGroupsForMergedQR();
+    } else {
+      this.checkboxModels = [];
+      this.initialOffListValues = [];
+      this.otherCheckboxModel = false;
+      this.cleanupAutocomplete();
+      this.prevCheckBoxValue = null;
     }
   }
 
@@ -76,12 +108,115 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Initialize the autocomplete-lhc
+   * Cannot be done in ngOnInit because the DOM elements that autocomplete-lhc depends on are
+   * not ready yet on ngOnInit
+   */
+  ngAfterViewInit() {
+    this.cancelAutocompleteSetup();
+    this.autocompleteSetupTimeout = setTimeout(() => {
+      this.autocompleteSetupTimeout = null;
+      if (!this.isDestroyed) {
+        this.setupAutocomplete();
+        this.viewInitialized = true;
+      }
+    }, 0);
+  }
+
+  /**
+   * Clean up the autocompleter and its list selection callback when the component is destroyed
+   */
+  ngOnDestroy(): void {
+    this.isDestroyed = true;
+    this.cancelAutocompleteSetup();
+    this.cleanupAutocomplete();
+  }
+
+  /**
+   * Cancels a delayed autocomplete setup if one is pending.
+   */
+  private cancelAutocompleteSetup(): void {
+    if (this.autocompleteSetupTimeout) {
+      clearTimeout(this.autocompleteSetupTimeout);
+      this.autocompleteSetupTimeout = null;
+    }
+  }
+
+  /**
+   * Clean up the autocompleter if there is one
+   */
+  cleanupAutocomplete(): void {
+    // Remove the list selection callback. destroy() below does not remove it, and
+    // observeListSelections stores callbacks in a global keyed by field id, so they
+    // would otherwise accumulate and fire multiple times per selection.
+    if (this.listSelectionObserver) {
+      this.listSelectionObserver();
+      this.listSelectionObserver = null;
+    }
+    if (this.acInstance) {
+      // reset the field value
+      this.acInstance.setFieldVal('', false);
+      this.acInstance.destroy();
+      this.acInstance = null;
+    }
+  }
+
+  /**
+   * Set up the autocompleter
+   */
+  setupAutocomplete() {
+    // this.ac may be undefined if the "#ac" input (guarded by *ngIf="otherCheckboxModel")
+    // has not been rendered yet when this is called; skip until it is available.
+    if (this.otherCheckboxModel && this.ac) {
+      this.cleanupAutocomplete();
+      const acOptions = {
+        maxSelect: '*'
+      };
+      this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, [], acOptions);
+      this.initialOffListValues.forEach(v => {
+        this.acInstance.storeSelectedItem(v, null); // no code, only text
+        this.acInstance.addToSelectedArea(v);
+      });
+      this.initialOffListValues.length = 0;
+      this.listSelectionObserver = Def.Autocompleter.Event.observeListSelections(this.lhcDataService.getItemAnswerId(this.item, '_otherValueInput'), () => {
+        const onListValues = (this.prevCheckBoxValue || []).filter(v => !v._notOnList);
+        this.item.value = onListValues.concat(this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
+        this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
+        this.prevCheckBoxValue = this.item.value;
+        this.item._visitedBefore = true;
+      });
+    }
+  }
+
+  /**
    * Invoked when the selection of checkbox changes
    * @param value the selected values of a checkbox group
    */
-  onCheckboxModelChange(value: any): void {
+  onCheckboxModelChange(value: any[]): void {
+    const hasOffListValue = value.some(v => v && v._notOnList);
+    if (hasOffListValue) {
+      if (this.acInstance) {
+        const onListValues = value.filter(v => !v || !v._notOnList);
+        value.splice(0, value.length, ...onListValues, ...this.acInstance.getSelectedItems().map(x => ({text: x, _notOnList: true})));
+      } else {
+        // If "Other" is checked but no values are in the autocomplete, remove all off-list
+        // placeholders from item.value.
+        const onListValues = value.filter(v => !v || !v._notOnList);
+        value.splice(0, value.length, ...onListValues);
+        this.cancelAutocompleteSetup();
+        this.autocompleteSetupTimeout = setTimeout(() => {
+          this.autocompleteSetupTimeout = null;
+          if (!this.isDestroyed) {
+            this.setupAutocomplete();
+          }
+        }, 0);
+      }
+    }
+    else {
+      this.cleanupAutocomplete();
+    }
     this.item.value = value;
-    this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
     this.prevCheckBoxValue = this.item.value;
     this.item._visitedBefore = true;
 
@@ -146,21 +281,4 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges {
     }
   }
 
-  /**
-   * Invoked when the value in the input field of 'other' changes
-   * @param otherValue the value in the other value input
-   */
-  onOtherValueChange(otherValue: any): void {
-    if (this.otherCheckboxModel) {
-      this.item.value = CommonUtils.deepCopy(this.prevCheckBoxValue).map((answer) => {
-        if (answer._notOnList) {
-          answer.text = otherValue;
-        }
-        return answer;
-      });
-      this.otherValue = otherValue;
-      this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue)
-      this.prevCheckBoxValue = this.item.value;
-    }
-  }
 }

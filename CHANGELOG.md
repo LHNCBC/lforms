@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.1.0] 2026-07-21
+### Changed
+- When the answer list is rendered as checkboxes, allow multiple string values
+  for the "Other" option for R4 open-choice and R5 optionsOrString.
+
 ## [43.0.2] 2026-07-31
 ### Added
 - Added system to tag in generated Questionnaire or QuestionnaireResponse.
