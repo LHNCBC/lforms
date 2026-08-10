@@ -859,6 +859,42 @@ test.describe('Validations', () => {
       ]);
     });
 
+    test('should validate targetConstraint when item parent chain has stale root variables', async ({ page }) => {
+      await loadFromTestData(page, 'q-with-targetConstraint-and-variable.json', 'R4');
+      let q1 = byId(page, 'number-one-to-hundred/1');
+      await q1.pressSequentially('200');
+      await q1.blur();
+
+      const errors = await page.evaluate(() => {
+        const w = window as any;
+        const formObj = w.LForms.Util._getFormObjectInScope();
+        const originalCheckFormControls = formObj._checkFormControls.bind(formObj);
+        formObj._checkFormControls = function () {
+          originalCheckFormControls();
+          const item = formObj.itemList.find(x => x.linkId === 'number-one-to-hundred');
+          // Simulate GitHub issue #204, where an item's _parentItem chain reaches
+          // a different LFormsData-like object with empty _fhirVariables instead
+          // of the current form's populated _fhirVariables.
+          item._parentItem = {
+            _fhirVariables: {},
+            _idPath: '',
+            _displayLevel: 0,
+            items: [item]
+          };
+        };
+        return w.LForms.Util.checkConstraints();
+      });
+
+      expect(errors).toEqual([
+        { constraintKey: "number-1-to-100",
+          linkId: "number-one-to-hundred",
+          locationLinkIds: ["number-one-to-hundred"],
+          message: "Number must be between 1 and 100.",
+          severity: "error"
+        }
+      ]);
+    });
+
     test('should validate targetConstraint after async expressions feed legacy data controls', async ({ page }) => {
       let asyncRequestCount = 0;
       await page.route(/\/async-constraint-value\/go\?_format=json$/, async route => {

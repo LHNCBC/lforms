@@ -469,9 +469,9 @@ import replaceAsync from 'string-replace-async';
      */
     _itemWithVars: function(item) {
       var itemWithVars = item;
-      while (!itemWithVars._fhirVariables)
+      while (itemWithVars && !itemWithVars._fhirVariables)
         itemWithVars = itemWithVars._parentItem; // should terminate at lfData
-      return itemWithVars;
+      return itemWithVars || this._lfData;
     },
 
 
@@ -491,6 +491,29 @@ import replaceAsync from 'string-replace-async';
           this._itemWithVars(item)._fhirVariables);
       }
       return rtn;
+    },
+
+
+    /**
+     * Returns a flattened FHIRPath variable map for the given item. Variables
+     * are normally found by walking the item's _parentItem chain. If that chain
+     * is stale and reaches a different LFormsData object, make sure variables
+     * from this expression processor's current LFormsData object are still
+     * available (e.g. %resource, %questionnaire, and root-level variables).
+     * @param item either an LFormsData or an item from an LFormsData.
+     * @return a flattened FHIRPath variable map.
+     */
+    _getFHIRPathVariables: function(item) {
+      var fVars = {};
+      var itemVars = this._itemWithVars(item)._fhirVariables || {};
+      for (var k in itemVars)
+        fVars[k] = itemVars[k];
+      var lfDataVars = this._lfData._fhirVariables || {};
+      for (var k in lfDataVars) {
+        if (!(k in fVars))
+          fVars[k] = lfDataVars[k];
+      }
+      return fVars;
     },
 
 
@@ -567,14 +590,10 @@ import replaceAsync from 'string-replace-async';
      */
     _evaluateFHIRPath: function(item, expression) {
       var fhirPathVal;
-      // Find the item-level fhirpathVars
-      var itemVars = this._itemWithVars(item)._fhirVariables;
       try {
         // We need to flatten the fhirVariables chain into a simple hash of key/
         // value pairs.
-        var fVars = {};
-        for (var k in itemVars)
-          fVars[k] = itemVars[k];
+        var fVars = this._getFHIRPathVariables(item);
         let contextNode, base;
         if (item._elementId) {
           contextNode = this._elemIDToQRItem[item._elementId];
@@ -619,11 +638,8 @@ import replaceAsync from 'string-replace-async';
      */
     _evaluateFHIRPathAgainstContext: function (context, expression, templateItem) {
       var fhirPathVal;
-      var itemVars = this._itemWithVars(templateItem)._fhirVariables;
       try {
-        var fVars = {};
-        for (var k in itemVars)
-          fVars[k] = itemVars[k];
+        var fVars = this._getFHIRPathVariables(templateItem);
         let contextNode = context;
         if (context._elementId) {
           // If context is an LForms item instead of an evaluated FHIRPath expression value,
