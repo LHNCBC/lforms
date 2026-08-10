@@ -86,21 +86,23 @@ test.describe('display controls demo', () => {
     expect(formData.items[4].value[0]).toEqual({code: 'c1', text: 'Answer X'});
     expect(formData.items[4].value[1] == null).toBe(true); // allow undefined
 
-    await byId(page, item4OtherValue).pressSequentially('other values');
+    await byId(page, item4OtherValue).locator('input').pressSequentially('other values');
+    await page.keyboard.press('Enter');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
     expect(formData.items[4].value.length).toBe(2);
     expect(formData.items[4].value[0].code).toBe('c1');
     expect(formData.items[4].value[0].text).toBe('Answer X');
     expect(formData.items[4].value[1]).toBe('other values');
 
-    // change the other value alone will update the data model when the checkbox is checked.
-    await byId(page, item4OtherValue).clear();
-    await byId(page, item4OtherValue).pressSequentially('other values again');
+    // adding one other value will update the data model when the checkbox is checked.
+    await byId(page, item4OtherValue).locator('input').pressSequentially('other values again');
+    await page.keyboard.press('Enter');
     formData = await page.evaluate(() => (window as any).LForms.Util.getFormData());
-    expect(formData.items[4].value.length).toBe(2);
+    expect(formData.items[4].value.length).toBe(3);
     expect(formData.items[4].value[0].code).toBe('c1');
     expect(formData.items[4].value[0].text).toBe('Answer X');
-    expect(formData.items[4].value[1]).toBe('other values again');
+    expect(formData.items[4].value[1]).toBe('other values');
+    expect(formData.items[4].value[2]).toBe('other values again');
 
     // other model values are not changed
     expect(formData.items[1].value.code).toBe('c3');

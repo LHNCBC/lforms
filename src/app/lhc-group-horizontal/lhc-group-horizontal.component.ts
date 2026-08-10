@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import language from "../../../language-config.json";
 
 @Component({
     selector: 'lhc-group-horizontal',
@@ -11,9 +12,10 @@ export class LhcGroupHorizontalComponent {
 
   @Input() item;
   @Input() formLevel: boolean = false;
-  
+
   constructor(public lhcDataService: LhcDataService) {
   }
 
 
+  protected readonly language = language;
 }

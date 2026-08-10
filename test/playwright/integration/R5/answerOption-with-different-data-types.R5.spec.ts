@@ -193,7 +193,7 @@ test.describe('AnswerOption with different types', () => {
             await expect(byId(page, ids.g6item2ans3).locator('input')).not.toBeChecked();
             await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_other')).locator('input').first()).toBeChecked();
             await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))).toBeVisible();
-            await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))).toHaveValue('user typed value');
+            await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))).toContainText('user typed value');
           } else {
             await expect(byId(page, `${ids.g6item2ans3}`).locator('input')).toBeChecked();
           }
@@ -349,7 +349,7 @@ test.describe('AnswerOption with different types', () => {
             await expect(byId(page, ids.g6item2ans3).locator('input')).not.toBeChecked();
             await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_other')).locator('input').first()).toBeChecked();
             await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))).toBeVisible();
-            await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))).toHaveValue('user typed value');
+            await expect(byId(page, answerId(`${valueType}-group6-item2/1/1`, '_otherValue'))).toContainText('user typed value');
           } else {
             await expect(byId(page, ids.g6item2ans3).locator('input')).toBeChecked();
           }

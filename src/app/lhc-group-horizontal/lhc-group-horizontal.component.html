@@ -49,9 +49,9 @@
     <!-- a button at the end of each repeating section -->
     <div *ngIf="item._questionRepeatable && lhcDataService.getLastRepeatingItem(item)._lastRepeatingItem && lhcDataService.targetEnabled(item) && !item._isHiddenFromView" class="lhc-button-padding {{lhcDataService.getSkipLogicClass(item)}}">
       <lhc-button-popover [item]="item" [popoverType]="'repeating-item'" buttonLabel= '+ {{item._text}}' [append]="true"></lhc-button-popover>
-      <span *ngIf="lhcDataService.getLastRepeatingItem(item)._minOccursNotMet" style="color: red;"> This repeatable item should have at least {{item.questionCardinality.min}} occurrences.</span>
+      <span *ngIf="lhcDataService.getLastRepeatingItem(item)._minOccursNotMet" style="color: red;"> {{language.repeatableItemAtLeast.replace('{lformsParam}', item.questionCardinality.min)}} </span>
     </div>
-    <span *ngIf="lhcDataService.getLastRepeatingItem(item)?._maxOccursExcceeded" style="color: red;"> This repeatable item should have at most {{item.questionCardinality.max}} occurrences.</span>
+    <span *ngIf="lhcDataService.getLastRepeatingItem(item)?._maxOccursExcceeded" style="color: red;"> {{language.repeatableItemAtMost.replace('{lformsParam}', item.questionCardinality.max)}} </span>
   </div>
 
 </ng-container>

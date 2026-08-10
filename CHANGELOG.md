@@ -2,6 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.1.0] 2026-08-10
+### Changed
+- When the answer list is rendered as checkboxes, allow multiple string values
+  for the "Other" option for R4 open-choice and R5 optionsOrString.
+### Added
+- Added system to tag in generated Questionnaire or QuestionnaireResponse.
+- Added a Chinese language file.
+### Fixed
+- Missing error messages in language configuration files.
+
 ## [43.0.0] 2026-07-13
 ### Added
 - New onFormChange event, emitted when the item value is modified at any

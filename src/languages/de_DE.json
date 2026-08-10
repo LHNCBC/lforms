@@ -36,7 +36,7 @@
     "NR": "müssen zwei numerische Werte sein, die durch ein ^ getrennt sind. Ein Wert kann weggelassen werden, das ^ jedoch nicht.",
     "YEAR": "muss eine Jahresangabe sein.",
     "MONTH": "muss eine numerische Monatsangabe sein.",
-    "DAY": "muss eine numerische Tagesangangabe sein.",
+    "DAY": "muss eine numerische Tagesangabe sein.",
     "URL": "muss eine gültige URL sein.",
     "EMAIL": "muss eine gültige E-Mail-Adresse sein.",
     "PHONE": "muss eine gültige Telefonnummer sein."
@@ -58,6 +58,30 @@
   "booleanNotAnswered": "Nicht beantwortet",
   "pleaseEnterInfoForTheBlank": "Bitte geben Sie Informationen in das Feld „{lformsParam}“ ein.",
   "other": "Andere",
+  "clearSelection": "Auswahl leeren",
+  "renderingErrorMessages": {
+    "comparatorInQuantity": "Diese Frage akzeptiert keine Mengenangabe mit einem Komparator.",
+    "nonMatchingQuantityUnit": "Es wurde versucht, eine Größe mit einer nicht passenden Einheit zuzuordnen.",
+    "MultipleValuesForNonRepeat": "Es wurde versucht, einem nicht wiederkehrenden Element mehrere Werte zuzuordnen.",
+    "invalidTagInHelpHTMLContent": "Im Hilfetext wurden ungültige HTML-Tags/Attribute gefunden.",
+    "invalidTagInLegalHTMLContent": "Im Rechtstext wurden ungültige HTML-Tags/Attribute gefunden.",
+    "invalidTagInAnswerOptionHTMLContent": "Ungültige HTML-Tags/Attribute in answerOptions gefunden.",
+    "invalidTagInHTMLContent": "Ungültige HTML-Tags/Attribute im Elementtext/Präfix gefunden.",
+    "answerValueSetLoadingError": "Die Antwortliste für diese Frage konnte nicht geladen werden.",
+    "hasModifierExtension": "Im Fragebogen sind eine oder mehrere ModifierExtensions enthalten. Der unten dargestellte Fragebogen dient nur der Veranschaulichung und wird möglicherweise nicht korrekt dargestellt. Die daraus generierte Antwort (QuestionnaireResponse) ist unter Umständen ungültig."
+  },
+  "error": "Fehler",
+  "warning": "Warnung",
+  "repeatableItemAtLeast": "Dieses wiederholbare Element sollte mindestens {lformsParam} Vorkommen haben.",
+  "repeatableItemAtMost": "Dieses wiederholbare Element sollte höchstens {lformsParam} Vorkommen haben.",
+  "implicitRulesNotSupported": "Der Fragebogen kann nicht gerendert werden, da er \"implicitRules\" verwendet, die von LHC-Forms nicht unterstützt werden.",
+  "unknownFileType": "Unbekannter Dateityp. Bitte stellen Sie sicher, dass die Datei die korrekte Dateiendung hat.",
+  "mimeTypeNotPermitted": "Die Datei {lformsParam1} gehört nicht zu den in diesem Fragebogen zulässigen MIME-Typen ({lformsParam2} und {lformsParam3}). Bitte stellen Sie sicher, dass Ihre Datei die korrekte Dateiendung für ihren Typ im Dateinamen hat.",
+  "maxAttachmentSizeExceeded": "Die Datei {lformsParam1} überschreitet die maximal zulässige Dateigröße von {lformsParam2} bytes. Falls Sie die Datei über eine URL angeben können, verwenden Sie die Schaltfläche, um das URL-Feld zu öffnen und die URL einzugeben.",
+  "largeFileConfirmation": "Das Hinzufügen einer großen Datei als Anhang kann zu einem Speichermangel auf Ihrem Computer führen. Sie können eine URL eingeben, anstatt die Datei anzuhängen. Möchten Sie die Datei wirklich anhängen?",
+  "attachmentFileOrUrlRequired": "Ein Anhang muss entweder eine Datei oder eine URL (oder beides) enthalten.",
+  "unableToAttachFile": "Die Datei konnte nicht angehängt werden.",
+  "typeToAddMoreValues": "Geben Sie weitere Werte ein, um diese hinzuzufügen.",
   "parsedDateFormats": [
     "M/D/YYYY",
     "M/D/YY",
@@ -76,6 +100,5 @@
     "M-D-YY HH:mm",
     "M-D HH:mm",
     "DD.MM.YYYY HH:mm"
-  ],
-  "clearSelection": "Auswahl leeren"
+  ]
 }

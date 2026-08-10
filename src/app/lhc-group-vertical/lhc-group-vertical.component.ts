@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { WindowService} from '../../lib/window.service';
+import language from "../../../language-config.json";
 
 @Component({
     selector: 'lhc-group-vertical',
@@ -24,4 +25,5 @@ export class LhcGroupVerticalComponent {
     });
   }
 
+  protected readonly language = language;
 }
