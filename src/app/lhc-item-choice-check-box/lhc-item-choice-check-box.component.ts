@@ -68,7 +68,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
           this.cancelAutocompleteSetup();
           this.autocompleteSetupTimeout = setTimeout(() => {
             this.autocompleteSetupTimeout = null;
-            if (this.otherCheckboxModel && this.ac && !this.acInstance) {
+            if (!this.isDestroyed && this.otherCheckboxModel && this.ac && !this.acInstance) {
               this.setupAutocomplete();
             }
           }, 0);
@@ -116,8 +116,10 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
     this.cancelAutocompleteSetup();
     this.autocompleteSetupTimeout = setTimeout(() => {
       this.autocompleteSetupTimeout = null;
-      this.setupAutocomplete();
-      this.viewInitialized = true;
+      if (!this.isDestroyed) {
+        this.setupAutocomplete();
+        this.viewInitialized = true;
+      }
     }, 0);
   }
 
@@ -166,6 +168,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
     // this.ac may be undefined if the "#ac" input (guarded by *ngIf="otherCheckboxModel")
     // has not been rendered yet when this is called; skip until it is available.
     if (this.otherCheckboxModel && this.ac) {
+      this.cleanupAutocomplete();
       const acOptions = {
         maxSelect: '*'
       };
@@ -203,7 +206,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         this.cancelAutocompleteSetup();
         this.autocompleteSetupTimeout = setTimeout(() => {
           this.autocompleteSetupTimeout = null;
-          this.setupAutocomplete();
+          if (!this.isDestroyed) {
+            this.setupAutocomplete();
+          }
         }, 0);
       }
     }
