@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.0.1] 2026-08-11
+### Fixed
+- LForms.Util.checkConstraints() sometimes fails to find FHIRPath
+  variables like %resource.
+
 ## [44.0.0] 2026-08-07
 ### Changed
 - LForms.Util.checkConstraints() is now an async function.
