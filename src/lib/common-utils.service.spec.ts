@@ -88,7 +88,7 @@ describe('CommonUtilsService', () => {
 
   })
 
-  it('should honor explicit orientation and otherwise treat positive answer layout columns as vertical', () => {
+  it('should keep one column vertical, honor other explicit orientations, and default positive columns to vertical', () => {
     expect(service.getDisplayControlIsVertical({
       answerLayout: {
         columns: '1'
@@ -138,7 +138,14 @@ describe('CommonUtilsService', () => {
         columns: '1',
         orientation: 'horizontal'
       }
-    })).toBeFalse();
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: 1,
+        orientation: 'horizontal'
+      }
+    })).toBeTrue();
   });
 
   it('should detect grid layout for answer layout columns greater than one', () => {

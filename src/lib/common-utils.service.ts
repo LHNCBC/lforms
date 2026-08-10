@@ -60,6 +60,12 @@ export class CommonUtilsService {
    * @returns true for vertical layout, otherwise false
    */
   getDisplayControlIsVertical(displayControl: DisplayControl): boolean {
+    const columns = displayControl?.answerLayout?.columns;
+    const columnCount = parseInt(String(columns), 10);
+    if (columnCount === 1) {
+      return true;
+    }
+
     const orientation = displayControl?.answerLayout?.orientation;
     if (orientation === 'horizontal') {
       return false;
@@ -68,8 +74,6 @@ export class CommonUtilsService {
       return true;
     }
 
-    const columns = displayControl?.answerLayout?.columns;
-    const columnCount = parseInt(String(columns), 10);
     return Number.isInteger(columnCount) && columnCount > 0;
   }
 
