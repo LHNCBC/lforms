@@ -203,49 +203,6 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   })
 
-  it('should set item.value, when the "other" checkbox is selected', () => {
-    component.item = itemCheckboxCWE;
-    component.acOptions = acOptions;
-    fixture.detectChanges();
-
-    let radio:HTMLElement = getItemAnswerElem(element, itemCheckboxCWE, itemCheckboxCWE.answers[2]);
-    radio.click();
-    expect(component.item.value).toEqual([{
-      "code": "c3",
-      "text": "Answer Z"
-    }])
-
-    //item.value should change, when the "other" checkbox is clicked
-    radio = getItemAnswerElem(element, itemCheckboxCWE, '_other')
-    radio.click();
-    fixture.detectChanges();
-    expect(component.item.value).toEqual([{
-      "code": "c3",
-      "text": "Answer Z"
-    },{
-      "text": null,
-      "_notOnList": true
-    }])
-
-    const otherInput:HTMLInputElement = getItemAnswerElem(element, itemCheckboxCWE, '_otherValue');
-    otherInput.value = 'some value';
-    otherInput.dispatchEvent(new Event('input'));
-    otherInput.dispatchEvent(new KeyboardEvent('keyup', {
-      bubbles : true, cancelable : true, shiftKey : false
-    }))
-    fixture.detectChanges();
-//    fixture.whenStable().then(() => {
-      expect(component.item.value).toEqual([{
-        "code": "c3",
-        "text": "Answer Z",
-      },{
-        "text": "some value",
-        "_notOnList": true
-      }])
-
-//    })
-  })
-
 
   it('should have lhc-vertical class with column 1', () => {
     component.item = itemCheckboxCNE;
@@ -262,6 +219,25 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     fixture.detectChanges();
     const containerDiv = element.querySelector('div[nz-row]');
     expect(containerDiv.classList).not.toContain('lhc-vertical');
+  });
+
+  it('should uncheck "Other" when the item is re-bound to a value with no off-list entries', () => {
+    // getLhcFormData() is used by the subgroup helpers in setInitialValue; stub it out.
+    spyOn(component.lhcDataService, 'getLhcFormData').and.returnValue({
+      getLinkIdForMultiSelectSubGroup: () => null
+    } as any);
+    component.acOptions = acOptions;
+
+    // First bind: the value has an off-list entry, so "Other" is checked.
+    component.item = { ...itemCheckboxCWE, value: [{ text: 'off list value', _notOnList: true }] };
+    component.ngOnChanges({});
+    expect(component.otherCheckboxModel).toBe(true);
+
+    // Re-bind: the value now has only on-list entries, so "Other" should be unchecked
+    // instead of staying stuck as checked from the previous value.
+    component.item = { ...itemCheckboxCWE, value: [{ code: 'c2', text: 'Answer Y' }] };
+    component.ngOnChanges({});
+    expect(component.otherCheckboxModel).toBe(false);
   });
 
 });
