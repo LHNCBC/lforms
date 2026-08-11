@@ -2,20 +2,20 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [43.1.0] 2026-08-06
+## [43.2.0] 2026-08-11
 ### Added
 - Validation of values entered in autocomplete fields, with a red border and
   tooltip error message shown when the value does not match an option in the list.
 
-## [43.0.2] 2026-07-31
+## [43.1.0] 2026-08-10
+### Changed
+- When the answer list is rendered as checkboxes, allow multiple string values
+  for the "Other" option for R4 open-choice and R5 optionsOrString.
 ### Added
 - Added system to tag in generated Questionnaire or QuestionnaireResponse.
-
-## [43.0.1] 2026-07-16
+- Added a Chinese language file.
 ### Fixed
 - Missing error messages in language configuration files.
-### Added
-- Chinese language file.
 
 ## [43.0.0] 2026-07-13
 ### Added

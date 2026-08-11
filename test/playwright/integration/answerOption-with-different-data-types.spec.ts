@@ -113,7 +113,7 @@ for (const fhirVersion of fhirVersions) {
           await expect(listItems.nth(1)).toContainText(values.g1Answer2);
           await expect(listItems.nth(2)).toContainText(values.g1Answer3);
 
-          // group 2 
+          // group 2
           // radio
           await expect(byId(page, ids.g2item1ans2)).toContainText(values.g1Answer2);
           // checkbox
@@ -160,7 +160,7 @@ for (const fhirVersion of fhirVersions) {
             await expect(byId(page, `item-${ids.g5item2}`).locator('span.autocomp_selected li').nth(0)).toHaveText('×' + values.g1Answer2);
           }
 
-          // group 6 
+          // group 6
           // radiobutton, non-repeats, initial
           await expect(byId(page, ids.g6item1ans2)).toContainText(values.g1Answer2);
           // for open-choice, the initial value is free text
@@ -181,7 +181,7 @@ for (const fhirVersion of fhirVersions) {
             if (valueType === 'valueCoding.open-choice') {
               await expect(byId(page, ids.g6item2ans3).locator('input').first()).not.toBeChecked();
               await expect(byId(page, answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).locator('input').first()).toBeChecked();
-              await expect(byId(page, answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))).toHaveValue('user typed value');
+              await expect(byId(page, 'item-valueCoding.open-choice-group6-item2/1/1').locator('.autocomp_selected')).toContainText('user typed value');
             } else {
               await expect(byId(page, ids.g6item2ans3).locator('input').first()).toBeChecked();
             }
@@ -360,7 +360,7 @@ for (const fhirVersion of fhirVersions) {
             if (valueType === 'valueCoding.open-choice') {
               await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).not.toBeChecked();
               await expect(byId(page, answerId('valueCoding.open-choice-group6-item2/1/1', '_other')).locator('input').first()).toBeChecked();
-              await expect(byId(page, answerId('valueCoding.open-choice-group6-item2/1/1', '_otherValue'))).toHaveValue('user typed value');
+              await expect(byId(page, 'item-valueCoding.open-choice-group6-item2/1/1').locator('.autocomp_selected')).toContainText('user typed value');
             } else {
               await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).toBeChecked();
             }

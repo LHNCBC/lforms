@@ -23,24 +23,24 @@
         nz-checkbox
         attr.aria-label="Checkbox Other for {{item.question}}"
         (click)="lhcDataService.setActiveRow(item)"
-        [nzValue]="{ 'text': this.otherValue, '_notOnList': true}"
+        [nzValue]="{'_notOnList': true}"
         [nzDisabled]="item._readOnly"
         [(ngModel)]="otherCheckboxModel"
         [id]="lhcDataService.getItemAnswerId(item, '_other')">
         {{item.openLabel || language.other}}
       </label>
-      <input
-        type="text"
-        [ngModel]="otherValue"
-        (ngModelChange)="onOtherValueChange($event)"
-        class="lhc-answer-other-input"
-        [id]="lhcDataService.getItemAnswerId(item, '_otherValue')"
-        nz-input
-        *ngIf="otherCheckboxModel"
-        [disabled]="item._readOnly"
-        (focus)="lhcDataService.setActiveRow(item)"/>
+      <div *ngIf="otherCheckboxModel"
+           class="{{item._readOnly ? 'lhc-item-readyonly' : null}}"
+           [id]="lhcDataService.getItemAnswerId(item, '_otherValue')">
+        <input type="text"
+               [disabled]="item._readOnly"
+               [placeholder]="language.typeToAddMoreValues"
+               (focus)="lhcDataService.setActiveRow(item)"
+               [id]="lhcDataService.getItemAnswerId(item, '_otherValueInput')"
+               #ac
+        >
+      </div>
     </div>
   </div>
 </nz-checkbox-wrapper>
-
 

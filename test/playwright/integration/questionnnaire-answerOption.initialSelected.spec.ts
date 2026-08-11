@@ -86,3 +86,70 @@ test.describe('answerOption.initialSelected in Questionnaire', () => {
     ]);
   });
 });
+
+test.describe('checkbox with multiple off-list initial values', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+  });
+
+  test('should display multiple off-list initial values and add/remove them correctly - R4 open-choice', async ({ page }) => {
+    await addFormToPage(page, 'checkbox-with-multiple-other-initial-values.json', 'formContainer', { fhirVersion: 'R4' });
+    // Initial values.
+    await expect(byId(page, '1/1||c2')).toBeChecked();
+    await expect(byId(page, '1/1||c3')).not.toBeChecked();
+    await expect(byId(page, '1/1|_other')).toBeChecked();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 1');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 2');
+    // Add another off-list value.
+    await byId(page, '1/1|_otherValueInput').fill('user typed value 3');
+    await byId(page, '1/1|_otherValueInput').blur();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(3);
+    await expect(page.locator('.autocomp_selected li').nth(2)).toContainText('user typed value 3');
+    // Remove the first off-list value.
+    await page.locator('.autocomp_selected li').first().locator('button').click();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 2');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 3');
+    // Export to QR.
+    const resource = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4'));
+    expect(resource.resourceType).toBe('QuestionnaireResponse');
+    expect(resource.item.length).toBe(1);
+    expect(resource.item[0].answer).toEqual([
+      { valueCoding: { code: 'c2', display: 'Answer 2' } },
+      { valueString: 'user typed value 2' },
+      { valueString: 'user typed value 3' }
+    ]);
+  });
+
+  test('should display multiple off-list initial values and add/remove them correctly - R5 optionsOrString', async ({ page }) => {
+    await addFormToPage(page, 'checkbox-with-multiple-other-initial-values.json', 'formContainer', { fhirVersion: 'R5' });
+    // Initial values.
+    await expect(byId(page, '1/1||c2')).toBeChecked();
+    await expect(byId(page, '1/1||c3')).not.toBeChecked();
+    await expect(byId(page, '1/1|_other')).toBeChecked();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 1');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 2');
+    // Add another off-list value.
+    await byId(page, '1/1|_otherValueInput').fill('user typed value 3');
+    await byId(page, '1/1|_otherValueInput').blur();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(3);
+    await expect(page.locator('.autocomp_selected li').nth(2)).toContainText('user typed value 3');
+    // Remove the first off-list value.
+    await page.locator('.autocomp_selected li').first().locator('button').click();
+    await expect(page.locator('.autocomp_selected li')).toHaveCount(2);
+    await expect(page.locator('.autocomp_selected li').first()).toContainText('user typed value 2');
+    await expect(page.locator('.autocomp_selected li').nth(1)).toContainText('user typed value 3');
+    // Export to QR.
+    const resource = await page.evaluate(() => (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R5'));
+    expect(resource.resourceType).toBe('QuestionnaireResponse');
+    expect(resource.item.length).toBe(1);
+    expect(resource.item[0].answer).toEqual([
+      { valueCoding: { code: 'c2', display: 'Answer 2' } },
+      { valueString: 'user typed value 2' },
+      { valueString: 'user typed value 3' }
+    ]);
+  });
+});

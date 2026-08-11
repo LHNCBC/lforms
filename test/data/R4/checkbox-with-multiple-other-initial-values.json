@@ -1,0 +1,61 @@
+{
+  "title": "Checkbox with multiple other initial values",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "open-choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ],
+            "text": "Check-box"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+          "valueCode": "horizontal"
+        }
+      ],
+      "repeats": true,
+      "linkId": "1",
+      "text": "valueCoding - repeats",
+      "answerOption": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          },
+          "initialSelected": true
+        },
+        {
+          "valueCoding": {
+            "code": "c3",
+            "display": "Answer 3"
+          }
+        }
+      ],
+      "initial": [
+        {
+          "valueString": "user typed value 1"
+        },
+        {
+          "valueString": "user typed value 2"
+        }
+      ]
+    }
+  ]
+}
