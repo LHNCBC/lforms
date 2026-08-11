@@ -636,6 +636,9 @@ export default class LhcFormData {
       const errorRequired = Validation.checkRequired(item._answerRequired, item.value, errors);
       const errorDataType = Validation.checkDataType(item.dataType, item.value, errors);
       const errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
+      if (item._hasAutocompleteValidationError && !errors.includes(language.invalidAnswer)) {
+        errors.push(language.invalidAnswer);
+      }
       item._validationErrors = errors;
 
     }

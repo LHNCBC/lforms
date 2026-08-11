@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { LhcAutocompleteComponent } from './lhc-autocomplete.component';
 import { LhcDataService} from '../../../lib/lhc-data.service';
 
@@ -31,6 +31,7 @@ describe('LhcAutocompleteComponent', () => {
 
     expect(component.item._hasValidation).toBeTrue();
     expect(component.item._showValidation).toBeTrue();
+    expect(component.item._hasAutocompleteValidationError).toBeTrue();
     expect(component.item._validationErrors).toEqual([
       'existing error',
       component.autocompleteInvalidError
@@ -44,6 +45,7 @@ describe('LhcAutocompleteComponent', () => {
 
     expect(component.item._hasValidation).toBeUndefined();
     expect(component.item._showValidation).toBeTrue();
+    expect(component.item._hasAutocompleteValidationError).toBeTrue();
     expect(component.item._validationErrors).toEqual([
       component.autocompleteInvalidError
     ]);
@@ -61,6 +63,7 @@ describe('LhcAutocompleteComponent', () => {
     component.removeAutocompleteValidationError();
 
     expect(component.item._validationErrors).toEqual(['existing error']);
+    expect(component.item._hasAutocompleteValidationError).toBeUndefined();
     expect(input.classList.contains('invalid')).toBeFalse();
     expect(input.classList.contains('no_match')).toBeFalse();
     expect(input.hasAttribute('invalid')).toBeFalse();
@@ -139,5 +142,41 @@ describe('LhcAutocompleteComponent', () => {
     expect(component.dataModel).toEqual({ text: 'B', code: 'b-code' });
     expect(component.item._validationErrors).toBeUndefined();
   });
+
+  it('should clear a previous single-select answer while retaining invalid input text', fakeAsync(() => {
+    const input = document.createElement('input');
+    input.value = 'invalid value';
+    input.classList.add('invalid', 'no_match');
+    input.setAttribute('invalid', 'true');
+    component.ac = { nativeElement: input };
+    component.item = {};
+    component.options = { acOptions: { matchListValue: true } };
+    component.acType = 'prefetch';
+    component.prefetchTextToItem = { b: { text: 'b' } };
+    component.dataModel = { text: 'b' };
+    component.multipleSelections = false;
+    component.acInstance = {
+      setFieldVal: jasmine.createSpy('setFieldVal'),
+      destroy: jasmine.createSpy('destroy')
+    };
+    spyOn(component.dataModelChange, 'emit');
+    spyOn(component.lhcDataService, 'onItemValueChange');
+
+    component.onSelectionHandler({
+      final_val: 'invalid value',
+      on_list: false,
+      removed: false
+    });
+
+    expect(component.dataModel).toBeNull();
+    expect(component.dataModelChange.emit).toHaveBeenCalledOnceWith(null);
+    expect(component.lhcDataService.onItemValueChange)
+      .toHaveBeenCalledOnceWith(component.item, null, null, true);
+
+    tick();
+
+    expect(component.acInstance.setFieldVal).toHaveBeenCalledWith('invalid value', false);
+    expect(component.item._validationErrors).toEqual([component.autocompleteInvalidError]);
+  }));
 
 });

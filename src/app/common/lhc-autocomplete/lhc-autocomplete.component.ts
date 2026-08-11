@@ -330,6 +330,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       return;
     }
     this.item._showValidation = true;
+    this.item._hasAutocompleteValidationError = true;
     const errors = this.item._validationErrors || [];
 
     if (!errors.includes(this.autocompleteInvalidError)) {
@@ -343,6 +344,9 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    * validation messages on the item.
    */
   removeAutocompleteValidationError(): void {
+    if (this.item) {
+      delete this.item._hasAutocompleteValidationError;
+    }
     if (Array.isArray(this.item?._validationErrors)) {
       this.item._validationErrors = this.item._validationErrors
         .filter(error => error !== this.autocompleteInvalidError);
@@ -565,9 +569,30 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       !canonicalPrefetchText;
 
     if (isInvalidAutocompleteValue) {
-      setTimeout(() => this.updateAutocompleteValidationError());
-      // Keep the current model and displayed typed value for invalid entries.
-      // Updating the model here can clear the field and drop the invalid UI state.
+      const invalidInputValue = this.ac?.nativeElement?.value || eventFinalValue;
+
+      // A single-select field must not retain a previously selected answer when
+      // the input now displays a different, invalid value. Multi-select answers
+      // remain visible as selected tags, so an invalid pending value does not
+      // clear those selections.
+      if (!this.multipleSelections && this.dataModel !== null && this.dataModel !== undefined) {
+        this.dataModel = null;
+        this.selectedItems = null;
+        this.dataModelChange.emit(this.dataModel);
+        this.lhcDataService.onItemValueChange(this.item, null, null, true);
+      }
+
+      // Updating the model can cause Angular to refresh the input from null.
+      // Restore the invalid text after that refresh so the user can correct it.
+      setTimeout(() => {
+        if (!this.multipleSelections && this.dataModel == null && invalidInputValue) {
+          this.acInstance?.setFieldVal(invalidInputValue, false);
+          const input = this.ac?.nativeElement;
+          input?.classList.add('invalid', 'no_match');
+          input?.setAttribute('invalid', 'true');
+        }
+        this.updateAutocompleteValidationError();
+      });
       return;
     }
     else {

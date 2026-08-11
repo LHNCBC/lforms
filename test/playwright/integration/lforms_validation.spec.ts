@@ -354,6 +354,12 @@ test.describe('Validations', () => {
       await expect(item).toHaveClass(/lhc-invalid/);
       await expect(invalidMessage).toBeVisible();
 
+      const validityErrors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
+      expect(validityErrors).toContain('valueString must be a valid answer from the list.');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
       await byId(page, 'valueString-group1-item2/1/1').click();
       await expect(input).toHaveValue('invalid again');
       await expect(input).toHaveClass(/invalid/);
