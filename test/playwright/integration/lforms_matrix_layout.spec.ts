@@ -83,12 +83,13 @@ test.describe('Form level Matrix layout', () => {
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
     expect(formData.itemsData[0].value[2]).toBe('other values');
 
-    // change the other value alone
+    // Add one more other value.
     await byId(page, item1OtherValue).clear();
     await byId(page, item1OtherValue).pressSequentially('other values again');
     await byId(page, item1OtherValue).blur();
     formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
-    expect(formData.itemsData[0].value[2]).toBe('other values again');
+    expect(formData.itemsData[0].value[2]).toBe('other values');
+    expect(formData.itemsData[0].value[3]).toBe('other values again');
 
     // fourth question
     await byId(page, item4answer1).click();
@@ -138,7 +139,7 @@ test.describe('Form level Matrix layout', () => {
       await expect(byId(page, '/g1m1/1||c2')).toBeChecked();
       await expect(byId(page, '/g1m2/1||c1')).toBeChecked();
       await expect(byId(page, '/g1m2/1|_other')).toBeChecked();
-      await expect(byId(page, '/g1m2/1|_otherValue')).toHaveValue('user typed string');
+      await expect(page.locator('.autocomp_selected').nth(1)).toContainText('user typed string');
 
       // first question
       const formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());
@@ -187,7 +188,7 @@ test.describe('Form level Matrix layout', () => {
       await expect(byId(page, '/g1m1/1/1||c2')).toBeChecked();
       await expect(byId(page, '/g1m2/1/1||c1')).toBeChecked();
       await expect(byId(page, '/g1m2/1/1|_other')).toBeChecked();
-      await expect(byId(page, '/g1m2/1/1|_otherValue')).toHaveValue('user typed string');
+      await expect(page.locator('.autocomp_selected').nth(1)).toContainText('user typed string');
 
       // first question
       const formData = await page.evaluate(() => (window as any).LForms.Util.getUserData());

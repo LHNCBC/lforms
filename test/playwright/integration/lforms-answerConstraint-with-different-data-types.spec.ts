@@ -57,7 +57,6 @@ function getItemIds(valueType: string, values: any) {
     g8item1ans3: `${valueType}-group8-item1/1/1||${coding ? values.g1Code3 : values.g1Answer3}`,
     g8item2ans2: `${valueType}-group8-item2/1/1||${coding ? values.g1Code2 : values.g1Answer2}`,
     g8item2ansOther: answerId(`${valueType}-group8-item2/1/1`, '_other'),
-    g8item2ansOtherValue: answerId(`${valueType}-group8-item2/1/1`, '_otherValue'),
   };
 }
 
@@ -152,7 +151,7 @@ async function testRenderOptionsOrString(page: Page, ids: any, values: any) {
   await expect(byId(page, ids.g6item2ans3)).toContainText(values.g1Answer3);
   await expect(byId(page, `${ids.g6item2ans3}`).locator('input').first()).not.toBeChecked();
   await expect(byId(page, ids.g6item2ansOther).locator('input').first()).toBeChecked();
-  await expect(byId(page, ids.g6item2ansOtherValue)).toHaveValue('user typed value');
+  await expect(byId(page, ids.g6item2ansOtherValue)).toContainText('user typed value');
 
   // group 7 - matrix radio
   await expect(byId(page, ids.g7item1ans2)).toBeChecked();
@@ -164,7 +163,8 @@ async function testRenderOptionsOrString(page: Page, ids: any, values: any) {
   await expect(byId(page, ids.g8item1ans3)).toBeChecked();
   await expect(byId(page, ids.g8item2ans2)).toBeChecked();
   await expect(byId(page, ids.g8item2ansOther)).toBeChecked();
-  await expect(byId(page, ids.g8item2ansOtherValue)).toHaveValue('user typed value');
+  await expect(page.locator('lhc-group-matrix').nth(1).locator('.autocomp_selected').nth(1))
+    .toContainText('user typed value');
 }
 
 test.describe('answerConstraint with different types', () => {

@@ -76,7 +76,11 @@ test.describe('calculatedExpression and hasSavedData=true/false tests', () => {
     // the other input field in CWE radio layout should be disabled too
     await expect(byId(page, answerId('g2/cwe-single-radio/1/1', '_otherValue'))).toBeDisabled();
     // the other input field in CWE checkbox layout should be disabled too
-    await expect(byId(page, answerId('g2/cwe-multiple-checkbox/1/1', '_otherValue'))).toBeDisabled();
+    await expect(byId(page, answerId('g2/cwe-multiple-checkbox/1/1', '_otherValueInput'))).toBeDisabled();
+    // the off-list values in CWE checkbox layout should not be removable (x button hidden)
+    const cweOtherButtons = byId(page, answerId('g2/cwe-multiple-checkbox/1/1', '_otherValue')).locator('.autocomp_selected li>button');
+    await expect(cweOtherButtons).toHaveText(['×']);
+    await expect(cweOtherButtons.first()).not.toBeVisible();
   });
 });
 
