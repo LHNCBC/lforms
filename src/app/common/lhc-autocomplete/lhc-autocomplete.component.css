@@ -2,8 +2,3 @@
 :host input[type="text"][invalid="true"] {
   border: 1px solid #FF0000;
 }
-
-:host input[type="text"].invalid:focus,
-:host input[type="text"][invalid="true"]:focus {
-  outline: none;
-}

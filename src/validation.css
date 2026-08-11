@@ -17,11 +17,6 @@
   border: 1px solid #FF0000;
 }
 
-.lhc-form .lhc-invalid.lhc-visited-before lhc-autocomplete input[type="text"]:focus,
-.lhc-form .lhc-invalid.lhc-show-validation lhc-autocomplete input[type="text"]:focus {
-  outline: none;
-}
-
 .lhc-form .lhc-validation-popover {
   display: none;
 }

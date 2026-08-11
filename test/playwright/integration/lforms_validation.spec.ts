@@ -334,6 +334,8 @@ test.describe('Validations', () => {
       await input.press('Enter');
       await expect(input).toHaveClass(/invalid/);
       await expect(input).toHaveCSS('border-top-color', 'rgb(255, 0, 0)');
+      await expect(input).toBeFocused();
+      await expect(input).not.toHaveCSS('outline-style', 'none');
       await expect(item).toHaveClass(/lhc-invalid/);
       await expect(invalidMessage).toBeVisible();
 
