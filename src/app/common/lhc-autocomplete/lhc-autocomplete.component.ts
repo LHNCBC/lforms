@@ -36,7 +36,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   allowNotOnList: boolean = false;
   acType: string = null;
   acInstance: any = null;
-  prefetchTextToItem: {};
+  prefetchTextToItem: Record<string, any> = Object.create(null);
   displayProp: string = '';
   viewInitialized = false;
   autocompleteInvalidError = language.invalidAnswer;
@@ -384,7 +384,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       return null;
     }
 
-    if (this.prefetchTextToItem[trimmedValue]) {
+    if (this.hasPrefetchItem(trimmedValue)) {
       return trimmedValue;
     }
 
@@ -395,6 +395,16 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     const lowerCaseValue = trimmedValue.toLowerCase();
     return Object.keys(this.prefetchTextToItem)
       .find(text => text.toLowerCase() === lowerCaseValue) || null;
+  }
+
+
+  /**
+   * Checks whether the prefetch mapping itself contains the given text.
+   * @param text the display text to look up.
+   * @returns {boolean} whether text is an own key in the prefetch mapping.
+   */
+  hasPrefetchItem(text: string): boolean {
+    return Object.prototype.hasOwnProperty.call(this.prefetchTextToItem, text);
   }
 
 
@@ -412,7 +422,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    * @param canonicalText the matching list text to select.
    */
   selectCanonicalPrefetchText(canonicalText: string): void {
-    if (!canonicalText || !this.acInstance) {
+    if (!canonicalText || !this.acInstance || !this.hasPrefetchItem(canonicalText)) {
       return;
     }
 
@@ -452,7 +462,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     this.acType = null;
     this.acInstance = false;
     this.allowNotOnList = null;
-    this.prefetchTextToItem = {};
+    this.prefetchTextToItem = Object.create(null);
     this.displayProp = "";
 
     // if there are options for the autocompleter
@@ -636,9 +646,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       }
       else {
         const selectedAnswerItems = selectedTexts.map(text => {
-          const answerItem = this.prefetchTextToItem[text];
-          if (answerItem) {
-            return answerItem;
+          if (this.hasPrefetchItem(text)) {
+            return this.prefetchTextToItem[text];
           }
           else if (this.allowNotOnList) {
             return this.options.modelForOffListItem ? this.options.modelForOffListItem(text) :

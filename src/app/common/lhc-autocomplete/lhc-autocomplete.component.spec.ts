@@ -143,6 +143,47 @@ describe('LhcAutocompleteComponent', () => {
     expect(component.item._validationErrors).toBeUndefined();
   });
 
+  it('should not treat inherited object keys as prefetch answers', () => {
+    component.acType = 'prefetch';
+    component.options = { acOptions: { matchListValue: true } };
+    component.prefetchTextToItem = { b: { text: 'b' } };
+    component.allowNotOnList = false;
+
+    expect(component.getCanonicalPrefetchText('toString')).toBeNull();
+    expect(component.getCanonicalPrefetchText('constructor')).toBeNull();
+
+    component.dataModel = { text: 'previous answer' };
+    component.setItemValueForPrefetchAC(['toString']);
+
+    expect(component.dataModel).toBeNull();
+  });
+
+  it('should accept an Object.prototype key when it is an actual prefetch answer', () => {
+    const answer = { text: 'toString', code: 'to-string-code' };
+    component.acType = 'prefetch';
+    component.options = { acOptions: { matchListValue: true } };
+    component.prefetchTextToItem = Object.create(null);
+    component.prefetchTextToItem['toString'] = answer;
+    component.allowNotOnList = false;
+
+    expect(component.getCanonicalPrefetchText('toString')).toBe('toString');
+
+    component.setItemValueForPrefetchAC(['toString']);
+
+    expect(component.dataModel).toBe(answer);
+  });
+
+  it('should safely map __proto__ as an actual prefetch answer', () => {
+    const answer = { text: '__proto__' };
+    component.acType = 'prefetch';
+    component.options = { acOptions: { matchListValue: true } };
+    component.prefetchTextToItem = Object.create(null);
+    component.prefetchTextToItem['__proto__'] = answer;
+
+    expect(Object.getPrototypeOf(component.prefetchTextToItem)).toBeNull();
+    expect(component.getCanonicalPrefetchText('__proto__')).toBe('__proto__');
+  });
+
   it('should clear a previous single-select answer while retaining invalid input text', fakeAsync(() => {
     const input = document.createElement('input');
     input.value = 'invalid value';
