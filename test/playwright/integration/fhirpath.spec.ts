@@ -94,6 +94,34 @@ test.describe('answerExpression', () => {
     await expect(searchResults.first()).toBeVisible();
   });
 
+  test('should clear invalid autocomplete validation when an answer expression rebuilds the list', async ({ page }) => {
+    await page.goto('/test/pages/lforms_testpage.html');
+    await waitForLFormsReady(page);
+    await loadFromTestData(page, 'answerExpressionTest.json');
+    const source = byId(page, 'q1/1');
+    const target = byId(page, 'q1List/1');
+    const targetItem = byId(page, 'item-q1List/1');
+    const invalidMessage = targetItem.locator('.validation-error')
+      .filter({ hasText: 'must be a valid answer from the list.' });
+
+    await target.click();
+    await target.pressSequentially('invalid');
+    await target.press('Enter');
+    await expect(target).toHaveClass(/invalid/);
+    await expect(targetItem).toHaveClass(/lhc-invalid/);
+    await expect(invalidMessage).toBeVisible();
+
+    await source.pressSequentially('valid');
+    await source.blur();
+
+    await expect(target).toHaveValue('');
+    await expect(target).not.toHaveClass(/invalid/);
+    await expect(targetItem).not.toHaveClass(/lhc-invalid/);
+    await expect(invalidMessage).not.toBeAttached();
+    const validityErrors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
+    expect(validityErrors).toBeNull();
+  });
+
   test('should not cause answerOptions to be generated in the Questionnaire', async ({ page }) => {
     await page.goto('/test/pages/lforms_testpage.html');
     await waitForLFormsReady(page);

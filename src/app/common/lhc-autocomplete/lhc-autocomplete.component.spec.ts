@@ -69,6 +69,59 @@ describe('LhcAutocompleteComponent', () => {
     expect(input.hasAttribute('invalid')).toBeFalse();
   });
 
+  it('should clear stale autocomplete validation when the model updates', () => {
+    const input = document.createElement('input');
+    input.value = 'invalid value';
+    input.classList.add('invalid', 'no_match');
+    input.setAttribute('invalid', 'true');
+    component.ac = { nativeElement: input };
+    component.item = {
+      _hasAutocompleteValidationError: true,
+      _validationErrors: ['existing error', component.autocompleteInvalidError]
+    };
+    component.acType = 'prefetch';
+    component.acInstance = {
+      setFieldVal: jasmine.createSpy('setFieldVal'),
+      destroy: jasmine.createSpy('destroy')
+    };
+    spyOn(component, 'updateAutocompSelectionModel').and.returnValue('Valid answer');
+
+    component.updateDisplayedValue({ text: 'Valid answer' });
+
+    expect(component.acInstance.setFieldVal).toHaveBeenCalledWith('Valid answer', false);
+    expect(component.item._hasAutocompleteValidationError).toBeUndefined();
+    expect(component.item._validationErrors).toEqual(['existing error']);
+    expect(input.classList.contains('invalid')).toBeFalse();
+    expect(input.classList.contains('no_match')).toBeFalse();
+    expect(input.hasAttribute('invalid')).toBeFalse();
+  });
+
+  it('should clear stale autocomplete validation when the answer list rebuilds', () => {
+    const input = document.createElement('input');
+    input.value = 'invalid value';
+    input.classList.add('invalid', 'no_match');
+    input.setAttribute('invalid', 'true');
+    component.ac = { nativeElement: input };
+    component.item = {
+      _hasAutocompleteValidationError: true,
+      _validationErrors: ['existing error', component.autocompleteInvalidError]
+    };
+    component.acInstance = {
+      setFieldVal: jasmine.createSpy('setFieldVal'),
+      destroy: jasmine.createSpy('destroy')
+    };
+
+    component.cleanupAutocomplete(true);
+
+    expect(component.acInstance.setFieldVal).toHaveBeenCalledWith('', false);
+    expect(component.acInstance.destroy).toHaveBeenCalled();
+    expect(component.item._hasAutocompleteValidationError).toBeUndefined();
+    expect(component.item._validationErrors).toEqual(['existing error']);
+    expect(input.classList.contains('invalid')).toBeFalse();
+    expect(input.classList.contains('no_match')).toBeFalse();
+    expect(input.hasAttribute('invalid')).toBeFalse();
+  });
+
   it('should remove autocomplete validation when the field is empty', () => {
     const input = document.createElement('input');
     input.classList.add('invalid', 'no_match');

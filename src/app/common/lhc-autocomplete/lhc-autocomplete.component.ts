@@ -163,6 +163,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   updateDisplayedValue(itemValue:any) {
     // Note:  This runs both in response to user interaction and to JavaScript
     // changes.
+    this.removeAutocompleteValidationError();
     if (!this.multipleSelections) {
       if (!itemValue)
         this.acInstance.setFieldVal('', false);
@@ -440,6 +441,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    * @param keepDataModel whether to keep the data model value on the autocompleter. default is false.
    */
   cleanupAutocomplete(keepDataModel:boolean=false): void {
+    this.removeAutocompleteValidationError();
     if (this.acInstance) {
       // reset the field value
       this.acInstance.setFieldVal('', false);
