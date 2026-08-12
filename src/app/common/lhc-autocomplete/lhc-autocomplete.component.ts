@@ -575,6 +575,10 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     let changed = false;
     const eventFinalValue = event?.final_val || '';
     const canonicalPrefetchText = this.getCanonicalPrefetchText(eventFinalValue);
+    const input = this.ac?.nativeElement;
+    const removedWithInvalidPendingValue = event?.removed && input?.value &&
+      (input.classList.contains('invalid') || input.getAttribute('invalid') === 'true' ||
+        this.item?._hasAutocompleteValidationError);
     const isInvalidAutocompleteValue = !event?.removed && !event?.on_list &&
       eventFinalValue &&
       this.options?.acOptions?.matchListValue &&
@@ -607,7 +611,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       });
       return;
     }
-    else {
+    else if (!event?.removed) {
       this.removeAutocompleteValidationError();
     }
 
@@ -624,12 +628,23 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     }
 
     if (changed) {
-      if (!isInvalidAutocompleteValue) {
+      if (!isInvalidAutocompleteValue && !event?.removed) {
         this.removeAutocompleteValidationError();
       }
       // run the change function
       this.dataModelChange.emit(this.dataModel);
       this.lhcDataService.onItemValueChange(this.item, null, null, true)
+    }
+
+    if (event?.removed) {
+      setTimeout(() => {
+        const input = this.ac?.nativeElement;
+        if (removedWithInvalidPendingValue && input?.value) {
+          input.classList.add('invalid', 'no_match');
+          input.setAttribute('invalid', 'true');
+        }
+        this.updateAutocompleteValidationError();
+      });
     }
 
   }

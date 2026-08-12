@@ -273,4 +273,37 @@ describe('LhcAutocompleteComponent', () => {
     expect(component.item._validationErrors).toEqual([component.autocompleteInvalidError]);
   }));
 
+  it('should retain invalid pending text validation when a multi-select tag is removed', fakeAsync(() => {
+    const input = document.createElement('input');
+    input.value = 'invalid value';
+    input.classList.add('invalid', 'no_match');
+    input.setAttribute('invalid', 'true');
+    component.ac = { nativeElement: input };
+    component.item = {};
+    component.options = { acOptions: { matchListValue: true } };
+    component.acType = 'prefetch';
+    component.prefetchTextToItem = { a: { text: 'a' } };
+    component.dataModel = [{ text: 'a' }];
+    component.multipleSelections = true;
+    component.acInstance = {
+      getSelectedItems: jasmine.createSpy('getSelectedItems').and.returnValue([]),
+      setFieldVal: jasmine.createSpy('setFieldVal'),
+      destroy: jasmine.createSpy('destroy')
+    };
+
+    component.onSelectionHandler({
+      final_val: 'a',
+      on_list: true,
+      removed: true
+    });
+    tick();
+
+    expect(input.value).toBe('invalid value');
+    expect(input.classList.contains('invalid')).toBeTrue();
+    expect(input.classList.contains('no_match')).toBeTrue();
+    expect(input.getAttribute('invalid')).toBe('true');
+    expect(component.item._hasAutocompleteValidationError).toBeTrue();
+    expect(component.item._validationErrors).toEqual([component.autocompleteInvalidError]);
+  }));
+
 });

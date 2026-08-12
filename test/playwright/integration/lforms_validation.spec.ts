@@ -369,6 +369,40 @@ test.describe('Validations', () => {
       await expect(invalidMessage).toBeVisible();
     });
 
+    test('should retain invalid pending text when a multi-select tag is removed', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerConstraint/dataType-ST-optionsOnly.json', 'formContainer');
+
+      const itemId = 'valueString-group1-item2/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const selectedTag = item.locator('span.autocomp_selected li');
+      const invalidMessage = page.locator(errorContainer).filter({ hasText: errorInvalidAnswer });
+
+      await input.click();
+      await input.pressSequentially('a');
+      await input.press('Enter');
+      await expect(selectedTag).toHaveCount(1);
+
+      await input.pressSequentially('invalid');
+      await input.press('Enter');
+      await expect(input).toHaveValue('invalid');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      await selectedTag.locator('button').click();
+
+      await expect(selectedTag).toHaveCount(0);
+      await expect(input).toHaveValue('invalid');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+      const validityErrors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
+      expect(validityErrors).toContain('valueString - repeats must be a valid answer from the list.');
+    });
+
     test('should validate multiple restrictions on INT', async ({ page }) => {
       await openFormByIndex(page, 13);
       const inta = byId(page, '/INTA/1');
