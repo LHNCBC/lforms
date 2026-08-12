@@ -42,7 +42,7 @@
     "PHONE": "muss eine gültige Telefonnummer sein."
   },
   "requiresAValue": " - Eingabe erforderlich",
-  "invalidAnswer": "muss eine gültige Antwort aus der Liste sein.",
+  "invalidAnswer": " - muss eine gültige Antwort aus der Liste sein.",
   "mustBeGreater": " - Wert muss größer sein als {lformsParam}.",
   "mustBeGreaterOrEqual": " - Wert muss größer oder gleich sein als {lformsParam}.",
   "mustBeLess": " - Wert muss kleiner sein als {lformsParam}.",
