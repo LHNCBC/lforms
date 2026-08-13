@@ -1838,6 +1838,9 @@ export default class LhcFormData {
       delete item._validationErrors;
       delete item._validationWarnings;
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+        if (item._hasAutocompleteValidationError) {
+          item._validationErrors = [language.invalidAnswer];
+        }
         this._checkConstraintsOnItem(item, issues);
       }
     }

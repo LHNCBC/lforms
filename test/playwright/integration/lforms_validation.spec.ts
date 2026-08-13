@@ -443,6 +443,54 @@ test.describe('Validations', () => {
       expect(validityErrors).toContain('valueString - repeats must be a valid answer from the list.');
     });
 
+    test('should retain autocomplete validation errors when checking constraints', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(
+        page,
+        'answerOption/answerOption-valueString.R4.json',
+        'formContainer',
+        { fhirVersion: 'R4' }
+      );
+
+      const itemId = 'valueString-group1-item1/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const invalidMessage = page.locator(errorContainer).filter({ hasText: errorInvalidAnswer });
+
+      await input.click();
+      await input.pressSequentially('invalid');
+      await input.press('Enter');
+      await byId(page, 'valueString-group1-item2/1/1').click();
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      const validationState = await page.evaluate(async () => {
+        const LForms = (window as any).LForms;
+        const issues = await LForms.Util.checkConstraints('#formContainer');
+        const form = LForms.Util._getFormObjectInScope('#formContainer');
+        const modelItem = form.itemList.find(
+          candidate => candidate.linkId === 'valueString-group1-item1'
+        );
+        return {
+          issues,
+          hasAutocompleteValidationError: modelItem._hasAutocompleteValidationError,
+          validationErrors: modelItem._validationErrors
+        };
+      });
+
+      expect(validationState).toEqual({
+        issues: null,
+        hasAutocompleteValidationError: true,
+        validationErrors: [errorInvalidAnswer]
+      });
+      await expect(input).toHaveValue('invalid');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+    });
+
     test('should validate multiple restrictions on INT', async ({ page }) => {
       await openFormByIndex(page, 13);
       const inta = byId(page, '/INTA/1');
