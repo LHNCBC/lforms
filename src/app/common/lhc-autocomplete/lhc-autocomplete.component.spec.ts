@@ -96,6 +96,38 @@ describe('LhcAutocompleteComponent', () => {
     expect(input.hasAttribute('invalid')).toBeFalse();
   });
 
+  it('should retain invalid pending text when a multi-select model updates', () => {
+    const input = document.createElement('input');
+    input.value = 'invalid value';
+    input.classList.add('invalid', 'no_match');
+    input.setAttribute('invalid', 'true');
+    component.ac = { nativeElement: input };
+    component.item = {
+      _hasAutocompleteValidationError: true,
+      _validationErrors: [component.autocompleteInvalidError]
+    };
+    component.multipleSelections = true;
+    component.acInstance = {
+      clearStoredSelection: jasmine.createSpy('clearStoredSelection'),
+      addToSelectedArea: jasmine.createSpy('addToSelectedArea'),
+      setFieldVal: jasmine.createSpy('setFieldVal'),
+      storeSelectedItem: jasmine.createSpy('storeSelectedItem'),
+      destroy: jasmine.createSpy('destroy')
+    };
+    spyOn(component, 'updateAutocompSelectionModel').and.returnValue('Updated answer');
+
+    component.updateDisplayedValue([{ text: 'Updated answer' }]);
+
+    expect(component.acInstance.clearStoredSelection).toHaveBeenCalled();
+    expect(component.acInstance.addToSelectedArea).toHaveBeenCalledWith('Updated answer');
+    expect(input.value).toBe('invalid value');
+    expect(input.classList.contains('invalid')).toBeTrue();
+    expect(input.classList.contains('no_match')).toBeTrue();
+    expect(input.getAttribute('invalid')).toBe('true');
+    expect(component.item._hasAutocompleteValidationError).toBeTrue();
+    expect(component.item._validationErrors).toEqual([component.autocompleteInvalidError]);
+  });
+
   it('should clear stale autocomplete validation when the answer list rebuilds', () => {
     const input = document.createElement('input');
     input.value = 'invalid value';

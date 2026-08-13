@@ -163,8 +163,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   updateDisplayedValue(itemValue:any) {
     // Note:  This runs both in response to user interaction and to JavaScript
     // changes.
-    this.removeAutocompleteValidationError();
     if (!this.multipleSelections) {
+      this.removeAutocompleteValidationError();
       if (!itemValue)
         this.acInstance.setFieldVal('', false);
       else {
@@ -186,6 +186,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
           this.acInstance.addToSelectedArea(dispVal);
         }
       }
+      this.updateAutocompleteValidationError();
     }
   }
 
