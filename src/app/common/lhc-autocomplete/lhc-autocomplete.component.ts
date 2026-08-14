@@ -40,6 +40,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   displayProp: string = '';
   viewInitialized = false;
   autocompleteInvalidError = language.invalidAnswer;
+  private invalidTextRestoreTimeout: ReturnType<typeof setTimeout> | null = null;
+  private autocompleteLifecycleId = 0;
 
   constructor(
     public lhcDataService: LhcDataService
@@ -442,6 +444,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    * @param keepDataModel whether to keep the data model value on the autocompleter. default is false.
    */
   cleanupAutocomplete(keepDataModel:boolean=false): void {
+    this.autocompleteLifecycleId++;
+    this.cancelInvalidTextRestore();
     this.removeAutocompleteValidationError();
     if (this.acInstance) {
       // reset the field value
@@ -451,6 +455,17 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
         this.dataModel = null;
       }
       this.acInstance.destroy();
+    }
+  }
+
+
+  /**
+   * Cancels a pending restoration of invalid input text.
+   */
+  private cancelInvalidTextRestore(): void {
+    if (this.invalidTextRestoreTimeout !== null) {
+      clearTimeout(this.invalidTextRestoreTimeout);
+      this.invalidTextRestoreTimeout = null;
     }
   }
 
@@ -586,7 +601,12 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       !canonicalPrefetchText;
 
     if (isInvalidAutocompleteValue) {
-      const invalidInputValue = this.ac?.nativeElement?.value || eventFinalValue;
+      const input = this.ac?.nativeElement;
+      const invalidInputValue = input?.value || eventFinalValue;
+      const acInstance = this.acInstance;
+      const acElement = acInstance?.element;
+      const lifecycleId = this.autocompleteLifecycleId;
+      this.cancelInvalidTextRestore();
 
       // A single-select field must not retain a previously selected answer when
       // the input now displays a different, invalid value. Multi-select answers
@@ -599,12 +619,26 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
         this.lhcDataService.onItemValueChange(this.item, null, null, true);
       }
 
+      // Emitting the model change and running its rules can synchronously rebuild
+      // this autocomplete or destroy the component. Do not schedule work for an
+      // instance that is no longer current.
+      if (this.autocompleteLifecycleId !== lifecycleId ||
+          this.acInstance !== acInstance || this.ac?.nativeElement !== input ||
+          acInstance?.element !== acElement) {
+        return;
+      }
+
       // Updating the model can cause Angular to refresh the input from null.
       // Restore the invalid text after that refresh so the user can correct it.
-      setTimeout(() => {
+      this.invalidTextRestoreTimeout = setTimeout(() => {
+        this.invalidTextRestoreTimeout = null;
+        if (this.autocompleteLifecycleId !== lifecycleId ||
+            this.acInstance !== acInstance || this.ac?.nativeElement !== input ||
+            acInstance?.element !== acElement) {
+          return;
+        }
         if (!this.multipleSelections && this.dataModel == null && invalidInputValue) {
-          this.acInstance?.setFieldVal(invalidInputValue, false);
-          const input = this.ac?.nativeElement;
+          acInstance?.setFieldVal(invalidInputValue, false);
           input?.classList.add('invalid', 'no_match');
           input?.setAttribute('invalid', 'true');
         }

@@ -305,6 +305,78 @@ describe('LhcAutocompleteComponent', () => {
     expect(component.item._validationErrors).toEqual([component.autocompleteInvalidError]);
   }));
 
+  it('should not restore invalid text into a rebuilt autocomplete', fakeAsync(() => {
+    const input = document.createElement('input');
+    input.value = 'invalid value';
+    component.ac = { nativeElement: input };
+    component.item = {};
+    component.options = { acOptions: { matchListValue: true } };
+    component.acType = 'prefetch';
+    component.prefetchTextToItem = {};
+    component.dataModel = { text: 'previous answer' };
+    component.multipleSelections = false;
+    const oldInstance = {
+      setFieldVal: jasmine.createSpy('oldSetFieldVal'),
+      destroy: jasmine.createSpy('oldDestroy')
+    };
+    const newInstance = {
+      setFieldVal: jasmine.createSpy('newSetFieldVal'),
+      destroy: jasmine.createSpy('newDestroy')
+    };
+    component.acInstance = oldInstance;
+    spyOn(component.dataModelChange, 'emit').and.callFake(() => {
+      component.cleanupAutocomplete(true);
+      component.acInstance = newInstance;
+    });
+    spyOn(component.lhcDataService, 'onItemValueChange');
+
+    component.onSelectionHandler({
+      final_val: 'invalid value',
+      on_list: false,
+      removed: false
+    });
+    tick();
+
+    expect(oldInstance.setFieldVal).toHaveBeenCalledOnceWith('', false);
+    expect(oldInstance.destroy).toHaveBeenCalled();
+    expect(newInstance.setFieldVal).not.toHaveBeenCalled();
+    expect(component.item._hasAutocompleteValidationError).toBeUndefined();
+  }));
+
+  it('should not restore invalid text after the component is destroyed', fakeAsync(() => {
+    const input = document.createElement('input');
+    input.value = 'invalid value';
+    component.ac = { nativeElement: input };
+    component.item = {};
+    component.options = { acOptions: { matchListValue: true } };
+    component.acType = 'prefetch';
+    component.prefetchTextToItem = {};
+    component.dataModel = { text: 'previous answer' };
+    component.multipleSelections = false;
+    let destroyed = false;
+    const setFieldVal = jasmine.createSpy('setFieldVal').and.callFake(() => {
+      if (destroyed) {
+        throw new Error('setFieldVal called after destroy');
+      }
+    });
+    component.acInstance = {
+      setFieldVal,
+      destroy: jasmine.createSpy('destroy').and.callFake(() => destroyed = true)
+    };
+    spyOn(component.dataModelChange, 'emit');
+    spyOn(component.lhcDataService, 'onItemValueChange');
+
+    component.onSelectionHandler({
+      final_val: 'invalid value',
+      on_list: false,
+      removed: false
+    });
+    fixture.destroy();
+
+    expect(() => tick()).not.toThrow();
+    expect(setFieldVal).toHaveBeenCalledOnceWith('', false);
+  }));
+
   it('should retain invalid pending text validation when a multi-select tag is removed', fakeAsync(() => {
     const input = document.createElement('input');
     input.value = 'invalid value';
