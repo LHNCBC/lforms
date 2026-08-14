@@ -228,6 +228,59 @@ describe('LhcAutocompleteComponent', () => {
     expect(component.item._validationErrors).toBeUndefined();
   });
 
+  it('should clear the pending field after normalizing a multi-select prefetch match', fakeAsync(() => {
+    const input = document.createElement('input');
+    input.value = 'b';
+    component.ac = { nativeElement: input };
+    component.item = {};
+    component.options = { acOptions: { matchListValue: true } };
+    component.acType = 'prefetch';
+    component.multipleSelections = true;
+    component.prefetchTextToItem = { B: { text: 'B', code: 'b-code' } };
+    const acInstance: any = {
+      element: input,
+      processedFieldVal_: 'b',
+      fieldValIsListVal_: false,
+      setFieldVal: jasmine.createSpy('setFieldVal').and.callFake(value => input.value = value),
+      storeSelectedItem: jasmine.createSpy('storeSelectedItem'),
+      addToSelectedArea: jasmine.createSpy('addToSelectedArea'),
+      getSelectedItems: jasmine.createSpy('getSelectedItems').and.returnValue(['B']),
+      setInvalidValIndicator: jasmine.createSpy('setInvalidValIndicator'),
+      setMatchStatusIndicator: jasmine.createSpy('setMatchStatusIndicator'),
+      destroy: jasmine.createSpy('destroy')
+    };
+    component.acInstance = acInstance;
+
+    component.onSelectionHandler({
+      final_val: 'b',
+      on_list: false,
+      removed: false
+    });
+
+    expect(acInstance.addToSelectedArea).toHaveBeenCalledOnceWith('B');
+    expect(input.value).toBe('B');
+    expect(component.dataModel).toEqual([{ text: 'B', code: 'b-code' }]);
+
+    // autocomplete-lhc marks the original off-list event invalid after the
+    // LForms selection observer returns.
+    input.classList.add('invalid', 'no_match');
+    input.setAttribute('invalid', 'true');
+    acInstance.processedFieldVal_ = 'b';
+    acInstance.fieldValIsListVal_ = false;
+
+    tick();
+
+    expect(input.value).toBe('');
+    expect(acInstance.processedFieldVal_).toBe('');
+    expect(acInstance.fieldValIsListVal_).toBeTrue();
+    expect(acInstance.setInvalidValIndicator).toHaveBeenCalledWith(false);
+    expect(acInstance.setMatchStatusIndicator).toHaveBeenCalledWith(true);
+    expect(input.classList.contains('invalid')).toBeFalse();
+    expect(input.classList.contains('no_match')).toBeFalse();
+    expect(input.hasAttribute('invalid')).toBeFalse();
+    expect(component.item._validationErrors).toBeUndefined();
+  }));
+
   it('should not treat inherited object keys as prefetch answers', () => {
     component.acType = 'prefetch';
     component.options = { acOptions: { matchListValue: true } };

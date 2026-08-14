@@ -41,6 +41,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   viewInitialized = false;
   autocompleteInvalidError = language.invalidAnswer;
   private invalidTextRestoreTimeout: ReturnType<typeof setTimeout> | null = null;
+  private canonicalSelectionCleanupTimeout: ReturnType<typeof setTimeout> | null = null;
   private autocompleteLifecycleId = 0;
 
   constructor(
@@ -435,8 +436,39 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     this.acInstance.storeSelectedItem(canonicalText, selectedAnswer?.code);
     if (this.multipleSelections) {
       this.acInstance.addToSelectedArea(canonicalText);
+      this.scheduleCanonicalSelectionCleanup();
     }
     this.clearAutocompleteInvalidState();
+  }
+
+
+  /**
+   * Clears the pending field after a case-insensitive multi-select match.
+   * autocomplete-lhc finishes its non-list handling after notifying selection
+   * observers, so this must run after that handler has returned.
+   */
+  private scheduleCanonicalSelectionCleanup(): void {
+    this.cancelCanonicalSelectionCleanup();
+    const acInstance = this.acInstance;
+    const input = this.ac?.nativeElement;
+    const acElement = acInstance?.element;
+    const lifecycleId = this.autocompleteLifecycleId;
+
+    this.canonicalSelectionCleanupTimeout = setTimeout(() => {
+      this.canonicalSelectionCleanupTimeout = null;
+      if (this.autocompleteLifecycleId !== lifecycleId ||
+          this.acInstance !== acInstance || this.ac?.nativeElement !== input ||
+          acInstance?.element !== acElement) {
+        return;
+      }
+
+      acInstance.setFieldVal('', false);
+      acInstance.processedFieldVal_ = '';
+      acInstance.fieldValIsListVal_ = true;
+      acInstance.setInvalidValIndicator?.(false);
+      acInstance.setMatchStatusIndicator?.(true);
+      this.removeAutocompleteValidationError();
+    });
   }
 
   /**
@@ -446,6 +478,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   cleanupAutocomplete(keepDataModel:boolean=false): void {
     this.autocompleteLifecycleId++;
     this.cancelInvalidTextRestore();
+    this.cancelCanonicalSelectionCleanup();
     this.removeAutocompleteValidationError();
     if (this.acInstance) {
       // reset the field value
@@ -466,6 +499,17 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     if (this.invalidTextRestoreTimeout !== null) {
       clearTimeout(this.invalidTextRestoreTimeout);
       this.invalidTextRestoreTimeout = null;
+    }
+  }
+
+
+  /**
+   * Cancels pending cleanup for a normalized multi-select entry.
+   */
+  private cancelCanonicalSelectionCleanup(): void {
+    if (this.canonicalSelectionCleanupTimeout !== null) {
+      clearTimeout(this.canonicalSelectionCleanupTimeout);
+      this.canonicalSelectionCleanupTimeout = null;
     }
   }
 

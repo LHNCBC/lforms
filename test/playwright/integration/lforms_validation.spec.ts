@@ -443,6 +443,39 @@ test.describe('Validations', () => {
       expect(validityErrors).toContain('valueString - repeats must be a valid answer from the list.');
     });
 
+    test('should clear pending text after a case-insensitive multi-select match', async ({ page }) => {
+      const pageErrors: string[] = [];
+      page.on('pageerror', error => pageErrors.push(error.message));
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerConstraint/dataType-CODING-optionsOnly.json', 'formContainer');
+
+      const itemId = 'valueCoding-group1-item2/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const selectedTag = item.locator('span.autocomp_selected li');
+
+      await input.click();
+      await input.pressSequentially('answer 1');
+      await input.press('Escape');
+      await input.press('Enter');
+
+      await expect(selectedTag).toHaveCount(1);
+      await expect(selectedTag).toContainText('Answer 1');
+      await expect(input).toHaveValue('');
+      await expect(input).not.toHaveClass(/invalid/);
+      await expect(item).not.toHaveClass(/lhc-invalid/);
+
+      const modelValue = await page.evaluate(() => {
+        const form = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+        return form.itemList.find(
+          candidate => candidate.linkId === 'valueCoding-group1-item2'
+        ).value;
+      });
+      expect(modelValue).toEqual([{ code: 'c1', text: 'Answer 1' }]);
+      expect(pageErrors).toEqual([]);
+    });
+
     test('should retain autocomplete validation errors when checking constraints', async ({ page }) => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
