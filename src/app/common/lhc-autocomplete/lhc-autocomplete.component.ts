@@ -168,16 +168,22 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     // changes.
     if (!this.multipleSelections) {
       this.removeAutocompleteValidationError();
-      if (!itemValue)
+      if (!itemValue) {
+        this.clearAutocompleteInvalidState();
         this.acInstance.setFieldVal('', false);
+      }
       else {
         const dispVal = this.updateAutocompSelectionModel(itemValue);
         if (typeof dispVal === 'string') {
           const fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
           this.acInstance.setFieldVal(fieldVal, false);
+          if (this.modelValueMatchesAutocompleteList(itemValue, fieldVal)) {
+            this.clearAutocompleteInvalidState();
+          }
         }
         else {// handle the case of an empty object as a model
           this.acInstance.setFieldVal('', false);
+          this.clearAutocompleteInvalidState();
         }
       }
     }
@@ -191,6 +197,19 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       }
       this.updateAutocompleteValidationError();
     }
+  }
+
+
+  /**
+   * Checks whether a model value represents an autocomplete list selection.
+   * @param itemValue the model value to check.
+   * @param displayValue the value displayed in the autocomplete field.
+   * @returns whether the value is known to be on the autocomplete list.
+   */
+  modelValueMatchesAutocompleteList(itemValue: any, displayValue: string): boolean {
+    return this.acType === 'prefetch' ?
+      this.getCanonicalPrefetchText(displayValue) !== null :
+      !itemValue?._notOnList;
   }
 
 
@@ -312,6 +331,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
 
     if (!input.value) {
       this.removeAutocompleteValidationError();
+      this.clearAutocompleteInvalidState();
       return;
     }
 
@@ -323,6 +343,12 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     }
     else {
       this.removeAutocompleteValidationError();
+      // A non-invalid value can still intentionally be off-list for an
+      // optionsOrString field. Preserve autocomplete-lhc's no_match state in
+      // that case; otherwise synchronize its state as a valid list match.
+      if (!input.classList.contains('no_match')) {
+        this.clearAutocompleteInvalidState();
+      }
     }
   }
 
@@ -359,7 +385,6 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
         delete this.item._validationErrors;
       }
     }
-    this.clearAutocompleteInvalidState();
   }
 
 
@@ -372,8 +397,12 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       return;
     }
 
-    input.classList.remove('invalid');
-    input.classList.remove('no_match');
+    this.acInstance?.setInvalidValIndicator?.(false);
+    this.acInstance?.setMatchStatusIndicator?.(true);
+
+    // Keep the DOM normalized when an instance is being torn down or a test
+    // double does not implement autocomplete-lhc's stateful methods.
+    input.classList.remove('invalid', 'no_match');
     input.removeAttribute('invalid');
   }
 
@@ -471,9 +500,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       acInstance.setFieldVal('', false);
       acInstance.processedFieldVal_ = '';
       acInstance.fieldValIsListVal_ = true;
-      acInstance.setInvalidValIndicator?.(false);
-      acInstance.setMatchStatusIndicator?.(true);
       this.removeAutocompleteValidationError();
+      this.clearAutocompleteInvalidState();
     });
   }
 
@@ -486,6 +514,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     this.cancelInvalidTextRestore();
     this.cancelCanonicalSelectionCleanup();
     this.removeAutocompleteValidationError();
+    this.clearAutocompleteInvalidState();
     if (this.acInstance) {
       // reset the field value
       this.acInstance.setFieldVal('', false);
@@ -698,6 +727,9 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     }
     else if (!event?.removed) {
       this.removeAutocompleteValidationError();
+      if (event?.on_list || canonicalPrefetchText) {
+        this.clearAutocompleteInvalidState();
+      }
     }
 
     if (!event?.on_list && canonicalPrefetchText) {

@@ -51,7 +51,7 @@ describe('LhcAutocompleteComponent', () => {
     ]);
   });
 
-  it('should remove only the autocomplete invalid value error and clear input state', () => {
+  it('should remove only the autocomplete invalid value error', () => {
     const input = document.createElement('input');
     input.classList.add('invalid', 'no_match');
     input.setAttribute('invalid', 'true');
@@ -64,9 +64,9 @@ describe('LhcAutocompleteComponent', () => {
 
     expect(component.item._validationErrors).toEqual(['existing error']);
     expect(component.item._hasAutocompleteValidationError).toBeUndefined();
-    expect(input.classList.contains('invalid')).toBeFalse();
-    expect(input.classList.contains('no_match')).toBeFalse();
-    expect(input.hasAttribute('invalid')).toBeFalse();
+    expect(input.classList.contains('invalid')).toBeTrue();
+    expect(input.classList.contains('no_match')).toBeTrue();
+    expect(input.getAttribute('invalid')).toBe('true');
   });
 
   it('should clear stale autocomplete validation when the model updates', () => {
@@ -80,6 +80,7 @@ describe('LhcAutocompleteComponent', () => {
       _validationErrors: ['existing error', component.autocompleteInvalidError]
     };
     component.acType = 'prefetch';
+    component.prefetchTextToItem = { 'Valid answer': { text: 'Valid answer' } };
     component.acInstance = {
       setFieldVal: jasmine.createSpy('setFieldVal'),
       destroy: jasmine.createSpy('destroy')
@@ -94,6 +95,36 @@ describe('LhcAutocompleteComponent', () => {
     expect(input.classList.contains('invalid')).toBeFalse();
     expect(input.classList.contains('no_match')).toBeFalse();
     expect(input.hasAttribute('invalid')).toBeFalse();
+  });
+
+  it('should retain no_match when the model updates to an accepted off-list value', () => {
+    const input = document.createElement('input');
+    input.value = 'custom answer';
+    input.classList.add('no_match');
+    component.ac = { nativeElement: input };
+    component.item = {
+      _hasAutocompleteValidationError: true,
+      _validationErrors: [component.autocompleteInvalidError]
+    };
+    component.acType = 'prefetch';
+    component.allowNotOnList = true;
+    component.prefetchTextToItem = { 'List answer': { text: 'List answer' } };
+    component.acInstance = {
+      setFieldVal: jasmine.createSpy('setFieldVal'),
+      storeSelectedItem: jasmine.createSpy('storeSelectedItem'),
+      setInvalidValIndicator: jasmine.createSpy('setInvalidValIndicator'),
+      setMatchStatusIndicator: jasmine.createSpy('setMatchStatusIndicator'),
+      destroy: jasmine.createSpy('destroy')
+    };
+
+    component.updateDisplayedValue({ text: 'custom answer', _notOnList: true });
+
+    expect(component.acInstance.setFieldVal).toHaveBeenCalledWith('custom answer', false);
+    expect(component.item._hasAutocompleteValidationError).toBeUndefined();
+    expect(component.item._validationErrors).toBeUndefined();
+    expect(input.classList.contains('no_match')).toBeTrue();
+    expect(component.acInstance.setInvalidValIndicator).not.toHaveBeenCalled();
+    expect(component.acInstance.setMatchStatusIndicator).not.toHaveBeenCalled();
   });
 
   it('should retain invalid pending text when a multi-select model updates', () => {
@@ -323,6 +354,46 @@ describe('LhcAutocompleteComponent', () => {
 
     expect(input.value).toBe('');
   }));
+
+  it('should accept an off-list value while retaining its no_match indication', () => {
+    const input = document.createElement('input');
+    input.value = 'custom answer';
+    input.classList.add('no_match');
+    component.ac = { nativeElement: input };
+    component.item = {
+      _hasAutocompleteValidationError: true,
+      _validationErrors: [component.autocompleteInvalidError]
+    };
+    component.options = { acOptions: { matchListValue: false } };
+    component.acType = 'prefetch';
+    component.allowNotOnList = true;
+    component.prefetchTextToItem = {};
+    component.acInstance = {
+      getSelectedItems: jasmine.createSpy('getSelectedItems').and.returnValue(['custom answer']),
+      setFieldVal: jasmine.createSpy('setFieldVal'),
+      setInvalidValIndicator: jasmine.createSpy('setInvalidValIndicator'),
+      setMatchStatusIndicator: jasmine.createSpy('setMatchStatusIndicator'),
+      destroy: jasmine.createSpy('destroy')
+    };
+
+    component.onSelectionHandler({
+      final_val: 'custom answer',
+      on_list: false,
+      removed: false
+    });
+
+    expect(component.dataModel).toEqual({ text: 'custom answer', _notOnList: true });
+    expect(component.item._hasAutocompleteValidationError).toBeUndefined();
+    expect(component.item._validationErrors).toBeUndefined();
+    expect(input.classList.contains('invalid')).toBeFalse();
+    expect(input.classList.contains('no_match')).toBeTrue();
+    expect(component.acInstance.setInvalidValIndicator).not.toHaveBeenCalled();
+    expect(component.acInstance.setMatchStatusIndicator).not.toHaveBeenCalled();
+
+    component.updateAutocompleteValidationError();
+
+    expect(input.classList.contains('no_match')).toBeTrue();
+  });
 
   it('should not treat inherited object keys as prefetch answers', () => {
     component.acType = 'prefetch';
