@@ -281,6 +281,49 @@ describe('LhcAutocompleteComponent', () => {
     expect(component.item._validationErrors).toBeUndefined();
   }));
 
+  it('should not add a duplicate tag for a canonical multi-select match', fakeAsync(() => {
+    const input = document.createElement('input');
+    input.value = 'b';
+    component.ac = { nativeElement: input };
+    component.item = {};
+    component.options = { acOptions: { matchListValue: true } };
+    component.acType = 'prefetch';
+    component.multipleSelections = true;
+    component.dataModel = [{ text: 'B', code: 'b-code' }];
+    component.prefetchTextToItem = { B: { text: 'B', code: 'b-code' } };
+    const acInstance: any = {
+      element: input,
+      processedFieldVal_: 'b',
+      fieldValIsListVal_: false,
+      isSelected: jasmine.createSpy('isSelected').and.returnValue(true),
+      setFieldVal: jasmine.createSpy('setFieldVal').and.callFake(value => input.value = value),
+      storeSelectedItem: jasmine.createSpy('storeSelectedItem'),
+      addToSelectedArea: jasmine.createSpy('addToSelectedArea'),
+      getSelectedItems: jasmine.createSpy('getSelectedItems').and.returnValue(['B']),
+      setInvalidValIndicator: jasmine.createSpy('setInvalidValIndicator'),
+      setMatchStatusIndicator: jasmine.createSpy('setMatchStatusIndicator'),
+      destroy: jasmine.createSpy('destroy')
+    };
+    component.acInstance = acInstance;
+    spyOn(component.dataModelChange, 'emit');
+
+    component.onSelectionHandler({
+      final_val: 'b',
+      on_list: false,
+      removed: false
+    });
+
+    expect(acInstance.isSelected).toHaveBeenCalledOnceWith('B');
+    expect(acInstance.storeSelectedItem).not.toHaveBeenCalled();
+    expect(acInstance.addToSelectedArea).not.toHaveBeenCalled();
+    expect(component.dataModel).toEqual([{ text: 'B', code: 'b-code' }]);
+    expect(component.dataModelChange.emit).not.toHaveBeenCalled();
+
+    tick();
+
+    expect(input.value).toBe('');
+  }));
+
   it('should not treat inherited object keys as prefetch answers', () => {
     component.acType = 'prefetch';
     component.options = { acOptions: { matchListValue: true } };

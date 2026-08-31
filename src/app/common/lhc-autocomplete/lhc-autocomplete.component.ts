@@ -432,10 +432,16 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     }
 
     const selectedAnswer = this.prefetchTextToItem[canonicalText];
+    const alreadySelected = this.multipleSelections &&
+      this.acInstance.isSelected?.(canonicalText);
     this.acInstance.setFieldVal(canonicalText, false);
-    this.acInstance.storeSelectedItem(canonicalText, selectedAnswer?.code);
+    if (!alreadySelected) {
+      this.acInstance.storeSelectedItem(canonicalText, selectedAnswer?.code);
+      if (this.multipleSelections) {
+        this.acInstance.addToSelectedArea(canonicalText);
+      }
+    }
     if (this.multipleSelections) {
-      this.acInstance.addToSelectedArea(canonicalText);
       this.scheduleCanonicalSelectionCleanup();
     }
     this.clearAutocompleteInvalidState();
