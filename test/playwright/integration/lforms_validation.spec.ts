@@ -66,7 +66,7 @@ test.describe('Validations', () => {
   const errorMinLength = 'must have a total length greater than or equal to ';
   const errorPattern = 'must match a RegExp pattern of';
   const errorMaxDecimalPlaces = ' decimal places.';
-  const errorRequire = 'requires a value';
+  const errorRequire = 'requires a value.';
   const errorMinOccurs = 'must have at least ';
   const errorMaxOccurs = 'must not have more than ';
   const errorInvalidAnswer = 'must be a valid answer from the list.';
@@ -685,10 +685,10 @@ test.describe('Validations', () => {
       // Required fields are empty
       let errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toEqual([
-        'Required DT field requires a value',
-        'Required DTM field requires a value',
-        'Required TX field requires a value',
-        'Required ST field requires a value'
+        'Required DT field requires a value.',
+        'Required DTM field requires a value.',
+        'Required TX field requires a value.',
+        'Required ST field requires a value.'
       ]);
 
       // Entering 1 will show a previously hidden section with required inputs to make sure they now
@@ -696,12 +696,12 @@ test.describe('Validations', () => {
       await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
       errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toEqual([
-        'Required DT field requires a value',
-        'Required DTM field requires a value',
-        'Required TX field requires a value',
-        'Required ST field requires a value',
-        "Required RT1: Shown when 'Skip Logic Required Source' == 1; requires a value",
-        'RT4: Shown when my section header is shown; requires a value'
+        'Required DT field requires a value.',
+        'Required DTM field requires a value.',
+        'Required TX field requires a value.',
+        'Required ST field requires a value.',
+        "Required RT1: Shown when 'Skip Logic Required Source' == 1; requires a value.",
+        'RT4: Shown when my section header is shown; requires a value.'
       ]);
     });
 
@@ -767,7 +767,7 @@ test.describe('Validations', () => {
         return (window as any).LForms.Util.checkValidity();
       });
       expect(errors).toEqual([
-        "Required child item requires a value"
+        "Required child item requires a value."
       ]);
       // Validation should be skipped since the parent question has enableWhen expression evaluated to false.
       await byId(page, 'question/1|false').click();

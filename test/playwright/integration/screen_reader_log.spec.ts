@@ -60,7 +60,7 @@ test.describe('508', () => {
       await expectReaderLogEntries(page,
         ['Showing Mock-up item: Shown when Height >= 10',
           'Hiding Mock-up item: Shown when Height >= 10',
-          'Height requires a value']);
+          'Height requires a value.']);
     });
 
     test('should add an entry when a section is added or removed', async ({ page }) => {
