@@ -20,11 +20,4 @@ describe('ErrorMessages', () => {
 
     expect(messageObject[messageID]).toBe(language.renderingErrorMessages[messageID]);
   });
-
-  it('should retain setLanguage as a no-op compatibility method', () => {
-    const configuredMessage = ErrorMessages.getMsg(messageID);
-
-    expect(() => ErrorMessages.setLanguage('another-language')).not.toThrow();
-    expect(ErrorMessages.getMsg(messageID)).toBe(configuredMessage);
-  });
 });

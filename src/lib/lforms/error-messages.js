@@ -30,16 +30,5 @@ export const ErrorMessages = {
    */
   addMsg: function (msgObj, messageID) {
     msgObj[messageID] = this.getMsg(messageID);
-  },
-
-
-  /**
-   * Retained for compatibility with callers of the previous runtime-language API.
-   * Language is now selected at build time, so this method no longer changes it.
-   * @deprecated Configure the locale when building LForms instead.
-   * @param languageCode the requested language code
-   */
-  setLanguage: function (languageCode) {
-    return undefined;
   }
 };
