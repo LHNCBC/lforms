@@ -11,10 +11,32 @@ import Def from 'autocomplete-lhc';
     standalone: false
 })
 export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
-  @Input() item;
-  @Input() acOptions; // item._autocompOptions
+  private _item;
+  private _acOptions;
+
+  @Input()
+  set item(item) {
+    this._item = item;
+    this.updateAnswerLayout();
+  }
+  get item() {
+    return this._item;
+  }
+
+  @Input()
+  set acOptions(acOptions) {
+    this._acOptions = acOptions;
+    this.updateAnswerLayout();
+  }
+  get acOptions() { // item._autocompOptions
+    return this._acOptions;
+  }
+
   @ViewChild("ac") ac: ElementRef<any>;
   language = language;
+  answerOptionColumnCount: number | null = null;
+  answerOptionIsVertical = false;
+  answerOptionIsGrid = false;
   checkboxModels: boolean[] = [];
   otherCheckboxModel: boolean = null;
   acInstance: any = null;
@@ -32,6 +54,20 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
     private commonUtils: CommonUtilsService,
     public lhcDataService: LhcDataService
   ) {}
+
+  /**
+   * Cache the answer layout values used by the template whenever its inputs change.
+   */
+  private updateAnswerLayout(): void {
+    const displayControl = this.item?.displayControl;
+    const answerCount = (this.acOptions?.listItems?.length || 0) +
+      (this.item?.answerConstraint === 'optionsOrString' ? 1 : 0);
+    this.answerOptionColumnCount = this.commonUtils.getDisplayControlEffectiveColumnCount(
+      displayControl, answerCount
+    );
+    this.answerOptionIsVertical = this.commonUtils.getDisplayControlIsVertical(displayControl);
+    this.answerOptionIsGrid = this.commonUtils.getDisplayControlIsGrid(displayControl);
+  }
 
   /**
    * Set the initial status of the autocomplete for "Other" values.

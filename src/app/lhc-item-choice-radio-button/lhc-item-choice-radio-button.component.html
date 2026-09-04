@@ -9,11 +9,11 @@
     role="radiogroup"
     nz-row
     class="lhc-radio-group"
-    [lhcAnswerOptionMinWidth]="commonUtils.getDisplayControlEffectiveColumnCount(item.displayControl, acOptions.listItems.length + (item.answerConstraint === 'optionsOrString' ? 1 : 0))"
-    [lhcAnswerOptionVertical]="commonUtils.getDisplayControlIsVertical(item.displayControl)"
+    [lhcAnswerOptionMinWidth]="answerOptionColumnCount"
+    [lhcAnswerOptionVertical]="answerOptionIsVertical"
     [ngClass]="{
-      'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl),
-      'lhc-grid': commonUtils.getDisplayControlIsGrid(item.displayControl)
+      'lhc-vertical': answerOptionIsVertical,
+      'lhc-grid': answerOptionIsGrid
     }">
     <label
       *ngFor="let answer of acOptions.listItems; index as i"

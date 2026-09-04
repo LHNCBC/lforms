@@ -10,9 +10,31 @@ import language from '../../../language-config.json';
     standalone: false
 })
 export class LhcItemChoiceRadioButtonComponent implements OnChanges {
-  @Input() item;
-  @Input() acOptions; // item._autocompOptions
+  private _item;
+  private _acOptions;
+
+  @Input()
+  set item(item) {
+    this._item = item;
+    this.updateAnswerLayout();
+  }
+  get item() {
+    return this._item;
+  }
+
+  @Input()
+  set acOptions(acOptions) {
+    this._acOptions = acOptions;
+    this.updateAnswerLayout();
+  }
+  get acOptions() { // item._autocompOptions
+    return this._acOptions;
+  }
+
   language = language;
+  answerOptionColumnCount: number | null = null;
+  answerOptionIsVertical = false;
+  answerOptionIsGrid = false;
 
   // internal data models
   radioValue: any = null ;
@@ -24,6 +46,21 @@ export class LhcItemChoiceRadioButtonComponent implements OnChanges {
     private commonUtils: CommonUtilsService,
     public lhcDataService: LhcDataService
   ) {}
+
+
+  /**
+   * Cache the answer layout values used by the template whenever its inputs change.
+   */
+  private updateAnswerLayout(): void {
+    const displayControl = this.item?.displayControl;
+    const answerCount = (this.acOptions?.listItems?.length || 0) +
+      (this.item?.answerConstraint === 'optionsOrString' ? 1 : 0);
+    this.answerOptionColumnCount = this.commonUtils.getDisplayControlEffectiveColumnCount(
+      displayControl, answerCount
+    );
+    this.answerOptionIsVertical = this.commonUtils.getDisplayControlIsVertical(displayControl);
+    this.answerOptionIsGrid = this.commonUtils.getDisplayControlIsGrid(displayControl);
+  }
 
 
   /**
