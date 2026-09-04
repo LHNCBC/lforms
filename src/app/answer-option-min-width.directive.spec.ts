@@ -56,6 +56,37 @@ describe('AnswerOptionMinWidthDirective', () => {
     expect(selectedRadio.checked).toBeTrue();
   });
 
+  it('removes identifiers and references from measurement clones', async () => {
+    const answer = host.querySelector<HTMLElement>('.lhc-answer');
+    const input = answer.querySelector<HTMLInputElement>('input');
+    answer.id = 'answer-id';
+    answer.setAttribute('for', 'answer-input-id');
+    answer.setAttribute('aria-labelledby', 'question-label-id');
+    answer.setAttribute('data-measurement-target', 'true');
+    input.id = 'answer-input-id';
+    input.setAttribute('aria-labelledby', 'answer-label-id');
+
+    const originalGetBoundingClientRect = HTMLElement.prototype.getBoundingClientRect;
+    let measurementClone: HTMLElement | undefined;
+    spyOn(HTMLElement.prototype, 'getBoundingClientRect').and.callFake(function (this: HTMLElement) {
+      if (this.getAttribute('data-measurement-target') === 'true' &&
+          this.parentElement?.getAttribute('aria-hidden') === 'true') {
+        measurementClone = this;
+      }
+      return originalGetBoundingClientRect.call(this);
+    });
+
+    await nextAnimationFrame();
+
+    expect(measurementClone).toBeDefined();
+    expect(measurementClone.hasAttribute('id')).toBeFalse();
+    expect(measurementClone.hasAttribute('for')).toBeFalse();
+    expect(measurementClone.hasAttribute('aria-labelledby')).toBeFalse();
+    const clonedInput = measurementClone.querySelector<HTMLInputElement>('input');
+    expect(clonedInput.hasAttribute('id')).toBeFalse();
+    expect(clonedInput.hasAttribute('aria-labelledby')).toBeFalse();
+  });
+
   it('uses the widest rendered option when the answers are short', async () => {
     host.querySelectorAll('.lhc-answer').forEach(answer => answer.textContent = 'Yes');
     await nextAnimationFrame();

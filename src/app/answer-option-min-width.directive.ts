@@ -138,12 +138,18 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
       clone.style.setProperty('min-width', '0', 'important');
       clone.style.setProperty('width', 'max-content', 'important');
       clone.style.setProperty('white-space', 'nowrap', 'important');
+      const clonedDescendants = Array.from(clone.querySelectorAll<HTMLElement>('*'));
+      [clone, ...clonedDescendants].forEach(element => {
+        element.removeAttribute('id');
+        element.removeAttribute('for');
+        element.removeAttribute('aria-labelledby');
+      });
       // A checked radio clone with the same name would uncheck the rendered
       // radio when inserted into the document.
       clone.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach(input => {
         input.removeAttribute('name');
       });
-      clone.querySelectorAll<HTMLElement>('*').forEach(element => {
+      clonedDescendants.forEach(element => {
         element.style.setProperty('max-width', 'none', 'important');
         element.style.setProperty('white-space', 'nowrap', 'important');
       });
