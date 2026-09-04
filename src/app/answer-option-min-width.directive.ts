@@ -60,7 +60,6 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
       this.mutationObserver = new MutationObserver(() => this.scheduleMeasurement());
       this.observeMutations();
       this.resizeObserver = new ResizeObserver(() => this.scheduleMeasurement());
-      this.resizeObserver.observe(this.host.nativeElement);
       if (this.host.nativeElement.parentElement) {
         this.resizeObserver.observe(this.host.nativeElement.parentElement);
       }
