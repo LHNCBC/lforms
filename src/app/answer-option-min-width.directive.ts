@@ -130,7 +130,7 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
     this.mutationObserver?.disconnect();
     this.host.nativeElement.appendChild(measurementContainer);
 
-    let widestAnswer = 0;
+    const clones: HTMLElement[] = [];
     for (const answerOption of answerOptions) {
       const clone = answerOption.cloneNode(true) as HTMLElement;
       clone.style.setProperty('flex', 'none', 'important');
@@ -148,6 +148,10 @@ export class AnswerOptionMinWidthDirective implements AfterViewInit, OnDestroy {
         element.style.setProperty('white-space', 'nowrap', 'important');
       });
       measurementContainer.appendChild(clone);
+      clones.push(clone);
+    }
+    let widestAnswer = 0;
+    for (const clone of clones) {
       widestAnswer = Math.max(widestAnswer, clone.getBoundingClientRect().width);
     }
 
