@@ -63,8 +63,10 @@ test.describe('Tests of addFormToPage test page', () => {
     await dtmInput.click();
     const btnNow = page.locator('.ant-picker-now-btn');
     await expect(btnNow).toBeVisible();
-    await btnNow.click();
-    await page.locator('.ant-picker-ok button').click();
+    // The picker can extend below the viewport on this long test page. Dispatch
+    // the clicks directly so Playwright does not wait for viewport actionability.
+    await btnNow.dispatchEvent('click');
+    await page.locator('.ant-picker-ok button').dispatchEvent('click');
     const value = await dtmInput.inputValue();
     expect(value).toMatch(/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/);
     expect(value >= minDTM).toBeTruthy();
