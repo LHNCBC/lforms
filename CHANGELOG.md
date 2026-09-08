@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [43.2.0] 2026-09-08
+### Added
+- Support the `check-box` item control on FHIR Questionnaire boolean items with
+  a localized three-state checkbox for Yes, No, and Not Answered.
+
 ## [43.1.0] 2026-08-10
 ### Changed
 - When the answer list is rendered as checkboxes, allow multiple string values
@@ -2144,4 +2149,3 @@ object.
 ### Removed
 - WidgetUtil.preprocessRIData.  This was an internal API, so it should not be
   a breaking change for anyone but ourselves.
-

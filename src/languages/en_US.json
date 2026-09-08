@@ -56,6 +56,7 @@
   "booleanYes": "Yes",
   "booleanNo": "No",
   "booleanNotAnswered": "Not Answered",
+  "booleanCheckboxHint": "Click to cycle through Not Answered, Yes, and No.",
   "pleaseEnterInfoForTheBlank": "Please enter info in the blank \"{lformsParam}\".",
   "other": "Other",
   "clearSelection": "Clear Selection",

@@ -297,9 +297,10 @@ about the meaning of each key:
       For other field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are:
-        * answerLayout - the layout of the answers when a item has a dataType of CODING, INT, 
-          DT, TM or ST. The supported values are 'COMBO_BOX' (default), and 'RADIO_CHECKBOX'. 
-          (see[defaultAnswerLayout](#defaultAnswerLayout))
+        * answerLayout - the layout of the answers when an item has a dataType of CODING, INT,
+          DT, TM or ST. The supported values are 'COMBO_BOX' (default), and 'RADIO_CHECKBOX'.
+          For a boolean item, 'CHECK_BOX' renders a three-state checkbox for true, false, and
+          unanswered. (see [defaultAnswerLayout](#defaultAnswerLayout))
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
         * colCSS - an array of valid CSS settings that could apply to its related column in a
           horizontal table. It only works when its parent item/section has a
@@ -402,4 +403,3 @@ a repeating item is added or removed. The event returns an object:
 For a description of functions provided for retrieving user-entered data in
 various formats, including FHIR, and for importing and exporting FHIR resources,
 see the [documentation](https://lhncbc.github.io/lforms/) website.
-

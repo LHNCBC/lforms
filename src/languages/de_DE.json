@@ -56,6 +56,7 @@
   "booleanYes": "Ja",
   "booleanNo": "Nein",
   "booleanNotAnswered": "Nicht beantwortet",
+  "booleanCheckboxHint": "Klicken, um zwischen Nicht beantwortet, Ja und Nein zu wechseln.",
   "pleaseEnterInfoForTheBlank": "Bitte geben Sie Informationen in das Feld „{lformsParam}“ ein.",
   "other": "Andere",
   "clearSelection": "Auswahl leeren",

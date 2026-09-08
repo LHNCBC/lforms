@@ -1,0 +1,29 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "checkbox-boolean",
+  "url": "https://example.org/R4/Questionnaire/checkbox-boolean",
+  "version": "1.0.0",
+  "title": "Checkbox Item Control for Booleans",
+  "status": "active",
+  "item": [
+    {
+      "linkId": "1",
+      "text": "Do you agree?",
+      "type": "boolean",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box",
+                "display": "Check-box"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

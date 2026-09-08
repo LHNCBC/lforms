@@ -1,34 +1,57 @@
 <ng-container *ngIf="item">
-  <nz-radio-group
-    [ngModel]="value"
-    (ngModelChange)="onModelChange($event)"
-    role="radiogroup"
-    [nzName]="'radiogroup_' + item._elementId"
-    attr.aria-labelledby="label-{{ item._elementId }}"
-    (click)="lhcDataService.setActiveRow(item)">
-    <label
-      nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
-      [nzValue]="true"
-      [(ngModel)]="booleanModels[0]"
-      [id]="lhcDataService.getItemAnswerId(item, 'true')"
-      >{{language.booleanYes}}</label>
-    <label
-      nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
-      [nzValue]="false"
-      [(ngModel)]="booleanModels[1]"
-      [id]="lhcDataService.getItemAnswerId(item, 'false')"
-      >{{language.booleanNo}}</label>
-    <label
-      nz-radio
-      [nzDisabled]="item._readOnly"
-      [disabled]="item._readOnly"
-      [nzValue]="null"
-      [(ngModel)]="booleanModels[2]"
-      [id]="lhcDataService.getItemAnswerId(item, 'null')"
-      >{{language.booleanNotAnswered}}</label>
-  </nz-radio-group>
+  <button
+    *ngIf="usesCheckboxControl(); else radioButtons"
+    type="button"
+    role="checkbox"
+    class="lhc-boolean-checkbox"
+    [class.lhc-boolean-checkbox-positive]="item.value === true"
+    [class.lhc-boolean-checkbox-negative]="item.value === false"
+    [class.lhc-boolean-checkbox-unanswered]="item.value !== true && item.value !== false"
+    [id]="lhcDataService.getItemAnswerId(item, 'checkbox')"
+    [disabled]="item._readOnly"
+    [attr.aria-checked]="getCheckboxAriaState()"
+    [attr.aria-labelledby]="'label-' + item._elementId"
+    [attr.aria-describedby]="'boolean-status-' + item._elementId"
+    [title]="language.booleanCheckboxHint"
+    (click)="cycleCheckboxState(); lhcDataService.setActiveRow(item)">
+    <span class="lhc-boolean-checkbox-box" aria-hidden="true"></span>
+    <span class="lhc-boolean-checkbox-status" [id]="'boolean-status-' + item._elementId">
+      {{getCheckboxStatus()}}
+    </span>
+  </button>
+
+  <ng-template #radioButtons>
+    <nz-radio-group
+      [ngModel]="value"
+      (ngModelChange)="onModelChange($event)"
+      role="radiogroup"
+      [nzName]="'radiogroup_' + item._elementId"
+      attr.aria-labelledby="label-{{ item._elementId }}"
+      (click)="lhcDataService.setActiveRow(item)">
+      <label
+        nz-radio
+        [nzDisabled]="item._readOnly"
+        [disabled]="item._readOnly"
+        [nzValue]="true"
+        [(ngModel)]="booleanModels[0]"
+        [id]="lhcDataService.getItemAnswerId(item, 'true')"
+        >{{language.booleanYes}}</label>
+      <label
+        nz-radio
+        [nzDisabled]="item._readOnly"
+        [disabled]="item._readOnly"
+        [nzValue]="false"
+        [(ngModel)]="booleanModels[1]"
+        [id]="lhcDataService.getItemAnswerId(item, 'false')"
+        >{{language.booleanNo}}</label>
+      <label
+        nz-radio
+        [nzDisabled]="item._readOnly"
+        [disabled]="item._readOnly"
+        [nzValue]="null"
+        [(ngModel)]="booleanModels[2]"
+        [id]="lhcDataService.getItemAnswerId(item, 'null')"
+        >{{language.booleanNotAnswered}}</label>
+    </nz-radio-group>
+  </ng-template>
 </ng-container>

@@ -31,6 +31,67 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhirVerisonInData = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
+        describe('boolean item controls', function() {
+          /**
+           * Build a boolean Questionnaire with the requested item-control code.
+           * @param {string} code the questionnaire-item-control code
+           * @returns {object} a FHIR Questionnaire containing one boolean item
+           */
+          function questionnaireWithItemControl(code) {
+            return {
+              resourceType: 'Questionnaire',
+              status: 'active',
+              item: [{
+                linkId: 'boolean-item',
+                text: 'Do you agree?',
+                type: 'boolean',
+                extension: [{
+                  url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+                  valueCodeableConcept: {
+                    coding: [{
+                      system: 'http://hl7.org/fhir/questionnaire-item-control',
+                      code: code
+                    }]
+                  }
+                }]
+              }]
+            };
+          }
+
+          /**
+           * Export an LForms form and retrieve its boolean item's itemControl extension.
+           * @param {object} formData an LForms form definition
+           * @returns {object|undefined} the exported questionnaire-itemControl extension
+           */
+          function exportedItemControl(formData) {
+            const questionnaire = LForms.Util._convertLFormsToFHIRData(
+              'Questionnaire', fhirVersion, formData);
+            return questionnaire.item[0].extension.find(
+              extension => extension.url ===
+                'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
+          }
+
+          it('should import and export check-box distinctly for a boolean item', function() {
+            const formData = LForms.Util.convertFHIRQuestionnaireToLForms(
+              questionnaireWithItemControl('check-box'), fhirVersion);
+
+            assert.deepEqual(formData.items[0].displayControl,
+              {answerLayout: {type: 'CHECK_BOX'}});
+            assert.equal(exportedItemControl(formData).valueCodeableConcept.coding[0].code,
+              'check-box');
+          });
+
+          it('should preserve radio-button for a boolean item', function() {
+            const formData = LForms.Util.convertFHIRQuestionnaireToLForms(
+              questionnaireWithItemControl('radio-button'), fhirVersion);
+
+            assert.deepEqual(formData.items[0].displayControl,
+              {answerLayout: {type: 'RADIO_CHECKBOX'}});
+            assert.equal(exportedItemControl(formData).valueCodeableConcept.coding[0].code,
+              'radio-button');
+          });
+        });
+
         it('should import initial.valueQuantity', ()=>{
           var quantity = {
             value: 5.3,
