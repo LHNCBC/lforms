@@ -636,6 +636,9 @@ export default class LhcFormData {
       const errorRequired = Validation.checkRequired(item._answerRequired, item.value, errors);
       const errorDataType = Validation.checkDataType(item.dataType, item.value, errors);
       const errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
+      if (item._hasAutocompleteValidationError && !errors.includes(language.invalidAnswer)) {
+        errors.push(language.invalidAnswer);
+      }
       item._validationErrors = errors;
 
     }
@@ -1402,7 +1405,9 @@ export default class LhcFormData {
       }
 
       // set up validation flag
-      if (item._answerRequired ||
+      if ((item._hasAnswerList && item.displayControl?.answerLayout?.type !== "RADIO_CHECKBOX" &&
+            item.answerConstraint !== "optionsOrString") ||
+          item._answerRequired ||
           item.restrictions ||
           (item.dataType !== CONSTANTS.DATA_TYPE.ST &&
             item.dataType !== CONSTANTS.DATA_TYPE.TX &&
@@ -1833,6 +1838,9 @@ export default class LhcFormData {
       delete item._validationErrors;
       delete item._validationWarnings;
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+        if (item._hasAutocompleteValidationError) {
+          item._validationErrors = [language.invalidAnswer];
+        }
         this._checkConstraintsOnItem(item, issues);
       }
     }

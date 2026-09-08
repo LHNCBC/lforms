@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import { byId, openFormByIndex, pressCypressKeys, waitForLFormsReady, loadFromTestData } from '../support/lforms-helpers';
+import { addFormToPage, byId, openFormByIndex, pressCypressKeys, waitForLFormsReady, loadFromTestData } from '../support/lforms-helpers';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -66,9 +66,10 @@ test.describe('Validations', () => {
   const errorMinLength = 'must have a total length greater than or equal to ';
   const errorPattern = 'must match a RegExp pattern of';
   const errorMaxDecimalPlaces = ' decimal places.';
-  const errorRequire = 'requires a value';
+  const errorRequire = 'requires a value.';
   const errorMinOccurs = 'must have at least ';
   const errorMaxOccurs = 'must not have more than ';
+  const errorInvalidAnswer = 'must be a valid answer from the list.';
 
   test.describe('data type validations (table)', () => {
     test('should validate INT type', async ({ page }) => {
@@ -318,6 +319,211 @@ test.describe('Validations', () => {
 
     // CNE/CWE with multiple selections does not work with validations. Need a fix in autocomplete directive.
 
+    test('should validate and retain invalid autocomplete entries for optionsOnly fields', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerConstraint/dataType-ST-optionsOnly.json', 'formContainer');
+
+      const itemId = 'valueString-group1-item1/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const invalidMessage = page.locator(errorContainer).filter({ hasText: errorInvalidAnswer });
+
+      await input.click();
+      await input.pressSequentially('invalid');
+      await input.press('Enter');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(input).toHaveCSS('border-top-color', 'rgb(255, 0, 0)');
+      await expect(input).toBeFocused();
+      await expect(input).not.toHaveCSS('outline-style', 'none');
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      await input.press('Control+a');
+      await input.press('Backspace');
+      await input.pressSequentially('b');
+      await input.press('Enter');
+      await expect(input).toHaveValue('b');
+      await expect(input).not.toHaveClass(/invalid/);
+      await expect(item).not.toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).not.toBeAttached();
+
+      await input.press('Control+a');
+      await input.press('Backspace');
+      await input.pressSequentially('invalid again');
+      await input.press('Enter');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      const validityErrors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
+      expect(validityErrors).toContain('valueString must be a valid answer from the list.');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      await byId(page, 'valueString-group1-item2/1/1').click();
+      await expect(input).toHaveValue('invalid again');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+    });
+
+    test('should retain invalid pending text when a multi-select tag is removed', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerConstraint/dataType-ST-optionsOnly.json', 'formContainer');
+
+      const itemId = 'valueString-group1-item2/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const selectedTag = item.locator('span.autocomp_selected li');
+      const invalidMessage = page.locator(errorContainer).filter({ hasText: errorInvalidAnswer });
+
+      await input.click();
+      await input.pressSequentially('a');
+      await input.press('Enter');
+      await expect(selectedTag).toHaveCount(1);
+
+      await input.pressSequentially('invalid');
+      await input.press('Enter');
+      await expect(input).toHaveValue('invalid');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      await selectedTag.locator('button').click();
+
+      await expect(selectedTag).toHaveCount(0);
+      await expect(input).toHaveValue('invalid');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+      const validityErrors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
+      expect(validityErrors).toContain('valueString - repeats must be a valid answer from the list.');
+    });
+
+    test('should retain invalid pending text when a multi-select model updates', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerConstraint/dataType-ST-optionsOnly.json', 'formContainer');
+
+      const itemId = 'valueString-group1-item2/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const selectedTag = item.locator('span.autocomp_selected li');
+      const invalidMessage = page.locator(errorContainer).filter({ hasText: errorInvalidAnswer });
+
+      await input.click();
+      await input.pressSequentially('a');
+      await input.press('ArrowDown');
+      await input.press('Enter');
+      await expect(selectedTag).toContainText('a');
+
+      await input.pressSequentially('invalid');
+      await input.press('Enter');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      await page.evaluate(() => {
+        const form = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+        const modelItem = form.itemList.find(
+          candidate => candidate.linkId === 'valueString-group1-item2'
+        );
+        modelItem.value = [{ text: 'b' }];
+      });
+      await byId(page, 'valueString-group1-item1/1/1').click({ force: true });
+
+      await expect(selectedTag).toContainText('b');
+      await expect(input).toHaveValue('invalid');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+      const validityErrors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
+      expect(validityErrors).toContain('valueString - repeats must be a valid answer from the list.');
+    });
+
+    test('should clear pending text after a case-insensitive multi-select match', async ({ page }) => {
+      const pageErrors: string[] = [];
+      page.on('pageerror', error => pageErrors.push(error.message));
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'answerConstraint/dataType-CODING-optionsOnly.json', 'formContainer');
+
+      const itemId = 'valueCoding-group1-item2/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const selectedTag = item.locator('span.autocomp_selected li');
+
+      await input.click();
+      await input.pressSequentially('answer 1');
+      await input.press('Escape');
+      await input.press('Enter');
+
+      await expect(selectedTag).toHaveCount(1);
+      await expect(selectedTag).toContainText('Answer 1');
+      await expect(input).toHaveValue('');
+      await expect(input).not.toHaveClass(/invalid/);
+      await expect(item).not.toHaveClass(/lhc-invalid/);
+
+      const modelValue = await page.evaluate(() => {
+        const form = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+        return form.itemList.find(
+          candidate => candidate.linkId === 'valueCoding-group1-item2'
+        ).value;
+      });
+      expect(modelValue).toEqual([{ code: 'c1', text: 'Answer 1' }]);
+      expect(pageErrors).toEqual([]);
+    });
+
+    test('should retain autocomplete validation errors when checking constraints', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(
+        page,
+        'answerOption/answerOption-valueString.R4.json',
+        'formContainer',
+        { fhirVersion: 'R4' }
+      );
+
+      const itemId = 'valueString-group1-item1/1/1';
+      const input = byId(page, itemId);
+      const item = byId(page, `item-${itemId}`);
+      const invalidMessage = page.locator(errorContainer).filter({ hasText: errorInvalidAnswer });
+
+      await input.click();
+      await input.pressSequentially('invalid');
+      await input.press('Enter');
+      await byId(page, 'valueString-group1-item2/1/1').click();
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+
+      const validationState = await page.evaluate(async () => {
+        const LForms = (window as any).LForms;
+        const issues = await LForms.Util.checkConstraints('#formContainer');
+        const form = LForms.Util._getFormObjectInScope('#formContainer');
+        const modelItem = form.itemList.find(
+          candidate => candidate.linkId === 'valueString-group1-item1'
+        );
+        return {
+          issues,
+          hasAutocompleteValidationError: modelItem._hasAutocompleteValidationError,
+          validationErrors: modelItem._validationErrors
+        };
+      });
+
+      expect(validationState).toEqual({
+        issues: null,
+        hasAutocompleteValidationError: true,
+        validationErrors: [errorInvalidAnswer]
+      });
+      await expect(input).toHaveValue('invalid');
+      await expect(input).toHaveClass(/invalid/);
+      await expect(item).toHaveClass(/lhc-invalid/);
+      await expect(invalidMessage).toBeVisible();
+    });
+
     test('should validate multiple restrictions on INT', async ({ page }) => {
       await openFormByIndex(page, 13);
       const inta = byId(page, '/INTA/1');
@@ -479,10 +685,10 @@ test.describe('Validations', () => {
       // Required fields are empty
       let errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toEqual([
-        'Required DT field requires a value',
-        'Required DTM field requires a value',
-        'Required TX field requires a value',
-        'Required ST field requires a value'
+        'Required DT field requires a value.',
+        'Required DTM field requires a value.',
+        'Required TX field requires a value.',
+        'Required ST field requires a value.'
       ]);
 
       // Entering 1 will show a previously hidden section with required inputs to make sure they now
@@ -490,12 +696,12 @@ test.describe('Validations', () => {
       await byId(page, '/sl_source_to_test_required/1').pressSequentially('1');
       errors = await page.evaluate(() => (window as any).LForms.Util.checkValidity());
       expect(errors).toEqual([
-        'Required DT field requires a value',
-        'Required DTM field requires a value',
-        'Required TX field requires a value',
-        'Required ST field requires a value',
-        "Required RT1: Shown when 'Skip Logic Required Source' == 1; requires a value",
-        'RT4: Shown when my section header is shown; requires a value'
+        'Required DT field requires a value.',
+        'Required DTM field requires a value.',
+        'Required TX field requires a value.',
+        'Required ST field requires a value.',
+        "Required RT1: Shown when 'Skip Logic Required Source' == 1; requires a value.",
+        'RT4: Shown when my section header is shown; requires a value.'
       ]);
     });
 
@@ -561,7 +767,7 @@ test.describe('Validations', () => {
         return (window as any).LForms.Util.checkValidity();
       });
       expect(errors).toEqual([
-        "Required child item requires a value"
+        "Required child item requires a value."
       ]);
       // Validation should be skipped since the parent question has enableWhen expression evaluated to false.
       await byId(page, 'question/1|false').click();

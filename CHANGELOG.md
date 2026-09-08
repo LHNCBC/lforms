@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.1.0] 2026-08-11
+### Added
+- Validation of values entered in autocomplete fields, with a red border and
+  tooltip error message shown when the value does not match an option in the list.
+
 ## [44.0.0] 2026-08-07
 ### Changed
 - LForms.Util.checkConstraints() is now an async function.
@@ -2148,4 +2153,3 @@ object.
 ### Removed
 - WidgetUtil.preprocessRIData.  This was an internal API, so it should not be
   a breaking change for anyone but ourselves.
-
