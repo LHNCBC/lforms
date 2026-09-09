@@ -3,6 +3,7 @@ import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autoc
 import copy from "fast-copy";
 import { LhcDataService} from '../../../lib/lhc-data.service';
 import CommonUtils from "../../../lib/lforms/lhc-common-utils.js";
+import language from "../../../../language-config.json";
 
 @Component({
     selector: 'lhc-autocomplete',
@@ -35,9 +36,13 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   allowNotOnList: boolean = false;
   acType: string = null;
   acInstance: any = null;
-  prefetchTextToItem: {};
+  prefetchTextToItem: Record<string, any> = Object.create(null);
   displayProp: string = '';
   viewInitialized = false;
+  autocompleteInvalidError = language.invalidAnswer;
+  private invalidTextRestoreTimeout: ReturnType<typeof setTimeout> | null = null;
+  private canonicalSelectionCleanupTimeout: ReturnType<typeof setTimeout> | null = null;
+  private autocompleteLifecycleId = 0;
 
   constructor(
     public lhcDataService: LhcDataService
@@ -84,8 +89,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   /**
    *  Decides whether the data model should be preserved when reconstructing the autocomplete-lhc widget.
    * @param changes the changes object passed to ngOnChanges
-   * @return {boolean, boolean} two flags, one indicates whether the data model should be kept,
-   * the other indicates whether the data model has changed.
+   * @returns {{keep: boolean, dataModelChanged: boolean|undefined}} flags indicating whether the data model should be kept and whether it changed.
    */
    keepDataModel(changes) {
     let keep, dataModelChanged;
@@ -163,16 +167,23 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     // Note:  This runs both in response to user interaction and to JavaScript
     // changes.
     if (!this.multipleSelections) {
-      if (!itemValue)
+      this.removeAutocompleteValidationError();
+      if (!itemValue) {
+        this.clearAutocompleteInvalidState();
         this.acInstance.setFieldVal('', false);
+      }
       else {
         const dispVal = this.updateAutocompSelectionModel(itemValue);
         if (typeof dispVal === 'string') {
           const fieldVal = this.acType === "prefetch" ? dispVal.trim() : dispVal;
           this.acInstance.setFieldVal(fieldVal, false);
+          if (this.modelValueMatchesAutocompleteList(itemValue, fieldVal)) {
+            this.clearAutocompleteInvalidState();
+          }
         }
         else {// handle the case of an empty object as a model
           this.acInstance.setFieldVal('', false);
+          this.clearAutocompleteInvalidState();
         }
       }
     }
@@ -184,13 +195,28 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
           this.acInstance.addToSelectedArea(dispVal);
         }
       }
+      this.updateAutocompleteValidationError();
     }
+  }
+
+
+  /**
+   * Checks whether a model value represents an autocomplete list selection.
+   * @param itemValue the model value to check.
+   * @param displayValue the value displayed in the autocomplete field.
+   * @returns whether the value is known to be on the autocomplete list.
+   */
+  modelValueMatchesAutocompleteList(itemValue: any, displayValue: string): boolean {
+    return this.acType === 'prefetch' ?
+      this.getCanonicalPrefetchText(displayValue) !== null :
+      !itemValue?._notOnList;
   }
 
 
   /**
    *  Returns the display value of an answer.
    * @param answer an object with the data for one selected answer
+   * @returns {string|null} the answer's display text, or null if no display text can be determined.
    */
   getDisplayValue(answer) {
 
@@ -241,7 +267,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   /**
    *  Updates the autocompleter's model to register an item as selected.
    * @param answer an object with data (possibly with a code) for the answer
-   * @return the display text determined for the answer.
+   * @returns {string|null} the display text determined for the answer.
    */
   updateAutocompSelectionModel(answer) {
     const dispVal = this.getDisplayValue(answer);
@@ -280,6 +306,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    */
   onInputBlur() {
     this.onBlurFn.emit();
+    setTimeout(() => this.updateAutocompleteValidationError());
   }
 
 
@@ -292,10 +319,202 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
 
 
   /**
+   * Adds/removes the LForms validation message for autocomplete-lhc's own
+   * invalid typed-value state. The normal LForms validation path does not see
+   * this because an unmatched typed value is not written to item.value.
+   */
+  updateAutocompleteValidationError(): void {
+    if (!this.item || !this.ac?.nativeElement) {
+      return;
+    }
+    const input = this.ac.nativeElement;
+
+    if (!input.value) {
+      this.removeAutocompleteValidationError();
+      this.clearAutocompleteInvalidState();
+      return;
+    }
+
+    const isInvalid = input.classList.contains('invalid') ||
+      input.getAttribute('invalid') === 'true';
+
+    if (isInvalid) {
+      this.addAutocompleteValidationError();
+    }
+    else {
+      this.removeAutocompleteValidationError();
+      // A non-invalid value can still intentionally be off-list for an
+      // optionsOrString field. Preserve autocomplete-lhc's no_match state in
+      // that case; otherwise synchronize its state as a valid list match.
+      if (!input.classList.contains('no_match')) {
+        this.clearAutocompleteInvalidState();
+      }
+    }
+  }
+
+
+  /**
+   * Adds the autocomplete-lhc typed-value error if it is not already present.
+   */
+  addAutocompleteValidationError(): void {
+    if (!this.item) {
+      return;
+    }
+    this.item._showValidation = true;
+    this.item._hasAutocompleteValidationError = true;
+    const errors = this.item._validationErrors || [];
+
+    if (!errors.includes(this.autocompleteInvalidError)) {
+      this.item._validationErrors = [...errors, this.autocompleteInvalidError];
+    }
+  }
+
+
+  /**
+   * Removes only the autocomplete-lhc typed-value error, preserving any other
+   * validation messages on the item.
+   */
+  removeAutocompleteValidationError(): void {
+    if (this.item) {
+      delete this.item._hasAutocompleteValidationError;
+    }
+    if (Array.isArray(this.item?._validationErrors)) {
+      this.item._validationErrors = this.item._validationErrors
+        .filter(error => error !== this.autocompleteInvalidError);
+      if (this.item._validationErrors.length === 0) {
+        delete this.item._validationErrors;
+      }
+    }
+  }
+
+
+  /**
+   * Clears autocomplete-lhc's typed-value invalid markers from the input.
+   */
+  clearAutocompleteInvalidState(): void {
+    const input = this.ac?.nativeElement;
+    if (!input) {
+      return;
+    }
+
+    this.acInstance?.setInvalidValIndicator?.(false);
+    this.acInstance?.setMatchStatusIndicator?.(true);
+
+    // Keep the DOM normalized when an instance is being torn down or a test
+    // double does not implement autocomplete-lhc's stateful methods.
+    input.classList.remove('invalid', 'no_match');
+    input.removeAttribute('invalid');
+  }
+
+
+  /**
+   * Returns the canonical prefetch list text matching the typed value.
+   * @param typedValue the text typed into the autocomplete input.
+   * @returns {string|null} the matching list text, or null if there is no match.
+   */
+  getCanonicalPrefetchText(typedValue: string): string | null {
+    const trimmedValue = typedValue?.trim();
+    if (!trimmedValue || this.acType !== 'prefetch') {
+      return null;
+    }
+
+    if (this.hasPrefetchItem(trimmedValue)) {
+      return trimmedValue;
+    }
+
+    if (!this.isCaseInsensitiveSelectionEnabled()) {
+      return null;
+    }
+
+    const lowerCaseValue = trimmedValue.toLowerCase();
+    return Object.keys(this.prefetchTextToItem)
+      .find(text => text.toLowerCase() === lowerCaseValue) || null;
+  }
+
+
+  /**
+   * Checks whether the prefetch mapping itself contains the given text.
+   * @param text the display text to look up.
+   * @returns {boolean} whether text is an own key in the prefetch mapping.
+   */
+  hasPrefetchItem(text: string): boolean {
+    return Object.prototype.hasOwnProperty.call(this.prefetchTextToItem, text);
+  }
+
+
+  /**
+   * autocomplete-lhc defaults case-insensitive typed selection to true.
+   * @returns {boolean} true unless case-insensitive typed selection is explicitly disabled.
+   */
+  isCaseInsensitiveSelectionEnabled(): boolean {
+    return this.options?.acOptions?.caseInsenstiveSelection !== false;
+  }
+
+
+  /**
+   * Applies autocomplete-lhc's canonical prefetch list value for a typed match.
+   * @param canonicalText the matching list text to select.
+   */
+  selectCanonicalPrefetchText(canonicalText: string): void {
+    if (!canonicalText || !this.acInstance || !this.hasPrefetchItem(canonicalText)) {
+      return;
+    }
+
+    const selectedAnswer = this.prefetchTextToItem[canonicalText];
+    const alreadySelected = this.multipleSelections &&
+      this.acInstance.isSelected?.(canonicalText);
+    this.acInstance.setFieldVal(canonicalText, false);
+    if (!alreadySelected) {
+      this.acInstance.storeSelectedItem(canonicalText, selectedAnswer?.code);
+      if (this.multipleSelections) {
+        this.acInstance.addToSelectedArea(canonicalText);
+      }
+    }
+    if (this.multipleSelections) {
+      this.scheduleCanonicalSelectionCleanup();
+    }
+    this.clearAutocompleteInvalidState();
+  }
+
+
+  /**
+   * Clears the pending field after a case-insensitive multi-select match.
+   * autocomplete-lhc finishes its non-list handling after notifying selection
+   * observers, so this must run after that handler has returned.
+   */
+  private scheduleCanonicalSelectionCleanup(): void {
+    this.cancelCanonicalSelectionCleanup();
+    const acInstance = this.acInstance;
+    const input = this.ac?.nativeElement;
+    const acElement = acInstance?.element;
+    const lifecycleId = this.autocompleteLifecycleId;
+
+    this.canonicalSelectionCleanupTimeout = setTimeout(() => {
+      this.canonicalSelectionCleanupTimeout = null;
+      if (this.autocompleteLifecycleId !== lifecycleId ||
+          this.acInstance !== acInstance || this.ac?.nativeElement !== input ||
+          acInstance?.element !== acElement) {
+        return;
+      }
+
+      acInstance.setFieldVal('', false);
+      acInstance.processedFieldVal_ = '';
+      acInstance.fieldValIsListVal_ = true;
+      this.removeAutocompleteValidationError();
+      this.clearAutocompleteInvalidState();
+    });
+  }
+
+  /**
    * Clean up the autocompleter if there is one
    * @param keepDataModel whether to keep the data model value on the autocompleter. default is false.
    */
   cleanupAutocomplete(keepDataModel:boolean=false): void {
+    this.autocompleteLifecycleId++;
+    this.cancelInvalidTextRestore();
+    this.cancelCanonicalSelectionCleanup();
+    this.removeAutocompleteValidationError();
+    this.clearAutocompleteInvalidState();
     if (this.acInstance) {
       // reset the field value
       this.acInstance.setFieldVal('', false);
@@ -304,6 +523,28 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
         this.dataModel = null;
       }
       this.acInstance.destroy();
+    }
+  }
+
+
+  /**
+   * Cancels a pending restoration of invalid input text.
+   */
+  private cancelInvalidTextRestore(): void {
+    if (this.invalidTextRestoreTimeout !== null) {
+      clearTimeout(this.invalidTextRestoreTimeout);
+      this.invalidTextRestoreTimeout = null;
+    }
+  }
+
+
+  /**
+   * Cancels pending cleanup for a normalized multi-select entry.
+   */
+  private cancelCanonicalSelectionCleanup(): void {
+    if (this.canonicalSelectionCleanupTimeout !== null) {
+      clearTimeout(this.canonicalSelectionCleanupTimeout);
+      this.canonicalSelectionCleanupTimeout = null;
     }
   }
 
@@ -318,7 +559,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     this.acType = null;
     this.acInstance = false;
     this.allowNotOnList = null;
-    this.prefetchTextToItem = {};
+    this.prefetchTextToItem = Object.create(null);
     this.displayProp = "";
 
     // if there are options for the autocompleter
@@ -358,6 +599,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
         this.acInstance = new Def.Autocompleter.Prefetch(this.ac.nativeElement, listItemsText, acOptions);
       }
 
+      this.retainInvalidValueOnBlur();
+
       const defaultItem =  acOptions.defaultValue
       // set up initial values if there is value
       const savedValue = this.dataModel || defaultItem;  //boolean is not a valid data type for answerOption
@@ -370,9 +613,24 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
 
 
   /**
+   * Keeps autocomplete-lhc from automatically clearing invalid typed text.
+   * LForms retains the text so the user can correct it while the underlying
+   * model remains unchanged.
+   */
+  retainInvalidValueOnBlur(): void {
+    const acInstance = this.acInstance;
+    if (typeof acInstance?.clearInvalidFieldVal !== 'function') {
+      return;
+    }
+
+    acInstance.clearInvalidFieldVal = () => undefined;
+  }
+
+
+  /**
    * Set the initial item.value to the autocompleter when the autocompleter is being set up or
    * the item.value is changed later
-   * @param itemValue
+   * @param itemValue the value to display and store in the autocompleter.
    */
   setItemInitValue(itemValue) {
     if (itemValue) {
@@ -410,6 +668,74 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    */
   onSelectionHandler(event) {
     let changed = false;
+    const eventFinalValue = event?.final_val || '';
+    const canonicalPrefetchText = this.getCanonicalPrefetchText(eventFinalValue);
+    const input = this.ac?.nativeElement;
+    const removedWithInvalidPendingValue = event?.removed && input?.value &&
+      (input.classList.contains('invalid') || input.getAttribute('invalid') === 'true' ||
+        this.item?._hasAutocompleteValidationError);
+    const isInvalidAutocompleteValue = !event?.removed && !event?.on_list &&
+      eventFinalValue &&
+      this.options?.acOptions?.matchListValue &&
+      !canonicalPrefetchText;
+
+    if (isInvalidAutocompleteValue) {
+      const input = this.ac?.nativeElement;
+      const invalidInputValue = input?.value || eventFinalValue;
+      const acInstance = this.acInstance;
+      const acElement = acInstance?.element;
+      const lifecycleId = this.autocompleteLifecycleId;
+      this.cancelInvalidTextRestore();
+
+      // A single-select field must not retain a previously selected answer when
+      // the input now displays a different, invalid value. Multi-select answers
+      // remain visible as selected tags, so an invalid pending value does not
+      // clear those selections.
+      if (!this.multipleSelections && this.dataModel !== null && this.dataModel !== undefined) {
+        this.dataModel = null;
+        this.selectedItems = null;
+        this.dataModelChange.emit(this.dataModel);
+        this.lhcDataService.onItemValueChange(this.item, null, null, true);
+      }
+
+      // Emitting the model change and running its rules can synchronously rebuild
+      // this autocomplete or destroy the component. Do not schedule work for an
+      // instance that is no longer current.
+      if (this.autocompleteLifecycleId !== lifecycleId ||
+          this.acInstance !== acInstance || this.ac?.nativeElement !== input ||
+          acInstance?.element !== acElement) {
+        return;
+      }
+
+      // Updating the model can cause Angular to refresh the input from null.
+      // Restore the invalid text after that refresh so the user can correct it.
+      this.invalidTextRestoreTimeout = setTimeout(() => {
+        this.invalidTextRestoreTimeout = null;
+        if (this.autocompleteLifecycleId !== lifecycleId ||
+            this.acInstance !== acInstance || this.ac?.nativeElement !== input ||
+            acInstance?.element !== acElement) {
+          return;
+        }
+        if (!this.multipleSelections && this.dataModel == null && invalidInputValue) {
+          acInstance?.setFieldVal(invalidInputValue, false);
+          input?.classList.add('invalid', 'no_match');
+          input?.setAttribute('invalid', 'true');
+        }
+        this.updateAutocompleteValidationError();
+      });
+      return;
+    }
+    else if (!event?.removed) {
+      this.removeAutocompleteValidationError();
+      if (event?.on_list || canonicalPrefetchText) {
+        this.clearAutocompleteInvalidState();
+      }
+    }
+
+    if (!event?.on_list && canonicalPrefetchText) {
+      this.selectCanonicalPrefetchText(canonicalPrefetchText);
+    }
+
     if (this.acType === 'prefetch') {
       const selectedTexts = this.acInstance.getSelectedItems()
       changed = this.setItemValueForPrefetchAC(selectedTexts);
@@ -419,9 +745,23 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     }
 
     if (changed) {
+      if (!isInvalidAutocompleteValue && !event?.removed) {
+        this.removeAutocompleteValidationError();
+      }
       // run the change function
       this.dataModelChange.emit(this.dataModel);
       this.lhcDataService.onItemValueChange(this.item, null, null, true)
+    }
+
+    if (event?.removed) {
+      setTimeout(() => {
+        const input = this.ac?.nativeElement;
+        if (removedWithInvalidPendingValue && input?.value) {
+          input.classList.add('invalid', 'no_match');
+          input.setAttribute('invalid', 'true');
+        }
+        this.updateAutocompleteValidationError();
+      });
     }
 
   }
@@ -430,7 +770,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
   /**
    * Set up an item's value when an answer is selected from a 'prefetch' autocompleter
    * @param selectedTexts the selected answer's text
-   * @return {boolean} whether item's value has changed
+   * @returns {boolean} whether item's value has changed
    */
   setItemValueForPrefetchAC(selectedTexts: string[]): boolean {
     const currentValue = copy(this.dataModel);
@@ -440,9 +780,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       }
       else {
         const selectedAnswerItems = selectedTexts.map(text => {
-          const answerItem = this.prefetchTextToItem[text];
-          if (answerItem) {
-            return answerItem;
+          if (this.hasPrefetchItem(text)) {
+            return this.prefetchTextToItem[text];
           }
           else if (this.allowNotOnList) {
             return this.options.modelForOffListItem ? this.options.modelForOffListItem(text) :
@@ -477,9 +816,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
    * Get the selected answer object from a 'search' autocompleter
    * @param itemText answer's text
    * @param onList whether the answer's text matches the answers texts on the list
-   * @returns {{}} an answer object with where 'code_system' is renamed to 'system' if
-   *               there is a 'code_system', along with 'text', 'code' and
-   *               an optional 'data'.
+   * @returns {Object|null} an answer object with 'code_system' renamed to 'system' if present, or null.
    */
 
   getSearchItemModelData(itemText, onList) {
@@ -508,8 +845,8 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
 
   /**
    * Set up an item's value when an answer is selected from a 'search' autocompleter
-   * @param selectedTexts the selected answer's text
-   * @return {boolean} whether the item's value has changed
+   * @param eventData the list selection event emitted from the search autocompleter.
+   * @returns {boolean} whether the item's value has changed
    */
   setItemValueForSearchAC(eventData):boolean {
     const itemText = eventData.final_val;

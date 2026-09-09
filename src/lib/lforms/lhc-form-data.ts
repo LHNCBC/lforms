@@ -636,6 +636,9 @@ export default class LhcFormData {
       const errorRequired = Validation.checkRequired(item._answerRequired, item.value, errors);
       const errorDataType = Validation.checkDataType(item.dataType, item.value, errors);
       const errorRestrictions = Validation.checkRestrictions(item.restrictions, item.value, errors);
+      if (item._hasAutocompleteValidationError && !errors.includes(language.invalidAnswer)) {
+        errors.push(language.invalidAnswer);
+      }
       item._validationErrors = errors;
 
     }
@@ -1402,7 +1405,9 @@ export default class LhcFormData {
       }
 
       // set up validation flag
-      if (item._answerRequired ||
+      if ((item._hasAnswerList && item.displayControl?.answerLayout?.type !== "RADIO_CHECKBOX" &&
+            item.answerConstraint !== "optionsOrString") ||
+          item._answerRequired ||
           item.restrictions ||
           (item.dataType !== CONSTANTS.DATA_TYPE.ST &&
             item.dataType !== CONSTANTS.DATA_TYPE.TX &&
@@ -1817,11 +1822,15 @@ export default class LhcFormData {
 
   /**
    * Get a list of errors preventing the form from being valid.
-   * @returns {Array<string> | null} list of errors or null if no errors
+   * @returns {Promise<Array<object> | null>} list of errors/warnings or null if no issues
    */
-  checkConstraints () {
-    // re-evaluated FHIRPath expression in case variables need an update.
-    this._expressionProcessor.runCalculations(false);
+  async checkConstraints () {
+    // Re-evaluate FHIRPath expressions in case variables need an update.
+    await this._expressionProcessor.runCalculations(false);
+    this._checkFormControls();
+    // Refresh the QuestionnaireResponse and named variables after legacy form
+    // controls have had a chance to change values or skip logic status.
+    await this._expressionProcessor.runCalculations(false);
     const issues = [];
     const itemListLength = this.itemList.length;
     for (let i = 0; i < itemListLength; i++) {
@@ -1829,6 +1838,9 @@ export default class LhcFormData {
       delete item._validationErrors;
       delete item._validationWarnings;
       if (item._skipLogicStatus !== CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+        if (item._hasAutocompleteValidationError) {
+          item._validationErrors = [language.invalidAnswer];
+        }
         this._checkConstraintsOnItem(item, issues);
       }
     }

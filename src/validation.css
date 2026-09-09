@@ -12,6 +12,11 @@
   border: 2px solid #FF0000;
 }
 
+.lhc-form .lhc-invalid.lhc-visited-before lhc-autocomplete input[type="text"],
+.lhc-form .lhc-invalid.lhc-show-validation lhc-autocomplete input[type="text"] {
+  border: 1px solid #FF0000;
+}
+
 .lhc-form .lhc-validation-popover {
   display: none;
 }
