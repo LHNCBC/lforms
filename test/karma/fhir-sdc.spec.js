@@ -66,10 +66,28 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           function exportedItemControl(formData) {
             const questionnaire = LForms.Util._convertLFormsToFHIRData(
               'Questionnaire', fhirVersion, formData);
-            return questionnaire.item[0].extension.find(
+            return questionnaire.item[0].extension && questionnaire.item[0].extension.find(
               extension => extension.url ===
                 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
           }
+
+          it('should not add an item control when a boolean item has none', function() {
+            const questionnaire = {
+              resourceType: 'Questionnaire',
+              status: 'active',
+              item: [{
+                linkId: 'boolean-item',
+                text: 'Do you agree?',
+                type: 'boolean'
+              }]
+            };
+
+            const formData = LForms.Util.convertFHIRQuestionnaireToLForms(
+              questionnaire, fhirVersion);
+
+            assert.isUndefined(formData.items[0].displayControl);
+            assert.isUndefined(exportedItemControl(formData));
+          });
 
           it('should import and export check-box distinctly for a boolean item', function() {
             const formData = LForms.Util.convertFHIRQuestionnaireToLForms(
