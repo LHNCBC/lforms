@@ -2,11 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [44.0.0] 2026-09-04
+## [44.1.0] 2026-09-04
 ### Added
 - Added support for the FHIR SDC Questionnaire columnCount extension, including
   multi-column horizontal and vertical answer layouts and round-trip conversion.
 
+## [44.0.0] 2026-08-11
+### Added
+- Validation of values entered in autocomplete fields, with a red border and
+  tooltip error message shown when the value does not match an option in the list.
 ### Changed
 - LForms.Util.checkConstraints() is now an async function.
 
@@ -2152,4 +2156,3 @@ object.
 ### Removed
 - WidgetUtil.preprocessRIData.  This was an internal API, so it should not be
   a breaking change for anyone but ourselves.
-

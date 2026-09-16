@@ -41,7 +41,8 @@
     "EMAIL": "必须为有效的电子邮件地址。",
     "PHONE": "必须为有效的电话号码。"
   },
-  "requiresAValue": "此条目需要填写值",
+  "requiresAValue": "此条目需要填写值。",
+  "invalidAnswer": "必须为列表中的有效选项。",
   "mustBeGreater": "必须为大于{lformsParam}的值。",
   "mustBeGreaterOrEqual": "必须为大于或等于{lformsParam}的值。",
   "mustBeLess": "必须为小于{lformsParam}的值。",
