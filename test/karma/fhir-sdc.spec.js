@@ -2226,76 +2226,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
-          it('should convert legacy column count extension to SDC column count extension', function () {
-            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
-            var fhirQ = {
-              "resourceType": "Questionnaire",
-              "status": "draft",
-              "item": [
-                {
-                  "type": fhirVersion === "R5" ? "coding" : "choice",
-                  "linkId": "/q1c",
-                  "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 columns",
-                  "extension": [
-                    {
-                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-                      "valueCodeableConcept": {
-                        "coding": [
-                          {
-                            "system": "http://hl7.org/fhir/questionnaire-item-control",
-                            "code": "radio-button",
-                            "display": "Radio Button"
-                          }
-                        ],
-                        "text": "Radio Button"
-                      }
-                    },
-                    {
-                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
-                      "valueCode": "horizontal"
-                    },
-                    {
-                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-columnCount",
-                      "valueInteger": 2
-                    }
-                  ]
-                }
-              ]
-            };
-            fhirQ.item[0][optionsProperty] = [
-              {
-                "valueCoding": {
-                  "code": "c1",
-                  "display": "Answer X"
-                }
-              },
-              {
-                "valueCoding": {
-                  "code": "c2",
-                  "display": "Answer Y"
-                }
-              }
-            ];
-
-            // Verify the legacy FHIR columnCount extension is imported into LForms answerLayout.
-            var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
-            assert.equal(lfData.items[0].displayControl.answerLayout.columns, "2");
-            assert.equal(lfData.items[0].displayControl.answerLayout.orientation, "horizontal");
-
-            // Verify export normalizes the legacy extension to the current SDC columnCount extension.
-            var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
-            var columnCountExt = convertedFhirQ.item[0].extension.find(function(extension) {
-              return extension.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
-            });
-            var legacyColumnCountExt = convertedFhirQ.item[0].extension.find(function(extension) {
-              return extension.url === "http://hl7.org/fhir/StructureDefinition/questionnaire-columnCount";
-            });
-
-            assert.isOk(columnCountExt);
-            assert.equal(columnCountExt.valuePositiveInt, 2);
-            assert.equal(legacyColumnCountExt, undefined);
-          });
-
           it('should retain an unused column count extension during Questionnaire round-trip conversion', function () {
             var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
             var columnCountUrl = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
@@ -2351,8 +2281,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             };
             convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
             columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
-              return extension.url === columnCountUrl ||
-                extension.url === "http://hl7.org/fhir/StructureDefinition/questionnaire-columnCount";
+              return extension.url === columnCountUrl;
             });
             assert.equal(columnCountExts.length, 1);
             assert.equal(columnCountExts[0].url, columnCountUrl);

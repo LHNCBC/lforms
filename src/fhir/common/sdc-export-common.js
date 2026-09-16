@@ -448,8 +448,7 @@ function addCommonSDCExportFns(ns) {
             answerChoiceOrientation = answerLayoutOrientation;
           }
           var hasRetainedColumnCount = targetItem.extension.some(function(extension) {
-            return extension.url === self.fhirExtColumnCount ||
-              extension.url === self.fhirExtColumnCountLegacy;
+            return extension.url === self.fhirExtColumnCount;
           });
           var answerLayoutColumns = item.displayControl.answerLayout.columns;
           var normalizedAnswerLayoutColumns = parseInt(String(answerLayoutColumns), 10);
@@ -461,8 +460,7 @@ function addCommonSDCExportFns(ns) {
             // A retained columnCount no longer describes a horizontal layout
             // after its internal columns value has been changed to zero.
             targetItem.extension = targetItem.extension.filter(function(extension) {
-              return extension.url !== self.fhirExtColumnCount &&
-                extension.url !== self.fhirExtColumnCountLegacy;
+              return extension.url !== self.fhirExtColumnCount;
             });
           }
           else if (normalizedAnswerLayoutColumns === 1) {
@@ -523,11 +521,10 @@ function addCommonSDCExportFns(ns) {
             });
         }
         if (answerColumnCount) {
-          // Replace any unconsumed SDC or legacy extension retained during
-          // import, rather than exporting duplicate columnCount extensions.
+          // Replace any unconsumed SDC extension retained during import,
+          // rather than exporting duplicate columnCount extensions.
           targetItem.extension = (targetItem.extension || []).filter(function(extension) {
-            return extension.url !== self.fhirExtColumnCount &&
-              extension.url !== self.fhirExtColumnCountLegacy;
+            return extension.url !== self.fhirExtColumnCount;
           });
           targetItem.extension.push(
             {

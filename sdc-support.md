@@ -21,7 +21,7 @@ fields.
   radio-button, check-box, help.  Note that type "list" is the default type of
   display, so that is supported, and the extension is not needed for that case.
 * choiceOrientation
-* columnCount (including import support for the legacy questionnaire-columnCount URL)
+* columnCount
 * optionPrefix
 * required
 * repeats
