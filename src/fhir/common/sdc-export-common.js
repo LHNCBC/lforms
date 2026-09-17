@@ -476,6 +476,14 @@ function addCommonSDCExportFns(ns) {
           else if (normalizedAnswerLayoutColumns > 1) {
             answerColumnCount = normalizedAnswerLayoutColumns;
           }
+          else if (hasRetainedColumnCount) {
+            // A supported radio-button/check-box control with no valid internal
+            // column count must not re-export an invalid retained extension
+            // (for example, valuePositiveInt=0 with no choiceOrientation).
+            targetItem.extension = targetItem.extension.filter(function(extension) {
+              return extension.url !== self.fhirExtColumnCount;
+            });
+          }
 
         }
       }

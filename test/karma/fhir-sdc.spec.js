@@ -2179,6 +2179,72 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
+          it('should remove invalid columnCount=0 when choiceOrientation is missing during round-trip conversion', function () {
+            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
+            var columnCountUrl = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+            var orientationUrl = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+
+            ["radio-button", "check-box"].forEach(function(controlCode) {
+              var fhirQ = {
+                "resourceType": "Questionnaire",
+                "status": "draft",
+                "item": [
+                  {
+                    "type": fhirVersion === "R5" ? "coding" : "choice",
+                    "linkId": "/q1c",
+                    "text": "Choice with an invalid zero column count",
+                    "repeats": controlCode === "check-box",
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                        "valueCodeableConcept": {
+                          "coding": [
+                            {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": controlCode
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "url": columnCountUrl,
+                        "valuePositiveInt": 0
+                      }
+                    ]
+                  }
+                ]
+              };
+              fhirQ.item[0][optionsProperty] = [
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer X"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer Y"
+                  }
+                }
+              ];
+
+              var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+              assert.equal(lfData.items[0].displayControl.answerLayout.columns, undefined);
+
+              var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+              var columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === columnCountUrl;
+              });
+              var orientationExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === orientationUrl;
+              });
+
+              assert.equal(columnCountExts.length, 0);
+              assert.equal(orientationExts.length, 0);
+            });
+          });
+
           it('should export numeric answerLayout columns 0 and 1 with choice orientation', function () {
             var item = {
               "questionCode": "q1c",
