@@ -1,6 +1,15 @@
 <nz-checkbox-wrapper style="width: 100%;"  (nzOnChange)="onCheckboxModelChange($event)" *ngIf="item">
-  <div nz-row [ngClass]="{'lhc-vertical': commonUtils.getDisplayControlIsVertical(item.displayControl)}">
-    <div *ngFor="let answer of acOptions.listItems; index as i">
+  <div nz-row
+    class="lhc-checkbox-group"
+    [lhcAnswerOptionMinWidth]="answerOptionColumnCount"
+    [lhcAnswerOptionVertical]="answerOptionIsVertical"
+    [ngClass]="{
+      'lhc-vertical': answerOptionIsVertical,
+      'lhc-grid': answerOptionIsGrid
+    }">
+    <div
+      *ngFor="let answer of acOptions.listItems; index as i"
+      class="lhc-answer">
       <label
         nz-checkbox
         attr.aria-label="Checkbox {{answer._displayText}} for {{item.question}}"
@@ -18,7 +27,9 @@
         </ng-container>
       </label>
     </div>
-    <div *ngIf="item.answerConstraint === 'optionsOrString'">
+    <div
+      *ngIf="item.answerConstraint === 'optionsOrString'"
+      class="lhc-answer">
       <label
         nz-checkbox
         attr.aria-label="Checkbox Other for {{item.question}}"
@@ -43,4 +54,3 @@
     </div>
   </div>
 </nz-checkbox-wrapper>
-

@@ -7,6 +7,38 @@
   margin: 0;
 }
 
+.lhc-radio-group.lhc-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: var(--lhc-answer-group-width, 100%);
+  width: 100%;
+}
+
+.lhc-radio-group.lhc-grid .lhc-answer {
+  align-items: flex-start;
+  flex: 0 1 var(--lhc-answer-option-width, 12rem);
+  max-width: min(100%, var(--lhc-answer-option-width, 12rem));
+  min-width: min(100%, var(--lhc-answer-option-width, 12rem));
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.lhc-radio-group.lhc-grid .lhc-answer span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.lhc-radio-group.lhc-grid.lhc-vertical {
+  display: grid;
+  grid-template-columns: repeat(var(--lhc-answer-effective-column-count, 1), minmax(0, 1fr));
+}
+
+.lhc-radio-group.lhc-grid.lhc-vertical .lhc-answer {
+  max-width: none;
+  width: 100%;
+}
+
 .lhc-answer-other-input {
   height: 22px;
 }

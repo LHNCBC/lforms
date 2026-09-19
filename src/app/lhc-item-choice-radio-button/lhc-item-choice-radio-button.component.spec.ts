@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button.component';
+import { AnswerOptionMinWidthDirective } from '../answer-option-min-width.directive';
 import { EventEmitter } from 'events';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { getItemAnswerElem } from '../ng-unit-test-helpers';
@@ -126,7 +127,7 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemChoiceRadioButtonComponent ],
+      declarations: [ LhcItemChoiceRadioButtonComponent, AnswerOptionMinWidthDirective ],
       imports: [FormsModule, NzRadioModule, NzGridModule],
       providers: [LhcDataService]
     })
@@ -317,6 +318,41 @@ describe('LhcItemChoiceRadioButtonComponent', () => {
     fixture.detectChanges();
     const containerDiv = element.querySelector('nz-radio-group');
     expect(containerDiv.classList).not.toContain('lhc-vertical');
+  });
+
+  it('should default columns greater than 1 to a vertical grid', () => {
+    const item = JSON.parse(JSON.stringify(itemRadioCWE));
+    item.displayControl.answerLayout.columns = '3';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('nz-radio-group') as HTMLElement;
+    expect(containerDiv.classList).toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
+  });
+
+  it('should use a horizontal grid when explicitly requested', () => {
+    const item = JSON.parse(JSON.stringify(itemRadioCWE));
+    item.displayControl.answerLayout.columns = '3';
+    item.displayControl.answerLayout.orientation = 'horizontal';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('nz-radio-group') as HTMLElement;
+    expect(containerDiv.classList).not.toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
+  });
+
+  it('should have lhc-grid and lhc-vertical classes with vertical orientation and columns greater than 1', () => {
+    const item = JSON.parse(JSON.stringify(itemRadioCWE));
+    item.displayControl.answerLayout.columns = '3';
+    item.displayControl.answerLayout.orientation = 'vertical';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('nz-radio-group') as HTMLElement;
+    expect(containerDiv.classList).toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
   });
 
 

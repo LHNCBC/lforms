@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box.component';
+import { AnswerOptionMinWidthDirective } from '../answer-option-min-width.directive';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import { getItemAnswerElem } from '../ng-unit-test-helpers';
 
@@ -126,7 +127,7 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LhcItemChoiceCheckBoxComponent ],
+      declarations: [ LhcItemChoiceCheckBoxComponent, AnswerOptionMinWidthDirective ],
       imports: [FormsModule, NzCheckboxModule, NzGridModule],
       providers: [LhcDataService]
     })
@@ -219,6 +220,41 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     fixture.detectChanges();
     const containerDiv = element.querySelector('div[nz-row]');
     expect(containerDiv.classList).not.toContain('lhc-vertical');
+  });
+
+  it('should default columns greater than 1 to a vertical grid', () => {
+    const item = JSON.parse(JSON.stringify(itemCheckboxCWE));
+    item.displayControl.answerLayout.columns = '3';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('div[nz-row]') as HTMLElement;
+    expect(containerDiv.classList).toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
+  });
+
+  it('should use a horizontal grid when explicitly requested', () => {
+    const item = JSON.parse(JSON.stringify(itemCheckboxCWE));
+    item.displayControl.answerLayout.columns = '3';
+    item.displayControl.answerLayout.orientation = 'horizontal';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('div[nz-row]') as HTMLElement;
+    expect(containerDiv.classList).not.toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
+  });
+
+  it('should have lhc-grid and lhc-vertical classes with vertical orientation and columns greater than 1', () => {
+    const item = JSON.parse(JSON.stringify(itemCheckboxCWE));
+    item.displayControl.answerLayout.columns = '3';
+    item.displayControl.answerLayout.orientation = 'vertical';
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+    const containerDiv = element.querySelector('div[nz-row]') as HTMLElement;
+    expect(containerDiv.classList).toContain('lhc-vertical');
+    expect(containerDiv.classList).toContain('lhc-grid');
   });
 
   it('should uncheck "Other" when the item is re-bound to a value with no off-list entries', () => {

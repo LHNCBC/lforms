@@ -7,6 +7,7 @@ import { LForms } from './lforms';
 import { LhcItemChoiceComponent } from './lhc-item-choice/lhc-item-choice.component';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box/lhc-item-choice-check-box.component';
 import { LhcItemChoiceRadioButtonComponent } from './lhc-item-choice-radio-button/lhc-item-choice-radio-button.component';
+import { AnswerOptionMinWidthDirective } from './answer-option-min-width.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -66,6 +67,7 @@ registerLocaleData(en);
         LhcItemChoiceComponent,
         LhcItemChoiceCheckBoxComponent,
         LhcItemChoiceRadioButtonComponent,
+        AnswerOptionMinWidthDirective,
         LhcItemChoiceAutocompleteComponent,
         LhcItemComponent,
         LhcUnitComponent,
@@ -130,4 +132,3 @@ export class AppModule implements DoBootstrap {
 
   ngDoBootstrap() {}
 }
-

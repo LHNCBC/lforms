@@ -2,6 +2,20 @@ import { Injectable } from '@angular/core';
 
 import CommonUtils from './lforms/lhc-common-utils.js';
 
+type AnswerLayoutType = 'RADIO_CHECKBOX' | 'COMBO_BOX';
+type AnswerLayoutOrientation = 'horizontal' | 'vertical';
+
+/**
+ * Partial shape of the LForms displayControl object used by common UI helpers.
+ */
+export interface DisplayControl {
+  answerLayout?: {
+    type?: AnswerLayoutType | null;
+    columns?: string | number;
+    orientation?: AnswerLayoutOrientation | null;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -43,12 +57,63 @@ export class CommonUtilsService {
    * Check if a checkbox or radio button control should use vertical layout.
    * Returns true if it should use vertical layout, false if horizontal.
    * @param displayControl an object that controls the display of the selected template
+   * @returns true for vertical layout, otherwise false
    */
-  getDisplayControlIsVertical(displayControl) {
-    return displayControl?.answerLayout?.columns !== undefined
-      && displayControl.answerLayout.columns !== '0';
+  getDisplayControlIsVertical(displayControl: DisplayControl): boolean {
+    const columns = displayControl?.answerLayout?.columns;
+    const columnCount = parseInt(String(columns), 10);
+    if (columnCount === 1) {
+      return true;
+    }
+
+    const orientation = displayControl?.answerLayout?.orientation;
+    if (orientation === 'horizontal') {
+      return false;
+    }
+    if (orientation === 'vertical') {
+      return true;
+    }
+
+    return Number.isInteger(columnCount) && columnCount > 0;
   }
 
+
+  /**
+   * Check if a checkbox or radio button control should use a grid layout.
+   * @param displayControl an object that controls the display of the selected template
+   * @returns true when the requested answer column count is greater than one
+   */
+  getDisplayControlIsGrid(displayControl: DisplayControl): boolean {
+    return this.getDisplayControlColumnCount(displayControl) > 1;
+  }
+
+
+  /**
+   * Get the number of answer columns requested by the display control.
+   * @param displayControl an object that controls the display of the selected template
+   * @returns the requested column count, or null when a multi-column layout was not requested
+   */
+  getDisplayControlColumnCount(displayControl: DisplayControl): number | null {
+    const columns = displayControl?.answerLayout?.columns;
+    const columnCount = parseInt(String(columns), 10);
+    return Number.isInteger(columnCount) && columnCount > 1 ? columnCount : null;
+  }
+
+
+  /**
+   * Get the number of answer columns that can actually be populated.
+   * A requested column count larger than the answer count would otherwise
+   * reserve empty columns and leave the populated columns using only part of
+   * the available width.
+   * @param displayControl an object that controls the display of the selected template
+   * @param answerCount the number of rendered answer options
+   * @returns the requested count capped at the answer count, or null when no columns can be rendered
+   */
+  getDisplayControlEffectiveColumnCount(displayControl: DisplayControl, answerCount: number): number | null {
+    const columnCount = this.getDisplayControlColumnCount(displayControl);
+    return columnCount && Number.isInteger(answerCount) && answerCount > 0 ?
+      Math.min(columnCount, answerCount) : null;
+  }
 
   /**
    * Get the aria-label for a control

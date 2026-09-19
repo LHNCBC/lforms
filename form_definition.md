@@ -104,18 +104,26 @@ about the meaning of each key:
     * <a name="defaultAnswerLayout"></a>defaultAnswerLayout -
       an object that controls the answer layout for each item that has a dataType of 
       CODING, INT, DT, TM or ST, and has an answer list but does not specify
-      answerLayout on the item itself. It has a single key of "answerLayout", which
-      has two keys, "type" and "columns". If "type" is set to be "COMBO_BOX", the
+      answerLayout on the item itself. It contains an "answerLayout" object with
+      "type", "columns", and "orientation" keys. If "type" is set to be "COMBO_BOX", the
       [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget
       will be used to handle the list. If "type" is set to be "RADIO_CHECKBOX", then
       all the answers are displayed as either radio buttons or check boxes,
       and "columns" controls how many columns are used.
-      If value of "columns" is "0", or there are no "columns". The answers will fill
-      in available space one after another. If the value of "columns" is "1" 
-      (or any value other than "0"), the answers are displayed in one column.
-      "columns" is valid only when "type" is set to be "RADIO_CHECKBOX".
+      If "columns" is omitted or set to "0", the answers fill the available space
+      one after another unless "orientation" is "vertical". If "columns" is set to
+      "1", the answers are displayed in one vertical column. A positive integer
+      greater than one requests a multi-column grid with that number of columns.
+      The rendered column count will not exceed the number of answers. For a vertical
+      grid, it may also be reduced when the available space is insufficient.
+      The optional "orientation" key controls the ordering of the answers and accepts
+      "horizontal" or "vertical". In a horizontal layout, answers are ordered
+      left-to-right and then wrap. In a vertical layout, answers are ordered
+      top-to-bottom before proceeding to the next column. For a multi-column layout,
+      the default orientation is "vertical". "columns" and "orientation" are valid
+      only when "type" is set to be "RADIO_CHECKBOX".
       Here is an example:
-      `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "1"}}`
+      `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "3", "orientation": "horizontal"}}`
     * hideTreeLine - a string that controls whether to hide tree line styles. Accepts
       'true', 'false' and 'auto'. Also accepts boolean type true/false for backward
       compatibility. The default is 'auto', which means to show the treeline when the
@@ -297,10 +305,12 @@ about the meaning of each key:
       For other field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are:
-        * answerLayout - the layout of the answers when an item has a dataType of CODING, INT,
-          DT, TM or ST. The supported values are 'COMBO_BOX' (default), and 'RADIO_CHECKBOX'.
-          For a boolean item, 'CHECK_BOX' renders a three-state checkbox for true, false, and
-          unanswered. (see [defaultAnswerLayout](#defaultAnswerLayout))
+        * answerLayout - an object that controls the layout of the answers when an item
+          has a dataType of CODING, INT, DT, TM or ST. Its "type" key accepts
+          "COMBO_BOX" (default) or "RADIO_CHECKBOX". For a boolean item, 'CHECK_BOX' renders
+          a three-state checkbox for true, false, and unanswered.It can also contain the 
+          "columns" and "orientation" keys described under 
+          [defaultAnswerLayout](#defaultAnswerLayout).
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
         * colCSS - an array of valid CSS settings that could apply to its related column in a
           horizontal table. It only works when its parent item/section has a
