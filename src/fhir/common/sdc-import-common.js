@@ -887,6 +887,16 @@ function addCommonSDCImportFns(ns) {
           break;
         case 'Checkbox': // backward-compatibility with old export
         case 'check-box':
+          // Boolean checkboxes need to retain the requested control type. Unlike
+          // answer-list items, their cardinality cannot be used to distinguish a
+          // checkbox from a radio-button layout.
+          displayControl.answerLayout = {
+            type: lfItem.dataType === 'BL' ? 'CHECK_BOX' : 'RADIO_CHECKBOX'
+          };
+          if (lfItem.dataType === 'BL') {
+            break;
+          }
+          // Continue to the shared answer-list orientation handling.
         case 'Radio': // backward-compatibility with old export
         case 'radio-button':
           displayControl.answerLayout = {type: 'RADIO_CHECKBOX'};

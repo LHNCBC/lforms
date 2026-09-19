@@ -2,10 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [44.1.0] 2026-09-04
+## [44.1.0] 2026-09-08
 ### Added
 - Added support for the FHIR SDC Questionnaire columnCount extension, including
   multi-column horizontal and vertical answer layouts and round-trip conversion.
+- Support the `check-box` item control on FHIR Questionnaire boolean items with
+  a localized three-state checkbox for Yes, No, and Not Answered.
 
 ## [44.0.0] 2026-08-11
 ### Added
