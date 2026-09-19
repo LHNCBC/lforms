@@ -37,6 +37,63 @@ export class LhcItemBooleanComponent implements OnChanges {
 
 
   /**
+   * Whether this boolean item requested the FHIR check-box item control.
+   * @returns true if the item's displayControl.answerLayout.type is CHECK_BOX
+   */
+  usesCheckboxControl(): boolean {
+    return this.item?.displayControl?.answerLayout?.type === 'CHECK_BOX';
+  }
+
+
+  /**
+   * Advance the checkbox through unanswered, true, false, and back to unanswered.
+   */
+  cycleCheckboxState(): void {
+    if (!this.item || this.item._readOnly) {
+      return;
+    }
+
+    const prevValue = this.item.value;
+    if (prevValue === true) {
+      this.item.value = false;
+    } else if (prevValue === false) {
+      this.item.value = null;
+    } else {
+      this.item.value = true;
+    }
+    this.lhcDataService.onItemValueChange(this.item, this.item.value, prevValue);
+  }
+
+
+  /**
+   * Return the localized status displayed beside the three-state checkbox.
+   * @returns the localized "Yes", "No", or "Not Answered" text for the item's current value
+   */
+  getCheckboxStatus(): string {
+    if (this.item?.value === true) {
+      return this.language.booleanYes;
+    } else if (this.item?.value === false) {
+      return this.language.booleanNo;
+    }
+    return this.language.booleanNotAnswered;
+  }
+
+
+  /**
+   * Return the WAI-ARIA checkbox state for the current boolean value.
+   * @returns 'true' if the item value is true, 'false' if it is false, otherwise 'mixed'
+   */
+  getCheckboxAriaState(): 'true' | 'false' | 'mixed' {
+    if (this.item?.value === true) {
+      return 'true';
+    } else if (this.item?.value === false) {
+      return 'false';
+    }
+    return 'mixed';
+  }
+
+
+  /**
    * Set radio model values based on the item value.
    */
   setBooleanModels(): void {

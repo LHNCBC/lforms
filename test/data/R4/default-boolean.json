@@ -1,0 +1,15 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "default-boolean",
+  "url": "https://example.org/R4/Questionnaire/default-boolean",
+  "version": "1.0.0",
+  "title": "Default (No Item Control) for Booleans",
+  "status": "active",
+  "item": [
+    {
+      "linkId": "1",
+      "text": "Do you agree?",
+      "type": "boolean"
+    }
+  ]
+}

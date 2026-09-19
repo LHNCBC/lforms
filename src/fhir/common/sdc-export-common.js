@@ -418,7 +418,17 @@ function addCommonSDCExportFns(ns) {
     if (!LForms.jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
       // for answers
-      if (item.displayControl.answerLayout && (item.dataType ==="CODING" ||
+      if (item.displayControl.answerLayout && item.dataType === "BL") {
+        if (item.displayControl.answerLayout.type === "CHECK_BOX") {
+          itemControlType = "check-box";
+          itemControlDisplay = "Check-box";
+        }
+        else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
+          itemControlType = "radio-button";
+          itemControlDisplay = "Radio Button";
+        }
+      }
+      else if (item.displayControl.answerLayout && (item.dataType ==="CODING" ||
           item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT"
           || item.dataType === "TM"))) {
         // search field
