@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CommonUtilsService } from './common-utils.service';
+import { CommonUtilsService, DisplayControl } from './common-utils.service';
 
 describe('CommonUtilsService', () => {
   let service: CommonUtilsService;
@@ -87,4 +87,87 @@ describe('CommonUtilsService', () => {
     expect(service.areTwoAnswersSame(e, completeAnswerWithoutSystem, itemWithAnswerCodeSystem)).toBeFalsy();
 
   })
+
+  it('should keep one column vertical, honor other explicit orientations, and default positive columns to vertical', () => {
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '1'
+      }
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: 1
+      }
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '0'
+      }
+    })).toBeFalse();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: 0
+      }
+    })).toBeFalse();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '3'
+      }
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '3',
+        orientation: 'vertical'
+      }
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '3',
+        orientation: 'horizontal'
+      }
+    })).toBeFalse();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: '1',
+        orientation: 'horizontal'
+      }
+    })).toBeTrue();
+
+    expect(service.getDisplayControlIsVertical({
+      answerLayout: {
+        columns: 1,
+        orientation: 'horizontal'
+      }
+    })).toBeTrue();
+  });
+
+  it('should detect grid layout for answer layout columns greater than one', () => {
+    const displayControl = {
+      answerLayout: {
+        columns: '3'
+      }
+    };
+
+    expect(service.getDisplayControlIsGrid(displayControl)).toBeTrue();
+    expect(service.getDisplayControlColumnCount(displayControl)).toBe(3);
+  });
+
+  it('should not reserve more columns than there are answers', () => {
+    const displayControl = {
+      answerLayout: {
+        columns: '10'
+      }
+    };
+
+    expect(service.getDisplayControlEffectiveColumnCount(displayControl, 5)).toBe(5);
+    expect(service.getDisplayControlEffectiveColumnCount(displayControl, 12)).toBe(10);
+  });
+
 });

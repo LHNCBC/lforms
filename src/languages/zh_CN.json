@@ -57,6 +57,7 @@
   "booleanYes": "是",
   "booleanNo": "否",
   "booleanNotAnswered": "未作答",
+  "booleanCheckboxHint": "点击可在“未作答”“是”和“否”之间切换。",
   "pleaseEnterInfoForTheBlank": "请先填写已有的空白条目“{lformsParam}”，再添加新条目。",
   "other": "其他",
   "clearSelection": "清除选择",

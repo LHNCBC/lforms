@@ -49,6 +49,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtEnableWhenExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression";
   self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+  self.fhirExtColumnCount = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-launchContext";
   self.fhirExtMaxSize = "http://hl7.org/fhir/StructureDefinition/maxSize";
   self.fhirExtMimeType = "http://hl7.org/fhir/StructureDefinition/mimeType";
@@ -886,16 +887,55 @@ function addCommonSDCImportFns(ns) {
           break;
         case 'Checkbox': // backward-compatibility with old export
         case 'check-box':
+          // Boolean checkboxes need to retain the requested control type. Unlike
+          // answer-list items, their cardinality cannot be used to distinguish a
+          // checkbox from a radio-button layout.
+          displayControl.answerLayout = {
+            type: lfItem.dataType === 'BL' ? 'CHECK_BOX' : 'RADIO_CHECKBOX'
+          };
+          if (lfItem.dataType === 'BL') {
+            break;
+          }
+          // Continue to the shared answer-list orientation handling.
         case 'Radio': // backward-compatibility with old export
         case 'radio-button':
           displayControl.answerLayout = {type: 'RADIO_CHECKBOX'};
           var answerChoiceOrientation = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtChoiceOrientation);
+          var answerChoiceOrientationValue = answerChoiceOrientation && answerChoiceOrientation.valueCode;
           if (answerChoiceOrientation) {
-            if (answerChoiceOrientation.valueCode === "vertical") {
+            if (answerChoiceOrientationValue === "vertical") {
               displayControl.answerLayout.columns = "1"
             }
-            else if (answerChoiceOrientation.valueCode === "horizontal") {
+            else if (answerChoiceOrientationValue === "horizontal") {
               displayControl.answerLayout.columns = "0"
+            }
+          }
+          var answerColumnCount = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtColumnCount);
+          if (answerColumnCount) {
+            var columnCount = parseInt(answerColumnCount.valuePositiveInt, 10);
+            if (columnCount > 0) {
+              // Treat columnCount as the preferred column hint, regardless of choiceOrientation.
+              displayControl.answerLayout.columns = columnCount.toString();
+              if (answerChoiceOrientationValue === "vertical" || answerChoiceOrientationValue === "horizontal") {
+                displayControl.answerLayout.orientation = answerChoiceOrientationValue;
+              }
+              else if (columnCount > 1) {
+                // Per SDC columnCount definition, vertical is the default
+                // orientation when no explicit choiceOrientation is present.
+                displayControl.answerLayout.orientation = "vertical";
+              }
+              // For values greater than one, answerLayout can distinguish the
+              // column count from the legacy orientation values. A value of one
+              // must remain available for export because columns="1" alone only
+              // identifies the legacy vertical layout.
+              if (columnCount > 1 && lfItem.extension) {
+                lfItem.extension = lfItem.extension.filter(function(extension) {
+                  return extension.url !== self.fhirExtColumnCount;
+                });
+                if (lfItem.extension.length === 0) {
+                  delete lfItem.extension;
+                }
+              }
             }
           }
           break;

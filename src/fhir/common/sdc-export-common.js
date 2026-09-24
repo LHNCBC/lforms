@@ -413,12 +413,22 @@ function addCommonSDCExportFns(ns) {
   self._handleItemControl = function(targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
-    var itemControlDisplay, answerChoiceOrientation;
+    var itemControlDisplay, answerChoiceOrientation, answerColumnCount;
     // Fly-over, Table, Checkbox, Combo-box, Lookup
     if (!LForms.jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
       // for answers
-      if (item.displayControl.answerLayout && (item.dataType ==="CODING" ||
+      if (item.displayControl.answerLayout && item.dataType === "BL") {
+        if (item.displayControl.answerLayout.type === "CHECK_BOX") {
+          itemControlType = "check-box";
+          itemControlDisplay = "Check-box";
+        }
+        else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
+          itemControlType = "radio-button";
+          itemControlDisplay = "Radio Button";
+        }
+      }
+      else if (item.displayControl.answerLayout && (item.dataType ==="CODING" ||
           item.answers && (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT"
           || item.dataType === "TM"))) {
         // search field
@@ -443,12 +453,46 @@ function addCommonSDCExportFns(ns) {
             itemControlType = "radio-button";
             itemControlDisplay = "Radio Button";
           }
-          // answer choice orientation
-          if (item.displayControl.answerLayout.columns === "0") {
-            answerChoiceOrientation = "horizontal";
+          var answerLayoutOrientation = item.displayControl.answerLayout.orientation;
+          if (answerLayoutOrientation === "vertical" || answerLayoutOrientation === "horizontal") {
+            answerChoiceOrientation = answerLayoutOrientation;
           }
-          else if (item.displayControl.answerLayout.columns === "1") {
-            answerChoiceOrientation = "vertical";
+          var hasRetainedColumnCount = targetItem.extension.some(function(extension) {
+            return extension.url === self.fhirExtColumnCount;
+          });
+          var answerLayoutColumns = item.displayControl.answerLayout.columns;
+          var normalizedAnswerLayoutColumns = parseInt(String(answerLayoutColumns), 10);
+          // answer choice orientation
+          if (normalizedAnswerLayoutColumns === 0) {
+            if (!answerChoiceOrientation) {
+              answerChoiceOrientation = "horizontal";
+            }
+            // A retained columnCount no longer describes a horizontal layout
+            // after its internal columns value has been changed to zero.
+            targetItem.extension = targetItem.extension.filter(function(extension) {
+              return extension.url !== self.fhirExtColumnCount;
+            });
+          }
+          else if (normalizedAnswerLayoutColumns === 1) {
+            if (!answerChoiceOrientation) {
+              answerChoiceOrientation = "vertical";
+            }
+            // Only export columnCount=1 when the retained extension shows that
+            // this was an explicit FHIR column count, not a legacy vertical layout.
+            if (hasRetainedColumnCount) {
+              answerColumnCount = 1;
+            }
+          }
+          else if (normalizedAnswerLayoutColumns > 1) {
+            answerColumnCount = normalizedAnswerLayoutColumns;
+          }
+          else if (hasRetainedColumnCount) {
+            // A supported radio-button/check-box control with no valid internal
+            // column count must not re-export an invalid retained extension
+            // (for example, valuePositiveInt=0 with no choiceOrientation).
+            targetItem.extension = targetItem.extension.filter(function(extension) {
+              return extension.url !== self.fhirExtColumnCount;
+            });
           }
 
         }
@@ -492,6 +536,18 @@ function addCommonSDCExportFns(ns) {
             {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
               "valueCode": answerChoiceOrientation
+            });
+        }
+        if (answerColumnCount) {
+          // Replace any unconsumed SDC extension retained during import,
+          // rather than exporting duplicate columnCount extensions.
+          targetItem.extension = (targetItem.extension || []).filter(function(extension) {
+            return extension.url !== self.fhirExtColumnCount;
+          });
+          targetItem.extension.push(
+            {
+              "url": self.fhirExtColumnCount,
+              "valuePositiveInt": answerColumnCount
             });
         }
       }

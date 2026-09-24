@@ -31,6 +31,85 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhirVerisonInData = fhirVersion === 'R4B' ? 'R4' : fhirVersion;
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
+        describe('boolean item controls', function() {
+          /**
+           * Build a boolean Questionnaire with the requested item-control code.
+           * @param {string} code the questionnaire-item-control code
+           * @returns {object} a FHIR Questionnaire containing one boolean item
+           */
+          function questionnaireWithItemControl(code) {
+            return {
+              resourceType: 'Questionnaire',
+              status: 'active',
+              item: [{
+                linkId: 'boolean-item',
+                text: 'Do you agree?',
+                type: 'boolean',
+                extension: [{
+                  url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+                  valueCodeableConcept: {
+                    coding: [{
+                      system: 'http://hl7.org/fhir/questionnaire-item-control',
+                      code: code
+                    }]
+                  }
+                }]
+              }]
+            };
+          }
+
+          /**
+           * Export an LForms form and retrieve its boolean item's itemControl extension.
+           * @param {object} formData an LForms form definition
+           * @returns {object|undefined} the exported questionnaire-itemControl extension
+           */
+          function exportedItemControl(formData) {
+            const questionnaire = LForms.Util._convertLFormsToFHIRData(
+              'Questionnaire', fhirVersion, formData);
+            return questionnaire.item[0].extension && questionnaire.item[0].extension.find(
+              extension => extension.url ===
+                'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl');
+          }
+
+          it('should not add an item control when a boolean item has none', function() {
+            const questionnaire = {
+              resourceType: 'Questionnaire',
+              status: 'active',
+              item: [{
+                linkId: 'boolean-item',
+                text: 'Do you agree?',
+                type: 'boolean'
+              }]
+            };
+
+            const formData = LForms.Util.convertFHIRQuestionnaireToLForms(
+              questionnaire, fhirVersion);
+
+            assert.isUndefined(formData.items[0].displayControl);
+            assert.isUndefined(exportedItemControl(formData));
+          });
+
+          it('should import and export check-box distinctly for a boolean item', function() {
+            const formData = LForms.Util.convertFHIRQuestionnaireToLForms(
+              questionnaireWithItemControl('check-box'), fhirVersion);
+
+            assert.deepEqual(formData.items[0].displayControl,
+              {answerLayout: {type: 'CHECK_BOX'}});
+            assert.equal(exportedItemControl(formData).valueCodeableConcept.coding[0].code,
+              'check-box');
+          });
+
+          it('should preserve radio-button for a boolean item', function() {
+            const formData = LForms.Util.convertFHIRQuestionnaireToLForms(
+              questionnaireWithItemControl('radio-button'), fhirVersion);
+
+            assert.deepEqual(formData.items[0].displayControl,
+              {answerLayout: {type: 'RADIO_CHECKBOX'}});
+            assert.equal(exportedItemControl(formData).valueCodeableConcept.coding[0].code,
+              'radio-button');
+          });
+        });
+
         it('should import initial.valueQuantity', ()=>{
           var quantity = {
             value: 5.3,
@@ -1310,7 +1389,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-          it('should not convert answer layout to choice orientation, if columns is not "0" or "1"', function () {
+          it('should convert answer layout columns greater than 1 to column count', function () {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 column",
@@ -1356,6 +1435,70 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                       ],
                       "text": "Check-box"
                   }
+              },
+              {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                  "valuePositiveInt": 2
+              }
+            ]);
+
+          });
+
+          it('should convert answer layout columns greater than 1 with vertical orientation to choice orientation and column count', function () {
+            var item = {
+              "questionCode": "q1c",
+              "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 column vertical",
+              "dataType": "CODING",
+              "answerCardinality": {
+                "min": "0",
+                "max": "*"
+              },
+              "displayControl": {
+                "answerLayout": {
+                  "type": "RADIO_CHECKBOX",
+                  "orientation": "vertical",
+                  "columns": "2"
+                }
+              },
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer X"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer Y"
+                }]
+              };
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
+            if (fhirVersion === "R5") {
+              assert.equal(out.type, "coding");
+            }
+            // R4, STU3
+            else {
+              assert.equal(out.type, "choice");
+            }
+            assert.deepEqual(out.extension, [
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                      "coding": [
+                          {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": "check-box",
+                              "display": "Check-box"
+                          }
+                      ],
+                      "text": "Check-box"
+                  }
+              },
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                  "valueCode": "vertical"
+              },
+              {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                  "valuePositiveInt": 2
               }
             ]);
 
@@ -1786,6 +1929,544 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var targetItem = {};
             fhir.SDC._processDisplayControl(targetItem, qItem);
             assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
+          it('should convert column count to answer layout columns', function () {
+            var qItem = {
+              "type": "choice",
+              "extension": [
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                          "coding": [
+                              {
+                                  "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                  "code": "radio-button",
+                                  "display": "Radio Button"
+                              }
+                          ],
+                          "text": "Radio Button"
+                      }
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                      "valueCode": "horizontal"
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                      "valuePositiveInt": 3
+                  }
+              ],
+              "required": false,
+              "linkId": "/q1c",
+              "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --3 columns",
+              "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "c1",
+                        "display": "Answer X"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "c2",
+                        "display": "Answer Y"
+                    }
+                }
+              ]
+            };
+            var itemDisplayControl =  {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "orientation": "horizontal",
+                "columns": "3"
+              }
+            };
+            var targetItem = {};
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+            assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
+          it('should preserve vertical choice orientation with column count', function () {
+            var qItem = {
+              "type": "choice",
+              "extension": [
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                          "coding": [
+                              {
+                                  "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                  "code": "radio-button",
+                                  "display": "Radio Button"
+                              }
+                          ],
+                          "text": "Radio Button"
+                      }
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                      "valueCode": "vertical"
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                      "valuePositiveInt": 2
+                  }
+              ],
+              "required": false,
+              "linkId": "/q1c",
+              "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 vertical columns",
+              "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "c1",
+                        "display": "Answer X"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "c2",
+                        "display": "Answer Y"
+                    }
+                }
+              ]
+            };
+            var itemDisplayControl =  {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "orientation": "vertical",
+                "columns": "2"
+              }
+            };
+            var targetItem = {};
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+            assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
+          it('should default columnCount greater than one to vertical orientation when choiceOrientation is missing', function () {
+            var qItem = {
+              "type": "choice",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "radio-button",
+                        "display": "Radio Button"
+                      }
+                    ],
+                    "text": "Radio Button"
+                  }
+                },
+                {
+                  "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                  "valuePositiveInt": 3
+                }
+              ],
+              "required": false,
+              "linkId": "/q1c",
+              "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --3 columns",
+              "answerOption": [
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer X"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer Y"
+                  }
+                }
+              ]
+            };
+            var itemDisplayControl =  {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "orientation": "vertical",
+                "columns": "3"
+              }
+            };
+            var targetItem = {};
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+            assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
+          it('should preserve column count during Questionnaire round-trip conversion', function () {
+            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
+            var fhirQ = {
+              "resourceType": "Questionnaire",
+              "status": "draft",
+              "item": [
+                {
+                  "type": fhirVersion === "R5" ? "coding" : "choice",
+                  "linkId": "/q1c",
+                  "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --3 columns",
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                        "coding": [
+                          {
+                            "system": "http://hl7.org/fhir/questionnaire-item-control",
+                            "code": "radio-button",
+                            "display": "Radio Button"
+                          }
+                        ],
+                        "text": "Radio Button"
+                      }
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                      "valueCode": "horizontal"
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+                      "valuePositiveInt": 3
+                    }
+                  ]
+                }
+              ]
+            };
+            fhirQ.item[0][optionsProperty] = [
+              {
+                "valueCoding": {
+                  "code": "c1",
+                  "display": "Answer X"
+                }
+              },
+              {
+                "valueCoding": {
+                  "code": "c2",
+                  "display": "Answer Y"
+                }
+              },
+              {
+                "valueCoding": {
+                  "code": "c3",
+                  "display": "Answer Z"
+                }
+              },
+              {
+                "valueCoding": {
+                  "code": "c4",
+                  "display": "Answer W"
+                }
+              }
+            ];
+
+            // Verify the FHIR columnCount extension is imported into LForms answerLayout.
+            var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            assert.equal(lfData.items[0].displayControl.answerLayout.columns, "3");
+            assert.equal(lfData.items[0].displayControl.answerLayout.orientation, "horizontal");
+
+            // Verify the LForms answerLayout exports back to the same columnCount extension.
+            var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+            var columnCountExt = convertedFhirQ.item[0].extension.find(function(extension) {
+              return extension.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+            });
+
+            assert.isOk(columnCountExt);
+            assert.equal(columnCountExt.valuePositiveInt, 3);
+          });
+
+          it('should preserve columnCount=1 and its explicit orientation during round-trip conversion', function () {
+            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
+            var columnCountUrl = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+            var orientationUrl = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+
+            ["horizontal", "vertical"].forEach(function(orientation) {
+              var fhirQ = {
+                "resourceType": "Questionnaire",
+                "status": "draft",
+                "item": [
+                  {
+                    "type": fhirVersion === "R5" ? "coding" : "choice",
+                    "linkId": "/q1c",
+                    "text": "One-column choice with explicit orientation",
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                        "valueCodeableConcept": {
+                          "coding": [
+                            {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": "radio-button",
+                              "display": "Radio Button"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "url": orientationUrl,
+                        "valueCode": orientation
+                      },
+                      {
+                        "url": columnCountUrl,
+                        "valuePositiveInt": 1
+                      }
+                    ]
+                  }
+                ]
+              };
+              fhirQ.item[0][optionsProperty] = [
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer X"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer Y"
+                  }
+                }
+              ];
+
+              var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+              assert.equal(lfData.items[0].displayControl.answerLayout.columns, "1");
+              assert.equal(lfData.items[0].displayControl.answerLayout.orientation, orientation);
+              assert.equal(lfData.items[0].extension.length, 1);
+              assert.equal(lfData.items[0].extension[0].url, columnCountUrl);
+
+              var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+              var columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === columnCountUrl;
+              });
+              var orientationExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === orientationUrl;
+              });
+              assert.equal(columnCountExts.length, 1);
+              assert.equal(columnCountExts[0].valuePositiveInt, 1);
+              assert.equal(orientationExts.length, 1);
+              assert.equal(orientationExts[0].valueCode, orientation);
+
+              if (orientation === "horizontal") {
+                // Changing back to the legacy horizontal layout should remove
+                // the retained one-column extension.
+                lfData.items[0].displayControl.answerLayout.columns = "0";
+                convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+                columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                  return extension.url === columnCountUrl;
+                });
+                assert.equal(columnCountExts.length, 0);
+              }
+            });
+          });
+
+          it('should remove invalid columnCount=0 when choiceOrientation is missing during round-trip conversion', function () {
+            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
+            var columnCountUrl = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+            var orientationUrl = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+
+            ["radio-button", "check-box"].forEach(function(controlCode) {
+              var fhirQ = {
+                "resourceType": "Questionnaire",
+                "status": "draft",
+                "item": [
+                  {
+                    "type": fhirVersion === "R5" ? "coding" : "choice",
+                    "linkId": "/q1c",
+                    "text": "Choice with an invalid zero column count",
+                    "repeats": controlCode === "check-box",
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                        "valueCodeableConcept": {
+                          "coding": [
+                            {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": controlCode
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "url": columnCountUrl,
+                        "valuePositiveInt": 0
+                      }
+                    ]
+                  }
+                ]
+              };
+              fhirQ.item[0][optionsProperty] = [
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer X"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer Y"
+                  }
+                }
+              ];
+
+              var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+              assert.equal(lfData.items[0].displayControl.answerLayout.columns, undefined);
+
+              var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+              var columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === columnCountUrl;
+              });
+              var orientationExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+                return extension.url === orientationUrl;
+              });
+
+              assert.equal(columnCountExts.length, 0);
+              assert.equal(orientationExts.length, 0);
+            });
+          });
+
+          it('should export numeric answerLayout columns 0 and 1 with choice orientation', function () {
+            var item = {
+              "questionCode": "q1c",
+              "question": "Answer RADIO_CHECKBOX layout numeric columns",
+              "dataType": "CODING",
+              "answerCardinality": {
+                "min": "0",
+                "max": "*"
+              },
+              "displayControl": {
+                "answerLayout": {
+                  "type": "RADIO_CHECKBOX",
+                  "columns": 0
+                }
+              },
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer X"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer Y"
+                }
+              ]
+            };
+
+            [
+              {columns: 0, orientation: 'horizontal'},
+              {columns: 1, orientation: 'vertical'}
+            ].forEach(function(testCase) {
+              var itemCopy = LForms.Util.deepCopy(item);
+              itemCopy.displayControl.answerLayout.columns = testCase.columns;
+              var out = fhir.SDC._processItem(LForms.Util.initializeCodes(itemCopy), {});
+              var orientationExt = out.extension.find(function(extension) {
+                return extension.url === "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
+              });
+              var columnCountExt = out.extension.find(function(extension) {
+                return extension.url === "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+              });
+
+              assert.isOk(orientationExt);
+              assert.equal(orientationExt.valueCode, testCase.orientation);
+              assert.equal(columnCountExt, undefined);
+            });
+          });
+
+          it('should retain an unused column count extension during Questionnaire round-trip conversion', function () {
+            var optionsProperty = fhirVersion === 'STU3' ? 'option' : 'answerOption';
+            var columnCountUrl = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount";
+            var fhirQ = {
+              "resourceType": "Questionnaire",
+              "status": "draft",
+              "item": [
+                {
+                  "type": fhirVersion === "R5" ? "coding" : "choice",
+                  "linkId": "/q1c",
+                  "text": "Choice without an explicit item control",
+                  "extension": [
+                    {
+                      "url": columnCountUrl,
+                      "valuePositiveInt": 2
+                    }
+                  ]
+                }
+              ]
+            };
+            fhirQ.item[0][optionsProperty] = [
+              {
+                "valueCoding": {
+                  "code": "c1",
+                  "display": "Answer X"
+                }
+              },
+              {
+                "valueCoding": {
+                  "code": "c2",
+                  "display": "Answer Y"
+                }
+              }
+            ];
+
+            var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            assert.deepEqual(lfData.items[0].extension, fhirQ.item[0].extension);
+
+            var convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+            var columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+              return extension.url === columnCountUrl;
+            });
+            assert.deepEqual(columnCountExts, fhirQ.item[0].extension);
+
+            // If the retained item is later changed to a supported control,
+            // replace the raw extension with one generated from answerLayout.
+            lfData.items[0].displayControl = {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "orientation": "horizontal",
+                "columns": "3"
+              }
+            };
+            convertedFhirQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+            columnCountExts = convertedFhirQ.item[0].extension.filter(function(extension) {
+              return extension.url === columnCountUrl;
+            });
+            assert.equal(columnCountExts.length, 1);
+            assert.equal(columnCountExts[0].url, columnCountUrl);
+            assert.equal(columnCountExts[0].valuePositiveInt, 3);
+          });
+
+          it('should retain column count when a different item control is used', function () {
+            var columnCountExtension = {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-columnCount",
+              "valuePositiveInt": 2
+            };
+            var qItem = {
+              "type": "choice",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "drop-down",
+                        "display": "Drop down"
+                      }
+                    ]
+                  }
+                },
+                columnCountExtension
+              ]
+            };
+            var targetItem = {};
+
+            fhir.SDC._processExtensions(targetItem, qItem);
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+
+            assert.deepEqual(targetItem.extension, [columnCountExtension]);
+            assert.deepEqual(targetItem.displayControl, {
+              "answerLayout": {
+                "type": "COMBO_BOX"
+              }
+            });
           });
 
 
