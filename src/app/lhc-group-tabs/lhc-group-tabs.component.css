@@ -6,3 +6,47 @@
   padding-top: 3px;
   padding-bottom: 3px;
 }
+
+/* Keep short vertical tab lists compact, but prevent long labels from taking
+   over the form. The percentage keeps the navigation responsive in embeds. */
+:host ::ng-deep .ant-tabs-left > .ant-tabs-nav {
+  max-width: var(--lhc-vertical-tabs-max-width, min(20rem, 40%));
+}
+
+:host ::ng-deep .ant-tabs-left > .ant-tabs-nav .ant-tabs-tab,
+:host ::ng-deep .ant-tabs-left > .ant-tabs-nav .ant-tabs-tab-btn {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+:host ::ng-deep .ant-tabs-left > .ant-tabs-nav .ant-tabs-tab-btn {
+  text-align: left;
+}
+
+/* The tabset host carries this class, while NG-ZORRO renders the navigation
+   inside it. Sticky positioning keeps navigation within this tab container. */
+:host ::ng-deep .lhc-tabs-sticky .ant-tabs-nav {
+  position: sticky;
+  top: var(--lhc-sticky-tabs-offset, 0px);
+  z-index: 1;
+  background-color: #fff;
+}
+
+:host ::ng-deep .lhc-tabs-sticky {
+  scroll-margin-top: var(--lhc-sticky-tabs-offset, 0px);
+}
+
+/* Keep nested horizontal tab bars from covering their sticky ancestor. */
+:host ::ng-deep .lhc-tabs-sticky.ant-tabs-top
+  .lhc-tabs-sticky.ant-tabs-top > .ant-tabs-nav {
+  position: static;
+}
+
+/* NG-ZORRO uses flex layout for left tabs. Do not allow the sticky navigation
+   to stretch to the content height, and make a very long tab list scrollable. */
+:host ::ng-deep .lhc-tabs-sticky.ant-tabs-left > .ant-tabs-nav {
+  align-self: flex-start;
+  flex: none;
+  max-height: calc(100vh - var(--lhc-sticky-tabs-offset, 0px));
+  overflow-y: auto;
+}

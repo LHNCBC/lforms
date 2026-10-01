@@ -57,4 +57,32 @@ describe('LhcDataService', () => {
     });
     expect(service.isHideRepetitionNumber()).toBeTrue();
   });
+
+  it('should use top tabs without headers or sticky navigation by default', () => {
+    service.setLhcFormData({templateOptions: {}});
+
+    expect(service.getTabPosition()).toBe('top');
+    expect(service.getShowTabHeader()).toBeFalse();
+    expect(service.getStickyTabs()).toBeFalse();
+  });
+
+  it('should resolve vertical tabs, content headers, and sticky navigation', () => {
+    service.setLhcFormData({
+      templateOptions: {tabLayout: 'vertical', showTabHeader: true, stickyTabs: true}
+    });
+
+    expect(service.getTabPosition()).toBe('left');
+    expect(service.getShowTabHeader()).toBeTrue();
+    expect(service.getStickyTabs()).toBeTrue();
+  });
+
+  it('should reject invalid tab layouts and non-boolean tab flags', () => {
+    service.setLhcFormData({
+      templateOptions: {tabLayout: 'right', showTabHeader: 'true', stickyTabs: 'true'}
+    });
+
+    expect(service.getTabPosition()).toBe('top');
+    expect(service.getShowTabHeader()).toBeFalse();
+    expect(service.getStickyTabs()).toBeFalse();
+  });
 });

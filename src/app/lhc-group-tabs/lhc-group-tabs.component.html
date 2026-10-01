@@ -1,9 +1,12 @@
 <ng-container *ngIf="item && item.items">
-  <nz-tabset nzType="card">
+  <nz-tabset #tabset nzType="card" [nzTabPosition]="lhcDataService.getTabPosition()"
+             [class.lhc-tabs-sticky]="lhcDataService.getStickyTabs()"
+             (nzSelectedIndexChange)="onSelectedIndexChange()">
     <ng-container *ngFor="let group of item.items">
       <ng-container *ngIf="!group._isHiddenFromView">
         <nz-tab [nzTitle]="group._text">
-          <lhc-group-vertical [item]="group" [hideGrouptTitle]="true"></lhc-group-vertical>
+          <lhc-group-vertical [item]="group"
+                              [hideGrouptTitle]="!lhcDataService.getShowTabHeader()"></lhc-group-vertical>
         </nz-tab>
       </ng-container>
     </ng-container>

@@ -5,6 +5,23 @@
 // is initialized, "setTemplateOptions" is always called separately on the initialized LhcFormData instance.
 //
 var $ = LForms.jQuery;
+describe('tab options in template options', function() {
+  it('should default tab options and preserve supplied values', function() {
+    var defaultOptions = new LForms.LFormsData({name: 'Default tab options'}).templateOptions;
+    assert.equal(defaultOptions.tabLayout, 'horizontal');
+    assert.equal(defaultOptions.showTabHeader, false);
+    assert.equal(defaultOptions.stickyTabs, false);
+
+    var specifiedOptions = new LForms.LFormsData({
+      name: 'Specified tab options',
+      templateOptions: {tabLayout: 'vertical', showTabHeader: true, stickyTabs: true}
+    }).templateOptions;
+    assert.equal(specifiedOptions.tabLayout, 'vertical');
+    assert.equal(specifiedOptions.showTabHeader, true);
+    assert.equal(specifiedOptions.stickyTabs, true);
+  });
+});
+
 describe('test displayScoreWithAnswerText in template options', function() {
   it('should display a score with answer text when displayScoreWithAnswerText is not set', function(done) {
     $.get('test/data/lforms/glasgow.json', function(glasgow) {
@@ -66,4 +83,3 @@ describe('test displayScoreWithAnswerText in template options', function() {
     });
   });
 });
-

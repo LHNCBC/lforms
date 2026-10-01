@@ -101,6 +101,13 @@
                 <input type="radio" id="hideTreeLineFalse" name="hideTreeLine" value="false"><label for="hideTreeLineFalse">false</label>
                 <input type="radio" id="hideTreeLineAuto" name="hideTreeLine" value="auto" checked><label for="hideTreeLineAuto">auto</label>
               </span>
+              <span class="option-checkbox">
+                tabLayout:
+                <input type="radio" id="tabLayoutHorizontal" name="tabLayout" value="horizontal" checked><label for="tabLayoutHorizontal">horizontal</label>
+                <input type="radio" id="tabLayoutVertical" name="tabLayout" value="vertical"><label for="tabLayoutVertical">vertical</label>
+              </span>
+              <span class="option-checkbox"><label><input type="checkbox" id="showTabHeader" /> showTabHeader</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="stickyTabs" /> stickyTabs</label></span>
             </div>
           </div>
           <div style="margin: 8px">QuestionnaireResponse for the Questionnaire selected below: <input type="file" id="qrFile"/></div>
@@ -445,7 +452,10 @@
             allowMarkdown = document.querySelector('#allowMarkdown').checked,
             showCodingInstruction = document.querySelector('#showCodingInstruction').checked,
             hideRepetitionNumber = document.querySelector('#hideRepetitionNumber').checked,
-            hideTreeLine = document.querySelector('input[name="hideTreeLine"]:checked').value;
+            hideTreeLine = document.querySelector('input[name="hideTreeLine"]:checked').value,
+            tabLayout = document.querySelector('input[name="tabLayout"]:checked').value,
+            showTabHeader = document.querySelector('#showTabHeader').checked,
+            stickyTabs = document.querySelector('#stickyTabs').checked;
         var questionnaire, qr;
 
         reader.onload = function() {
@@ -493,6 +503,15 @@
           }
           if (hideTreeLine !== 'auto') {
             options["hideTreeLine"] = hideTreeLine;
+          }
+          if (tabLayout !== 'horizontal') {
+            options["tabLayout"] = tabLayout;
+          }
+          if (showTabHeader) {
+            options["showTabHeader"] = true;
+          }
+          if (stickyTabs) {
+            options["stickyTabs"] = true;
           }
           if (qr) {
             options.questionnaireResponse = qr;
