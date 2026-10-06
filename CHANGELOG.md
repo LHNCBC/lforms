@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.2.0] 2026-10-06
+### Added
+- Boolean items with the `check-box` item control that are required and have an
+  initial value now use a two-state checkbox (checked or unchecked) instead of
+  the three-state checkbox. A two-state checkbox with no answer in a loaded
+  QuestionnaireResponse is set to false, and a newly added repetition starts
+  with the initial value. Other boolean items with the `check-box` item control
+  continue to use the three-state checkbox.
+
 ## [44.1.0] 2026-09-08
 ### Added
 - Added support for the FHIR SDC Questionnaire columnCount extension, including

@@ -1359,6 +1359,13 @@ export default class LhcFormData {
         (item.value === undefined || item.value === null)) {
         this._lfItemValueFromDefaultAnswer(item);
       }
+      // a two-state checkbox cannot display "not answered", so a saved form
+      // without an answer for it is treated as unchecked (false), regardless of
+      // the default value.
+      else if (this.hasSavedData && InternalUtil.usesTwoStateCheckbox(item) &&
+        (item.value === undefined || item.value === null)) {
+        item.value = false;
+      }
 
       // id
       if (item._questionRepeatable && prevSibling && prevSibling.linkId === item.linkId) {
@@ -1524,7 +1531,9 @@ export default class LhcFormData {
    * @private
    */
   _removeUserDataAndRepeatingSubItems(item) {
-    item.value = null;
+    // a two-state checkbox cannot display "not answered", so new repetitions
+    // start with its default value instead of an empty value.
+    item.value = InternalUtil.usesTwoStateCheckbox(item) ? item.defaultAnswer : null;
     item.unit = null;
     if (item.items && item.items.length > 0) {
       for (let i=0; i<item.items.length; i++) {

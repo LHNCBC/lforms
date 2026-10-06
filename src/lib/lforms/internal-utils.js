@@ -459,6 +459,19 @@ export const InternalUtil = {
 
 
   /**
+   * Check if a boolean item meets the FHIR requirements for a two-state checkbox:
+   * it requested the check-box item control, is required, and has a default value.
+   * @param {*} item an lforms item
+   * @returns true if the item should be rendered as a two-state checkbox
+   */
+  usesTwoStateCheckbox: function(item) {
+    return item?.displayControl?.answerLayout?.type === 'CHECK_BOX' &&
+      item._answerRequired === true &&
+      typeof item.defaultAnswer === 'boolean';
+  },
+
+
+  /**
    * Get the rendering-xhtml string, replacing local ids in the 'src' attributes of
    * the 'img' tags if the local ids are in the 'contained' with image data,
    * @param containedImages a hashmap of image data from the "contained" in FHIR questionnaire
