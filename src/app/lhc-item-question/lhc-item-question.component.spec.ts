@@ -33,6 +33,7 @@ describe('LhcItemQuestionComponent', () => {
     const lhcDataService = TestBed.inject(LhcDataService);
     const changeSpy = spyOn(lhcDataService, 'onItemValueChange');
     component.item = {
+      dataType: 'BL',
       value: true,
       defaultAnswer: true,
       _answerRequired: true,
@@ -51,5 +52,22 @@ describe('LhcItemQuestionComponent', () => {
     expect(changeSpy).not.toHaveBeenCalled();
     tick();
     expect(changeSpy).toHaveBeenCalledOnceWith(component.item, false, null);
+  }));
+
+  it('should not normalize a non-boolean item that otherwise looks like a two-state checkbox', fakeAsync(() => {
+    const lhcDataService = TestBed.inject(LhcDataService);
+    const changeSpy = spyOn(lhcDataService, 'onItemValueChange');
+    component.item = {
+      dataType: 'CODING',
+      value: null,
+      defaultAnswer: true,
+      _answerRequired: true,
+      displayControl: {answerLayout: {type: 'CHECK_BOX'}}
+    };
+    component.ngDoCheck();
+    tick();
+
+    expect(component.item.value).toBeNull();
+    expect(changeSpy).not.toHaveBeenCalled();
   }));
 });

@@ -107,6 +107,7 @@ describe('LhcItemBooleanComponent', () => {
     component.item = {
       _elementId: 'checkbox/1',
       question: 'Do you agree?',
+      dataType: 'BL',
       value: false,
       defaultAnswer: false,
       _answerRequired: true,
@@ -150,6 +151,7 @@ describe('LhcItemBooleanComponent', () => {
       component.item = {
         _elementId: 'boolean/1',
         question: 'Do you agree?',
+        dataType: 'BL',
         ...properties
       };
       fixture.detectChanges();
@@ -164,6 +166,7 @@ describe('LhcItemBooleanComponent', () => {
     component.item = {
       _elementId: 'boolean/1',
       question: 'Do you agree?',
+      dataType: 'BL',
       defaultAnswer: false,
       _answerRequired: true
     };
@@ -178,6 +181,7 @@ describe('LhcItemBooleanComponent', () => {
     component.item = {
       _elementId: 'checkbox/1',
       question: 'Do you agree?',
+      dataType: 'BL',
       value: false,
       defaultAnswer: false,
       _answerRequired: true,
@@ -206,6 +210,7 @@ describe('LhcItemBooleanComponent', () => {
       component.item = {
         _elementId: 'checkbox/1',
         question: 'Do you agree?',
+        dataType: 'BL',
         value: false,
         defaultAnswer: false,
         _answerRequired: true,

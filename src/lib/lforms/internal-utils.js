@@ -465,7 +465,8 @@ export const InternalUtil = {
    * @returns true if the item should be rendered as a two-state checkbox
    */
   usesTwoStateCheckbox: function(item) {
-    return item?.displayControl?.answerLayout?.type === 'CHECK_BOX' &&
+    return item?.dataType === CONSTANTS.DATA_TYPE.BL &&
+      item.displayControl?.answerLayout?.type === 'CHECK_BOX' &&
       item._answerRequired === true &&
       typeof item.defaultAnswer === 'boolean';
   },
