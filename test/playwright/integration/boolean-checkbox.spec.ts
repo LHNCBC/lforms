@@ -213,6 +213,59 @@ for (const fhirVersion of ['R4', 'R5']) {
       expect(await exportedBoolean(page, fhirVersion, 'qualifying')).toBe(false);
     });
 
+    test('normalizes a programmatically cleared two-state checkbox to false', async ({ page }) => {
+      const checkbox = twoStateInput(page, 'qualifying-initial-true/1');
+      await expect(checkbox).toBeChecked();
+
+      const immediateResult = await page.evaluate(version => {
+        const win = window as any;
+        const formData = win.LForms.Util._getFormObjectInScope('#formContainer');
+        const item = formData.items.find((entry: any) => entry.linkId === 'qualifying-initial-true');
+
+        item.value = null;
+        const validityErrors = win.LForms.Util.checkValidity();
+        const valueAfterValidation = item.value;
+
+        item.value = null;
+        const response = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', version);
+        const responseItem = response.item.find((entry: any) => entry.linkId === 'qualifying-initial-true');
+        return {
+          validityErrors,
+          valueAfterValidation,
+          valueAfterExport: item.value,
+          exportedValue: responseItem.answer[0].valueBoolean
+        };
+      }, fhirVersion);
+      expect(immediateResult).toEqual({
+        validityErrors: ['Required boolean without an initial value requires a value.'],
+        valueAfterValidation: false,
+        valueAfterExport: false,
+        exportedValue: false
+      });
+
+      // Trigger an Angular change-detection pass without changing an answer.
+      await byId(page, 'label-qualifying-initial-true/1').click();
+
+      await expect(checkbox).not.toBeChecked();
+      const result = await page.evaluate(version => {
+        const win = window as any;
+        const formData = win.LForms.Util._getFormObjectInScope('#formContainer');
+        const item = formData.items.find((entry: any) => entry.linkId === 'qualifying-initial-true');
+        const response = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', version);
+        const responseItem = response.item.find((entry: any) => entry.linkId === 'qualifying-initial-true');
+        return {
+          value: item.value,
+          validityErrors: win.LForms.Util.checkValidity(),
+          exportedValue: responseItem.answer[0].valueBoolean
+        };
+      }, fhirVersion);
+      expect(result).toEqual({
+        value: false,
+        validityErrors: ['Required boolean without an initial value requires a value.'],
+        exportedValue: false
+      });
+    });
+
     test('treats missing saved answers as false for two-state checkboxes', async ({ page }) => {
       // a saved response that has no answer for any of the checkbox items
       await loadWithSavedResponse(page, fhirVersion, [{linkId: 'no-item-control', answer: [{valueBoolean: true}]}]);

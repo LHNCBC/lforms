@@ -472,6 +472,38 @@ export const InternalUtil = {
 
 
   /**
+   * Normalize an unanswered two-state checkbox to its unchecked value.
+   * @param {*} item an lforms item
+   * @returns true if the item's value was changed
+   */
+  normalizeTwoStateCheckboxValue: function(item) {
+    const changed = this.usesTwoStateCheckbox(item) &&
+      (item.value === undefined || item.value === null);
+    if (changed) {
+      item.value = false;
+    }
+    return changed;
+  },
+
+
+  /**
+   * Recursively normalize unanswered two-state checkboxes in an item tree.
+   * @param {Array} items sibling lforms items
+   * @returns true if at least one item's value was changed
+   */
+  normalizeTwoStateCheckboxValues: function(items) {
+    let changed = false;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        changed = this.normalizeTwoStateCheckboxValue(item) || changed;
+        changed = this.normalizeTwoStateCheckboxValues(item.items) || changed;
+      }
+    }
+    return changed;
+  },
+
+
+  /**
    * Get the rendering-xhtml string, replacing local ids in the 'src' attributes of
    * the 'img' tags if the local ids are in the 'contained' with image data,
    * @param containedImages a hashmap of image data from the "contained" in FHIR questionnaire

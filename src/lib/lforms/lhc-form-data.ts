@@ -1359,13 +1359,10 @@ export default class LhcFormData {
         (item.value === undefined || item.value === null)) {
         this._lfItemValueFromDefaultAnswer(item);
       }
-      // a two-state checkbox cannot display "not answered", so a saved form
-      // without an answer for it is treated as unchecked (false), regardless of
-      // the default value.
-      else if (this.hasSavedData && InternalUtil.usesTwoStateCheckbox(item) &&
-        (item.value === undefined || item.value === null)) {
-        item.value = false;
-      }
+      // A two-state checkbox cannot display "not answered".  Normalize any
+      // remaining empty value to unchecked after defaults and supplied data
+      // have been processed.
+      InternalUtil.normalizeTwoStateCheckboxValue(item);
 
       // id
       if (item._questionRepeatable && prevSibling && prevSibling.linkId === item.linkId) {
@@ -1781,6 +1778,7 @@ export default class LhcFormData {
   getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems) {
     const ret:any = {};
     this._invalidData = false;
+    InternalUtil.normalizeTwoStateCheckboxValues(this.items);
     // check the value on each item and its subtree
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
@@ -1796,6 +1794,7 @@ export default class LhcFormData {
    */
   checkValidity () {
     const errors = [];
+    InternalUtil.normalizeTwoStateCheckboxValues(this.items);
     this._collectValidityErrors(this.items, errors);
     if (errors.length) {
       return errors;
