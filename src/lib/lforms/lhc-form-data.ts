@@ -1523,7 +1523,8 @@ export default class LhcFormData {
 
   /**
    * Remove user data and the repeating sub items (except for the first one)
-   * on an item or on all its sub items
+   * on an item or on all its sub items. A two-state checkbox item is reset to
+   * its default value instead of null.
    * @param item an item
    * @private
    */
