@@ -10,6 +10,10 @@ This project follows [Semantic Versioning](http://semver.org/).
   QuestionnaireResponse is set to false, and a newly added repetition starts
   with the initial value. Other boolean items with the `check-box` item control
   continue to use the three-state checkbox.
+### Changed
+- The three-state checkbox for boolean items is now 16px instead of 20px,
+  the same size as the other checkboxes and radio buttons, and its check
+  and X marks have been redrawn to match.
 
 ## [44.1.0] 2026-09-08
 ### Added
