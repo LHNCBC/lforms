@@ -9,7 +9,8 @@ This project follows [Semantic Versioning](http://semver.org/).
   the three-state checkbox. A two-state checkbox with no answer in a loaded
   QuestionnaireResponse is set to false, and a newly added repetition starts
   with the initial value. Other boolean items with the `check-box` item control
-  continue to use the three-state checkbox.
+  continue to use the three-state checkbox. See
+  https://hl7.org/fhir/questionnaire.html#booleans.
 ### Changed
 - The three-state checkbox for boolean items is now 16px instead of 20px,
   the same size as the other checkboxes and radio buttons, and its check
