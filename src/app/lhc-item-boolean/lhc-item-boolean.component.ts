@@ -1,5 +1,4 @@
-import {OnChanges, Component, Input, ViewChild} from '@angular/core';
-import {NzCheckboxComponent} from 'ng-zorro-antd/checkbox';
+import {OnChanges, Component, Input} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {InternalUtil} from '../../lib/lforms/internal-utils';
 import language from '../../../language-config.json';
@@ -17,18 +16,6 @@ export class LhcItemBooleanComponent implements OnChanges {
   language = language;
 
   constructor(public lhcDataService: LhcDataService) {
-  }
-
-  /**
-   * Mark the two-state checkbox's native input as required for assistive
-   * technologies. ng-zorro does not forward ARIA attributes to that input, and
-   * the two-state checkbox is only rendered for required items.
-   * @param checkbox the rendered two-state checkbox, or undefined when the item
-   *  is not rendered as a two-state checkbox
-   */
-  @ViewChild(NzCheckboxComponent)
-  set twoStateCheckbox(checkbox: NzCheckboxComponent | undefined) {
-    checkbox?.inputElement.nativeElement.setAttribute('aria-required', 'true');
   }
 
   /**

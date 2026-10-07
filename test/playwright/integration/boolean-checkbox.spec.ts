@@ -173,8 +173,8 @@ for (const fhirVersion of ['R4', 'R5']) {
       const radioGroup = (linkId: string) =>
         byId(page, answerId(`${linkId}/1`, 'true')).locator('xpath=ancestor::*[@role="radiogroup"]');
 
-      await expect(byId(page, answerId('qualifying/1', 'checkbox')).locator('input[type="checkbox"]'))
-        .toHaveAttribute('aria-required', 'true');
+      // unchecked (false) already satisfies the requirement, so "required" would mislead
+      await expect(twoStateInput(page, 'qualifying/1')).not.toHaveAttribute('aria-required');
       await expect(byId(page, answerId('no-initial/1', 'checkbox'))).toHaveAttribute('aria-required', 'true');
       await expect(byId(page, answerId('optional/1', 'checkbox'))).not.toHaveAttribute('aria-required');
       await expect(radioGroup('no-item-control')).toHaveAttribute('aria-required', 'true');

@@ -201,7 +201,8 @@ describe('LhcItemBooleanComponent', () => {
     const ariaRequired = (selector: string) =>
       fixture.nativeElement.querySelector(selector).getAttribute('aria-required');
 
-    it('should mark the two-state checkbox input as required', () => {
+    // unchecked (false) already satisfies the requirement, so "required" would mislead
+    it('should not mark the two-state checkbox input as required', () => {
       component.item = {
         _elementId: 'checkbox/1',
         question: 'Do you agree?',
@@ -213,7 +214,7 @@ describe('LhcItemBooleanComponent', () => {
       component.value = false;
       fixture.detectChanges();
 
-      expect(ariaRequired('input[type="checkbox"]')).toBe('true');
+      expect(ariaRequired('input[type="checkbox"]')).toBeNull();
     });
 
     [true, false].forEach(required => {
