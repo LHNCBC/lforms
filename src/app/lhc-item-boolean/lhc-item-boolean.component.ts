@@ -12,6 +12,9 @@ import language from '../../../language-config.json';
 export class LhcItemBooleanComponent implements OnChanges {
   @Input() item: any;
   @Input() value: any;
+  // In a horizontal table the column header is the question text of the first
+  // row's item, so an input id matching it would let a header click change row 1.
+  @Input() hideQuestionText = false;
   booleanModels: boolean[] = new Array(3);
   language = language;
 

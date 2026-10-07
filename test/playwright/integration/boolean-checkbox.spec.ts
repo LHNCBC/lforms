@@ -180,6 +180,47 @@ for (const fhirVersion of ['R4', 'R5']) {
       expect(await exportedBoolean(page, fhirVersion, 'qualifying')).toBe(false);
     });
 
+    test('does not toggle a two-state checkbox when its table column header is clicked', async ({ page }) => {
+      const checkBoxControl = {
+        url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+        valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: 'check-box'}]}
+      };
+      const questionnaire = {
+        resourceType: 'Questionnaire',
+        status: 'active',
+        item: [{
+          linkId: 'table', text: 'Table', type: 'group', repeats: true,
+          extension: [{
+            url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+            valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: 'gtable'}]}
+          }],
+          item: [
+            {linkId: 'agree', text: 'Agree', type: 'boolean', required: true,
+              initial: [{valueBoolean: false}], extension: [checkBoxControl]},
+            {linkId: 'note', text: 'Note', type: 'string'}
+          ]
+        }]
+      };
+      await page.evaluate(({q, version}) =>
+        (window as any).LForms.Util.addFormToPage(q, 'formContainer', {fhirVersion: version}),
+        {q: questionnaire, version: fhirVersion});
+      await byId(page, 'add-table/1').click();
+      const row1 = twoStateInput(page, 'agree/1/1');
+      const row2 = twoStateInput(page, 'agree/2/1');
+      await expect(row2).toHaveCount(1);
+
+      // the column header is the question text of the first row's item
+      await byId(page, 'label-agree/1/1').click();
+
+      await expect(row1).not.toBeChecked();
+      await expect(row2).not.toBeChecked();
+      const exported = await page.evaluate(version =>
+        (window as any).LForms.Util.getFormFHIRData('QuestionnaireResponse', version).item
+          .map((row: any) => row.item.find((item: any) => item.linkId === 'agree').answer[0].valueBoolean),
+        fhirVersion);
+      expect(exported).toEqual([false, false]);
+    });
+
     test('exposes the required state to assistive technologies', async ({ page }) => {
       const radioGroup = (linkId: string) =>
         byId(page, answerId(`${linkId}/1`, 'true')).locator('xpath=ancestor::*[@role="radiogroup"]');

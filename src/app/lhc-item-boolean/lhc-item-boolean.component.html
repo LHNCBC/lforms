@@ -6,7 +6,7 @@
     (ngModelChange)="onModelChange($event)"
     [nzDisabled]="item._readOnly"
     [id]="lhcDataService.getItemAnswerId(item, 'checkbox')"
-    [nzId]="item._elementId"
+    [nzId]="hideQuestionText ? null : item._elementId"
     (click)="lhcDataService.setActiveRow(item)">
   </label>
 

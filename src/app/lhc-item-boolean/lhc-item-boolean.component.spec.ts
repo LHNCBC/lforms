@@ -201,6 +201,26 @@ describe('LhcItemBooleanComponent', () => {
     expect(changeSpy).not.toHaveBeenCalled();
   });
 
+  [false, true].forEach(hideQuestionText => {
+    it(`should ${hideQuestionText ? 'not ' : ''}give the two-state checkbox input the item's element id when hideQuestionText is ${hideQuestionText}`, () => {
+      component.item = {
+        _elementId: 'checkbox/1',
+        question: 'Do you agree?',
+        dataType: 'BL',
+        value: false,
+        defaultAnswer: false,
+        _answerRequired: true,
+        displayControl: {answerLayout: {type: 'CHECK_BOX'}}
+      };
+      component.value = false;
+      component.hideQuestionText = hideQuestionText;
+      fixture.detectChanges();
+
+      const checkbox: HTMLInputElement = fixture.nativeElement.querySelector('input[type="checkbox"]');
+      expect(checkbox.getAttribute('id')).toBe(hideQuestionText ? null : 'checkbox/1');
+    });
+  });
+
   describe('aria-required', () => {
     const ariaRequired = (selector: string) =>
       fixture.nativeElement.querySelector(selector).getAttribute('aria-required');
