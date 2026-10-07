@@ -7,7 +7,7 @@
     [nzDisabled]="item._readOnly"
     [disabled]="item._readOnly"
     [id]="lhcDataService.getItemAnswerId(item, 'checkbox')"
-    [attr.aria-labelledby]="'label-' + item._elementId"
+    [nzId]="item._elementId"
     (click)="lhcDataService.setActiveRow(item)">
   </label>
 

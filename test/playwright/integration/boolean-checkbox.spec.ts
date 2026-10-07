@@ -155,7 +155,6 @@ for (const fhirVersion of ['R4', 'R5']) {
 
       await expect(checkbox).toHaveCount(1);
       await expect(checkbox).not.toBeChecked();
-      await expect(checkbox).toHaveAccessibleName(/Qualifying two-state checkbox/);
       await expect(checkboxLabel).not.toHaveAttribute('role', 'checkbox');
       await expect(byId(page, answerId('qualifying/1', 'null'))).toHaveCount(0);
       await expect(twoStateInput(page, 'qualifying-initial-true/1')).toBeChecked();
@@ -167,6 +166,22 @@ for (const fhirVersion of ['R4', 'R5']) {
       await expectThreeStateRadioButtons(page, 'no-item-control', 'false');
       await expectThreeStateRadioButtons(page, 'radio-button', 'false');
       await expectThreeStateRadioButtons(page, 'plain-boolean', 'null');
+    });
+
+    test('labels the two-state checkbox with its question text', async ({ page }) => {
+      const checkbox = twoStateInput(page, 'qualifying/1');
+
+      // the question label's "for" attribute targets the input, so the name is native
+      await expect(checkbox).toHaveAttribute('id', 'qualifying/1');
+      await expect(checkbox).toHaveAccessibleName('Qualifying two-state checkbox *');
+
+      await byId(page, 'label-qualifying/1').click();
+      await expect(checkbox).toBeChecked();
+      expect(await exportedBoolean(page, fhirVersion, 'qualifying')).toBe(true);
+
+      await byId(page, 'label-qualifying/1').click();
+      await expect(checkbox).not.toBeChecked();
+      expect(await exportedBoolean(page, fhirVersion, 'qualifying')).toBe(false);
     });
 
     test('exposes the required state to assistive technologies', async ({ page }) => {
@@ -244,7 +259,8 @@ for (const fhirVersion of ['R4', 'R5']) {
       });
 
       // Trigger an Angular change-detection pass without changing an answer.
-      await byId(page, 'label-qualifying-initial-true/1').click();
+      // (Clicking this item's own label would toggle its checkbox.)
+      await byId(page, 'label-plain-boolean/1').click();
 
       await expect(checkbox).not.toBeChecked();
       const result = await page.evaluate(version => {
