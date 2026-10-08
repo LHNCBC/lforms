@@ -1,7 +1,6 @@
-import { Component, DoCheck, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import { WindowService } from '../../lib/window.service';
 import { LhcDataService} from '../../lib/lhc-data.service';
-import {InternalUtil} from '../../lib/lforms/internal-utils.js';
 
 @Component({
     selector: 'lhc-item-question',
@@ -9,7 +8,7 @@ import {InternalUtil} from '../../lib/lforms/internal-utils.js';
     styleUrls: ['./lhc-item-question.component.css'],
     standalone: false
 })
-export class LhcItemQuestionComponent implements OnInit, DoCheck {
+export class LhcItemQuestionComponent implements OnInit {
 
   @Input() item;
   @Input() options;
@@ -33,18 +32,5 @@ export class LhcItemQuestionComponent implements OnInit, DoCheck {
       this.eleStyle = viewModeClass === "lhc-item-view-lg" ? {"width": updatedWidth/2 + "px"} : null;
     });  
   }
-
-
-  /**
-   * Keep the stored value aligned with the unchecked state rendered by a
-   * two-state checkbox, including after direct programmatic item updates.
-   */
-  ngDoCheck(): void {
-    const item = this.item;
-    const prevValue = item?.value;
-    if (InternalUtil.normalizeTwoStateCheckboxValue(item)) {
-      // Safety net for direct item.value writes; notify dependents outside this change-detection pass.
-      setTimeout(() => this.lhcDataService.onItemValueChange(item, item.value, prevValue));
-    }
-  }
 }
+

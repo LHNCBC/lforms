@@ -581,6 +581,12 @@ export default class LhcFormData {
    * @param sourceItem the controlling/source item
    */
   updateOnSourceItemChange(sourceItem) {
+    // A two-state checkbox cannot display "not answered".  Store an empty value
+    // as unchecked before the change is passed on to dependent items.
+    const twoStateValue = InternalUtil.twoStateCheckboxValue(sourceItem, sourceItem.value);
+    if (twoStateValue !== sourceItem.value) {
+      sourceItem.value = twoStateValue;
+    }
     const _self = this;
     let changed = true;
     while(changed) {
@@ -1359,10 +1365,13 @@ export default class LhcFormData {
         (item.value === undefined || item.value === null)) {
         this._lfItemValueFromDefaultAnswer(item);
       }
-      // A two-state checkbox cannot display "not answered".  Normalize any
-      // remaining empty value to unchecked after defaults and supplied data
+      // A two-state checkbox cannot display "not answered".  Store any
+      // remaining empty value as unchecked after defaults and supplied data
       // have been processed.
-      InternalUtil.normalizeTwoStateCheckboxValue(item);
+      const twoStateValue = InternalUtil.twoStateCheckboxValue(item, item.value);
+      if (twoStateValue !== item.value) {
+        item.value = twoStateValue;
+      }
 
       // id
       if (item._questionRepeatable && prevSibling && prevSibling.linkId === item.linkId) {
@@ -1779,7 +1788,6 @@ export default class LhcFormData {
   getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId, includeTempItems) {
     const ret:any = {};
     this._invalidData = false;
-    InternalUtil.normalizeTwoStateCheckboxValues(this.items);
     // check the value on each item and its subtree
     this._checkSubTreeValues(this.items);
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
@@ -1795,7 +1803,6 @@ export default class LhcFormData {
    */
   checkValidity () {
     const errors = [];
-    InternalUtil.normalizeTwoStateCheckboxValues(this.items);
     this._collectValidityErrors(this.items, errors);
     if (errors.length) {
       return errors;
@@ -3223,11 +3230,10 @@ export default class LhcFormData {
               newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
             }
             // A two-state checkbox cannot display "not answered", so an empty
-            // value from the source is set as unchecked.  Comparing the normalized
-            // value keeps data control from undoing the normalization repeatedly.
-            if (onAttribute === 'value' && InternalUtil.usesTwoStateCheckbox(item) &&
-              (newData === undefined || newData === null)) {
-              newData = false;
+            // value from the source is set as unchecked.  Normalizing before the
+            // comparison below lets repeated runs see no change and settle.
+            if (onAttribute === 'value') {
+              newData = InternalUtil.twoStateCheckboxValue(item, newData);
             }
             // set the data if it is different than the existing value
             if (!CommonUtils.deepEqual(item[onAttribute], newData)) {

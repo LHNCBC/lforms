@@ -299,7 +299,6 @@ const FormUtils = {
       options = {};
     if (!(formData instanceof LForms.LFormsData))
       formData = new LForms.LFormsData(formData);
-    InternalUtil.normalizeTwoStateCheckboxValues(formData.items);
     var version = this.validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;

@@ -315,58 +315,125 @@ for (const fhirVersion of ['R4', 'R5']) {
       expect(await exportedBoolean(page, fhirVersion, 'qualifying')).toBe(false);
     });
 
-    test('normalizes a programmatically cleared two-state checkbox to false', async ({ page }) => {
+    test('does not change a two-state checkbox value when checking validity or exporting', async ({ page }) => {
       const checkbox = twoStateInput(page, 'qualifying-initial-true/1');
       await expect(checkbox).toBeChecked();
 
-      const immediateResult = await page.evaluate(version => {
-        const win = window as any;
-        const formData = win.LForms.Util._getFormObjectInScope('#formContainer');
-        const item = formData.items.find((entry: any) => entry.linkId === 'qualifying-initial-true');
-
-        item.value = null;
-        const validityErrors = win.LForms.Util.checkValidity();
-        const valueAfterValidation = item.value;
-
-        item.value = null;
-        const response = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', version);
-        const responseItem = response.item.find((entry: any) => entry.linkId === 'qualifying-initial-true');
-        return {
-          validityErrors,
-          valueAfterValidation,
-          valueAfterExport: item.value,
-          exportedValue: responseItem.answer[0].valueBoolean
-        };
-      }, fhirVersion);
-      expect(immediateResult).toEqual({
-        validityErrors: ['Required boolean without an initial value requires a value.'],
-        valueAfterValidation: false,
-        valueAfterExport: false,
-        exportedValue: false
+      // Direct writes to item.value are not supported, but they are the only way to
+      // get an empty two-state value, to show that reading the form leaves it as is.
+      await page.evaluate(() => {
+        const formData = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+        formData.items.find((entry: any) => entry.linkId === 'qualifying-initial-true').value = null;
       });
-
       // Trigger an Angular change-detection pass without changing an answer.
       // (Clicking this item's own label would toggle its checkbox.)
       await byId(page, 'label-plain-boolean/1').click();
-
       await expect(checkbox).not.toBeChecked();
+
       const result = await page.evaluate(version => {
         const win = window as any;
         const formData = win.LForms.Util._getFormObjectInScope('#formContainer');
         const item = formData.items.find((entry: any) => entry.linkId === 'qualifying-initial-true');
+        const valueAfterRendering = item.value;
+        const validityErrors = win.LForms.Util.checkValidity();
+        const valueAfterValidation = item.value;
+        win.LForms.Util.getUserData();
+        const valueAfterUserData = item.value;
         const response = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', version);
-        const responseItem = response.item.find((entry: any) => entry.linkId === 'qualifying-initial-true');
         return {
-          value: item.value,
-          validityErrors: win.LForms.Util.checkValidity(),
-          exportedValue: responseItem.answer[0].valueBoolean
+          valueAfterRendering,
+          validityErrors,
+          valueAfterValidation,
+          valueAfterUserData,
+          exported: response.item.some((entry: any) => entry.linkId === 'qualifying-initial-true'),
+          valueAfterExport: item.value
         };
       }, fhirVersion);
       expect(result).toEqual({
-        value: false,
-        validityErrors: ['Required boolean without an initial value requires a value.'],
-        exportedValue: false
+        valueAfterRendering: null,
+        validityErrors: [
+          'Qualifying two-state checkbox with initial true requires a value.',
+          'Required boolean without an initial value requires a value.'
+        ],
+        valueAfterValidation: null,
+        valueAfterUserData: null,
+        exported: false,
+        valueAfterExport: null
       });
+    });
+
+    test('normalizes an empty two-state checkbox value when lforms is notified of the change', async ({ page }) => {
+      const lformsForm = {
+        lformsVersion: '30.0.0', name: 'Notified two-state checkbox', code: 'notified-two-state',
+        items: [
+          {questionCode: 'source', linkId: '/source', question: 'Source', dataType: 'BL',
+            answerCardinality: {min: '1', max: '1'}, defaultAnswer: true,
+            displayControl: {answerLayout: {type: 'CHECK_BOX'}}},
+          {questionCode: 'dependent', linkId: '/dependent', question: 'Shown when the source is answered',
+            dataType: 'ST', skipLogic: {action: 'show',
+              conditions: [{source: '/source', trigger: {exists: true}}]}}
+        ]
+      };
+      await page.evaluate(form => (window as any).LForms.Util.addFormToPage(form, 'formContainer'), lformsForm);
+      const source = twoStateInput(page, '/source/1');
+      await expect(source).toBeChecked();
+
+      const result = await page.evaluate(version => {
+        const win = window as any;
+        const formData = win.LForms.Util._getFormObjectInScope('#formContainer');
+        const [sourceItem, dependentItem] = formData.items;
+        const isShown = () => dependentItem._skipLogicStatus !== 'target-disabled';
+        const shownBefore = isShown();
+        sourceItem.value = null;
+        formData.updateOnSourceItemChange(sourceItem);
+        const response = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', version);
+        return {
+          shownBefore,
+          sourceValue: sourceItem.value,
+          // skip logic sees the normalized value, so the source still has an answer
+          shownAfter: isShown(),
+          validityErrors: win.LForms.Util.checkValidity(),
+          exportedSource: response.item.find((entry: any) => entry.linkId === '/source').answer[0].valueBoolean
+        };
+      }, fhirVersion);
+      expect(result).toEqual({
+        shownBefore: true,
+        sourceValue: false,
+        shownAfter: true,
+        validityErrors: null,
+        exportedSource: false
+      });
+      await expect(source).not.toBeChecked();
+    });
+
+    test('normalizes every empty two-state checkbox value assigned by setRepeatingItems', async ({ page }) => {
+      await byId(page, 'add-repeating-qualifying/1').click();
+      await expect(twoStateInput(page, 'repeating-qualifying/1')).toBeChecked();
+      await expect(twoStateInput(page, 'repeating-qualifying/2')).toBeChecked();
+
+      const result = await page.evaluate(() => {
+        const formData = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+        const items = (linkId: string) => formData.itemList.filter((entry: any) => entry.linkId === linkId);
+        // a repeating question, with a value for each existing repetition
+        formData.setRepeatingItems(items('repeating-qualifying')[0], [null, null], [], 'review');
+        // a non-repeating question, with no value
+        formData.setRepeatingItems(items('qualifying-initial-true')[0], [], [], 'review');
+        return {
+          repeating: items('repeating-qualifying').map((entry: any) => entry.value),
+          nonRepeating: items('qualifying-initial-true').map((entry: any) => entry.value),
+          validityErrors: (window as any).LForms.Util.checkValidity()
+        };
+      });
+      expect(result).toEqual({
+        repeating: [false, false],
+        nonRepeating: [false],
+        validityErrors: ['Required boolean without an initial value requires a value.']
+      });
+      expect((await exportedRepeats(page, fhirVersion)).repeating).toEqual([false, false]);
+      expect(await exportedBoolean(page, fhirVersion, 'qualifying-initial-true')).toBe(false);
+      await expect(twoStateInput(page, 'repeating-qualifying/1')).not.toBeChecked();
+      await expect(twoStateInput(page, 'repeating-qualifying/2')).not.toBeChecked();
+      await expect(twoStateInput(page, 'qualifying-initial-true/1')).not.toBeChecked();
     });
 
     test('treats missing saved answers as false for two-state checkboxes', async ({ page }) => {

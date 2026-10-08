@@ -879,8 +879,11 @@ import {InternalUtil} from '../lib/lforms/internal-utils.js';
         // A two-state checkbox cannot represent an unanswered value.  Normalize
         // an empty expression result to its unchecked state so the stored value
         // agrees with what the control displays.
-        if (InternalUtil.usesTwoStateCheckbox(item) && nonEmptyNewVal.length === 0) {
-          newVal = nonEmptyNewVal = [false];
+        if (nonEmptyNewVal.length === 0) {
+          const twoStateValue = InternalUtil.twoStateCheckboxValue(item, null);
+          if (twoStateValue !== null) {
+            newVal = nonEmptyNewVal = [twoStateValue];
+          }
         }
         const msgSource = 'FHIRPath value expression';
         changed = !deepEqual(oldVal, nonEmptyNewVal);
