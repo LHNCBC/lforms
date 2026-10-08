@@ -3222,6 +3222,13 @@ export default class LhcFormData {
               // direct access to the data in source item
               newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
             }
+            // A two-state checkbox cannot display "not answered", so an empty
+            // value from the source is set as unchecked.  Comparing the normalized
+            // value keeps data control from undoing the normalization repeatedly.
+            if (onAttribute === 'value' && InternalUtil.usesTwoStateCheckbox(item) &&
+              (newData === undefined || newData === null)) {
+              newData = false;
+            }
             // set the data if it is different than the existing value
             if (!CommonUtils.deepEqual(item[onAttribute], newData)) {
               item[onAttribute] = CommonUtils.deepCopy(newData);

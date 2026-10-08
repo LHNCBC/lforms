@@ -225,6 +225,49 @@ for (const fhirVersion of ['R4', 'R5']) {
       expect(exported).toEqual([false, false]);
     });
 
+    test('settles when a data control copies an unanswered value into a two-state checkbox', async ({ page }) => {
+      const lformsForm = {
+        lformsVersion: '30.0.0', name: 'Data control into a two-state checkbox', code: 'data-control-two-state',
+        items: [
+          {questionCode: 'source', linkId: '/source', question: 'Source', dataType: 'BL'},
+          {questionCode: 'target', linkId: '/target', question: 'Target', dataType: 'BL',
+            answerCardinality: {min: '1', max: '1'}, defaultAnswer: false,
+            displayControl: {answerLayout: {type: 'CHECK_BOX'}},
+            dataControl: [{source: {sourceType: 'INTERNAL', sourceLinkId: '/source'},
+              construction: 'SIMPLE', dataFormat: 'value', onAttribute: 'value'}]}
+        ]
+      };
+      await page.evaluate(form => (window as any).LForms.Util.addFormToPage(form, 'formContainer'), lformsForm);
+      const target = twoStateInput(page, '/target/1');
+      const targetValue = () => page.evaluate(() =>
+        (window as any).LForms.Util._getFormObjectInScope('#formContainer').items[1].value);
+      const countIdleUpdates = async () => {
+        await page.evaluate(() => {
+          const formData = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+          const update = formData.updateOnSourceItemChange.bind(formData);
+          (window as any).updateCount = 0;
+          formData.updateOnSourceItemChange = (item: any) => {
+            (window as any).updateCount++;
+            return update(item);
+          };
+        });
+        // allow time for any repeated updates to accumulate
+        await page.waitForTimeout(1000);
+        return page.evaluate(() => (window as any).updateCount);
+      };
+
+      await expect(target).not.toBeChecked();
+      expect(await targetValue()).toBe(false);
+      expect(await countIdleUpdates()).toBe(0);
+
+      await byId(page, answerId('/source/1', 'true')).click();
+      await expect(target).toBeChecked();
+      await byId(page, answerId('/source/1', 'null')).click();
+      await expect(target).not.toBeChecked();
+      expect(await targetValue()).toBe(false);
+      expect(await countIdleUpdates()).toBe(0);
+    });
+
     test('exposes the required state to assistive technologies', async ({ page }) => {
       const radioGroup = (linkId: string) =>
         byId(page, answerId(`${linkId}/1`, 'true')).locator('xpath=ancestor::*[@role="radiogroup"]');
