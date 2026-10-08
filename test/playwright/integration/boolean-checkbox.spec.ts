@@ -472,6 +472,56 @@ for (const fhirVersion of ['R4', 'R5']) {
       expect(await exportedBoolean(page, fhirVersion, 'qualifying-initial-true')).toBe(false);
     });
 
+    test('does not export or validate a disabled two-state checkbox with no saved answer', async ({ page }) => {
+      const questionnaire = {
+        resourceType: 'Questionnaire',
+        status: 'active',
+        item: [
+          {linkId: 'source', text: 'Source', type: 'boolean'},
+          {linkId: 'target', text: 'Target', type: 'boolean', required: true,
+            initial: [{valueBoolean: true}],
+            enableWhen: [{question: 'source', operator: '=', answerBoolean: true}],
+            extension: [{
+              url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+              valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: 'check-box'}]}
+            }]}
+        ]
+      };
+      const savedResponse = {
+        resourceType: 'QuestionnaireResponse',
+        status: 'in-progress',
+        item: [{linkId: 'source', answer: [{valueBoolean: false}]}]
+      };
+      await page.evaluate(({q, qr, version}) => {
+        const win = window as any;
+        const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, version);
+        return win.LForms.Util.addFormToPage(
+          win.LForms.Util.mergeFHIRDataIntoLForms(qr, formDef, version), 'formContainer');
+      }, {q: questionnaire, qr: savedResponse, version: fhirVersion});
+      await expect(byId(page, answerId('source/1', 'false')).locator('input[type="radio"]')).toBeChecked();
+      const target = twoStateInput(page, 'target/1');
+      await expect(target).toHaveCount(0);
+
+      const disabledState = await page.evaluate(() => {
+        const formData = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+        const item = formData.itemList.find((entry: any) => entry.linkId === 'target');
+        return {
+          skipLogicStatus: item._skipLogicStatus,
+          value: item.value,
+          validityErrors: (window as any).LForms.Util.checkValidity()
+        };
+      });
+      // the value is normalized like any other two-state checkbox, but a disabled item is not exported
+      expect(disabledState).toEqual({skipLogicStatus: 'target-disabled', value: false, validityErrors: null});
+      expect(await exportedBoolean(page, fhirVersion, 'target')).toBeUndefined();
+      expect(await exportedBoolean(page, fhirVersion, 'source')).toBe(false);
+
+      await byId(page, answerId('source/1', 'true')).click();
+      await expect(target).toHaveCount(1);
+      await expect(target).not.toBeChecked();
+      expect(await exportedBoolean(page, fhirVersion, 'target')).toBe(false);
+    });
+
     test('starts new repetitions of two-state checkboxes with their initial values', async ({ page }) => {
       // change the first repetitions so that copies of them would not match the initial values
       await twoStateInput(page, 'group-qualifying-true/1/1').uncheck();
