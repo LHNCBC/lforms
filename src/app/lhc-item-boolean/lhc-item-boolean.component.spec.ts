@@ -202,10 +202,11 @@ describe('LhcItemBooleanComponent', () => {
   });
 
   [false, true].forEach(hideQuestionText => {
-    it(`should ${hideQuestionText ? 'not ' : ''}give the two-state checkbox input the item's element id when hideQuestionText is ${hideQuestionText}`, () => {
+    it(`should name the two-state checkbox input ${hideQuestionText ? 'within its own label' : "through the question label's element id"} when hideQuestionText is ${hideQuestionText}`, () => {
       component.item = {
         _elementId: 'checkbox/1',
         question: 'Do you agree?',
+        _text: 'Do you agree?',
         dataType: 'BL',
         value: false,
         defaultAnswer: false,
@@ -218,6 +219,8 @@ describe('LhcItemBooleanComponent', () => {
 
       const checkbox: HTMLInputElement = fixture.nativeElement.querySelector('input[type="checkbox"]');
       expect(checkbox.getAttribute('id')).toBe(hideQuestionText ? null : 'checkbox/1');
+      const hiddenName = fixture.nativeElement.querySelector('.lhc-visually-hidden');
+      expect(hiddenName?.textContent.trim()).toBe(hideQuestionText ? 'Do you agree?' : undefined);
     });
   });
 

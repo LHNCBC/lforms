@@ -212,6 +212,9 @@ for (const fhirVersion of ['R4', 'R5']) {
       const row1 = twoStateInput(page, 'agree/1/1');
       const row2 = twoStateInput(page, 'agree/2/1');
       await expect(row2).toHaveCount(1);
+      // each row's checkbox is named with the question text, without linking it to the header
+      await expect(row1).toHaveAccessibleName('Agree');
+      await expect(row2).toHaveAccessibleName('Agree');
 
       // the column header is the question text of the first row's item
       await byId(page, 'label-agree/1/1').click();

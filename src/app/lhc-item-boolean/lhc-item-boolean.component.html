@@ -8,6 +8,8 @@
     [id]="lhcDataService.getItemAnswerId(item, 'checkbox')"
     [nzId]="hideQuestionText ? null : item._elementId"
     (click)="lhcDataService.setActiveRow(item)">
+    <!-- without a question label for the input, name it within its own label -->
+    <span *ngIf="hideQuestionText" class="lhc-visually-hidden">{{item._text}}</span>
   </label>
 
   <ng-template #threeStateControls>

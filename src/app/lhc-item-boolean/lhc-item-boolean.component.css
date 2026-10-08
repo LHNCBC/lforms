@@ -3,6 +3,19 @@
   padding: 4.3125px 2px; /* to make the item's height 33px */
 }
 
+/* available to assistive technologies, but not displayed */
+.lhc-visually-hidden {
+  border: 0;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 .lhc-boolean-checkbox {
   align-items: center;
   background: transparent;
