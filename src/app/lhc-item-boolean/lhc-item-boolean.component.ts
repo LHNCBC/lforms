@@ -55,7 +55,7 @@ export class LhcItemBooleanComponent implements OnChanges {
    * @returns true if the item should be rendered as a two-state checkbox
    */
   usesTwoStateCheckbox(): boolean {
-    return !!this.item && InternalUtil.usesTwoStateCheckbox(this.item);
+    return InternalUtil.usesTwoStateCheckbox(this.item);
   }
 
 
