@@ -50,7 +50,9 @@
 }
 
 .lhc-boolean-checkbox-positive .lhc-boolean-checkbox-box::before {
-  /* the same check mark geometry as the ng-zorro checkbox */
+  /* the same check mark geometry as the ng-zorro checkbox (checkbox/style/mixin.less:
+     width (@checkbox-size / 14) * 5px, height (@checkbox-size / 14) * 8px, left 21.5%,
+     with the default 16px @checkbox-size) */
   border: solid #fff;
   border-width: 0 2px 2px 0;
   content: '';
