@@ -173,7 +173,7 @@ for (const fhirVersion of ['R4', 'R5']) {
 
       // the question label's "for" attribute targets the input, so the name is native
       await expect(checkbox).toHaveAttribute('id', 'qualifying/1');
-      await expect(checkbox).toHaveAccessibleName('Qualifying two-state checkbox *');
+      await expect(checkbox).toHaveAccessibleName('Qualifying two-state checkbox with initial false *');
 
       await byId(page, 'label-qualifying/1').click();
       await expect(checkbox).toBeChecked();

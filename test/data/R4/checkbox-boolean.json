@@ -8,7 +8,7 @@
   "item": [
     {
       "linkId": "qualifying",
-      "text": "Qualifying two-state checkbox",
+      "text": "Qualifying two-state checkbox with initial false",
       "type": "boolean",
       "required": true,
       "initial": [{"valueBoolean": false}],
