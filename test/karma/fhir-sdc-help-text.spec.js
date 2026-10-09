@@ -1,53 +1,69 @@
 var $ = LForms.jQuery;
 
 describe('Questionnaire item-control help text issues', function() {
-  it('should not treat a help extension as a child item', function() {
-    const questionnaire = {
-      resourceType: 'Questionnaire',
-      status: 'draft',
-      item: [{
-        linkId: 'multi-select',
-        text: 'Question',
-        type: 'choice',
-        repeats: true,
-        answerOption: [{valueCoding: {code: 'a', display: 'Answer A'}}],
-        extension: [{
-          url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
-          valueCodeableConcept: {
-            coding: [{
-              system: 'http://hl7.org/fhir/questionnaire-item-control',
-              code: 'radio-button'
-            }]
-          }
-        }],
+  const displayItemControls = {
+    help: function(item) {
+      assert.equal(item.codingInstructions, '<p>Formatted help text</p>');
+      assert.equal(item.codingInstructionsFormat, 'html');
+    },
+    legal: function(item) {
+      assert.equal(item.legal, '<p>Formatted legal text</p>');
+      assert.equal(item.legalFormat, 'html');
+    },
+    unit: function(item) {
+      assert.equal(item.itemControlUnit, 'Unit text');
+      assert.equal(item.itemControlUnitLinkId, 'multi-select-unit');
+    }
+  };
+  Object.keys(displayItemControls).forEach(function(code) {
+    it('should not treat a ' + code + ' extension as a child item', function() {
+      const label = code.charAt(0).toUpperCase() + code.slice(1);
+      const questionnaire = {
+        resourceType: 'Questionnaire',
+        status: 'draft',
         item: [{
-          linkId: 'multi-select-help',
-          text: 'Help text',
-          type: 'display',
+          linkId: 'multi-select',
+          text: 'Question',
+          type: 'choice',
+          repeats: true,
+          answerOption: [{valueCoding: {code: 'a', display: 'Answer A'}}],
           extension: [{
             url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
             valueCodeableConcept: {
               coding: [{
                 system: 'http://hl7.org/fhir/questionnaire-item-control',
-                code: 'help'
+                code: 'radio-button'
               }]
             }
           }],
-          _text: {
+          item: [{
+            linkId: 'multi-select-' + code,
+            text: label + ' text',
+            type: 'display',
             extension: [{
-              url: 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml',
-              valueString: '<p>Formatted help text</p>'
-            }]
-          }
+              url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+              valueCodeableConcept: {
+                coding: [{
+                  system: 'http://hl7.org/fhir/questionnaire-item-control',
+                  code: code
+                }]
+              }
+            }],
+            _text: {
+              extension: [{
+                url: 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml',
+                valueString: '<p>Formatted ' + code + ' text</p>'
+              }]
+            }
+          }]
         }]
-      }]
-    };
+      };
 
-    const formDef = LForms.Util.convertFHIRQuestionnaireToLForms(questionnaire, 'R4');
+      const formDef = LForms.Util.convertFHIRQuestionnaireToLForms(questionnaire, 'R4');
 
-    assert.equal(formDef.items[0].codingInstructions, '<p>Formatted help text</p>');
-    assert.equal(formDef.items[0].codingInstructionsFormat, 'html');
-    assert.notProperty(formDef.items[0], 'items');
+      displayItemControls[code](formDef.items[0]);
+      assert.notProperty(formDef.items[0], 'items');
+    });
   });
 
   let fhirVersions = Object.keys(LForms.Util.FHIRSupport);

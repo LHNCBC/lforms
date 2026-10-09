@@ -60,7 +60,9 @@ test.describe('Question with sub items', () => {
 
     expect(convertedItem.codingInstructions).toBe('<p>Formatted help text</p>');
     expect(convertedItem.hasItems).toBe(false);
-    await byId(page, 'multi-select/1||a').click();
+    const checkbox = byId(page, 'multi-select/1||a');
+    await checkbox.click();
+    await expect(checkbox).toBeChecked();
     await expect(page.locator('.lhc-item-group-body')).toHaveCount(0);
   });
 
