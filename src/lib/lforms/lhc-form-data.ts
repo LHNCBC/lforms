@@ -581,6 +581,12 @@ export default class LhcFormData {
    * @param sourceItem the controlling/source item
    */
   updateOnSourceItemChange(sourceItem) {
+    // A two-state checkbox cannot display "not answered".  Store an empty value
+    // as unchecked before the change is passed on to dependent items.
+    const twoStateValue = InternalUtil.twoStateCheckboxValue(sourceItem, sourceItem.value);
+    if (twoStateValue !== sourceItem.value) {
+      sourceItem.value = twoStateValue;
+    }
     const _self = this;
     let changed = true;
     while(changed) {
@@ -1359,6 +1365,13 @@ export default class LhcFormData {
         (item.value === undefined || item.value === null)) {
         this._lfItemValueFromDefaultAnswer(item);
       }
+      // A two-state checkbox cannot display "not answered".  Store any
+      // remaining empty value as unchecked after defaults and supplied data
+      // have been processed.
+      const twoStateValue = InternalUtil.twoStateCheckboxValue(item, item.value);
+      if (twoStateValue !== item.value) {
+        item.value = twoStateValue;
+      }
 
       // id
       if (item._questionRepeatable && prevSibling && prevSibling.linkId === item.linkId) {
@@ -1519,12 +1532,15 @@ export default class LhcFormData {
 
   /**
    * Remove user data and the repeating sub items (except for the first one)
-   * on an item or on all its sub items
+   * on an item or on all its sub items. A two-state checkbox item is reset to
+   * its default value instead of null.
    * @param item an item
    * @private
    */
   _removeUserDataAndRepeatingSubItems(item) {
-    item.value = null;
+    // a two-state checkbox cannot display "not answered", so new repetitions
+    // start with its default value instead of an empty value.
+    item.value = InternalUtil.usesTwoStateCheckbox(item) ? item.defaultAnswer : null;
     item.unit = null;
     if (item.items && item.items.length > 0) {
       for (let i=0; i<item.items.length; i++) {
@@ -3212,6 +3228,12 @@ export default class LhcFormData {
             else if (constructionType === CONSTANTS.DATA_CONTROL.CONSTRUCTION_SIMPLE) {
               // direct access to the data in source item
               newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
+            }
+            // A two-state checkbox cannot display "not answered", so an empty
+            // value from the source is set as unchecked.  Normalizing before the
+            // comparison below lets repeated runs see no change and settle.
+            if (onAttribute === 'value') {
+              newData = InternalUtil.twoStateCheckboxValue(item, newData);
             }
             // set the data if it is different than the existing value
             if (!CommonUtils.deepEqual(item[onAttribute], newData)) {

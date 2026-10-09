@@ -1,30 +1,47 @@
 <ng-container *ngIf="item">
-  <button
-    *ngIf="usesCheckboxControl(); else radioButtons"
-    type="button"
-    role="checkbox"
-    class="lhc-boolean-checkbox"
-    [class.lhc-boolean-checkbox-positive]="item.value === true"
-    [class.lhc-boolean-checkbox-negative]="item.value === false"
-    [class.lhc-boolean-checkbox-unanswered]="item.value !== true && item.value !== false"
+  <label
+    *ngIf="usesTwoStateCheckbox(); else threeStateControls"
+    nz-checkbox
+    [ngModel]="value"
+    (ngModelChange)="onModelChange($event)"
+    [nzDisabled]="item._readOnly"
     [id]="lhcDataService.getItemAnswerId(item, 'checkbox')"
-    [disabled]="item._readOnly"
-    [attr.aria-checked]="getCheckboxAriaState()"
-    [attr.aria-labelledby]="'label-' + item._elementId"
-    [attr.aria-describedby]="'boolean-status-' + item._elementId"
-    [title]="language.booleanCheckboxHint"
-    (click)="cycleCheckboxState(); lhcDataService.setActiveRow(item)">
-    <span class="lhc-boolean-checkbox-box" aria-hidden="true"></span>
-    <span class="lhc-boolean-checkbox-status" [id]="'boolean-status-' + item._elementId">
-      {{getCheckboxStatus()}}
-    </span>
-  </button>
+    [nzId]="hideQuestionText ? null : item._elementId"
+    (click)="lhcDataService.setActiveRow(item)">
+    <!-- without a question label for the input, name it within its own label -->
+    <span *ngIf="hideQuestionText" class="lhc-visually-hidden">{{item._text}}</span>
+  </label>
+
+  <ng-template #threeStateControls>
+    <button
+      *ngIf="usesCheckboxControl(); else radioButtons"
+      type="button"
+      role="checkbox"
+      class="lhc-boolean-checkbox"
+      [class.lhc-boolean-checkbox-positive]="item.value === true"
+      [class.lhc-boolean-checkbox-negative]="item.value === false"
+      [class.lhc-boolean-checkbox-unanswered]="item.value !== true && item.value !== false"
+      [id]="lhcDataService.getItemAnswerId(item, 'checkbox')"
+      [disabled]="item._readOnly"
+      [attr.aria-checked]="getCheckboxAriaState()"
+      [attr.aria-required]="item._answerRequired ? 'true' : null"
+      [attr.aria-labelledby]="'label-' + item._elementId"
+      [attr.aria-describedby]="'boolean-status-' + item._elementId"
+      [title]="language.booleanCheckboxHint"
+      (click)="cycleCheckboxState(); lhcDataService.setActiveRow(item)">
+      <span class="lhc-boolean-checkbox-box" aria-hidden="true"></span>
+      <span class="lhc-boolean-checkbox-status" [id]="'boolean-status-' + item._elementId">
+        {{getCheckboxStatus()}}
+      </span>
+    </button>
+  </ng-template>
 
   <ng-template #radioButtons>
     <nz-radio-group
       [ngModel]="value"
       (ngModelChange)="onModelChange($event)"
       role="radiogroup"
+      [attr.aria-required]="item._answerRequired ? 'true' : null"
       [nzName]="'radiogroup_' + item._elementId"
       attr.aria-labelledby="label-{{ item._elementId }}"
       (click)="lhcDataService.setActiveRow(item)">

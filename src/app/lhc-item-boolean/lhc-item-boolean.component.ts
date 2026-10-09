@@ -1,5 +1,6 @@
 import {OnChanges, Component, Input} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
+import {InternalUtil} from '../../lib/lforms/internal-utils';
 import language from '../../../language-config.json';
 
 @Component({
@@ -11,6 +12,9 @@ import language from '../../../language-config.json';
 export class LhcItemBooleanComponent implements OnChanges {
   @Input() item: any;
   @Input() value: any;
+  // In a horizontal table the column header is the question text of the first
+  // row's item, so an input id matching it would let a header click change row 1.
+  @Input() hideQuestionText = false;
   booleanModels: boolean[] = new Array(3);
   language = language;
 
@@ -42,6 +46,16 @@ export class LhcItemBooleanComponent implements OnChanges {
    */
   usesCheckboxControl(): boolean {
     return this.item?.displayControl?.answerLayout?.type === 'CHECK_BOX';
+  }
+
+
+  /**
+   * Whether this item meets the FHIR requirements for a two-state checkbox:
+   * it requested the check-box item control, is required, and has a default value.
+   * @returns true if the item should be rendered as a two-state checkbox
+   */
+  usesTwoStateCheckbox(): boolean {
+    return InternalUtil.usesTwoStateCheckbox(this.item);
   }
 
 

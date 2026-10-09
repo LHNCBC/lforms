@@ -32,6 +32,7 @@ export const InternalUtil = {
    */
   assignValueToItem: function(item, val, type) {
     var changed = false;
+    val = this.twoStateCheckboxValue(item, val);
     type = type || val && val._type;
     if (val && type === 'Quantity') {
       if (item.value !== val.value) {
@@ -455,6 +456,41 @@ export const InternalUtil = {
   hasAnswerList: function(item) {
     return item.dataType === "CODING" || item.answers &&
       (item.dataType === "ST" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "TM")
+  },
+
+
+  /**
+   * Check if a boolean item meets the FHIR requirements for a two-state checkbox:
+   * it requested the check-box item control, is required, and has a default value.
+   * @param {*} item an lforms item
+   * @returns true if the item should be rendered as a two-state checkbox
+   */
+  usesTwoStateCheckbox: function(item) {
+    return item?.dataType === CONSTANTS.DATA_TYPE.BL &&
+      item.displayControl?.answerLayout?.type === 'CHECK_BOX' &&
+      item._answerRequired === true &&
+      typeof item.defaultAnswer === 'boolean';
+  },
+
+
+  /**
+   * Get the value to store in an item.  A two-state checkbox cannot display
+   * "not answered", so an empty value for it is stored as false (unchecked).
+   * lforms calls this wherever it writes a value that may be empty: when the
+   * form is loaded (_setTreeNodes), when a value is assigned through
+   * assignValueToItem (e.g., each repetition in setRepeatingItems), in data
+   * control (_updateDataByDataControl) and FHIRPath expressions
+   * (_setItemValueFromFHIRPath), and when it is notified of a changed value
+   * (updateOnSourceItemChange).  User input and new repetitions only produce
+   * true or false.  A value that other code assigns directly to item.value,
+   * without calling updateOnSourceItemChange, is not normalized.
+   * @param {*} item an lforms item
+   * @param {*} value the new value of the item
+   * @returns false for an empty value of a two-state checkbox, otherwise the value
+   */
+  twoStateCheckboxValue: function(item, value) {
+    return (value === undefined || value === null) && this.usesTwoStateCheckbox(item) ?
+      false : value;
   },
 
 

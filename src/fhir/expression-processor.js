@@ -27,6 +27,7 @@ export let ExpressionProcessor;
 import copy from "fast-copy";
 import deepEqual from "deep-equal";
 import replaceAsync from 'string-replace-async';
+import {InternalUtil} from '../lib/lforms/internal-utils.js';
 
 (function() {
   "use strict";
@@ -875,6 +876,15 @@ import replaceAsync from 'string-replace-async';
       if (fhirPathRes !== undefined) {
         var [newVal, messages] = this._fhir.SDC._convertFHIRValues(item, fhirPathRes);
         var nonEmptyNewVal = newVal.filter(x=>!LForms.Util.isItemValueEmpty(x));
+        // A two-state checkbox cannot represent an unanswered value.  Normalize
+        // an empty expression result to its unchecked state so the stored value
+        // agrees with what the control displays.
+        if (nonEmptyNewVal.length === 0) {
+          const twoStateValue = InternalUtil.twoStateCheckboxValue(item, null);
+          if (twoStateValue !== null) {
+            newVal = nonEmptyNewVal = [twoStateValue];
+          }
+        }
         const msgSource = 'FHIRPath value expression';
         changed = !deepEqual(oldVal, nonEmptyNewVal);
         // If this is the first run of the expressions, and there is

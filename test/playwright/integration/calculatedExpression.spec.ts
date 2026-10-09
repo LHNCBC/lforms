@@ -1,6 +1,49 @@
 import { test, expect } from '@playwright/test';
 import { addFormToPage, waitForLFormsReady, byId, answerId } from '../support/lforms-helpers';
 
+function twoStateExpressionQuestionnaire(
+  expressionType: 'calculatedExpression' | 'initialExpression',
+  sourceInitial?: boolean
+) {
+  return {
+    resourceType: 'Questionnaire',
+    status: 'active',
+    item: [
+      {
+        linkId: 'source',
+        text: 'Source boolean',
+        type: 'boolean',
+        ...(sourceInitial === undefined ? {} : {initial: [{valueBoolean: sourceInitial}]})
+      },
+      {
+        linkId: 'target',
+        text: 'Expression-driven two-state checkbox',
+        type: 'boolean',
+        required: true,
+        initial: [{valueBoolean: true}],
+        extension: [
+          {
+            url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+            valueCodeableConcept: {
+              coding: [{
+                system: 'http://hl7.org/fhir/questionnaire-item-control',
+                code: 'check-box'
+              }]
+            }
+          },
+          {
+            url: `http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-${expressionType}`,
+            valueExpression: {
+              language: 'text/fhirpath',
+              expression: "%resource.item.where(linkId='source').answer.value"
+            }
+          }
+        ]
+      }
+    ]
+  };
+}
+
 // Tests of the support for calculatedExpression.
 test.describe('calculatedExpression', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,6 +66,65 @@ test.describe('calculatedExpression', () => {
     await byId(page, 'weight/1').fill('');
     await byId(page, 'weight/1').pressSequentially('102');
     await expect(byId(page, answerId('overweight/1', 'true'))).toHaveClass(/ant-radio-wrapper-checked/);
+  });
+
+  test('should treat an empty calculatedExpression result as false for a two-state checkbox', async ({ page }) => {
+    await page.evaluate(q => (window as any).LForms.Util.addFormToPage(
+      q, 'formContainer', {fhirVersion: 'R4'}),
+      twoStateExpressionQuestionnaire('calculatedExpression', true));
+
+    const target = byId(page, answerId('target/1', 'checkbox')).locator('input[type="checkbox"]');
+    await expect(target).toBeChecked();
+
+    await byId(page, answerId('source/1', 'null')).click();
+    await expect(target).not.toBeChecked();
+
+    const result = await page.evaluate(() => {
+      const win = window as any;
+      const formData = win.LForms.Util.getFormData();
+      const targetItem = formData.items.find((item: any) => item.linkId === 'target');
+      const response = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      const targetResponseItem = response.item.find((item: any) => item.linkId === 'target');
+      return {
+        value: targetItem.value,
+        validityErrors: win.LForms.Util.checkValidity(),
+        exportedValue: targetResponseItem.answer[0].valueBoolean
+      };
+    });
+
+    expect(result).toEqual({
+      value: false,
+      validityErrors: null,
+      exportedValue: false
+    });
+  });
+
+  test('should treat an empty initialExpression result as false for a two-state checkbox', async ({ page }) => {
+    await page.evaluate(q => (window as any).LForms.Util.addFormToPage(
+      q, 'formContainer', {fhirVersion: 'R4'}),
+      twoStateExpressionQuestionnaire('initialExpression'));
+
+    const target = byId(page, answerId('target/1', 'checkbox')).locator('input[type="checkbox"]');
+    await expect(target).not.toBeChecked();
+
+    const result = await page.evaluate(() => {
+      const win = window as any;
+      const formData = win.LForms.Util.getFormData();
+      const targetItem = formData.items.find((item: any) => item.linkId === 'target');
+      const response = win.LForms.Util.getFormFHIRData('QuestionnaireResponse', 'R4');
+      const targetResponseItem = response.item.find((item: any) => item.linkId === 'target');
+      return {
+        value: targetItem.value,
+        validityErrors: win.LForms.Util.checkValidity(),
+        exportedValue: targetResponseItem.answer[0].valueBoolean
+      };
+    });
+
+    expect(result).toEqual({
+      value: false,
+      validityErrors: null,
+      exportedValue: false
+    });
   });
 
   test.describe('for single-select lists', () => {
