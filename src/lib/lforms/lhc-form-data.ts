@@ -2367,7 +2367,7 @@ export default class LhcFormData {
           item._horizontalTableHeader = true;
           item._horizontalTableId = tableHeaderLinkIdAndParentIdPath;
 
-          itemsInRow = item.items;
+          itemsInRow = item.items || [];
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
             const itemInRow = itemsInRow[j];
             columnHeaders.push({item: itemInRow, id: "col" + itemInRow._elementId, displayControl: itemInRow.displayControl});
@@ -2389,7 +2389,7 @@ export default class LhcFormData {
         // if it's the following rows, update the tableRows and tableEndIndex
         else if (tableHeaderLinkIdAndParentIdPath === itemLinkIdAndParentIdPath ) {
           item._horizontalTableHeader = false;
-          itemsInRow = item.items;
+          itemsInRow = item.items || [];
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
             // indicate the item is in a horizontal table
             itemsInRow[j]._inHorizontalTable = true;

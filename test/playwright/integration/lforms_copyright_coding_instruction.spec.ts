@@ -267,6 +267,16 @@ test.describe('popover buttons', () => {
       await waitForLFormsReady(page);
       await test4PopoverCases(page, 'matrix');
     });
+
+    test('should render a horizontal table group whose only child is a help item', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'gtable-group-with-only-help-item.json', 'formContainer', {fhirVersion: 'R4'});
+
+      await byId(page, 'help-button-table-group/1').click();
+      await expect(byId(page, 'help-content-table-group/1')).toHaveText('Help text for the table group.');
+      await expect(byId(page, 'question-after-table/1')).toBeVisible();
+    });
   });
 });
 
