@@ -2,6 +2,68 @@ import { test, expect } from '@playwright/test';
 import { byId, waitForLFormsReady, addFormToPage, pressCypressKeys, escapeIdSelector } from '../support/lforms-helpers';
 
 test.describe('Question with sub items', () => {
+  test('should not create per-option subgroups for a help extension', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+
+    const questionnaire = {
+      resourceType: 'Questionnaire',
+      status: 'draft',
+      item: [{
+        linkId: 'multi-select',
+        text: 'Question',
+        type: 'choice',
+        repeats: true,
+        answerOption: [{valueCoding: {code: 'a', display: 'Answer A'}}],
+        extension: [{
+          url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+          valueCodeableConcept: {
+            coding: [{
+              system: 'http://hl7.org/fhir/questionnaire-item-control',
+              code: 'radio-button'
+            }]
+          }
+        }],
+        item: [{
+          linkId: 'multi-select-help',
+          text: 'Help text',
+          type: 'display',
+          extension: [{
+            url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+            valueCodeableConcept: {
+              coding: [{
+                system: 'http://hl7.org/fhir/questionnaire-item-control',
+                code: 'help'
+              }]
+            }
+          }],
+          _text: {
+            extension: [{
+              url: 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml',
+              valueString: '<p>Formatted help text</p>'
+            }]
+          }
+        }]
+      }]
+    };
+
+    const convertedItem = await page.evaluate(q => {
+      const win = window as any;
+      const formDef = win.LForms.Util.convertFHIRQuestionnaireToLForms(q, 'R4');
+      const convertedItem = {
+        codingInstructions: formDef.items[0].codingInstructions,
+        hasItems: Object.prototype.hasOwnProperty.call(formDef.items[0], 'items')
+      };
+      win.LForms.Util.addFormToPage(formDef, 'formContainer');
+      return convertedItem;
+    }, questionnaire);
+
+    expect(convertedItem.codingInstructions).toBe('<p>Formatted help text</p>');
+    expect(convertedItem.hasItems).toBe(false);
+    await byId(page, 'multi-select/1||a').click();
+    await expect(page.locator('.lhc-item-group-body')).toHaveCount(0);
+  });
+
   test('should render sub items for each selected option and export/merge properly, checkbox layout', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);

@@ -1892,10 +1892,15 @@ function addCommonSDCImportFns(ns) {
    */
   self._processChildItems = function(targetItem, qItem, containedVS, linkIdItemMap, containedImages) {
     if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
         let isHelpTextItem = self._processCodingInstructionsAndLegal(targetItem, qItem.item[i]);
         if(!isHelpTextItem) {
+          // Help, legal, and unit display items are represented as properties of
+          // the parent LForms item.  Only create the child-items array when the
+          // Questionnaire contains an actual child item.  In particular, an
+          // empty array makes a repeating choice look like a multi-select with
+          // dependent questions to the renderer.
+          targetItem.items = targetItem.items || [];
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap, containedImages);
           // If any child item contains modifierExtension, mark the parent lfItem._hasModifierExtension true.
           if (!targetItem._hasModifierExtension && item._hasModifierExtension) {
