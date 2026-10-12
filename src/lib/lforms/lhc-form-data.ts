@@ -2571,9 +2571,16 @@ export default class LhcFormData {
    * @param answer the selected multi-select option.
    */
   addSubItemsForMultiSelect(item, answer) {
+    // A subgroup is only created when there are real sub items to put in it.
+    // For example, an item whose only Questionnaire child is a help text item
+    // has an empty items list, because help text items are excluded on import.
+    const subItems = (item.items || []).filter(x => !x.isSubGroupForMultiSelect);
+    if (subItems.length === 0) {
+      return;
+    }
     const linkId = this.getLinkIdForMultiSelectSubGroup(answer);
     // Make a copy of the original sub items, excluding multi-select subgroups.
-    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForMultiSelect));
+    let subItemsCopy = CommonUtils.deepCopy(subItems);
     let newGroupItemForMultiSelect = {
       "isSubGroupForMultiSelect": true,
       "multiSelectOption": answer,
