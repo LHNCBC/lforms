@@ -21,6 +21,11 @@ This project follows [Semantic Versioning](http://semver.org/).
   answer in a multi-select question whose only child was one of these items
   displayed the selected answer's text below the question (GitHub issue #207).
   Thanks to Christopher Pruijsen for the fix (GitHub PR #211).
+- For a multi-select question with child items, the heading for a selected
+  answer is no longer displayed when none of the child items are displayed,
+  for example when they are hidden with the questionnaire-hidden extension or
+  disabled by enableWhen. Screen readers are also no longer told that the
+  child items were added or removed.
 - A `table` (matrix) group with no child items, such as one whose only child
   is a help item, is now rendered as a vertical group.
 - Selecting an answer in a single-select drop-down question that has child

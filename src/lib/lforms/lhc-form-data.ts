@@ -2603,8 +2603,11 @@ export default class LhcFormData {
 
     this._resetInternalData();
 
-    var readerMsg = language.added + newGroupItemForMultiSelect.question;
-    this._actionLogs.push(readerMsg);
+    // Do not announce a subgroup that is not displayed.
+    if (InternalUtil.multiSelectSubGroupShown(newGroupItemForMultiSelect)) {
+      var readerMsg = language.added + newGroupItemForMultiSelect.question;
+      this._actionLogs.push(readerMsg);
+    }
   }
 
 
@@ -2615,12 +2618,17 @@ export default class LhcFormData {
    */
   deleteSubItemsForCheckbox(item, answer) {
     const linkId = this.getLinkIdForMultiSelectSubGroup(answer);
+    const subGroup = item.items.find(x => x.linkId === linkId);
+    const subGroupShown = subGroup && InternalUtil.multiSelectSubGroupShown(subGroup);
     item.items = item.items.filter(x => x.linkId !== linkId);
 
     this._resetInternalData();
 
-    var readerMsg = `${language.removed} Sub items for checkbox option: ${answer._displayText}`;
-    this._actionLogs.push(readerMsg);
+    // Do not announce a subgroup that was not displayed.
+    if (subGroupShown) {
+      var readerMsg = `${language.removed} Sub items for checkbox option: ${answer._displayText}`;
+      this._actionLogs.push(readerMsg);
+    }
   }
 
 
@@ -2631,10 +2639,14 @@ export default class LhcFormData {
    */
   deleteSubItemsForAutocomplete(item, index) {
     const readerMsg = `${language.removed} sub items for autocomplete option: ${item.items[index]?.question}`;
+    const subGroupShown = item.items[index] && InternalUtil.multiSelectSubGroupShown(item.items[index]);
     item.items.splice(index, 1);
 
     this._resetInternalData();
-    this._actionLogs.push(readerMsg);
+    // Do not announce a subgroup that was not displayed.
+    if (subGroupShown) {
+      this._actionLogs.push(readerMsg);
+    }
   }
 
 

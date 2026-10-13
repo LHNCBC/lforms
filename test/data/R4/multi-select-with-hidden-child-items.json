@@ -1,0 +1,234 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "title": "Multi-select with hidden child items",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "case1-visible",
+      "text": "Case 1 (control): child is visible",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case1-child",
+          "text": "How many? (visible)",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "linkId": "case2-hidden",
+      "text": "Case 2: only child is hidden in the definition",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case2-child",
+          "text": "How many? (hidden)",
+          "type": "integer",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+              "valueBoolean": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "case3-mixed",
+      "text": "Case 3 (control): one hidden child, one visible child",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case3-hidden-child",
+          "text": "Internal score (hidden)",
+          "type": "integer",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+              "valueBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "case3-visible-child",
+          "text": "How many? (visible)",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "linkId": "show-details",
+      "text": "Show follow-up questions for Case 4?",
+      "type": "boolean"
+    },
+    {
+      "linkId": "case4-enablewhen-other",
+      "text": "Case 4: only child is disabled by enableWhen on another question",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case4-child",
+          "text": "How many? (enabled when 'Show follow-up questions' is Yes)",
+          "type": "integer",
+          "enableWhen": [
+            {
+              "question": "show-details",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "case5-enablewhen-parent",
+      "text": "Case 5: only child is enabled only when the parent includes Apple",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case5-child",
+          "text": "Apple variety (enabled when Apple is selected)",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "case5-enablewhen-parent",
+              "operator": "=",
+              "answerCoding": { "code": "a" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "case6-autocomplete-hidden",
+      "text": "Case 6: autocomplete, only child is hidden in the definition",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case6-child",
+          "text": "How many? (hidden)",
+          "type": "integer",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+              "valueBoolean": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

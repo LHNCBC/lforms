@@ -98,6 +98,68 @@ test.describe('Question with sub items', () => {
     expect(errors).toEqual([]);
   });
 
+  test('should show a selected option\'s subgroup only when one of its sub items is shown', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'multi-select-with-hidden-child-items.json', 'formContainer', { fhirVersion: 'R4' });
+    const subGroupLabel = (parentLinkId: string, code: string) =>
+      byId(page, 'item-' + parentLinkId + '/1').locator(
+        '#' + escapeIdSelector('label-multi-select-subgroup||' + code + '/1/multi-select-subgroup||' + code));
+
+    // Case 1: the sub item is visible.
+    await byId(page, 'case1-visible/1||a').click();
+    await expect(subGroupLabel('case1-visible', 'a')).toBeVisible();
+
+    // Case 2: the only sub item is hidden by the questionnaire-hidden extension.
+    const case2Apple = byId(page, 'case2-hidden/1||a');
+    await case2Apple.click();
+    await expect(case2Apple).toBeChecked();
+    await expect(subGroupLabel('case2-hidden', 'a')).not.toBeAttached();
+
+    // Case 3: one hidden and one visible sub item.
+    await byId(page, 'case3-mixed/1||a').click();
+    await expect(subGroupLabel('case3-mixed', 'a')).toBeVisible();
+
+    // Case 4: the only sub item is enabled by another question.
+    const case4Apple = byId(page, 'case4-enablewhen-other/1||a');
+    await case4Apple.click();
+    await expect(case4Apple).toBeChecked();
+    await expect(subGroupLabel('case4-enablewhen-other', 'a')).not.toBeAttached();
+    await byId(page, 'show-details/1|true').click();
+    await expect(subGroupLabel('case4-enablewhen-other', 'a')).toBeVisible();
+    await byId(page, 'show-details/1|false').click();
+    await expect(subGroupLabel('case4-enablewhen-other', 'a')).not.toBeAttached();
+
+    // Case 5: the only sub item is enabled when Apple is selected.
+    const case5Banana = byId(page, 'case5-enablewhen-parent/1||b');
+    await case5Banana.click();
+    await expect(case5Banana).toBeChecked();
+    await expect(subGroupLabel('case5-enablewhen-parent', 'b')).not.toBeAttached();
+    await byId(page, 'case5-enablewhen-parent/1||a').click();
+    await expect(subGroupLabel('case5-enablewhen-parent', 'a')).toBeVisible();
+    await expect(subGroupLabel('case5-enablewhen-parent', 'b')).toBeVisible();
+
+    // Case 6: autocomplete, the only sub item is hidden.
+    const dropdown = byId(page, 'case6-autocomplete-hidden/1');
+    await dropdown.click();
+    await dropdown.press('ArrowDown');
+    await dropdown.press('Enter');
+    await expect(subGroupLabel('case6-autocomplete-hidden', 'a')).not.toBeAttached();
+
+    // The subgroups whose headings are not shown are still in the form data.
+    const subGroupCounts = await page.evaluate(() => {
+      const items = (window as any).LForms.Util.getFormData('formContainer', false, false, true).items;
+      const counts: Record<string, number> = {};
+      items.forEach((item: any) => {
+        counts[item.linkId] = (item.items || []).filter((x: any) => x.isSubGroupForMultiSelect).length;
+      });
+      return counts;
+    });
+    expect(subGroupCounts['case2-hidden']).toBe(1);
+    expect(subGroupCounts['case4-enablewhen-other']).toBe(1);
+    expect(subGroupCounts['case6-autocomplete-hidden']).toBe(1);
+  });
+
   test('should render sub items for each selected option and export/merge properly, checkbox layout', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);

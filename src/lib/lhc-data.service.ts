@@ -317,6 +317,18 @@ export class LhcDataService {
 
 
   /**
+   * Check if a multi-select subgroup should be displayed (at least one of its
+   * sub items is displayed). Items that are not multi-select subgroups are not
+   * affected.
+   * @param item an item
+   * @return {boolean}
+   */
+  multiSelectSubGroupShown(item) {
+    return this.lhcFormData ? InternalUtil.multiSelectSubGroupShown(item) : false;
+  }
+
+
+  /**
    * Get the sequence number for the current repeating item
    * @param item an item in the lforms form items array
    * @returns {string}

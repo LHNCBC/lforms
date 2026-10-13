@@ -561,6 +561,22 @@ export const InternalUtil = {
 
 
   /**
+   * Check if a multi-select subgroup should be displayed.  A subgroup is only
+   * displayed when at least one of its sub items is displayed, so that the
+   * selected answer's text is not shown as a heading with nothing under it.
+   * The subgroup is kept in the data, so that values of hidden sub items are
+   * still included in the QuestionnaireResponse.
+   * @param item an item
+   * @return {boolean} false if the item is a multi-select subgroup and none
+   *  of its sub items are displayed, true otherwise.
+   */
+  multiSelectSubGroupShown: function(item) {
+    return !item.isSubGroupForMultiSelect || (item.items || []).some(subItem =>
+        !subItem._isHiddenFromView && this.targetShown(subItem));
+  },
+
+
+  /**
    * Check if the item is a multi-select (could be checkbox or dropdown layout) with sub items.
    */
   isMultiSelectWithSubItems: function(item) {
