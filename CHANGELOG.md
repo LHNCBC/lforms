@@ -15,6 +15,16 @@ This project follows [Semantic Versioning](http://semver.org/).
 - The three-state checkbox for boolean items is now 16px instead of 20px,
   the same size as the other checkboxes and radio buttons, and its check
   and X marks have been redrawn to match.
+### Fixed
+- Help, legal, and unit display items in a FHIR Questionnaire are no longer
+  treated as child items of their parent question. Previously, selecting an
+  answer in a multi-select question whose only child was one of these items
+  displayed the selected answer's text below the question (GitHub issue #207).
+  Thanks to Christopher Pruijsen for the fix (GitHub PR #211).
+- A `table` (matrix) group with no child items, such as one whose only child
+  is a help item, is now rendered as a vertical group.
+- Selecting an answer in a single-select drop-down question that has child
+  items no longer raises an error.
 
 ## [44.1.0] 2026-09-08
 ### Added
