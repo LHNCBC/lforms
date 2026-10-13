@@ -66,6 +66,38 @@ test.describe('Question with sub items', () => {
     await expect(page.locator('.lhc-item-group-body')).toHaveCount(0);
   });
 
+  test('should not raise an error when selecting an answer in a single-select drop-down with sub items', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    const errors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error' && msg.text().includes('TypeError')) {
+        errors.push(msg.text());
+      }
+    });
+    await page.evaluate(() => {
+      (window as any).LForms.Util.addFormToPage({
+        lformsVersion: '30.0.0',
+        name: 'Single-select drop-down with a child question',
+        items: [{
+          linkId: 'single-select',
+          question: 'Single-select',
+          dataType: 'CODING',
+          displayControl: {answerLayout: {type: 'COMBO_BOX'}},
+          answers: [{code: 'a', text: 'Answer A'}, {code: 'b', text: 'Answer B'}],
+          items: [{linkId: 'single-select-child', question: 'Child', dataType: 'ST'}]
+        }]
+      }, 'formContainer');
+    });
+
+    const dropdown = byId(page, 'single-select/1');
+    await dropdown.click();
+    await dropdown.press('ArrowDown');
+    await dropdown.press('Enter');
+    await expect(dropdown).toHaveValue('Answer A');
+    expect(errors).toEqual([]);
+  });
+
   test('should render sub items for each selected option and export/merge properly, checkbox layout', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);

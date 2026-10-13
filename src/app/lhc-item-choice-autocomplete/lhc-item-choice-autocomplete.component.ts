@@ -1,6 +1,7 @@
 import { Component, OnInit, OnChanges, Input, inject } from '@angular/core';
 import { LhcDataService} from '../../lib/lhc-data.service';
 import {CommonUtilsService} from "../../lib/common-utils.service";
+import {InternalUtil} from '../../lib/lforms/internal-utils';
 
 @Component({
     selector: 'lhc-item-choice-autocomplete',
@@ -43,7 +44,7 @@ export class LhcItemChoiceAutocompleteComponent implements OnChanges {
    * Add or remove subgroups for the multi-select item based on the current value of the item.
    */
   addOrRemoveSubGroups(): void {
-    if (!this.item.items) {
+    if (!InternalUtil.isMultiSelectWithSubItems(this.item)) {
       return;
     }
     const validLinkIds = this.item.value?.map((v) => {

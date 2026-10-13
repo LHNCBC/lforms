@@ -3,6 +3,7 @@ import {CommonUtilsService} from '../../lib/common-utils.service';
 import {LhcDataService} from '../../lib/lhc-data.service';
 import language from '../../../language-config.json';
 import Def from 'autocomplete-lhc';
+import {InternalUtil} from '../../lib/lforms/internal-utils';
 
 @Component({
     selector: 'lhc-item-choice-check-box',
@@ -263,7 +264,7 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
    * Add or remove subgroups for the checkbox item, as the selection changes.
    */
   addOrRemoveSubGroupsForCheckbox(): void {
-    if (!this.item.items) {
+    if (!InternalUtil.isMultiSelectWithSubItems(this.item)) {
       return;
     }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
