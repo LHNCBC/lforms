@@ -258,6 +258,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
     this.item._visitedBefore = true;
 
     this.addOrRemoveSubGroupsForCheckbox();
+    // The subgroups are added or removed after onItemValueChange has sent
+    // the other messages, so send the messages for the subgroups now.
+    this.lhcDataService.sendActionsToScreenReader();
   }
 
   /**

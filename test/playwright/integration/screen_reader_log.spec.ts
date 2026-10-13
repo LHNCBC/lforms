@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { byId, openFormByIndex } from '../support/lforms-helpers';
+import { addFormToPage, byId, openFormByIndex, waitForLFormsReady } from '../support/lforms-helpers';
 
 test.describe('508', () => {
   const heightField = '/54126-8/8302-2/1/1';
@@ -106,6 +106,39 @@ test.describe('508', () => {
       // Remove the question
       await page.locator('button[title=\'Remove this "Name"\']').first().click();
       await expectReaderLogEntries(page, ['Added question', 'Removed question']);
+    });
+
+    test('should add an entry when a multi-select subgroup is added or removed, only if it is shown', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'multi-select-with-hidden-child-items.json', 'formContainer', { fhirVersion: 'R4' });
+      await byId(page, 'case1-visible/1||a').waitFor({ state: 'visible' });
+      await resetReaderLog(page);
+      await expectReaderLogEntriesEmpty(page);
+
+      // The sub item is visible.
+      const case1Apple = byId(page, 'case1-visible/1||a');
+      await case1Apple.click();
+      await expectReaderLogEntries(page, ['Added Apple']);
+      await case1Apple.click();
+      await expectReaderLogEntries(page, ['Added Apple', 'Removed Sub items for checkbox option: Apple']);
+
+      // The only sub item is hidden.
+      const case2Apple = byId(page, 'case2-hidden/1||a');
+      await case2Apple.click();
+      await expect(case2Apple).toBeChecked();
+      await case2Apple.click();
+      await expect(case2Apple).not.toBeChecked();
+      await expectReaderLogEntries(page, ['Added Apple', 'Removed Sub items for checkbox option: Apple']);
+
+      // The only sub item is hidden, autocomplete.
+      await resetReaderLog(page);
+      const dropdown = byId(page, 'case6-autocomplete-hidden/1');
+      await dropdown.click();
+      await dropdown.press('ArrowDown');
+      await dropdown.press('Enter');
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Selected Apple' })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added' })).toHaveCount(0);
     });
   });
 

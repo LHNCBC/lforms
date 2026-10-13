@@ -26,6 +26,9 @@ This project follows [Semantic Versioning](http://semver.org/).
   for example when they are hidden with the questionnaire-hidden extension or
   disabled by enableWhen. Screen readers are also no longer told that the
   child items were added or removed.
+- For a multi-select check-box question with child items, screen readers are
+  now told that the child items were added or removed when an answer is
+  checked or unchecked, instead of on the next change in the form.
 - A `table` (matrix) group with no child items, such as one whose only child
   is a help item, is now rendered as a vertical group.
 - Selecting an answer in a single-select drop-down question that has child
