@@ -277,6 +277,16 @@ test.describe('popover buttons', () => {
       await expect(byId(page, 'help-content-table-group/1')).toHaveText('Help text for the table group.');
       await expect(byId(page, 'question-after-table/1')).toBeVisible();
     });
+
+    test('should render a matrix group whose only child is a help item', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'matrix-group-with-only-help-item.json', 'formContainer', {fhirVersion: 'R4'});
+
+      await byId(page, 'help-button-matrix-group/1').click();
+      await expect(byId(page, 'help-content-matrix-group/1')).toHaveText('Help text for the matrix group.');
+      await expect(byId(page, 'question-after-matrix/1')).toBeVisible();
+    });
   });
 });
 
