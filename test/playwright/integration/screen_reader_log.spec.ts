@@ -200,6 +200,69 @@ test.describe('508', () => {
         'Removed Sub items for checkbox option: Apple'];
       await expectReaderLogEntries(page, case7Entries);
     });
+
+    for (const layout of ['check-box', 'autocomplete']) {
+      test(`should not announce nested subgroup visibility when its ${layout} ancestor is removed`, async ({ page }) => {
+        await page.goto('/test/pages/addFormToPageTest.html');
+        await waitForLFormsReady(page);
+        await page.evaluate(async layout => {
+          const control = (code: string) => ({
+            url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+            valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code}]}
+          });
+          await (window as any).LForms.Util.addFormToPage({
+            resourceType: 'Questionnaire', status: 'draft',
+            item: [{linkId: 'details', text: 'Show details?', type: 'boolean', initial: [{valueBoolean: true}]}, {
+              linkId: 'outer', text: 'Fruits', type: 'choice', repeats: true,
+              extension: [control(layout)],
+              answerOption: [{valueCoding: {code: 'a', display: 'Apple'}}],
+              item: [{
+                linkId: 'inner', text: 'Size', type: 'choice', repeats: true,
+                extension: [control('check-box')],
+                answerOption: [{valueCoding: {code: 's', display: 'Small'}}],
+                item: [{
+                  linkId: 'leaf', text: 'How many?', type: 'string',
+                  enableBehavior: 'all',
+                  enableWhen: [{question: 'outer', operator: '=', answerCoding: {code: 'a'}},
+                    {question: 'details', operator: '=', answerBoolean: true}]
+                }]
+              }]
+            }]
+          }, 'formContainer', {fhirVersion: 'R4'});
+        }, layout);
+
+        const outer = byId(page, 'outer/1');
+        if (layout === 'check-box') {
+          await byId(page, 'outer/1||a').click();
+        } else {
+          await outer.click();
+          await outer.press('ArrowDown');
+          await outer.press('Enter');
+        }
+        await byId(page, 'inner/1/multi-select-subgroup||a/1||s').click();
+        await expect(page.locator('input[id^="leaf/"]')).toBeVisible();
+        await resetReaderLog(page);
+
+        // Visibility changes of a nested subgroup are still announced while
+        // its containing answer remains selected.
+        await byId(page, 'details/1|false').click();
+        await expectReaderLogEntries(page, ['Hiding sub items for Small']);
+        await byId(page, 'details/1|true').click();
+        await expectReaderLogEntries(page, ['Hiding sub items for Small', 'Showing sub items for Small']);
+        await resetReaderLog(page);
+
+        if (layout === 'check-box') {
+          await byId(page, 'outer/1||a').click();
+        } else {
+          await byId(page, 'item-outer/1').locator('.autocomp_selected li button').click();
+        }
+        await expect(page.locator('input[id^="leaf/"]')).toHaveCount(0);
+        await expect(page.locator(readerLogEntries).filter({hasText: /sub items/i}))
+          .toHaveText([layout === 'check-box' ?
+            'Removed Sub items for checkbox option: Apple' : 'Removed sub items for autocomplete option: Apple']);
+      });
+    }
+
   });
 
   test.describe('field labels', () => {

@@ -39,6 +39,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Loading a QuestionnaireResponse no longer fails when it includes help,
   legal, or unit display items, for example under a question's answer or in a
   group, including when a question has more than one of the same kind.
+- Removing a selected multi-select answer no longer announces separate
+  visibility changes for nested subgroups that are removed with it.
 - A `table` (matrix) group with no child items, such as one whose only child
   is a help item, is now rendered as a vertical group.
 - Selecting an answer in a single-select drop-down question that has child

@@ -678,6 +678,11 @@ export default class LhcFormData {
         this._subGroupVisibilityBeforeRemoval.set(subGroup, wasShown);
         return;
       }
+      // A deselected ancestor removes this whole subtree. Its removal message
+      // also covers nested subgroups whose own answers are still selected.
+      if (this._isInUnusedMultiSelectPart(subGroup)) {
+        return;
+      }
 
       const isShown = InternalUtil.multiSelectSubGroupShown(subGroup);
       if (wasShown !== isShown) {
