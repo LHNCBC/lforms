@@ -66,6 +66,78 @@ describe('Questionnaire item-control help text issues', function() {
     });
   });
 
+  describe('QuestionnaireResponse with help, legal, or unit display items', function() {
+    const checkBoxExt = {
+      url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+      valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: 'check-box'}]}
+    };
+    const answerOption = [{valueCoding: {code: 'a', display: 'Apple'}}, {valueCoding: {code: 'b', display: 'Banana'}}];
+    const apple = {valueCoding: {code: 'a', display: 'Apple'}};
+    function displayItem(linkId, code) {
+      return {
+        linkId: linkId,
+        text: code + ' text',
+        type: 'display',
+        extension: [{
+          url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+          valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: code}]}
+        }]
+      };
+    }
+    function merge(qItems, qrItems) {
+      const formDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+        {resourceType: 'Questionnaire', status: 'draft', item: qItems}, 'R4');
+      return LForms.Util.mergeFHIRDataIntoLForms('QuestionnaireResponse',
+        {resourceType: 'QuestionnaireResponse', status: 'in-progress', item: qrItems}, formDef, 'R4');
+    }
+
+    ['help', 'legal', 'unit'].forEach(function(code) {
+      it('should merge a multi-select answer whose only Questionnaire child is a ' + code + ' item', function() {
+        const merged = merge([{
+          linkId: 'ms', text: 'Fruits', type: 'choice', repeats: true, extension: [checkBoxExt],
+          answerOption: answerOption, item: [displayItem('ms-' + code, code)]
+        }], [{linkId: 'ms', answer: [Object.assign({item: [{linkId: 'ms-' + code}]}, apple)]}]);
+
+        assert.deepEqual(merged.items[0].value.map(v => v.code), ['a']);
+        assert.notProperty(merged.items[0], 'items');
+      });
+    });
+
+    it('should merge a multi-select answer whose items include a help item and a child item', function() {
+      const merged = merge([{
+        linkId: 'ms', text: 'Fruits', type: 'choice', repeats: true, extension: [checkBoxExt],
+        answerOption: answerOption,
+        item: [displayItem('ms-help', 'help'), {linkId: 'ms-child', text: 'How many?', type: 'string'}]
+      }], [{linkId: 'ms', answer: [Object.assign({item: [
+        {linkId: 'ms-help'}, {linkId: 'ms-child', answer: [{valueString: 'three'}]}
+      ]}, apple)]}]);
+
+      const subGroups = merged.items[0].items.filter(item => item.isSubGroupForMultiSelect);
+      assert.equal(subGroups.length, 1);
+      assert.deepEqual(subGroups[0].items.map(item => item.linkId), ['ms-child']);
+      assert.equal(subGroups[0].items[0].value, 'three');
+    });
+
+    it('should merge a single-select answer whose items include a help item', function() {
+      const merged = merge([{
+        linkId: 'single', text: 'Fruit', type: 'choice', answerOption: answerOption,
+        item: [displayItem('single-help', 'help')]
+      }], [{linkId: 'single', answer: [Object.assign({item: [{linkId: 'single-help'}]}, apple)]}]);
+
+      assert.equal(merged.items[0].value.code, 'a');
+      assert.notProperty(merged.items[0], 'items');
+    });
+
+    it('should merge a group whose items include a help item', function() {
+      const merged = merge([{
+        linkId: 'grp', text: 'Group', type: 'group',
+        item: [displayItem('grp-help', 'help'), {linkId: 'grp-child', text: 'Name', type: 'string'}]
+      }], [{linkId: 'grp', item: [{linkId: 'grp-help'}, {linkId: 'grp-child', answer: [{valueString: 'Ann'}]}]}]);
+
+      assert.equal(merged.items[0].items[0].value, 'Ann');
+    });
+  });
+
   let fhirVersions = Object.keys(LForms.Util.FHIRSupport);
   for (let i=0, len=fhirVersions.length; i<len; ++i) {
     (function (fhirVersion) {

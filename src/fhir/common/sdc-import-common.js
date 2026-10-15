@@ -1040,6 +1040,20 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   * Checks whether a linkId is that of a help, legal, or unit display item of
+   * the given LForms item.  Those display items are stored as properties of
+   * the LForms item rather than as its child items.
+   * @param lfItem an LForms item
+   * @param linkId the linkId of a QuestionnaireResponse item
+   * @private
+   */
+  qrImport._isHelpLegalOrUnitLinkId = function(lfItem, linkId) {
+    return linkId !== undefined && (linkId === lfItem.codingInstructionsLinkId ||
+      linkId === lfItem.legalLinkId || linkId === lfItem.itemControlUnitLinkId);
+  };
+
+
+  /**
    * Merge data into items on the same level
    * @param parentQRItemInfo structural information of a parent item
    * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
@@ -1052,7 +1066,8 @@ function addCommonSDCImportFns(ns) {
 
       var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
       var qrItem = qrItemInfo.item;
-      if (qrItem) {
+      // Help, legal, and unit display items have no answers to merge.
+      if (qrItem && !this._isHelpLegalOrUnitLinkId(parentLFormsItem, qrItemInfo.linkId)) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
           var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId);
@@ -1101,7 +1116,14 @@ function addCommonSDCImportFns(ns) {
               } else {
                 // Multi-select with child items.
                 for (let k = 0; k < qrItemInfo.qrAnswersItemsInfo.length; k++) {
-                  if (qrItemInfo.qrAnswersItemsInfo[k]) {
+                  const answerItemsInfo = qrItemInfo.qrAnswersItemsInfo[k];
+                  if (answerItemsInfo) {
+                    // The help, legal, and unit display items belong to the
+                    // multi-select question, not to the answer's subgroup.
+                    answerItemsInfo.qrItemsInfo = answerItemsInfo.qrItemsInfo.filter(
+                      info => !this._isHelpLegalOrUnitLinkId(item, info.linkId));
+                  }
+                  if (answerItemsInfo && answerItemsInfo.qrItemsInfo.length > 0) {
                     let newCheckboxSubGroup = {
                       "isSubGroupForMultiSelect": true,
                       "multiSelectOption": {},

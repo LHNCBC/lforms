@@ -36,6 +36,9 @@ This project follows [Semantic Versioning](http://semver.org/).
   added, removed, shown or hidden, only that is announced, not each child
   item. Items that were removed from the form are no longer announced when
   the skip logic that controlled them changes.
+- Loading a QuestionnaireResponse no longer fails when it includes help,
+  legal, or unit display items, for example under a question's answer or in a
+  group.
 - A `table` (matrix) group with no child items, such as one whose only child
   is a help item, is now rendered as a vertical group.
 - Selecting an answer in a single-select drop-down question that has child
