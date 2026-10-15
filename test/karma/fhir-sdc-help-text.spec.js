@@ -136,6 +136,30 @@ describe('Questionnaire item-control help text issues', function() {
 
       assert.equal(merged.items[0].items[0].value, 'Ann');
     });
+
+    ['help', 'legal', 'unit'].forEach(function(code) {
+      it('should merge a multi-select answer whose items include two ' + code + ' items', function() {
+        const merged = merge([{
+          linkId: 'ms', text: 'Fruits', type: 'choice', repeats: true, extension: [checkBoxExt],
+          answerOption: answerOption, item: [displayItem('ms-' + code + '-1', code), displayItem('ms-' + code + '-2', code)]
+        }], [{linkId: 'ms', answer: [Object.assign({item: [
+          {linkId: 'ms-' + code + '-1'}, {linkId: 'ms-' + code + '-2'}
+        ]}, apple)]}]);
+
+        assert.deepEqual(merged.items[0].value.map(v => v.code), ['a']);
+        assert.notProperty(merged.items[0], 'items');
+      });
+    });
+
+    it('should merge a group whose items include the first of two help items', function() {
+      const merged = merge([{
+        linkId: 'grp', text: 'Group', type: 'group',
+        item: [displayItem('grp-help-1', 'help'), displayItem('grp-help-2', 'help'),
+          {linkId: 'grp-child', text: 'Name', type: 'string'}]
+      }], [{linkId: 'grp', item: [{linkId: 'grp-help-1'}, {linkId: 'grp-child', answer: [{valueString: 'Ann'}]}]}]);
+
+      assert.equal(merged.items[0].items[0].value, 'Ann');
+    });
   });
 
   let fhirVersions = Object.keys(LForms.Util.FHIRSupport);

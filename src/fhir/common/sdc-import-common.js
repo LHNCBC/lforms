@@ -1040,16 +1040,18 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   * Checks whether a linkId is that of a help, legal, or unit display item of
-   * the given LForms item.  Those display items are stored as properties of
-   * the LForms item rather than as its child items.
+   * Checks whether a QuestionnaireResponse item has nothing to merge into the
+   * given LForms item: it has no answers or child items, and no child item of
+   * the LForms item has its linkId.  This is the case for help, legal, and unit
+   * display items, which are stored as properties of the LForms item rather
+   * than as its child items.
    * @param lfItem an LForms item
-   * @param linkId the linkId of a QuestionnaireResponse item
+   * @param qrItem a QuestionnaireResponse item
    * @private
    */
-  qrImport._isHelpLegalOrUnitLinkId = function(lfItem, linkId) {
-    return linkId !== undefined && (linkId === lfItem.codingInstructionsLinkId ||
-      linkId === lfItem.legalLinkId || linkId === lfItem.itemControlUnitLinkId);
+  qrImport._isEmptyUnmatchedQRItem = function(lfItem, qrItem) {
+    return !qrItem.answer?.length && !qrItem.item?.length &&
+      !this._findTheMatchingItemByLinkId(lfItem, qrItem.linkId);
   };
 
 
@@ -1067,7 +1069,7 @@ function addCommonSDCImportFns(ns) {
       var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
       var qrItem = qrItemInfo.item;
       // Help, legal, and unit display items have no answers to merge.
-      if (qrItem && !this._isHelpLegalOrUnitLinkId(parentLFormsItem, qrItemInfo.linkId)) {
+      if (qrItem && !this._isEmptyUnmatchedQRItem(parentLFormsItem, qrItem)) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
           var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId);
@@ -1121,7 +1123,7 @@ function addCommonSDCImportFns(ns) {
                     // The help, legal, and unit display items belong to the
                     // multi-select question, not to the answer's subgroup.
                     answerItemsInfo.qrItemsInfo = answerItemsInfo.qrItemsInfo.filter(
-                      info => !this._isHelpLegalOrUnitLinkId(item, info.linkId));
+                      info => !this._isEmptyUnmatchedQRItem(item, info.item));
                   }
                   if (answerItemsInfo && answerItemsInfo.qrItemsInfo.length > 0) {
                     let newCheckboxSubGroup = {
