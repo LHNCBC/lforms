@@ -229,6 +229,48 @@
           ]
         }
       ]
+    },
+    {
+      "linkId": "case7-enablewhen-mixed",
+      "text": "Case 7: one visible child, one child disabled by enableWhen on another question",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case7-visible-child",
+          "text": "Where from? (visible)",
+          "type": "string"
+        },
+        {
+          "linkId": "case7-enablewhen-child",
+          "text": "How ripe? (enabled when 'Show follow-up questions' is Yes)",
+          "type": "integer",
+          "enableWhen": [
+            {
+              "question": "show-details",
+              "operator": "=",
+              "answerBoolean": true
+            }
+          ]
+        }
+      ]
     }
   ]
 }

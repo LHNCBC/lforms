@@ -60,6 +60,11 @@ export default class LhcFormData {
   // displayed before form controls were reevaluated.
   _subGroupVisibilityBeforeRemoval = new Map();
 
+  // While a change is processed, the positions in _actionLogs of the skip
+  // logic messages for items in multi-select subgroups.  The messages are
+  // removed if a message for the whole subgroup is added for the same change.
+  _subGroupItemLogs = null;
+
   // active item, where a input field in the row has the focus
   _activeItem = null;
 
@@ -589,6 +594,7 @@ export default class LhcFormData {
     // selected multi-select option's subgroup can become shown or hidden when
     // enableWhen changes, without the subgroup itself being added or removed.
     const previousSubGroupVisibility = this._getMultiSelectSubGroupVisibility();
+    this._subGroupItemLogs = [];
 
     // A two-state checkbox cannot display "not answered".  Store an empty value
     // as unchecked before the change is passed on to dependent items.
@@ -664,12 +670,9 @@ export default class LhcFormData {
    */
   _logMultiSelectSubGroupVisibilityChanges(previousVisibility) {
     this._subGroupVisibilityBeforeRemoval = new Map();
+    const announcedSubGroups = new Set();
     previousVisibility.forEach((wasShown, subGroup) => {
-      const parentValue = subGroup._parentItem?.value;
-      const selectedAnswers = Array.isArray(parentValue) ? parentValue : (parentValue ? [parentValue] : []);
-      const answerSelected = selectedAnswers.some(
-        answer => answer && this.getLinkIdForMultiSelectSubGroup(answer) === subGroup.linkId);
-      if (!answerSelected) {
+      if (!this._isMultiSelectSubGroupAnswerSelected(subGroup)) {
         // The subgroup is about to be removed, which is announced when it is
         // removed if it was displayed before this change.
         this._subGroupVisibilityBeforeRemoval.set(subGroup, wasShown);
@@ -679,8 +682,78 @@ export default class LhcFormData {
       const isShown = InternalUtil.multiSelectSubGroupShown(subGroup);
       if (wasShown !== isShown) {
         this._actionLogs.push((isShown ? 'Showing' : 'Hiding') + ' sub items for ' + subGroup.question);
+        announcedSubGroups.add(subGroup);
       }
     });
+    this._removeSubGroupItemLogs(announcedSubGroups);
+  }
+
+
+  /**
+   * Check whether the answer for a multi-select subgroup is selected.
+   * @param subGroup a multi-select subgroup
+   * @return {boolean}
+   * @private
+   */
+  _isMultiSelectSubGroupAnswerSelected(subGroup) {
+    const parentValue = subGroup._parentItem?.value;
+    const selectedAnswers = Array.isArray(parentValue) ? parentValue : (parentValue ? [parentValue] : []);
+    return selectedAnswers.some(
+      answer => answer && this.getLinkIdForMultiSelectSubGroup(answer) === subGroup.linkId);
+  }
+
+
+  /**
+   * Check whether an item is in a part of a multi-select question that is not
+   * displayed: the original sub items, which are copied into a subgroup for
+   * each selected answer, or the subgroup of an answer that is no longer
+   * selected.
+   * @param item an item
+   * @return {boolean}
+   * @private
+   */
+  _isInUnusedMultiSelectPart(item) {
+    for (let current = item; current?._parentItem; current = current._parentItem) {
+      if (InternalUtil.isMultiSelectWithSubItems(current._parentItem) &&
+          (!current.isSubGroupForMultiSelect || !this._isMultiSelectSubGroupAnswerSelected(current))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  /**
+   * Find the multi-select subgroup that contains an item.
+   * @param item an item
+   * @return the item itself if it is a multi-select subgroup, otherwise the
+   *  nearest multi-select subgroup above it, or undefined if there is none.
+   * @private
+   */
+  _getMultiSelectSubGroup(item) {
+    for (let current = item; current; current = current._parentItem) {
+      if (current.isSubGroupForMultiSelect) {
+        return current;
+      }
+    }
+    return undefined;
+  }
+
+
+  /**
+   * Stop keeping track of the skip logic messages for items in multi-select
+   * subgroups, and remove the ones for the given subgroups, which have their
+   * own message.
+   * @param subGroups a Set of multi-select subgroups
+   * @private
+   */
+  _removeSubGroupItemLogs(subGroups) {
+    const removed = new Set((this._subGroupItemLogs || [])
+      .filter(log => subGroups.has(log.subGroup)).map(log => log.index));
+    this._subGroupItemLogs = null;
+    if (removed.size > 0) {
+      this._actionLogs = this._actionLogs.filter((msg, i) => !removed.has(i));
+    }
   }
 
 
@@ -832,6 +905,13 @@ export default class LhcFormData {
    * @private
    */
   _setupSourceToTargetMap() {
+    // Rebuild the lists, so that they do not keep items that have been removed.
+    for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+      const item = this.itemList[i];
+      delete item._formulaTargets;
+      delete item._dataControlTargets;
+      delete item._skipLogicTargets;
+    }
     for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
       const item = this.itemList[i];
       // formula
@@ -972,10 +1052,15 @@ export default class LhcFormData {
   _setSkipLogicStatusValue(item, newStatus, noLog=false) {
     let changed = false;
     if (item._skipLogicStatus !== newStatus) {
-      if (item._skipLogicStatus) {
+      // Items that are not displayed because of the multi-select layout are
+      // not announced.
+      if (item._skipLogicStatus && !noLog && !this._isInUnusedMultiSelectPart(item)) {
         const msg = newStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ? 'Hiding ' + item._text : 'Showing ' + item._text;
-        if (!noLog)
-          this._actionLogs.push(msg);
+        const subGroup = this._getMultiSelectSubGroup(item);
+        if (subGroup && this._subGroupItemLogs) {
+          this._subGroupItemLogs.push({subGroup: subGroup, index: this._actionLogs.length});
+        }
+        this._actionLogs.push(msg);
       }
       item._skipLogicStatus = newStatus;
       changed = true;
@@ -2655,12 +2740,17 @@ export default class LhcFormData {
     this._updateSubItemsHiddenFromView(newGroupItemForMultiSelect, false);
     item.items.unshift(newGroupItemForMultiSelect);
 
+    this._subGroupItemLogs = [];
     this._resetInternalData();
 
     // Do not announce a subgroup that is not displayed.
     if (InternalUtil.multiSelectSubGroupShown(newGroupItemForMultiSelect)) {
       var readerMsg = language.added + newGroupItemForMultiSelect.question;
       this._actionLogs.push(readerMsg);
+      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]));
+    }
+    else {
+      this._removeSubGroupItemLogs(new Set());
     }
   }
 

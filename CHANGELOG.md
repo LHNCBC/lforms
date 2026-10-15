@@ -30,6 +30,12 @@ This project follows [Semantic Versioning](http://semver.org/).
 - For a multi-select check-box question with child items, screen readers are
   now told that the child items were added or removed when an answer is
   checked or unchecked, instead of on the next change in the form.
+- Screen readers are no longer told the same skip logic change more than
+  once. Items that are not displayed because of a multi-select question's
+  layout are no longer announced. When a selected answer's child items are
+  added, removed, shown or hidden, only that is announced, not each child
+  item. Items that were removed from the form are no longer announced when
+  the skip logic that controlled them changes.
 - A `table` (matrix) group with no child items, such as one whose only child
   is a help item, is now rendered as a vertical group.
 - Selecting an answer in a single-select drop-down question that has child

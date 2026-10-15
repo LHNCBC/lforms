@@ -134,30 +134,26 @@ test.describe('508', () => {
       // The child is enabled only while Apple is selected. Its subgroup is
       // shown when Apple is checked and hidden before it is removed when Apple
       // is unchecked, so both structural changes should still be announced.
+      // The child's own "Showing"/"Hiding" messages are not announced, for
+      // either the original child or the copy for Apple.
       await resetReaderLog(page);
       const case5Apple = byId(page, 'case5-enablewhen-parent/1||a');
       await case5Apple.click();
-      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Apple' })).toHaveCount(1);
+      await expectReaderLogEntries(page, ['Added Apple']);
       await case5Apple.click();
-      await expect(page.locator(readerLogEntries).filter({
-        hasText: 'Removed Sub items for checkbox option: Apple'
-      })).toHaveCount(1);
+      await expectReaderLogEntries(page, ['Added Apple', 'Removed Sub items for checkbox option: Apple']);
 
       // Banana stays checked, so its subgroup is only shown or hidden as Apple
-      // is checked or unchecked, and is not added or removed.
+      // is checked or unchecked, and is not added or removed. The copy of the
+      // child for the Apple subgroup removed above is not announced either.
       await resetReaderLog(page);
       await byId(page, 'case5-enablewhen-parent/1||b').click();
       await expect(byId(page, 'case5-enablewhen-parent/1||b')).toBeChecked();
       await case5Apple.click();
-      await expect(page.locator(readerLogEntries).filter({ hasText: 'Showing sub items for Banana' })).toHaveCount(1);
-      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Apple' })).toHaveCount(1);
+      await expectReaderLogEntries(page, ['Showing sub items for Banana', 'Added Apple']);
       await case5Apple.click();
-      await expect(page.locator(readerLogEntries).filter({ hasText: 'Hiding sub items for Banana' })).toHaveCount(1);
-      await expect(page.locator(readerLogEntries).filter({ hasText: 'Removed' })).toHaveCount(1);
-      await expect(page.locator(readerLogEntries).filter({
-        hasText: 'Removed Sub items for checkbox option: Apple'
-      })).toHaveCount(1);
-      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Banana' })).toHaveCount(0);
+      await expectReaderLogEntries(page, ['Showing sub items for Banana', 'Added Apple',
+        'Hiding sub items for Banana', 'Removed Sub items for checkbox option: Apple']);
 
       // The subgroup is initially hidden because its child is controlled by a
       // different question. It should be announced as shown or hidden when
@@ -188,6 +184,21 @@ test.describe('508', () => {
       await dropdown.press('Enter');
       await expect(page.locator(readerLogEntries).filter({ hasText: 'Selected Apple' })).toHaveCount(1);
       await expect(page.locator(readerLogEntries).filter({ hasText: 'Added' })).toHaveCount(0);
+
+      // One child stays visible, so the subgroup stays shown, and the other
+      // child's own message is announced. The original children are not
+      // announced.
+      await byId(page, 'show-details/1|false').click();
+      await resetReaderLog(page);
+      const case7Apple = byId(page, 'case7-enablewhen-mixed/1||a');
+      await case7Apple.click();
+      await expectReaderLogEntries(page, ['Added Apple']);
+      await byId(page, 'show-details/1|true').click();
+      await case7Apple.click();
+      const case7Entries = ['Added Apple',
+        "Showing How ripe? (enabled when 'Show follow-up questions' is Yes)",
+        'Removed Sub items for checkbox option: Apple'];
+      await expectReaderLogEntries(page, case7Entries);
     });
   });
 
