@@ -56,6 +56,10 @@ export default class LhcFormData {
   // action logs for screen reader
   _actionLogs = [];
 
+  // Whether each multi-select subgroup whose answer was just deselected was
+  // displayed before form controls were reevaluated.
+  _subGroupVisibilityBeforeRemoval = new Map();
+
   // active item, where a input field in the row has the focus
   _activeItem = null;
 
@@ -581,6 +585,11 @@ export default class LhcFormData {
    * @param sourceItem the controlling/source item
    */
   updateOnSourceItemChange(sourceItem) {
+    // Keep the visibility state from before form controls are reevaluated.  A
+    // selected multi-select option's subgroup can become shown or hidden when
+    // enableWhen changes, without the subgroup itself being added or removed.
+    const previousSubGroupVisibility = this._getMultiSelectSubGroupVisibility();
+
     // A two-state checkbox cannot display "not answered".  Store an empty value
     // as unchecked before the change is passed on to dependent items.
     const twoStateValue = InternalUtil.twoStateCheckboxValue(sourceItem, sourceItem.value);
@@ -617,6 +626,7 @@ export default class LhcFormData {
     this._adjustLastSiblingListForHorizontalLayout();
     // run all form controls
     this._checkFormControls();
+    this._logMultiSelectSubGroupVisibilityChanges(previousSubGroupVisibility);
 
     // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
@@ -627,6 +637,50 @@ export default class LhcFormData {
         });
       });
     }
+  }
+
+
+  /**
+   * Capture the current visibility of each multi-select subgroup.
+   * @return a map from subgroup objects to whether they are displayed
+   * @private
+   */
+  _getMultiSelectSubGroupVisibility() {
+    const visibility = new Map();
+    for (const item of this.itemList) {
+      if (item.isSubGroupForMultiSelect) {
+        visibility.set(item, InternalUtil.multiSelectSubGroupShown(item));
+      }
+    }
+    return visibility;
+  }
+
+
+  /**
+   * Add screen-reader messages for existing multi-select subgroups whose
+   * visibility changed while form controls were reevaluated.
+   * @param previousVisibility visibility captured before form controls ran
+   * @private
+   */
+  _logMultiSelectSubGroupVisibilityChanges(previousVisibility) {
+    this._subGroupVisibilityBeforeRemoval = new Map();
+    previousVisibility.forEach((wasShown, subGroup) => {
+      const parentValue = subGroup._parentItem?.value;
+      const selectedAnswers = Array.isArray(parentValue) ? parentValue : (parentValue ? [parentValue] : []);
+      const answerSelected = selectedAnswers.some(
+        answer => answer && this.getLinkIdForMultiSelectSubGroup(answer) === subGroup.linkId);
+      if (!answerSelected) {
+        // The subgroup is about to be removed, which is announced when it is
+        // removed if it was displayed before this change.
+        this._subGroupVisibilityBeforeRemoval.set(subGroup, wasShown);
+        return;
+      }
+
+      const isShown = InternalUtil.multiSelectSubGroupShown(subGroup);
+      if (wasShown !== isShown) {
+        this._actionLogs.push((isShown ? 'Showing' : 'Hiding') + ' sub items for ' + subGroup.question);
+      }
+    });
   }
 
 
@@ -2619,7 +2673,11 @@ export default class LhcFormData {
   deleteSubItemsForCheckbox(item, answer) {
     const linkId = this.getLinkIdForMultiSelectSubGroup(answer);
     const subGroup = item.items.find(x => x.linkId === linkId);
-    const subGroupShown = subGroup && InternalUtil.multiSelectSubGroupShown(subGroup);
+    // Unchecking the answer may already have hidden the subgroup through
+    // enableWhen, so use its visibility from before the change if it is known.
+    const subGroupShown = subGroup && (this._subGroupVisibilityBeforeRemoval.has(subGroup) ?
+      this._subGroupVisibilityBeforeRemoval.get(subGroup) : InternalUtil.multiSelectSubGroupShown(subGroup));
+    this._subGroupVisibilityBeforeRemoval.delete(subGroup);
     item.items = item.items.filter(x => x.linkId !== linkId);
 
     this._resetInternalData();

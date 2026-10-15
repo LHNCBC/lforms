@@ -131,6 +131,55 @@ test.describe('508', () => {
       await expect(case2Apple).not.toBeChecked();
       await expectReaderLogEntries(page, ['Added Apple', 'Removed Sub items for checkbox option: Apple']);
 
+      // The child is enabled only while Apple is selected. Its subgroup is
+      // shown when Apple is checked and hidden before it is removed when Apple
+      // is unchecked, so both structural changes should still be announced.
+      await resetReaderLog(page);
+      const case5Apple = byId(page, 'case5-enablewhen-parent/1||a');
+      await case5Apple.click();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Apple' })).toHaveCount(1);
+      await case5Apple.click();
+      await expect(page.locator(readerLogEntries).filter({
+        hasText: 'Removed Sub items for checkbox option: Apple'
+      })).toHaveCount(1);
+
+      // Banana stays checked, so its subgroup is only shown or hidden as Apple
+      // is checked or unchecked, and is not added or removed.
+      await resetReaderLog(page);
+      await byId(page, 'case5-enablewhen-parent/1||b').click();
+      await expect(byId(page, 'case5-enablewhen-parent/1||b')).toBeChecked();
+      await case5Apple.click();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Showing sub items for Banana' })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Apple' })).toHaveCount(1);
+      await case5Apple.click();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Hiding sub items for Banana' })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Removed' })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({
+        hasText: 'Removed Sub items for checkbox option: Apple'
+      })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Banana' })).toHaveCount(0);
+
+      // The subgroup is initially hidden because its child is controlled by a
+      // different question. It should be announced as shown or hidden when
+      // that question changes, and as removed when Apple is unchecked.
+      await resetReaderLog(page);
+      const case4Apple = byId(page, 'case4-enablewhen-other/1||a');
+      await case4Apple.click();
+      await expect(case4Apple).toBeChecked();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Apple' })).toHaveCount(0);
+      await byId(page, 'show-details/1|true').click();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Showing sub items for Apple' })).toHaveCount(1);
+      await byId(page, 'show-details/1|false').click();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Hiding sub items for Apple' })).toHaveCount(1);
+      await expect(case4Apple).toBeChecked();
+      await byId(page, 'show-details/1|true').click();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Showing sub items for Apple' })).toHaveCount(2);
+      await case4Apple.click();
+      await expect(page.locator(readerLogEntries).filter({
+        hasText: 'Removed Sub items for checkbox option: Apple'
+      })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Apple' })).toHaveCount(0);
+
       // The only sub item is hidden, autocomplete.
       await resetReaderLog(page);
       const dropdown = byId(page, 'case6-autocomplete-hidden/1');
