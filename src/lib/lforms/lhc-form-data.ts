@@ -63,6 +63,10 @@ export default class LhcFormData {
   // New hidden subgroups whose FHIRPath expressions have not run yet.
   _hiddenNewSubGroups = new Set();
 
+  // Track announcements made during an expression run, so its final
+  // visibility check does not announce the same change again.
+  _pendingExpressionRuns = new Set<{visibility: Map<any, boolean>, hiddenNewSubGroups: Set<any>}>();
+
   // While a change is processed, the positions in _actionLogs of the skip
   // logic messages for items in multi-select subgroups.  The messages are
   // removed if a message for the whole subgroup is added for the same change.
@@ -645,15 +649,22 @@ export default class LhcFormData {
       return new Promise<void>((resolve, reject) => {
         setTimeout(function(){
           // enableWhenExpression can show or hide a selected option's subgroup.
-          const previousVisibility = self._getMultiSelectSubGroupVisibility();
-          const hiddenNewSubGroups = self._hiddenNewSubGroups;
+          const run = {
+            visibility: self._getMultiSelectSubGroupVisibility(),
+            hiddenNewSubGroups: self._hiddenNewSubGroups
+          };
           self._hiddenNewSubGroups = new Set();
+          self._pendingExpressionRuns.add(run);
           self._expressionProcessor.runCalculations(false).then(()=>{
+            self._pendingExpressionRuns.delete(run);
             self._subGroupItemLogs = [];
             self._checkFormControls();
-            self._logMultiSelectSubGroupVisibilityChanges(previousVisibility, hiddenNewSubGroups);
+            self._logMultiSelectSubGroupVisibilityChanges(run.visibility, run.hiddenNewSubGroups);
             resolve();
-          }).catch(reject);
+          }).catch(error => {
+            self._pendingExpressionRuns.delete(run);
+            reject(error);
+          });
         });
       });
     }
@@ -702,13 +713,23 @@ export default class LhcFormData {
 
       const isShown = InternalUtil.multiSelectSubGroupShown(subGroup);
       if (wasShown !== isShown) {
-        if (isShown && hiddenNewSubGroups?.has(subGroup)) {
+        const addedHidden = hiddenNewSubGroups?.has(subGroup) ||
+          [...this._pendingExpressionRuns].some(run => run.hiddenNewSubGroups.has(subGroup));
+        if (isShown && addedHidden) {
           this._actionLogs.push(language.added + subGroup.question);
         }
         else {
           this._actionLogs.push((isShown ? 'Showing' : 'Hiding') + ' sub items for ' + subGroup.question);
         }
         announcedSubGroups.add(subGroup);
+        // A calculated value can cause another update before expressions
+        // finish. Record what that update has already announced.
+        for (const run of this._pendingExpressionRuns) {
+          if (run.visibility.has(subGroup)) {
+            run.visibility.set(subGroup, isShown);
+          }
+          run.hiddenNewSubGroups.delete(subGroup);
+        }
       }
     });
     this._removeSubGroupItemLogs(announcedSubGroups);

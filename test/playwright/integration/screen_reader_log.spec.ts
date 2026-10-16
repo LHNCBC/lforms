@@ -257,6 +257,54 @@ test.describe('508', () => {
       await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Banana' })).toHaveCount(0);
     });
 
+
+    test('should add one entry when a calculated value shows or hides a multi-select subgroup', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'multi-select-with-calculated-child-items.json', 'formContainer', { fhirVersion: 'R4' });
+      await byId(page, 'case1-calculated-other/1||a').waitFor({ state: 'visible' });
+      await resetReaderLog(page);
+
+      // The child is controlled by a calculated value that depends on another
+      // question. The value is set while FHIRPath expressions run, which
+      // starts another round of form updates before the expressions finish.
+      const case1Apple = byId(page, 'case1-calculated-other/1||a');
+      await case1Apple.click();
+      await expect(case1Apple).toBeChecked();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Apple' })).toHaveCount(0);
+      await resetReaderLog(page);
+      const number = byId(page, 'number/1');
+      await number.fill('10');
+      await number.press('Tab');
+      await expect(byId(page, 'case1-child/1/multi-select-subgroup||a/1')).toBeVisible();
+      const case1Shown = ['Set values for question', 'Showing sub items for Apple'];
+      await expectReaderLogEntries(page, case1Shown);
+      await number.fill('1');
+      await number.press('Tab');
+      await expect(byId(page, 'case1-child/1/multi-select-subgroup||a/1')).toHaveCount(0);
+      const case1Hidden = case1Shown.concat(['Set values for question', 'Hiding sub items for Apple']);
+      await expectReaderLogEntries(page, case1Hidden);
+      // Wait for any late messages from the end of the expression run.
+      await page.waitForTimeout(500);
+      expect(await page.locator(readerLogEntries).allTextContents()).toEqual(case1Hidden);
+
+      // The child is controlled by a calculated value that is true when Apple
+      // is selected. The subgroup is hidden when it is added, and is shown by
+      // the calculated value, so it is announced as added.
+      await resetReaderLog(page);
+      const case2Apple = byId(page, 'case2-calculated-parent/1||a');
+      await case2Apple.click();
+      await expect(byId(page, 'case2-child/1/multi-select-subgroup||a/1')).toBeVisible();
+      const case2Added = ['Set values for question', 'Added Apple'];
+      await expectReaderLogEntries(page, case2Added);
+      await case2Apple.click();
+      await expect(byId(page, 'case2-child/1/multi-select-subgroup||a/1')).toHaveCount(0);
+      const case2Removed = case2Added.concat(['Removed  Sub items for checkbox option: Apple', 'Set values for question']);
+      await expectReaderLogEntries(page, case2Removed);
+      await page.waitForTimeout(500);
+      expect(await page.locator(readerLogEntries).allTextContents()).toEqual(case2Removed);
+    });
+
     for (const layout of ['check-box', 'autocomplete']) {
       test(`should not announce nested subgroup visibility when its ${layout} ancestor is removed`, async ({ page }) => {
         await page.goto('/test/pages/addFormToPageTest.html');

@@ -28,6 +28,8 @@ This project follows [Semantic Versioning](http://semver.org/).
   items were added or removed, and are told when enableWhen or
   enableWhenExpression later shows or hides the child items of a selected
   answer.
+- Visibility changes of a multi-select answer's child items caused by a
+  calculated value are announced only once.
 - For a multi-select check-box question with child items, screen readers are
   now told that the child items were added or removed when an answer is
   checked or unchecked, instead of on the next change in the form.
