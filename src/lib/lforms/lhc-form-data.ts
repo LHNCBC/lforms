@@ -2797,7 +2797,8 @@ export default class LhcFormData {
       this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]));
     }
     else {
-      this._removeSubGroupItemLogs(new Set());
+      // No part of this new subgroup is displayed, so discard its item logs.
+      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]));
       if (LForms.FHIR && this._hasResponsiveExpr) {
         // FHIRPath expressions, which run after this, might show it.
         this._hiddenNewSubGroups.add(newGroupItemForMultiSelect);

@@ -305,6 +305,32 @@ test.describe('508', () => {
       expect(await page.locator(readerLogEntries).allTextContents()).toEqual(case2Removed);
     });
 
+    test('should discard item messages when a newly copied subgroup stays hidden', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'multi-select-with-hidden-child-items.json', 'formContainer', { fhirVersion: 'R4' });
+
+      const result = await page.evaluate(() => {
+        const form = (window as any).LForms.Util._getFormObjectInScope('#formContainer');
+        const parent = form.items.find(item => item.linkId === 'case4-enablewhen-other');
+        // Exercise the defensive cleanup: a copied template's cached status
+        // can differ from the status calculated for its new subgroup.
+        parent.items[0]._skipLogicStatus = 'target-enabled';
+        parent.value = [parent.answers[0]];
+        form._actionLogs = [];
+        form.addSubItemsForMultiSelect(parent, parent.value[0]);
+        const subgroup = parent.items.find(item => item.isSubGroupForMultiSelect);
+        return {
+          shown: form._getMultiSelectSubGroupVisibility().get(subgroup),
+          childStatus: subgroup.items[0]._skipLogicStatus,
+          messages: form._actionLogs
+        };
+      });
+      expect(result.shown).toBe(false);
+      expect(result.childStatus).toBe('target-disabled');
+      expect(result.messages).toEqual([]);
+    });
+
     for (const layout of ['check-box', 'autocomplete']) {
       test(`should not announce nested subgroup visibility when its ${layout} ancestor is removed`, async ({ page }) => {
         await page.goto('/test/pages/addFormToPageTest.html');
