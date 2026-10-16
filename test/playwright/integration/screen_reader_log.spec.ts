@@ -201,6 +201,62 @@ test.describe('508', () => {
       await expectReaderLogEntries(page, case7Entries);
     });
 
+
+    test('should add an entry when an enableWhenExpression shows or hides a multi-select subgroup', async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'multi-select-with-enablewhenexpression-child-items.json', 'formContainer', { fhirVersion: 'R4' });
+      await byId(page, 'case1-expression-other/1||a').waitFor({ state: 'visible' });
+      await resetReaderLog(page);
+
+      // The child is controlled by another question.
+      const case1Apple = byId(page, 'case1-expression-other/1||a');
+      await case1Apple.click();
+      await expect(case1Apple).toBeChecked();
+      await byId(page, 'show-details/1|true').click();
+      await expectReaderLogEntries(page, ['Showing sub items for Apple']);
+      await byId(page, 'show-details/1|false').click();
+      await expectReaderLogEntries(page, ['Showing sub items for Apple', 'Hiding sub items for Apple']);
+      await expect(case1Apple).toBeChecked();
+      await byId(page, 'show-details/1|true').click();
+      await case1Apple.click();
+      await expectReaderLogEntries(page, ['Showing sub items for Apple', 'Hiding sub items for Apple',
+        'Showing sub items for Apple', 'Removed Sub items for checkbox option: Apple']);
+
+      // The child is enabled only while Apple is selected. Banana stays
+      // checked, so its subgroup is only shown or hidden.
+      await resetReaderLog(page);
+      const case2Banana = byId(page, 'case2-expression-parent/1||b');
+      await case2Banana.click();
+      await expect(case2Banana).toBeChecked();
+      const case2Apple = byId(page, 'case2-expression-parent/1||a');
+      await case2Apple.click();
+      await expectReaderLogEntries(page, ['Added Apple', 'Showing sub items for Banana']);
+      await case2Apple.click();
+      await expectReaderLogEntries(page, ['Added Apple', 'Showing sub items for Banana',
+        'Removed Sub items for checkbox option: Apple', 'Hiding sub items for Banana']);
+
+      // The same, with autocomplete.
+      await resetReaderLog(page);
+      const dropdown = byId(page, 'case3-autocomplete-expression-parent/1');
+      await dropdown.click();
+      await dropdown.press('ArrowDown');
+      await dropdown.press('ArrowDown');
+      await dropdown.press('Enter');
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Selected Banana' })).toHaveCount(1);
+      await dropdown.press('ArrowDown');
+      await dropdown.press('Enter');
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Showing sub items for Banana' })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Apple' })).toHaveCount(1);
+      await page.locator('#item-case3-autocomplete-expression-parent\\/1 .autocomp_selected li', { hasText: 'Apple' })
+        .locator('button').click();
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Hiding sub items for Banana' })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({
+        hasText: 'Removed sub items for autocomplete option: Apple'
+      })).toHaveCount(1);
+      await expect(page.locator(readerLogEntries).filter({ hasText: 'Added Banana' })).toHaveCount(0);
+    });
+
     for (const layout of ['check-box', 'autocomplete']) {
       test(`should not announce nested subgroup visibility when its ${layout} ancestor is removed`, async ({ page }) => {
         await page.goto('/test/pages/addFormToPageTest.html');

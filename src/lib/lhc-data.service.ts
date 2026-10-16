@@ -727,9 +727,11 @@ export class LhcDataService {
       (skipComparison || !skipComparison && !CommonUtils.deepEqual(currentValue, previousValue))) {
 
       // run lforms internal changes
-      this.lhcFormData.updateOnSourceItemChange(item)
+      const expressionsDone = this.lhcFormData.updateOnSourceItemChange(item);
 
       this.sendActionsToScreenReader();
+      // Expressions run asynchronously and can produce more announcements.
+      expressionsDone?.then(() => this.sendActionsToScreenReader());
 
       this.formChangeEventSource.next({
         'event': 'dataChanged',

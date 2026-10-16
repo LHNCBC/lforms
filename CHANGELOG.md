@@ -25,8 +25,9 @@ This project follows [Semantic Versioning](http://semver.org/).
   answer is no longer displayed when none of the child items are displayed,
   for example when they are hidden with the questionnaire-hidden extension or
   disabled by enableWhen. Screen readers are no longer told that hidden child
-  items were added or removed, and are told when enableWhen later shows or
-  hides the child items of a selected answer.
+  items were added or removed, and are told when enableWhen or
+  enableWhenExpression later shows or hides the child items of a selected
+  answer.
 - For a multi-select check-box question with child items, screen readers are
   now told that the child items were added or removed when an answer is
   checked or unchecked, instead of on the next change in the form.

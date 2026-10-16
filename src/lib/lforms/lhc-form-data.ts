@@ -60,6 +60,9 @@ export default class LhcFormData {
   // displayed before form controls were reevaluated.
   _subGroupVisibilityBeforeRemoval = new Map();
 
+  // New hidden subgroups whose FHIRPath expressions have not run yet.
+  _hiddenNewSubGroups = new Set();
+
   // While a change is processed, the positions in _actionLogs of the skip
   // logic messages for items in multi-select subgroups.  The messages are
   // removed if a message for the whole subgroup is added for the same change.
@@ -588,6 +591,8 @@ export default class LhcFormData {
   /**
    * Check skip logic, formulas and data controls when the source item changes.
    * @param sourceItem the controlling/source item
+   * @return a Promise that resolves after FHIRPath expressions have run, if
+   *  there are any to run, or undefined otherwise
    */
   updateOnSourceItemChange(sourceItem) {
     // Keep the visibility state from before form controls are reevaluated.  A
@@ -637,9 +642,18 @@ export default class LhcFormData {
     // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
       const self = this;
-      setTimeout(function(){
-        self._expressionProcessor.runCalculations(false).then(()=>{
-          self._checkFormControls();
+      return new Promise<void>((resolve, reject) => {
+        setTimeout(function(){
+          // enableWhenExpression can show or hide a selected option's subgroup.
+          const previousVisibility = self._getMultiSelectSubGroupVisibility();
+          const hiddenNewSubGroups = self._hiddenNewSubGroups;
+          self._hiddenNewSubGroups = new Set();
+          self._expressionProcessor.runCalculations(false).then(()=>{
+            self._subGroupItemLogs = [];
+            self._checkFormControls();
+            self._logMultiSelectSubGroupVisibilityChanges(previousVisibility, hiddenNewSubGroups);
+            resolve();
+          }).catch(reject);
         });
       });
     }
@@ -666,9 +680,11 @@ export default class LhcFormData {
    * Add screen-reader messages for existing multi-select subgroups whose
    * visibility changed while form controls were reevaluated.
    * @param previousVisibility visibility captured before form controls ran
+   * @param hiddenNewSubGroups (optional) new hidden subgroups to announce as
+   *  added if expressions show them for the first time
    * @private
    */
-  _logMultiSelectSubGroupVisibilityChanges(previousVisibility) {
+  _logMultiSelectSubGroupVisibilityChanges(previousVisibility, hiddenNewSubGroups?) {
     this._subGroupVisibilityBeforeRemoval = new Map();
     const announcedSubGroups = new Set();
     previousVisibility.forEach((wasShown, subGroup) => {
@@ -686,7 +702,12 @@ export default class LhcFormData {
 
       const isShown = InternalUtil.multiSelectSubGroupShown(subGroup);
       if (wasShown !== isShown) {
-        this._actionLogs.push((isShown ? 'Showing' : 'Hiding') + ' sub items for ' + subGroup.question);
+        if (isShown && hiddenNewSubGroups?.has(subGroup)) {
+          this._actionLogs.push(language.added + subGroup.question);
+        }
+        else {
+          this._actionLogs.push((isShown ? 'Showing' : 'Hiding') + ' sub items for ' + subGroup.question);
+        }
         announcedSubGroups.add(subGroup);
       }
     });
@@ -2756,6 +2777,10 @@ export default class LhcFormData {
     }
     else {
       this._removeSubGroupItemLogs(new Set());
+      if (LForms.FHIR && this._hasResponsiveExpr) {
+        // FHIRPath expressions, which run after this, might show it.
+        this._hiddenNewSubGroups.add(newGroupItemForMultiSelect);
+      }
     }
   }
 
