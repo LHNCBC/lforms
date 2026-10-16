@@ -66,31 +66,31 @@ describe('Questionnaire item-control help text issues', function() {
     });
   });
 
-  describe('QuestionnaireResponse with help, legal, or unit display items', function() {
-    const checkBoxExt = {
-      url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
-      valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: 'check-box'}]}
+  const checkBoxExt = {
+    url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+    valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: 'check-box'}]}
+  };
+  const answerOption = [{valueCoding: {code: 'a', display: 'Apple'}}, {valueCoding: {code: 'b', display: 'Banana'}}];
+  const apple = {valueCoding: {code: 'a', display: 'Apple'}};
+  function displayItem(linkId, code) {
+    return {
+      linkId: linkId,
+      text: code + ' text',
+      type: 'display',
+      extension: [{
+        url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+        valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: code}]}
+      }]
     };
-    const answerOption = [{valueCoding: {code: 'a', display: 'Apple'}}, {valueCoding: {code: 'b', display: 'Banana'}}];
-    const apple = {valueCoding: {code: 'a', display: 'Apple'}};
-    function displayItem(linkId, code) {
-      return {
-        linkId: linkId,
-        text: code + ' text',
-        type: 'display',
-        extension: [{
-          url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
-          valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: code}]}
-        }]
-      };
-    }
-    function merge(qItems, qrItems) {
-      const formDef = LForms.Util.convertFHIRQuestionnaireToLForms(
-        {resourceType: 'Questionnaire', status: 'draft', item: qItems}, 'R4');
-      return LForms.Util.mergeFHIRDataIntoLForms('QuestionnaireResponse',
-        {resourceType: 'QuestionnaireResponse', status: 'in-progress', item: qrItems}, formDef, 'R4');
-    }
+  }
+  function merge(qItems, qrItems) {
+    const formDef = LForms.Util.convertFHIRQuestionnaireToLForms(
+      {resourceType: 'Questionnaire', status: 'draft', item: qItems}, 'R4');
+    return LForms.Util.mergeFHIRDataIntoLForms('QuestionnaireResponse',
+      {resourceType: 'QuestionnaireResponse', status: 'in-progress', item: qrItems}, formDef, 'R4');
+  }
 
+  describe('QuestionnaireResponse with help, legal, or unit display items', function() {
     ['help', 'legal', 'unit'].forEach(function(code) {
       it('should merge a multi-select answer whose only Questionnaire child is a ' + code + ' item', function() {
         const merged = merge([{
@@ -159,6 +159,72 @@ describe('Questionnaire item-control help text issues', function() {
       }], [{linkId: 'grp', item: [{linkId: 'grp-help-1'}, {linkId: 'grp-child', answer: [{valueString: 'Ann'}]}]}]);
 
       assert.equal(merged.items[0].items[0].value, 'Ann');
+    });
+  });
+
+  describe('QuestionnaireResponse with a multi-select question that has child items', function() {
+    const banana = {valueCoding: {code: 'b', display: 'Banana'}};
+    function msQuestion(itemControl) {
+      return {
+        linkId: 'ms', text: 'Fruits', type: 'choice', repeats: true,
+        extension: [{
+          url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+          valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code: itemControl}]}
+        }],
+        answerOption: answerOption,
+        item: [displayItem('ms-help', 'help'), {linkId: 'ms-child', text: 'How many?', type: 'string'}]
+      };
+    }
+    function subGroups(merged) {
+      return merged.items[0].items.filter(item => item.isSubGroupForMultiSelect);
+    }
+
+    ['check-box', 'autocomplete'].forEach(function(itemControl) {
+      it('should give typed Other answers distinct subgroups and keep saved child values (' + itemControl + ')', function() {
+        const question = msQuestion(itemControl);
+        question.type = 'open-choice';
+        const merged = merge([question], [{linkId: 'ms', answer: [
+          {valueString: 'Mango'},
+          {valueString: 'Papaya', item: [{linkId: 'ms-child', answer: [{valueString: 'nine'}]}]}
+        ]}]);
+
+        const groups = subGroups(merged);
+        assert.deepEqual(groups.map(g => g.linkId), ['multi-select-subgroup||Mango', 'multi-select-subgroup||Papaya']);
+        assert.deepEqual(groups.map(g => g.question), ['Mango', 'Papaya']);
+        assert.deepEqual(groups[0].multiSelectOption, {text: 'Mango', _notOnList: true});
+        assert.notProperty(groups[0].items[0], 'value');
+        assert.equal(groups[1].items[0].value, 'nine');
+      });
+    });
+
+    ['check-box', 'autocomplete'].forEach(function(itemControl) {
+      it('should add the child items of a selected answer whose items include only a help item (' + itemControl + ')', function() {
+        const merged = merge([msQuestion(itemControl)],
+          [{linkId: 'ms', answer: [Object.assign({item: [{linkId: 'ms-help'}]}, apple)]}]);
+
+        const groups = subGroups(merged);
+        assert.deepEqual(groups.map(g => g.linkId), ['multi-select-subgroup||a']);
+        assert.deepEqual(groups[0].items.map(item => item.linkId), ['ms-child']);
+        assert.notProperty(groups[0].items[0], 'value');
+      });
+    });
+
+    it('should add the child items of every selected answer that has no items', function() {
+      const merged = merge([msQuestion('check-box')], [{linkId: 'ms', answer: [apple, banana]}]);
+
+      assert.deepEqual(subGroups(merged).map(g => g.linkId),
+        ['multi-select-subgroup||a', 'multi-select-subgroup||b']);
+    });
+
+    it('should add the child items of a selected answer that has no items, next to one that has', function() {
+      const merged = merge([msQuestion('check-box')], [{linkId: 'ms', answer: [
+        Object.assign({item: [{linkId: 'ms-child', answer: [{valueString: 'three'}]}]}, apple), banana
+      ]}]);
+
+      const groups = subGroups(merged);
+      assert.deepEqual(groups.map(g => g.linkId), ['multi-select-subgroup||a', 'multi-select-subgroup||b']);
+      assert.equal(groups[0].items[0].value, 'three');
+      assert.notProperty(groups[1].items[0], 'value');
     });
   });
 

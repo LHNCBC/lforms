@@ -41,6 +41,9 @@ This project follows [Semantic Versioning](http://semver.org/).
   group, including when a question has more than one of the same kind.
 - Removing a selected multi-select answer no longer announces separate
   visibility changes for nested subgroups that are removed with it.
+- Loading a QuestionnaireResponse now creates child items for every selected
+  multi-select answer, including unanswered children and typed Other answers.
+  Typed answers retain their subgroup labels and child answers when saved.
 - A `table` (matrix) group with no child items, such as one whose only child
   is a help item, is now rendered as a vertical group.
 - Selecting an answer in a single-select drop-down question that has child

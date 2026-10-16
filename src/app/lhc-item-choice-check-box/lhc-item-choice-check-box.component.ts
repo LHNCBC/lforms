@@ -221,6 +221,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
         this.prevCheckBoxValue = this.item.value;
         this.item._visitedBefore = true;
+        this.addOrRemoveSubGroupsForCheckbox();
+        this.lhcDataService.sendActionsToScreenReader();
       });
     }
   }
@@ -280,6 +282,22 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, multiSelectOption);
       }
     }
+    // Typed Other answers have no entry in checkboxModels. Their imported
+    // subgroups still need to follow the current selection.
+    const formData = this.lhcDataService.getLhcFormData();
+    const otherValues = (this.item.value || []).filter(value => value._notOnList);
+    const otherLinkIds = otherValues.map(value => formData.getLinkIdForMultiSelectSubGroup(value));
+    for (const subGroup of [...this.item.items]) {
+      if (subGroup.isSubGroupForMultiSelect && subGroup.multiSelectOption?._notOnList &&
+          !otherLinkIds.includes(subGroup.linkId)) {
+        formData.deleteSubItemsForCheckbox(this.item, subGroup.multiSelectOption);
+      }
+    }
+    for (const value of otherValues) {
+      if (!formData.hasSubGroupWithLinkId(this.item, formData.getLinkIdForMultiSelectSubGroup(value))) {
+        formData.addSubItemsForMultiSelect(this.item, value);
+      }
+    }
   }
 
   /**
@@ -312,6 +330,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
     // A list of currently valid subgroup linkIds.
     const subGroupLinkIds = this.acOptions.listItems.map(x =>
       lhcFormData.getLinkIdForMultiSelectSubGroup(x));
+    subGroupLinkIds.push(...(this.item.value || []).filter(value => value._notOnList)
+      .map(value => lhcFormData.getLinkIdForMultiSelectSubGroup(value)));
     if (this.item.items) {
       this.item.items = this.item.items.filter(x =>
         !x.isSubGroupForMultiSelect ||

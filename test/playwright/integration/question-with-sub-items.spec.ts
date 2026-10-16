@@ -2,6 +2,60 @@ import { test, expect } from '@playwright/test';
 import { byId, waitForLFormsReady, addFormToPage, pressCypressKeys, escapeIdSelector } from '../support/lforms-helpers';
 
 test.describe('Question with sub items', () => {
+  for (const layout of ['check-box', 'autocomplete']) {
+    test(`should load and save unanswered and typed Other child items in ${layout} layout`, async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await page.evaluate(async layout => {
+        const control = (code: string) => ({
+          url: 'http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+          valueCodeableConcept: {coding: [{system: 'http://hl7.org/fhir/questionnaire-item-control', code}]}
+        });
+        const q = {resourceType: 'Questionnaire', status: 'draft', item: [{
+          linkId: 'ms', text: 'Fruits', type: 'open-choice', repeats: true,
+          extension: [control(layout)], answerOption: [{valueCoding: {code: 'a', display: 'Apple'}}],
+          item: [{linkId: 'help', text: 'Choose fruits', type: 'display', extension: [control('help')]},
+            {linkId: 'child', text: 'How many?', type: 'string'}]
+        }]};
+        const qr = {resourceType: 'QuestionnaireResponse', status: 'in-progress', item: [{
+          linkId: 'ms', answer: [
+            {valueCoding: {code: 'a', display: 'Apple'}, item: [{linkId: 'help'}]},
+            {valueString: 'Mango'},
+            {valueString: 'Papaya', item: [{linkId: 'child', answer: [{valueString: 'nine'}]}]}
+          ]
+        }]};
+        const util = (window as any).LForms.Util;
+        const merged = util.mergeFHIRDataIntoLForms(qr, util.convertFHIRQuestionnaireToLForms(q, 'R4'), 'R4');
+        await util.addFormToPage(merged, 'formContainer');
+      }, layout);
+
+      // Imported subgroups have ordinal paths; identify each input by its group.
+      const group = (answer: string) => page.locator('lhc-item-group').filter({
+        has: page.locator('.lhc-item-group-title', {hasText: new RegExp('^\\s*' + answer + '\\s*$')})
+      });
+      await expect(group('Apple')).toBeVisible();
+      await expect(group('Mango')).toBeVisible();
+      await expect(group('Papaya')).toBeVisible();
+      await expect(page.locator('[id^="label-multi-select-subgroup"]')).toHaveCount(3);
+      await expect(group('Papaya').locator('input')).toHaveValue('nine');
+      await group('Apple').locator('input').fill('three');
+      await group('Apple').locator('input').blur();
+      await group('Mango').locator('input').fill('seven');
+      await group('Mango').locator('input').blur();
+
+      const saved = await page.evaluate(() => (window as any).LForms.Util
+        .getFormFHIRData('QuestionnaireResponse', 'R4', 'formContainer'));
+      const answers = saved.item[0].answer;
+      expect(answers.find((a: any) => a.valueCoding?.code === 'a').item[0].answer).toEqual([{valueString: 'three'}]);
+      expect(answers.find((a: any) => a.valueString === 'Mango').item[0].answer).toEqual([{valueString: 'seven'}]);
+      expect(answers.find((a: any) => a.valueString === 'Papaya').item[0].answer).toEqual([{valueString: 'nine'}]);
+
+      await byId(page, 'item-ms/1').locator('.autocomp_selected li', {hasText: 'Mango'}).locator('button').click();
+      await expect(group('Mango')).toHaveCount(0);
+      await expect(group('Papaya').locator('input')).toHaveValue('nine');
+    });
+  }
+
   test('should not create per-option subgroups for a help extension', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
