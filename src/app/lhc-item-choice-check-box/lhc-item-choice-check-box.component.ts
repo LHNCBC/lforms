@@ -282,8 +282,9 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, multiSelectOption);
       }
     }
-    // Typed Other answers have no entry in checkboxModels. Their imported
-    // subgroups still need to follow the current selection.
+    // Typed Other answers have no entry in checkboxModels. Create or remove
+    // their subgroups as the selection changes, for both newly typed answers
+    // and answers imported from a QuestionnaireResponse.
     const formData = this.lhcDataService.getLhcFormData();
     const otherValues = (this.item.value || []).filter(value => value._notOnList);
     const otherLinkIds = otherValues.map(value => formData.getLinkIdForMultiSelectSubGroup(value));
