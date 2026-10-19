@@ -106,6 +106,11 @@
                 <input type="radio" id="tabLayoutHorizontal" name="tabLayout" value="horizontal" checked><label for="tabLayoutHorizontal">horizontal</label>
                 <input type="radio" id="tabLayoutVertical" name="tabLayout" value="vertical"><label for="tabLayoutVertical">vertical</label>
               </span>
+              <span class="option-checkbox">
+                tabAnswerAlignment:
+                <input type="radio" id="tabAnswerAlignmentForm" name="tabAnswerAlignment" value="form" checked><label for="tabAnswerAlignmentForm">form</label>
+                <input type="radio" id="tabAnswerAlignmentContent" name="tabAnswerAlignment" value="content"><label for="tabAnswerAlignmentContent">content</label>
+              </span>
               <span class="option-checkbox"><label><input type="checkbox" id="showTabHeader" /> showTabHeader</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="stickyTabs" /> stickyTabs</label></span>
             </div>
@@ -454,6 +459,7 @@
             hideRepetitionNumber = document.querySelector('#hideRepetitionNumber').checked,
             hideTreeLine = document.querySelector('input[name="hideTreeLine"]:checked').value,
             tabLayout = document.querySelector('input[name="tabLayout"]:checked').value,
+            tabAnswerAlignment = document.querySelector('input[name="tabAnswerAlignment"]:checked').value,
             showTabHeader = document.querySelector('#showTabHeader').checked,
             stickyTabs = document.querySelector('#stickyTabs').checked;
         var questionnaire, qr;
@@ -509,6 +515,9 @@
           }
           if (showTabHeader) {
             options["showTabHeader"] = true;
+          }
+          if (tabAnswerAlignment !== 'form') {
+            options["tabAnswerAlignment"] = tabAnswerAlignment;
           }
           if (stickyTabs) {
             options["stickyTabs"] = true;

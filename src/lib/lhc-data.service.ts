@@ -59,6 +59,14 @@ export class LhcDataService {
   }
 
   /**
+   * Whether vertical tab answer widths are based on the whole form or tab content.
+   * Missing or invalid values preserve the form-wide answer alignment.
+   */
+  getTabAnswerAlignment(): 'form' | 'content' {
+    return this.getTemplateOptions().tabAnswerAlignment === 'content' ? 'content' : 'form';
+  }
+
+  /**
    * Whether each tab's label should also be shown as a header in its content.
    * Only boolean true enables the header.
    */

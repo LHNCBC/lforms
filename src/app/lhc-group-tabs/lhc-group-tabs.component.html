@@ -1,6 +1,8 @@
 <ng-container *ngIf="item && item.items">
   <nz-tabset #tabset nzType="card" [nzTabPosition]="lhcDataService.getTabPosition()"
              [class.lhc-tabs-sticky]="lhcDataService.getStickyTabs()"
+             [style.--lhc-tab-content-answer-width]="lhcDataService.getTabPosition() === 'left' &&
+               lhcDataService.getTabAnswerAlignment() === 'content' ? contentAnswerWidth : null"
              (nzSelectedIndexChange)="onSelectedIndexChange()">
     <ng-container *ngFor="let group of item.items">
       <ng-container *ngIf="!group._isHiddenFromView">

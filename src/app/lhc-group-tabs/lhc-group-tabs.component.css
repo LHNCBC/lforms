@@ -23,6 +23,13 @@
   text-align: left;
 }
 
+/* Narrow question text beside vertical tabs must wrap rather than push the
+   fixed-width answer column out of alignment with the rest of the form. */
+:host ::ng-deep .ant-tabs-left lhc-item-question .lhc-de-label-button {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* The tabset host carries this class, while NG-ZORRO renders the navigation
    inside it. Sticky positioning keeps navigation within this tab container. */
 :host ::ng-deep .lhc-tabs-sticky .ant-tabs-nav {

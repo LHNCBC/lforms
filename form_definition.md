@@ -106,6 +106,16 @@ about the meaning of each key:
       setting the inherited CSS custom property
       `--lhc-vertical-tabs-max-width` on the LForms host or an ancestor. For
       example: `wc-lhc-form { --lhc-vertical-tabs-max-width: 15rem; }`
+    * tabAnswerAlignment - (optional) controls answer column widths in vertical
+      tabs in the large view layout, including nested tab containers. Permitted
+      values are `form` (the default) and `content`. With `form`, answers use half
+      the form width, aligning inputs with questions outside the tabs. The tab
+      navigation takes space from the question text area, which can become narrow.
+      With `content`, answers use half the enclosing tab's content width, leaving
+      more space for question text. Missing or invalid values use `form`.
+      Horizontal tabs and medium/small view layouts are unaffected. For example,
+      use `{"tabLayout": "vertical", "tabAnswerAlignment": "content"}` to split
+      the tab content evenly between questions and answers.
     * showTabHeader - (optional) when the boolean value is `true`, repeats each
       tab's label as a header at the top of its content. This applies to both
       horizontal and vertical tab layouts, including nested tab containers. It

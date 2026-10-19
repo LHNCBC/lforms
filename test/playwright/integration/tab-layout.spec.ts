@@ -20,6 +20,7 @@ test.describe('Tab Layout', () => {
     await page.goto('/test/pages/lforms_testpage.html');
     await waitForLFormsReady(page);
     await page.locator('#tabLayoutVertical').check();
+    await page.locator('#tabAnswerAlignmentContent').check();
     await page.locator('#showTabHeader').check();
     await page.locator('#stickyTabs').check();
     await loadFromTestData(page, 'tab-layout.json', 'R4');
@@ -27,6 +28,9 @@ test.describe('Tab Layout', () => {
     await expect(page.locator('#test-form .ant-tabs-left')).toHaveCount(1);
     await expect(page.locator('#test-form .ant-tabs-tabpane-active .lhc-item-group-title')).toContainText('Tab One');
     await expect(page.locator('#test-form nz-tabset.lhc-tabs-sticky')).toHaveCount(1);
+    await expect.poll(() => page.locator('#test-form nz-tabset').evaluate(element =>
+      parseFloat((element as HTMLElement).style.getPropertyValue('--lhc-tab-content-answer-width'))
+    )).toBeGreaterThan(0);
 
     // check that selected options are correctly used when loading another questionnaire
     await page.evaluate(() => {
@@ -41,6 +45,9 @@ test.describe('Tab Layout', () => {
     await expect(page.locator('#test-form .ant-tabs-left')).toHaveCount(1);
     await expect(page.locator('#test-form .ant-tabs-tabpane-active .lhc-item-group-title')).toContainText('Tab One');
     await expect(page.locator('#test-form nz-tabset.lhc-tabs-sticky')).toHaveCount(1);
+    await expect.poll(() => page.locator('#test-form nz-tabset').evaluate(element =>
+      parseFloat((element as HTMLElement).style.getPropertyValue('--lhc-tab-content-answer-width'))
+    )).toBeGreaterThan(0);
   });
 
   test('should show tab content headers only when enabled', async ({ page }) => {
@@ -114,7 +121,7 @@ test.describe('Tab Layout', () => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     await addFormToPage(page, 'tab-layout.json', 'formContainer', {
-      fhirVersion: 'R4', tabLayout: 'vertical'
+      fhirVersion: 'R4', tabLayout: 'vertical', tabAnswerAlignment: 'content'
     });
     await expect(page.locator('#formContainer .ant-tabs-left')).toHaveCount(1);
 
@@ -140,6 +147,154 @@ test.describe('Tab Layout', () => {
       Math.abs(await answerWidth() - await contentWidth() / 2)
     ).toBeLessThan(1);
     await expect.poll(answerWidth).toBeLessThan(initialAnswerWidth);
+  });
+
+  test('should align mixed and nested tab answers with the rest of the form by default', async ({ page }) => {
+    await page.setViewportSize({width: 1100, height: 900});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout-answer-alignment.json', 'formContainer', {
+      fhirVersion: 'R4', tabLayout: 'vertical'
+    });
+    const columns = page.locator('#formContainer .lhc-de-input-unit:visible');
+    await expect(columns).toHaveCount(4);
+
+    for (const width of [1100, 800]) {
+      await page.setViewportSize({width, height: 900});
+      await expect.poll(() => columns.evaluateAll(elements => {
+        const rects = elements.map(element => element.getBoundingClientRect());
+        return Math.max(...rects.map(rect => Math.max(
+          Math.abs(rect.width - rects[0].width), Math.abs(rect.x - rects[0].x)
+        )));
+      })).toBeLessThan(1);
+      await expect.poll(async () => {
+        const answerWidth = await columns.first().evaluate(element => element.getBoundingClientRect().width);
+        const formWidth = await page.locator('#formContainer wc-lhc-form')
+          .evaluate(element => element.getBoundingClientRect().width);
+        return Math.abs(answerWidth - formWidth / 2);
+      }).toBeLessThan(1);
+    }
+  });
+
+  test('should change alignment without resizing and use each nested tab content width', async ({ page }) => {
+    await page.setViewportSize({width: 1100, height: 900});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout-answer-alignment.json', 'formContainer', {
+      fhirVersion: 'R4', tabLayout: 'vertical'
+    });
+    const tabsets = page.locator('#formContainer nz-tabset');
+    await expect(tabsets).toHaveCount(2);
+    const outsideAnswer = page.locator('#formContainer .lhc-de-input-unit').first();
+
+    for (const alignment of ['content', 'form', 'invalid', 'content']) {
+      await page.locator('#formContainer wc-lhc-form').evaluate((element: any, tabAnswerAlignment) => {
+        element.options = {tabAnswerAlignment};
+      }, alignment);
+      for (let index = 0; index < 2; index++) {
+        const holder = tabsets.nth(index).locator(':scope > .ant-tabs-content-holder');
+        const answer = holder.locator('.lhc-de-input-unit').first();
+        await expect.poll(async () => {
+          const expectedWidth = alignment === 'content'
+            ? await holder.evaluate(element => element.getBoundingClientRect().width / 2)
+            : await outsideAnswer.evaluate(element => element.getBoundingClientRect().width);
+          return Math.abs(await answer.evaluate(element => element.getBoundingClientRect().width) - expectedWidth);
+        }).toBeLessThan(1);
+      }
+    }
+
+    // An orientation change must also remove the width override from every tabset.
+    await page.locator('#formContainer wc-lhc-form').evaluate((element: any) => {
+      element.options = {tabLayout: 'horizontal'};
+    });
+    await expect(page.locator('#formContainer .ant-tabs-top')).toHaveCount(2);
+    for (let index = 0; index < 2; index++) {
+      await expect.poll(() => tabsets.nth(index).evaluate(element =>
+        (element as HTMLElement).style.getPropertyValue('--lhc-tab-content-answer-width')
+      )).toBe('');
+      await expect.poll(async () => Math.abs(
+        await tabsets.nth(index).locator('.lhc-de-input-unit').first()
+          .evaluate(element => element.getBoundingClientRect().width) -
+        await outsideAnswer.evaluate(element => element.getBoundingClientRect().width)
+      )).toBeLessThan(1);
+    }
+  });
+
+  test('should restore nested content alignment after hiding and resizing its parent tab', async ({ page }) => {
+    await page.setViewportSize({width: 1100, height: 900});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout-answer-alignment.json', 'formContainer', {
+      fhirVersion: 'R4', tabLayout: 'vertical', tabAnswerAlignment: 'content'
+    });
+    const outer = page.locator('#formContainer nz-tabset').first();
+    const tabs = outer.locator(':scope > .ant-tabs-nav').getByRole('tab');
+    await tabs.nth(1).click();
+    await expect(byId(page, 'q2/1/1/1')).toBeVisible();
+    await page.setViewportSize({width: 800, height: 900});
+    await tabs.nth(0).click();
+
+    const nested = outer.locator('nz-tabset');
+    await nested.getByRole('tab').nth(1).click();
+    await expect(byId(page, 'nestedQ2/1/1/1/1/1')).toBeVisible();
+    const holder = nested.locator(':scope > .ant-tabs-content-holder');
+    await expect.poll(async () => Math.abs(
+      await holder.locator('.ant-tabs-tabpane-active .lhc-de-input-unit')
+        .evaluate(element => element.getBoundingClientRect().width) -
+      await holder.evaluate(element => element.getBoundingClientRect().width / 2)
+    )).toBeLessThan(1);
+  });
+
+  (['form', 'content'] as const).forEach(tabAnswerAlignment => {
+    test(`should keep responsive stacked questions with ${tabAnswerAlignment} alignment`, async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'tab-layout-answer-alignment.json', 'formContainer', {
+        fhirVersion: 'R4', tabLayout: 'vertical', tabAnswerAlignment
+      });
+
+      for (const width of [600, 400]) {
+        await page.setViewportSize({width, height: 900});
+        await expect.poll(() => page.locator('#formContainer lhc-item-question:visible').evaluateAll(rows =>
+          rows.every(row => {
+            const answer = row.querySelector('.lhc-de-input-unit') as HTMLElement;
+            const label = row.querySelector('.lhc-de-label-button');
+            return answer.style.width === '' &&
+              answer.getBoundingClientRect().top >= label.getBoundingClientRect().bottom - 1 &&
+              answer.getBoundingClientRect().width > row.getBoundingClientRect().width * 0.9;
+          })
+        )).toBe(true);
+      }
+    });
+  });
+
+  ['tab-layout-answer-alignment.json', 'tab-layout-long-labels.json'].forEach(fixture => {
+    test(`should render content alignment without resize-loop errors in ${fixture}`, async ({ page }) => {
+      await page.addInitScript(() => {
+        (window as any).resizeObserverErrors = [];
+        window.addEventListener('error', event => {
+          if (event.message.includes('ResizeObserver loop')) {
+            (window as any).resizeObserverErrors.push(event.message);
+          }
+        });
+      });
+      await page.setViewportSize({width: 800, height: 900});
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, fixture, 'formContainer', {
+        fhirVersion: 'R4', tabLayout: 'vertical', tabAnswerAlignment: 'content'
+      });
+      const holder = page.locator('#formContainer nz-tabset > .ant-tabs-content-holder').first();
+      await expect.poll(async () => Math.abs(
+        await holder.locator('.lhc-de-input-unit').first().evaluate(element => element.getBoundingClientRect().width) -
+        await holder.evaluate(element => element.getBoundingClientRect().width / 2)
+      )).toBeLessThan(1);
+      // Allow the browser to deliver any resize-loop errors from the layout update.
+      await page.evaluate(() => new Promise<void>(resolve => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      }));
+      expect(await page.evaluate(() => (window as any).resizeObserverErrors)).toEqual([]);
+    });
   });
 
   test('should support sticky vertical tabs', async ({ page }) => {

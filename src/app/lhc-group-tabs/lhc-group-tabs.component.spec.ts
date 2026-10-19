@@ -1,4 +1,4 @@
-import {ElementRef} from '@angular/core';
+import {ElementRef, NgZone} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {LhcGroupTabsComponent} from './lhc-group-tabs.component';
 
@@ -13,6 +13,7 @@ describe('LhcGroupTabsComponent', () => {
   let cancelAnimationFrameSpy: jasmine.Spy;
   let resizeObserverCallback: ResizeObserverCallback;
   let originalResizeObserver: typeof ResizeObserver;
+  let disconnectObserverSpy: jasmine.Spy;
   let nextFrameId: number;
   let pendingFrames: Map<number, FrameRequestCallback>;
 
@@ -20,7 +21,7 @@ describe('LhcGroupTabsComponent', () => {
     lhcDataService = jasmine.createSpyObj<LhcDataService>(
       'LhcDataService', ['getStickyTabs', 'getTabPosition']
     );
-    component = new LhcGroupTabsComponent(lhcDataService);
+    component = new LhcGroupTabsComponent(lhcDataService, new NgZone({enableLongStackTrace: false}));
     tabset = document.createElement('div');
     contentHolder = document.createElement('div');
     contentHolder.className = 'ant-tabs-content-holder';
@@ -29,13 +30,14 @@ describe('LhcGroupTabsComponent', () => {
     component.tabset = new ElementRef(tabset);
 
     originalResizeObserver = window.ResizeObserver;
+    disconnectObserverSpy = jasmine.createSpy('disconnect');
     window.ResizeObserver = class {
       constructor(callback: ResizeObserverCallback) {
         resizeObserverCallback = callback;
       }
       observe(): void {}
       unobserve(): void {}
-      disconnect(): void {}
+      disconnect = disconnectObserverSpy;
     } as unknown as typeof ResizeObserver;
 
     tabsetTop = 0;
@@ -78,30 +80,52 @@ describe('LhcGroupTabsComponent', () => {
     } as ResizeObserverEntry], {} as ResizeObserver);
   }
 
-  it('should publish half of the vertical tab content width for descendant questions', () => {
-    lhcDataService.getTabPosition.and.returnValue('left');
+  it('should cache half of the content width regardless of the current alignment', () => {
     component.ngAfterViewInit();
 
     reportContentWidth(640);
 
-    expect(contentHolder.style.getPropertyValue('--lhc-tab-content-answer-width')).toBe('320px');
+    expect(component.contentAnswerWidth).toBeNull();
+    runFrame(1);
+    expect(component.contentAnswerWidth).toBe('320px');
   });
 
   it('should retain the last usable vertical tab content width while content is hidden', () => {
-    lhcDataService.getTabPosition.and.returnValue('left');
     component.ngAfterViewInit();
     reportContentWidth(640);
+    runFrame(1);
 
     reportContentWidth(0);
 
-    expect(contentHolder.style.getPropertyValue('--lhc-tab-content-answer-width')).toBe('320px');
+    expect(component.contentAnswerWidth).toBe('320px');
   });
 
-  it('should leave horizontal tabs on the existing form-width fallback', () => {
+  it('should leave the width unset until the content becomes visible', () => {
     component.ngAfterViewInit();
-    reportContentWidth(800);
+    reportContentWidth(0);
 
-    expect(contentHolder.style.getPropertyValue('--lhc-tab-content-answer-width')).toBe('');
+    expect(component.contentAnswerWidth).toBeNull();
+  });
+
+  it('should use the latest content measurement on the next frame', () => {
+    component.ngAfterViewInit();
+    reportContentWidth(640);
+    reportContentWidth(600);
+
+    expect(cancelAnimationFrameSpy).toHaveBeenCalledOnceWith(1);
+    runFrame(2);
+
+    expect(component.contentAnswerWidth).toBe('300px');
+  });
+
+  it('should disconnect the observer and cancel pending measurement updates when destroyed', () => {
+    component.ngAfterViewInit();
+    reportContentWidth(640);
+
+    component.ngOnDestroy();
+
+    expect(disconnectObserverSpy).toHaveBeenCalledTimes(1);
+    expect(cancelAnimationFrameSpy).toHaveBeenCalledOnceWith(1);
   });
 
   it('should ignore the initial tab selection', () => {

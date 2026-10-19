@@ -9,16 +9,25 @@ describe('tab options in template options', function() {
   it('should default tab options and preserve supplied values', function() {
     var defaultOptions = new LForms.LFormsData({name: 'Default tab options'}).templateOptions;
     assert.equal(defaultOptions.tabLayout, 'horizontal');
+    assert.equal(defaultOptions.tabAnswerAlignment, 'form');
     assert.equal(defaultOptions.showTabHeader, false);
     assert.equal(defaultOptions.stickyTabs, false);
 
-    var specifiedOptions = new LForms.LFormsData({
+    var form = new LForms.LFormsData({
       name: 'Specified tab options',
-      templateOptions: {tabLayout: 'vertical', showTabHeader: true, stickyTabs: true}
-    }).templateOptions;
+      templateOptions: {
+        tabLayout: 'vertical', tabAnswerAlignment: 'content', showTabHeader: true, stickyTabs: true
+      }
+    });
+    var specifiedOptions = form.templateOptions;
     assert.equal(specifiedOptions.tabLayout, 'vertical');
+    assert.equal(specifiedOptions.tabAnswerAlignment, 'content');
     assert.equal(specifiedOptions.showTabHeader, true);
     assert.equal(specifiedOptions.stickyTabs, true);
+
+    form.setTemplateOptions({tabAnswerAlignment: 'form'});
+    assert.equal(form.templateOptions.tabAnswerAlignment, 'form');
+    assert.equal(form.templateOptions.tabLayout, 'vertical');
   });
 });
 

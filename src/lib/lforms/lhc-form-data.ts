@@ -124,8 +124,11 @@ export default class LhcFormData {
     readonlyMode: false,
     // Whether to show a "clear selection" button next to radio buttons.
     showRadioClearSelectionButton: false,
-    // Whether tabs are displayed across the top (horizontal) or on the left (vertical).
+    // Whether tabs are displayed across the top ('horizontal') or on the left ('vertical').
     tabLayout: 'horizontal',
+    // Whether vertical tab answers align to the whole form ('form') or split the tab content
+    // width ('content').
+    tabAnswerAlignment: 'form',
     // Whether to repeat each tab's label as a header in its content area.
     showTabHeader: false,
     // Whether tab navigation stays visible while its tab container is scrolled.
