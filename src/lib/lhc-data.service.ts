@@ -721,13 +721,15 @@ export class LhcDataService {
    * @param currentValue the current value of an item.value
    * @param previousValue the previous value of an item.value
    * @param skipComparison whether to skip comparision of previous value and current value. defalut is false.
+   * @param updateSubGroups optional synchronous dropdown model/structure update,
+   *  run after subgroup visibility is captured but before form controls run
    */
-  onItemValueChange(item, currentValue, previousValue, skipComparison=false) {
+  onItemValueChange(item, currentValue, previousValue, skipComparison=false, updateSubGroups?: () => void) {
     if (this.lhcFormData &&
       (skipComparison || !skipComparison && !CommonUtils.deepEqual(currentValue, previousValue))) {
 
       // run lforms internal changes
-      const expressionsDone = this.lhcFormData.updateOnSourceItemChange(item);
+      const expressionsDone = this.lhcFormData.updateOnSourceItemChange(item, updateSubGroups);
 
       this.sendActionsToScreenReader();
       // Expressions run asynchronously and can produce more announcements.

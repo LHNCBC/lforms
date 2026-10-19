@@ -30,6 +30,9 @@ This project follows [Semantic Versioning](http://semver.org/).
   answer.
 - Visibility changes of a multi-select answer's child items caused by a
   calculated value are announced only once.
+- Selecting or removing a multi-select dropdown answer now announces which
+  existing answer's subgroup is shown or hidden by enableWhen, instead of
+  announcing only the child question's text.
 - For a multi-select check-box question with child items, screen readers are
   now told that the child items were added or removed when an answer is
   checked or unchecked, instead of on the next change in the form.

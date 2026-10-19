@@ -202,6 +202,55 @@ test.describe('508', () => {
     });
 
 
+    for (const hasVisibleSibling of [false, true]) {
+      // A whole subgroup transition gets one answer-specific message. If a
+      // sibling stays visible, retain the conditional child's own message.
+      test(`should announce dropdown visibility changes with ${hasVisibleSibling ? 'a visible sibling' : 'all children conditional'}`, async ({ page }) => {
+        await page.goto('/test/pages/addFormToPageTest.html');
+        await waitForLFormsReady(page);
+        await page.evaluate(async hasVisibleSibling => {
+          const q = await fetch('/test/data/R4/multi-select-with-hidden-child-items.json').then(r => r.json());
+          const item = q.item.find(i => i.linkId === 'case5-enablewhen-parent');
+          item.extension[0].valueCodeableConcept.coding[0].code = 'drop-down';
+          item.item[0].text = 'Details';
+          if (hasVisibleSibling) {
+            item.item.push({linkId: 'always-visible', text: 'Always visible', type: 'string'});
+          }
+          q.item = [item];
+          await (window as any).LForms.Util.addFormToPage(q, 'formContainer', {fhirVersion: 'R4'});
+        }, hasVisibleSibling);
+
+        const dropdown = byId(page, 'case5-enablewhen-parent/1');
+        const headings = page.locator('[id^="label-multi-select-subgroup"]');
+        await dropdown.click();
+        await dropdown.press('ArrowDown');
+        await dropdown.press('ArrowDown');
+        await dropdown.press('Enter');
+        await expect(byId(page, 'item-case5-enablewhen-parent/1').locator('.autocomp_selected li'))
+          .toContainText(['Banana']);
+        await expect(headings).toHaveText(hasVisibleSibling ? ['Banana'] : []);
+        await resetReaderLog(page);
+
+        await dropdown.press('ArrowDown');
+        await dropdown.press('Enter');
+        await expect(headings).toHaveText(['Apple', 'Banana']);
+        await expect(page.locator(readerLogEntries).filter({hasText: /^Showing /}))
+          .toHaveText([hasVisibleSibling ? 'Showing Details' : 'Showing sub items for Banana']);
+        await expect(page.locator(readerLogEntries).filter({hasText: 'Added Apple'})).toHaveCount(1);
+        await resetReaderLog(page);
+
+        await byId(page, 'item-case5-enablewhen-parent/1').locator('.autocomp_selected li', {hasText: 'Apple'})
+          .locator('button').click();
+        await expect(headings).toHaveText(hasVisibleSibling ? ['Banana'] : []);
+        await expect(byId(page, 'item-case5-enablewhen-parent/1').locator('.autocomp_selected li'))
+          .toContainText(['Banana']);
+        await expect(page.locator(readerLogEntries).filter({hasText: /^Hiding /}))
+          .toHaveText([hasVisibleSibling ? 'Hiding Details' : 'Hiding sub items for Banana']);
+        await expect(page.locator(readerLogEntries).filter({hasText: 'Removed sub items for autocomplete option: Apple'}))
+          .toHaveCount(1);
+      });
+    }
+
     test('should add an entry when an enableWhenExpression shows or hides a multi-select subgroup', async ({ page }) => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);

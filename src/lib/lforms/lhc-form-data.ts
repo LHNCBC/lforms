@@ -595,15 +595,18 @@ export default class LhcFormData {
   /**
    * Check skip logic, formulas and data controls when the source item changes.
    * @param sourceItem the controlling/source item
+   * @param updateSubGroups optional dropdown structure update to include in
+   *  the visibility snapshot and announcement deduplication
    * @return a Promise that resolves after FHIRPath expressions have run, if
    *  there are any to run, or undefined otherwise
    */
-  updateOnSourceItemChange(sourceItem) {
+  updateOnSourceItemChange(sourceItem, updateSubGroups?: () => void) {
     // Keep the visibility state from before form controls are reevaluated.  A
     // selected multi-select option's subgroup can become shown or hidden when
     // enableWhen changes, without the subgroup itself being added or removed.
     const previousSubGroupVisibility = this._getMultiSelectSubGroupVisibility();
     this._subGroupItemLogs = [];
+    updateSubGroups?.();
 
     // A two-state checkbox cannot display "not answered".  Store an empty value
     // as unchecked before the change is passed on to dependent items.
@@ -792,12 +795,19 @@ export default class LhcFormData {
    * subgroups, and remove the ones for the given subgroups, which have their
    * own message.
    * @param subGroups a Set of multi-select subgroups
+   * @param keepTracking keep tracking the remaining item messages while a
+   *  dropdown selection is still being processed
    * @private
    */
-  _removeSubGroupItemLogs(subGroups) {
-    const removed = new Set((this._subGroupItemLogs || [])
+  _removeSubGroupItemLogs(subGroups, keepTracking=false) {
+    const logs = this._subGroupItemLogs || [];
+    const removed = new Set(logs
       .filter(log => subGroups.has(log.subGroup)).map(log => log.index));
-    this._subGroupItemLogs = null;
+    // Removing a new subgroup's item messages shifts later log positions.
+    // Preserve the other groups' messages for the final visibility check.
+    this._subGroupItemLogs = keepTracking ? logs
+      .filter(log => !subGroups.has(log.subGroup))
+      .map(log => ({...log, index: log.index - [...removed].filter(i => i < log.index).length})) : null;
     if (removed.size > 0) {
       this._actionLogs = this._actionLogs.filter((msg, i) => !removed.has(i));
     }
@@ -2787,18 +2797,19 @@ export default class LhcFormData {
     this._updateSubItemsHiddenFromView(newGroupItemForMultiSelect, false);
     item.items.unshift(newGroupItemForMultiSelect);
 
-    this._subGroupItemLogs = [];
+    const keepTracking = this._subGroupItemLogs !== null;
+    this._subGroupItemLogs = this._subGroupItemLogs || [];
     this._resetInternalData();
 
     // Do not announce a subgroup that is not displayed.
     if (InternalUtil.multiSelectSubGroupShown(newGroupItemForMultiSelect)) {
       var readerMsg = language.added + newGroupItemForMultiSelect.question;
       this._actionLogs.push(readerMsg);
-      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]));
+      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]), keepTracking);
     }
     else {
       // No part of this new subgroup is displayed, so discard its item logs.
-      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]));
+      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]), keepTracking);
       if (LForms.FHIR && this._hasResponsiveExpr) {
         // FHIRPath expressions, which run after this, might show it.
         this._hiddenNewSubGroups.add(newGroupItemForMultiSelect);
