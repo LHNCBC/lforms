@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Added `tabLayout`, `tabAnswerAlignment`, `showTabHeader`, and `stickyTabs` template options for
+  form-wide vertical tabs, configurable answer layout, optional tab content headers, and sticky tab
+  navigation.
+
 ## [44.1.0] 2026-09-08
 ### Added
 - Added support for the FHIR SDC Questionnaire columnCount extension, including

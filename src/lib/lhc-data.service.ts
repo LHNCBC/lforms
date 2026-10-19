@@ -50,6 +50,38 @@ export class LhcDataService {
     return this.lhcFormData?.templateOptions || {};
   }
 
+  /**
+   * Gets the NG-ZORRO tab position selected for the whole form.
+   * Invalid or omitted values preserve the historic top-positioned tabs.
+   */
+  getTabPosition(): 'top' | 'left' {
+    return this.getTemplateOptions().tabLayout === 'vertical' ? 'left' : 'top';
+  }
+
+  /**
+   * Whether vertical tab answer widths are based on the whole form or tab content.
+   * Missing or invalid values preserve the form-wide answer alignment.
+   */
+  getTabAnswerAlignment(): 'form' | 'content' {
+    return this.getTemplateOptions().tabAnswerAlignment === 'content' ? 'content' : 'form';
+  }
+
+  /**
+   * Whether each tab's label should also be shown as a header in its content.
+   * Only boolean true enables the header.
+   */
+  getShowTabHeader(): boolean {
+    return this.getTemplateOptions().showTabHeader === true;
+  }
+
+  /**
+   * Whether the form's tab navigation should be sticky. Only boolean true
+   * enables this so string values from HTML attributes cannot enable it.
+   */
+  getStickyTabs(): boolean {
+    return this.getTemplateOptions().stickyTabs === true;
+  }
+
 
   /**
    * The following functions are exposed to components and their templates through a service
@@ -728,5 +760,3 @@ export class LhcDataService {
   };
 
 }
-
-

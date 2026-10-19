@@ -184,8 +184,11 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
               }
             }
             self.lhcFormData = new LhcFormData(q);
-            // and options change
-            if (changes.options && self.options) {
+            // Apply the current options on every questionnaire load. The web
+            // component can receive questionnaire and options in separate
+            // change cycles, and lhcFormData is cleared while the new
+            // questionnaire is initialized.
+            if (self.options) {
               // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));
               self.lhcFormData.setTemplateOptions(self.options);
             }
