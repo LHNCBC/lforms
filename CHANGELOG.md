@@ -50,6 +50,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Loading a QuestionnaireResponse now creates child items for every selected
   multi-select answer, including unanswered children and typed Other answers.
   Typed answers retain their subgroup labels and child answers when saved.
+- Removing a typed Other answer from a multi-select checkbox question now
+  announces the answer's text instead of "undefined".
 - A `table` (matrix) group with no child items, such as one whose only child
   is a help item, is now rendered as a vertical group.
 - Selecting an answer in a single-select drop-down question that has child

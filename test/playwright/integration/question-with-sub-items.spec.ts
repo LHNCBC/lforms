@@ -50,9 +50,13 @@ test.describe('Question with sub items', () => {
       expect(answers.find((a: any) => a.valueString === 'Mango').item[0].answer).toEqual([{valueString: 'seven'}]);
       expect(answers.find((a: any) => a.valueString === 'Papaya').item[0].answer).toEqual([{valueString: 'nine'}]);
 
+      await page.evaluate(() => document.getElementById('reader_log').replaceChildren());
       await byId(page, 'item-ms/1').locator('.autocomp_selected li', {hasText: 'Mango'}).locator('button').click();
       await expect(group('Mango')).toHaveCount(0);
       await expect(group('Papaya').locator('input')).toHaveValue('nine');
+      await expect(page.locator('#reader_log p').filter({hasText: /^Removed\s+(Sub items for checkbox|sub items for autocomplete) option:/}))
+        .toHaveText([layout === 'check-box' ?
+          'Removed Sub items for checkbox option: Mango' : 'Removed sub items for autocomplete option: Mango']);
     });
   }
 

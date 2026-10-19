@@ -2837,7 +2837,8 @@ export default class LhcFormData {
 
     // Do not announce a subgroup that was not displayed.
     if (subGroupShown) {
-      var readerMsg = `${language.removed} Sub items for checkbox option: ${answer._displayText}`;
+      const optionText = subGroup.question || answer._displayText || answer.text || answer.code;
+      var readerMsg = `${language.removed} Sub items for checkbox option: ${optionText}`;
       this._actionLogs.push(readerMsg);
     }
   }
