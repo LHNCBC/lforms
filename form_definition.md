@@ -307,8 +307,16 @@ about the meaning of each key:
       Supported the fields are:
         * answerLayout - an object that controls the layout of the answers when an item
           has a dataType of CODING, INT, DT, TM or ST. Its "type" key accepts
-          "COMBO_BOX" (default) or "RADIO_CHECKBOX". For a boolean item, 'CHECK_BOX' renders
-          a three-state checkbox for true, false, and unanswered.It can also contain the 
+          "COMBO_BOX" (default) or "RADIO_CHECKBOX". For a boolean item, "CHECK_BOX"
+          renders a two-state checkbox when the item is required and has a boolean
+          default answer; otherwise, it renders a three-state checkbox for true,
+          false, and unanswered. A FHIR initialExpression alone does not count as
+          a default answer, so such items use the three-state checkbox. When
+          saved data is loaded without an answer for
+          a two-state checkbox, its value is set to false (unchecked), regardless
+          of the default answer. A newly added repetition of a two-state checkbox
+          starts with its default answer. A boolean item without "CHECK_BOX" renders as
+          three radio buttons. It can also contain the
           "columns" and "orientation" keys described under 
           [defaultAnswerLayout](#defaultAnswerLayout).
         * css - an array of valid CSS settings that could apply to an item. (limited supports).

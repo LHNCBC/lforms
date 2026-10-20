@@ -2,6 +2,29 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.2.0] 2026-10-06
+### Added
+- Required boolean items with the `check-box` item control and an initial
+  value now use a two-state checkbox (checked or unchecked). It is set to false
+  when a loaded QuestionnaireResponse has no answer, and a new repetition
+  starts with the initial value. Other `check-box` boolean items still use the
+  three-state checkbox. See https://hl7.org/fhir/questionnaire.html#booleans.
+### Changed
+- The three-state checkbox for boolean items is now 16px instead of 20px, like
+  the other checkboxes and radio buttons, with redrawn check and X marks.
+- Updated angular packages and build dependencies to fix vulnerabilities.
+### Fixed
+- Help, legal, and unit display items used as child items no longer cause
+  errors or incorrectly display selected answer text. This also fixes
+  QuestionnaireResponse loading and table groups containing only a help item.
+  (GitHub issue #207; thanks to Christopher Pruijsen for GitHub PR #211.)
+- Improved handling of child items for choice questions, including
+  multi-select answers, typed Other answers, QuestionnaireResponse loading, and
+  single-select drop-downs.
+- Improved screen reader announcements for multi-select answer child items,
+  including additions, removals, and visibility changes, while suppressing
+  duplicate or stale announcements.
+
 ## [44.1.0] 2026-09-08
 ### Added
 - Added support for the FHIR SDC Questionnaire columnCount extension, including

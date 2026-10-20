@@ -2,13 +2,18 @@
   <ng-container *ngSwitchCase="'horizontal'">
     <lhc-group-horizontal [item]="item"></lhc-group-horizontal>
   </ng-container>
+  <!-- A matrix needs at least one child item for its rows and answer columns. -->
   <ng-container *ngSwitchCase="'matrix'">
-    <lhc-group-matrix [item]="item" [acOptions]="item.items[0]?._autocompOptions"></lhc-group-matrix>
+    <lhc-group-matrix *ngIf="item.items?.length; else verticalGroup" [item]="item" [acOptions]="item.items[0]?._autocompOptions"></lhc-group-matrix>
   </ng-container>
   <ng-container *ngSwitchCase="'tabs'">
     <lhc-group-tabs [item]="item"></lhc-group-tabs>
   </ng-container>
   <ng-container *ngSwitchCase="'vertical'">
-    <lhc-group-vertical [item]="item"></lhc-group-vertical>
+    <ng-container *ngTemplateOutlet="verticalGroup"></ng-container>
   </ng-container>
 </ng-container>
+
+<ng-template #verticalGroup>
+  <lhc-group-vertical [item]="item"></lhc-group-vertical>
+</ng-template>

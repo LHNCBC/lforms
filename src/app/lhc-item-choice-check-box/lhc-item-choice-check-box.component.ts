@@ -3,6 +3,7 @@ import {CommonUtilsService} from '../../lib/common-utils.service';
 import {LhcDataService} from '../../lib/lhc-data.service';
 import language from '../../../language-config.json';
 import Def from 'autocomplete-lhc';
+import {InternalUtil} from '../../lib/lforms/internal-utils';
 
 @Component({
     selector: 'lhc-item-choice-check-box',
@@ -220,6 +221,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         this.lhcDataService.onItemValueChange(this.item, this.item.value, this.prevCheckBoxValue);
         this.prevCheckBoxValue = this.item.value;
         this.item._visitedBefore = true;
+        this.addOrRemoveSubGroupsForCheckbox();
+        this.lhcDataService.sendActionsToScreenReader();
       });
     }
   }
@@ -257,13 +260,16 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
     this.item._visitedBefore = true;
 
     this.addOrRemoveSubGroupsForCheckbox();
+    // The subgroups are added or removed after onItemValueChange has sent
+    // the other messages, so send the messages for the subgroups now.
+    this.lhcDataService.sendActionsToScreenReader();
   }
 
   /**
    * Add or remove subgroups for the checkbox item, as the selection changes.
    */
   addOrRemoveSubGroupsForCheckbox(): void {
-    if (!this.item.items) {
+    if (!InternalUtil.isMultiSelectWithSubItems(this.item)) {
       return;
     }
     for (let i = 0, len = this.checkboxModels.length; i < len; i++) {
@@ -274,6 +280,23 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
         this.lhcDataService.getLhcFormData().addSubItemsForMultiSelect(this.item, multiSelectOption);
       } else if (!this.checkboxModels[i] && subGroupExists) {
         this.lhcDataService.getLhcFormData().deleteSubItemsForCheckbox(this.item, multiSelectOption);
+      }
+    }
+    // Typed Other answers have no entry in checkboxModels. Create or remove
+    // their subgroups as the selection changes, for both newly typed answers
+    // and answers imported from a QuestionnaireResponse.
+    const formData = this.lhcDataService.getLhcFormData();
+    const otherValues = (this.item.value || []).filter(value => value._notOnList);
+    const otherLinkIds = otherValues.map(value => formData.getLinkIdForMultiSelectSubGroup(value));
+    for (const subGroup of [...this.item.items]) {
+      if (subGroup.isSubGroupForMultiSelect && subGroup.multiSelectOption?._notOnList &&
+          !otherLinkIds.includes(subGroup.linkId)) {
+        formData.deleteSubItemsForCheckbox(this.item, subGroup.multiSelectOption);
+      }
+    }
+    for (const value of otherValues) {
+      if (!formData.hasSubGroupWithLinkId(this.item, formData.getLinkIdForMultiSelectSubGroup(value))) {
+        formData.addSubItemsForMultiSelect(this.item, value);
       }
     }
   }
@@ -308,6 +331,8 @@ export class LhcItemChoiceCheckBoxComponent implements OnInit, OnChanges, OnDest
     // A list of currently valid subgroup linkIds.
     const subGroupLinkIds = this.acOptions.listItems.map(x =>
       lhcFormData.getLinkIdForMultiSelectSubGroup(x));
+    subGroupLinkIds.push(...(this.item.value || []).filter(value => value._notOnList)
+      .map(value => lhcFormData.getLinkIdForMultiSelectSubGroup(value)));
     if (this.item.items) {
       this.item.items = this.item.items.filter(x =>
         !x.isSubGroupForMultiSelect ||

@@ -1,0 +1,134 @@
+{
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+    ]
+  },
+  "title": "Multi-select with child items controlled by enableWhenExpression",
+  "status": "draft",
+  "item": [
+    {
+      "linkId": "show-details",
+      "text": "Show follow-up questions for Case 1?",
+      "type": "boolean"
+    },
+    {
+      "linkId": "case1-expression-other",
+      "text": "Case 1: only child is enabled by an enableWhenExpression on another question",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case1-child",
+          "text": "How many? (enabled when 'Show follow-up questions' is Yes)",
+          "type": "integer",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+              "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='show-details').answer.where(value = true).exists()"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "case2-expression-parent",
+      "text": "Case 2: only child is enabled by an enableWhenExpression when the parent includes Apple",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "check-box"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case2-child",
+          "text": "Apple variety (enabled when Apple is selected)",
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+              "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='case2-expression-parent').answer.value.where(code = 'a').exists()"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "linkId": "case3-autocomplete-expression-parent",
+      "text": "Case 3: autocomplete, only child is enabled by an enableWhenExpression when the parent includes Apple",
+      "type": "choice",
+      "repeats": true,
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down"
+              }
+            ]
+          }
+        }
+      ],
+      "answerOption": [
+        { "valueCoding": { "code": "a", "display": "Apple" } },
+        { "valueCoding": { "code": "b", "display": "Banana" } }
+      ],
+      "item": [
+        {
+          "linkId": "case3-child",
+          "text": "Apple variety (enabled when Apple is selected)",
+          "type": "string",
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-enableWhenExpression",
+              "valueExpression": {
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='case3-autocomplete-expression-parent').answer.value.where(code = 'a').exists()"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

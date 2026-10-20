@@ -5,7 +5,11 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LhcItemChoiceCheckBoxComponent } from './lhc-item-choice-check-box.component';
 import { AnswerOptionMinWidthDirective } from '../answer-option-min-width.directive';
 import { LhcDataService} from '../../lib/lhc-data.service';
+import LhcFormData from '../../lib/lforms/lhc-form-data';
+import { LForms as lforms} from '../lforms';
 import { getItemAnswerElem } from '../ng-unit-test-helpers';
+
+window.LForms = lforms;
 
 
 describe('LhcItemChoiceCheckBoxComponent', () => {
@@ -274,6 +278,43 @@ describe('LhcItemChoiceCheckBoxComponent', () => {
     component.item = { ...itemCheckboxCWE, value: [{ code: 'c2', text: 'Answer Y' }] };
     component.ngOnChanges({});
     expect(component.otherCheckboxModel).toBe(false);
+  });
+
+  it('should not add a subgroup when the item has no real sub items', () => {
+    // An item whose only Questionnaire child is a help text item is imported
+    // with an empty items list. Selecting an answer should not add a subgroup.
+    const lhcDataService = TestBed.inject(LhcDataService);
+    lhcDataService.setLhcFormData(new LhcFormData({}));
+    const item = JSON.parse(JSON.stringify(itemCheckboxCNE));
+    item.items = [];
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+
+    const checkbox: HTMLElement = getItemAnswerElem(element, item, item.answers[0]);
+    checkbox.click();
+    fixture.detectChanges();
+
+    expect(item.items.length).toBe(0);
+  });
+
+  it('should add a subgroup when the item has real sub items', () => {
+    const lhcDataService = TestBed.inject(LhcDataService);
+    lhcDataService.setLhcFormData(new LhcFormData({}));
+    const item = JSON.parse(JSON.stringify(itemCheckboxCNE));
+    item.items = [{dataType: 'INT', question: 'How many?', linkId: 'child-int'}];
+    component.item = item;
+    component.acOptions = acOptions;
+    fixture.detectChanges();
+
+    const checkbox: HTMLElement = getItemAnswerElem(element, item, item.answers[0]);
+    checkbox.click();
+    fixture.detectChanges();
+
+    expect(item.items.length).toBe(2);
+    expect(item.items[0].isSubGroupForMultiSelect).toBe(true);
+    expect(item.items[0].items.length).toBe(1);
+    expect(item.items[1].question).toBe('How many?');
   });
 
 });

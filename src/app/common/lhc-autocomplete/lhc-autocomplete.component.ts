@@ -3,6 +3,7 @@ import Def from 'autocomplete-lhc'; // see docs at http://lhncbc.github.io/autoc
 import copy from "fast-copy";
 import { LhcDataService} from '../../../lib/lhc-data.service';
 import CommonUtils from "../../../lib/lforms/lhc-common-utils.js";
+import {InternalUtil} from '../../../lib/lforms/internal-utils';
 import language from "../../../../language-config.json";
 
 @Component({
@@ -79,8 +80,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
 
       // run the change function
       if (dataChanged) {
-        this.dataModelChange.emit(this.dataModel);
-        this.lhcDataService.onItemValueChange(this.item, null, null, true)
+        this.notifyDataModelChange();
       }
     }
   }
@@ -286,8 +286,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
     const oldDataModel = CommonUtils.deepCopy(this.dataModel);
     this.setupAutocomplete();
     if (!CommonUtils.deepEqual(oldDataModel, this.dataModel)) {
-      this.dataModelChange.emit(this.dataModel);
-      this.lhcDataService.onItemValueChange(this.item, null, null, true)
+      this.notifyDataModelChange();
     }
     this.viewInitialized = true;
   }
@@ -663,6 +662,24 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
 
 
   /**
+   * Include dropdown subgroup additions/removals in the form's visibility
+   * snapshot and item-message tracking. Other autocomplete fields retain
+   * their existing change notification order.
+   */
+  private notifyDataModelChange() {
+    if (this.item && InternalUtil.isMultiSelectWithSubItems(this.item) &&
+        this.lhcDataService.getLhcFormData()) {
+      this.lhcDataService.onItemValueChange(this.item, null, null, true,
+        () => this.dataModelChange.emit(this.dataModel));
+    }
+    else {
+      this.dataModelChange.emit(this.dataModel);
+      this.lhcDataService.onItemValueChange(this.item, null, null, true);
+    }
+  }
+
+
+  /**
    * Event handler for when an answer item is selected
    * @param event the event emitted from an autocompleter
    */
@@ -694,8 +711,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
       if (!this.multipleSelections && this.dataModel !== null && this.dataModel !== undefined) {
         this.dataModel = null;
         this.selectedItems = null;
-        this.dataModelChange.emit(this.dataModel);
-        this.lhcDataService.onItemValueChange(this.item, null, null, true);
+        this.notifyDataModelChange();
       }
 
       // Emitting the model change and running its rules can synchronously rebuild
@@ -749,8 +765,7 @@ export class LhcAutocompleteComponent implements OnChanges, AfterViewInit, OnDes
         this.removeAutocompleteValidationError();
       }
       // run the change function
-      this.dataModelChange.emit(this.dataModel);
-      this.lhcDataService.onItemValueChange(this.item, null, null, true)
+      this.notifyDataModelChange();
     }
 
     if (event?.removed) {

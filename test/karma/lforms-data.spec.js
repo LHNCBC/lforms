@@ -1,5 +1,36 @@
 // Tests for the HL7 generation library
 describe('LFormsData class', function() {
+  describe('subgroup announcement tracking', function() {
+    it('should reindex retained item messages when a new subgroup suppresses its own messages', function() {
+      const form = new LForms.LFormsData({name: 'test form', items: []});
+      const apple = {};
+      const banana = {};
+      form._actionLogs = ['Showing Apple details', 'Showing Banana details', 'Added Apple'];
+      form._subGroupItemLogs = [{subGroup: apple, index: 0}, {subGroup: banana, index: 1}];
+
+      form._removeSubGroupItemLogs(new Set([apple]), true);
+      assert.deepEqual(form._actionLogs, ['Showing Banana details', 'Added Apple']);
+      assert.deepEqual(form._subGroupItemLogs, [{subGroup: banana, index: 0}]);
+
+      form._actionLogs.push('Showing sub items for Banana');
+      form._removeSubGroupItemLogs(new Set([banana]));
+      assert.deepEqual(form._actionLogs, ['Added Apple', 'Showing sub items for Banana']);
+      assert.isNull(form._subGroupItemLogs);
+    });
+
+    it('should retain item messages for other subgroups while processing a hidden addition', function() {
+      const form = new LForms.LFormsData({name: 'test form', items: []});
+      const hiddenGroup = {};
+      const banana = {};
+      form._actionLogs = ['Showing Banana details'];
+      form._subGroupItemLogs = [{subGroup: banana, index: 0}];
+
+      form._removeSubGroupItemLogs(new Set([hiddenGroup]), true);
+      assert.deepEqual(form._actionLogs, ['Showing Banana details']);
+      assert.deepEqual(form._subGroupItemLogs, [{subGroup: banana, index: 0}]);
+    });
+  });
+
   describe('constructor', function() {
     it('should create with empty items',function () {
       var lfData = new LForms.LFormsData({name: 'test form', items: []});

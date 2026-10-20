@@ -57,4 +57,24 @@ describe('LhcDataService', () => {
     });
     expect(service.isHideRepetitionNumber()).toBeTrue();
   });
+
+  it('should show a multi-select subgroup only when one of its sub items is shown', () => {
+    service.setLhcFormData({});
+    const subGroup = (subItems) => ({isSubGroupForMultiSelect: true, items: subItems});
+    const visible = {linkId: 'visible'};
+    const hidden = {linkId: 'hidden', _isHiddenFromView: true};
+    const disabled = {linkId: 'disabled', _enableWhenExpVal: false};
+    const disabledProtected = {linkId: 'protected', _enableWhenExpVal: false, _disabledDisplayStatus: 'protected'};
+
+    expect(service.multiSelectSubGroupShown(subGroup([visible]))).toBeTrue();
+    expect(service.multiSelectSubGroupShown(subGroup([hidden, visible]))).toBeTrue();
+    expect(service.multiSelectSubGroupShown(subGroup([disabledProtected]))).toBeTrue();
+    expect(service.multiSelectSubGroupShown(subGroup([hidden]))).toBeFalse();
+    expect(service.multiSelectSubGroupShown(subGroup([disabled]))).toBeFalse();
+    expect(service.multiSelectSubGroupShown(subGroup([hidden, disabled]))).toBeFalse();
+    expect(service.multiSelectSubGroupShown(subGroup([]))).toBeFalse();
+    // Other items, including groups whose sub items are all hidden, are not affected.
+    expect(service.multiSelectSubGroupShown({items: [hidden]})).toBeTrue();
+    expect(service.multiSelectSubGroupShown(visible)).toBeTrue();
+  });
 });

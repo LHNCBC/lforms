@@ -32,6 +32,7 @@ export const InternalUtil = {
    */
   assignValueToItem: function(item, val, type) {
     var changed = false;
+    val = this.twoStateCheckboxValue(item, val);
     type = type || val && val._type;
     if (val && type === 'Quantity') {
       if (item.value !== val.value) {
@@ -459,6 +460,41 @@ export const InternalUtil = {
 
 
   /**
+   * Check if a boolean item meets the FHIR requirements for a two-state checkbox:
+   * it requested the check-box item control, is required, and has a default value.
+   * @param {*} item an lforms item
+   * @returns true if the item should be rendered as a two-state checkbox
+   */
+  usesTwoStateCheckbox: function(item) {
+    return item?.dataType === CONSTANTS.DATA_TYPE.BL &&
+      item.displayControl?.answerLayout?.type === 'CHECK_BOX' &&
+      item._answerRequired === true &&
+      typeof item.defaultAnswer === 'boolean';
+  },
+
+
+  /**
+   * Get the value to store in an item.  A two-state checkbox cannot display
+   * "not answered", so an empty value for it is stored as false (unchecked).
+   * lforms calls this wherever it writes a value that may be empty: when the
+   * form is loaded (_setTreeNodes), when a value is assigned through
+   * assignValueToItem (e.g., each repetition in setRepeatingItems), in data
+   * control (_updateDataByDataControl) and FHIRPath expressions
+   * (_setItemValueFromFHIRPath), and when it is notified of a changed value
+   * (updateOnSourceItemChange).  User input and new repetitions only produce
+   * true or false.  A value that other code assigns directly to item.value,
+   * without calling updateOnSourceItemChange, is not normalized.
+   * @param {*} item an lforms item
+   * @param {*} value the new value of the item
+   * @returns false for an empty value of a two-state checkbox, otherwise the value
+   */
+  twoStateCheckboxValue: function(item, value) {
+    return (value === undefined || value === null) && this.usesTwoStateCheckbox(item) ?
+      false : value;
+  },
+
+
+  /**
    * Get the rendering-xhtml string, replacing local ids in the 'src' attributes of
    * the 'img' tags if the local ids are in the 'contained' with image data,
    * @param containedImages a hashmap of image data from the "contained" in FHIR questionnaire
@@ -521,6 +557,22 @@ export const InternalUtil = {
   targetShown: function(item) {
     return item._disabledDisplayStatus === 'protected' ||
         this.targetEnabled(item);
+  },
+
+
+  /**
+   * Check if a multi-select subgroup should be displayed.  A subgroup is only
+   * displayed when at least one of its sub items is displayed, so that the
+   * selected answer's text is not shown as a heading with nothing under it.
+   * The subgroup is kept in the data, so that values of hidden sub items are
+   * still included in the QuestionnaireResponse.
+   * @param item an item
+   * @return {boolean} false if the item is a multi-select subgroup and none
+   *  of its sub items are displayed, true otherwise.
+   */
+  multiSelectSubGroupShown: function(item) {
+    return !item.isSubGroupForMultiSelect || (item.items || []).some(subItem =>
+        !subItem._isHiddenFromView && this.targetShown(subItem));
   },
 
 
