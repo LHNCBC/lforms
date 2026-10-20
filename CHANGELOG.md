@@ -4,61 +4,26 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [44.2.0] 2026-10-06
 ### Added
-- Boolean items with the `check-box` item control that are required and have an
-  initial value now use a two-state checkbox (checked or unchecked) instead of
-  the three-state checkbox. A two-state checkbox with no answer in a loaded
-  QuestionnaireResponse is set to false, and a newly added repetition starts
-  with the initial value. Other boolean items with the `check-box` item control
-  continue to use the three-state checkbox. See
-  https://hl7.org/fhir/questionnaire.html#booleans.
+- Required boolean items with the `check-box` item control and an initial
+  value now use a two-state checkbox (checked or unchecked). It is set to false
+  when a loaded QuestionnaireResponse has no answer, and a new repetition
+  starts with the initial value. Other `check-box` boolean items still use the
+  three-state checkbox. See https://hl7.org/fhir/questionnaire.html#booleans.
 ### Changed
-- The three-state checkbox for boolean items is now 16px instead of 20px,
-  the same size as the other checkboxes and radio buttons, and its check
-  and X marks have been redrawn to match.
+- The three-state checkbox for boolean items is now 16px instead of 20px, like
+  the other checkboxes and radio buttons, with redrawn check and X marks.
+- Updated angular packages and build dependencies to fix vulnerabilities.
 ### Fixed
-- Help, legal, and unit display items in a FHIR Questionnaire are no longer
-  treated as child items of their parent question. Previously, selecting an
-  answer in a multi-select question whose only child was one of these items
-  displayed the selected answer's text below the question (GitHub issue #207).
-  Thanks to Christopher Pruijsen for the fix (GitHub PR #211).
-- For a multi-select question with child items, the heading for a selected
-  answer is no longer displayed when none of the child items are displayed,
-  for example when they are hidden with the questionnaire-hidden extension or
-  disabled by enableWhen. Screen readers are no longer told that hidden child
-  items were added or removed, and are told when enableWhen or
-  enableWhenExpression later shows or hides the child items of a selected
-  answer.
-- Visibility changes of a multi-select answer's child items caused by a
-  calculated value are announced only once.
-- Selecting or removing a multi-select dropdown answer now announces which
-  existing answer's subgroup is shown or hidden by enableWhen, instead of
-  announcing only the child question's text.
-- For a multi-select check-box question with child items, screen readers are
-  now told that the child items were added or removed when an answer is
-  checked or unchecked, instead of on the next change in the form.
-- Screen readers are no longer told the same skip logic change more than
-  once. Items that are not displayed because of a multi-select question's
-  layout are no longer announced. When a selected answer's child items are
-  added, removed, shown or hidden, only that is announced, not each child
-  item. Items that were removed from the form are no longer announced when
-  the skip logic that controlled them changes.
-- Loading a QuestionnaireResponse no longer fails when it includes help,
-  legal, or unit display items, for example under a question's answer or in a
-  group, including when a question has more than one of the same kind.
-- Removing a selected multi-select answer no longer announces separate
-  visibility changes for nested subgroups that are removed with it.
-- Loading a QuestionnaireResponse now creates child items for every selected
-  multi-select answer, including unanswered children and typed Other answers.
-  Typed answers retain their subgroup labels and child answers when saved.
-- For a multi-select checkbox question with child items, entering a new
-  Other answer now creates a subgroup for that answer, matching autocomplete.
-  Removing the answer also removes its subgroup.
-- Removing a typed Other answer from a multi-select checkbox question now
-  announces the answer's text instead of "undefined".
-- A `table` (matrix) group with no child items, such as one whose only child
-  is a help item, is now rendered as a vertical group.
-- Selecting an answer in a single-select drop-down question that has child
-  items no longer raises an error.
+- Help, legal, and unit display items used as child items no longer cause
+  errors or incorrectly display selected answer text. This also fixes
+  QuestionnaireResponse loading and table groups containing only a help item.
+  (GitHub issue #207; thanks to Christopher Pruijsen for GitHub PR #211.)
+- Improved handling of child items for choice questions, including
+  multi-select answers, typed Other answers, QuestionnaireResponse loading, and
+  single-select drop-downs.
+- Improved screen reader announcements for multi-select answer child items,
+  including additions, removals, and visibility changes, while suppressing
+  duplicate or stale announcements.
 
 ## [44.1.0] 2026-09-08
 ### Added
