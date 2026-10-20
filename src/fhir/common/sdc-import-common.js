@@ -1040,6 +1040,22 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   * Checks whether a QuestionnaireResponse item has nothing to merge into the
+   * given LForms item: it has no answers or child items, and no child item of
+   * the LForms item has its linkId.  This is the case for help, legal, and unit
+   * display items, which are stored as properties of the LForms item rather
+   * than as its child items.
+   * @param lfItem an LForms item
+   * @param qrItem a QuestionnaireResponse item
+   * @private
+   */
+  qrImport._isEmptyUnmatchedQRItem = function(lfItem, qrItem) {
+    return !qrItem.answer?.length && !qrItem.item?.length &&
+      !this._findTheMatchingItemByLinkId(lfItem, qrItem.linkId);
+  };
+
+
+  /**
    * Merge data into items on the same level
    * @param parentQRItemInfo structural information of a parent item
    * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
@@ -1052,7 +1068,8 @@ function addCommonSDCImportFns(ns) {
 
       var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
       var qrItem = qrItemInfo.item;
-      if (qrItem) {
+      // Help, legal, and unit display items have no answers to merge.
+      if (qrItem && !this._isEmptyUnmatchedQRItem(parentLFormsItem, qrItem)) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
           var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId);
@@ -1095,43 +1112,64 @@ function addCommonSDCImportFns(ns) {
           if (qrAnswer && qrAnswer.length > 0) {
             this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
             // process item.answer.item, if applicable
-            if (qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo.length > 0) {
-              if(!ns._answerRepeats(item)) {
-                this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[0], item);
-              } else {
-                // Multi-select with child items.
-                for (let k = 0; k < qrItemInfo.qrAnswersItemsInfo.length; k++) {
-                  if (qrItemInfo.qrAnswersItemsInfo[k]) {
-                    let newCheckboxSubGroup = {
-                      "isSubGroupForMultiSelect": true,
-                      "multiSelectOption": {},
-                      "header": true,
-                      "dataType": "SECTION",
-                      "displayControl": {
-                        "questionLayout": "vertical"
-                      },
-                      "question": "",
-                      "linkId": "",
-                      "_id": "",
-                      "items": []
-                    };
-                    const multiSelectOption = item.value[k];
-                    if (!multiSelectOption) {
+            const qrAnswersItemsInfo = qrItemInfo.qrAnswersItemsInfo || [];
+            if (!ns._answerRepeats(item)) {
+              if (qrAnswersItemsInfo.length > 0) {
+                this._processQRItemAndLFormsItem(qrAnswersItemsInfo[0], item);
+              }
+            } else {
+              // Multi-select.  As when an answer is selected on the form, each
+              // selected answer gets a subgroup with a copy of the child items,
+              // even if the QR has no answers for them.
+              const childItems = (item.items || []).filter(x => !x.isSubGroupForMultiSelect);
+              const values = Array.isArray(item.value) ? item.value : [];
+              const numAnswers = Math.max(values.length, qrAnswersItemsInfo.length);
+              for (let k = 0; k < numAnswers; k++) {
+                const answerItemsInfo = qrAnswersItemsInfo[k];
+                if (answerItemsInfo) {
+                  // The help, legal, and unit display items belong to the
+                  // multi-select question, not to the answer's subgroup.
+                  answerItemsInfo.qrItemsInfo = answerItemsInfo.qrItemsInfo.filter(
+                    info => !this._isEmptyUnmatchedQRItem(item, info.item));
+                }
+                const hasSavedChildItems = !!answerItemsInfo && answerItemsInfo.qrItemsInfo.length > 0;
+                if (hasSavedChildItems || childItems.length > 0) {
+                  // Open-choice valueString answers are imported as strings,
+                  // but subgroup identity and QR export matching need an object.
+                  const multiSelectOption = typeof values[k] === 'string' ?
+                    {text: values[k], _notOnList: true} : values[k];
+                  if (!multiSelectOption) {
+                    if (hasSavedChildItems) {
                       throw new Error("qrAnswersItemsInfo[" + k + "] doesn't have a corresponding item value. Please check the QR.");
                     }
-                    const linkId = 'multi-select-subgroup|' + (multiSelectOption.system || '') + '|' + (multiSelectOption.code || multiSelectOption.text);
-                    // multiSelectOption._displayText might be missing here during import/merge, because it is set in lhc-form-data.ts.
-                    // For this reason, newCheckboxSubGroup.multiSelectOption and newCheckboxSubGroup.question will be updated later in
-                    // lhc-item-choice-check-box.component.ts or lhc-item-choice-autocomplete.component.ts.
-                    newCheckboxSubGroup.multiSelectOption = multiSelectOption;
-                    newCheckboxSubGroup.question = multiSelectOption._displayText || multiSelectOption.text || multiSelectOption.code + '';
-                    newCheckboxSubGroup.linkId = linkId;
-                    newCheckboxSubGroup._id = linkId;
-                    newCheckboxSubGroup.items = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForMultiSelect));
-                    item.items.push(newCheckboxSubGroup);
-                    if (item.value[k]) {
-                      this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[k], newCheckboxSubGroup);
-                    }
+                    continue;
+                  }
+                  let newCheckboxSubGroup = {
+                    "isSubGroupForMultiSelect": true,
+                    "multiSelectOption": {},
+                    "header": true,
+                    "dataType": "SECTION",
+                    "displayControl": {
+                      "questionLayout": "vertical"
+                    },
+                    "question": "",
+                    "linkId": "",
+                    "_id": "",
+                    "items": []
+                  };
+                  const linkId = 'multi-select-subgroup|' + (multiSelectOption.system || '') + '|' + (multiSelectOption.code || multiSelectOption.text);
+                  // multiSelectOption._displayText might be missing here during import/merge, because it is set in lhc-form-data.ts.
+                  // For this reason, newCheckboxSubGroup.multiSelectOption and newCheckboxSubGroup.question will be updated later in
+                  // lhc-item-choice-check-box.component.ts or lhc-item-choice-autocomplete.component.ts.
+                  newCheckboxSubGroup.multiSelectOption = multiSelectOption;
+                  newCheckboxSubGroup.question = multiSelectOption._displayText || multiSelectOption.text || multiSelectOption.code + '';
+                  newCheckboxSubGroup.linkId = linkId;
+                  newCheckboxSubGroup._id = linkId;
+                  newCheckboxSubGroup.items = CommonUtils.deepCopy(childItems);
+                  item.items = item.items || [];
+                  item.items.push(newCheckboxSubGroup);
+                  if (hasSavedChildItems) {
+                    this._processQRItemAndLFormsItem(answerItemsInfo, newCheckboxSubGroup);
                   }
                 }
               }
@@ -1892,10 +1930,15 @@ function addCommonSDCImportFns(ns) {
    */
   self._processChildItems = function(targetItem, qItem, containedVS, linkIdItemMap, containedImages) {
     if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
         let isHelpTextItem = self._processCodingInstructionsAndLegal(targetItem, qItem.item[i]);
         if(!isHelpTextItem) {
+          // Help, legal, and unit display items are represented as properties of
+          // the parent LForms item.  Only create the child-items array when the
+          // Questionnaire contains an actual child item.  In particular, an
+          // empty array makes a repeating choice look like a multi-select with
+          // dependent questions to the renderer.
+          targetItem.items = targetItem.items || [];
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap, containedImages);
           // If any child item contains modifierExtension, mark the parent lfItem._hasModifierExtension true.
           if (!targetItem._hasModifierExtension && item._hasModifierExtension) {

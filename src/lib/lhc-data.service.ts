@@ -317,6 +317,18 @@ export class LhcDataService {
 
 
   /**
+   * Check if a multi-select subgroup should be displayed (at least one of its
+   * sub items is displayed). Items that are not multi-select subgroups are not
+   * affected.
+   * @param item an item
+   * @return {boolean}
+   */
+  multiSelectSubGroupShown(item) {
+    return this.lhcFormData ? InternalUtil.multiSelectSubGroupShown(item) : false;
+  }
+
+
+  /**
    * Get the sequence number for the current repeating item
    * @param item an item in the lforms form items array
    * @returns {string}
@@ -709,15 +721,19 @@ export class LhcDataService {
    * @param currentValue the current value of an item.value
    * @param previousValue the previous value of an item.value
    * @param skipComparison whether to skip comparision of previous value and current value. defalut is false.
+   * @param updateSubGroups optional synchronous dropdown model/structure update,
+   *  run after subgroup visibility is captured but before form controls run
    */
-  onItemValueChange(item, currentValue, previousValue, skipComparison=false) {
+  onItemValueChange(item, currentValue, previousValue, skipComparison=false, updateSubGroups?: () => void) {
     if (this.lhcFormData &&
       (skipComparison || !skipComparison && !CommonUtils.deepEqual(currentValue, previousValue))) {
 
       // run lforms internal changes
-      this.lhcFormData.updateOnSourceItemChange(item)
+      const expressionsDone = this.lhcFormData.updateOnSourceItemChange(item, updateSubGroups);
 
       this.sendActionsToScreenReader();
+      // Expressions run asynchronously and can produce more announcements.
+      expressionsDone?.then(() => this.sendActionsToScreenReader());
 
       this.formChangeEventSource.next({
         'event': 'dataChanged',

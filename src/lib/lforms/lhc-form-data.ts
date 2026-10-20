@@ -56,6 +56,22 @@ export default class LhcFormData {
   // action logs for screen reader
   _actionLogs = [];
 
+  // Whether each multi-select subgroup whose answer was just deselected was
+  // displayed before form controls were reevaluated.
+  _subGroupVisibilityBeforeRemoval = new Map();
+
+  // New hidden subgroups whose FHIRPath expressions have not run yet.
+  _hiddenNewSubGroups = new Set();
+
+  // Track announcements made during an expression run, so its final
+  // visibility check does not announce the same change again.
+  _pendingExpressionRuns = new Set<{visibility: Map<any, boolean>, hiddenNewSubGroups: Set<any>}>();
+
+  // While a change is processed, the positions in _actionLogs of the skip
+  // logic messages for items in multi-select subgroups.  The messages are
+  // removed if a message for the whole subgroup is added for the same change.
+  _subGroupItemLogs = null;
+
   // active item, where a input field in the row has the focus
   _activeItem = null;
 
@@ -579,8 +595,19 @@ export default class LhcFormData {
   /**
    * Check skip logic, formulas and data controls when the source item changes.
    * @param sourceItem the controlling/source item
+   * @param updateSubGroups optional dropdown structure update to include in
+   *  the visibility snapshot and announcement deduplication
+   * @return a Promise that resolves after FHIRPath expressions have run, if
+   *  there are any to run, or undefined otherwise
    */
-  updateOnSourceItemChange(sourceItem) {
+  updateOnSourceItemChange(sourceItem, updateSubGroups?: () => void) {
+    // Keep the visibility state from before form controls are reevaluated.  A
+    // selected multi-select option's subgroup can become shown or hidden when
+    // enableWhen changes, without the subgroup itself being added or removed.
+    const previousSubGroupVisibility = this._getMultiSelectSubGroupVisibility();
+    this._subGroupItemLogs = [];
+    updateSubGroups?.();
+
     // A two-state checkbox cannot display "not answered".  Store an empty value
     // as unchecked before the change is passed on to dependent items.
     const twoStateValue = InternalUtil.twoStateCheckboxValue(sourceItem, sourceItem.value);
@@ -617,15 +644,172 @@ export default class LhcFormData {
     this._adjustLastSiblingListForHorizontalLayout();
     // run all form controls
     this._checkFormControls();
+    this._logMultiSelectSubGroupVisibilityChanges(previousSubGroupVisibility);
 
     // run FHIRPath expression
     if (LForms.FHIR && this._hasResponsiveExpr) {
       const self = this;
-      setTimeout(function(){
-        self._expressionProcessor.runCalculations(false).then(()=>{
-          self._checkFormControls();
+      return new Promise<void>((resolve, reject) => {
+        setTimeout(function(){
+          // enableWhenExpression can show or hide a selected option's subgroup.
+          const run = {
+            visibility: self._getMultiSelectSubGroupVisibility(),
+            hiddenNewSubGroups: self._hiddenNewSubGroups
+          };
+          self._hiddenNewSubGroups = new Set();
+          self._pendingExpressionRuns.add(run);
+          self._expressionProcessor.runCalculations(false).then(()=>{
+            self._pendingExpressionRuns.delete(run);
+            self._subGroupItemLogs = [];
+            self._checkFormControls();
+            self._logMultiSelectSubGroupVisibilityChanges(run.visibility, run.hiddenNewSubGroups);
+            resolve();
+          }).catch(error => {
+            self._pendingExpressionRuns.delete(run);
+            reject(error);
+          });
         });
       });
+    }
+  }
+
+
+  /**
+   * Capture the current visibility of each multi-select subgroup.
+   * @return a map from subgroup objects to whether they are displayed
+   * @private
+   */
+  _getMultiSelectSubGroupVisibility() {
+    const visibility = new Map();
+    for (const item of this.itemList) {
+      if (item.isSubGroupForMultiSelect) {
+        visibility.set(item, InternalUtil.multiSelectSubGroupShown(item));
+      }
+    }
+    return visibility;
+  }
+
+
+  /**
+   * Add screen-reader messages for existing multi-select subgroups whose
+   * visibility changed while form controls were reevaluated.
+   * @param previousVisibility visibility captured before form controls ran
+   * @param hiddenNewSubGroups (optional) new hidden subgroups to announce as
+   *  added if expressions show them for the first time
+   * @private
+   */
+  _logMultiSelectSubGroupVisibilityChanges(previousVisibility, hiddenNewSubGroups?) {
+    this._subGroupVisibilityBeforeRemoval = new Map();
+    const announcedSubGroups = new Set();
+    previousVisibility.forEach((wasShown, subGroup) => {
+      if (!this._isMultiSelectSubGroupAnswerSelected(subGroup)) {
+        // The subgroup is about to be removed, which is announced when it is
+        // removed if it was displayed before this change.
+        this._subGroupVisibilityBeforeRemoval.set(subGroup, wasShown);
+        return;
+      }
+      // A deselected ancestor removes this whole subtree. Its removal message
+      // also covers nested subgroups whose own answers are still selected.
+      if (this._isInUnusedMultiSelectPart(subGroup)) {
+        return;
+      }
+
+      const isShown = InternalUtil.multiSelectSubGroupShown(subGroup);
+      if (wasShown !== isShown) {
+        const addedHidden = hiddenNewSubGroups?.has(subGroup) ||
+          [...this._pendingExpressionRuns].some(run => run.hiddenNewSubGroups.has(subGroup));
+        if (isShown && addedHidden) {
+          this._actionLogs.push(language.added + subGroup.question);
+        }
+        else {
+          this._actionLogs.push((isShown ? 'Showing' : 'Hiding') + ' sub items for ' + subGroup.question);
+        }
+        announcedSubGroups.add(subGroup);
+        // A calculated value can cause another update before expressions
+        // finish. Record what that update has already announced.
+        for (const run of this._pendingExpressionRuns) {
+          if (run.visibility.has(subGroup)) {
+            run.visibility.set(subGroup, isShown);
+          }
+          run.hiddenNewSubGroups.delete(subGroup);
+        }
+      }
+    });
+    this._removeSubGroupItemLogs(announcedSubGroups);
+  }
+
+
+  /**
+   * Check whether the answer for a multi-select subgroup is selected.
+   * @param subGroup a multi-select subgroup
+   * @return {boolean}
+   * @private
+   */
+  _isMultiSelectSubGroupAnswerSelected(subGroup) {
+    const parentValue = subGroup._parentItem?.value;
+    const selectedAnswers = Array.isArray(parentValue) ? parentValue : (parentValue ? [parentValue] : []);
+    return selectedAnswers.some(
+      answer => answer && this.getLinkIdForMultiSelectSubGroup(answer) === subGroup.linkId);
+  }
+
+
+  /**
+   * Check whether an item is in a part of a multi-select question that is not
+   * displayed: the original sub items, which are copied into a subgroup for
+   * each selected answer, or the subgroup of an answer that is no longer
+   * selected.
+   * @param item an item
+   * @return {boolean}
+   * @private
+   */
+  _isInUnusedMultiSelectPart(item) {
+    for (let current = item; current?._parentItem; current = current._parentItem) {
+      if (InternalUtil.isMultiSelectWithSubItems(current._parentItem) &&
+          (!current.isSubGroupForMultiSelect || !this._isMultiSelectSubGroupAnswerSelected(current))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  /**
+   * Find the multi-select subgroup that contains an item.
+   * @param item an item
+   * @return the item itself if it is a multi-select subgroup, otherwise the
+   *  nearest multi-select subgroup above it, or undefined if there is none.
+   * @private
+   */
+  _getMultiSelectSubGroup(item) {
+    for (let current = item; current; current = current._parentItem) {
+      if (current.isSubGroupForMultiSelect) {
+        return current;
+      }
+    }
+    return undefined;
+  }
+
+
+  /**
+   * Stop keeping track of the skip logic messages for items in multi-select
+   * subgroups, and remove the ones for the given subgroups, which have their
+   * own message.
+   * @param subGroups a Set of multi-select subgroups
+   * @param keepTracking keep tracking the remaining item messages while a
+   *  dropdown selection is still being processed
+   * @private
+   */
+  _removeSubGroupItemLogs(subGroups, keepTracking=false) {
+    const logs = this._subGroupItemLogs || [];
+    const removed = new Set(logs
+      .filter(log => subGroups.has(log.subGroup)).map(log => log.index));
+    // Removing a new subgroup's item messages shifts later log positions.
+    // Preserve the other groups' messages for the final visibility check.
+    this._subGroupItemLogs = keepTracking ? logs
+      .filter(log => !subGroups.has(log.subGroup))
+      .map(log => ({...log, index: log.index - [...removed].filter(i => i < log.index).length})) : null;
+    if (removed.size > 0) {
+      this._actionLogs = this._actionLogs.filter((msg, i) => !removed.has(i));
     }
   }
 
@@ -778,6 +962,13 @@ export default class LhcFormData {
    * @private
    */
   _setupSourceToTargetMap() {
+    // Rebuild the lists, so that they do not keep items that have been removed.
+    for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
+      const item = this.itemList[i];
+      delete item._formulaTargets;
+      delete item._dataControlTargets;
+      delete item._skipLogicTargets;
+    }
     for (let i=0, iLen=this.itemList.length; i<iLen; i++) {
       const item = this.itemList[i];
       // formula
@@ -918,10 +1109,15 @@ export default class LhcFormData {
   _setSkipLogicStatusValue(item, newStatus, noLog=false) {
     let changed = false;
     if (item._skipLogicStatus !== newStatus) {
-      if (item._skipLogicStatus) {
+      // Items that are not displayed because of the multi-select layout are
+      // not announced.
+      if (item._skipLogicStatus && !noLog && !this._isInUnusedMultiSelectPart(item)) {
         const msg = newStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ? 'Hiding ' + item._text : 'Showing ' + item._text;
-        if (!noLog)
-          this._actionLogs.push(msg);
+        const subGroup = this._getMultiSelectSubGroup(item);
+        if (subGroup && this._subGroupItemLogs) {
+          this._subGroupItemLogs.push({subGroup: subGroup, index: this._actionLogs.length});
+        }
+        this._actionLogs.push(msg);
       }
       item._skipLogicStatus = newStatus;
       changed = true;
@@ -2367,7 +2563,7 @@ export default class LhcFormData {
           item._horizontalTableHeader = true;
           item._horizontalTableId = tableHeaderLinkIdAndParentIdPath;
 
-          itemsInRow = item.items;
+          itemsInRow = item.items || [];
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
             const itemInRow = itemsInRow[j];
             columnHeaders.push({item: itemInRow, id: "col" + itemInRow._elementId, displayControl: itemInRow.displayControl});
@@ -2389,7 +2585,7 @@ export default class LhcFormData {
         // if it's the following rows, update the tableRows and tableEndIndex
         else if (tableHeaderLinkIdAndParentIdPath === itemLinkIdAndParentIdPath ) {
           item._horizontalTableHeader = false;
-          itemsInRow = item.items;
+          itemsInRow = item.items || [];
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
             // indicate the item is in a horizontal table
             itemsInRow[j]._inHorizontalTable = true;
@@ -2571,9 +2767,16 @@ export default class LhcFormData {
    * @param answer the selected multi-select option.
    */
   addSubItemsForMultiSelect(item, answer) {
+    // A subgroup is only created when there are real sub items to put in it.
+    // For example, an item whose only Questionnaire child is a help text item
+    // has an empty items list, because help text items are excluded on import.
+    const subItems = (item.items || []).filter(x => !x.isSubGroupForMultiSelect);
+    if (subItems.length === 0) {
+      return;
+    }
     const linkId = this.getLinkIdForMultiSelectSubGroup(answer);
     // Make a copy of the original sub items, excluding multi-select subgroups.
-    let subItemsCopy = CommonUtils.deepCopy(item.items.filter(x => !x.isSubGroupForMultiSelect));
+    let subItemsCopy = CommonUtils.deepCopy(subItems);
     let newGroupItemForMultiSelect = {
       "isSubGroupForMultiSelect": true,
       "multiSelectOption": answer,
@@ -2594,10 +2797,24 @@ export default class LhcFormData {
     this._updateSubItemsHiddenFromView(newGroupItemForMultiSelect, false);
     item.items.unshift(newGroupItemForMultiSelect);
 
+    const keepTracking = this._subGroupItemLogs !== null;
+    this._subGroupItemLogs = this._subGroupItemLogs || [];
     this._resetInternalData();
 
-    var readerMsg = language.added + newGroupItemForMultiSelect.question;
-    this._actionLogs.push(readerMsg);
+    // Do not announce a subgroup that is not displayed.
+    if (InternalUtil.multiSelectSubGroupShown(newGroupItemForMultiSelect)) {
+      var readerMsg = language.added + newGroupItemForMultiSelect.question;
+      this._actionLogs.push(readerMsg);
+      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]), keepTracking);
+    }
+    else {
+      // No part of this new subgroup is displayed, so discard its item logs.
+      this._removeSubGroupItemLogs(new Set([newGroupItemForMultiSelect]), keepTracking);
+      if (LForms.FHIR && this._hasResponsiveExpr) {
+        // FHIRPath expressions, which run after this, might show it.
+        this._hiddenNewSubGroups.add(newGroupItemForMultiSelect);
+      }
+    }
   }
 
 
@@ -2608,12 +2825,22 @@ export default class LhcFormData {
    */
   deleteSubItemsForCheckbox(item, answer) {
     const linkId = this.getLinkIdForMultiSelectSubGroup(answer);
+    const subGroup = item.items.find(x => x.linkId === linkId);
+    // Unchecking the answer may already have hidden the subgroup through
+    // enableWhen, so use its visibility from before the change if it is known.
+    const subGroupShown = subGroup && (this._subGroupVisibilityBeforeRemoval.has(subGroup) ?
+      this._subGroupVisibilityBeforeRemoval.get(subGroup) : InternalUtil.multiSelectSubGroupShown(subGroup));
+    this._subGroupVisibilityBeforeRemoval.delete(subGroup);
     item.items = item.items.filter(x => x.linkId !== linkId);
 
     this._resetInternalData();
 
-    var readerMsg = `${language.removed} Sub items for checkbox option: ${answer._displayText}`;
-    this._actionLogs.push(readerMsg);
+    // Do not announce a subgroup that was not displayed.
+    if (subGroupShown) {
+      const optionText = subGroup.question || answer._displayText || answer.text || answer.code;
+      var readerMsg = `${language.removed} Sub items for checkbox option: ${optionText}`;
+      this._actionLogs.push(readerMsg);
+    }
   }
 
 
@@ -2624,10 +2851,14 @@ export default class LhcFormData {
    */
   deleteSubItemsForAutocomplete(item, index) {
     const readerMsg = `${language.removed} sub items for autocomplete option: ${item.items[index]?.question}`;
+    const subGroupShown = item.items[index] && InternalUtil.multiSelectSubGroupShown(item.items[index]);
     item.items.splice(index, 1);
 
     this._resetInternalData();
-    this._actionLogs.push(readerMsg);
+    // Do not announce a subgroup that was not displayed.
+    if (subGroupShown) {
+      this._actionLogs.push(readerMsg);
+    }
   }
 
 

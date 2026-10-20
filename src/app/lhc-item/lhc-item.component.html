@@ -14,7 +14,7 @@
         <!-- question item could have sub items -->
         <div *ngIf="item.items" class="lhc-item-group-body">
           <ng-container *ngFor="let item of item.items; trackBy: lhcDataService.trackByElementId">
-            <lhc-item *ngIf="item && !item._isHiddenFromView && lhcDataService.targetShown(item)"
+            <lhc-item *ngIf="item && !item._isHiddenFromView && lhcDataService.targetShown(item) && lhcDataService.multiSelectSubGroupShown(item)"
               [item]="item" class="{{lhcDataService.getItemClassList(item, viewMode)}}"
               id="item-{{ item._elementId }}">
             </lhc-item>
