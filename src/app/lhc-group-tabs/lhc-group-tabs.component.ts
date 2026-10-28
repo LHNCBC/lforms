@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild} from "@angular/core";
+import {AfterViewChecked, AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild} from "@angular/core";
 import {LhcDataService} from '../../lib/lhc-data.service';
 import {WindowService} from '../../lib/window.service';
 
@@ -8,7 +8,7 @@ import {WindowService} from '../../lib/window.service';
   styleUrls: ['./lhc-group-tabs.component.css'],
   standalone: false
 })
-export class LhcGroupTabsComponent implements AfterViewInit, OnDestroy {
+export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() item;
   @ViewChild('tabset', {read: ElementRef}) tabset: ElementRef<HTMLElement>;
 
@@ -66,6 +66,16 @@ export class LhcGroupTabsComponent implements AfterViewInit, OnDestroy {
         }
       });
       this.contentResizeObserver.observe(contentHolder);
+    }
+  }
+
+  ngAfterViewChecked(): void {
+    // NG-ZORRO does not expose an orientation input for its generated tablist.
+    // Scope the lookup to this tabset's navigation, excluding nested tabsets.
+    const tablist = this.tabset?.nativeElement.querySelector(':scope > .ant-tabs-nav [role="tablist"]');
+    const orientation = this.lhcDataService.getTabPosition() === 'left' ? 'vertical' : 'horizontal';
+    if (tablist && tablist.getAttribute('aria-orientation') !== orientation) {
+      tablist.setAttribute('aria-orientation', orientation);
     }
   }
 

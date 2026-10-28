@@ -50,6 +50,43 @@ test.describe('Tab Layout', () => {
     )).toBeGreaterThan(0);
   });
 
+  (['horizontal', 'vertical'] as const).forEach(initialLayout => {
+    test(`should expose tablist orientation for nested tabs initially using ${initialLayout} layout`, async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'tab-layout-nested-layout.json', 'formContainer', {
+        fhirVersion: 'R4', tabLayout: initialLayout
+      });
+      const tablists = page.locator('#formContainer [role="tablist"]');
+      await expect(tablists).toHaveCount(1);
+      await expect(tablists.first()).toHaveAttribute('aria-orientation', initialLayout);
+      // The nested tabset is created only when its outer tab is first opened.
+      await tablists.first().getByRole('tab').nth(1).click();
+      await expect(tablists).toHaveCount(2);
+      const session = await page.context().newCDPSession(page);
+
+      for (const [index, layout] of [initialLayout, 'horizontal', 'vertical', 'invalid', 'vertical'].entries()) {
+        if (index > 0) {
+          await page.locator('#formContainer wc-lhc-form').evaluate((element: any, tabLayout) => {
+            element.options = {tabLayout};
+          }, layout);
+        }
+        const orientation = layout === 'vertical' ? 'vertical' : 'horizontal';
+        for (const tablist of await tablists.all()) {
+          await expect(tablist).toHaveAttribute('aria-orientation', orientation);
+        }
+        // Verify the computed accessibility properties, not only the DOM
+        // attributes, so assistive technology receives the same orientation.
+        await expect.poll(async () => {
+          const {nodes} = await session.send('Accessibility.getFullAXTree');
+          return nodes.filter(node => !node.ignored && node.role?.value === 'tablist')
+            .map(node => node.properties?.find(property => property.name === 'orientation')?.value.value);
+        }).toEqual([orientation, orientation]);
+      }
+      await session.detach();
+    });
+  });
+
   test('should show tab content headers only when enabled', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
