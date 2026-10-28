@@ -116,6 +116,45 @@ test.describe('Tab Layout', () => {
     });
   });
 
+  (['horizontal', 'vertical'] as const).forEach(tabLayout => {
+    [0, 40].forEach(offset => {
+      test(`should reveal new ${tabLayout} tab content in a scrolling host with ${offset}px offset`, async ({ page }) => {
+        await page.setViewportSize({width: 1100, height: 1000});
+        await page.goto('/test/pages/addFormToPageTest.html');
+        await waitForLFormsReady(page);
+        await addFormToPage(page, 'tab-layout-long-content.json', 'formContainer', {
+          fhirVersion: 'R4', tabLayout, stickyTabs: true
+        });
+        const host = page.locator('#formContainer');
+        await host.evaluate((element: HTMLElement, offset) => {
+          element.style.cssText = 'height:400px; overflow:auto; margin-top:50px; border:3px solid #888';
+          element.style.setProperty('--lhc-sticky-tabs-offset', `${offset}px`);
+        }, offset);
+        const tabs = host.getByRole('tab');
+        const initialWindowScroll = await page.evaluate(() => window.scrollY);
+
+        for (const position of ['shallow', 'bottom', 'unscrolled']) {
+          await tabs.nth(0).click();
+          await host.evaluate((element, position) => {
+            element.scrollTop = position === 'unscrolled' ? 0 : position === 'shallow' ? 100 : element.scrollHeight;
+          }, position);
+          await tabs.nth(1).click();
+          await expect.poll(() => host.evaluate((element, {tabLayout, offset}) => {
+            const nav = element.querySelector('.ant-tabs-nav').getBoundingClientRect();
+            const input = element.querySelector('.ant-tabs-tabpane-active input').getBoundingClientRect();
+            const host = element.getBoundingClientRect();
+            const visibleTop = tabLayout === 'horizontal' ? nav.bottom : host.top + element.clientTop + offset;
+            return input.top >= visibleTop - 1 && input.bottom <= host.bottom - element.clientTop;
+          }, {tabLayout, offset})).toBe(true);
+          await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(initialWindowScroll);
+          if (position === 'unscrolled') {
+            await expect.poll(() => host.evaluate(element => element.scrollTop)).toBe(0);
+          }
+        }
+      });
+    });
+  });
+
   test('should size answer columns from the vertical tab content width', async ({ page }) => {
     await page.setViewportSize({width: 900, height: 720});
     await page.goto('/test/pages/addFormToPageTest.html');

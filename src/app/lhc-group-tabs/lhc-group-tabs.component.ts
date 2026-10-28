@@ -96,14 +96,40 @@ export class LhcGroupTabsComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const stickyBoundary = parseFloat(getComputedStyle(tabset).scrollMarginTop) || 0;
-    if (tabset.getBoundingClientRect().top >= stickyBoundary) {
+    const scrollContainer = this.getScrollContainer(tabset);
+    const stickyOffset = parseFloat(getComputedStyle(tabset).scrollMarginTop) || 0;
+    const stickyBoundary = () => stickyOffset + (scrollContainer ?
+      scrollContainer.getBoundingClientRect().top + scrollContainer.clientTop : 0);
+    if (tabset.getBoundingClientRect().top >= stickyBoundary()) {
       return;
     }
 
     this.pendingScrollFrame = requestAnimationFrame(() => {
       this.pendingScrollFrame = null;
-      tabset.scrollIntoView({block: 'start', inline: 'nearest'});
+      if (scrollContainer) {
+        // Reset this scrollport without moving the page or outer scrollports.
+        // Measure again after the selected tab's content has been rendered.
+        scrollContainer.scrollTop += tabset.getBoundingClientRect().top - stickyBoundary();
+      }
+      else {
+        tabset.scrollIntoView({block: 'start', inline: 'nearest'});
+      }
     });
+  }
+
+  private getScrollContainer(element: HTMLElement): HTMLElement | null {
+    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+      // Root overflow is handled by the viewport, including body overflow
+      // propagated to the root and documents without a scrollingElement.
+      if (parent === document.body || parent === document.documentElement) {
+        return null;
+      }
+      // Sticky positioning uses the nearest overflow ancestor, even when it
+      // currently has no scrollbar. overflow: clip does not create a scrollport.
+      if (/^(auto|scroll|hidden|overlay)$/.test(getComputedStyle(parent).overflowY)) {
+        return parent;
+      }
+    }
+    return null;
   }
 }

@@ -18,6 +18,7 @@ describe('LhcGroupTabsComponent', () => {
   let disconnectObserverSpy: jasmine.Spy;
   let nextFrameId: number;
   let pendingFrames: Map<number, FrameRequestCallback>;
+  let scrollHost: HTMLElement;
 
   beforeEach(() => {
     lhcDataService = jasmine.createSpyObj<LhcDataService>(
@@ -63,6 +64,7 @@ describe('LhcGroupTabsComponent', () => {
   afterEach(() => {
     window.ResizeObserver = originalResizeObserver;
     tabset.remove();
+    scrollHost?.remove();
   });
 
   function runFrame(frameId: number): void {
@@ -221,6 +223,44 @@ describe('LhcGroupTabsComponent', () => {
     component.onSelectedIndexChange();
 
     expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reset only the nearest scrolling host using its border and sticky offset', () => {
+    scrollHost = document.createElement('div');
+    scrollHost.style.cssText = 'overflow:auto; height:10px';
+    const innerHost = document.createElement('div');
+    innerHost.style.cssText = 'overflow:auto; height:20px; border:3px solid black';
+    document.body.appendChild(scrollHost);
+    scrollHost.appendChild(innerHost);
+    innerHost.appendChild(tabset);
+    tabset.style.height = '200px';
+    innerHost.scrollTop = 100;
+    scrollHost.scrollTop = 5;
+    spyOn(innerHost, 'getBoundingClientRect').and.returnValue({top: 200} as DOMRect);
+    initializeStickyTabs('40px');
+    tabsetTop = 240; // Above the inner host's sticky boundary at 200 + 3 + 40.
+
+    component.onSelectedIndexChange();
+    runFrame(1);
+
+    expect(innerHost.scrollTop).toBe(97);
+    expect(scrollHost.scrollTop).toBe(5);
+    expect(scrollIntoViewSpy).not.toHaveBeenCalled();
+  });
+
+  it('should keep the scroll position when the tabset starts below the host sticky boundary', () => {
+    scrollHost = document.createElement('div');
+    scrollHost.style.overflowY = 'auto';
+    document.body.appendChild(scrollHost);
+    scrollHost.appendChild(tabset);
+    spyOn(scrollHost, 'getBoundingClientRect').and.returnValue({top: 200} as DOMRect);
+    initializeStickyTabs('40px');
+    tabsetTop = 241;
+
+    component.onSelectedIndexChange();
+
+    expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
+    expect(scrollIntoViewSpy).not.toHaveBeenCalled();
   });
 
   it('should cancel a pending frame when another selection needs to scroll', () => {
