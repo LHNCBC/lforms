@@ -11,23 +11,34 @@ describe('tab options in template options', function() {
     assert.equal(defaultOptions.tabLayout, 'horizontal');
     assert.equal(defaultOptions.tabAnswerAlignment, 'form');
     assert.equal(defaultOptions.showTabHeader, false);
+    assert.equal(defaultOptions.showTabContainerText, false);
     assert.equal(defaultOptions.stickyTabs, false);
 
     var form = new LForms.LFormsData({
       name: 'Specified tab options',
       templateOptions: {
-        tabLayout: 'vertical', tabAnswerAlignment: 'content', showTabHeader: true, stickyTabs: true
+        tabLayout: 'vertical', tabAnswerAlignment: 'content', showTabHeader: true,
+        showTabContainerText: true, stickyTabs: true
       }
     });
     var specifiedOptions = form.templateOptions;
     assert.equal(specifiedOptions.tabLayout, 'vertical');
     assert.equal(specifiedOptions.tabAnswerAlignment, 'content');
     assert.equal(specifiedOptions.showTabHeader, true);
+    assert.equal(specifiedOptions.showTabContainerText, true);
     assert.equal(specifiedOptions.stickyTabs, true);
 
     form.setTemplateOptions({tabAnswerAlignment: 'form'});
     assert.equal(form.templateOptions.tabAnswerAlignment, 'form');
     assert.equal(form.templateOptions.tabLayout, 'vertical');
+    assert.equal(form.templateOptions.showTabContainerText, true);
+
+    form.setTemplateOptions({showTabHeader: false, showTabContainerText: false, stickyTabs: false});
+    assert.equal(form.templateOptions.showTabHeader, false);
+    assert.equal(form.templateOptions.showTabContainerText, false);
+    assert.equal(form.templateOptions.stickyTabs, false);
+    assert.equal(form.templateOptions.tabLayout, 'vertical');
+    assert.equal(form.templateOptions.tabAnswerAlignment, 'form');
   });
 });
 

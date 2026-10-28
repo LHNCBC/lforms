@@ -60,8 +60,10 @@ test.describe('tree lines', () => {
         for (const options of [
           {hideTreeLine: false, hideIndentation: false},
           {hideTreeLine: true, hideIndentation: false},
+          {hideTreeLine: 'true', hideIndentation: false},
           {hideTreeLine: 'auto', hideIndentation: false},
-          {hideTreeLine: false, hideIndentation: true}
+          {hideTreeLine: false, hideIndentation: true},
+          {hideTreeLine: false, hideIndentation: false}
         ]) {
           await page.locator('#formContainer wc-lhc-form').evaluate((element: any, options) => {
             element.options = options;
@@ -78,13 +80,20 @@ test.describe('tree lines', () => {
           if (options.hideIndentation) {
             await expect(page.locator('#formContainer .lhc-indentation, #formContainer .lhc-tree-line'))
               .toHaveCount(0);
+            await expectNoTreeOrIndentation(deeperItems);
           } else {
             for (const child of await deeperItems.all()) {
               await expect(child).toHaveClass(/\blhc-indentation\b/);
               await expect(child).toHaveCSS('padding-left', '24px');
             }
-            if (options.hideTreeLine === true) {
+            if (options.hideTreeLine === true || options.hideTreeLine === 'true') {
               await expect(page.locator('#formContainer .lhc-tree-line')).toHaveCount(0);
+              for (const child of await deeperItems.all()) {
+                await expect.poll(() => child.evaluate(element => [
+                  getComputedStyle(element, '::before').content,
+                  getComputedStyle(element, '::after').content
+                ])).toEqual(['none', 'none']);
+              }
             } else {
               for (const child of await deeperItems.all()) {
                 await expect(child).toHaveClass(/\blhc-tree-line\b/);

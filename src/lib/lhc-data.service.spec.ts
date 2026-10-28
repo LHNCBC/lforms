@@ -58,6 +58,32 @@ describe('LhcDataService', () => {
     expect(service.isHideRepetitionNumber()).toBeTrue();
   });
 
+  [
+    {hideTreeLine: false, hideIndentation: false, depth: 3, lines: true},
+    {hideTreeLine: true, hideIndentation: false, depth: 4, lines: false},
+    {hideTreeLine: 'true', hideIndentation: false, depth: 4, lines: false},
+    {hideTreeLine: 'auto', hideIndentation: false, depth: 3, lines: false},
+    {hideTreeLine: 'auto', hideIndentation: false, depth: 4, lines: true},
+    {hideTreeLine: false, hideIndentation: true, depth: 4, lines: false}
+  ].forEach(({hideTreeLine, hideIndentation, depth, lines}) => {
+    it(`should preserve descendant layout and suppress tab-root decoration with ${JSON.stringify({hideTreeLine, hideIndentation, depth})}`, () => {
+      service.setLhcFormData({
+        templateOptions: {hideTreeLine, hideIndentation}, _totalLevelsOfHierarchy: depth
+      });
+      const item = {dataType: 'ST', question: 'Question', _firstSibling: true, _lastSibling: true};
+      const descendantClasses = service.getItemClassList(item, 'lg').split(/\s+/);
+      expect(descendantClasses.includes('lhc-tree-line')).toBe(lines);
+      expect(descendantClasses.includes('lhc-indentation')).toBe(!hideIndentation);
+
+      const tabRootClasses = service.getItemClassList(item, 'lg', true).split(/\s+/);
+      expect(tabRootClasses).not.toContain('lhc-tree-line');
+      expect(tabRootClasses).not.toContain('lhc-indentation');
+      expect(tabRootClasses).toContain('lhc-item-view-lg');
+      expect(tabRootClasses).toContain('lhc-first-item');
+      expect(tabRootClasses).toContain('lhc-last-item');
+    });
+  });
+
   it('should show a multi-select subgroup only when one of its sub items is shown', () => {
     service.setLhcFormData({});
     const subGroup = (subItems) => ({isSubGroupForMultiSelect: true, items: subItems});

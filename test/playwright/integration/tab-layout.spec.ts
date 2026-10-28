@@ -83,6 +83,12 @@ test.describe('Tab Layout', () => {
             .map(node => node.properties?.find(property => property.name === 'orientation')?.value.value);
         }).toEqual([orientation, orientation]);
       }
+      const nestedTabs = tablists.nth(1).getByRole('tab');
+      await nestedTabs.first().focus();
+      await nestedTabs.first().press('ArrowDown');
+      await expect(nestedTabs.nth(1)).toBeFocused();
+      await nestedTabs.nth(1).press('Enter');
+      await expect(byId(page, 'q2/1/1/1/1/1')).toBeVisible();
       await session.detach();
     });
   });
@@ -201,6 +207,101 @@ test.describe('Tab Layout', () => {
     await expect(page.locator('#formContainer .lhc-tab-container-text')).toHaveCount(0);
     await expect(page.locator('#formContainer nz-tabset')).toHaveCSS('padding-left', '0px');
     await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '24px');
+  });
+
+  test('should retain separately supplied options when native LForms definitions are replaced', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    const definition = {
+      name: 'Native tab form',
+      templateOptions: {tabLayout: 'horizontal', showTabHeader: false, showTabContainerText: false, stickyTabs: false},
+      items: [{
+        linkId: 'container', questionCode: 'container', question: 'Native container',
+        dataType: 'SECTION', header: true, displayControl: {questionLayout: 'tabs'},
+        items: [{
+          linkId: 'tab', questionCode: 'tab', question: 'Native tab', dataType: 'SECTION', header: true,
+          items: [{linkId: 'question', questionCode: 'question', question: 'Question', dataType: 'ST'}]
+        }]
+      }]
+    };
+    await page.evaluate(async definition => {
+      const form = document.createElement('wc-lhc-form') as any;
+      document.getElementById('formContainer').appendChild(form);
+      form.options = {tabLayout: 'vertical', showTabHeader: true, showTabContainerText: true, stickyTabs: true};
+      // Supply questionnaire and options in separate change cycles.
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+      form.questionnaire = definition;
+    }, definition);
+
+    const form = page.locator('#formContainer wc-lhc-form');
+    for (const name of ['Native tab form', 'Replacement native tab form']) {
+      if (name !== definition.name) {
+        await form.evaluate((element: any, definition) => {
+          element.questionnaire = definition;
+        }, {...definition, name});
+      }
+      await expect(form.locator('.lhc-form-title')).toContainText(name);
+      await expect(form.locator('nz-tabset')).toHaveClass(/ant-tabs-left/);
+      await expect(form.locator('nz-tabset')).toHaveClass(/lhc-tabs-sticky/);
+      await expect(form.locator('.lhc-tab-container-text')).toHaveText('Native container');
+      await expect(form.locator('.ant-tabs-tabpane-active .lhc-item-group-title')).toHaveText('Native tab');
+    }
+  });
+
+  (['horizontal', 'vertical'] as const).forEach(tabLayout => {
+    test(`should highlight only the selected ${tabLayout} tab`, async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'tab-layout.json', 'formContainer', {fhirVersion: 'R4', tabLayout});
+      const nav = page.locator('#formContainer nz-tabset > .ant-tabs-nav');
+      const buttons = nav.getByRole('tab');
+      for (const index of [0, 1, 0]) {
+        await buttons.nth(index).click();
+        const selected = nav.locator('.ant-tabs-tab-active');
+        await expect(selected).toHaveCount(1);
+        await expect(selected.getByRole('tab')).toHaveAttribute('aria-selected', 'true');
+        await expect(selected.getByRole('tab')).toHaveText(index === 0 ? 'Tab One' : 'Tab Two');
+        await expect(selected).toHaveCSS('background-color', 'rgb(230, 241, 255)');
+        await expect(selected.getByRole('tab')).toHaveCSS('color', 'rgb(0, 0, 0)');
+        await expect(nav.locator('.ant-tabs-tab').nth(1 - index)).not.toHaveClass(/ant-tabs-tab-active/);
+      }
+    });
+  });
+
+  test('should wrap long vertical labels within responsive and custom navigation widths', async ({ page }) => {
+    await page.setViewportSize({width: 1100, height: 900});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout.json', 'formContainer', {fhirVersion: 'R4', tabLayout: 'vertical'});
+    const nav = page.locator('#formContainer nz-tabset > .ant-tabs-nav');
+    await expect.poll(() => nav.evaluate(element =>
+      element.getBoundingClientRect().width < Math.min(
+        20 * parseFloat(getComputedStyle(document.documentElement).fontSize),
+        element.parentElement.getBoundingClientRect().width * 0.4
+      )
+    )).toBe(true);
+
+    await addFormToPage(page, 'tab-layout-long-labels.json', 'formContainer', {fhirVersion: 'R4', tabLayout: 'vertical'});
+    for (const width of [1100, 700]) {
+      await page.setViewportSize({width, height: 900});
+      await expect.poll(() => nav.evaluate(element => {
+        const limit = Math.min(20 * parseFloat(getComputedStyle(document.documentElement).fontSize),
+          element.parentElement.getBoundingClientRect().width * 0.4);
+        const labels = Array.from(element.querySelectorAll('[role="tab"]')).slice(1);
+        return element.getBoundingClientRect().width <= limit + 1 && labels.every(label => {
+          const range = document.createRange();
+          range.selectNodeContents(label);
+          const lines = new Set(Array.from(range.getClientRects()).filter(rect => rect.width > 0).map(rect => Math.round(rect.top)));
+          return lines.size > 1 && label.scrollWidth <= label.clientWidth + 1;
+        });
+      })).toBe(true);
+    }
+    await page.locator('#formContainer').evaluate((element: HTMLElement) => {
+      element.style.setProperty('--lhc-vertical-tabs-max-width', '15rem');
+    });
+    await expect.poll(() => nav.evaluate(element => Math.abs(element.getBoundingClientRect().width -
+      15 * parseFloat(getComputedStyle(document.documentElement).fontSize))
+    )).toBeLessThan(1);
   });
 
   test('should show distinct content levels in the five-level sample', async ({ page }) => {
@@ -454,17 +555,33 @@ test.describe('Tab Layout', () => {
 
     // Changing alignment without a resize must remove the fallback and retain
     // the explicitly requested two-column content alignment in each tabset.
+    for (const alignment of ['content', 'form']) {
+      await page.locator('#formContainer wc-lhc-form').evaluate((element: any, tabAnswerAlignment) => {
+        element.options = {tabAnswerAlignment};
+      }, alignment);
+      for (let index = 0; index < 2; index++) {
+        const holder = tabsets.nth(index).locator(':scope > .ant-tabs-content-holder');
+        await expect.poll(() => holder.evaluate((element, alignment) => {
+          const row = element.querySelector('lhc-item-question');
+          const answer = row.querySelector('.lhc-de-input-unit').getBoundingClientRect();
+          const label = row.querySelector('.lhc-de-label-button').getBoundingClientRect();
+          return alignment === 'content'
+            ? getComputedStyle(row).flexDirection === 'row' &&
+              Math.abs(answer.width - element.getBoundingClientRect().width / 2) < 1
+            : getComputedStyle(row).flexDirection === 'column' &&
+              answer.top >= label.bottom - 1 && Math.abs(answer.width - label.width) < 1;
+        }, alignment)).toBe(true);
+      }
+    }
     await page.locator('#formContainer wc-lhc-form').evaluate((element: any) => {
-      element.options = {tabAnswerAlignment: 'content'};
+      element.options = {tabLayout: 'horizontal'};
     });
-    for (let index = 0; index < 2; index++) {
-      const holder = tabsets.nth(index).locator(':scope > .ant-tabs-content-holder');
-      await expect.poll(() => holder.evaluate(element => {
-        const row = element.querySelector('lhc-item-question');
-        const answer = row.querySelector('.lhc-de-input-unit').getBoundingClientRect();
-        return getComputedStyle(row).flexDirection === 'row' &&
-          Math.abs(answer.width - element.getBoundingClientRect().width / 2) < 1;
-      })).toBe(true);
+    for (const row of await tabsets.locator('lhc-item-question').all()) {
+      await expect(row).toHaveCSS('flex-direction', 'row');
+      await expect.poll(async () => Math.abs(
+        await row.locator(':scope > .lhc-de-input-unit').evaluate(element => element.getBoundingClientRect().width) -
+        await outsideAnswer.evaluate(element => element.getBoundingClientRect().width)
+      )).toBeLessThan(1);
     }
   });
 
@@ -688,6 +805,88 @@ test.describe('Tab Layout', () => {
     await page.evaluate(() => window.scrollTo(0, 300));
     await expect.poll(() => page.locator('#formContainer .ant-tabs-nav').evaluate((nav) =>
       Math.round(nav.getBoundingClientRect().top))).toBe(40);
+  });
+
+  (['horizontal', 'vertical'] as const).forEach(tabLayout => {
+    test(`should stop sticky ${tabLayout} navigation at the end of its container`, async ({ page }) => {
+      await page.setViewportSize({width: 1100, height: 900});
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'tab-layout-long-content.json', 'formContainer', {
+        fhirVersion: 'R4', tabLayout, stickyTabs: true
+      });
+      await page.locator('#formContainer').evaluate((element: HTMLElement) => {
+        element.style.setProperty('--lhc-sticky-tabs-offset', '40px');
+        const followingContent = document.createElement('div');
+        followingContent.style.height = '2000px';
+        element.after(followingContent);
+      });
+      const tabset = page.locator('#formContainer nz-tabset');
+      const nav = tabset.locator(':scope > .ant-tabs-nav');
+      await page.evaluate(() => window.scrollTo(0, 400));
+      await expect.poll(() => nav.evaluate(element => Math.round(element.getBoundingClientRect().top))).toBe(40);
+      await tabset.evaluate(element => window.scrollTo(0, window.scrollY + element.getBoundingClientRect().bottom + 100));
+      await expect(nav).not.toBeInViewport();
+    });
+  });
+
+  test('should constrain a long vertical tab list and keep its last tab keyboard-accessible', async ({ page }) => {
+    await page.setViewportSize({width: 1100, height: 720});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await page.evaluate(async () => {
+      const questionnaire = await fetch('/test/data/R4/tab-layout.json').then(response => response.json());
+      questionnaire.item[0].item = Array.from({length: 30}, (_, tab) => ({
+        type: 'group', linkId: `manyTab${tab}`, text: `Tab ${tab + 1}`,
+        item: Array.from({length: tab === 0 ? 50 : 1}, (_, question) => ({
+          type: 'string', linkId: `manyQuestion${tab}_${question}`, text: `Question ${question + 1} in tab ${tab + 1}`
+        }))
+      }));
+      document.getElementById('formContainer').style.setProperty('--lhc-sticky-tabs-offset', '40px');
+      await (window as any).LForms.Util.addFormToPage(questionnaire, 'formContainer', {
+        fhirVersion: 'R4', tabLayout: 'vertical', stickyTabs: true
+      });
+    });
+    const nav = page.locator('#formContainer nz-tabset > .ant-tabs-nav');
+    const tabs = nav.getByRole('tab');
+    await expect(tabs).toHaveCount(30);
+    await expect.poll(() => nav.evaluate(element => element.getBoundingClientRect().height <= window.innerHeight - 40)).toBe(true);
+    await page.evaluate(() => window.scrollTo(0, 300));
+    await tabs.first().focus();
+    await tabs.first().press('ArrowUp');
+    await expect(tabs.last()).toBeFocused();
+    await expect(tabs.last()).toBeInViewport();
+    await tabs.last().press('Enter');
+    await expect(tabs.last()).toHaveAttribute('aria-selected', 'true');
+    await expect(byId(page, 'manyQuestion29_0/1/1/1')).toBeInViewport();
+  });
+
+  test('should keep both outer and nested vertical navigation sticky while nested content scrolls', async ({ page }) => {
+    await page.setViewportSize({width: 1400, height: 900});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout-answer-alignment.json', 'formContainer', {
+      fhirVersion: 'R4', tabLayout: 'vertical', stickyTabs: true
+    });
+    const tabsets = page.locator('#formContainer nz-tabset');
+    await expect(tabsets).toHaveCount(2);
+    await page.locator('#formContainer').evaluate((element: HTMLElement) => {
+      element.style.setProperty('--lhc-sticky-tabs-offset', '40px');
+    });
+    await tabsets.nth(1).locator(':scope > .ant-tabs-content-holder').evaluate((element: HTMLElement) => {
+      element.style.minHeight = '1600px';
+    });
+    await tabsets.nth(1).evaluate(element => window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top + 150));
+    for (const tabset of await tabsets.all()) {
+      await expect.poll(() => tabset.locator(':scope > .ant-tabs-nav').evaluate(element =>
+        Math.round(element.getBoundingClientRect().top)
+      )).toBe(40);
+    }
+    await tabsets.nth(1).getByRole('tab').nth(1).click();
+    await expect(byId(page, 'nestedQ2/1/1/1/1/1')).toBeInViewport();
+    await expect.poll(() => tabsets.nth(1).evaluate(element =>
+      Math.round(element.getBoundingClientRect().top)
+    )).toBe(40);
   });
 
   test('enableWhen should work across tabs', async ({ page }) => {
