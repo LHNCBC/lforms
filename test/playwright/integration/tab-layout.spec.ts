@@ -87,6 +87,40 @@ test.describe('Tab Layout', () => {
     });
   });
 
+  test('should show distinct content levels in the five-level sample', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout-five-levels.json', 'formContainer', {
+      fhirVersion: 'R4', tabLayout: 'horizontal', hideTreeLine: 'auto'
+    });
+    const form = page.locator('#formContainer');
+    const row = (linkId: string) => form.locator(`lhc-item[id^="item-${linkId}/"]`);
+    const rootLeft = await row('beforeTabs').evaluate(element => element.getBoundingClientRect().left);
+    const expectInset = async (linkId: string, pixels: number) => {
+      await expect(row(linkId)).toBeVisible();
+      await expect.poll(() => row(linkId).evaluate((element, expected) => {
+        const rect = element.getBoundingClientRect();
+        // Item padding belongs to ordinary group/question hierarchy levels.
+        return Math.abs(rect.left + parseFloat(getComputedStyle(element).paddingLeft) - expected);
+      }, rootLeft + pixels)).toBeLessThan(1);
+    };
+    await expectInset('tabQuestion', 24);
+    await expectInset('ordinaryGroup', 24);
+    await expectInset('groupQuestion', 48);
+    await expectInset('deeperGroup', 48);
+    await expectInset('deepQuestion1', 72);
+
+    const outer = form.locator('nz-tabset').first();
+    await outer.locator(':scope > .ant-tabs-nav').getByRole('tab').nth(1).click();
+    await expectInset('beforeNestedTabs', 24);
+    await expectInset('afterNestedTabs', 24);
+    await expectInset('nestedQuestion1', 48);
+    const nested = row('nestedTabs').locator('nz-tabset');
+    await expect.poll(() => nested.locator(':scope > .ant-tabs-nav').evaluate((element, expected) =>
+      Math.abs(element.getBoundingClientRect().left - expected), rootLeft + 24
+    )).toBeLessThan(1);
+  });
+
   test('should show tab content headers only when enabled', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
@@ -96,17 +130,24 @@ test.describe('Tab Layout', () => {
     const activeHeader = page.locator('#formContainer .ant-tabs-tabpane-active .lhc-item-group-title');
     await expect(page.locator('#formContainer .ant-tabs-top')).toHaveCount(1);
     await expect(activeHeader).toContainText('Tab One');
+    await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '24px');
 
     await page.locator('#formContainer wc-lhc-form').evaluate((element: any) => {
       element.options = {tabLayout: 'vertical', showTabHeader: true};
     });
     await expect(page.locator('#formContainer .ant-tabs-left')).toHaveCount(1);
     await expect(activeHeader).toContainText('Tab One');
+    await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '12px');
 
     await page.locator('#formContainer wc-lhc-form').evaluate((element: any) => {
       element.options = {tabLayout: 'vertical', showTabHeader: false};
     });
     await expect(page.locator('#formContainer .lhc-item-group-title')).toHaveCount(0);
+    await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '12px');
+    await page.locator('#formContainer wc-lhc-form').evaluate((element: any) => {
+      element.options = {tabLayout: 'horizontal'};
+    });
+    await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '24px');
   });
 
   test('should default to non-sticky top tabs without tab headers', async ({ page }) => {

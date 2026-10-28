@@ -7,6 +7,15 @@
   padding-bottom: 3px;
 }
 
+/* Match group headers and keep selected tab labels readable. */
+:host ::ng-deep .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active {
+  background-color: #e6f1ff;
+}
+
+:host ::ng-deep .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #000;
+}
+
 /* Keep short vertical tab lists compact, but prevent long labels from taking
    over the form. The percentage keeps the navigation responsive in embeds. */
 :host ::ng-deep .ant-tabs-left > .ant-tabs-nav {
@@ -66,4 +75,18 @@
   flex: none;
   max-height: calc(100vh - var(--lhc-sticky-tabs-offset, 0px));
   overflow-y: auto;
+}
+
+/* Horizontal tab content uses a full indentation step; vertical tabs use a
+   smaller gap beside their navigation. hideIndentation removes either inset. */
+:host ::ng-deep nz-tabset > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
+  padding-left: 0;
+}
+
+:host ::ng-deep .lhc-tab-content-indented > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
+  padding-left: 24px;
+}
+
+:host ::ng-deep .lhc-tab-content-indented.ant-tabs-left > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
+  padding-left: 12px;
 }

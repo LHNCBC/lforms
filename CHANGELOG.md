@@ -9,6 +9,9 @@ This project follows [Semantic Versioning](http://semver.org/).
   optional tab content headers, and sticky tab navigation.
   (Thanks to [Chris Moesel (@cmoesel)](https://github.com/cmoesel) for
   [GitHub PR #210](https://github.com/LHNCBC/lforms/pull/210).)
+### Changed
+- Refined tab content indentation and tree lines across nested layouts, and
+  highlighted selected tabs with a light-blue background and black text.
 
 ## [44.2.0] 2026-10-06
 ### Added

@@ -1,5 +1,6 @@
 <ng-container *ngIf="item && item.items">
   <nz-tabset #tabset nzType="card" [nzTabPosition]="lhcDataService.getTabPosition()"
+             [class.lhc-tab-content-indented]="!lhcDataService.getTemplateOptions().hideIndentation"
              [class.lhc-tabs-sticky]="lhcDataService.getStickyTabs()"
              [style.--lhc-tab-question-direction]="stackQuestions ? 'column' : 'row'"
              [style.--lhc-tab-question-label-width]="stackQuestions ? '100%' : 'auto'"
@@ -10,6 +11,7 @@
       <ng-container *ngIf="!group._isHiddenFromView">
         <nz-tab [nzTitle]="group._text">
           <lhc-group-vertical [item]="group"
+                              [isTabContent]="true"
                               [hideGrouptTitle]="!lhcDataService.getShowTabHeader()"></lhc-group-vertical>
         </nz-tab>
       </ng-container>

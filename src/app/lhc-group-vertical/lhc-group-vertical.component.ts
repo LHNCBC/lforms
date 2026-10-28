@@ -13,6 +13,7 @@ export class LhcGroupVerticalComponent {
 
   @Input() item: any;
   @Input() hideGrouptTitle = false;
+  @Input() isTabContent = false;
 
   viewMode = "";
 

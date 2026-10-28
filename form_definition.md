@@ -106,6 +106,10 @@ about the meaning of each key:
       setting the inherited CSS custom property
       `--lhc-vertical-tabs-max-width` on the LForms host or an ancestor. For
       example: `wc-lhc-form { --lhc-vertical-tabs-max-width: 15rem; }`
+      Tab content has a 24px inset for horizontal tabs and a 12px inset for
+      vertical tabs, unless `hideIndentation` is `true`. Nested tab navigation
+      inherits its parent content's inset. Direct children of each tab have no
+      extra item indentation or tree lines; ordinary descendants retain them.
     * tabAnswerAlignment - (optional) controls answer column widths in vertical
       tabs in the large view layout, including nested tab containers. Permitted
       values are `form` (the default) and `content`. With `form`, answers use half
