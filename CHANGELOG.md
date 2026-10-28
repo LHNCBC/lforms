@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.3.0] 2026-10-28
+### Added
+- Added `tabLayout`, `tabAnswerAlignment`, `showTabHeader`, and `stickyTabs`
+  template options for vertical tabs, configurable answer column alignment,
+  optional tab content headers, and sticky tab navigation.
+  (Thanks to [Chris Moesel (@cmoesel)](https://github.com/cmoesel) for
+  [GitHub PR #210](https://github.com/LHNCBC/lforms/pull/210).)
+
 ## [44.2.0] 2026-10-06
 ### Added
 - Required boolean items with the `check-box` item control and an initial
