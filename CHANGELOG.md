@@ -9,6 +9,8 @@ This project follows [Semantic Versioning](http://semver.org/).
   optional tab content headers, and sticky tab navigation.
   (Thanks to [Chris Moesel (@cmoesel)](https://github.com/cmoesel) for
   [GitHub PR #210](https://github.com/LHNCBC/lforms/pull/210).)
+- Added the `showTabContainerText` template option to display tab-container
+  group text above each tabset, independently of the headers inside tabs.
 ### Changed
 - Refined tab content indentation and tree lines across nested layouts, and
   highlighted selected tabs with a light-blue background and black text.

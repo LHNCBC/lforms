@@ -1,4 +1,8 @@
 <ng-container *ngIf="item && item.items">
+  <div *ngIf="lhcDataService.getShowTabContainerText() && item._text"
+       class="lhc-item-group-title lhc-tab-container-text">
+    <lhc-item-question-text [item]="item"></lhc-item-question-text>
+  </div>
   <nz-tabset #tabset nzType="card" [nzTabPosition]="lhcDataService.getTabPosition()"
              [class.lhc-tab-content-indented]="!lhcDataService.getTemplateOptions().hideIndentation"
              [class.lhc-tabs-sticky]="lhcDataService.getStickyTabs()"

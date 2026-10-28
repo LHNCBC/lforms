@@ -87,6 +87,122 @@ test.describe('Tab Layout', () => {
     });
   });
 
+  test('should default showTabContainerText to false and apply the upload checkbox', async ({ page }) => {
+    await page.goto('/test/pages/lforms_testpage.html');
+    await waitForLFormsReady(page);
+    const checkbox = page.locator('#showTabContainerText');
+    await expect(checkbox).not.toBeChecked();
+
+    for (const enabled of [false, true, false]) {
+      await checkbox.setChecked(enabled);
+      await loadFromTestData(page, 'tab-layout-container-text.json', 'R4');
+      await expect.poll(() => page.locator('#test-form').evaluate((element: any) =>
+        element.lhcFormData?.templateOptions.showTabContainerText
+      )).toBe(enabled);
+      await expect(page.locator('#test-form .lhc-tab-container-text')).toHaveCount(enabled ? 2 : 0);
+    }
+  });
+
+  for (const tabLayout of ['horizontal', 'vertical'] as const) {
+    test(`should show ${tabLayout} container text with orientation-specific indentation`, async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'tab-layout-container-text.json', 'formContainer', {
+        fhirVersion: 'R4', tabLayout, hideTreeLine: false
+      });
+      const form = page.locator('#formContainer');
+      const containers = form.locator('.lhc-tab-container-text');
+      const headers = form.locator('.lhc-item-group-title:not(.lhc-tab-container-text)');
+      const tabsets = form.locator('nz-tabset');
+      const contentIndent = tabLayout === 'horizontal' ? '24px' : '12px';
+      await expect(tabsets).toHaveCount(2);
+      await expect(containers).toHaveCount(0);
+      await expect(tabsets.first()).toHaveCSS('padding-left', '0px');
+      await expect(tabsets.nth(1)).toHaveCSS('padding-left', '0px');
+      const navPositions = await tabsets.evaluateAll(elements => elements.map(element =>
+        element.querySelector(':scope > .ant-tabs-nav')!.getBoundingClientRect().left
+      ));
+      if (tabLayout === 'horizontal') {
+        // Each tab's questions sit one level below its navigation.
+        const outerQuestion = page.locator('#formContainer lhc-item[id^="item-q1/"]');
+        const nestedQuestion = page.locator('#formContainer lhc-item[id^="item-nestedQ1/"]');
+        await expect.poll(() => outerQuestion.evaluate((element, navLeft) =>
+          Math.abs(element.getBoundingClientRect().left - navLeft - 24), navPositions[0]
+        )).toBeLessThan(1);
+        await expect.poll(() => nestedQuestion.evaluate((element, navLeft) =>
+          Math.abs(element.getBoundingClientRect().left - navLeft - 24), navPositions[1]
+        )).toBeLessThan(1);
+        expect(Math.abs(navPositions[1] - navPositions[0] - 24)).toBeLessThan(1);
+      }
+
+      await form.locator('wc-lhc-form').evaluate((element: any) => {
+        element.options = {showTabContainerText: true};
+      });
+      await expect(containers).toHaveText(['Outer tab container', 'Nested tab container']);
+      await expect(headers).toHaveCount(0);
+      await expect.poll(() => tabsets.evaluateAll((elements, before) => Math.max(...elements.map((element, index) =>
+        Math.abs(element.querySelector(':scope > .ant-tabs-nav')!.getBoundingClientRect().left - before[index])
+      )), navPositions)).toBeLessThan(1);
+      for (const tabset of await tabsets.all()) {
+        await expect(tabset).toHaveCSS('padding-left', '0px');
+        const pane = tabset.locator(':scope > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane-active');
+        await expect(pane).toHaveCSS('padding-left', contentIndent);
+        if (tabLayout === 'vertical') {
+          await expect.poll(() => pane.evaluate(element => {
+            const firstItem = element.querySelector(':scope > lhc-group-vertical > .lhc-item-group-body > lhc-item')!;
+            return Math.abs(firstItem.getBoundingClientRect().left - element.getBoundingClientRect().left - 12);
+          })).toBeLessThan(1);
+        }
+        await expect.poll(() => tabset.evaluate(element => {
+          const nav = element.querySelector(':scope > .ant-tabs-nav')!;
+          return nav.getBoundingClientRect().left - element.getBoundingClientRect().left;
+        })).toBe(0);
+      }
+      // Container text never introduces lines or item indentation at a tab's first level.
+      await expect(form.locator('.lhc-tree-line, .lhc-indentation')).toHaveCount(0);
+
+      await form.locator('wc-lhc-form').evaluate((element: any) => {
+        element.options = {showTabHeader: true};
+      });
+      await expect(headers).toHaveText(['Tab One', 'Nested Tab One']);
+      await expect(containers).toHaveCount(2);
+      await form.locator('wc-lhc-form').evaluate((element: any) => {
+        element.options = {showTabContainerText: false};
+      });
+      await expect(containers).toHaveCount(0);
+      await expect(headers).toHaveCount(2);
+      await expect(tabsets.first()).toHaveCSS('padding-left', '0px');
+      await expect(tabsets.nth(1)).toHaveCSS('padding-left', '0px');
+
+      // Only boolean true enables container text; hideIndentation still controls its inset.
+      await form.locator('wc-lhc-form').evaluate((element: any) => {
+        element.options = {showTabContainerText: 'true'};
+      });
+      await expect(containers).toHaveCount(0);
+      await form.locator('wc-lhc-form').evaluate((element: any) => {
+        element.options = {showTabContainerText: true, hideIndentation: true};
+      });
+      await expect(containers).toHaveCount(2);
+      for (const tabset of await tabsets.all()) {
+        await expect(tabset).toHaveCSS('padding-left', '0px');
+        await expect(tabset.locator(':scope > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane-active'))
+          .toHaveCSS('padding-left', '0px');
+      }
+      await expect(form.locator('.lhc-tree-line, .lhc-indentation')).toHaveCount(0);
+    });
+  }
+
+  test('should keep outer tabs at level zero without an empty header when container text is missing', async ({ page }) => {
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout.json', 'formContainer', {
+      fhirVersion: 'R4', showTabContainerText: true
+    });
+    await expect(page.locator('#formContainer .lhc-tab-container-text')).toHaveCount(0);
+    await expect(page.locator('#formContainer nz-tabset')).toHaveCSS('padding-left', '0px');
+    await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '24px');
+  });
+
   test('should show distinct content levels in the five-level sample', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);

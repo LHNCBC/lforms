@@ -112,6 +112,7 @@
                 <input type="radio" id="tabAnswerAlignmentContent" name="tabAnswerAlignment" value="content"><label for="tabAnswerAlignmentContent">content</label>
               </span>
               <span class="option-checkbox"><label><input type="checkbox" id="showTabHeader" /> showTabHeader</label></span>
+              <span class="option-checkbox"><label><input type="checkbox" id="showTabContainerText" /> showTabContainerText</label></span>
               <span class="option-checkbox"><label><input type="checkbox" id="stickyTabs" /> stickyTabs</label></span>
             </div>
           </div>
@@ -461,6 +462,7 @@
             tabLayout = document.querySelector('input[name="tabLayout"]:checked').value,
             tabAnswerAlignment = document.querySelector('input[name="tabAnswerAlignment"]:checked').value,
             showTabHeader = document.querySelector('#showTabHeader').checked,
+            showTabContainerText = document.querySelector('#showTabContainerText').checked,
             stickyTabs = document.querySelector('#stickyTabs').checked;
         var questionnaire, qr;
 
@@ -515,6 +517,9 @@
           }
           if (showTabHeader) {
             options["showTabHeader"] = true;
+          }
+          if (showTabContainerText) {
+            options["showTabContainerText"] = true;
           }
           if (tabAnswerAlignment !== 'form') {
             options["tabAnswerAlignment"] = tabAnswerAlignment;

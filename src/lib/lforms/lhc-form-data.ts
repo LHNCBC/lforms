@@ -147,6 +147,8 @@ export default class LhcFormData {
     tabAnswerAlignment: 'form',
     // Whether to repeat each tab's label as a header in its content area.
     showTabHeader: false,
+    // Whether to show the text of the group containing a tabset.
+    showTabContainerText: false,
     // Whether tab navigation stays visible while its tab container is scrolled.
     stickyTabs: false
   };

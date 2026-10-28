@@ -74,6 +74,11 @@ export class LhcDataService {
     return this.getTemplateOptions().showTabHeader === true;
   }
 
+  /** Whether to show the text of the group containing a tabset. */
+  getShowTabContainerText(): boolean {
+    return this.getTemplateOptions().showTabContainerText === true;
+  }
+
   /**
    * Whether the form's tab navigation should be sticky. Only boolean true
    * enables this so string values from HTML attributes cannot enable it.

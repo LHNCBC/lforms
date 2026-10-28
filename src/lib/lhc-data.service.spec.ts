@@ -84,29 +84,33 @@ describe('LhcDataService', () => {
     expect(service.getTabPosition()).toBe('top');
     expect(service.getTabAnswerAlignment()).toBe('form');
     expect(service.getShowTabHeader()).toBeFalse();
+    expect(service.getShowTabContainerText()).toBeFalse();
     expect(service.getStickyTabs()).toBeFalse();
   });
 
   it('should resolve vertical tabs, content headers, and sticky navigation', () => {
     service.setLhcFormData({
       templateOptions: {
-        tabLayout: 'vertical', tabAnswerAlignment: 'content', showTabHeader: true, stickyTabs: true
+        tabLayout: 'vertical', tabAnswerAlignment: 'content', showTabHeader: true,
+        showTabContainerText: true, stickyTabs: true
       }
     });
 
     expect(service.getTabPosition()).toBe('left');
     expect(service.getTabAnswerAlignment()).toBe('content');
     expect(service.getShowTabHeader()).toBeTrue();
+    expect(service.getShowTabContainerText()).toBeTrue();
     expect(service.getStickyTabs()).toBeTrue();
   });
 
   it('should reject invalid tab layouts and non-boolean tab flags', () => {
     service.setLhcFormData({
-      templateOptions: {tabLayout: 'right', showTabHeader: 'true', stickyTabs: 'true'}
+      templateOptions: {tabLayout: 'right', showTabHeader: 'true', showTabContainerText: 'true', stickyTabs: 'true'}
     });
 
     expect(service.getTabPosition()).toBe('top');
     expect(service.getShowTabHeader()).toBeFalse();
+    expect(service.getShowTabContainerText()).toBeFalse();
     expect(service.getStickyTabs()).toBeFalse();
   });
 

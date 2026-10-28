@@ -127,6 +127,10 @@ about the meaning of each key:
       tab's label as a header at the top of its content. This applies to both
       horizontal and vertical tab layouts, including nested tab containers. It
       defaults to `false`.
+    * showTabContainerText - (optional) when the boolean value is `true`, shows
+      the tab-container group's text above its tabset, including nested tabsets.
+      Defaults to `false`. This is independent of `showTabHeader`, which controls
+      headers inside individual tabs. Containers without text have no header.
     * stickyTabs - (optional) when the boolean value is `true`, keeps tab
       navigation visible while its container scrolls. This applies to every
       vertical tab container, including nested containers, but only to outermost
