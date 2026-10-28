@@ -1,7 +1,9 @@
 <ng-container *ngIf="item && item.items">
   <nz-tabset #tabset nzType="card" [nzTabPosition]="lhcDataService.getTabPosition()"
              [class.lhc-tabs-sticky]="lhcDataService.getStickyTabs()"
-             [style.--lhc-tab-content-answer-width]="lhcDataService.getTabPosition() === 'left' &&
+             [style.--lhc-tab-question-direction]="stackQuestions ? 'column' : 'row'"
+             [style.--lhc-tab-question-label-width]="stackQuestions ? '100%' : 'auto'"
+             [style.--lhc-tab-content-answer-width]="stackQuestions ? '100%' : lhcDataService.getTabPosition() === 'left' &&
                lhcDataService.getTabAnswerAlignment() === 'content' ? contentAnswerWidth : null"
              (nzSelectedIndexChange)="onSelectedIndexChange()">
     <ng-container *ngFor="let group of item.items">

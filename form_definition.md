@@ -110,7 +110,10 @@ about the meaning of each key:
       tabs in the large view layout, including nested tab containers. Permitted
       values are `form` (the default) and `content`. With `form`, answers use half
       the form width, aligning inputs with questions outside the tabs. The tab
-      navigation takes space from the question text area, which can become narrow.
+      navigation takes space from the question text area. When a tab's content
+      width is 600px or less, or the aligned answer column would leave 200px or
+      less for question text and indentation, questions stack above full-width
+      answers. Each nested tab container responds to its own width.
       With `content`, answers use half the enclosing tab's content width, leaving
       more space for question text. Missing or invalid values use `form`.
       Horizontal tabs and medium/small view layouts are unaffected. For example,

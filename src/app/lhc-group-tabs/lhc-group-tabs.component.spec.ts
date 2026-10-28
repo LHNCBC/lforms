@@ -1,10 +1,12 @@
 import {ElementRef, NgZone} from '@angular/core';
 import {LhcDataService} from '../../lib/lhc-data.service';
+import {WindowService} from '../../lib/window.service';
 import {LhcGroupTabsComponent} from './lhc-group-tabs.component';
 
 describe('LhcGroupTabsComponent', () => {
   let component: LhcGroupTabsComponent;
   let lhcDataService: jasmine.SpyObj<LhcDataService>;
+  let windowService: jasmine.SpyObj<WindowService>;
   let tabset: HTMLElement;
   let contentHolder: HTMLElement;
   let tabsetTop: number;
@@ -19,9 +21,11 @@ describe('LhcGroupTabsComponent', () => {
 
   beforeEach(() => {
     lhcDataService = jasmine.createSpyObj<LhcDataService>(
-      'LhcDataService', ['getStickyTabs', 'getTabPosition']
+      'LhcDataService', ['getStickyTabs', 'getTabPosition', 'getTabAnswerAlignment']
     );
-    component = new LhcGroupTabsComponent(lhcDataService, new NgZone({enableLongStackTrace: false}));
+    windowService = jasmine.createSpyObj<WindowService>('WindowService', ['getWindowWidth']);
+    windowService.getWindowWidth.and.returnValue(800);
+    component = new LhcGroupTabsComponent(lhcDataService, new NgZone({enableLongStackTrace: false}), windowService);
     tabset = document.createElement('div');
     contentHolder = document.createElement('div');
     contentHolder.className = 'ant-tabs-content-holder';
@@ -126,6 +130,36 @@ describe('LhcGroupTabsComponent', () => {
 
     expect(disconnectObserverSpy).toHaveBeenCalledTimes(1);
     expect(cancelAnimationFrameSpy).toHaveBeenCalledOnceWith(1);
+  });
+
+  it('should stack narrow form-aligned vertical tabs and restore the layout as width or options change', () => {
+    lhcDataService.getTabPosition.and.returnValue('left');
+    lhcDataService.getTabAnswerAlignment.and.returnValue('form');
+    component.ngAfterViewInit();
+
+    reportContentWidth(601);
+    runFrame(1);
+    expect(component.stackQuestions).toBeFalse();
+
+    reportContentWidth(600);
+    runFrame(2);
+    expect(component.stackQuestions).toBeTrue();
+
+    lhcDataService.getTabAnswerAlignment.and.returnValue('content');
+    expect(component.stackQuestions).toBeFalse();
+    lhcDataService.getTabAnswerAlignment.and.returnValue('form');
+    lhcDataService.getTabPosition.and.returnValue('top');
+    expect(component.stackQuestions).toBeFalse();
+
+    lhcDataService.getTabPosition.and.returnValue('left');
+    reportContentWidth(900);
+    runFrame(3);
+    expect(component.stackQuestions).toBeFalse();
+
+    // A wider form also needs room for its wider aligned answer column, even
+    // when this tab's content is above the normal responsive breakpoint.
+    windowService.getWindowWidth.and.returnValue(1600);
+    expect(component.stackQuestions).toBeTrue();
   });
 
   it('should ignore the initial tab selection', () => {

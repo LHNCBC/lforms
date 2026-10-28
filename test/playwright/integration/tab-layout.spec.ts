@@ -159,7 +159,7 @@ test.describe('Tab Layout', () => {
     const columns = page.locator('#formContainer .lhc-de-input-unit:visible');
     await expect(columns).toHaveCount(4);
 
-    for (const width of [1100, 800]) {
+    for (const width of [1400, 1100]) {
       await page.setViewportSize({width, height: 900});
       await expect.poll(() => columns.evaluateAll(elements => {
         const rects = elements.map(element => element.getBoundingClientRect());
@@ -173,6 +173,65 @@ test.describe('Tab Layout', () => {
           .evaluate(element => element.getBoundingClientRect().width);
         return Math.abs(answerWidth - formWidth / 2);
       }).toBeLessThan(1);
+    }
+  });
+
+  test('should stack narrow form-aligned tab questions independently as nested content resizes', async ({ page }) => {
+    await page.setViewportSize({width: 800, height: 900});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await addFormToPage(page, 'tab-layout-nested-long-labels.json', 'formContainer', {
+      fhirVersion: 'R4', tabLayout: 'vertical'
+    });
+    const tabsets = page.locator('#formContainer nz-tabset');
+    await expect(tabsets).toHaveCount(2);
+    const outsideAnswer = page.locator('#formContainer .lhc-de-input-unit').first();
+
+    // Narrow both tabsets, then widen only the outer one, then both. Repeat
+    // the narrow case to check that resizing restores the stacked layout.
+    for (const width of [800, 1100, 1400, 1600, 1900, 800]) {
+      await page.setViewportSize({width, height: 900});
+      const expectedStacked = width === 800 ? [true, true] : width < 1900 ? [false, true] : [false, false];
+      for (let index = 0; index < 2; index++) {
+        const holder = tabsets.nth(index).locator(':scope > .ant-tabs-content-holder');
+        const row = holder.locator('lhc-item-question').first();
+        await expect.poll(() => row.evaluate((element, stacked) => {
+          const label = element.querySelector(':scope > .lhc-de-label-button').getBoundingClientRect();
+          const answer = element.querySelector(':scope > .lhc-de-input-unit').getBoundingClientRect();
+          const rect = element.getBoundingClientRect();
+          const form = element.closest('wc-lhc-form').getBoundingClientRect();
+          const style = getComputedStyle(element);
+          const rowWidth = rect.width - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth) -
+            parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+          return style.flexDirection === (stacked ? 'column' : 'row') &&
+            label.width > 120 &&
+            (!stacked || answer.top >= label.bottom - 1) &&
+            Math.abs(answer.width - (stacked ? rowWidth : form.width / 2)) < 1 &&
+            answer.right <= form.right + 1;
+        }, expectedStacked[index])).toBe(true);
+      }
+      await expect.poll(() => page.evaluate(() =>
+        document.documentElement.scrollWidth <= window.innerWidth
+      )).toBe(true);
+      // Questions outside tabs continue using the form's answer column width.
+      await expect.poll(() => outsideAnswer.evaluate(element =>
+        Math.abs(element.getBoundingClientRect().width - element.closest('wc-lhc-form').getBoundingClientRect().width / 2)
+      )).toBeLessThan(1);
+    }
+
+    // Changing alignment without a resize must remove the fallback and retain
+    // the explicitly requested two-column content alignment in each tabset.
+    await page.locator('#formContainer wc-lhc-form').evaluate((element: any) => {
+      element.options = {tabAnswerAlignment: 'content'};
+    });
+    for (let index = 0; index < 2; index++) {
+      const holder = tabsets.nth(index).locator(':scope > .ant-tabs-content-holder');
+      await expect.poll(() => holder.evaluate(element => {
+        const row = element.querySelector('lhc-item-question');
+        const answer = row.querySelector('.lhc-de-input-unit').getBoundingClientRect();
+        return getComputedStyle(row).flexDirection === 'row' &&
+          Math.abs(answer.width - element.getBoundingClientRect().width / 2) < 1;
+      })).toBe(true);
     }
   });
 

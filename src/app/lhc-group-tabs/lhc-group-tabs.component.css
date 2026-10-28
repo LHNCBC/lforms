@@ -30,6 +30,16 @@
   overflow-wrap: anywhere;
 }
 
+/* Each tabset sets these inherited values so nested tabs choose their own
+   layout. Medium and small question layouts keep their existing styles. */
+:host ::ng-deep .ant-tabs-left .lhc-item-view-lg > lhc-item-question.lhc-de {
+  flex-direction: var(--lhc-tab-question-direction);
+}
+
+:host ::ng-deep .ant-tabs-left .lhc-item-view-lg > lhc-item-question > .lhc-de-label-button {
+  width: var(--lhc-tab-question-label-width);
+}
+
 /* The tabset host carries this class, while NG-ZORRO renders the navigation
    inside it. Sticky positioning keeps navigation within this tab container. */
 :host ::ng-deep .lhc-tabs-sticky .ant-tabs-nav {

@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild} from "@angular/core";
 import {LhcDataService} from '../../lib/lhc-data.service';
+import {WindowService} from '../../lib/window.service';
 
 @Component({
   selector: 'lhc-group-tabs',
@@ -11,14 +12,27 @@ export class LhcGroupTabsComponent implements AfterViewInit, OnDestroy {
   @Input() item;
   @ViewChild('tabset', {read: ElementRef}) tabset: ElementRef<HTMLElement>;
 
-  contentAnswerWidth: string | null = null;
+  private contentWidth: number | null = null;
+
+  get contentAnswerWidth(): string | null {
+    return this.contentWidth === null ? null : `${this.contentWidth / 2}px`;
+  }
+
+  get stackQuestions(): boolean {
+    // Use the existing medium-view breakpoint within this tabset, and reserve
+    // 200px for question text and indentation beside the form's answer column.
+    const minimumContentWidth = Math.max(600, this.winService.getWindowWidth() / 2 + 200);
+    return this.lhcDataService.getTabPosition() === 'left' &&
+      this.lhcDataService.getTabAnswerAlignment() === 'form' &&
+      this.contentWidth !== null && this.contentWidth <= minimumContentWidth;
+  }
 
   private viewInitialized = false;
   private pendingScrollFrame: number | null = null;
   private pendingResizeFrame: number | null = null;
   private contentResizeObserver: ResizeObserver | null = null;
 
-  constructor(public lhcDataService: LhcDataService, private zone: NgZone) {
+  constructor(public lhcDataService: LhcDataService, private zone: NgZone, private winService: WindowService) {
   }
 
   ngAfterViewInit(): void {
@@ -39,14 +53,13 @@ export class LhcGroupTabsComponent implements AfterViewInit, OnDestroy {
             cancelAnimationFrame(this.pendingResizeFrame);
             this.pendingResizeFrame = null;
           }
-          const answerWidth = `${contentWidth / 2}px`;
-          if (answerWidth !== this.contentAnswerWidth) {
+          if (contentWidth !== this.contentWidth) {
             // Updating answer widths can change the observed content's height.
             // Apply them next frame to avoid a ResizeObserver feedback loop.
             this.pendingResizeFrame = requestAnimationFrame(() => {
               this.pendingResizeFrame = null;
               this.zone.run(() => {
-                this.contentAnswerWidth = answerWidth;
+                this.contentWidth = contentWidth;
               });
             });
           }
