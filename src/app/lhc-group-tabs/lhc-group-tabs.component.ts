@@ -14,10 +14,19 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
 
   private contentWidth: number | null = null;
 
+  /**
+   * Get half of the last usable tab content width for content-aligned answers.
+   * @returns A CSS pixel width, or null before a positive width is measured.
+   */
   get contentAnswerWidth(): string | null {
     return this.contentWidth === null ? null : `${this.contentWidth / 2}px`;
   }
 
+  /**
+   * Determine whether form-aligned vertical tab questions need a stacked layout.
+   * @returns True when measured content is at most 600px wide or leaves at most
+   *  200px beside the form-wide answer column; false for other layouts or before measurement.
+   */
   get stackQuestions(): boolean {
     // Use the existing medium-view breakpoint within this tabset, and reserve
     // 200px for question text and indentation beside the form's answer column.
@@ -32,9 +41,19 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
   private pendingResizeFrame: number | null = null;
   private contentResizeObserver: ResizeObserver | null = null;
 
+  /**
+   * Provide the form services used to render tabs and measure their content.
+   * @param lhcDataService Form data and template-option access.
+   * @param zone Angular zone used to publish deferred content measurements.
+   * @param winService Shared form-width and view-mode service.
+   */
   constructor(public lhcDataService: LhcDataService, private zone: NgZone, private winService: WindowService) {
   }
 
+  /**
+   * Observe tab content width and defer usable measurements to the next animation
+   * frame, retaining the last measurement while the content is hidden.
+   */
   ngAfterViewInit(): void {
     this.viewInitialized = true;
 
@@ -69,6 +88,10 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
     }
   }
 
+  /**
+   * Synchronize this tabset's generated tablist ARIA orientation after rendering,
+   * including when options change or navigation is created lazily.
+   */
   ngAfterViewChecked(): void {
     // NG-ZORRO does not expose an orientation input for its generated tablist.
     // Scope the lookup to this tabset's navigation, excluding nested tabsets.
@@ -79,6 +102,7 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
     }
   }
 
+  /** Disconnect content observation and cancel pending resize and scroll frames. */
   ngOnDestroy(): void {
     this.contentResizeObserver?.disconnect();
     if (this.pendingResizeFrame !== null) {
@@ -89,7 +113,11 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
     }
   }
 
-  // If the user selects a tab in sticky mode, scroll to the top of the new page
+  /**
+   * Reveal the selected tab's start when its tabset has scrolled above its sticky
+   * boundary. Reset the nearest scroll container, or the viewport, on the next
+   * frame; leave already-visible tabsets and forms with stickyTabs disabled in place.
+   */
   onSelectedIndexChange(): void {
     // Ignore the selection that NG-ZORRO emits when initializing the tabset
     if (!this.viewInitialized || !this.lhcDataService.getStickyTabs()) {
@@ -108,6 +136,10 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
 
     const scrollContainer = this.getScrollContainer(tabset);
     const stickyOffset = parseFloat(getComputedStyle(tabset).scrollMarginTop) || 0;
+    /**
+     * Measure the sticky boundary again so deferred scrolling uses current geometry.
+     * @returns The scroll container's inner top plus the sticky offset, in viewport pixels.
+     */
     const stickyBoundary = () => stickyOffset + (scrollContainer ?
       scrollContainer.getBoundingClientRect().top + scrollContainer.clientTop : 0);
     if (tabset.getBoundingClientRect().top >= stickyBoundary()) {
@@ -127,6 +159,12 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
     });
   }
 
+  /**
+   * Find the nearest ancestor whose vertical overflow establishes the sticky
+   * scroll container, including hidden overflow and containers without scrollbars.
+   * @param element Element whose ancestors are searched.
+   * @returns The overflow ancestor, or null when scrolling belongs to the viewport.
+   */
   private getScrollContainer(element: HTMLElement): HTMLElement | null {
     for (let parent = element.parentElement; parent; parent = parent.parentElement) {
       // Root overflow is handled by the viewport, including body overflow

@@ -286,6 +286,8 @@ export default class LhcFormData {
   /**
    * Get a list of warning messages where answer lists are not loaded from URLs
    * in 'answerValueSet'
+   * @returns Warning messages for answerValueSets without loaded answers, excluding external and
+   *  search autocomplete lists.
    */
   checkAnswersResourceStatus() {
     const status = [];
@@ -305,6 +307,7 @@ export default class LhcFormData {
    *  resources) which could affect the content.  Potentially, the function could
    *  be called more than once, or after a related group of resources have
    *  completed loading.
+   * @param listener Callback invoked after asynchronous resource loading changes form content.
    */
   addAsyncChangeListener(listener) {
     if (!this._asyncChangeListeners)
@@ -356,6 +359,8 @@ export default class LhcFormData {
    *  loaded, then a support object for some FHIR version will be returned,
    *  if any is loaded.  (In some cases, we do not care which version is
    *  used.)  If no fhir support is loaded, then an exception will be thrown.
+   * @returns The cached FHIR support object, or the first loaded version; throws when no support is
+   *  available.
    */
   _getFHIRSupport() {
     let rtn = this._fhir;
@@ -415,6 +420,9 @@ export default class LhcFormData {
    *  Promise.
    *  Otherwise, if one or more fail, it returns a failed promise with an array
    *  of the failure reasons.
+   * @param promises Resource-loading promises to wait for, including any individual rejections.
+   * @returns A promise resolving without a value when all inputs fulfill, or rejecting with an
+   *  array of rejection reasons.
    */
   _resolveAllPromises(promises) {
     return Promise.allSettled(promises).then(results => {
@@ -441,6 +449,7 @@ export default class LhcFormData {
    *  These will be URL-encoded.
    * @param queryParams (optional) A object of key/value pairs (string values)
    *  for the query part of the URL.  Values be URL-encoded.
+   * @returns The encoded relative path with optional query parameters appended.
    */
   _buildURL(pathParts, queryParams) {
     // Would Use URL and URLSearchParams, except for the need to support IE11
@@ -477,8 +486,9 @@ export default class LhcFormData {
 
 
   /**
-   *  Checks that the given variable name is allowed in FHIR and throws an
-   *  exception if it is not.
+   * Reject variable names reserved by the loaded FHIR support; this does not validate general
+   *  variable-name syntax.
+   * @param name Variable name to check against the reserved-name map.
    */
   _checkFHIRVarName(name) {
     if (this._fhir.reservedVarNames[name]) {
@@ -753,7 +763,8 @@ export default class LhcFormData {
   /**
    * Check whether the answer for a multi-select subgroup is selected.
    * @param subGroup a multi-select subgroup
-   * @return {boolean}
+   * @returns True when the parent question currently selects the answer represented by this
+   *  subgroup.
    * @private
    */
   _isMultiSelectSubGroupAnswerSelected(subGroup) {
@@ -770,7 +781,8 @@ export default class LhcFormData {
    * each selected answer, or the subgroup of an answer that is no longer
    * selected.
    * @param item an item
-   * @return {boolean}
+   * @returns True when the item or an ancestor belongs to an original or unselected multi-select
+   *  subtree.
    * @private
    */
   _isInUnusedMultiSelectPart(item) {
@@ -1438,10 +1450,14 @@ export default class LhcFormData {
 
 
   /**
-   * Assign the given item's defaultAnswer as its value, potentially with data type conversion/transformation.
-   * For now, only converting DT/DTM string to a date object. The assignment happens only if item.defaultAnswer
+   * Assign the given item's defaultAnswer as its value, potentially with data type
+   *  conversion/transformation.
+   * For now, only converting DT/DTM string to a date object. The assignment happens only if
+   *  item.defaultAnswer
    * is not undefined, null, or empty string.
    * @param item the lforms item to assign value to (from its defaultAnswer)
+   * @returns False when the default is undefined, null, or empty; otherwise undefined after
+   *  assigning the value.
    * @private
    */
   _lfItemValueFromDefaultAnswer(item) {
@@ -1839,7 +1855,10 @@ export default class LhcFormData {
 
 
   /**
-   *  Returns true if the item is hidden for any reason.
+   * Check skip logic, enableWhen expression results, and definition-level hiding. Protected
+   *  disabled items remain visible unless hidden in the definition.
+   * @param item Item whose disabled-display and hidden flags are inspected.
+   * @returns Truthy when the item is hidden by these conditions; falsy otherwise.
    */
   isItemHidden(item) {
     return ((item._skipLogicStatus === CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || item._enableWhenExpVal === false) &&
@@ -2090,6 +2109,7 @@ export default class LhcFormData {
    * Set a _itemOrSubtreeHasValue flag on each item
    * item._itemOrSubtreeHasValue is true if the item or any item in its subtree has value.
    * @param item an item
+   * @returns True when the item or any descendant has a nonempty value.
    */
   _setSubTreeHasValue(item) {
     let hasValue = false;
@@ -2265,7 +2285,7 @@ export default class LhcFormData {
    * @param value the captured value
    * @param withOffListValue optional, a flag indicates the value could be an off-list value,
    * where data is handled by autocomplete-lhc or radio buttons/checkboxes. default is false.
-   * @returns {*}
+   * @returns The object or array with internal properties removed, or null for other input values.
    * @private
    */
   _getObjectValue(value, withOffListValue = false) {
@@ -2295,12 +2315,15 @@ export default class LhcFormData {
 
 
   /**
-   * Special handling for user input values, to get the original answer or unit object if there is one
+   * Special handling for user input values, to get the original answer or unit object if there is
+   *  one
    * (when getting the user data from the form)
    * @param item an item
    * @param value the data object of the selected answer
    * @param dataType optional, the data type of the value
    * @param hasAnswerList optional, a flag that indicates there is an answer list
+   * @returns The normalized answer/unit value or converted primitive, or undefined when the input
+   *  is absent.
    * @private
    */
   _getOriginalValue(item, value, dataType=null, hasAnswerList=false) {
@@ -2403,7 +2426,8 @@ export default class LhcFormData {
   /**
    * Get the max _id of the repeating item on the same level
    * @param item an item
-   * @returns {number}
+   * @returns The largest _id among sibling items with the same linkId, starting with the supplied
+   *  item's _id.
    */
   getRepeatingItemMaxId(item) {
     let maxId = item._id;
@@ -2422,7 +2446,8 @@ export default class LhcFormData {
   /**
    * Get the count of the repeating item on the same level
    * @param item an item
-   * @returns {number}
+   * @returns The number of siblings with the same linkId, including the supplied item when present
+   *  in its parent.
    */
   getRepeatingItemCount(item) {
     let count = 0;
@@ -2497,7 +2522,8 @@ export default class LhcFormData {
   /**
    * Get the last item that will be displayed in a repeating section
    * @param item an item
-   * @returns {*}
+   * @returns The last leaf reached through children not disabled by skip logic, or the input item
+   *  when it has no children.
    * @private
    */
   _getLastSubItem(item) {
@@ -2764,6 +2790,8 @@ export default class LhcFormData {
   /**
    * Construct a linkId for a multi-select subgroup.
    * @param answer the selected multi-select option.
+   * @returns A subgroup identifier built from the answer system and its code, or text when the code
+   *  is absent.
    */
   getLinkIdForMultiSelectSubGroup(answer) {
     const system = answer.system || '';
@@ -2877,6 +2905,7 @@ export default class LhcFormData {
    * Checks if an item has a multi-select subgroup with a specific linkId.
    * @param item an LForms item with multi-select layout and sub items.
    * @param linkId the linkId of the multi-select subgroup.
+   * @returns True when a direct child is a multi-select subgroup with the requested linkId.
    */
   hasSubGroupWithLinkId(item, linkId): boolean {
     if (item.items && item.items.some(x => x.isSubGroupForMultiSelect === true && x.linkId === linkId)) {
@@ -2907,7 +2936,8 @@ export default class LhcFormData {
   /**
    * Check if any of the repeating item or group has no user input values.
    * @param item a repeating item or a repeating group item
-   * @returns {boolean}
+   * @returns True when at least one repetition has no user input; also updates unused-item warning
+   *  flags.
    */
   areAnyRepeatingItemsEmpty(item) {
     let anyEmpty = false;
@@ -2931,7 +2961,8 @@ export default class LhcFormData {
    * Check if a repeating item has no user input value or
    * all items within a repeating group item have no user input values
    * @param item a repeating item or a repeating group item
-   * @returns {boolean}
+   * @returns True when the item and its descendants have no considered user input, ignoring
+   *  disabled question values.
    */
   _isRepeatingItemEmpty(item) {
 
@@ -2983,7 +3014,8 @@ export default class LhcFormData {
   /**
    * Get a list of repeating items that the current item belongs to.
    * @param item the current item
-   * @returns {Array}
+   * @returns Sibling repetitions with the same linkId, or an empty array for a non-repeatable or
+   *  unattached item.
    * @private
    */
   _getRepeatingItems(item) {
@@ -3219,6 +3251,8 @@ export default class LhcFormData {
   /**
    *  Returns the description of an item (section/question/row).
    * @param item the item whose type is needed
+   * @returns 'row' for an item in a horizontal table, otherwise 'section' for a section item or
+   *  'question'.
    */
   itemDescription(item) {
     return item._inHorizontalTable ?  'row' : item.dataType===CONSTANTS.DATA_TYPE.SECTION ? 'section' : 'question';
@@ -3229,7 +3263,7 @@ export default class LhcFormData {
    * Get the scores from source items
    * @param item the target item where the score rule is defined
    * @param formula the score rule formula
-   * @returns {Array}
+   * @returns One score per source item, using zero when no enabled score is available.
    * @private
    */
   _getScores(item, formula) {
@@ -3250,10 +3284,10 @@ export default class LhcFormData {
 
 
   /**
-   * Get a source item from the question code defined in a score rule
+   * Resolve formula source items by linkId relative to the target item.
    * @param item the target item where a formula is defined
    * @param linkIds the linkIds of source items
-   * @returns {Array}
+   * @returns Source items in linkId order, with null entries for unresolved references.
    * @private
    */
   _getFormulaSourceItems(item, linkIds) {
@@ -3272,7 +3306,8 @@ export default class LhcFormData {
    * Convert an item's value in its selected unit to the value in standard unit used for calculation
    * @param item an item
    * @param formula the formula defined on the item
-   * @returns {Array}
+   * @returns Numeric source values in standard units, with null for falsy or disabled source
+   *  values.
    * @private
    */
   _getValuesInStandardUnit (item, formula) {
@@ -3299,7 +3334,7 @@ export default class LhcFormData {
   /**
    * Run the formula on the item and get the result
    * @param item an item
-   * @returns {string}
+   * @returns The calculated result, or an empty string when no calculation method is configured.
    */
   getFormulaResult(item) {
     let result ='';
@@ -3361,9 +3396,9 @@ export default class LhcFormData {
 
   /**
    * Create a data object based on the value in dataFormat
-   * @param dataFormat a string specifies how and where to get the data
+   * @param dataFormat Mapping from target field names to source attribute paths.
    * @param sourceItem the source item, which is the data source
-   * @returns {{}}
+   * @returns An object containing the resolved field values.
    * @private
    */
   _constructObjectByDataFormat(dataFormat, sourceItem) {
@@ -3380,9 +3415,10 @@ export default class LhcFormData {
 
   /**
    * Create a data array based on the value in dataFormat
-   * @param dataFormat a string specifies how and where to get the data
+   * @param dataFormat Mapping from target field names to source paths resolving to parallel arrays.
    * @param sourceItem the source item, which is the data source
-   * @returns {Array}
+   * @returns An array of field objects, or an empty array when source values are not equally sized
+   *  arrays.
    * @private
    */
   _constructArrayByDataFormat(dataFormat, sourceItem) {
@@ -3504,7 +3540,7 @@ export default class LhcFormData {
    * @param sourceItem a source item object.
    *        Note: While "." is allowed in the attribute names of javascript object,
    *        here we assume "." is not used in the names of the item's attributes.
-   * @returns {*}
+   * @returns The resolved value, or the last value reached if traversal stops early.
    * @private
    */
   _getDataFromNestedAttributes(strQuery, sourceItem) {
@@ -3856,26 +3892,35 @@ export default class LhcFormData {
         }
         else if (LForms.fhirContext?.client) {
           const self = this;
-          options.fhir = {search: function(fieldVal, count) {
-            if (LForms.fhirCapabilities.urlExpandBroken)
-              return self._findValueSetIDAndSearch(item, fieldVal, count);
-            else {
-              const fhirClient =  LForms.fhirContext.client;
-              return fhirClient.request(self._buildURL(['ValueSet', '$expand'],
-                {count: count, filter: fieldVal, url: item.answerValueSet}
-              )).catch((errorData) => {
-                LForms.fhirCapabilities.urlExpandBroken = true;
-                // HAPI does not support (maybe just because of a bug) $expand
-                // when both "url" and "filter" parameters are present.  In that
-                // case, it says, ""ValueSet contains include criteria with no
-                // system defined".
-                //if (errorData.data.responseJSON.issue[0].diagnostics ==
-                //  'ValueSet contains include criteria with no system defined') {
-                // For now, just always try the alternative.
+          options.fhir = {
+            /**
+             * Expand the item's answer ValueSet through the FHIR context, falling back to an
+             *  ID-based request if URL expansion fails.
+             * @param fieldVal Typed search text supplied as the ValueSet expansion filter.
+             * @param count Maximum number of expansion entries requested.
+             * @returns A promise for the matching ValueSet expansion response.
+             */
+            search: function(fieldVal, count) {
+              if (LForms.fhirCapabilities.urlExpandBroken)
                 return self._findValueSetIDAndSearch(item, fieldVal, count);
-              });
+              else {
+                const fhirClient =  LForms.fhirContext.client;
+                return fhirClient.request(self._buildURL(['ValueSet', '$expand'],
+                  {count: count, filter: fieldVal, url: item.answerValueSet}
+                )).catch((errorData) => {
+                  LForms.fhirCapabilities.urlExpandBroken = true;
+                  // HAPI does not support (maybe just because of a bug) $expand
+                  // when both "url" and "filter" parameters are present.  In that
+                  // case, it says, ""ValueSet contains include criteria with no
+                  // system defined".
+                  //if (errorData.data.responseJSON.issue[0].diagnostics ==
+                  //  'ValueSet contains include criteria with no system defined') {
+                  // For now, just always try the alternative.
+                  return self._findValueSetIDAndSearch(item, fieldVal, count);
+                });
+              }
             }
-          }};
+          };
           // 500ms delay for requests to SNOMED.
           if (options.url?.startsWith('https://snowstorm.ihtsdotools.org/')) {
             options.frequency = 0.5;
@@ -3947,8 +3992,9 @@ export default class LhcFormData {
 
   /**
    * Check the display type of item.text or an answerOption.
-   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
-   * @returns {string}
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form
+   *  answers array.
+   * @returns The selected text format: 'plain', 'html', 'escaped', or 'markdown'.
    */
   getTextDisplayType(item) {
     let format = 'plain';
@@ -3969,7 +4015,7 @@ export default class LhcFormData {
   /**
    * Check the display type of item.prefix
    * @param item an item in the lforms form items array
-   * @returns {string}
+   * @returns The selected prefix format: 'plain', 'html', 'escaped', or 'markdown'.
    */
   getPrefixDisplayType(item) {
     let format = 'plain';
@@ -4060,7 +4106,7 @@ export default class LhcFormData {
    * range example: {"minInclusive": 3, "maxInclusive":10}
    * @param range data range
    * @param numValue an item's numeric value
-   * @returns {boolean}
+   * @returns True when the numeric value satisfies the supplied supported range bounds.
    * @private
    */
   _inRange(range, numValue) {
@@ -4112,9 +4158,9 @@ export default class LhcFormData {
 
   /**
    * Shallowly compares two JavaScript objects to see if their keys and values are equal.
-   * @param obj1
-   * @param obj2
-   * @returns {boolean}
+   * @param obj1 First object to compare.
+   * @param obj2 Second object to compare.
+   * @returns True when the objects have equal keys and shallowly equal values.
    * @private
    */
   _objectEqual(obj1, obj2) {
@@ -4130,7 +4176,7 @@ export default class LhcFormData {
    * the "ancestor" axis and then the "preceding" axis and then the "following" axis.
    * @param item an item where the search starts
    * @param linkId a linkId
-   * @returns {null}
+   * @returns The matching item found along ancestor, preceding, then following axes, or null.
    * @private
    */
   _findItemByLinkId(item, linkId) {
@@ -4182,10 +4228,10 @@ export default class LhcFormData {
 
 
   /**
-   * Get a source item from the question code defined in a skip logic
+   * Resolve a skip-logic source by linkId relative to its target item.
    * @param item the target item where a skip logic is defined
    * @param linkId the linkId of a source item
-   * @returns {Array}
+   * @returns The matching source item, or null when no match is found.
    * @private
    */
   _getSkipLogicSourceItem(item, linkId) {
@@ -4206,6 +4252,11 @@ export default class LhcFormData {
    */
   _codingsEqual(coding1, coding2) {
     let equals = false;
+    /**
+     * Check whether a coding field is present without treating zero as empty.
+     * @param v Coding field value to examine.
+     * @returns True unless the value is null, undefined, or an empty string.
+     */
     const hasValue = (v) => v !== null && v !== undefined && v !== '';
     if(coding1.system === coding2.system || !coding1.system && !coding2.system) {
       if(hasValue(coding1.code) || hasValue(coding2.code)) {
@@ -4224,7 +4275,8 @@ export default class LhcFormData {
    * Check if a source item's value meet a skip logic condition/trigger
    * @param item a source item of a skip logic
    * @param trigger a trigger of a skip logic
-   * @returns {boolean}
+   * @returns Whether the source item satisfies the trigger; some comparisons can return a falsy
+   *  missing value.
    * @private
    */
   _checkSkipLogicCondition(item, trigger) {
@@ -4348,7 +4400,8 @@ export default class LhcFormData {
   /**
    * Check if all the conditions/triggers are met for a skip logic
    * @param item a target item where a skip logic is defined
-   * @returns {boolean}
+   * @returns Whether the configured ALL/ANY condition combination is satisfied; false when no skip
+   *  logic is defined.
    * @private
    */
   _checkSkipLogic(item) {
@@ -4383,8 +4436,8 @@ export default class LhcFormData {
 
   /**
    * Get the css class on the skip logic target field
-   * @param item
-   * @returns {string|string|*|string}
+   * @param item Item whose current skip-logic status is needed.
+   * @returns The item's current skip-logic status CSS class.
    */
   getSkipLogicClass(item) {
       return item._skipLogicStatus;
@@ -4394,7 +4447,7 @@ export default class LhcFormData {
   /**
    * Check if the question needs an extra input
    * @param item an item in the lforms form items array
-   * @returns {boolean}
+   * @returns True when a single selected answer is marked as Other and requires an extra input.
    */
   needExtra(item) {
     let extra = false;
@@ -4427,7 +4480,8 @@ export default class LhcFormData {
   /**
    * Get the css class for the active row
    * @param item an item
-   * @returns {string}
+   * @returns 'lhc-active-row' when the item matches the active element ID, or an empty string
+   *  otherwise.
    */
   getActiveRowClass(item) {
     let ret = "";

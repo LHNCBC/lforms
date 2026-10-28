@@ -86,6 +86,11 @@ describe('LhcDataService', () => {
 
   it('should show a multi-select subgroup only when one of its sub items is shown', () => {
     service.setLhcFormData({});
+    /**
+     * Build a minimal subgroup for visibility assertions.
+     * @param subItems Child items whose visibility is evaluated.
+     * @returns A multi-select subgroup fixture containing the supplied children.
+     */
     const subGroup = (subItems) => ({isSubGroupForMultiSelect: true, items: subItems});
     const visible = {linkId: 'visible'};
     const hidden = {linkId: 'hidden', _isHiddenFromView: true};

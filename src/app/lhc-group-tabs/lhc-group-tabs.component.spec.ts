@@ -37,10 +37,16 @@ describe('LhcGroupTabsComponent', () => {
     originalResizeObserver = window.ResizeObserver;
     disconnectObserverSpy = jasmine.createSpy('disconnect');
     window.ResizeObserver = class {
+      /**
+       * Capture the observer callback so tests can deliver measurements explicitly.
+       * @param callback Callback supplied by the component under test.
+       */
       constructor(callback: ResizeObserverCallback) {
         resizeObserverCallback = callback;
       }
+      /** Accept observation requests without subscribing to browser layout updates. */
       observe(): void {}
+      /** Accept unobserve requests without browser-side effects. */
       unobserve(): void {}
       disconnect = disconnectObserverSpy;
     } as unknown as typeof ResizeObserver;
@@ -67,6 +73,10 @@ describe('LhcGroupTabsComponent', () => {
     scrollHost?.remove();
   });
 
+  /**
+   * Run and remove a queued animation-frame callback in the test scheduler.
+   * @param frameId ID returned by the mocked requestAnimationFrame call.
+   */
   function runFrame(frameId: number): void {
     const callback = pendingFrames.get(frameId);
     expect(callback).toBeDefined();
@@ -74,12 +84,20 @@ describe('LhcGroupTabsComponent', () => {
     callback(0);
   }
 
+  /**
+   * Enable sticky tabs and initialize the component with the specified scroll margin.
+   * @param stickyBoundary CSS scroll-margin-top value representing the sticky offset.
+   */
   function initializeStickyTabs(stickyBoundary = '0px'): void {
     lhcDataService.getStickyTabs.and.returnValue(true);
     tabset.style.scrollMarginTop = stickyBoundary;
     component.ngAfterViewInit();
   }
 
+  /**
+   * Deliver a synthetic content-width measurement to the captured resize observer.
+   * @param width Observed content width in CSS pixels; zero represents hidden content.
+   */
   function reportContentWidth(width: number): void {
     resizeObserverCallback([{
       contentRect: {width}

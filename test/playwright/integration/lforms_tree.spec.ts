@@ -1,6 +1,11 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { addFormToPage, byId, openFormByIndex, waitForLFormsReady } from '../support/lforms-helpers';
 
+/**
+ * Assert that matching rows have no tree classes, indentation, or generated branches.
+ * @param items Locator matching item rows to inspect.
+ * @returns A promise resolving when every matched row satisfies the layout assertions.
+ */
 async function expectNoTreeOrIndentation(items: Locator): Promise<void> {
   for (const row of await items.all()) {
     await expect(row).not.toHaveClass(/\blhc-tree-line\b|\blhc-indentation\b/);

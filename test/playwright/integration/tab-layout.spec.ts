@@ -311,8 +311,19 @@ test.describe('Tab Layout', () => {
       fhirVersion: 'R4', tabLayout: 'horizontal', hideTreeLine: 'auto'
     });
     const form = page.locator('#formContainer');
+    /**
+     * Locate rendered item rows for a linkId in the hierarchy sample.
+     * @param linkId Identifier of the sample question or group.
+     * @returns A locator matching rows with that linkId, including any repetitions.
+     */
     const row = (linkId: string) => form.locator(`lhc-item[id^="item-${linkId}/"]`);
     const rootLeft = await row('beforeTabs').evaluate(element => element.getBoundingClientRect().left);
+    /**
+     * Assert a sample item's visible content starts at the expected horizontal inset.
+     * @param linkId Identifier of the sample question or group.
+     * @param pixels Expected inset from the root row's left edge, in CSS pixels.
+     * @returns A promise resolving when the visible item's inset is within one pixel.
+     */
     const expectInset = async (linkId: string, pixels: number) => {
       await expect(row(linkId)).toBeVisible();
       await expect.poll(() => row(linkId).evaluate((element, expected) => {
@@ -463,8 +474,16 @@ test.describe('Tab Layout', () => {
       '#formContainer nz-tabset.ant-tabs-left > .ant-tabs-content-holder'
     );
     const answerColumn = contentHolder.locator('.lhc-de-input-unit').first();
+    /**
+     * Measure the rendered answer column for resize assertions.
+     * @returns A promise resolving to the column's bounding width in CSS pixels.
+     */
     const answerWidth = () => answerColumn.evaluate(element =>
       element.getBoundingClientRect().width);
+    /**
+     * Measure the tab content holder for answer-width comparisons.
+     * @returns A promise resolving to the holder's bounding width in CSS pixels.
+     */
     const contentWidth = () => contentHolder.evaluate(element =>
       element.getBoundingClientRect().width);
 

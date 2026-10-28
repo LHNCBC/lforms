@@ -16,6 +16,11 @@ export class LhcItemQuestionComponent implements OnInit {
 
   eleStyle: object = null;
    
+  /**
+   * Provide the services used to choose the question's responsive answer width.
+   * @param winService Shared form-width and view-mode service.
+   * @param lhcDataService Form data and item display options.
+   */
   constructor(
     private winService: WindowService,
     public lhcDataService: LhcDataService,
@@ -23,7 +28,8 @@ export class LhcItemQuestionComponent implements OnInit {
   
 
   /**
-   * Set up the window width observer when the component is initialized/reinitialized
+   * Subscribe to form-width changes. Large-view answers use an inherited tab
+   * width override or half the form width; other view modes clear the inline width.
    */
   ngOnInit(): void {
     this.winService.windowWidth.subscribe(updatedWidth => {
