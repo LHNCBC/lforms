@@ -14,8 +14,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Refined tab content indentation across nested layouts, and
   highlighted selected tabs with a light-blue background and black text.
-- Removed tree lines from first-level items at the form root and within each
-  tab, including tabs nested at any depth.
+- First-level items within each tab, including tabs nested at any depth, no
+  longer show tree lines, matching first-level items at the form root.
 ### Fixed
 - Template options assigned to the `wc-lhc-form` web component in a separate
   change notification from its questionnaire are now applied to that questionnaire.
