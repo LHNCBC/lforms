@@ -14,6 +14,7 @@ describe('LhcGroupTabsComponent', () => {
   let requestAnimationFrameSpy: jasmine.Spy;
   let cancelAnimationFrameSpy: jasmine.Spy;
   let resizeObserverCallback: ResizeObserverCallback;
+  let resizeObservations: {callback: ResizeObserverCallback; targets: Element[]}[];
   let originalResizeObserver: typeof ResizeObserver;
   let disconnectObserverSpy: jasmine.Spy;
   let nextFrameId: number;
@@ -40,17 +41,23 @@ describe('LhcGroupTabsComponent', () => {
     component.tabset = new ElementRef(tabset);
 
     originalResizeObserver = window.ResizeObserver;
+    resizeObservations = [];
     disconnectObserverSpy = jasmine.createSpy('disconnect');
     window.ResizeObserver = class {
+      private targets: Element[] = [];
       /**
        * Capture the observer callback so tests can deliver measurements explicitly.
        * @param callback Callback supplied by the component under test.
        */
       constructor(callback: ResizeObserverCallback) {
         resizeObserverCallback = callback;
+        resizeObservations.push({callback, targets: this.targets});
       }
-      /** Accept observation requests without subscribing to browser layout updates. */
-      observe(): void {}
+      /**
+       * Record observation targets without subscribing to browser layout updates.
+       * @param target Element whose size the component wants to observe.
+       */
+      observe(target: Element): void { this.targets.push(target); }
       /** Accept unobserve requests without browser-side effects. */
       unobserve(): void {}
       disconnect = disconnectObserverSpy;
@@ -185,6 +192,42 @@ describe('LhcGroupTabsComponent', () => {
     // when this tab's content is above the normal responsive breakpoint.
     windowService.getWindowWidth.and.returnValue(1600);
     expect(component.stackQuestions).toBeTrue();
+  });
+
+  it('should measure the nearest scroll container and refresh its height after resizing', () => {
+    scrollHost = document.createElement('div');
+    scrollHost.style.cssText = 'height:700px; overflow:auto';
+    const innerHost = document.createElement('div');
+    innerHost.style.cssText = 'height:350px; overflow:auto; border:3px solid black';
+    document.body.appendChild(scrollHost);
+    scrollHost.appendChild(innerHost);
+    innerHost.appendChild(tabset);
+    component.ngAfterViewInit();
+    const observation = resizeObservations.find(observation => observation.targets.includes(innerHost));
+    expect(observation).toBeDefined();
+
+    const entry: ResizeObserverEntry = {
+      target: innerHost, contentRect: innerHost.getBoundingClientRect(),
+      borderBoxSize: [], contentBoxSize: [], devicePixelContentBoxSize: []
+    };
+    observation.callback([entry], {} as ResizeObserver);
+    expect(tabset.style.getPropertyValue('--lhc-tab-scroll-container-height')).toBe('350px');
+
+    innerHost.style.height = '250px';
+    observation.callback([{...entry, contentRect: innerHost.getBoundingClientRect()}], {} as ResizeObserver);
+    expect(tabset.style.getPropertyValue('--lhc-tab-scroll-container-height')).toBe('250px');
+  });
+
+  it('should disconnect both content and scroll-container observations on destruction', () => {
+    scrollHost = document.createElement('div');
+    scrollHost.style.cssText = 'height:350px; overflow:auto';
+    document.body.appendChild(scrollHost);
+    scrollHost.appendChild(tabset);
+    component.ngAfterViewInit();
+
+    component.ngOnDestroy();
+
+    expect(disconnectObserverSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should ignore the initial tab selection', () => {

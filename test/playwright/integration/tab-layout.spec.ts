@@ -935,6 +935,73 @@ test.describe('Tab Layout', () => {
     await expect(byId(page, 'manyQuestion29_0/1/1/1')).toBeInViewport();
   });
 
+  for (const offset of [0, 40]) {
+    test(`should keep the last sticky vertical tab reachable in a resizing scroll container with ${offset}px offset`, async ({ page }) => {
+      await page.setViewportSize({width: 1100, height: 1000});
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await page.evaluate(async offset => {
+        const questionnaire = await fetch('/test/data/R4/tab-layout.json').then(response => response.json());
+        questionnaire.item[0].item = Array.from({length: 30}, (_, tab) => ({
+          type: 'group', linkId: `manyTab${tab}`, text: `Tab ${tab + 1}`,
+          item: Array.from({length: tab === 0 ? 50 : 1}, (_, question) => ({
+            type: 'string', linkId: `manyQuestion${tab}_${question}`, text: `Question ${question + 1}`
+          }))
+        }));
+        const host = document.getElementById('formContainer');
+        host.style.cssText = 'height:350px; overflow:auto; margin-top:50px; border:3px solid #888';
+        host.style.setProperty('--lhc-sticky-tabs-offset', `${offset}px`);
+        await (window as any).LForms.Util.addFormToPage(questionnaire, host, {
+          fhirVersion: 'R4', tabLayout: 'vertical', stickyTabs: true
+        });
+      }, offset);
+      const host = page.locator('#formContainer');
+      const nav = host.locator('nz-tabset > .ant-tabs-nav');
+      const tabs = nav.getByRole('tab');
+      await expect(tabs).toHaveCount(30);
+
+      for (const height of [350, 250, 450]) {
+        await host.evaluate((element: HTMLElement, height) => {
+          element.style.height = `${height}px`;
+          element.scrollTop = 100;
+        }, height);
+        await expect.poll(() => nav.evaluate((element: HTMLElement, offset) => {
+          const host = document.getElementById('formContainer');
+          return element.getBoundingClientRect().height <= Math.min(host.clientHeight, window.innerHeight) - offset;
+        }, offset)).toBe(true);
+        await tabs.first().focus();
+        await tabs.first().press('ArrowUp');
+        await expect(tabs.last()).toBeFocused();
+        // Check full containment, since a page viewport assertion alone misses
+        // clipping by the form's independently scrolling host.
+        await expect.poll(() => tabs.last().evaluate(element => {
+          const host = document.getElementById('formContainer');
+          const hostTop = host.getBoundingClientRect().top + host.clientTop;
+          const tab = element.getBoundingClientRect();
+          return tab.top >= hostTop && tab.bottom <= hostTop + host.clientHeight;
+        })).toBe(true);
+        await expect(tabs.last()).toBeInViewport();
+        await tabs.last().press('ArrowDown');
+        await expect(tabs.first()).toBeFocused();
+      }
+      // A scroll container taller than the browser must still use the viewport
+      // limit, including after the viewport itself is resized.
+      await host.evaluate((element: HTMLElement) => { element.style.height = '1200px'; });
+      await page.setViewportSize({width: 1100, height: 700});
+      await expect.poll(() => nav.evaluate((element: HTMLElement, offset) =>
+        element.getBoundingClientRect().height <= window.innerHeight - offset, offset
+      )).toBe(true);
+      await host.evaluate((element: HTMLElement) => { element.style.height = '350px'; });
+      await expect.poll(() => nav.evaluate((element: HTMLElement, offset) =>
+        element.getBoundingClientRect().height <= 350 - offset, offset
+      )).toBe(true);
+      await tabs.first().press('ArrowUp');
+      await tabs.last().press('Enter');
+      await expect(tabs.last()).toHaveAttribute('aria-selected', 'true');
+      await expect(byId(page, 'manyQuestion29_0/1/1/1')).toBeInViewport();
+    });
+  }
+
   test('should keep both outer and nested vertical navigation sticky while nested content scrolls', async ({ page }) => {
     await page.setViewportSize({width: 1400, height: 900});
     await page.goto('/test/pages/addFormToPageTest.html');

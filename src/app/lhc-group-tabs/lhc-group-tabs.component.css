@@ -69,11 +69,12 @@
 }
 
 /* NG-ZORRO uses flex layout for left tabs. Do not allow the sticky navigation
-   to stretch to the content height, and make a very long tab list scrollable. */
+   to stretch to the content height, and fit long lists inside both the nearest
+   scroll container and the viewport. The component observes scrollport resizing. */
 :host ::ng-deep .lhc-tabs-sticky.ant-tabs-left > .ant-tabs-nav {
   align-self: flex-start;
   flex: none;
-  max-height: calc(100vh - var(--lhc-sticky-tabs-offset, 0px));
+  max-height: calc(min(100vh, var(--lhc-tab-scroll-container-height, 100vh)) - var(--lhc-sticky-tabs-offset, 0px));
   overflow-y: auto;
 }
 

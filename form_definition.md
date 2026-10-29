@@ -136,7 +136,9 @@ about the meaning of each key:
       vertical tab container, including nested containers, but only to outermost
       horizontal tab containers. It defaults to `false`. Sticky navigation is
       constrained to its tab container and does not remain visible after the container
-      scrolls away. Host applications with fixed headers can set the inherited CSS custom
+      scrolls away. Long vertical tab lists fit within the viewport and the nearest
+      scrolling container, updating when that container resizes.
+      Host applications with fixed headers can set the inherited CSS custom
       property `--lhc-sticky-tabs-offset` (default: `0px`) on the LForms host or an
       ancestor. For example: `wc-lhc-form { --lhc-sticky-tabs-offset: 64px; }`
     * <a name="viewMode"></a>viewMode - (optional) the view mode for the form. Permitted values are 'lg',

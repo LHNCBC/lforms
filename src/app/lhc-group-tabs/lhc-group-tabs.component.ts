@@ -41,6 +41,7 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
   private pendingScrollFrame: number | null = null;
   private pendingResizeFrame: number | null = null;
   private contentResizeObserver: ResizeObserver | null = null;
+  private scrollContainerResizeObserver: ResizeObserver | null = null;
 
   /**
    * Provide the form services used to render tabs and measure their content.
@@ -52,8 +53,8 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
   }
 
   /**
-   * Observe tab content width and defer usable measurements to the next animation
-   * frame, retaining the last measurement while the content is hidden.
+   * Observe the nearest scroll container's height and tab content width. Defer
+   * usable content widths to the next frame, retaining them while content is hidden.
    */
   ngAfterViewInit(): void {
     this.viewInitialized = true;
@@ -62,6 +63,13 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
     // Cache the content width even in form alignment mode so changing the option
     // does not depend on another resize notification.
     const tabset = this.tabset?.nativeElement;
+    const scrollContainer = tabset && this.getScrollContainer(tabset);
+    if (scrollContainer) {
+      this.scrollContainerResizeObserver = new ResizeObserver(() => {
+        tabset.style.setProperty('--lhc-tab-scroll-container-height', `${scrollContainer.clientHeight}px`);
+      });
+      this.scrollContainerResizeObserver.observe(scrollContainer);
+    }
     const contentHolder = Array.from(tabset?.children || []).find(element =>
       element.classList.contains('ant-tabs-content-holder')) as HTMLElement | undefined;
     if (contentHolder) {
@@ -107,6 +115,7 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
   /** Disconnect content observation and cancel pending resize and scroll frames. */
   ngOnDestroy(): void {
     this.contentResizeObserver?.disconnect();
+    this.scrollContainerResizeObserver?.disconnect();
     if (this.pendingResizeFrame !== null) {
       cancelAnimationFrame(this.pendingResizeFrame);
     }
