@@ -490,10 +490,20 @@
           // prepopulation is desired.
           testForm.prepop = window.prepopulateFHIR;
           var options = { 'messageLevel': 'info' };
-          // Set the options values when the option checkboxes have non-default values.
-          // Do not set the options with the default values, which will overwrite the
-          // options values within the lform data file (not affecting Questionnaires as options
-          // are not included in Questionnaires).
+          // File uploads represent a new selection of all page controls. Send
+          // explicit baseline values so unchecked controls replace earlier
+          // component overrides, while preserving defaults supplied by native forms.
+          const controlDefaults = {
+            allowHTML: false, displayInvalidHTML: false, allowMarkdown: false,
+            showCodingInstruction: false, hideRepetitionNumber: true, hideTreeLine: 'auto',
+            tabLayout: 'horizontal', tabAnswerAlignment: 'form', showTabHeader: false,
+            showTabContainerText: false, stickyTabs: false
+          };
+          for (const [option, defaultValue] of Object.entries(controlDefaults)) {
+            options[option] = Object.prototype.hasOwnProperty.call(questionnaire.templateOptions || {}, option) ?
+              questionnaire.templateOptions[option] : defaultValue;
+          }
+          // Non-default control selections override the questionnaire's settings.
           if(allowHTML) {
             options["allowHTML"] = true;
           }
