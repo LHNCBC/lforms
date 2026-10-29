@@ -65,8 +65,12 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
     const tabset = this.tabset?.nativeElement;
     const scrollContainer = tabset && this.getScrollContainer(tabset);
     if (scrollContainer) {
-      this.scrollContainerResizeObserver = new ResizeObserver(() => {
-        tabset.style.setProperty('--lhc-tab-scroll-container-height', `${scrollContainer.clientHeight}px`);
+      this.scrollContainerResizeObserver = new ResizeObserver(entries => {
+        // Use the padding-box height. Quirks-mode documents report the viewport
+        // height as body.clientHeight, even when the body scrolls independently.
+        const style = getComputedStyle(scrollContainer);
+        const height = entries[0].contentRect.height + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+        tabset.style.setProperty('--lhc-tab-scroll-container-height', `${height}px`);
       });
       this.scrollContainerResizeObserver.observe(scrollContainer);
     }
@@ -180,16 +184,23 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
 
   /**
    * Find the nearest ancestor whose vertical overflow establishes the sticky
-   * scroll container, including hidden overflow and containers without scrollbars.
+   * scroll container, including hidden overflow, containers without scrollbars,
+   * and a body that scrolls independently of the viewport.
    * @param element Element whose ancestors are searched.
    * @returns The overflow ancestor, or null when scrolling belongs to the viewport.
    */
   private getScrollContainer(element: HTMLElement): HTMLElement | null {
     for (let parent = element.parentElement; parent; parent = parent.parentElement) {
-      // Root overflow is handled by the viewport, including body overflow
-      // propagated to the root and documents without a scrollingElement.
-      if (parent === document.body || parent === document.documentElement) {
+      // Root overflow is handled by the viewport. Body overflow also belongs to
+      // the viewport unless the root's own overflow is not visible.
+      if (parent === document.documentElement) {
         return null;
+      }
+      if (parent === document.body) {
+        const rootStyle = getComputedStyle(document.documentElement);
+        if (rootStyle.overflowX === 'visible' && rootStyle.overflowY === 'visible') {
+          return null;
+        }
       }
       // Sticky positioning uses the nearest overflow ancestor, even when it
       // currently has no scrollbar. overflow: clip does not create a scrollport.

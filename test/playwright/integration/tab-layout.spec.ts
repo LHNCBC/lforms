@@ -1168,6 +1168,52 @@ test.describe('Tab Layout', () => {
     });
   }
 
+  test('should keep the last sticky vertical tab reachable when the body scrolls independently', async ({ page }) => {
+    await page.setViewportSize({width: 1100, height: 1000});
+    await page.goto('/test/pages/addFormToPageTest.html');
+    await waitForLFormsReady(page);
+    await page.evaluate(async () => {
+      const questionnaire = await fetch('/test/data/R4/tab-layout.json').then(response => response.json());
+      questionnaire.item[0].item = Array.from({length: 30}, (_, tab) => ({
+        type: 'group', linkId: `manyTab${tab}`, text: `Tab ${tab + 1}`,
+        item: Array.from({length: tab === 0 ? 50 : 1}, (_, question) => ({
+          type: 'string', linkId: `manyQuestion${tab}_${question}`, text: `Question ${question + 1}`
+        }))
+      }));
+      // A non-visible root overflow stops body overflow from propagating to the viewport.
+      document.documentElement.style.cssText = 'overflow:hidden; height:100%';
+      document.body.style.cssText = 'height:350px; padding:5px; margin:0; overflow:auto';
+      await (window as any).LForms.Util.addFormToPage(questionnaire, 'formContainer', {
+        fhirVersion: 'R4', tabLayout: 'vertical', stickyTabs: true
+      });
+    });
+    const nav = page.locator('#formContainer nz-tabset > .ant-tabs-nav');
+    const tabs = nav.getByRole('tab');
+    await expect(tabs).toHaveCount(30);
+
+    // The test page uses quirks mode, where body.clientHeight reports the viewport
+    // height. Measure the body's padding box from its bounding rectangle instead.
+    await expect.poll(() => nav.evaluate(element =>
+      element.getBoundingClientRect().height <= document.body.getBoundingClientRect().height
+    )).toBe(true);
+    // Scroll the tabset past the body's top so its navigation is stuck.
+    await nav.evaluate(element => {
+      const tabset = element.parentElement.getBoundingClientRect();
+      document.body.scrollTop += tabset.top - document.body.getBoundingClientRect().top + 100;
+    });
+    await tabs.first().focus();
+    await tabs.first().press('ArrowUp');
+    await expect(tabs.last()).toBeFocused();
+    await expect.poll(() => tabs.last().evaluate(element => {
+      const body = document.body.getBoundingClientRect();
+      const tab = element.getBoundingClientRect();
+      return tab.top >= body.top && tab.bottom <= body.bottom;
+    })).toBe(true);
+    await tabs.last().press('Enter');
+    await expect(tabs.last()).toHaveAttribute('aria-selected', 'true');
+    await expect(byId(page, 'manyQuestion29_0/1/1/1')).toBeInViewport();
+  });
+
   test('should keep both outer and nested vertical navigation sticky while nested content scrolls', async ({ page }) => {
     await page.setViewportSize({width: 1400, height: 900});
     await page.goto('/test/pages/addFormToPageTest.html');

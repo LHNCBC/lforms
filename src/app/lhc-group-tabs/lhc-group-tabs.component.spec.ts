@@ -198,7 +198,7 @@ describe('LhcGroupTabsComponent', () => {
     scrollHost = document.createElement('div');
     scrollHost.style.cssText = 'height:700px; overflow:auto';
     const innerHost = document.createElement('div');
-    innerHost.style.cssText = 'height:350px; overflow:auto; border:3px solid black';
+    innerHost.style.cssText = 'height:350px; padding:5px; overflow:auto; border:3px solid black';
     document.body.appendChild(scrollHost);
     scrollHost.appendChild(innerHost);
     innerHost.appendChild(tabset);
@@ -206,16 +206,17 @@ describe('LhcGroupTabsComponent', () => {
     const observation = resizeObservations.find(observation => observation.targets.includes(innerHost));
     expect(observation).toBeDefined();
 
+    // The content box excludes padding, which still belongs to the scrollport.
     const entry: ResizeObserverEntry = {
-      target: innerHost, contentRect: innerHost.getBoundingClientRect(),
+      target: innerHost, contentRect: new DOMRect(0, 0, 100, 350),
       borderBoxSize: [], contentBoxSize: [], devicePixelContentBoxSize: []
     };
     observation.callback([entry], {} as ResizeObserver);
-    expect(tabset.style.getPropertyValue('--lhc-tab-scroll-container-height')).toBe('350px');
+    expect(tabset.style.getPropertyValue('--lhc-tab-scroll-container-height')).toBe('360px');
 
     innerHost.style.height = '250px';
-    observation.callback([{...entry, contentRect: innerHost.getBoundingClientRect()}], {} as ResizeObserver);
-    expect(tabset.style.getPropertyValue('--lhc-tab-scroll-container-height')).toBe('250px');
+    observation.callback([{...entry, contentRect: new DOMRect(0, 0, 100, 250)}], {} as ResizeObserver);
+    expect(tabset.style.getPropertyValue('--lhc-tab-scroll-container-height')).toBe('260px');
   });
 
   it('should disconnect both content and scroll-container observations on destruction', () => {
