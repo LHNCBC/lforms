@@ -293,7 +293,7 @@ test.describe('Tab Layout', () => {
     }
   });
 
-  test('should not reuse options or a QuestionnaireResponse when a FHIR questionnaire is replaced', async ({ page }) => {
+  test('should keep the current QuestionnaireResponse but not earlier template options when a FHIR questionnaire is replaced', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     const questionnaire = await page.evaluate(async () => {
@@ -321,7 +321,8 @@ test.describe('Tab Layout', () => {
     await expect(form.locator('nz-tabset')).toHaveClass(/ant-tabs-top/);
     await expect(form.locator('nz-tabset')).not.toHaveClass(/lhc-tabs-sticky/);
     await expect(form.locator('.ant-tabs-tabpane-active .lhc-item-group-title')).toHaveCount(0);
-    await expect(byId(page, 'q1/1/1/1')).toHaveValue('');
+    // As before this release, conversion and response merging use the current options property.
+    await expect(byId(page, 'q1/1/1/1')).toHaveValue('Previous answer');
     await expect.poll(() => form.evaluate((element: any) => element.lhcFormData.templateOptions.allowHTML))
       .toBe(false);
 

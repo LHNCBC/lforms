@@ -151,9 +151,10 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
 
   /**
-   * Rebuild a changed questionnaire using newly supplied options, including
-   * separate input notifications before initialization. Apply option-only changes
-   * to the existing model without carrying them into a later load.
+   * Rebuild a changed questionnaire. FHIR conversion and QuestionnaireResponse
+   * merging use the current options. Template options are applied only when newly
+   * supplied for this load, including in a separate notification before initialization.
+   * Option-only changes update the existing model without carrying into a later load.
    * @param changes Angular input-change records for the questionnaire and options.
    */
   ngOnChanges(changes) {
@@ -178,7 +179,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
         const self = this;
         // reset the data after this thread is done
         setTimeout(()=> {
-          const options = self.hasNewOptions ? self.options : null;
+          const templateOptions = self.hasNewOptions ? self.options : null;
           self.hasNewOptions = false;
           try {
             let q = CommonUtils.deepCopy(self.questionnaire);
@@ -190,20 +191,20 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
               const fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
                 // convert it to a lforms form data
-                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, options || {});
-                // Merge only a QuestionnaireResponse supplied for this load.
-                if (options?.questionnaireResponse) {
+                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.options);
+                // If options.questionnaireResponse is specified, we can utilize it and reduce the number of lforms API calls.
+                if (self.options?.questionnaireResponse) {
                   // make a copy of questionnaireResponse so that the original data are not modified
-                  const qr = copy(options.questionnaireResponse);
+                  const qr = copy(self.options.questionnaireResponse);
                   q = LForms.FHIR[fhirVer].SDC.mergeQuestionnaireResponseToLForms(q, qr);
                 }
               }
             }
             self.lhcFormData = new LhcFormData(q);
             // Omitted options leave the new questionnaire's settings and library
-            // defaults in place, without reapplying an earlier load's options.
-            if (options) {
-              self.lhcFormData.setTemplateOptions(options);
+            // defaults in place, without reapplying an earlier load's template options.
+            if (templateOptions) {
+              self.lhcFormData.setTemplateOptions(templateOptions);
             }
             self.lhcDataService.setLhcFormData(self.lhcFormData);
             // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire

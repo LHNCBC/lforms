@@ -16,6 +16,9 @@ This project follows [Semantic Versioning](http://semver.org/).
   highlighted selected tabs with a light-blue background and black text.
 - Removed tree lines from first-level items at the form root and within each
   tab, including tabs nested at any depth.
+### Fixed
+- Template options assigned to the `wc-lhc-form` web component in a separate
+  change notification from its questionnaire are now applied to that questionnaire.
 
 ## [44.2.0] 2026-10-06
 ### Added
