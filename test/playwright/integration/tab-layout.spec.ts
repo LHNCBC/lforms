@@ -48,38 +48,6 @@ test.describe('Tab Layout', () => {
     await expect.poll(() => page.locator('#test-form nz-tabset').evaluate(element =>
       parseFloat((element as HTMLElement).style.getPropertyValue('--lhc-tab-content-answer-width'))
     )).toBeGreaterThan(0);
-
-    // Returning upload controls to their defaults must explicitly replace the
-    // previous component overrides when another file is loaded.
-    await page.locator('#tabLayoutHorizontal').check();
-    await page.locator('#tabAnswerAlignmentForm').check();
-    await page.locator('#showTabHeader').uncheck();
-    await page.locator('#stickyTabs').uncheck();
-    await loadFromTestData(page, 'tab-layout.json', 'R4');
-    await expect(page.locator('#test-form nz-tabset')).toHaveClass(/ant-tabs-top/);
-    await expect(page.locator('#test-form nz-tabset')).not.toHaveClass(/lhc-tabs-sticky/);
-    await expect(page.locator('#test-form .ant-tabs-tabpane-active .lhc-item-group-title')).toHaveCount(0);
-    await expect.poll(() => page.locator('#test-form').evaluate((element: any) =>
-      element.lhcFormData.templateOptions.tabAnswerAlignment
-    )).toBe('form');
-  });
-
-  test('should preserve native form tab defaults when upload controls remain at their defaults', async ({ page }) => {
-    await page.goto('/test/pages/lforms_testpage.html');
-    await waitForLFormsReady(page);
-    const definition = await page.evaluate(async () => {
-      const questionnaire = await fetch('/test/data/R4/tab-layout.json').then(response => response.json());
-      const definition = (window as any).LForms.FHIR.R4.SDC.convertQuestionnaireToLForms(questionnaire);
-      definition.templateOptions = {tabLayout: 'vertical', stickyTabs: true, showTabHeader: true};
-      return definition;
-    });
-    await page.locator('#fileAnchor').setInputFiles({
-      name: 'native-tab-defaults.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(definition))
-    });
-
-    await expect(page.locator('#test-form nz-tabset')).toHaveClass(/ant-tabs-left/);
-    await expect(page.locator('#test-form nz-tabset')).toHaveClass(/lhc-tabs-sticky/);
-    await expect(page.locator('#test-form .ant-tabs-tabpane-active .lhc-item-group-title')).toHaveText('Tab One');
   });
 
   (['horizontal', 'vertical'] as const).forEach(initialLayout => {
@@ -241,15 +209,12 @@ test.describe('Tab Layout', () => {
     await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '24px');
   });
 
-  test('should retain partial component overrides while respecting replacement native form defaults', async ({ page }) => {
+  test('should retain separately supplied options when native LForms definitions are replaced', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
     const definition = {
       name: 'Native tab form',
-      templateOptions: {
-        tabLayout: 'horizontal', showTabHeader: false, showTabContainerText: false, stickyTabs: false,
-        hideTreeLine: true
-      },
+      templateOptions: {tabLayout: 'horizontal', showTabHeader: false, showTabContainerText: false, stickyTabs: false},
       items: [{
         linkId: 'container', questionCode: 'container', question: 'Native container',
         dataType: 'SECTION', header: true, displayControl: {questionLayout: 'tabs'},
@@ -262,10 +227,8 @@ test.describe('Tab Layout', () => {
     await page.evaluate(async definition => {
       const form = document.createElement('wc-lhc-form') as any;
       document.getElementById('formContainer').appendChild(form);
-      form.options = {tabLayout: 'vertical', showTabContainerText: true, stickyTabs: true};
-      // Accumulate option patches even before a questionnaire has been supplied.
-      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
-      form.options = {showTabHeader: true};
+      form.options = {tabLayout: 'vertical', showTabHeader: true, showTabContainerText: true, stickyTabs: true};
+      // Supply questionnaire and options in separate change cycles.
       await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
       form.questionnaire = definition;
     }, definition);
@@ -275,98 +238,26 @@ test.describe('Tab Layout', () => {
       if (name !== definition.name) {
         await form.evaluate((element: any, definition) => {
           element.questionnaire = definition;
-        }, {...definition, name, templateOptions: {...definition.templateOptions, hideTreeLine: false}});
+        }, {...definition, name});
       }
       await expect(form.locator('.lhc-form-title')).toContainText(name);
       await expect(form.locator('nz-tabset')).toHaveClass(/ant-tabs-left/);
       await expect(form.locator('nz-tabset')).toHaveClass(/lhc-tabs-sticky/);
       await expect(form.locator('.lhc-tab-container-text')).toHaveText('Native container');
       await expect(form.locator('.ant-tabs-tabpane-active .lhc-item-group-title')).toHaveText('Native tab');
-      await expect.poll(() => form.evaluate((element: any) => element.lhcFormData.templateOptions.hideTreeLine))
-        .toBe(name === definition.name);
     }
-  });
 
-  test('should retain partial tab options and explicit false overrides when a FHIR questionnaire is replaced', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await addFormToPage(page, 'tab-layout.json', 'formContainer', {
-      fhirVersion: 'R4', tabLayout: 'vertical', stickyTabs: true, allowHTML: true
-    });
-    const form = page.locator('#formContainer wc-lhc-form');
-    await form.evaluate((element: any) => {
+    // A replacement options object is the complete configuration for the next
+    // questionnaire; omitted settings must not leak from earlier assignments.
+    await form.evaluate((element: any, definition) => {
       element.options = {showTabHeader: true};
-    });
-    await expect(form.locator('.ant-tabs-tabpane-active .lhc-item-group-title')).toHaveText('Tab One');
-
-    for (const enabled of [true, false]) {
-      if (!enabled) {
-        await form.evaluate((element: any) => {
-          element.options = {
-            tabLayout: 'horizontal', stickyTabs: false, showTabHeader: false, allowHTMLInInstructions: false
-          };
-        });
-        await expect(form.locator('nz-tabset')).toHaveClass(/ant-tabs-top/);
-      }
-      const title = enabled ? 'Replacement vertical questionnaire' : 'Replacement horizontal questionnaire';
-      await form.evaluate(async (element: any, title) => {
-        const questionnaire = await fetch('/test/data/R4/tab-layout.json').then(response => response.json());
-        element.questionnaire = {...questionnaire, title};
-      }, title);
-
-      await expect(form.locator('.lhc-form-title')).toHaveText(title);
-      await expect(form.locator('nz-tabset')).toHaveClass(enabled ? /ant-tabs-left/ : /ant-tabs-top/);
-      await expect.poll(() => form.evaluate((element: any) => ({
-        tabLayout: element.lhcFormData.templateOptions.tabLayout,
-        stickyTabs: element.lhcFormData.templateOptions.stickyTabs,
-        showTabHeader: element.lhcFormData.templateOptions.showTabHeader,
-        allowHTML: element.lhcFormData.templateOptions.allowHTML
-      }))).toEqual({
-        tabLayout: enabled ? 'vertical' : 'horizontal', stickyTabs: enabled, showTabHeader: enabled, allowHTML: enabled
-      });
-      if (enabled) {
-        await expect(form.locator('nz-tabset')).toHaveClass(/lhc-tabs-sticky/);
-      }
-      else {
-        await expect(form.locator('nz-tabset')).not.toHaveClass(/lhc-tabs-sticky/);
-      }
-      await expect(form.locator('.ant-tabs-tabpane-active .lhc-item-group-title')).toHaveCount(enabled ? 1 : 0);
-    }
-  });
-
-  test('should not reuse a previous questionnaire response after a partial options update', async ({ page }) => {
-    await page.goto('/test/pages/addFormToPageTest.html');
-    await waitForLFormsReady(page);
-    await page.evaluate(async () => {
-      const questionnaire = {
-        resourceType: 'Questionnaire', status: 'draft', title: 'Original response form',
-        item: [{type: 'string', linkId: 'name', text: 'Name'}]
-      };
-      await (window as any).LForms.Util.addFormToPage(questionnaire, 'formContainer', {
-        fhirVersion: 'R4', showQuestionCode: true,
-        questionnaireResponse: {
-          resourceType: 'QuestionnaireResponse', status: 'in-progress',
-          item: [{linkId: 'name', answer: [{valueString: 'Original answer'}]}]
-        }
-      });
-    });
-    const form = page.locator('#formContainer wc-lhc-form');
-    await expect(form.getByRole('textbox', {name: 'Name', exact: true})).toHaveValue('Original answer');
-    await form.evaluate((element: any) => {
-      element.options = {showTabHeader: true};
-    });
-    await expect.poll(() => form.evaluate((element: any) => element.lhcFormData.templateOptions.showTabHeader))
-      .toBe(true);
-    await form.evaluate((element: any) => {
-      element.questionnaire = {
-        resourceType: 'Questionnaire', status: 'draft', title: 'Replacement response form',
-        item: [{type: 'string', linkId: 'name', text: 'Name'}]
-      };
-    });
-    await expect(form.locator('.lhc-form-title')).toHaveText('Replacement response form');
-    await expect(form.getByRole('textbox', {name: 'Name', exact: true})).toHaveValue('');
-    await expect.poll(() => form.evaluate((element: any) => element.lhcFormData.templateOptions.showQuestionCode))
-      .toBe(true);
+      element.questionnaire = {...definition, name: 'Native form with replacement options'};
+    }, definition);
+    await expect(form.locator('.lhc-form-title')).toHaveText('Native form with replacement options');
+    await expect(form.locator('nz-tabset')).toHaveClass(/ant-tabs-top/);
+    await expect(form.locator('nz-tabset')).not.toHaveClass(/lhc-tabs-sticky/);
+    await expect(form.locator('.lhc-tab-container-text')).toHaveCount(0);
+    await expect(form.locator('.ant-tabs-tabpane-active .lhc-item-group-title')).toHaveText('Native tab');
   });
 
   (['horizontal', 'vertical'] as const).forEach(tabLayout => {

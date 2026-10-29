@@ -424,10 +424,6 @@ about the meaning of each key:
 * **questionnaire** - A JSON object of a FHIR Questionnaire (including FHIR SDC Questionnaire),
  or the above LHC-Forms internal format.
 * **options** - Optional, a JSON object. The options defined in [templateOptions](#templateOptions).
-  Updates merge with previously supplied component options. These explicit overrides remain in
-  effect when `questionnaire` is replaced; options that were not overridden use the replacement
-  questionnaire's settings or the library defaults. Supply explicit values, such as `false`, to
-  change earlier overrides.
 * **prepop** - Optional, a boolean value. A flag indicating whether to run the pre-populate operation
  for the FHIR Questionnaire. The default value is false.
 * **fhirVersion** - Optional, a string value. The specified FHIR version of the data provided in 

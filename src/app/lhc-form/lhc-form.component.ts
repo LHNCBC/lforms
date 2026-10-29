@@ -44,7 +44,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   private changeSize = new Subject();
   private observer: any;
   private formChangeEventSubscription: Subscription;
-  private templateOptionOverrides: any = null;
 
   /**
    * Connect debounced form-width updates and shared view-mode changes.
@@ -158,14 +157,11 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
 
   /**
-   * Merge component option patches into retained overrides, then rebuild a changed
-   * questionnaire with those overrides or apply them to the existing model.
+   * Rebuild the form model when the questionnaire changes, reapplying current
+   * component options, or merge option-only changes into the existing model.
    * @param changes Angular input-change records for the questionnaire and options.
    */
   ngOnChanges(changes) {
-    if ((changes.options || changes.questionnaire) && this.options) {
-      this.retainTemplateOptionOverrides();
-    }
     // form data changes
     if (changes.questionnaire) {
       // form data changes, clean up the previous data before loading the new form data
@@ -186,7 +182,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
               const fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
                 // convert it to a lforms form data
-                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.templateOptionOverrides);
+                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.options);
                 // If options.questionnaireResponse is specified, we can utilize it and reduce the number of lforms API calls.
                 if (self.options?.questionnaireResponse) {
                   // make a copy of questionnaireResponse so that the original data are not modified
@@ -196,10 +192,13 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
               }
             }
             self.lhcFormData = new LhcFormData(q);
-            // Reapply accumulated component overrides without carrying over the
-            // previous questionnaire's own template options or default values.
-            if (self.templateOptionOverrides) {
-              self.lhcFormData.setTemplateOptions(self.templateOptionOverrides);
+            // Apply the current options on every questionnaire load. The web
+            // component can receive questionnaire and options in separate
+            // change cycles, and lhcFormData is cleared while the new
+            // questionnaire is initialized.
+            if (self.options) {
+              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));
+              self.lhcFormData.setTemplateOptions(self.options);
             }
             self.lhcDataService.setLhcFormData(self.lhcFormData);
             // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
@@ -250,27 +249,9 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
     else if (changes.options) {
       const lhcFD = this.lhcDataService.getLhcFormData();
       if (lhcFD) {
-        lhcFD.setTemplateOptions(this.templateOptionOverrides);
+        lhcFD.setTemplateOptions(this.options);
       }
     }
-  }
-
-  /**
-   * Retain a copy of explicitly supplied template options across partial updates,
-   * excluding load-specific API options. Normalize the legacy HTML option before
-   * merging so a later alias can override an earlier allowHTML value.
-   */
-  private retainTemplateOptionOverrides(): void {
-    const options = {...this.options};
-    delete options.questionnaireResponse;
-    delete options.prepopulate;
-    delete options.fhirVersion;
-    if (Object.prototype.hasOwnProperty.call(options, 'allowHTMLInInstructions') &&
-        !Object.prototype.hasOwnProperty.call(options, 'allowHTML')) {
-      options.allowHTML = options.allowHTMLInInstructions;
-      delete options.allowHTMLInInstructions;
-    }
-    this.templateOptionOverrides = {...this.templateOptionOverrides, ...copy(options)};
   }
 
 }
