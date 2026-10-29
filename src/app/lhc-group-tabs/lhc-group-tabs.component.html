@@ -3,12 +3,13 @@
        class="lhc-item-group-title lhc-tab-container-text">
     <lhc-item-question-text [item]="item"></lhc-item-question-text>
   </div>
+  <!-- Inherit the complete parent layout until the first usable width measurement. -->
   <nz-tabset #tabset nzType="card" [nzTabPosition]="lhcDataService.getTabPosition()"
              [class.lhc-tab-content-indented]="!lhcDataService.getTemplateOptions().hideIndentation"
              [class.lhc-tabs-sticky]="lhcDataService.getStickyTabs()"
-             [style.--lhc-tab-question-direction]="stackQuestions ? 'column' : 'row'"
-             [style.--lhc-tab-question-label-width]="stackQuestions ? '100%' : 'auto'"
-             [style.--lhc-tab-content-answer-width]="stackQuestions ? '100%' : lhcDataService.getTabPosition() === 'left' &&
+             [style.--lhc-tab-question-direction]="contentAnswerWidth === null ? null : stackQuestions ? 'column' : 'row'"
+             [style.--lhc-tab-question-label-width]="contentAnswerWidth === null ? null : stackQuestions ? '100%' : 'auto'"
+             [style.--lhc-tab-content-answer-width]="contentAnswerWidth === null ? null : stackQuestions ? '100%' : lhcDataService.getTabPosition() === 'left' &&
                lhcDataService.getTabAnswerAlignment() === 'content' ? contentAnswerWidth : null"
              (nzSelectedIndexChange)="onSelectedIndexChange($event)">
     <ng-container *ngFor="let group of item.items">

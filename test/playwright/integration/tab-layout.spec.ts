@@ -617,6 +617,82 @@ test.describe('Tab Layout', () => {
     }
   });
 
+  for (const tabAnswerAlignment of ['form', 'content'] as const) {
+    test(`should inherit a complete ${tabAnswerAlignment}-aligned layout before a lazy nested tabset is measured`, async ({ page }) => {
+      await page.setViewportSize({width: 1000, height: 900});
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await page.evaluate(async tabAnswerAlignment => {
+        const questionnaire = await fetch('/test/data/R4/tab-layout-nested-layout.json')
+          .then(response => response.json());
+        questionnaire.item[0].item.forEach((item, index) => {
+          item.text = `Outer ${index + 1}: Patient assessment and detailed clinical information with additional context`;
+        });
+        await (window as any).LForms.Util.addFormToPage(questionnaire, 'formContainer', {
+          fhirVersion: 'R4', tabLayout: 'vertical', tabAnswerAlignment
+        });
+      }, tabAnswerAlignment);
+      const tabsets = page.locator('#formContainer nz-tabset');
+      await expect(tabsets).toHaveCount(1);
+      const outer = tabsets.first();
+      await expect.poll(() => outer.evaluate(element =>
+        (element as HTMLElement).style.getPropertyValue('--lhc-tab-question-direction')
+      )).toBe(tabAnswerAlignment === 'form' ? 'column' : 'row');
+      await expect.poll(() => outer.evaluate(element =>
+        (element as HTMLElement).style.getPropertyValue('--lhc-tab-content-answer-width')
+      )).not.toBe('');
+
+      // Mutation observers capture the first rendered layout before the browser
+      // delivers ResizeObserver measurements; a settled-layout check misses it.
+      await page.evaluate(() => {
+        (window as any).initialNestedLayout = null;
+        const properties = [
+          '--lhc-tab-question-direction', '--lhc-tab-question-label-width', '--lhc-tab-content-answer-width'
+        ];
+        const observer = new MutationObserver(() => {
+          const tabsets = document.querySelectorAll<HTMLElement>('#formContainer nz-tabset');
+          const inner = tabsets[1];
+          const question = inner?.querySelector('lhc-item-question');
+          const label = question?.querySelector('.lhc-de-label-button');
+          const answer = question?.querySelector('.lhc-de-input-unit');
+          if (!inner || !label || !answer) return;
+          (window as any).initialNestedLayout = {
+            inline: properties.map(property => inner.style.getPropertyValue(property)),
+            inherited: properties.map(property => getComputedStyle(inner).getPropertyValue(property).trim()),
+            outer: properties.map(property => getComputedStyle(tabsets[0]).getPropertyValue(property).trim()),
+            direction: getComputedStyle(question).flexDirection,
+            labelBottom: label.getBoundingClientRect().bottom,
+            answerTop: answer.getBoundingClientRect().top
+          };
+          observer.disconnect();
+        });
+        observer.observe(document.getElementById('formContainer'), {childList: true, subtree: true});
+      });
+      await outer.locator(':scope > .ant-tabs-nav').getByRole('tab').nth(1).click();
+      await page.waitForFunction(() => (window as any).initialNestedLayout !== null);
+      const initial = await page.evaluate(() => (window as any).initialNestedLayout);
+      expect(initial.inline).toEqual(['', '', '']);
+      expect(initial.inherited).toEqual(initial.outer);
+      expect(initial.direction).toBe(tabAnswerAlignment === 'form' ? 'column' : 'row');
+      if (tabAnswerAlignment === 'form') {
+        expect(initial.answerTop).toBeGreaterThanOrEqual(initial.labelBottom - 1);
+      }
+
+      await expect(tabsets).toHaveCount(2);
+      const inner = tabsets.nth(1);
+      await expect.poll(() => inner.evaluate(element =>
+        (element as HTMLElement).style.getPropertyValue('--lhc-tab-question-direction')
+      )).toBe(tabAnswerAlignment === 'form' ? 'column' : 'row');
+      if (tabAnswerAlignment === 'content') {
+        await expect.poll(() => inner.evaluate(element => {
+          const holder = element.querySelector(':scope > .ant-tabs-content-holder');
+          const answer = holder.querySelector('.lhc-de-input-unit');
+          return Math.abs(answer.getBoundingClientRect().width - holder.getBoundingClientRect().width / 2);
+        })).toBeLessThan(1);
+      }
+    });
+  }
+
   test('should stack narrow form-aligned tab questions independently as nested content resizes', async ({ page }) => {
     await page.setViewportSize({width: 800, height: 900});
     await page.goto('/test/pages/addFormToPageTest.html');
