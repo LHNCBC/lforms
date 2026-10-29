@@ -20,9 +20,6 @@ export class LhcDataService {
   private formChangeEventSource = new Subject<any>();
   public formChangeEvent$ = this.formChangeEventSource.asObservable();
 
-  /**
-   * Initialize the screen-reader log used for form announcements.
-   */
   constructor() {
     this.srLog = new ScreenReaderLog();
    }
@@ -39,7 +36,7 @@ export class LhcDataService {
 
   /**
    * Set the lhcFormData object
-   * @param data Form data model to expose to components, or null while clearing the form.
+   * @returns the lhcFormData object
    */
   setLhcFormData(data:any): void {
     this.lhcFormData = data;
@@ -48,7 +45,6 @@ export class LhcDataService {
 
   /**
    * Get the widget options
-   * @returns The current form template options, or an empty object when no model is available.
    */
   getTemplateOptions() {
     return this.lhcFormData?.templateOptions || {};
@@ -105,8 +101,8 @@ export class LhcDataService {
    */
 
   /**
-   * Set the active form item and announce its validation errors to screen readers.
-   * @param item Form item to activate.
+   * Set the active row in table
+   * @param index index of an item in the lforms form items array
    */
   setActiveRow(item) {
     if (this.lhcFormData && item) {
@@ -149,7 +145,7 @@ export class LhcDataService {
   /**
    * Get the css class for the active row
    * @param item an item
-   * @returns 'lhc-active-row' for the active item, or an empty string otherwise.
+   * @returns {string}
    */
   getActiveRowClass(item) {
     return this.lhcFormData.getActiveRowClass(item);
@@ -159,7 +155,7 @@ export class LhcDataService {
   /**
    * Get an item's skip logic status
    * @param item an item
-   * @returns The item's current skip-logic status CSS class.
+   * @returns {*|string}
    */
   getSkipLogicClass(item) {
     return this.lhcFormData.getSkipLogicClass(item);
@@ -205,7 +201,7 @@ export class LhcDataService {
    * Check if there's only one repeating item in a group
    * (so that the 'remove' button won't show on this item)
    * @param item an item in the lforms form items array
-   * @returns True when at most one repetition exists, so its remove button is hidden.
+   * @returns {boolean}
    */
   hasOneRepeatingItem(item) {
     const recCount = this.lhcFormData.getRepeatingItemCount(item);
@@ -216,7 +212,7 @@ export class LhcDataService {
   /**
    * Check if the current horizontal table has one row only
    * @param item an item in the lforms form items array
-   * @returns True when the corresponding horizontal table contains exactly one row.
+   * @returns {boolean}
    */
   hasOneRepeatingRow(item) {
     let ret = false;
@@ -232,7 +228,7 @@ export class LhcDataService {
    * Get the last repeating item.
    * Returns null if the item is not repeatable.
    * @param item an item. It may not be the last of the repeating items.
-   * @returns The last sibling repetition, or null when the item is not repeatable.
+   * @returns {boolean}
    */
   getLastRepeatingItem(item) {
     const repeatingItems = this.lhcFormData._getRepeatingItems(item);
@@ -242,9 +238,8 @@ export class LhcDataService {
 
   /**
    * Check the display type of item.text or an answerOption.
-   * @param item an item in the lforms form items array, or an answerOption in the lforms form
-   *  answers array.
-   * @returns The text format: 'plain', 'html', 'escaped', or 'markdown'.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
    */
   getTextDisplayType(item) {
     return this.lhcFormData?.getTextDisplayType(item) || 'plain';
@@ -253,9 +248,8 @@ export class LhcDataService {
 
   /**
    * Check the display type of item.prefix.
-   * @param item an item in the lforms form items array, or an answerOption in the lforms form
-   *  answers array.
-   * @returns The prefix format: 'plain', 'html', 'escaped', or 'markdown'.
+   * @param item an item in the lforms form items array, or an answerOption in the lforms form answers array.
+   * @returns {string}
    */
   getPrefixDisplayType(item) {
     return this.lhcFormData?.getPrefixDisplayType(item) || 'plain';
@@ -265,8 +259,7 @@ export class LhcDataService {
   /**
    * Check the display type of the coding instructions
    * @param item an item in the lforms form items array
-   * @returns A position-format combination such as 'inline-html', or an empty string when no
-   *  instructions exist.
+   * @returns {string}
    */
   getCodingInstructionsDisplayType(item) {
     let ret ='';
@@ -298,8 +291,7 @@ export class LhcDataService {
   /**
    * Check the display type of item.legal
    * @param item an item in the lforms form items array
-   * @returns A position-format combination such as 'popover-plain', or an empty string when no
-   *  legal text exists.
+   * @returns {string}
    */
   getLegalDisplayType(item) {
     let ret ='';
@@ -331,7 +323,7 @@ export class LhcDataService {
   /**
    * Check if there's a unit list
    * @param item an item in the lforms form items array
-   * @returns True when unit autocomplete options or a readonly display unit are available.
+   * @returns {boolean}
    */
   checkUnits(item) {
     return !!(item._unitAutocompOptions ||
@@ -342,7 +334,7 @@ export class LhcDataService {
   /**
    * Check an item's skip logic status to decide if the item is enabled
    * @param item an item
-   * @returns Whether the item is enabled; false when no form model is available.
+   * @returns {boolean}
    */
   targetEnabled(item) {
     return this.lhcFormData ? InternalUtil.targetEnabled(item): false;
@@ -350,9 +342,9 @@ export class LhcDataService {
 
 
   /**
-   * Check whether an item is disabled but remains visible with protected display.
+   * Check an item's skip logic status to decide if the item is enabled and protected (not hidden from view)
    * @param item an item
-   * @returns Whether the item is disabled and protected; false when no form model is available.
+   * @returns {boolean}
    */
   targetDisabledAndProtected(item) {
     return this.lhcFormData ? InternalUtil.targetDisabledAndProtected(item) : false;
@@ -362,8 +354,8 @@ export class LhcDataService {
   /**
    * Check if the item should be displayed (enabled or disabled but protected)
    * @param item an item
-   * @returns Whether the item should be displayed; false when no form model is available.
-   */
+   * @return {boolean}
+  */
   targetShown(item) {
     return this.lhcFormData ? InternalUtil.targetShown(item) : false;
   }
@@ -374,8 +366,7 @@ export class LhcDataService {
    * sub items is displayed). Items that are not multi-select subgroups are not
    * affected.
    * @param item an item
-   * @returns Whether the subgroup has displayed children, or the item is an ordinary item; false
-   *  without a form model.
+   * @return {boolean}
    */
   multiSelectSubGroupShown(item) {
     return this.lhcFormData ? InternalUtil.multiSelectSubGroupShown(item) : false;
@@ -385,7 +376,7 @@ export class LhcDataService {
   /**
    * Get the sequence number for the current repeating item
    * @param item an item in the lforms form items array
-   * @returns The dot-separated repetition path, or an empty string for a non-repeatable item.
+   * @returns {string}
    */
   getRepeatingSN(item) {
     let ret = '';
@@ -413,7 +404,7 @@ export class LhcDataService {
   /**
    * Get CSS classes for the sibling status (whether it is the first or the last sibling)
    * @param item a form item
-   * @returns The applicable first-sibling and last-sibling CSS classes, or an empty string.
+   * @returns {string}
    */
   getSiblingStatus(item) {
     let status = "";
@@ -482,7 +473,7 @@ export class LhcDataService {
 
   /**
    * Whether to hide repetition number before question text
-   * @returns The hideRepetitionNumber template option.
+   * @returns {boolean}
    */
   isHideRepetitionNumber() {
     return this.getLhcFormData().templateOptions.hideRepetitionNumber;
@@ -492,7 +483,7 @@ export class LhcDataService {
   /**
    * Get the CSS class on each item row
    * @param item an item in the lforms form items array
-   * @returns CSS classes describing item data type, validation, visibility, and interaction state.
+   * @returns {string}
    */
   getRowClass(item) {
     //var eleClass = 'level' + item._displayLevel;
@@ -690,7 +681,7 @@ export class LhcDataService {
 
   /**
    * Return the horizontal table structure of the form
-   * @returns The form model's horizontal-table structure, keyed by table identifiers.
+   * @returns {object}
    */
   getHorizontalTableInfo() {
     return this.lhcFormData._horizontalTableInfo;
@@ -701,7 +692,7 @@ export class LhcDataService {
    * Track by item's element id for each cell in a table row
    * @param index *ngFor index, not used
    * @param item *ngFor item, an item of the form
-   * @returns The item's unique element ID used as the Angular tracking key.
+   * @returns
    */
   trackByElementId(index, item) {
     // index is not used since item._elementId is unique
@@ -712,8 +703,8 @@ export class LhcDataService {
   /**
    * Track by each row's group header item's element id for each row in a horizontal table
    * @param index *ngFor index
-   * @param row Horizontal-table row containing a header item.
-   * @returns The row header item's unique element ID.
+   * @param item *ngFor item, the group/section item of a form
+   * @returns
    */
   trackByRowHeaderElementId(index, row) {
     return row.header._elementId;
@@ -723,8 +714,8 @@ export class LhcDataService {
   /**
    * Track by column's id, which is "col" + the item's element id in the first row
    * @param index *ngFor index, not used
-   * @param col Column header in the horizontal-table structure.
-   * @returns The column header's ID.
+   * @param item *ngFor item, an item in the headers array of the horizontal table structure
+   * @returns
    */
   trackByColumnHeaderId(index, col) {
     return col.id;
@@ -734,7 +725,7 @@ export class LhcDataService {
   /**
    * Check if the item is a subsequent item of a horizontal group item, which is handled separately
    * @param item a form item
-   * @returns Truthy for a horizontal group item without a table-header marker; falsy otherwise.
+   * @returns {boolean}
    */
   isSubsequentHorizontalTableGroupItem(item) {
     return item && item.displayControl && item.displayControl.questionLayout === "horizontal" && !item._horizontalTableHeader;
@@ -768,7 +759,7 @@ export class LhcDataService {
 
   /**
    * Check if the form is rendered with all FHIR resources loaded
-   * @returns True when the current model has been marked ready for interaction.
+   * @returns {boolean}
    */
   isFormReady(): boolean {
     return !!this.lhcFormData._formReady;

@@ -17,11 +17,6 @@ export class LhcGroupVerticalComponent {
 
   viewMode = "";
 
-  /**
-   * Track the shared view mode when form width changes and expose form data to the template.
-   * @param winService Shared form-width and view-mode service.
-   * @param lhcDataService Form data and item rendering helpers.
-   */
   constructor(
     private winService: WindowService,
     public lhcDataService: LhcDataService,

@@ -46,13 +46,6 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   private formChangeEventSubscription: Subscription;
   private hasNewOptions = false;
 
-  /**
-   * Connect debounced form-width updates and shared view-mode changes.
-   * @param winService Shared form-width and view-mode service.
-   * @param lhcDataService Form data and rendering helpers.
-   * @param host Form host element whose content width is observed.
-   * @param zone Angular zone used to publish resize observations.
-   */
   constructor(private winService: WindowService,
     public lhcDataService: LhcDataService,
     private host: ElementRef,
@@ -76,7 +69,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
 
   /**
-   * Observe the form host's content width and publish changes inside Angular's zone.
+   * Set up the observer on window size
    */
   ngOnInit(): void {
     this.observer = new ResizeObserver(entries => {
@@ -98,8 +91,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   // }
 
   /**
-   * Mark a newly rendered form model and emit readiness once its data processing
-   * has also completed. Subsequent checks of the same model do not emit again.
+   * Called after the view is completely checked, that is, after a form has
+   * completely been rendered, and possibly at other times.
    */
   ngAfterViewChecked(): void {
     // If this is the first time this particular form has been rendered, see if
@@ -114,7 +107,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
 
   /**
-   * Stop observing the form host and unsubscribe from form-change events.
+   * Remove the observer for window size
    */
   ngOnDestroy() {
     this.observer.unobserve(this.host.nativeElement);
@@ -135,7 +128,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
 
   /**
-   * Mark the model ready, subscribe to debounced form-change events, and emit onFormReady.
+   * Set a flag and emit an event that the form is ready
    */
   formReady() {
     // set a flag on the form data

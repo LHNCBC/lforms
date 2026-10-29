@@ -16,11 +16,6 @@ export class LhcItemQuestionComponent implements OnInit {
 
   eleStyle: object = null;
    
-  /**
-   * Provide the services used to choose the question's responsive answer width.
-   * @param winService Shared form-width and view-mode service.
-   * @param lhcDataService Form data and item display options.
-   */
   constructor(
     private winService: WindowService,
     public lhcDataService: LhcDataService,
