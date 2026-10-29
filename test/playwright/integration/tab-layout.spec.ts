@@ -809,10 +809,23 @@ test.describe('Tab Layout', () => {
       await navigation.getByRole('tab', {name: 'Nested Tab Two'}).click();
       const hideEarlierTab = byId(page, 'toggle/1/1/1/1/1|false').locator('input');
       await hideEarlierTab.scrollIntoViewIfNeeded();
-      const scrollPosition = await page.evaluate(() => window.scrollY);
-      expect(scrollPosition).toBeGreaterThan(100);
+      // Playwright may reposition the page while retrying an unstable click.
+      // Capture the baseline after that positioning, before the answer handler.
+      await page.evaluate(() => {
+        (window as any).scrollBeforeHidingNestedTab = null;
+        const controller = new AbortController();
+        window.addEventListener('click', event => {
+          const input = document.getElementById('toggle/1/1/1/1/1|false')?.querySelector('input');
+          if (event.target === input) {
+            (window as any).scrollBeforeHidingNestedTab = window.scrollY;
+            controller.abort();
+          }
+        }, {capture: true, signal: controller.signal});
+      });
 
       await hideEarlierTab.click();
+      const scrollPosition = await page.evaluate(() => (window as any).scrollBeforeHidingNestedTab);
+      expect(scrollPosition).toBeGreaterThan(100);
       await expect(navigation.getByRole('tab')).toHaveCount(1);
       await expect(navigation.getByRole('tab', {name: 'Nested Tab Two'}))
         .toHaveAttribute('aria-selected', 'true');
