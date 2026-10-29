@@ -27,7 +27,12 @@ describe('LhcGroupTabsComponent', () => {
     windowService = jasmine.createSpyObj<WindowService>('WindowService', ['getWindowWidth']);
     windowService.getWindowWidth.and.returnValue(800);
     component = new LhcGroupTabsComponent(lhcDataService, new NgZone({enableLongStackTrace: false}), windowService);
+    component.item = {items: [{_isHiddenFromView: false}, {_isHiddenFromView: false}]};
     tabset = document.createElement('div');
+    const navigation = document.createElement('div');
+    navigation.className = 'ant-tabs-nav';
+    navigation.style.position = 'sticky';
+    tabset.appendChild(navigation);
     contentHolder = document.createElement('div');
     contentHolder.className = 'ant-tabs-content-holder';
     tabset.appendChild(contentHolder);
@@ -186,7 +191,7 @@ describe('LhcGroupTabsComponent', () => {
     lhcDataService.getStickyTabs.and.returnValue(true);
     tabsetTop = -1;
 
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
 
     expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
     expect(scrollIntoViewSpy).not.toHaveBeenCalled();
@@ -197,7 +202,30 @@ describe('LhcGroupTabsComponent', () => {
     component.ngAfterViewInit();
     tabsetTop = -1;
 
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
+
+    expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
+    expect(scrollIntoViewSpy).not.toHaveBeenCalled();
+  });
+
+  it('should keep the current answer in view when hiding an earlier tab changes only its index', () => {
+    initializeStickyTabs();
+    component.onSelectedIndexChange(1);
+    component.item.items[0]._isHiddenFromView = true;
+    tabsetTop = -100;
+
+    component.onSelectedIndexChange(0);
+
+    expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
+    expect(scrollIntoViewSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not reset scrolling for nonsticky nested horizontal navigation', () => {
+    initializeStickyTabs();
+    tabset.querySelector<HTMLElement>('.ant-tabs-nav').style.position = 'static';
+    tabsetTop = -100;
+
+    component.onSelectedIndexChange(1);
 
     expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
     expect(scrollIntoViewSpy).not.toHaveBeenCalled();
@@ -211,7 +239,7 @@ describe('LhcGroupTabsComponent', () => {
       initializeStickyTabs('40px');
       tabsetTop = top;
 
-      component.onSelectedIndexChange();
+      component.onSelectedIndexChange(1);
 
       expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
       expect(scrollIntoViewSpy).not.toHaveBeenCalled();
@@ -222,7 +250,7 @@ describe('LhcGroupTabsComponent', () => {
     initializeStickyTabs('40px');
     tabsetTop = 39;
 
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
 
     expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
     expect(scrollIntoViewSpy).not.toHaveBeenCalled();
@@ -238,7 +266,7 @@ describe('LhcGroupTabsComponent', () => {
     expect(stickyBoundary).toBeGreaterThan(3);
     tabsetTop = stickyBoundary - 1;
 
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
 
     expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
   });
@@ -258,7 +286,7 @@ describe('LhcGroupTabsComponent', () => {
     initializeStickyTabs('40px');
     tabsetTop = 240; // Above the inner host's sticky boundary at 200 + 3 + 40.
 
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
     runFrame(1);
 
     expect(innerHost.scrollTop).toBe(97);
@@ -275,7 +303,7 @@ describe('LhcGroupTabsComponent', () => {
     initializeStickyTabs('40px');
     tabsetTop = 241;
 
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
 
     expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
     expect(scrollIntoViewSpy).not.toHaveBeenCalled();
@@ -285,8 +313,8 @@ describe('LhcGroupTabsComponent', () => {
     initializeStickyTabs();
     tabsetTop = -1;
 
-    component.onSelectedIndexChange();
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
+    component.onSelectedIndexChange(0);
 
     expect(cancelAnimationFrameSpy).toHaveBeenCalledOnceWith(1);
     expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(2);
@@ -300,10 +328,10 @@ describe('LhcGroupTabsComponent', () => {
   it('should cancel a pending frame when the latest selection does not need to scroll', () => {
     initializeStickyTabs();
     tabsetTop = -1;
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
 
     tabsetTop = 0;
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(0);
 
     expect(cancelAnimationFrameSpy).toHaveBeenCalledOnceWith(1);
     expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
@@ -314,7 +342,7 @@ describe('LhcGroupTabsComponent', () => {
   it('should cancel a pending frame when destroyed', () => {
     initializeStickyTabs();
     tabsetTop = -1;
-    component.onSelectedIndexChange();
+    component.onSelectedIndexChange(1);
 
     component.ngOnDestroy();
 

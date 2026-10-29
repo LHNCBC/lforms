@@ -37,6 +37,7 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
   }
 
   private viewInitialized = false;
+  private selectedGroup: any = null;
   private pendingScrollFrame: number | null = null;
   private pendingResizeFrame: number | null = null;
   private contentResizeObserver: ResizeObserver | null = null;
@@ -56,6 +57,7 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
    */
   ngAfterViewInit(): void {
     this.viewInitialized = true;
+    this.selectedGroup = this.item?.items?.find(group => !group._isHiddenFromView) || null;
 
     // Cache the content width even in form alignment mode so changing the option
     // does not depend on another resize notification.
@@ -116,21 +118,29 @@ export class LhcGroupTabsComponent implements AfterViewInit, AfterViewChecked, O
   /**
    * Reveal the selected tab's start when its tabset has scrolled above its sticky
    * boundary. Reset the nearest scroll container, or the viewport, on the next
-   * frame; leave already-visible tabsets and forms with stickyTabs disabled in place.
+   * frame only when the selected group changes and this navigation is sticky.
+   * @param index Selected index among the currently visible tab groups.
    */
-  onSelectedIndexChange(): void {
-    // Ignore the selection that NG-ZORRO emits when initializing the tabset
-    if (!this.viewInitialized || !this.lhcDataService.getStickyTabs()) {
-      return;
-    }
-
+  onSelectedIndexChange(index: number): void {
     if (this.pendingScrollFrame !== null) {
       cancelAnimationFrame(this.pendingScrollFrame);
       this.pendingScrollFrame = null;
     }
 
+    const group = this.item?.items?.filter(group => !group._isHiddenFromView)[index];
+    const previousGroup = this.selectedGroup;
+    this.selectedGroup = group;
+    // Hiding an earlier tab can change the selected index without changing the
+    // selected group. It must not move the user away from their current answer.
+    if (!this.viewInitialized || !group || group === previousGroup ||
+        !this.lhcDataService.getStickyTabs()) {
+      return;
+    }
+
     const tabset = this.tabset?.nativeElement;
-    if (!tabset) {
+    const navigation = tabset?.querySelector(':scope > .ant-tabs-nav');
+    // Nested horizontal navigation is static even when stickyTabs is enabled.
+    if (!navigation || getComputedStyle(navigation).position !== 'sticky') {
       return;
     }
 

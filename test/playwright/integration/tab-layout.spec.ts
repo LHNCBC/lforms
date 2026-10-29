@@ -771,6 +771,49 @@ test.describe('Tab Layout', () => {
     await expect(tabNavs.nth(1)).toHaveCSS('position', 'static');
   });
 
+  for (const tabLayout of ['horizontal', 'vertical'] as const) {
+    test(`should preserve the current answer position when an earlier nested ${tabLayout} tab is hidden`, async ({ page }) => {
+      await page.setViewportSize({width: 1100, height: 900});
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await page.evaluate(async tabLayout => {
+        const questionnaire = await fetch('/test/data/R4/tab-layout-answer-alignment.json')
+          .then(response => response.json());
+        const nestedTabs = questionnaire.item[1].item[0].item[1];
+        nestedTabs.item[0].enableWhen = [{question: 'toggle', operator: '=', answerBoolean: true}];
+        nestedTabs.item[1].item = Array.from({length: 40}, (_, index) => ({
+          type: 'string', linkId: `long${index}`, text: `Question ${index + 1}`
+        }));
+        nestedTabs.item[1].item.push({
+          type: 'boolean', linkId: 'toggle', text: 'Show preceding nested tab?', initial: [{valueBoolean: true}]
+        });
+        await (window as any).LForms.Util.addFormToPage(questionnaire, 'formContainer', {
+          fhirVersion: 'R4', tabLayout, stickyTabs: true
+        });
+      }, tabLayout);
+
+      const nestedTabs = page.locator('#formContainer nz-tabset').nth(1);
+      const navigation = nestedTabs.locator(':scope > .ant-tabs-nav');
+      await navigation.getByRole('tab', {name: 'Nested Tab Two'}).click();
+      const hideEarlierTab = byId(page, 'toggle/1/1/1/1/1|false').locator('input');
+      await hideEarlierTab.scrollIntoViewIfNeeded();
+      const scrollPosition = await page.evaluate(() => window.scrollY);
+      expect(scrollPosition).toBeGreaterThan(100);
+
+      await hideEarlierTab.click();
+      await expect(navigation.getByRole('tab')).toHaveCount(1);
+      await expect(navigation.getByRole('tab', {name: 'Nested Tab Two'}))
+        .toHaveAttribute('aria-selected', 'true');
+      // Wait for the deferred scroll frame, so an unwanted reset cannot pass
+      // simply because the assertion ran before the animation-frame callback.
+      await page.evaluate(() => new Promise<void>(resolve => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      }));
+      expect(await page.evaluate(() => window.scrollY)).toBe(scrollPosition);
+      await expect(hideEarlierTab).toBeInViewport();
+    });
+  }
+
   test('should keep sticky tabs at the configured offset while their container scrolls', async ({ page }) => {
     await page.setViewportSize({width: 800, height: 720});
     await page.goto('/test/pages/addFormToPageTest.html');

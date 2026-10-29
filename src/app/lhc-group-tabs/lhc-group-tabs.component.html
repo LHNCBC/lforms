@@ -10,7 +10,7 @@
              [style.--lhc-tab-question-label-width]="stackQuestions ? '100%' : 'auto'"
              [style.--lhc-tab-content-answer-width]="stackQuestions ? '100%' : lhcDataService.getTabPosition() === 'left' &&
                lhcDataService.getTabAnswerAlignment() === 'content' ? contentAnswerWidth : null"
-             (nzSelectedIndexChange)="onSelectedIndexChange()">
+             (nzSelectedIndexChange)="onSelectedIndexChange($event)">
     <ng-container *ngFor="let group of item.items">
       <ng-container *ngIf="!group._isHiddenFromView">
         <nz-tab [nzTitle]="group._text">
