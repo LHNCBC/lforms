@@ -1,5 +1,7 @@
 <ng-container *ngIf="item && item.items">
-  <div *ngIf="lhcDataService.getShowTabContainerText() && item._text"
+  <!-- The text may be supplied only as formatted HTML or Markdown. -->
+  <div *ngIf="lhcDataService.getShowTabContainerText() &&
+              (item._text || lhcDataService.getTextDisplayType(item) !== 'plain')"
        class="lhc-item-group-title lhc-tab-container-text">
     <lhc-item-question-text [item]="item"></lhc-item-question-text>
   </div>

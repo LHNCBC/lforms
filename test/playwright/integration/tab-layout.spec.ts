@@ -209,6 +209,40 @@ test.describe('Tab Layout', () => {
     await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '24px');
   });
 
+  for (const {format, extension, options, html} of [
+    {format: 'HTML', extension: {url: 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml',
+      valueString: '<b>Formatted container</b>'}, options: {allowHTML: true}, html: '<b>Formatted container</b>'},
+    {format: 'HTML', extension: {url: 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml',
+      valueString: '<b>Formatted container</b>'}, options: {allowHTML: false}, html: null},
+    {format: 'Markdown', extension: {url: 'http://hl7.org/fhir/StructureDefinition/rendering-markdown',
+      valueMarkdown: '**Formatted container**'}, options: {allowMarkdown: true}, html: '<strong>Formatted container</strong>'}
+  ]) {
+    test(`should ${html ? 'show' : 'not show'} ${format}-only container text with ${JSON.stringify(options)}`, async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await page.evaluate(async ({extension, options}) => {
+        const questionnaire = await fetch('/test/data/R4/tab-layout-container-text.json').then(response => response.json());
+        const container = questionnaire.item.find(item => item.linkId === 'tabContainer');
+        delete container.text;
+        container._text = {extension: [extension]};
+        await (window as any).LForms.Util.addFormToPage(questionnaire, 'formContainer', {
+          fhirVersion: 'R4', showTabContainerText: true, ...options
+        });
+      }, {extension, options});
+      const containers = page.locator('#formContainer .lhc-tab-container-text');
+      await expect(page.locator('#formContainer nz-tabset')).toHaveCount(2);
+      if (html) {
+        await expect(containers).toHaveText(['Formatted container', 'Nested tab container']);
+        await expect(containers.first().locator('.question')).toContainText('Formatted container');
+        expect(await containers.first().locator('.question').innerHTML()).toContain(html);
+      }
+      else {
+        // Without the matching option, formatted-only text has nothing to display.
+        await expect(containers).toHaveText(['Nested tab container']);
+      }
+    });
+  }
+
   test('should use only newly supplied options when native LForms definitions are replaced', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
