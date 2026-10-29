@@ -51,6 +51,8 @@ test.describe('tree lines', () => {
           return new Promise<void>(resolve => {
             element.addEventListener('onFormReady', () => resolve(), {once: true});
             element.questionnaire = questionnaire;
+            // Supply the complete configuration again for this new load.
+            element.options = {...element.options};
           });
         });
 

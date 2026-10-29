@@ -44,6 +44,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   private changeSize = new Subject();
   private observer: any;
   private formChangeEventSubscription: Subscription;
+  private hasNewOptions = false;
 
   /**
    * Connect debounced form-width updates and shared view-mode changes.
@@ -157,11 +158,23 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
 
   /**
-   * Rebuild the form model when the questionnaire changes, reapplying current
-   * component options, or merge option-only changes into the existing model.
+   * Rebuild a changed questionnaire using newly supplied options, including
+   * separate input notifications before initialization. Apply option-only changes
+   * to the existing model without carrying them into a later load.
    * @param changes Angular input-change records for the questionnaire and options.
    */
   ngOnChanges(changes) {
+    if (changes.options) {
+      this.hasNewOptions = true;
+      // Adjacent web-component property assignments can trigger separate change
+      // notifications. Keep options available until the current turn finishes;
+      // a questionnaire update clears the model before initialization is deferred.
+      setTimeout(() => {
+        if (this.lhcFormData) {
+          this.hasNewOptions = false;
+        }
+      }, 0);
+    }
     // form data changes
     if (changes.questionnaire) {
       // form data changes, clean up the previous data before loading the new form data
@@ -172,6 +185,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
         const self = this;
         // reset the data after this thread is done
         setTimeout(()=> {
+          const options = self.hasNewOptions ? self.options : null;
+          self.hasNewOptions = false;
           try {
             let q = CommonUtils.deepCopy(self.questionnaire);
             // check if questionnaire is a FHIR Questionnaire
@@ -182,23 +197,20 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
               const fhirVer = self.fhirVersion || LForms.Util.guessFHIRVersion(q) || "R4";
               if (LForms.FHIR[fhirVer] && LForms.FHIR[fhirVer].SDC) {
                 // convert it to a lforms form data
-                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, self.options);
-                // If options.questionnaireResponse is specified, we can utilize it and reduce the number of lforms API calls.
-                if (self.options?.questionnaireResponse) {
+                q = LForms.FHIR[fhirVer].SDC.convertQuestionnaireToLForms(q, options || {});
+                // Merge only a QuestionnaireResponse supplied for this load.
+                if (options?.questionnaireResponse) {
                   // make a copy of questionnaireResponse so that the original data are not modified
-                  const qr = copy(self.options.questionnaireResponse);
+                  const qr = copy(options.questionnaireResponse);
                   q = LForms.FHIR[fhirVer].SDC.mergeQuestionnaireResponseToLForms(q, qr);
                 }
               }
             }
             self.lhcFormData = new LhcFormData(q);
-            // Apply the current options on every questionnaire load. The web
-            // component can receive questionnaire and options in separate
-            // change cycles, and lhcFormData is cleared while the new
-            // questionnaire is initialized.
-            if (self.options) {
-              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));
-              self.lhcFormData.setTemplateOptions(self.options);
+            // Omitted options leave the new questionnaire's settings and library
+            // defaults in place, without reapplying an earlier load's options.
+            if (options) {
+              self.lhcFormData.setTemplateOptions(options);
             }
             self.lhcDataService.setLhcFormData(self.lhcFormData);
             // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire
