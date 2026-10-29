@@ -12,8 +12,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added the `showTabContainerText` template option to display tab-container
   group text above each tabset, independently of the headers inside tabs.
 ### Changed
-- Refined tab content indentation and tree lines across nested layouts, and
+- Refined tab content indentation across nested layouts, and
   highlighted selected tabs with a light-blue background and black text.
+- Removed tree lines from first-level items at the form root and within each
+  tab, including tabs nested at any depth.
 
 ## [44.2.0] 2026-10-06
 ### Added
