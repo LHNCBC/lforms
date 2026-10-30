@@ -7,13 +7,19 @@
   padding-bottom: 3px;
 }
 
-/* Match group headers and keep selected tab labels readable. */
+/* Distinguish selected tabs from the lighter group headers. */
 :host ::ng-deep .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active {
-  background-color: #e6f1ff;
+  background-color: #a6c9e8;
 }
 
 :host ::ng-deep .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #000;
+}
+
+/* Frame the content inside its existing bounds, preserving tab and header alignment. */
+:host ::ng-deep .ant-tabs-card > .ant-tabs-content-holder {
+  outline: 1px solid #cbd5df;
+  outline-offset: -1px;
 }
 
 /* Keep short vertical tab lists compact, but prevent long labels from taking

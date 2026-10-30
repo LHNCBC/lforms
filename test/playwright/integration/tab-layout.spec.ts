@@ -375,7 +375,7 @@ test.describe('Tab Layout', () => {
     test(`should highlight only the selected ${tabLayout} tab`, async ({ page }) => {
       await page.goto('/test/pages/addFormToPageTest.html');
       await waitForLFormsReady(page);
-      await addFormToPage(page, 'tab-layout.json', 'formContainer', {fhirVersion: 'R4', tabLayout});
+      await addFormToPage(page, 'tab-layout.json', 'formContainer', {fhirVersion: 'R4', tabLayout, showTabHeader: true});
       const nav = page.locator('#formContainer nz-tabset > .ant-tabs-nav');
       const buttons = nav.getByRole('tab');
       for (const index of [0, 1, 0]) {
@@ -384,8 +384,10 @@ test.describe('Tab Layout', () => {
         await expect(selected).toHaveCount(1);
         await expect(selected.getByRole('tab')).toHaveAttribute('aria-selected', 'true');
         await expect(selected.getByRole('tab')).toHaveText(index === 0 ? 'Tab One' : 'Tab Two');
-        await expect(selected).toHaveCSS('background-color', 'rgb(230, 241, 255)');
+        await expect(selected).toHaveCSS('background-color', 'rgb(166, 201, 232)');
         await expect(selected.getByRole('tab')).toHaveCSS('color', 'rgb(0, 0, 0)');
+        await expect(page.locator('#formContainer .ant-tabs-tabpane-active > lhc-group-vertical > .lhc-item-group-title'))
+          .toHaveCSS('background-color', 'rgb(230, 241, 255)');
         await expect(nav.locator('.ant-tabs-tab').nth(1 - index)).not.toHaveClass(/ant-tabs-tab-active/);
       }
     });
