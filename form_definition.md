@@ -126,7 +126,8 @@ about the meaning of each key:
     * showTabHeader - (optional) when the boolean value is `true`, repeats each
       tab's label as a header at the top of its content. This applies to both
       horizontal and vertical tab layouts, including nested tab containers. It
-      defaults to `false`.
+      defaults to `false`. The header aligns with the left edge of the tab's
+      content area, while questions retain their tab content indentation.
     * showTabContainerText - (optional) when the boolean value is `true`, shows
       the tab-container group's text above its tabset, including nested tabsets.
       Defaults to `false`. This is independent of `showTabHeader`, which controls

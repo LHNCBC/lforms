@@ -91,3 +91,20 @@
 :host ::ng-deep .lhc-tab-content-indented.ant-tabs-left > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane {
   padding-left: 12px;
 }
+
+/* Keep repeated headers at the tab content root while questions retain the
+   pane's indentation. Scope each rule to this tabset's immediate group title. */
+:host ::ng-deep nz-tabset > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane
+  > lhc-group-vertical > .lhc-item-group-title {
+  margin-left: 0;
+}
+
+:host ::ng-deep .lhc-tab-content-indented > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane
+  > lhc-group-vertical > .lhc-item-group-title {
+  margin-left: -24px;
+}
+
+:host ::ng-deep .lhc-tab-content-indented.ant-tabs-left > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane
+  > lhc-group-vertical > .lhc-item-group-title {
+  margin-left: -12px;
+}

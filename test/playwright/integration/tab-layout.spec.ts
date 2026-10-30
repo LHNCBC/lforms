@@ -501,6 +501,58 @@ test.describe('Tab Layout', () => {
     await expect(page.locator('#formContainer .ant-tabs-tabpane-active')).toHaveCSS('padding-left', '24px');
   });
 
+  for (const tabLayout of ['horizontal', 'vertical'] as const) {
+    test(`should align ${tabLayout} tab headers with their content roots while preserving question indentation`, async ({ page }) => {
+      await page.goto('/test/pages/addFormToPageTest.html');
+      await waitForLFormsReady(page);
+      await addFormToPage(page, 'tab-layout-container-text.json', 'formContainer', {
+        fhirVersion: 'R4', tabLayout, showTabHeader: true, showTabContainerText: true
+      });
+      const form = page.locator('#formContainer wc-lhc-form');
+      const tabsets = form.locator('nz-tabset');
+      await expect(tabsets).toHaveCount(2);
+
+      for (const hideIndentation of [false, true, false]) {
+        await form.evaluate((element: any, hideIndentation) => {
+          element.options = {hideIndentation, showTabHeader: true};
+        }, hideIndentation);
+        const expectedIndent = hideIndentation ? 0 : tabLayout === 'horizontal' ? 24 : 12;
+        for (const tabset of await tabsets.all()) {
+          const pane = tabset.locator(':scope > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane-active');
+          const header = pane.locator(':scope > lhc-group-vertical > .lhc-item-group-title');
+          await expect(header).toBeVisible();
+          await expect.poll(() => pane.evaluate((element, expectedIndent) => {
+            const header = element.querySelector(':scope > lhc-group-vertical > .lhc-item-group-title')!;
+            const question = element.querySelector(':scope > lhc-group-vertical > .lhc-item-group-body > lhc-item')!;
+            const rootLeft = element.getBoundingClientRect().left;
+            return Math.max(
+              Math.abs(header.getBoundingClientRect().left - rootLeft),
+              Math.abs(question.getBoundingClientRect().left - rootLeft - expectedIndent)
+            );
+          }, expectedIndent)).toBeLessThan(1);
+        }
+
+        // Toggling the repeated header must not shift questions or nested navigation.
+        const questionPositions = await form.locator('lhc-item-question').evaluateAll(elements =>
+          elements.map(element => element.getBoundingClientRect().left));
+        await form.evaluate((element: any) => { element.options = {showTabHeader: false}; });
+        await expect(form.locator('.lhc-item-group-title:not(.lhc-tab-container-text)')).toHaveCount(0);
+        await expect.poll(() => form.locator('lhc-item-question').evaluateAll(elements =>
+          elements.map(element => element.getBoundingClientRect().left))).toEqual(questionPositions);
+      }
+
+      // A newly selected nested pane must use the same header alignment.
+      await form.evaluate((element: any) => { element.options = {showTabHeader: true}; });
+      await tabsets.nth(1).locator(':scope > .ant-tabs-nav').getByRole('tab').nth(1).click();
+      const nestedPane = tabsets.nth(1).locator(':scope > .ant-tabs-content-holder > .ant-tabs-content > .ant-tabs-tabpane-active');
+      await expect(nestedPane.locator(':scope > lhc-group-vertical > .lhc-item-group-title')).toHaveText('Nested Tab Two');
+      await expect.poll(() => nestedPane.evaluate(element => Math.abs(
+        element.querySelector(':scope > lhc-group-vertical > .lhc-item-group-title')!.getBoundingClientRect().left -
+        element.getBoundingClientRect().left
+      ))).toBeLessThan(1);
+    });
+  }
+
   test('should default to non-sticky top tabs without tab headers', async ({ page }) => {
     await page.goto('/test/pages/addFormToPageTest.html');
     await waitForLFormsReady(page);
