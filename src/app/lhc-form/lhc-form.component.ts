@@ -44,6 +44,7 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
   private changeSize = new Subject();
   private observer: any;
   private formChangeEventSubscription: Subscription;
+  private hasNewOptions = false;
 
   constructor(private winService: WindowService,
     public lhcDataService: LhcDataService,
@@ -150,10 +151,24 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
 
 
   /**
-   * Handle the changes when a new form data is loaded
-   * @param changes the object that contains the changes
+   * Rebuild a changed questionnaire. FHIR conversion and QuestionnaireResponse
+   * merging use the current options. Template options are applied only when newly
+   * supplied for this load, including in a separate notification before initialization.
+   * Option-only changes update the existing model without carrying into a later load.
+   * @param changes Angular input-change records for the questionnaire and options.
    */
   ngOnChanges(changes) {
+    if (changes.options) {
+      this.hasNewOptions = true;
+      // Adjacent web-component property assignments can trigger separate change
+      // notifications. Keep options available until the current turn finishes;
+      // a questionnaire update clears the model before initialization is deferred.
+      setTimeout(() => {
+        if (this.lhcFormData) {
+          this.hasNewOptions = false;
+        }
+      }, 0);
+    }
     // form data changes
     if (changes.questionnaire) {
       // form data changes, clean up the previous data before loading the new form data
@@ -164,6 +179,8 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
         const self = this;
         // reset the data after this thread is done
         setTimeout(()=> {
+          const templateOptions = self.hasNewOptions ? self.options : null;
+          self.hasNewOptions = false;
           try {
             let q = CommonUtils.deepCopy(self.questionnaire);
             // check if questionnaire is a FHIR Questionnaire
@@ -184,10 +201,10 @@ export class LhcFormComponent implements OnInit, OnChanges, OnDestroy, AfterView
               }
             }
             self.lhcFormData = new LhcFormData(q);
-            // and options change
-            if (changes.options && self.options) {
-              // self.lhcFormData.setTemplateOptions(CommonUtils.deepCopy(self.options));
-              self.lhcFormData.setTemplateOptions(self.options);
+            // Omitted options leave the new questionnaire's settings and library
+            // defaults in place, without reapplying an earlier load's template options.
+            if (templateOptions) {
+              self.lhcFormData.setTemplateOptions(templateOptions);
             }
             self.lhcDataService.setLhcFormData(self.lhcFormData);
             // if FHIR libs are loaded and the data is converted from a FHIR Questionnaire

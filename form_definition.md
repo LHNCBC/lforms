@@ -97,6 +97,51 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}`
+    * tabLayout - (optional) controls the navigation position for every tab
+      container in the form, including nested tab containers. Permitted values
+      are `horizontal` (the default, with tabs at the top) and `vertical` (with
+      tabs on the left). Missing or invalid values use `horizontal`. Vertical
+      tab labels wrap when their navigation reaches the smaller of `20rem` or
+      40% of the tab container. Host applications can change this maximum by
+      setting the inherited CSS custom property
+      `--lhc-vertical-tabs-max-width` on the LForms host or an ancestor. For
+      example: `wc-lhc-form { --lhc-vertical-tabs-max-width: 15rem; }`
+      Tab content has a 24px inset for horizontal tabs and a 12px inset for
+      vertical tabs, unless `hideIndentation` is `true`. Nested tab navigation
+      inherits its parent content's inset. Direct children of each tab have no
+      extra item indentation or tree lines; ordinary descendants retain them.
+    * tabAnswerAlignment - (optional) controls answer column widths in vertical
+      tabs in the large view layout, including nested tab containers. Permitted
+      values are `form` (the default) and `content`. With `form`, answers use half
+      the form width, aligning inputs with questions outside the tabs. The tab
+      navigation takes space from the question text area. When a tab's content
+      width is 600px or less, or the aligned answer column would leave 200px or
+      less for question text and indentation, questions stack above full-width
+      answers. Each nested tab container responds to its own width.
+      With `content`, answers use half the enclosing tab's content width, leaving
+      more space for question text. Missing or invalid values use `form`.
+      Horizontal tabs and medium/small view layouts are unaffected. For example,
+      use `{"tabLayout": "vertical", "tabAnswerAlignment": "content"}` to split
+      the tab content evenly between questions and answers.
+    * showTabHeader - (optional) when the boolean value is `true`, repeats each
+      tab's label as a header at the top of its content. This applies to both
+      horizontal and vertical tab layouts, including nested tab containers. It
+      defaults to `false`. The header aligns with the left edge of the tab's
+      content area, while questions retain their tab content indentation.
+    * showTabContainerText - (optional) when the boolean value is `true`, shows
+      the tab-container group's text above its tabset, including nested tabsets.
+      Defaults to `false`. This is independent of `showTabHeader`, which controls
+      headers inside individual tabs. Containers without text have no header.
+    * stickyTabs - (optional) when the boolean value is `true`, keeps tab
+      navigation visible while its container scrolls. This applies to every
+      vertical tab container, including nested containers, but only to outermost
+      horizontal tab containers. It defaults to `false`. Sticky navigation is
+      constrained to its tab container and does not remain visible after the container
+      scrolls away. Long vertical tab lists fit within the viewport and the nearest
+      scrolling container, updating when that container resizes.
+      Host applications with fixed headers can set the inherited CSS custom
+      property `--lhc-sticky-tabs-offset` (default: `0px`) on the LForms host or an
+      ancestor. For example: `wc-lhc-form { --lhc-sticky-tabs-offset: 64px; }`
     * <a name="viewMode"></a>viewMode - (optional) the view mode for the form. Permitted values are 'lg',
       'md', 'sm', and 'auto', which determine the 4 predefined layouts for large
        screen/container, medium screen/container, small screen/container and a
@@ -382,6 +427,9 @@ about the meaning of each key:
 * **questionnaire** - A JSON object of a FHIR Questionnaire (including FHIR SDC Questionnaire),
  or the above LHC-Forms internal format.
 * **options** - Optional, a JSON object. The options defined in [templateOptions](#templateOptions).
+  Template options are applied to a new questionnaire only when an options object is
+  assigned for that load. Otherwise, the new questionnaire's settings and the library
+  defaults are used.
 * **prepop** - Optional, a boolean value. A flag indicating whether to run the pre-populate operation
  for the FHIR Questionnaire. The default value is false.
 * **fhirVersion** - Optional, a string value. The specified FHIR version of the data provided in 

@@ -1,0 +1,64 @@
+{
+  "title": "A form with long tab labels",
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "item": [
+    {
+      "type": "group",
+      "linkId": "tabContainer",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "tab-container",
+                "display": "Tab Container"
+              }
+            ],
+            "text": "Tab Container"
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "group",
+          "text": "Short",
+          "linkId": "shortTab",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "shortQuestion",
+              "text": "A question in the short tab"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "text": "This is a very long tab name that should wrap at a reasonable point without consuming most of the form",
+          "linkId": "longTab",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "longQuestion",
+              "text": "A question in the tab with a long name"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "text": "PneumonoultramicroscopicsilicovolcanoconiosisIdentifierWithoutBreaks",
+          "linkId": "unbrokenTab",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "unbrokenQuestion",
+              "text": "A question in the tab with an unbroken name"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
