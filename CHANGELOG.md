@@ -2,6 +2,24 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.3.0] 2026-10-28
+### Added
+- Added `tabLayout`, `tabAnswerAlignment`, `showTabHeader`, and `stickyTabs`
+  template options for vertical tabs, configurable answer column alignment,
+  optional tab content headers, and sticky tab navigation.
+  (Thanks to [Chris Moesel (@cmoesel)](https://github.com/cmoesel) for
+  [GitHub PR #210](https://github.com/LHNCBC/lforms/pull/210).)
+- Added the `showTabContainerText` template option to display tab-container
+  group text above each tabset, independently of the headers inside tabs.
+### Changed
+- Refined tab content indentation across nested layouts, and
+  highlighted selected tabs with a light-blue background and black text.
+- First-level items within each tab, including tabs nested at any depth, no
+  longer show tree lines, matching first-level items at the form root.
+### Fixed
+- Template options assigned to the `wc-lhc-form` web component in a separate
+  change notification from its questionnaire are now applied to that questionnaire.
+
 ## [44.2.0] 2026-10-06
 ### Added
 - Required boolean items with the `check-box` item control and an initial

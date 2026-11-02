@@ -1,0 +1,146 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "title": "Five hierarchy levels with ordinary groups and nested tabs",
+  "item": [
+    {
+      "type": "string",
+      "linkId": "beforeTabs",
+      "text": "Level 1: question before the tabs"
+    },
+    {
+      "type": "group",
+      "linkId": "outerTabs",
+      "text": "Level 1: outer tab container",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "tab-container",
+                "display": "Tab Container"
+              }
+            ]
+          }
+        }
+      ],
+      "item": [
+        {
+          "type": "group",
+          "linkId": "ordinaryGroupsTab",
+          "text": "Level 2: Ordinary groups",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "tabQuestion",
+              "text": "Level 3: question directly inside the tab"
+            },
+            {
+              "type": "group",
+              "linkId": "ordinaryGroup",
+              "text": "Level 3: ordinary group",
+              "item": [
+                {
+                  "type": "string",
+                  "linkId": "groupQuestion",
+                  "text": "Level 4: question inside the ordinary group"
+                },
+                {
+                  "type": "group",
+                  "linkId": "deeperGroup",
+                  "text": "Level 4: deeper ordinary group",
+                  "item": [
+                    {
+                      "type": "string",
+                      "linkId": "deepQuestion1",
+                      "text": "Level 5: first question in the deeper group"
+                    },
+                    {
+                      "type": "string",
+                      "linkId": "deepQuestion2",
+                      "text": "Level 5: last question in the deeper group"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "linkId": "nestedTabsTab",
+          "text": "Level 2: Nested tabs",
+          "item": [
+            {
+              "type": "string",
+              "linkId": "beforeNestedTabs",
+              "text": "Level 3: question before nested tabs"
+            },
+            {
+              "type": "group",
+              "linkId": "nestedTabs",
+              "text": "Level 3: nested tab container",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                        "code": "tab-container",
+                        "display": "Tab Container"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "item": [
+                {
+                  "type": "group",
+                  "linkId": "nestedTabOne",
+                  "text": "Level 4: Nested Tab One",
+                  "item": [
+                    {
+                      "type": "string",
+                      "linkId": "nestedQuestion1",
+                      "text": "Level 5: first question in Nested Tab One"
+                    },
+                    {
+                      "type": "string",
+                      "linkId": "nestedQuestion2",
+                      "text": "Level 5: last question in Nested Tab One"
+                    }
+                  ]
+                },
+                {
+                  "type": "group",
+                  "linkId": "nestedTabTwo",
+                  "text": "Level 4: Nested Tab Two",
+                  "item": [
+                    {
+                      "type": "string",
+                      "linkId": "nestedQuestion3",
+                      "text": "Level 5: question in Nested Tab Two"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "linkId": "afterNestedTabs",
+              "text": "Level 3: question after nested tabs"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "string",
+      "linkId": "afterTabs",
+      "text": "Level 1: question after the tabs"
+    }
+  ]
+}

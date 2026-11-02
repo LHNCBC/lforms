@@ -50,6 +50,51 @@ export class LhcDataService {
     return this.lhcFormData?.templateOptions || {};
   }
 
+  /**
+   * Gets the NG-ZORRO tab position selected for the whole form.
+   * Invalid or omitted values preserve the historic top-positioned tabs.
+   * @returns 'left' for a vertical tab layout; 'top' for missing, horizontal, or invalid values.
+   */
+  getTabPosition(): 'top' | 'left' {
+    return this.getTemplateOptions().tabLayout === 'vertical' ? 'left' : 'top';
+  }
+
+  /**
+   * Resolve the configured answer-alignment policy for vertical tabs. The form policy can use a
+   *  stacked layout when content is narrow.
+   * @returns 'content' when explicitly configured; 'form' otherwise.
+   */
+  getTabAnswerAlignment(): 'form' | 'content' {
+    return this.getTemplateOptions().tabAnswerAlignment === 'content' ? 'content' : 'form';
+  }
+
+  /**
+   * Whether each tab's label should also be shown as a header in its content.
+   * Only boolean true enables the header.
+   * @returns True only when showTabHeader is the boolean true.
+   */
+  getShowTabHeader(): boolean {
+    return this.getTemplateOptions().showTabHeader === true;
+  }
+
+  /**
+   * Check whether the tab-container group's text should appear above its tabset.
+   * @returns True only when showTabContainerText is the boolean true.
+   */
+  getShowTabContainerText(): boolean {
+    return this.getTemplateOptions().showTabContainerText === true;
+  }
+
+  /**
+   * Whether the form's tab navigation should be sticky. Only boolean true
+   * enables this so string values from HTML attributes cannot enable it.
+   * @returns True only when stickyTabs is the boolean true; individual tabsets apply their
+   *  layout-specific sticky rules.
+   */
+  getStickyTabs(): boolean {
+    return this.getTemplateOptions().stickyTabs === true;
+  }
+
 
   /**
    * The following functions are exposed to components and their templates through a service
@@ -371,9 +416,12 @@ export class LhcDataService {
   }
 
   /**
-   * Get CSS classes for the tree line
-   * @param isTopLevelItem whether it's a top level item
-   * @returns {string}
+   * Choose tree-line decoration while suppressing it at form/tab roots and when indentation or tree
+   *  lines are hidden.
+   * @param isTopLevelItem Whether the item starts a visual hierarchy at the form or tab-content
+   *  root.
+   * @returns 'lhc-tree-line' when lines should be drawn, or an empty string; auto mode hides lines
+   *  for hierarchies of at most three levels.
    */
   getTreeLineClass(isTopLevelItem = false) {
     if (isTopLevelItem) {
@@ -392,8 +440,10 @@ export class LhcDataService {
 
   /**
    * Get CSS classes for the indentation
-   * @param isTopLevelItem whether it's a top level item
-   * @returns {string}
+   * @param isTopLevelItem Whether the item starts a visual hierarchy at the form or tab-content
+   *  root.
+   * @returns 'lhc-indentation' for indented descendants, or an empty string at roots or when
+   *  indentation is hidden.
    */
   getIndentationClass(isTopLevelItem = false) {
     return isTopLevelItem || this.getLhcFormData().templateOptions.hideIndentation ? '' : 'lhc-indentation';
@@ -403,7 +453,10 @@ export class LhcDataService {
    * get CSS class list for an item
    * @param item an item in a form
    * @param viewMode view mode of the item
-   * @param isTopLevelItem whether item is a top level item
+   * @param isTopLevelItem Whether this item is a form/tab-content root whose tree decoration is
+   *  suppressed.
+   * @returns Space-separated item, view-mode, sibling, state, and applicable tree-decoration
+   *  classes.
    */
   getItemClassList(item, viewMode, isTopLevelItem = false) {
     const classList = [
@@ -744,5 +797,3 @@ export class LhcDataService {
   };
 
 }
-
-

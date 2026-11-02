@@ -23,14 +23,16 @@ export class LhcItemQuestionComponent implements OnInit {
   
 
   /**
-   * Set up the window width observer when the component is initialized/reinitialized
+   * Subscribe to form-width changes. Large-view answers use an inherited tab
+   * width override or half the form width; other view modes clear the inline width.
    */
   ngOnInit(): void {
     this.winService.windowWidth.subscribe(updatedWidth => {
       const viewMode = this.winService.getViewMode();
       const viewModeClass = this.lhcDataService.getItemViewModeClass(this.item, viewMode)
-      this.eleStyle = viewModeClass === "lhc-item-view-lg" ? {"width": updatedWidth/2 + "px"} : null;
+      this.eleStyle = viewModeClass === "lhc-item-view-lg" ? {
+        "width": `var(--lhc-tab-content-answer-width, ${updatedWidth / 2}px)`
+      } : null;
     });  
   }
 }
-
