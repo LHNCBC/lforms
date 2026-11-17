@@ -97,6 +97,11 @@
   display: inline-block;
 }
 
+.lhc-form .ant-checkbox-wrapper,
+.lhc-form-overlay-container .ant-checkbox-wrapper {
+  display: inline-flex;
+}
+
 @layer lforms {
   .lhc-form button,
   .lhc-form input,
