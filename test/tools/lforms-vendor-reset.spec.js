@@ -175,6 +175,32 @@ describe('lforms-vendor-reset.css structural (un-layered) resets', () => {
     });
   });
 
+  describe('ng-zorro checkbox / radio wrappers', () => {
+    let rule;
+
+    before(() => {
+      rule = findRule(root, /\.ant-checkbox-wrapper/);
+    });
+
+    it('exists and covers both checkbox and radio wrappers', () => {
+      assert.ok(rule, 'expected a rule targeting `.ant-checkbox-wrapper`');
+      assert.ok(/\.ant-radio-wrapper/.test(rule.selector),
+        'expected the same rule to target `.ant-radio-wrapper`');
+    });
+
+    it('restores display: inline-flex (defends against host `label { display: inline-block }`)', () => {
+      assert.strictEqual(declValue(rule, 'display'), 'inline-flex');
+    });
+
+    it('is OUTSIDE @layer lforms so an un-layered host `label` reset cannot defeat it', () => {
+      assert.strictEqual(isInsideLayer(rule), false);
+    });
+
+    it('uses real class specificity (no `:where()` that would zero it out)', () => {
+      assert.ok(!/:where\(/.test(rule.selector));
+    });
+  });
+
   describe('box-sizing reset', () => {
     let rule;
 
