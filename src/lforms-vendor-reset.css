@@ -97,6 +97,21 @@
   display: inline-block;
 }
 
+/*
+ * ng-zorro checkbox / radio wrappers (`<label class="ant-checkbox-wrapper">`,
+ * `<label class="ant-radio-wrapper">`). The vendor rule lays them out as
+ * `inline-flex` so the control and its text sit side by side; without this
+ * un-layered copy a host global reset such as Bootstrap Reboot's
+ * `label { display: inline-block }` overrides it and the answer labels wrap
+ * below their checkboxes / radio buttons.
+ */
+.lhc-form .ant-checkbox-wrapper,
+.lhc-form-overlay-container .ant-checkbox-wrapper,
+.lhc-form .ant-radio-wrapper,
+.lhc-form-overlay-container .ant-radio-wrapper {
+  display: inline-flex;
+}
+
 @layer lforms {
   .lhc-form button,
   .lhc-form input,

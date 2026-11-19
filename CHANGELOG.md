@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [44.3.1] 2026-11-17
+### Fixed
+- `inline-flex` display for ng-zorro checkbox / radio wrappers is now
+  un-layered so a host global reset such as Bootstrap Reboot's
+  `label { display: inline-block }` will not override it.
+
 ## [44.3.0] 2026-10-28
 ### Added
 - Added `tabLayout`, `tabAnswerAlignment`, `showTabHeader`, and `stickyTabs`
