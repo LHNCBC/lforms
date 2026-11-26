@@ -68,6 +68,29 @@ describe('HL7 library', function() {
           "^LN|2.b|USA^United States^AA|");
 
     });
+
+
+    it('should escape delimiter characters in text values', function() {
+      var formInfo = {obxIndex: 1};
+      var itemData = {'question': 'Notes | comments', 'questionCode': 'X1234-5',
+        'value': 'BP 120/80 | sitting & calm ~ C:\\notes ^ ok', 'dataType': 'ST', '_obx4': ''};
+      var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
+      assert.equal(out.trim(),
+          'OBX|1|ST|X1234-5^Notes \\F\\ comments^LN||'+
+          'BP 120/80 \\F\\ sitting \\T\\ calm \\R\\ C:\\E\\notes \\S\\ ok|');
+    });
+
+
+    it('should escape delimiter characters in answer text', function() {
+      var formInfo = {obxIndex: 1};
+      var itemData = {'question': 'Symptoms', 'questionCode': 'X1234-5',
+        'value': [{'text': 'Pain & swelling'}, {'text': 'Fever ^ chills', 'code': 'A1'}],
+        'dataType': 'CODING', 'answerConstraint':'optionsOrString', '_obx4': ''};
+      var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
+      assert.equal(out.trim(),
+          "OBX|1|CWE|X1234-5^Symptoms^LN|a|^^^^^^^^Pain \\T\\ swelling|\r"+
+          "OBX|1|CWE|X1234-5^Symptoms^LN|b|A1^Fever \\S\\ chills^|");
+    });
   });
 
 });

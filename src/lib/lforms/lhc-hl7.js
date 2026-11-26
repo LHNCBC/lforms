@@ -86,6 +86,28 @@ const LhcHL7 = {
     escape: "\\"
   },
 
+  // escape sequences for the delimiter characters (HL7 v2.5.1, section 2.7.1)
+  escapeSequences: {
+    "|": "\\F\\",
+    "^": "\\S\\",
+    "&": "\\T\\",
+    "~": "\\R\\",
+    "\\": "\\E\\"
+  },
+
+  /**
+   * Replace the delimiter characters in a value with their escape sequences,
+   * so that the value stays within its field or component.
+   * @param value a field or component value
+   * @returns {string}
+   */
+  _escape: function(value) {
+    var sequences = this.escapeSequences;
+    return String(value).replace(/[|^&~\\]/g, function(ch) {
+      return sequences[ch];
+    });
+  },
+
   // OBX segment
   OBX: [
     {"seq":1, "len":4, "dt":"SI", "opt":"O","name":"Set ID"},
@@ -225,7 +247,7 @@ const LhcHL7 = {
     // index = seq - 1
     formObrArray[0] = "OBR";
     formObrArray[1] = "1";
-    formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
+    formObrArray[4] = this._escape(formData.code) + this.delimiters.component + this._escape(formData.name) + this.delimiters.component + this.LOINC_CS;
 
     // ignore ending empty fields
     var foundValue = false;
@@ -365,13 +387,13 @@ const LhcHL7 = {
     var code = itemVal.code;
     if (dataType === 'CWE' && !code && code !== 0) {
       // For non-coded values, the text goes in OBX 5.9
-      rtn = this.delimiters.component.repeat(8) + itemVal.text;
+      rtn = this.delimiters.component.repeat(8) + this._escape(itemVal.text);
     }
     else {
       var answerCS = !itemVal.system ? "" : (itemVal.system === 'LOINC' || itemVal.system === this.LOINC_URI) ?
           this.LOINC_CS : itemVal.system;
-      rtn = code + this.delimiters.component +
-        itemVal.text + this.delimiters.component + answerCS;
+      rtn = this._escape(code) + this.delimiters.component +
+        this._escape(itemVal.text) + this.delimiters.component + this._escape(answerCS);
     }
     return rtn;
   },
@@ -397,8 +419,8 @@ const LhcHL7 = {
         itemObrArray[0] = "OBR";
         itemObrArray[1] = ++formInfo.obrIndex;
 
-        itemObrArray[4] = item.questionCode + this.delimiters.component +
-            item.question + this.delimiters.component + questionCS;
+        itemObrArray[4] = this._escape(item.questionCode) + this.delimiters.component +
+            this._escape(item.question) + this.delimiters.component + questionCS;
 
         // ignore ending empty fields
         var foundValue = false;
@@ -438,13 +460,13 @@ const LhcHL7 = {
         itemObxArray[0] = "OBX";
         itemObxArray[1] = formInfo.obxIndex++;
         itemObxArray[2] = hl7DataType;
-        itemObxArray[3] = item.questionCode + this.delimiters.component +
-            item.question + this.delimiters.component + questionCS;
+        itemObxArray[3] = this._escape(item.questionCode) + this.delimiters.component +
+            this._escape(item.question) + this.delimiters.component + questionCS;
         // unit
         if (item.unit) {
           var unitName ="";
           if (item.unit.name !== undefined) {
-            unitName = item.unit.name;
+            unitName = this._escape(item.unit.name);
           }
           itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
         }
@@ -468,7 +490,7 @@ const LhcHL7 = {
             itemObxArray[5] = CommonUtils.formatDate(dv, item.dataType === 'DT'? this._DT_FMT: this._DTM_FMT);
           }
           else {
-            itemObxArray[5] = val.toString();
+            itemObxArray[5] = this._escape(val);
           }
           // ignore ending empty fields
           hl7Seg += itemObxArray.join(this.delimiters.field)
